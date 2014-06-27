@@ -1,8 +1,0 @@
-hello2
-by taku
-hello3
-by shibata
-hello3.1
-by shibata
-hello4
-by kawai

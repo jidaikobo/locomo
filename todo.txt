@@ -1,0 +1,80 @@
+オブザーバすごい。
+転じてORMのhas_many等はちょっと考えもの。意識せずにとれるのはよいけど、むしろオブザーバ主体でやりたい気もする。保存や削除がうっとうしすぎる。
+
+
+
+
+未来日付の取得
+- 単純なfindではとれなくすること
+- 未来日付コントローラを作る、アクションに対してaclを設定し、find(include_futrue[futrue_only])などで取得する際、aclクラスにこの権利を確認して返すようにする。
+
+expireの実装。未来とほぼ同様の実装にする
+
+存在するコンテンツの時限装置の考案
+
+承認管理システムの実装相談
+
+
+
+acl
+グループのaclかユーザのaclかを選択
+グループとコントローラの選択（グループについては、絞り込みの仕組み）
+選択したコントローラとグループについてaclを設定
+
+
+
+
+
+php oil g scaffold -f user user_name:varchar[50]  password:varchar[50] email:varchar[255] last_login_at:int:null deleted_at:int:null activation_key:varchar[50]:null status:varchar[20]
+
+users
+	user_id
+	user_name
+	password
+	email
+	last_login
+	create_date
+	update_date
+	activation_key
+	status
+
+php oil g model -f users-meta user_id:int meta_key:varchar[255] meta_value:longtext --no-timestamp --singular
+
+user-meta
+	user_id
+	meta_key
+	meta_value
+
+php oil g scaffold -f usergroups usergroup_name:varchar[50] deleted_at:int:null
+
+usergroups
+	usergroup_name
+
+php oil g model -f users-usergroups-r user_id:int usergroup_id:int --no-timestamp
+
+users-usergroups-r
+	user_id
+	usergroup_id
+
+loginlog
+	ip
+	login_id
+	login_password
+	status
+	count
+	current_action（/ctrl/act/id）
+	create_date
+# ログインに成功したらstatusを1、失敗で0。0でカウントアップ。
+
+php oil g scaffold -f acl controller:varchar[50]  action:varchar[50] usergroup_id:int user_id:int --no-timestamp
+
+acl
+	controller
+	action
+	usergroup_id
+	user_id
+
+bool Acl::valid(user_id = '' , action = '')
+
+＊　＊　＊
+
