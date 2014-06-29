@@ -1,5 +1,13 @@
 <?php echo \View::forge('inc_header'); ?>
 
+<ul>
+	<li><a href="/usergroup/index">通常</a></li>
+	<li><a href="/usergroup/index_deleted">削除済み</a></li>
+	<li><a href="/usergroup/index_yet">予約</a></li>
+	<li><a href="/usergroup/index_expired">期限切れ</a></li>
+	<li><a href="/usergroup/add_testdata">10件のテストデータ追加</a></li>
+</ul>
+
 <h2>Listing <span class='muted'>Usergroups</span> (<?php echo $hit ?>)</h2>
 <br>
 <?php if ($items): ?>

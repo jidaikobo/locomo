@@ -1,5 +1,5 @@
 <?php
-namespace Kontiki;
-abstract class ViewModel_Acl_Abstract extends \Kontiki\ViewModel
+namespace Acl;
+class ViewModel_Acl extends \Kontiki\ViewModel_Acl_Abstract
 {
 }

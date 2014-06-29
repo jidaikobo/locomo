@@ -81,9 +81,6 @@ return array(
 	// 'language'           => 'en', // Default language
 	// 'language_fallback'  => 'en', // Fallback language when file isn't available for default language
 	// 'locale'             => 'en_US', // PHP set_locale() setting, null to not set
-	'language'          => 'ja', // Default language
-	'language_fallback' => 'en', // Fallback language when file isn't available for default language
-	'locale'            => 'ja_JP.utf8',// PHP set_locale() setting, null to not set
 
 	/**
 	 * Internal string encoding charset
@@ -97,7 +94,6 @@ return array(
 	 * default_timezone		optional, if you want to change the server's default timezone
 	 */
 	// 'server_gmt_offset'  => 0,
-	 'default_timezone'   => 'Asia/Tokyo',
 
 	/**
 	 * Logging Threshold.  Can be set to any of the following:
@@ -240,9 +236,6 @@ return array(
 	 *
 	 * Paths MUST end with a directory separator (the DS constant)!
 	 */
-	 'module_paths' => array(
-		APPPATH.'modules'.DS
-	 ),
 
 	/**
 	 * To enable you to split up your additions to the framework, packages are
@@ -322,13 +315,5 @@ return array(
 		 * If you don't want the lang in a group use null as groupname.
 		 */
 		// 'language'  => array(),
-	 ),
-
-	/**************************************************************************/
-	/* Acl                                                                    */
-	/**************************************************************************/
-	 'acl' => array(
-		 	'user',
-		 	'usergroup',
 	 ),
 );

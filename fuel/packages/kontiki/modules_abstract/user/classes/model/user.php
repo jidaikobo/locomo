@@ -1,0 +1,80 @@
+<?php
+namespace Kontiki;
+
+abstract class Model_User_Abstract extends \Kontiki\Model
+{
+	protected static $_table_name = 'users';
+
+	protected static $_properties = array(
+		'id',
+		'user_name',
+		'password',
+		'email',
+		'activation_key',
+		'status',
+		'last_login_at',
+		'deleted_at',
+		'created_at',
+		'expired_at',
+		'updated_at',
+	);
+
+	protected static $_observers = array(
+		'Orm\Observer_CreatedAt' => array(
+			'events' => array('before_insert'),
+			'mysql_timestamp' => true,
+		),
+		'Orm\Observer_UpdatedAt' => array(
+			'events' => array('before_save'),
+			'mysql_timestamp' => true,
+		),
+		'Kontiki_Observer\Password' => array(
+			'events' => array('before_insert', 'before_save'),
+		),
+		'Kontiki_Observer\Date' => array(
+			'events' => array('before_insert', 'before_save'),
+			'properties' => array('expired_at','reserved_at'),
+		),
+	);
+
+	/**
+	 * validate()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function validate($factory, $id = '')
+	{
+		$val = \Kontiki\Validation::forge($factory);
+
+		//user_name
+		$val->add('user_name', 'ユーザ名')
+			->add_rule('required')
+			->add_rule('max_length', 50)
+			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
+			->add_rule('unique', "users.user_name.{$id}");
+
+		//confirm_password
+		$val->add('confirm_password', '確認用パスワード')
+			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+
+		//password
+		$val->add('password', 'パスワード')
+			->add_rule('require_once', "users.password.{$id}")
+			->add_rule('min_length', 8)
+			->add_rule('max_length', 50)
+			->add_rule('match_field', 'confirm_password')
+			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+
+		//password
+		$val->add('email', 'メールアドレス')
+			->add_rule('required')
+			->add_rule('valid_email')
+			->add_rule('max_length', 255)
+			->add_rule('unique', "users.email.{$id}");
+
+		return $val;
+	}
+}

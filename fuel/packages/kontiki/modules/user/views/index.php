@@ -1,5 +1,13 @@
 <?php echo \View::forge('inc_header'); ?>
 
+<ul>
+	<li><a href="/user/index">通常</a></li>
+	<li><a href="/user/index_deleted">削除済み</a></li>
+	<li><a href="/user/index_yet">予約</a></li>
+	<li><a href="/user/index_expired">期限切れ</a></li>
+	<li><a href="/user/add_testdata">10件のテストデータ追加</a></li>
+</ul>
+
 <h2>Listing <span class='muted'>Users</span> (<?php echo $hit ?>)</h2>
 <br>
 <?php if ($items): ?>
@@ -20,9 +28,9 @@
 <?php foreach ($items as $item): ?>		<tr>
 
 			<td><?php echo $item->id; ?></td>
-			<td><?php echo \Str::truncate($item->user_name,20); ?></td>
-			<td><?php echo \Str::truncate($item->password,20); ?></td>
-			<td><?php echo \Str::truncate($item->email,20); ?></td>
+			<td><?php echo \Str::truncate($item->user_name, 20); ?></td>
+			<td><?php echo \Str::truncate($item->password, 20); ?></td>
+			<td><?php echo \Str::truncate($item->email, 20); ?></td>
 			<td><?php echo $item->last_login_at; ?></td>
 			<td><?php echo $item->deleted_at; ?></td>
 			<td><?php echo $item->status; ?></td>

@@ -1,16 +1,6 @@
 <?php echo \View::forge('inc_header'); ?>
 
 <h2>Viewing <span class='muted'>#<?php echo $item->id; ?></span></h2>
-<?php
-
-//$item->userown= \Fieldset::forge('userown');
-$result = \User\Model_User::find('all', array('related' => array('userown')));
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $result[1] ) ;
-echo '</textarea>' ;
-
-?>
 <p>
 	<strong>User name:</strong>
 	<?php echo $item->user_name; ?></p>
@@ -32,6 +22,13 @@ echo '</textarea>' ;
 <p>
 	<strong>Status:</strong>
 	<?php echo $item->status; ?></p>
+
+<?php foreach($item->phones as $phones): ?>
+<p>
+	<strong>phone:</strong>
+	<?php echo $phones['meta_value']; ?></p>
+<?php endforeach; ?>
+
 
 <?php
 $ctrl_sfx = isset($is_deleted) ? '_deleted' : '' ;

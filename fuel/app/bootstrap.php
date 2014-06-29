@@ -10,9 +10,6 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
-//	'Kontiki_Controller'    => APPPATH.'classes/extends/controller.php',
-//	'Kontiki_Model'         => APPPATH.'classes/extends/model.php',
-//	'Kontiki_Validation'    => APPPATH.'classes/extends/validation.php',
 ));
 
 // Register the autoloader
