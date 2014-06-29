@@ -61,6 +61,7 @@
 
 	<div class="form-group">
 		<label class='control-label'>&nbsp;</label>
+		<?php echo Form::hidden($token_key, $token); ?>
 		<?php echo \Form::submit('submit', 'Save', array('class' => 'btn btn-primary')); ?>
 	</div>
 

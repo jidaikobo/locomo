@@ -56,7 +56,9 @@ class Password extends \Orm\Observer
 		if ( ! empty($property)):
 			$obj->{$this->_property} = md5($property);
 		else:
-			$obj->{$this->_property} = $obj->{$this->_property};
+			//$objをvar_dump()すると、_originalが見えるので、きっとここ、リファクタリングできる
+			$originals = $obj->get_original_values();
+			$obj->{$this->_property} = $originals[$this->_property];
 		endif;
 	}
 }

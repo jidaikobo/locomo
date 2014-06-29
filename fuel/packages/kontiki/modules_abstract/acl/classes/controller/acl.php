@@ -177,6 +177,9 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	 */
 	public function action_update_acl()
 	{
+		//CSRF
+		if( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
+
 		//user requests
 		$controller   = \Input::param('controller') == 'none' ? null : \Input::param('controller') ;
 		$usergroup_id = is_numeric(\Input::post('usergroup')) ? \Input::post('usergroup') : null;
@@ -230,6 +233,9 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	 */
 	public function action_update_owner_acl()
 	{
+		//CSRF
+		if( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
+
 		//user requests
 		$controller   = \Input::post('controller');
 		$acls         = \Input::post('acls');

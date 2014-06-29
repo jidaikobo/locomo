@@ -2034,3 +2034,32 @@ WARNING - 2014-06-29 14:16:06 --> Fuel\Core\Fuel::init - The configured locale j
 ERROR - 2014-06-29 14:17:10 --> Error - Module 'acl' could not be found at '' in /Users/jidaikobo/Sites/fuel/html/fuel/core/classes/module.php on line 88
 ERROR - 2014-06-29 14:18:25 --> Fatal Error - Class 'Usergroup\Model_Usergroup' not found in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules_abstract/acl/classes/model/acl.php on line 31
 ERROR - 2014-06-29 14:19:00 --> Error - Module 'acl' could not be found at '' in /Users/jidaikobo/Sites/fuel/html/fuel/core/classes/module.php on line 88
+ERROR - 2014-06-29 14:59:21 --> Runtime Notice - Declaration of Kontiki\Controller::after() should be compatible with Fuel\Core\Controller_Rest::after($response) in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/abstract/controller.php on line 4
+ERROR - 2014-06-29 14:59:44 --> Error - Acl\Controller_Acl::router() or the controller after() method must return a Response object. in /Users/jidaikobo/Sites/fuel/html/fuel/core/classes/request.php on line 477
+ERROR - 2014-06-29 15:40:00 --> Error - The requested view could not be found: PKGPATH/kontiki/views/inc_header in /Users/jidaikobo/Sites/fuel/html/fuel/core/classes/view.php on line 388
+ERROR - 2014-06-29 15:42:51 --> Parsing Error - parse error in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules/user/views/edit.php on line 4
+ERROR - 2014-06-29 15:58:51 --> Error - Property "_original" not found for User\Model_User. in /Users/jidaikobo/Sites/fuel/html/fuel/packages/orm/classes/model.php on line 1133
+ERROR - 2014-06-29 16:18:30 --> Parsing Error - parse error in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/abstract/model.php on line 25
+ERROR - 2014-06-29 16:19:03 --> Fatal Error - Undefined class constant 'get_original_values' in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/observers/password.php on line 62
+ERROR - 2014-06-29 16:19:16 --> Fatal Error - Using $this when not in object context in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/abstract/model.php on line 25
+ERROR - 2014-06-29 16:19:27 --> Fatal Error - Using $this when not in object context in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/abstract/model.php on line 25
+ERROR - 2014-06-29 16:20:42 --> Parsing Error - parse error, expecting `']'' in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/observers/password.php on line 61
+ERROR - 2014-06-29 16:29:14 --> Compile Error - Cannot make non static method Kontiki\Controller::before() static in class Kontiki\Controller_User_Abstract in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules_abstract/user/classes/controller/user.php on line 5
+ERROR - 2014-06-29 16:29:35 --> Compile Error - Cannot make non static method Kontiki\Controller::before() static in class Kontiki\Controller_User_Abstract in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules_abstract/user/classes/controller/user.php on line 5
+ERROR - 2014-06-29 16:31:33 --> Parsing Error - parse error in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules_abstract/user/classes/controller/user.php on line 114
+ERROR - 2014-06-29 16:31:36 --> Notice - Undefined variable: user in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules_abstract/user/classes/controller/user.php on line 116
+ERROR - 2014-06-29 16:32:21 --> Parsing Error - parse error in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules_abstract/user/classes/controller/user.php on line 117
+ERROR - 2014-06-29 16:33:09 --> Parsing Error - parse error, expecting `';'' in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 21
+ERROR - 2014-06-29 16:37:04 --> Notice - Undefined variable: is_user_logged_in in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 17
+ERROR - 2014-06-29 16:38:46 --> Fatal Error - Class 'User\Controller_User' not found in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/bootstrap.php on line 50
+ERROR - 2014-06-29 16:39:25 --> Notice - Array to string conversion in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 2
+ERROR - 2014-06-29 16:39:36 --> Notice - Undefined variable: is_user_logged_in in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 24
+ERROR - 2014-06-29 16:39:44 --> Fatal Error - Call to undefined function dei() in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 6
+ERROR - 2014-06-29 16:40:54 --> Notice - Undefined variable: is_user_logged_in in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 17
+ERROR - 2014-06-29 16:49:32 --> Notice - Undefined variable: is_user_logged_in in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 17
+ERROR - 2014-06-29 16:50:02 --> Notice - Undefined variable: is_user_logged_in in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/views/inc_header.php on line 17
+ERROR - 2014-06-29 16:50:21 --> Runtime Notice - call_user_func() expects parameter 1 to be a valid callback, non-static method Kontiki\Rig::_init() should not be called statically in /Users/jidaikobo/Sites/fuel/html/fuel/core/classes/autoloader.php on line 364
+ERROR - 2014-06-29 16:50:46 --> Fatal Error - Class 'User\Controller_User' not found in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/rig.php on line 8
+ERROR - 2014-06-29 16:51:08 --> Fatal Error - Access to undeclared static property: Kontiki\Rig::$userinfo in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/rig.php on line 10
+ERROR - 2014-06-29 16:51:30 --> Fatal Error - Access to undeclared static property: Kontiki\Rig::$userinfo in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/classes/rig.php on line 13
+ERROR - 2014-06-29 16:56:39 --> Fatal Error - Access to undeclared static property: Kontiki\Controller_User_Abstract::$is_user_logged_in in /Users/jidaikobo/Sites/fuel/html/fuel/packages/kontiki/modules_abstract/user/classes/controller/user.php on line 123

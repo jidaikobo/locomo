@@ -1,4 +1,4 @@
-<?php echo \View::forge('inc_header'); ?>
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
 
 <h2>Viewing <span class='muted'>#<?php echo $item->id; ?></span></h2>
 <p>
@@ -45,4 +45,4 @@ if(isset($is_delete_deleted)):
 endif;
 ?>
 
-<?php echo \View::forge('inc_footer');
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>

@@ -32,6 +32,9 @@ Autoloader::add_classes(array(
 
 	//actionset
 	'Kontiki\Actionset'                     => __DIR__.'/classes/actionset.php',
+
+	//rig
+	'Kontiki\Rig'                           => __DIR__.'/classes/rig.php',
 ));
 
 // Register the autoloader
@@ -44,5 +47,7 @@ if(file_exists(PKGPATH.'kontiki/config/packageconfig.php')):
 else:
 	Config::load('packageconfig.default.php');
 endif;
+
+$rig = new \Kontiki\Rig();
 
 /* End of file bootstrap.php */

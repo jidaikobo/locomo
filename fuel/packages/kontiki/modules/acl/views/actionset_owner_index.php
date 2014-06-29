@@ -1,4 +1,4 @@
-<?php echo \View::forge('inc_header'); ?>
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
 
 <p>対象コントローラ：<code><?php echo $controller ?></code></p>
 
@@ -21,6 +21,7 @@
 </table>
 
 <?php
+echo Form::hidden($token_key, $token);
 echo Form::hidden('controller', $hidden_controller);
 echo Form::hidden('owner', $hidden_owner);
 ?>
@@ -32,4 +33,4 @@ echo Form::hidden('owner', $hidden_owner);
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo \View::forge('inc_footer');
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>

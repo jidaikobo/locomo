@@ -1,2 +1,4 @@
 .DS_Store
+fuel/app/logs/*/*/*
+fuel/app/cache/*/*
 /fuel/packages/kontiki/config/packageconfig.php 

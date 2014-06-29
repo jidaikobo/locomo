@@ -94,6 +94,17 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	}
 
 	/**
+	* after()
+	*/
+	public function after($response)
+	{
+		$view = \View::forge();
+		$view->set_global('token_key', \Config::get('security.csrf_token_key'));
+		$view->set_global('token', \Security::fetch_token());
+		return $response;
+	}
+
+	/**
 	 * set_actionset()
 	 * 
 	 */
@@ -291,7 +302,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$model = $this->model_name ;
 		if (\Input::method() == 'POST'):
 			$val = $model::validate('create');
-			if ($val->run()):
+			if ($val->run() && \Security::check_token()):
 				$args = array();
 				foreach(\Input::post() as $field => $value):
 					if( ! \DBUtil::field_exists($this->table_name, array($field))) continue;
@@ -342,7 +353,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$obj = $this->view_hook($obj, 'edit');
 
 		//validation succeed
-		if ($val->run()):
+		if ($val->run() && \Security::check_token()):
 			//prepare self fields
 			foreach(\Input::post() as $field => $value):
 				if( ! \DBUtil::field_exists($this->table_name, array($field))) continue;
@@ -374,7 +385,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 					sprintf($this->messages['edit_error'], $this->request->module, $id)
 				);
 			endif;
-		//edit view or validation failed
+		//edit view or validation failed of CSRF suspected
 		else:
 			if (\Input::method() == 'POST'):
 				foreach(\Input::post() as $k => $v):

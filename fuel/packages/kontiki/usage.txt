@@ -1,0 +1,10 @@
+APPPATH.config/config.php
+
+- always_loadに、kontikiをたす
+
+- Security settingsの
+	'csrf_autoload'    => false,
+	'csrf_token_key'   => 'fuel_csrf_token',
+	'csrf_expiration'  => 0,
+	コメントアウトを外す
+

@@ -15,6 +15,17 @@ abstract class Model extends \Orm\Model_Soft
 	}
 
 	/**
+	 * get_original_values()
+	 *
+	 * @return  array
+	 * @author shibata@jidaikobo.com
+	 */
+	public function get_original_values()
+	{
+		return $this->_original;
+	}
+
+	/**
 	 * get_table_relations()
 	 *
 	 * @return  array

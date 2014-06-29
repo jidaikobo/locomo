@@ -1,4 +1,4 @@
-<?php echo \View::forge('inc_header'); ?>
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
 
 <p><?php if($user): ?>
 対象：<code><?php echo $user ?></code><br />
@@ -29,6 +29,7 @@
 </table>
 
 <?php
+echo Form::hidden($token_key, $token);
 echo Form::hidden('controller', $hidden_controller);
 echo Form::hidden('user', $hidden_user);
 echo Form::hidden('usergroup', $hidden_usergroup);
@@ -41,4 +42,4 @@ echo Form::hidden('usergroup', $hidden_usergroup);
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo \View::forge('inc_footer');
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>

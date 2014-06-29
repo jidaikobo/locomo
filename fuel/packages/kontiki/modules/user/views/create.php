@@ -1,4 +1,4 @@
-<?php echo \View::forge('inc_header'); ?>
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
 
 <h2>New <span class='muted'>User</span></h2>
 <br>
@@ -8,4 +8,4 @@
 
 <p><?php echo Html::anchor('user', 'Back'); ?></p>
 
-<?php echo \View::forge('inc_footer');
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>

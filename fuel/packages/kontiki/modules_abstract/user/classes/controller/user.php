@@ -8,6 +8,10 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	*/
 	public static $nicename = 'ユーザ管理';
 
+	/**
+	* @var user information
+	*/
+	public static $userinfo = array();
 
 	/**
 	 * messages
@@ -112,6 +116,10 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	 */
 	public function action_login($redirect = NULL)
 	{
+		//ログイン済みのユーザだったらログイン画面を表示しない
+		//このあたり要検討みたい。
+
+
 		//ログイン処理
 		if(\Input::method() == 'POST'):
 			$account = \Input::post('account');
@@ -155,20 +163,16 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 				//redirect
 				\Session::set_flash( 'success', 'ログインしました。');
-				\Response::redirect('user/');
+
+//				$redirect = \Input::post('ret') ?: \Uri::base();
+				$redirect = \Uri::base();
+				\Response::redirect($redirect);
 			//ログイン失敗
 			else:
 				\Session::set_flash( 'error', 'ログインに失敗しました。入力内容に誤りがあります。');
 				\Response::redirect('user/login/');
 			endif;
 		endif;
-
-/*
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( \Session::get('user') ) ;
-echo '</textarea>' ;
-die();
-*/
 
 		//view
 		$view = \View::forge('login');
@@ -177,4 +181,16 @@ die();
 		return \Response::forge($view);
 	}
 
+	/**
+	 * action_logout()
+	 * 
+	 */
+	public function action_logout()
+	{
+		//session
+		$session = \Session::instance();
+		$session->delete('user');
+		\Session::set_flash( 'error', 'ログアウトしました');
+		\Response::redirect('user/login/');
+	}
 }

@@ -10,6 +10,10 @@
 
 		<div class="form-group">
 			<label class='control-label'>&nbsp;</label>
-			<?php echo Form::submit('submit', 'Save', array('class' => 'btn btn-primary')); ?>		</div>
+			<?php
+			echo Form::hidden($token_key, $token);
+			echo Form::submit('submit', 'Save', array('class' => 'btn btn-primary'));
+			?>
+		</div>
 	</fieldset>
 <?php echo Form::close(); ?>

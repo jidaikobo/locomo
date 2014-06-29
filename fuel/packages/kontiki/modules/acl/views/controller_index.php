@@ -1,4 +1,4 @@
-<?php echo \View::forge('inc_header'); ?>
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
 
 <ul>
 	<li>アクセス権限は「ユーザグループ単位」「ユーザ単位」のいずれかごとに設定できます。</li>
@@ -12,18 +12,21 @@
 <legend>ユーザグループ単位の権限設定</legend>
 <div class="form-group">
 <?php
-echo \Form::label('コントローラをドロップダウンから選択', 'controller', array('class'=>'control-label'));
-echo Form::select('controller', 'none', $controllers, array('class' => 'col-md-4 form-control'));
+	echo \Form::label('コントローラをドロップダウンから選択', 'controller', array('class'=>'control-label'));
+	echo Form::select('controller', 'none', $controllers, array('class' => 'col-md-4 form-control'));
 ?>
 </div>
 <div class="form-group">
 <?php
-echo \Form::label('ユーザグループをドロップダウンから選択', 'usergroup', array('class'=>'control-label'));
-echo Form::select('usergroup', 'none', $usergroups, array('class' => 'col-md-4 form-control'));
+	echo \Form::label('ユーザグループをドロップダウンから選択', 'usergroup', array('class'=>'control-label'));
+	echo Form::select('usergroup', 'none', $usergroups, array('class' => 'col-md-4 form-control'));
 ?>
 </div>
 <div class="form-group">
-	<?php echo \Form::submit('submit', '次へ', array('class' => 'btn btn-primary')); ?>
+<?php
+	echo Form::hidden($token_key, $token);
+	echo \Form::submit('submit', '次へ', array('class' => 'btn btn-primary'));
+?>
 </div>
 </fieldset>
 <?php echo \Form::close(); ?>
@@ -34,18 +37,21 @@ echo Form::select('usergroup', 'none', $usergroups, array('class' => 'col-md-4 f
 <legend>ユーザ単位の権限設定</legend>
 <div class="form-group">
 <?php
-echo \Form::label('コントローラをドロップダウンから選択', 'controller', array('class'=>'control-label'));
-echo Form::select('controller', 'none', $controllers, array('class' => 'col-md-4 form-control'));
+	echo \Form::label('コントローラをドロップダウンから選択', 'controller', array('class'=>'control-label'));
+	echo Form::select('controller', 'none', $controllers, array('class' => 'col-md-4 form-control'));
 ?>
 </div>
 <div class="form-group">
 <?php
-echo \Form::label('ユーザをドロップダウンから選択', 'user', array('class'=>'control-label'));
-echo Form::select('user', 'none', $users, array('class' => 'col-md-4 form-control'));
+	echo \Form::label('ユーザをドロップダウンから選択', 'user', array('class'=>'control-label'));
+	echo Form::select('user', 'none', $users, array('class' => 'col-md-4 form-control'));
 ?>
 </div>
 <div class="form-group">
-	<?php echo \Form::submit('submit', '次へ', array('class' => 'btn btn-primary')); ?>
+<?php
+	echo Form::hidden($token_key, $token);
+	echo \Form::submit('submit', '次へ', array('class' => 'btn btn-primary'));
+?>
 </div>
 </fieldset>
 <?php echo \Form::close(); ?>
@@ -56,15 +62,18 @@ echo Form::select('user', 'none', $users, array('class' => 'col-md-4 form-contro
 <legend>オーナ権限設定</legend>
 <div class="form-group">
 <?php
-echo \Form::label('コントローラをドロップダウンから選択', 'controller', array('class'=>'control-label'));
-echo Form::select('controller', 'none', $controllers, array('class' => 'col-md-4 form-control'));
+	echo \Form::label('コントローラをドロップダウンから選択', 'controller', array('class'=>'control-label'));
+	echo Form::select('controller', 'none', $controllers, array('class' => 'col-md-4 form-control'));
 ?>
 </div>
 <div class="form-group">
-	<?php echo \Form::hidden('owner', '1'); ?>
-	<?php echo \Form::submit('submit', '次へ', array('class' => 'btn btn-primary')); ?>
+<?php
+	echo Form::hidden($token_key, $token);
+	echo \Form::hidden('owner', '1');
+	echo \Form::submit('submit', '次へ', array('class' => 'btn btn-primary'));
+?>
 </div>
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo \View::forge('inc_footer');
+<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>

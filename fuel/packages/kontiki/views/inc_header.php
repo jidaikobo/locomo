@@ -10,6 +10,17 @@
 </head>
 <body>
 	<div class="container">
+	<div id="tmp_menu">
+		<a href="/user/">acl</a>
+		<a href="/user/">user</a>
+		<a href="/usergroup/">usergroup</a>
+		<?php if( ! $is_user_logged_in): ?>
+			<a href="/user/login/<?php echo Uri::current() ?>">login</a>
+		<?php else: ?>
+			<a href="/user/logout">logout</a>
+		<?php endif; ?>
+	</div>
+
 		<div class="col-md-12">
 			<h1><?php echo $title; ?></h1>
 			<hr>
