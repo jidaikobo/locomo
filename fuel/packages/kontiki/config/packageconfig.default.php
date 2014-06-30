@@ -35,9 +35,7 @@ return array(
 
 	//always guest allowed controllers
 	'always_allowed' => array(
-		'user' => array(
-			'login',
-			'logout'
-		),
+		'user/login',
+		'user/logout',
 	),
 );
