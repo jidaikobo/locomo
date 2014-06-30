@@ -15,8 +15,8 @@ Autoloader::add_namespace('Kontiki', PKGPATH.'kontiki/');
 
 Autoloader::add_classes(array(
 	//base abstract classes
-	'Kontiki\Controller'                    => __DIR__.'/classes/abstract/controller.php',
-	'Kontiki\Model'                         => __DIR__.'/classes/abstract/model.php',
+	'Kontiki\Controller' => __DIR__.'/classes/abstract/controller.php',
+	'Kontiki\Model'      => __DIR__.'/classes/abstract/model.php',
 
 	//base abstract modules
 	'Kontiki\Controller_User_Abstract'      => __DIR__.'/modules_abstract/user/classes/controller/user.php',
@@ -28,13 +28,10 @@ Autoloader::add_classes(array(
 	'Kontiki\Model_Meta_Abstract'           => __DIR__.'/modules_abstract/meta/classes/model/meta.php',
 
 	//validation
-	'Kontiki\Validation'                    => __DIR__.'/classes/validation.php',
+	'Kontiki\Validation' => __DIR__.'/classes/validation.php',
 
 	//actionset
-	'Kontiki\Actionset'                     => __DIR__.'/classes/actionset.php',
-
-	//rig
-	'Kontiki\Rig'                           => __DIR__.'/classes/rig.php',
+	'Kontiki\Actionset' => __DIR__.'/classes/actionset.php',
 ));
 
 // Register the autoloader
@@ -47,7 +44,5 @@ if(file_exists(PKGPATH.'kontiki/config/packageconfig.php')):
 else:
 	Config::load('packageconfig.default.php');
 endif;
-
-$rig = new \Kontiki\Rig();
 
 /* End of file bootstrap.php */

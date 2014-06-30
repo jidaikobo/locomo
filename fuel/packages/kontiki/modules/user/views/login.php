@@ -1,6 +1,6 @@
 <?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
 
-<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/', 'class'=>'form-horizontal')); ?>
+<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret, 'class'=>'form-horizontal')); ?>
 
 <fieldset>
 <legend>ログイン</legend>
@@ -18,10 +18,6 @@
 </div>
 
 <?php
-//hidden
-echo Form::hidden('ret', $hidden_ret);
-echo Form::hidden('mode', 'try');
-
 //buttons
 echo Html::anchor('/', '戻る', array('class' => 'btn btn-small'));
 echo \Form::submit('submit', 'ログイン', array('class' => 'btn btn-primary'));

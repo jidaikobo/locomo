@@ -76,9 +76,16 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	*/
 	public function before()
 	{
+		//parent
+		parent::before();
+
+		//set and get userinfo
+		\User\Controller_User::set_userinfo();
+		$userinfo = \User\Controller_User::$userinfo;
+
 		//acl
 		$group_id = -2;//test data
-		if( ! \Acl\Controller_Acl::auth($this->request->module, $this->request->action, $group_id) ):
+		if( ! \Acl\Controller_Acl::auth($this->request->module, $this->request->action, $userinfo) ):
 			\Session::set_flash('error', $this->messages['auth_error']);
 			\Response::redirect(\Uri::base(false));
 		endif;
@@ -90,7 +97,17 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$this->model_name  = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($this->request->module);
 		$model = $this->model_name ;
 		$this->table_name = $model::get_table_name();
-		parent::before();
+
+		//base assign
+		$view = \View::forge();
+		$view->set_global('token_key', \Config::get('security.csrf_token_key'));
+		$view->set_global('token', \Security::fetch_token());
+
+		//url
+		$view->set_global('controller', $this->request->module);
+		$view->set_global('action', $this->request->action);
+		$view->set_global('query_string', \Uri::create(\input::get()));
+		$view->set_global('current_uri', \Uri::create('/'.$this->request->module.'/'.$this->request->action.'/', array(), \input::get()));
 	}
 
 	/**
@@ -98,9 +115,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	*/
 	public function after($response)
 	{
-		$view = \View::forge();
-		$view->set_global('token_key', \Config::get('security.csrf_token_key'));
-		$view->set_global('token', \Security::fetch_token());
 		return $response;
 	}
 

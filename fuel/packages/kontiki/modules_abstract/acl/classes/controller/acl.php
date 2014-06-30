@@ -33,26 +33,29 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	 * auth()
 	 * 
 	 */
-	public static function auth($controller = null, $action = null, $group_id = null, $user_id = null)
+	public static function auth($controller = null, $action = null, $userinfo = null)
 	{
 		//false
 		if($controller === null || $action === null) return false;
-		if($group_id === null && $user_id === null) return false;
+		if($userinfo === null) return false;
+
+		//always guest allowed controllers
+		$always_allowed = \Config::get('always_allowed');
+		$check_str = $controller.'/'.$action;
+		if(in_array($check_str, $always_allowed)) return true;
 
 		//admin and root user is always allowed
-		if($group_id == -2 || $group_id == -1) return true;
+		if(in_array(array(-1, -2), $userinfo['usergroup_ids'])) return true;
 
-		//cofigを確認しsimple_authだったら、ログインしてたらtrueを返す
-
-		//query build
+		//check acl
 		$q = \DB::select('controller');
 		$q->from('acls');
 		$q->where('controller', $controller);
 		$q->where('action', $action);
-		if( ! empty($group_id)):
-			$q->where('usergroup_id', $group_id);
+		if( ! empty($userinfo['usergroup_ids'])):
+			$q->where('usergroup_id','IN' , $userinfo['usergroup_ids']);
 		else:
-			$q->where('user_id', $user_id);
+			$q->where('user_id', $userinfo['user_id']);
 		endif;
 		$result = $q->execute()->current() ;
 

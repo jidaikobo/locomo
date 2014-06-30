@@ -11,6 +11,7 @@ return array(
 				2 => '003_create_users_usergroups_r',
 				3 => '004_create_acls',
 				4 => '005_create_meta',
+				5 => '006_create_loginlog',
 			),
 		),
 		'module' => 

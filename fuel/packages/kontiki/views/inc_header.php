@@ -15,7 +15,7 @@
 		<a href="/user/">user</a>
 		<a href="/usergroup/">usergroup</a>
 		<?php if( ! $is_user_logged_in): ?>
-			<a href="/user/login/<?php echo Uri::current() ?>">login</a>
+			<a href="/user/login/<?php echo base64_encode($current_uri) ?>">login</a>
 		<?php else: ?>
 			<a href="/user/logout">logout</a>
 		<?php endif; ?>

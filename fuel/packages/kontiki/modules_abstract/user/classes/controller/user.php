@@ -14,6 +14,11 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	public static $userinfo = array();
 
 	/**
+	* @var bool is_user_logged_in
+	*/
+	public static $is_user_logged_in = false;
+
+	/**
 	 * messages
 	 * 
 	 */
@@ -102,12 +107,28 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	}
 
 	/**
-	 * hash()
+	 * set_userinfo()
 	 * 
 	 */
-	private static function hash($str)
+	public static function set_userinfo()
 	{
-		return md5($str);
+		//set userinfo
+		$session = \Session::instance();
+		self::$userinfo = $session->get('user');
+
+		//is_user_logged_in
+		self::$is_user_logged_in = (self::$userinfo) ? true : false;
+
+		//guest
+		if( ! self::$userinfo['user_id']):
+			self::$userinfo['user_id'] = null;
+		endif;
+		self::$userinfo['usergroup_ids'][] = 0;
+
+		//view
+		$view = \View::forge();
+		$view->set_global('user', self::$userinfo);
+		$view->set_global('is_user_logged_in', (self::$is_user_logged_in) ? true : false);
 	}
 
 	/**
@@ -116,59 +137,81 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	 */
 	public function action_login($redirect = NULL)
 	{
-		//ログイン済みのユーザだったらログイン画面を表示しない
-		//このあたり要検討みたい。
+		//redirect
+		$redirect_decode = $redirect ? base64_decode($redirect) : \URI::base() ;
 
+		//ログイン済みのユーザだったらログイン画面を表示しない
+		if(self::$is_user_logged_in):
+			\Session::set_flash( 'error', 'あなたは既にログインしています');
+			\Response::redirect($redirect_decode);
+		endif;
 
 		//ログイン処理
 		if(\Input::method() == 'POST'):
+			//Banされたユーザだったら追い返す
+			$user_model = \User\Model_User::forge();
+			if( ! $user_model::check_deny(\Input::post("account"))):
+				$user_ban_setting = \Config::get('user_ban_setting');
+				$limit_count = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
+				$limit_time  = $user_ban_setting ? $user_ban_setting['limit_time'] : 300 ;
+				\Session::set_flash( 'error', "{$limit_count}回のログインに失敗したので、{$limit_time}秒間ログインはできません。");
+				\Response::redirect('/');
+			endif;
+
 			$account = \Input::post('account');
 			$password = \Input::post('password');
 			if($account == null || $password == null):
 				\Session::set_flash( 'error', 'ユーザ名とパスワードの両方を入力してください');
 				\Response::redirect('user/login/');
 			endif;
+			//flag and value
+			$user = array();
+			$is_success = false;
 
-			//確認
-			$q = \DB::select('id');
-			$q->from('users');
-			$q->where('password', self::hash($password));
-			$q->where('deleted_at', '=', null);
-			$q->where('created_at', '<=', date('Y-m-d H:i:s'));
-			$q->where('expired_at', '>=', date('Y-m-d H:i:s'));
-			$q->and_where_open();
-				$q->where('user_name', '=', $account);
-				$q->or_where('email', '=', $account);
-			$q->and_where_close();
-			$user_ids = $q->execute()->current() ;
-			$user_id = $user_ids['id'] ;
+			//rootユーザ
+			if($account == ROOT_USER_NAME && $password == ROOT_USER_PASS):
+				$user['user_id'] = null;
+				$user['usergroup_ids'] = array(-2);
+				$is_success = true;
+			endif;
+
+			//adminユーザ
+			if($account == ADMN_USER_NAME && $password == ADMN_USER_PASS):
+				$user['user_id'] = null;
+				$user['usergroup_ids'] = array(-1);
+				$is_success = true;
+			endif;
+
+			//データベースで確認
+			$user_id = 0;
+			if( ! $user):
+				$user_ids = $user_model::get_userinfo($account, $password);
+				$user_id = @$user_ids['id'] ;
+			endif;
+
+			//ユーザが存在したらUsergroupを取得
+			if($user_id):
+				$usergroup_ids = $user_model::get_userinfo($user_id);
+
+				//DBに存在したユーザ情報
+				$user['user_id'] = $user_id;
+				$user['usergroup_ids'] = $usergroup_ids ?: array();
+				$is_success = true;
+			endif;
 
 			//ログイン成功
-			if($user_id):
-				//get usergroup ids
-				$q = \DB::select('users_usergroups_r.usergroup_id');
-				$q->distinct();
-				$q->from('usergroups');
-				$q->from('users_usergroups_r');
-				$q->where('users_usergroups_r.user_id', '=', $user_id);
-				$q->where('usergroups.deleted_at', '=', null);
-				$q->where('usergroups.deleted_at', '=', null);
-				$q->where('usergroups.created_at', '<=', date('Y-m-d H:i:s'));
-				$q->where('usergroups.expired_at', '>=', date('Y-m-d H:i:s'));
-				$usergroup_ids = \Arr::flatten_assoc($q->execute()->as_array()) ;
-
+			if($is_success):
 				//session
 				$session = \Session::instance();
-				$session->set('user', array('user_id' => $user_id, 'usergroup_ids' => $usergroup_ids));
+				$session->set('user', $user);
+				$user_model::add_user_log($account, $password, true);
 
 				//redirect
 				\Session::set_flash( 'success', 'ログインしました。');
-
-//				$redirect = \Input::post('ret') ?: \Uri::base();
-				$redirect = \Uri::base();
-				\Response::redirect($redirect);
+				\Response::redirect($redirect_decode);
 			//ログイン失敗
 			else:
+				$user_model::add_user_log($account, $password, false);
 				\Session::set_flash( 'error', 'ログインに失敗しました。入力内容に誤りがあります。');
 				\Response::redirect('user/login/');
 			endif;
@@ -176,7 +219,7 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 		//view
 		$view = \View::forge('login');
-		$view->set('hidden_ret', $redirect);
+		$view->set('ret', $redirect);
 		$view->set_global('title', 'ログイン');
 		return \Response::forge($view);
 	}
