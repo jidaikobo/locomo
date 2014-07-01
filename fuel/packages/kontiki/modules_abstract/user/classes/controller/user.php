@@ -74,8 +74,11 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 		//現在のユーザが所属するグループ
 		$user_id = intval($obj->id);
-		$sql = "SELECT `usergroup_id` FROM users_usergroups_r WHERE `user_id` = {$user_id}" ;
-		$resuls = \DB::query($sql)->execute()->as_array();
+
+		$q = \DB::select('usergroup_id');
+		$q->from('users_usergroups_r');
+		$q->where('user_id', $user_id);
+		$resuls = $q->execute()->as_array();
 		$obj->usergroups = $resuls ? \Arr::flatten_assoc($resuls) : array();
 
 		return $obj;
@@ -91,15 +94,24 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 		if (\Input::method() == 'POST'):
 			$user_id = intval($obj->id);
 			//まずすべて削除
-			$sql = 'DELETE FROM users_usergroups_r WHERE user_id = '.$user_id;
-			\DB::query($sql)->execute();
+			$q = \DB::delete();
+			$q->table('users_usergroups_r');
+			$q->where('user_id', $user_id);
+			$q->execute();
 
 			//ユーザグループを更新
 			if(is_array(\Input::post('usergroup'))):
 				foreach(\Input::post('usergroup') as $group_id => $v):
 					$group_id = intval($group_id);
-					$sql = "INSERT INTO users_usergroups_r (user_id,usergroup_id) VALUES ('{$user_id}','{$group_id}')";
-					\DB::query($sql)->execute();
+
+					$q = \DB::insert();
+					$q->table('users_usergroups_r');
+					$q->set(array(
+						'user_id' => $user_id,
+						'usergroup_id' => $group_id,
+					));
+					$q->execute();
+
 				endforeach;
 			endif;
 		endif;
