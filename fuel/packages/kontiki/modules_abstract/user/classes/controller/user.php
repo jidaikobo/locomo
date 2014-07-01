@@ -62,29 +62,6 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	);
 
 	/**
-	 * view_hook()
-	 * 
-	 */
-	public function view_hook($obj = NULL, $mode = 'edit')
-	{
-		//このシステムのすべてのユーザグループ（選択肢用）
-		$usergroups = \Usergroup\Model_Usergroup::find('all');
-		$view = \View::forge('edit');
-		$view->set_global('usergroups', $usergroups, false);
-
-		//現在のユーザが所属するグループ
-		$user_id = intval($obj->id);
-
-		$q = \DB::select('usergroup_id');
-		$q->from('users_usergroups_r');
-		$q->where('user_id', $user_id);
-		$resuls = $q->execute()->as_array();
-		$obj->usergroups = $resuls ? \Arr::flatten_assoc($resuls) : array();
-
-		return $obj;
-	}
-
-	/**
 	 * post_save_hook()
 	 * 
 	 */
@@ -120,6 +97,8 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 	/**
 	 * set_userinfo()
+	 * ログイン中のユーザ情報のセット。
+	 * \Kontiki\Controller::before()から呼ばれる。
 	 * 
 	 */
 	public static function set_userinfo()

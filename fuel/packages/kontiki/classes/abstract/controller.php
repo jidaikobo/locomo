@@ -84,7 +84,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$userinfo = \User\Controller_User::$userinfo;
 
 		//acl
-		$group_id = -2;//test data
 		if( ! \Acl\Controller_Acl::auth($this->request->module, $this->request->action, $userinfo) ):
 			\Session::set_flash('error', $this->messages['auth_error']);
 			\Response::redirect(\Uri::base(false));
@@ -227,7 +226,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$view->set('pagination', $pagination->render(), false);
 		$view->set_global('title', sprintf($this->titles[$action], $this->request->module));
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
@@ -261,10 +260,10 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 		//view
 		$view = \View::forge('view');
-		$view->set('item', $data['item']);
+		$view->set_global('item', $data['item']);
 		$view->set_global('title', sprintf($this->titles['view'], $this->request->module));
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
@@ -282,26 +281,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	 * 
 	 */
 	public function post_save_hook($obj = null, $mode = 'edit')
-	{
-		if($obj == null) \Response::redirect($this->request->module);
-		return $obj;
-	}
-
-	/**
-	 * pre_reinput_view_hook()
-	 * 
-	 */
-	public function pre_reinput_view_hook($obj = null, $mode = 'edit')
-	{
-		if($obj == null) \Response::redirect($this->request->module);
-		return $obj;
-	}
-
-	/**
-	 * view_hook()
-	 * 
-	 */
-	public function view_hook($obj = null, $mode = 'edit')
 	{
 		if($obj == null) \Response::redirect($this->request->module);
 		return $obj;
@@ -350,7 +329,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$view = \View::forge('create');
 		$view->set_global('title', sprintf($this->titles['create'], $this->request->module));
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
@@ -364,7 +343,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$model = $this->model_name ;
 		$val = $model::validate('edit',$id);
 		$view = \View::forge('edit');
-		$obj = $this->view_hook($obj, 'edit');
 
 		//validation succeed
 		if ($val->run() && \Security::check_token()):
@@ -407,9 +385,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 					$obj->$k = $v;
 				endforeach;
 
-				//pre_reinput_view_hook()
-				$obj = $this->pre_reinput_view_hook($obj, 'edit');
-
 				\Session::set_flash('error', $val->error());
 			endif;
 
@@ -419,7 +394,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		//view
 		$view->set_global('title', sprintf($this->titles['edit'], $this->request->module));
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
@@ -534,7 +509,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$view->set('item', $data['item']);
 		$view->set_global('title', sprintf($this->titles['view_deleted'], $this->request->module));
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
@@ -580,7 +555,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$view->set('is_delete_deleted', true);
 		$view->set_global('title', sprintf($this->titles['confirm_delete'], $this->request->module));
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**

@@ -23,13 +23,6 @@
 	<strong>Status:</strong>
 	<?php echo $item->status; ?></p>
 
-<?php foreach($item->phones as $phones): ?>
-<p>
-	<strong>phone:</strong>
-	<?php echo $phones['meta_value']; ?></p>
-<?php endforeach; ?>
-
-
 <?php
 $ctrl_sfx = isset($is_deleted) ? '_deleted' : '' ;
 echo Html::anchor('user/edit'.$ctrl_sfx.'/'.$item->id, 'Edit');

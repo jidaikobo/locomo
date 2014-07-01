@@ -11,7 +11,7 @@
 <body>
 	<div class="container">
 	<div id="tmp_menu">
-		<a href="/user/">acl</a>
+		<a href="/acl/controller_index/">acl</a>
 		<a href="/user/">user</a>
 		<a href="/usergroup/">usergroup</a>
 		<?php if( ! $is_user_logged_in): ?>

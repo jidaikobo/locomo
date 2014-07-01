@@ -45,7 +45,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		if(in_array($check_str, $always_allowed)) return true;
 
 		//admin and root user is always allowed
-		if(in_array(array(-1, -2), $userinfo['usergroup_ids'])) return true;
+		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
 
 		//check acl
 		$q = \DB::select('controller');
@@ -80,8 +80,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		$view->set('usergroups', $usergroups);
 		$view->set('users', $users);
 
-//		return \Response::forge(\Acl\ViewModel_Acl::forge($view));
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
@@ -99,7 +98,6 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 			\Session::set_flash('error', '必要項目を選択してから「次へ」を押してください。');
 			\Response::redirect(\Uri::create('/acl/controller_index/'));
 		endif;
-
 
 		//vals
 		$controllers = \Acl\Model_Acl::get_controllers();
@@ -129,7 +127,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		$view->set('actionsets', $actionsets);
 		$view->set('aprvd_actionset', $aprvd_actionset);
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
@@ -171,7 +169,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		$view->set('actionsets', $actionsets);
 		$view->set('aprvd_actionset', $aprvd_actionset);
 
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**

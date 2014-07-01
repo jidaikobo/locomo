@@ -17,14 +17,21 @@ Autoloader::add_classes(array(
 	//base abstract classes
 	'Kontiki\Controller' => __DIR__.'/classes/abstract/controller.php',
 	'Kontiki\Model'      => __DIR__.'/classes/abstract/model.php',
+	'Kontiki\ViewModel'  => __DIR__.'/classes/abstract/view.php',
 
 	//base abstract modules
 	'Kontiki\Controller_User_Abstract'      => __DIR__.'/modules_abstract/user/classes/controller/user.php',
 	'Kontiki\Model_User_Abstract'           => __DIR__.'/modules_abstract/user/classes/model/user.php',
+	'Kontiki\View_User_Abstract'            => __DIR__.'/modules_abstract/user/classes/view/user.php',
+
 	'Kontiki\Controller_Usergroup_Abstract' => __DIR__.'/modules_abstract/usergroup/classes/controller/usergroup.php',
 	'Kontiki\Model_Usergroup_Abstract'      => __DIR__.'/modules_abstract/usergroup/classes/model/usergroup.php',
+	'Kontiki\View_Usergroup_Abstract'       => __DIR__.'/modules_abstract/usergroup/classes/view/usergroup.php',
+
 	'Kontiki\Controller_Acl_Abstract'       => __DIR__.'/modules_abstract/acl/classes/controller/acl.php',
 	'Kontiki\Model_Acl_Abstract'            => __DIR__.'/modules_abstract/acl/classes/model/acl.php',
+	'Kontiki\View_Acl_Abstract'             => __DIR__.'/modules_abstract/acl/classes/view/acl.php',
+
 	'Kontiki\Model_Meta_Abstract'           => __DIR__.'/modules_abstract/meta/classes/model/meta.php',
 
 	//validation

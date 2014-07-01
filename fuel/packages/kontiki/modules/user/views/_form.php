@@ -11,7 +11,13 @@
 		<div>
 		<?php
 			foreach($usergroups as $usergroup):
-				$checked = in_array($usergroup->id, $item->usergroups) ? ' checked="checked"' : null ;
+				$checked = null; 
+				if(
+					(isset($item) && in_array($usergroup->id, $item->usergroups)) ||
+					(is_array(\Input::post('usergroup')) && array_key_exists($usergroup->id, \Input::post('usergroup')))
+				):
+					$checked = ' checked="checked"'; 
+				endif;
 				echo '<label>'.\Form::checkbox("usergroup[{$usergroup->id}]", 1, array('class' => '',$checked)).$usergroup->usergroup_name.'</label><br />';
 			endforeach;
 		?>
@@ -47,16 +53,6 @@
 	<div class="form-group">
 		<?php echo \Form::label('expired date', 'expired_at', array('class'=>'control-label')); ?>
 		<?php echo \Form::input('expired_at', Input::post('expired_at', isset($item) ? $item->expired_at : ''), array('class' => 'col-md-4 form-control', 'placeholder'=> date('Y-m-d H:i:s'))); ?>
-	</div>
-
-	<div class="form-group">
-		<?php echo \Form::label('Memo', 'Memo', array('class'=>'control-label')); ?>
-		<?php echo \Form::textarea('memo[meta_value]', Input::post('memo.meta_value', isset($item) ? $item->memo['meta_value'] : ''), array('class' => 'col-md-4 form-control', 'placeholder'=>'memo')); ?>
-	</div>
-
-	<div class="form-group">
-		<?php echo \Form::label('phone', 'phone', array('class'=>'control-label')); ?>
-		<?php echo \Form::input('phones[1][meta_value]', Input::post('phones.1.meta_value', isset($item->phones["[user][1][phones]"]->meta_value) ? $item->phones["[user][1][phones]"]->meta_value : ''), array('class' => 'col-md-4 form-control', 'placeholder'=>'phone number')); ?>
 	</div>
 
 	<div class="form-group">
