@@ -9,6 +9,9 @@ define('ADMN_USER_PASS','121212');
 
 //fuel config
 return array(
+	//base
+	'site_title' => 'kontiki package',
+
 	//locale settings
 	'language'          => 'ja',
 	'language_fallback' => 'en',

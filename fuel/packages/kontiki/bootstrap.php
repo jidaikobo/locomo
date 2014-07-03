@@ -20,6 +20,10 @@ Autoloader::add_classes(array(
 	'Kontiki\ViewModel'  => __DIR__.'/classes/abstract/view.php',
 
 	//base abstract modules
+	'Kontiki\Controller_Content_Abstract'      => __DIR__.'/modules_abstract/content/classes/controller/Content.php',
+	'Kontiki\Model_Content_Abstract'           => __DIR__.'/modules_abstract/content/classes/model/Content.php',
+	'Kontiki\View_Content_Abstract'            => __DIR__.'/modules_abstract/content/classes/view/Content.php',
+
 	'Kontiki\Controller_User_Abstract'      => __DIR__.'/modules_abstract/user/classes/controller/user.php',
 	'Kontiki\Model_User_Abstract'           => __DIR__.'/modules_abstract/user/classes/model/user.php',
 	'Kontiki\View_User_Abstract'            => __DIR__.'/modules_abstract/user/classes/view/user.php',

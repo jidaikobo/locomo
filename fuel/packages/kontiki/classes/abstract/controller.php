@@ -81,10 +81,9 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 		//set and get userinfo
 		\User\Controller_User::set_userinfo();
-		$userinfo = \User\Controller_User::$userinfo;
 
 		//acl
-		if( ! \Acl\Controller_Acl::auth($this->request->module, $this->request->action, $userinfo) ):
+		if( ! $this->acl(\User\Controller_User::$userinfo) ):
 			\Session::set_flash('error', $this->messages['auth_error']);
 			\Response::redirect(\Uri::base(false));
 		endif;
@@ -115,6 +114,14 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	public function after($response)
 	{
 		return $response;
+	}
+
+	/**
+	* acl()
+	*/
+	public function acl($userinfo)
+	{
+		return \Acl\Controller_Acl::auth($this->request->module, $this->request->action, $userinfo);
 	}
 
 	/**

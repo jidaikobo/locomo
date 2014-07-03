@@ -1,4 +1,6 @@
-APPPATH.config/config.php
+/*
+ * APPPATH.config/config.php
+ */
 
 - always_loadに、kontikiをたす
 
@@ -7,4 +9,12 @@ APPPATH.config/config.php
 	'csrf_token_key'   => 'fuel_csrf_token',
 	'csrf_expiration'  => 0,
 	コメントアウトを外す
+
+/*
+ * APPPATH.config/routes.php
+ */
+
+- トップページと404を変更
+	'_root_'  => 'content/home',
+	'_404_'   => 'content/404',
 
