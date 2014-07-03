@@ -108,9 +108,10 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		//check database
 		$q = \DB::select('action');
 		$q->from('acls');
-		$q->where('controller','=',$controller);
-		if($usergroup_id) $q->where('usergroup_id','=',$usergroup_id);
-		if($user_id) $q->where('user_id','=',$user_id);
+		$q->where('controller', '=', $controller);
+		if($usergroup_id) $q->where('usergroup_id', '=', $usergroup_id);
+		if($user_id) $q->where('user_id', '=', $user_id);
+		$q->where('owner_allowed','=', null);
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
 		$aprvd_actionset = \Kontiki\Actionset::judge_set($results, $actionsets);
@@ -179,7 +180,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	public function action_update_acl()
 	{
 		//CSRF
-		if( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
+//		if( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 		//user requests
 		$controller   = \Input::param('controller') == 'none' ? null : \Input::param('controller') ;

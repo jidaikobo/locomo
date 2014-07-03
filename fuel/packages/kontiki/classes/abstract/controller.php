@@ -95,17 +95,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$this->model_name  = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($this->request->module);
 		$model = $this->model_name ;
 		$this->table_name = $model::get_table_name();
-
-		//base assign
-		$view = \View::forge();
-		$view->set_global('token_key', \Config::get('security.csrf_token_key'));
-		$view->set_global('token', \Security::fetch_token());
-
-		//url
-		$view->set_global('controller', $this->request->module);
-		$view->set_global('action', $this->request->action);
-		$view->set_global('query_string', \Uri::create(\input::get()));
-		$view->set_global('current_uri', \Uri::create('/'.$this->request->module.'/'.$this->request->action.'/', array(), \input::get()));
 	}
 
 	/**
