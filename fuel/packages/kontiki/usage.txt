@@ -4,6 +4,13 @@
 
 - always_loadに、kontikiをたす
 
+- modulesを以下のように設定
+		 'modules'  => array(
+		 	'acl',
+		 	'user',
+		 	'usergroup',
+		 ),
+
 - Security settingsの
 	'csrf_autoload'    => false,
 	'csrf_token_key'   => 'fuel_csrf_token',

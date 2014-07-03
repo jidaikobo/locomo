@@ -212,7 +212,7 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 		$view = \View::forge('login');
 		$view->set('ret', $redirect);
 		$view->set_global('title', 'ログイン');
-		return \Response::forge($view);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**

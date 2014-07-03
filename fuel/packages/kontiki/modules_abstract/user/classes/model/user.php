@@ -77,4 +77,30 @@ abstract class Model_User_Abstract extends \Kontiki\Model
 
 		return $val;
 	}
+
+	/**
+	 * find_item()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function find_item($id = null)
+	{
+		//parent
+		$item = parent::find_item($id);
+
+		//現在のユーザが所属するグループ
+		if($item):
+			$user_id = intval($item->id);
+			$q = \DB::select('usergroup_id');
+			$q->from('users_usergroups_r');
+			$q->where('user_id', $user_id);
+			$resuls = $q->execute()->as_array();
+			$item->usergroups = $resuls ? \Arr::flatten_assoc($resuls) : array();
+		endif;
+
+		return $item;
+	}
 }

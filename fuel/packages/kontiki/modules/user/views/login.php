@@ -14,7 +14,7 @@
 <!--パスワード-->
 <div class="form-group">
 	<?php echo \Form::label('パスワード', 'password', array('class'=>'control-label')); ?>
-	<?php echo \Form::input('password', Input::post('password', isset($item) ? $item->password : ''), array('class' => 'col-md-4 form-control', 'placeholder'=>'パスワードを入力')); ?>
+	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('class' => 'col-md-4 form-control', 'placeholder'=>'パスワードを入力')); ?>
 </div>
 
 <?php

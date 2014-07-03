@@ -358,8 +358,8 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 				$obj = $this->post_save_hook($obj, 'edit');
 
 				//save relations
-				$model::delete_relations($obj->id);
-				$obj = $model::insert_relations($obj->id);
+//				$model::delete_relations($obj->id);
+//				$obj = $model::insert_relations($obj->id);
 
 				//message
 				\Session::set_flash(
@@ -402,7 +402,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$model = $this->model_name ;
 		is_null($id) and \Response::redirect($this->request->module);
 
-		if ( ! $obj = $model::find($id)):
+		if ( ! $obj = $model::find_item($id)):
 			\Session::set_flash(
 				'error',
 				sprintf($this->messages['view_error'], $this->request->module, $id)

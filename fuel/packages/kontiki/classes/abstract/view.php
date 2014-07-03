@@ -25,5 +25,6 @@ abstract class ViewModel extends \ViewModel
 		$view->set_global('action', $action);
 //		$view->set_global('query_string', \Uri::create(\input::get()));
 //		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
+		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/'));
 	}
 }

@@ -284,7 +284,6 @@ return array(
 		 'modules'  => array(
 		 	'acl',
 		 	'user',
-		 	'meta',
 		 	'usergroup',
 		 ),
 
