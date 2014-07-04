@@ -37,26 +37,96 @@ abstract class Model extends \Orm\Model_Soft
 	{
 		if(empty($id)) return false;
 
-		//acl確認
-
-		//retval
-		$obj = (object) array();
-
-		//start query building
-		$q = \DB::select('id');
+		//まず取得（表示非表示を問わず取得する）
+		$primary_key = static::$_primary_key[0];
+		$q = \DB::select($primary_key);
 		$q->from(static::$_table_name);
-		$q->where('id', $id);
-		$q->where('deleted_at', '=', null);
+		$q->where($primary_key, $id);
+		$item = self::find($id);
+		$item = $item ?:  self::find_deleted($id);
+		if( ! $item) return false;
 
-		$q->where('created_at', '<=', date('Y-m-d H:i:s'));
-//		$q->where('expired_at', '>=', date('Y-m-d H:i:s'));
-/*
-あとで未来と期限切れを排除
-*/
-		$id = $q->as_object()->execute()->current() ;
+		//表示制限要件がなければ許可
+		if(
+			! isset($item->status) &&
+			! isset($item->deleted_at) &&
+			! isset($item->created_at) &&
+			! isset($item->expired_at)
+		):
+			return $item;
+		endif;
 
-		//item
-		return self::find($id) ;
+		//要件のないmodelであれば常にtrue
+		$status     = isset($item->status)     ? $item->status     : 'public';
+		$deleted_at = isset($item->deleted_at) ? $item->deleted_at : null;
+		$created_at = isset($item->created_at) ? $item->created_at : time() - 64800;
+		$expired_at = isset($item->expired_at) ? $item->expired_at : time() + 64800;
+
+		//判定用諸情報
+		$controller = \Inflector::denamespace(\Request::main()->controller);
+		$controller = strtolower(substr($controller, 11));
+		$action     = \Request::active()->action;
+		$userinfo   = \User\Controller_User::$userinfo;
+
+		//まず一般表示権限を確認
+		if(
+			\Acl\Controller_Acl::auth($controller, 'view', $userinfo) &&
+			$status != 'revision' &&
+			$status != 'invisible' &&
+			$deleted_at == null &&
+			strtotime($created_at) <= time() &&
+			strtotime($expired_at) >= time()
+		):
+			return $item;
+		endif;
+
+		//削除された項目を確認
+		if(
+			\Acl\Controller_Acl::auth($controller, 'view_deleted', $userinfo) &&
+			$status != 'revision' &&
+			$deleted_at != null
+		):
+			return $item;
+		endif;
+
+		//期限切れ項目を確認
+		if(
+			\Acl\Controller_Acl::auth($controller, 'view_expired', $userinfo) &&
+			$status != 'revision' &&
+			$deleted_at != null &&
+			strtotime($expired_at) <= time()
+		):
+			return $item;
+		endif;
+
+		//予約項目を確認
+		if(
+			\Acl\Controller_Acl::auth($controller, 'view_yet', $userinfo) &&
+			$status != 'revision' &&
+			$deleted_at == null &&
+			strtotime($created_at) >= time() &&
+			strtotime($expired_at) >= time()
+		):
+			return $item;
+		endif;
+
+		//リビジョンを確認
+		if(
+			\Acl\Controller_Acl::auth($controller, 'view_revision', $userinfo) &&
+			$status == 'revision'
+		):
+			return $item;
+		endif;
+
+		//不可視項目を確認
+		if(
+			\Acl\Controller_Acl::auth($controller, 'view_invisible', $userinfo) &&
+			$status == 'invisible'
+		):
+			return $item;
+		endif;
+
+		return false ;
 	}
 
 	/**
@@ -136,7 +206,7 @@ abstract class Model extends \Orm\Model_Soft
 			endif;
 		endif;
 
-		//mode
+		//mode - date
 		$now = date('Y-m-d H:i:s', time());
 		if(@$args['mode'] == 'deleted'):
 			$q->where('deleted_at', '!=', '');
@@ -148,6 +218,13 @@ abstract class Model extends \Orm\Model_Soft
 			$q->where('created_at', '<=', $now);
 			$q->where('expired_at', '>=', $now);
 			$q->where('deleted_at', '=', null);
+		endif;
+
+		//mode - status
+		if(@$args['mode'] == 'revision'):
+			$q->where('status', '=', 'revision');
+		elseif(@$args['mode'] == 'invisible'):
+			$q->where('status', '=', 'invisible');
 		endif;
 
 		//count all before limit

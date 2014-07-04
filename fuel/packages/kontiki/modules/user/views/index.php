@@ -8,7 +8,7 @@
 	<li><a href="/user/add_testdata">10件のテストデータ追加</a></li>
 </ul>
 
-<h2>Listing <span class='muted'>Users</span> (<?php echo $hit ?>)</h2>
+<h2>項目一覧 (<?php echo $hit ?>)</h2>
 <br>
 <?php if ($items): ?>
 <table class="table table-striped">
@@ -16,7 +16,6 @@
 		<tr>
 			<th>id</th>
 			<th>User name</th>
-			<th>Password</th>
 			<th>Email</th>
 			<th>Last login</th>
 			<th>Delete date</th>
@@ -29,7 +28,6 @@
 
 			<td><?php echo $item->id; ?></td>
 			<td><?php echo \Str::truncate($item->user_name, 20); ?></td>
-			<td><?php echo \Str::truncate($item->password, 20); ?></td>
 			<td><?php echo \Str::truncate($item->email, 20); ?></td>
 			<td><?php echo $item->last_login_at; ?></td>
 			<td><?php echo $item->deleted_at; ?></td>
@@ -38,10 +36,9 @@
 				<div class="btn-toolbar">
 					<div class="btn-group">
 						<?php
-						$ctrl_sfx = $is_deleted ? '_deleted' : '' ;
 						$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
-						echo Html::anchor('user/view'.$ctrl_sfx.'/'.$item->id, '<i class="icon-eye-open"></i> View', array('class' => 'btn btn-small'));
-						echo Html::anchor('user/edit'.$ctrl_sfx.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'btn btn-small'));
+						echo Html::anchor('user/view'.'/'.$item->id, '<i class="icon-eye-open"></i> View', array('class' => 'btn btn-small'));
+						echo Html::anchor('user/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'btn btn-small'));
 						if($is_deleted):
 							echo Html::anchor('user/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> Undelete', array('class' => 'btn btn-small'));
 							echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'btn btn-small btn-danger'));
@@ -60,7 +57,7 @@
 <?php echo $pagination; ?>
 
 <?php else: ?>
-<p>No Users.</p>
+<p>ユーザが存在しません。</p>
 
 <?php endif; ?><p>
 	<?php echo Html::anchor('user/create', 'Add new User', array('class' => 'btn btn-success')); ?>

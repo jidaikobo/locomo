@@ -5,7 +5,7 @@ abstract class Controller_Content_Abstract extends \Kontiki\Controller
 	/**
 	* @var string name for human
 	*/
-	public static $nicename = 'コンテンツ管理';
+	public static $nicename = 'コンテンツ';
 
 	/**
 	 * router()

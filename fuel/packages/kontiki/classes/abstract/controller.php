@@ -26,34 +26,34 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	 * @var array default languages of flash messages
 	 */
 	protected $messages = array(
-		'auth_error'       => 'You are not permitted.',
-		'view_error'       => 'Could not find %1$s #%2$d.',
-		'create_success'   => 'Added %1$s #%2$d.',
-		'create_error'     => 'Could not save %1$s.',
-		'edit_success'     => 'Updated %1$s #%2$d.',
-		'edit_error'       => 'Could not update %1$s #%2$d.',
-		'delete_success'   => 'Deleted %1$s #%2$d.',
-		'delete_error'     => 'Could not delete %1$s #%2$d.',
-		'undelete_success' => 'Undeleted %1$s #%2$d.',
-		'undelete_error'   => 'Could not undelete %1$s #%2$d.',
-		'purge_success'    => 'Completely deleted %1$s #%2$d.',
-		'purge_error'      => 'Could not delete %1$s #%2$d.',
+		'auth_error'       => '権限がありません',
+		'view_error'       => '%1$s #%2$d は見つかりませんでした',
+		'create_success'   => '%1$sに #%2$d を新規作成しました',
+		'create_error'     => '%1$sに保存できませんでした',
+		'edit_success'     => '%1$sの #%2$d を更新しました',
+		'edit_error'       => '%1$sの #%2$d を更新できませんでした',
+		'delete_success'   => '%1$sの #%2$d を削除しました',
+		'delete_error'     => '%1$sの #%2$d を削除できませんでした',
+		'undelete_success' => '%1$sの #%2$d を復活しました',
+		'undelete_error'   => '%1$sの #%2$d を復活できませんでした',
+		'purge_success'    => '%1$sの #%2$d を完全に削除しました',
+		'purge_error'      => '%1$sの #%2$d を削除できませんでした',
 	);
 
 	/**
 	 * @var array default languages of page title
 	 */
 	protected $titles = array(
-		'index'          => '%1$s.',
-		'view'           => '%1$s.',
-		'create'         => 'Create %1$s.',
-		'edit'           => 'Edit %1$s.',
-		'index_deleted'  => 'Delete List %1$s.',
-		'index_yet'      => 'Yet List %1$s.',
-		'index_expired'  => 'Expired List %1$s.',
-		'view_deleted'   => 'Deleted %1$s.',
-		'edit_deleted'   => 'Edit Deleted %1$s.',
-		'confirm_delete' => 'Are you sure to Permanently Delete a %1$s?',
+		'index'          => '%1$s',
+		'view'           => '%1$s',
+		'create'         => '%1$sの新規作成',
+		'edit'           => '%1$sの編集',
+		'index_deleted'  => '%1$sの削除済み項目',
+		'index_yet'      => '%1$sの予約項目',
+		'index_expired'  => '%1$sの期限切れ項目',
+		'view_deleted'   => '%1$s（削除済み）',
+		'edit_deleted'   => '%1$s（削除済み）の編集',
+		'confirm_delete' => '%1$sを完全に削除してよろしいですか？',
 	);
 
 	/**
@@ -95,6 +95,10 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$this->model_name  = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($this->request->module);
 		$model = $this->model_name ;
 		$this->table_name = $model::get_table_name();
+
+		//nicename
+		$controller = '\\'. (string) \Request::main()->controller;
+		self::$nicename  = $controller::$nicename;
 	}
 
 	/**
@@ -220,7 +224,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$view->set('items', $items->results);
 		$view->set('is_deleted', $mode == 'deleted' ? true : false);
 		$view->set('pagination', $pagination->render(), false);
-		$view->set_global('title', sprintf($this->titles[$action], $this->request->module));
+		$view->set_global('title', sprintf($this->titles[$action], self::$nicename));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -249,7 +253,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['view_error'], $this->request->module, $id)
+				sprintf($this->messages['view_error'], self::$nicename, $id)
 			);
 			\Response::redirect($this->request->module);
 		endif;
@@ -257,7 +261,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		//view
 		$view = \View::forge('view');
 		$view->set_global('item', $data['item']);
-		$view->set_global('title', sprintf($this->titles['view'], $this->request->module));
+		$view->set_global('title', sprintf($this->titles['view'], self::$nicename));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -307,13 +311,13 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 					
 					\Session::set_flash(
 						'success',
-						sprintf($this->messages['create_success'], $this->request->module, $obj->id)
+						sprintf($this->messages['create_success'], self::$nicename, $obj->id)
 					);
 					\Response::redirect($this->request->module);
 				else:
 					\Session::set_flash(
-						'error', sprintf($this->messages['create_error'],
-						$this->request->module)
+						'error',
+						sprintf($this->messages['create_error'], self::$nicename)
 					);
 				endif;
 			else:
@@ -323,7 +327,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 		//view
 		$view = \View::forge('create');
-		$view->set_global('title', sprintf($this->titles['create'], $this->request->module));
+		$view->set_global('title', sprintf($this->titles['create'], self::$nicename));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -364,13 +368,13 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 				//message
 				\Session::set_flash(
 					'success',
-					sprintf($this->messages['edit_success'], $this->request->module, $id)
+					sprintf($this->messages['edit_success'], self::$nicename, $id)
 				);
 				\Response::redirect($redirect);
 			else:
 				\Session::set_flash(
 					'error',
-					sprintf($this->messages['edit_error'], $this->request->module, $id)
+					sprintf($this->messages['edit_error'], self::$nicename, $id)
 				);
 			endif;
 		//edit view or validation failed of CSRF suspected
@@ -388,7 +392,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		endif;
 
 		//view
-		$view->set_global('title', sprintf($this->titles['edit'], $this->request->module));
+		$view->set_global('title', sprintf($this->titles['edit'], self::$nicename));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -405,7 +409,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		if ( ! $obj = $model::find_item($id)):
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['view_error'], $this->request->module, $id)
+				sprintf($this->messages['view_error'], self::$nicename, $id)
 			);
 			\Response::redirect($this->request->module);
 		endif;
@@ -428,12 +432,12 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 			$obj->delete();
 			\Session::set_flash(
 				'success',
-				sprintf($this->messages['delete_success'], $this->request->module, $id)
+				sprintf($this->messages['delete_success'], self::$nicename, $id)
 			);
 		else:
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['delete_error'], $this->request->module, $id)
+				sprintf($this->messages['delete_error'], self::$nicename, $id)
 			);
 		endif;
 
@@ -483,52 +487,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	}
 
 	/**
-	 * action_view_deleted()
-	 * 
-	 */
-	public function action_view_deleted($id = null)
-	{
-		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
-
-		if ( ! $data['item'] = $model::find_deleted($id)):
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['view_error'], $this->request->module, $id)
-			);
-			\Response::redirect($this->request->module);
-		endif;
-
-		//view
-		$view = \View::forge('view');
-		$view->set('is_deleted', true);
-		$view->set('item', $data['item']);
-		$view->set_global('title', sprintf($this->titles['view_deleted'], $this->request->module));
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-	}
-
-	/**
-	 * action_edit_deleted()
-	 * 
-	 */
-	public function action_edit_deleted($id = null)
-	{
-		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
-
-		if ( ! $obj = $model::find_deleted($id)):
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['view_error'], $this->request->module, $id)
-			);
-			\Response::redirect($this->request->module);
-		endif;
-		$title = sprintf($this->titles['edit'], $this->request->module);
-		return $this->edit_core($id, $obj, $this->request->module.'/edit_deleted/'.$id, $title);
-	}
-
-	/**
 	 * action_confirm_delete()
 	 * 
 	 */
@@ -537,10 +495,10 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$model = $this->model_name ;
 		is_null($id) and \Response::redirect($this->request->module);
 
-		if ( ! $data['item'] = $model::find_deleted($id)):
+		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['view_error'], $this->request->module, $id)
+				sprintf($this->messages['view_error'], self::$nicename, $id)
 			);
 			\Response::redirect($this->request->module);
 		endif;
@@ -549,7 +507,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$view = \View::forge('view');
 		$view->set('item', $data['item']);
 		$view->set('is_delete_deleted', true);
-		$view->set_global('title', sprintf($this->titles['confirm_delete'], $this->request->module));
+		$view->set_global('title', sprintf($this->titles['confirm_delete'], self::$nicename));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -563,17 +521,17 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$model = $this->model_name ;
 		is_null($id) and \Response::redirect($this->request->module);
 
-		if ($obj = $model::find_deleted($id)):
+		if ($obj = $model::find_item($id)):
 			$obj->undelete();
 
 			\Session::set_flash(
 				'success',
-				sprintf($this->messages['undelete_success'], $this->request->module, $id)
+				sprintf($this->messages['undelete_success'], self::$nicename, $id)
 			);
 		else:
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['undelete_error'], $this->request->module, $id)
+				sprintf($this->messages['undelete_error'], self::$nicename, $id)
 			);
 		endif;
 
@@ -589,17 +547,17 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		$model = $this->model_name ;
 		is_null($id) and \Response::redirect($this->request->module);
 
-		if ($obj = $model::find_deleted($id)):
+		if ($obj = $model::find_item($id)):
 			//なぜか削除されないが、親クラスである\Orm\Model::delete()のカスケーディング削除の恩恵にあずかるためには、これを使うべきっぽいので、とりあえずおいておく。
 			$obj->purge();
 			\Session::set_flash(
 				'success',
-				sprintf($this->messages['purge_success'], $this->request->module, $id)
+				sprintf($this->messages['purge_success'], self::$nicename, $id)
 			);
 		else:
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['purge_error'], $this->request->module, $id)
+				sprintf($this->messages['purge_error'], self::$nicename, $id)
 			);
 		endif;
 

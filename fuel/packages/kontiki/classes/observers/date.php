@@ -5,7 +5,7 @@ class Date extends \Orm\Observer
 	/**
 	 * @var  string  default property
 	 */
-	public static $properties = array('expired_at','reserved_at');
+	public static $properties = array('expired_at');
 
 	/**
 	 * @var  string  property

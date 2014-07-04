@@ -2,29 +2,40 @@
 namespace Kontiki;
 class Actionset
 {
-	//===actionItems===
+	/**
+	 * actionItems()
+	 * @param str $controller
+	 * @return  obj
+	 */
 	public static function actionItems($controller = null)
 	{
 		$actions = (object) array();
-		$actions->view          = self::view($controller);
-		$actions->view_revision = self::view_revision();
-		$actions->view_expired  = self::view_expired();
-		$actions->view_yet      = self::view_yet();
-		$actions->view_deleted  = self::view_deleted();
-//		$actions->view_invisible = self::view_invisible();
-//		$actions->downloadFiles = self::downloadFiles();
-		$actions->create        = self::create();
-		$actions->edit         = self::edit();
-//		$actions->upload        = self::upload();
-//		$actions->uploadAll     = self::uploadAll();
-//		$actions->deleteFiles   = self::deleteFiles();
+		$actions->view           = self::view($controller);
+		$actions->view_revision  = self::view_revision();
+		$actions->view_expired   = self::view_expired();
+		$actions->view_yet       = self::view_yet();
+		$actions->view_deleted   = self::view_deleted();
+		$actions->view_invisible = self::view_invisible();
+		$actions->download_files = self::download_files();
+		$actions->create         = self::create();
+		$actions->edit           = self::edit();
+		$actions->upload         = self::upload();
+		$actions->upload_all     = self::upload_all();
+		$actions->delete_files   = self::delete_files();
 		$actions->delete         = self::delete();
 		$actions->undelete       = self::undelete();
 		$actions->purge          = self::purge();
 		return $actions;
 	}
 
-	//===judge_set===
+	/**
+	 * judge_set()
+	 *
+	 * @param str   $actions
+	 * @param array $actionsets
+	 *
+	 * @return  array
+	 */
 	public static function judge_set($actions, $actionsets)
 	{
 		//アクションセットの条件を満たすものを抽出
@@ -37,7 +48,11 @@ class Actionset
 		return $results;
 	}
 
-	//===view===
+	/**
+	 * view()
+	 * @param str   $controller
+	 * @return  array
+	 */
 	private static function view($controller)
 	{
 		$retvals = array(
@@ -53,7 +68,10 @@ class Actionset
 		return $retvals;
 	}
 
-	//===view_revision===
+	/**
+	 * view_revision()
+	 * @return  array
+	 */
 	private static function view_revision()
 	{
 		$retvals = array(
@@ -70,7 +88,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===view_expired===
+	/**
+	 * view_expired()
+	 * @return  array
+	 */
 	private static function view_expired()
 	{
 		$retvals = array(
@@ -85,7 +106,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===view_yet===
+	/**
+	 * view_yet()
+	 * @return  array
+	 */
 	private static function view_yet()
 	{
 		$retvals = array(
@@ -100,7 +124,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===view_deleted===
+	/**
+	 * view_deleted()
+	 * @return  array
+	 */
 	private static function view_deleted()
 	{
 		$retvals = array(
@@ -115,7 +142,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===view_invisible===
+	/**
+	 * view_invisible()
+	 * @return  array
+	 */
 	private static function view_invisible()
 	{
 		$retvals = array(
@@ -130,7 +160,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===create===
+	/**
+	 * create()
+	 * @return  array
+	 */
 	private static function create()
 	{
 		$retvals = array(
@@ -147,7 +180,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===edit===
+	/**
+	 * edit()
+	 * @return  array
+	 */
 	private static function edit()
 	{
 		$retvals = array(
@@ -165,7 +201,10 @@ class Actionset
 		return $retvals;
 	}
 
-	//===edit_deleted===
+	/**
+	 * edit_deleted()
+	 * @return  array
+	 */
 	private static function edit_deleted()
 	{
 		$retvals = array(
@@ -180,8 +219,11 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===downloadFiles===
-	private static function downloadFiles()
+	/**
+	 * download_files()
+	 * @return  array
+	 */
+	private static function download_files()
 	{
 		$retvals = array(
 			'action_name' => 'ファイルへのアクセス権限',
@@ -192,7 +234,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===upload===
+	/**
+	 * upload()
+	 * @return  array
+	 */
 	private static function upload()
 	{
 		$retvals = array(
@@ -204,8 +249,11 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===uploadAll===
-	private static function uploadAll()
+	/**
+	 * upload_all()
+	 * @return  array
+	 */
+	private static function upload_all()
 	{
 		$retvals = array(
 			'action_name' => '強力なファイルアップロード権限',
@@ -216,8 +264,11 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===deleteFiles===
-	private static function deleteFiles()
+	/**
+	 * delete_files()
+	 * @return  array
+	 */
+	private static function delete_files()
 	{
 		$retvals = array(
 			'action_name' => 'ファイルの削除権限',
@@ -228,7 +279,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===delete===
+	/**
+	 * delete()
+	 * @return  array
+	 */
 	private static function delete()
 	{
 		$retvals = array(
@@ -245,7 +299,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===undelete===
+	/**
+	 * undelete()
+	 * @return  array
+	 */
 	private static function undelete()
 	{
 		$retvals = array(
@@ -262,7 +319,10 @@ class Actionset
 		return $retvals;
 	}
 	
-	//===purge===
+	/**
+	 * purge()
+	 * @return  array
+	 */
 	private static function purge()
 	{
 		$retvals = array(

@@ -33,7 +33,7 @@ abstract class Model_User_Abstract extends \Kontiki\Model
 		),
 		'Kontiki_Observer\Date' => array(
 			'events' => array('before_insert', 'before_save'),
-			'properties' => array('expired_at','reserved_at'),
+			'properties' => array('expired_at'),
 		),
 	);
 
@@ -93,10 +93,16 @@ abstract class Model_User_Abstract extends \Kontiki\Model
 
 		//現在のユーザが所属するグループ
 		if($item):
+			$now = date('Y-m-d H:i:s', time());
 			$user_id = intval($item->id);
 			$q = \DB::select('usergroup_id');
 			$q->from('users_usergroups_r');
-			$q->where('user_id', $user_id);
+			$q->join('usergroups');
+			$q->on('users_usergroups_r.usergroup_id', '=', 'usergroups.id');
+			$q->where('users_usergroups_r.user_id', $user_id);
+			$q->where('usergroups.created_at', '<=', $now);
+			$q->where('usergroups.expired_at', '>=', $now);
+			$q->where('usergroups.deleted_at', '=', null);
 			$resuls = $q->execute()->as_array();
 			$item->usergroups = $resuls ? \Arr::flatten_assoc($resuls) : array();
 		endif;

@@ -17,7 +17,6 @@ class Create_users
 			'deleted_at'     => array('type' => 'datetime', 'null' => true),
 			'created_at'     => array('type' => 'datetime', 'null' => true),
 			'expired_at'     => array('type' => 'datetime', 'null' => true),
-			'reserved_at'    => array('type' => 'datetime', 'null' => true),
 			'updated_at'     => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 	}

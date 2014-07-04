@@ -8,7 +8,7 @@
 	<li><a href="/usergroup/add_testdata">10件のテストデータ追加</a></li>
 </ul>
 
-<h2>Listing <span class='muted'>Usergroups</span> (<?php echo $hit ?>)</h2>
+<h2>項目一覧 (<?php echo $hit ?>)</h2>
 <br>
 <?php if ($items): ?>
 <table class="table table-striped">
@@ -28,10 +28,9 @@
 				<div class="btn-toolbar">
 					<div class="btn-group">
 						<?php
-						$ctrl_sfx = $is_deleted ? '_deleted' : '' ;
 						$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
-						echo Html::anchor('usergroup/view'.$ctrl_sfx.'/'.$item->id, '<i class="icon-eye-open"></i> View', array('class' => 'btn btn-small'));
-						echo Html::anchor('usergroup/edit'.$ctrl_sfx.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'btn btn-small'));
+						echo Html::anchor('usergroup/view'.'/'.$item->id, '<i class="icon-eye-open"></i> View', array('class' => 'btn btn-small'));
+						echo Html::anchor('usergroup/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'btn btn-small'));
 						if($is_deleted):
 							echo Html::anchor('usergroup/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> Undelete', array('class' => 'btn btn-small'));
 							echo Html::anchor('usergroup/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'btn btn-small btn-danger'));
@@ -49,7 +48,7 @@
 <?php echo $pagination; ?>
 
 <?php else: ?>
-<p>No Usergroups.</p>
+<p>ユーザグループが存在しません。</p>
 
 <?php endif; ?><p>
 	<?php echo Html::anchor('usergroup/create', 'Add new Usergroup', array('class' => 'btn btn-success')); ?>
