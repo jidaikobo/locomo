@@ -208,23 +208,28 @@ abstract class Model extends \Orm\Model_Soft
 
 		//mode - date
 		$now = date('Y-m-d H:i:s', time());
-		if(@$args['mode'] == 'deleted'):
+		if(@$args['mode'] == 'deleted' && \DBUtil::field_exists(static::$_table_name, array('deleted_at'))):
 			$q->where('deleted_at', '!=', '');
-		elseif(@$args['mode'] == 'yet'):
+		elseif(@$args['mode'] == 'yet' && \DBUtil::field_exists(static::$_table_name, array('created_at'))):
 			$q->where('created_at', '>', $now);
-		elseif(@$args['mode'] == 'expired'):
+		elseif(@$args['mode'] == 'expired' && \DBUtil::field_exists(static::$_table_name, array('expired_at'))):
 			$q->where('expired_at', '<', $now);
 		else:
-			$q->where('created_at', '<=', $now);
-			$q->where('expired_at', '>=', $now);
-			$q->where('deleted_at', '=', null);
+			if(\DBUtil::field_exists(static::$_table_name, array('created_at')))
+				$q->where('created_at', '<=', $now);
+			if(\DBUtil::field_exists(static::$_table_name, array('expired_at')))
+				$q->where('expired_at', '>=', $now);
+			if(\DBUtil::field_exists(static::$_table_name, array('deleted_at')))
+				$q->where('deleted_at', '=', null);
 		endif;
 
 		//mode - status
-		if(@$args['mode'] == 'revision'):
-			$q->where('status', '=', 'revision');
-		elseif(@$args['mode'] == 'invisible'):
-			$q->where('status', '=', 'invisible');
+		if(\DBUtil::field_exists(static::$_table_name, array('status'))):
+			if(@$args['mode'] == 'revision'):
+				$q->where('status', '=', 'revision');
+			elseif(@$args['mode'] == 'invisible'):
+				$q->where('status', '=', 'invisible');
+			endif;
 		endif;
 
 		//count all before limit

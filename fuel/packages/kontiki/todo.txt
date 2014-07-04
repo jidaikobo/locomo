@@ -1,82 +1,49 @@
-- ログイン時のURLの持ち回し
+creator_idとmodifier_idの実装とあわせてacl（とくにオーナaclを実装）
 
-- 絶対に読み込んで実行されるclassの作り方がわからん。絶対にテンプレートに渡す値（userのログイン状態など）をどうにかしてすっきり埋め込みたい。classのrig.phpはそのテスト。うまくいけばなくなるかも。
-
-＊　＊　＊
-
-オブザーバすごい。
-転じてORMのhas_many等はちょっと考えもの。意識せずにとれるのはよいけど、むしろオブザーバ主体でやりたい気もする。保存や削除がうっとうしすぎる。
-ここ、やり方を根本的に間違えているかも。ormするときには、もしかするとmigrate時点で何か必要みたい？？
-
-未来日付の取得
-- 単純なfindではとれなくすること
-- 未来日付コントローラを作る、アクションに対してaclを設定し、find(include_futrue[futrue_only])などで取得する際、aclクラスにこの権利を確認して返すようにする。
-
-expireの実装。未来とほぼ同様の実装にする
+オーナaclを実装したら、userについては、creatorでなく、user_idの一致によるacl（アクションセット）も入れること
 
 存在するコンテンツの時限装置の考案
 
-承認管理システム（いわゆるワークフロー）の実装相談
+■承認管理システム（いわゆるワークフロー）の実装相談
+abstract controllerに
+$this->is_workflowed
+を設定。trueだったら、項目をワークフロー管理する
+ワークフロー管理するコントローラには
+- statusフィールド
+- workflow_route_idフィールド
+- workflow_routeフィールド
+必須とする。
+$this->is_workflowed = true
+なのに、このフィールドがないときにはエラーを出す
 
-acl
-グループのaclかユーザのaclかを選択
-グループとコントローラの選択（グループについては、絞り込みの仕組み）
-選択したコントローラとグループについてaclを設定
-オーナaclの仕組みの検討
+$this->is_workflowed = true
+のコントローラは、フォームにstatusを変更できるスイッチがあったとしても、すべて無効になる。つまり編集者／承認者は項目の可視属性等をまったく変更できない。
+statusはworkflowedかpublicのいずれかしか存在しない。
 
+workflowコントローラを作る
+workflowコントローラでは、経路設定ができる
+最初に、承認ステップ数を決定する（ステップ数は最低2。1の場合は、自動的に承認される）
 
+              OR or AND
++-------+    +-------+
++creator+ -> +user1  +
++       +    +group1 +
++       +    +user2  +
++-------+    +-------+
 
-
-php oil g scaffold -f user user_name:varchar[50]  password:varchar[50] email:varchar[255] last_login_at:int:null deleted_at:int:null activation_key:varchar[50]:null status:varchar[20]
-
-users
-	user_id
-	user_name
-	password
-	email
-	last_login
-	create_date
-	update_date
-	activation_key
-	status
-
-php oil g model -f users-meta user_id:int meta_key:varchar[255] meta_value:longtext --no-timestamp --singular
-
-user-meta
-	user_id
-	meta_key
-	meta_value
-
-php oil g scaffold -f usergroups usergroup_name:varchar[50] deleted_at:int:null
-
-usergroups
-	usergroup_name
-
-php oil g model -f users-usergroups-r user_id:int usergroup_id:int --no-timestamp
-
-users-usergroups-r
-	user_id
-	usergroup_id
-
-loginlog
-	ip
-	login_id
-	login_password
-	status
-	count
-	current_action（/ctrl/act/id）
-	create_date
-# ログインに成功したらstatusを1、失敗で0。0でカウントアップ。
-
-php oil g scaffold -f acl controller:varchar[50]  action:varchar[50] usergroup_id:int user_id:int --no-timestamp
-
-acl
-	controller
-	action
-	usergroup_id
-	user_id
-
-bool Acl::valid(user_id = '' , action = '')
-
-＊　＊　＊
-
+workflow_routeフィールドはこうなる。
+array(
+	//最初の配列は、申請済みなら1が入る。そうでなければ0
+	array(1),
+	//以降の配列は属性と承認者情報が入る
+	array(
+		'type' => 'OR',
+		'users' => array(1),
+		'usergroups' => array(),
+	),
+	array(
+		'type' => 'AND',
+		'users' => array(1,3),
+		'usergroups' => array(3),
+	),
+)
