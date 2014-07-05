@@ -82,12 +82,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		//set and get userinfo
 		\User\Controller_User::set_userinfo();
 
-		//acl
-		if( ! $this->acl(\User\Controller_User::$userinfo) ):
-			\Session::set_flash('error', $this->messages['auth_error']);
-			\Response::redirect(\Uri::base(false));
-		endif;
-
 		//actionset
 		$this->set_actionset();
 
@@ -99,6 +93,16 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		//nicename
 		$controller = '\\'. (string) \Request::main()->controller;
 		self::$nicename  = $controller::$nicename;
+
+		//acl まずユーザ／ユーザグループ単位を確認する。
+		if( ! $this->acl(\User\Controller_User::$userinfo)):
+			//ユーザ／ユーザグループで失敗したら、オーナ権限を確認する
+			if( ! $this->owner_acl(\User\Controller_User::$userinfo)):
+				//双方駄目ならエラー
+				\Session::set_flash('error', $this->messages['auth_error']);
+				\Response::redirect(\Uri::base(false));
+			endif;
+		endif;
 	}
 
 	/**
@@ -115,6 +119,55 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	public function acl($userinfo)
 	{
 		return \Acl\Controller_Acl::auth($this->request->module, $this->request->action, $userinfo);
+	}
+
+	/**
+	* owner_acl()
+	*/
+	public function owner_acl($userinfo)
+	{
+		//オーナ権限を判定するコントローラには、creator_idフィールドが必須とする（creator_idを使わないとしても）
+		if( ! \DBUtil::field_exists($this->table_name, array('creator_id'))) return true;
+
+		//adminたち（ユーザグループ-1や-2）は常にtrue
+		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
+
+		//オーナ権限なのでゲストは常にfalse
+		if( ! \User\Controller_User::$is_user_logged_in) return false;
+
+		//オーナ権限に関係あるアクションセットを取得
+		$actionset4owner = array();
+		foreach(self::$actionset as $actionset_name => $action):
+			if( ! isset($action['owner_allowed'])) continue;
+			$actionset4owner = array_merge($actionset4owner, $action['dependencies']);
+		endforeach;
+
+		//オーナ権限の関係ないアクションであれば常にfalse
+		if( ! in_array($this->request->action, $actionset4owner)) return false;
+
+		//オーナ権限のあるアクションは原理的に個票なので第一引数はid
+		$id = is_numeric(\URI::segment(3)) ? \URI::segment(3) : \URI::segment(4);
+		if( ! $id) return false;
+
+		//オーバヘッドだが権限確認用に取得
+		$model = $this->model_name ;
+		$item = $model::find_item_anyway($id);
+		if( ! $item) return false;
+
+		//adminでないのに、user_idがなかったり、コンテンツのcreator_idがなければfalse
+		if( ! $userinfo['user_id'] || ! $item->creator_id) return false;
+
+		return $this->check_owner_acl($userinfo, $item);
+	}
+
+	/**
+	 * check_owner_acl()
+	 * オーナ権限は原則creator_idを確認するが、他を確認することがあるときはこのメソッドをオーバライドすること
+	*/
+	public function check_owner_acl($userinfo = null, $item = null)
+	{
+		if($userinfo == null || $item == null) return false;
+		return \Acl\Controller_Acl::owner_auth($userinfo, $item);
 	}
 
 	/**
@@ -176,8 +229,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * index_core()
-	 * 
-	 * 将来的には、任意のテンプレートを指定し、任意の項目一覧をウィジェットっぽく使える？
 	 * 
 	 * @param array $args
 	 * @param str   $args[mode] [deleted|yet|expired|reserved]

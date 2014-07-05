@@ -64,6 +64,17 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	}
 
 	/**
+	 * check_owner_acl()
+	 * creator_idだけでなく、ユーザIDが一致したら許可する
+	*/
+	public function check_owner_acl($userinfo = null, $item = null)
+	{
+		$result = parent::check_owner_acl($userinfo, $item);
+		$is_users_item = ($userinfo['user_id'] === $item->id);
+		return ($result || $is_users_item);
+	}
+
+	/**
 	 * set_userinfo()
 	 * ログイン中のユーザ情報のセット。
 	 * \Kontiki\Controller::before()から呼ばれる。
@@ -129,32 +140,31 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 			//rootユーザ
 			if($account == ROOT_USER_NAME && $password == ROOT_USER_PASS):
-				$user['user_id'] = null;
+				$user['user_id'] = -2;
 				$user['usergroup_ids'] = array(-2);
 				$is_success = true;
 			endif;
 
 			//adminユーザ
 			if($account == ADMN_USER_NAME && $password == ADMN_USER_PASS):
-				$user['user_id'] = null;
+				$user['user_id'] = -1;
 				$user['usergroup_ids'] = array(-1);
 				$is_success = true;
 			endif;
 
 			//データベースで確認
 			$user_id = 0;
-			if( ! $user):
+			if( ! $user || ! @is_numeric($user['user_id'])):
 				$user_ids = $user_model::get_userinfo($account, $password);
 				$user_id = @$user_ids['id'] ;
 			endif;
 
 			//ユーザが存在したらUsergroupを取得
 			if($user_id):
-				$usergroup_ids = $user_model::get_userinfo($user_id);
-
+				$usergroup_ids = $user_model::get_usergroups($user_id);
 				//DBに存在したユーザ情報
 				$user['user_id'] = $user_id;
-				$user['usergroup_ids'] = $usergroup_ids ?: array();
+				$user['usergroup_ids'] = $usergroup_ids ? $usergroup_ids : array();
 				$is_success = true;
 			endif;
 

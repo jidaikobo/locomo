@@ -10,18 +10,28 @@ class Actionset
 	public static function actionItems($controller = null)
 	{
 		$actions = (object) array();
-		$actions->view           = self::view($controller);
+		$actions->view           = self::view();
 		$actions->view_revision  = self::view_revision();
 		$actions->view_expired   = self::view_expired();
 		$actions->view_yet       = self::view_yet();
 		$actions->view_deleted   = self::view_deleted();
 		$actions->view_invisible = self::view_invisible();
-		$actions->download_files = self::download_files();
-		$actions->create         = self::create();
 		$actions->edit           = self::edit();
+
+		$actions->view_owner           = self::view_owner();
+		$actions->view_revision_owner  = self::view_revision_owner();
+		$actions->view_expired_owner   = self::view_expired_owner();
+		$actions->view_ye_ownert       = self::view_yet_owner();
+		$actions->view_deleted_owner   = self::view_deleted_owner();
+		$actions->view_invisible_owner = self::view_invisible_owner();
+		$actions->edit_owner           = self::edit_owner();
+		$actions->edit_deleted_ower    = self::edit_deleted_ower();
+
+		$actions->create         = self::create();
+		$actions->download_files = self::download_files();
 		$actions->upload         = self::upload();
 		$actions->upload_all     = self::upload_all();
-		$actions->delete_files   = self::delete_files();
+		$actions->delete_file    = self::delete_file();
 		$actions->delete         = self::delete();
 		$actions->undelete       = self::undelete();
 		$actions->purge          = self::purge();
@@ -50,18 +60,34 @@ class Actionset
 
 	/**
 	 * view()
-	 * @param str   $controller
+	 * @param str $controller
 	 * @return  array
 	 */
-	private static function view($controller)
+	private static function view()
 	{
 		$retvals = array(
-			'owner_allowed' => TRUE,
-			'url' => '/'.$controller.'/index/',
+			'url' => '/',
 			'action_name' => '閲覧（通常項目）',
 			'explanation' => '通常項目の一覧と個票の閲覧権限です。',
 			'dependencies' => array(
 				'index',
+				'view',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * view_owner()
+	 * @return  array
+	 */
+	private static function view_owner()
+	{
+		$retvals = array(
+			'owner_allowed' => TRUE,
+			'action_name' => '閲覧（通常項目）',
+			'explanation' => '項目制作者への項目閲覧権限です。一覧の閲覧権限は許可されません。',
+			'dependencies' => array(
 				'view',
 			)
 		);
@@ -75,11 +101,29 @@ class Actionset
 	private static function view_revision()
 	{
 		$retvals = array(
-			'owner_allowed' => TRUE,
 			'action_name' => '閲覧（リビジョン）',
 			'explanation' => '作業履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴はみることができるようになります。また、通常項目の編集権限も許可されます。',
 			'dependencies' => array(
 				'index',
+				'view',
+				'edit',
+				'view_revision',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * view_revision_owner()
+	 * @return  array
+	 */
+	private static function view_revision_owner()
+	{
+		$retvals = array(
+			'owner_allowed' => TRUE,
+			'action_name' => '閲覧（リビジョン）',
+			'explanation' => '作業履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴はみることができるようになります。また、通常項目の編集権限も許可されます。',
+			'dependencies' => array(
 				'view',
 				'edit',
 				'view_revision',
@@ -95,11 +139,27 @@ class Actionset
 	private static function view_expired()
 	{
 		$retvals = array(
-			'owner_allowed' => TRUE,
 			'action_name' => '閲覧（期限切れ）',
 			'explanation' => '期限切れ項目の閲覧権限です。',
 			'dependencies' => array(
 				'index_expired',
+				'view_expired',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * view_expired_owner()
+	 * @return  array
+	 */
+	private static function view_expired_owner()
+	{
+		$retvals = array(
+			'owner_allowed' => TRUE,
+			'action_name' => '閲覧（期限切れ）',
+			'explanation' => '期限切れ項目の閲覧権限です。',
+			'dependencies' => array(
 				'view_expired',
 			)
 		);
@@ -113,11 +173,27 @@ class Actionset
 	private static function view_yet()
 	{
 		$retvals = array(
-			'owner_allowed' => TRUE,
 			'action_name' => '閲覧（予約項目）',
 			'explanation' => '予約項目の閲覧権限です。',
 			'dependencies' => array(
 				'index_yet',
+				'view_yet',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * view_yet_owner()
+	 * @return  array
+	 */
+	private static function view_yet_owner()
+	{
+		$retvals = array(
+			'owner_allowed' => TRUE,
+			'action_name' => '閲覧（予約項目）',
+			'explanation' => '予約項目の閲覧権限です。',
+			'dependencies' => array(
 				'view_yet',
 			)
 		);
@@ -129,6 +205,23 @@ class Actionset
 	 * @return  array
 	 */
 	private static function view_deleted()
+	{
+		$retvals = array(
+			'action_name' => '閲覧（削除された項目）',
+			'explanation' => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
+			'dependencies' => array(
+				'index_deleted',
+				'view_deleted',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * view_deleted_owner()
+	 * @return  array
+	 */
+	private static function view_deleted_owner()
 	{
 		$retvals = array(
 			'owner_allowed' => TRUE,
@@ -149,12 +242,67 @@ class Actionset
 	private static function view_invisible()
 	{
 		$retvals = array(
+			'action_name' => '閲覧（不可視項目）',
+			'explanation' => '不可視項目の閲覧権限',
+			'dependencies' => array(
+				'index_invisible',
+				'view_invisible',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * view_invisible_owner()
+	 * @return  array
+	 */
+	private static function view_invisible_owner()
+	{
+		$retvals = array(
 			'owner_allowed' => TRUE,
 			'action_name' => '閲覧（不可視項目）',
 			'explanation' => '不可視項目の閲覧権限',
 			'dependencies' => array(
 				'index_invisible',
 				'view_invisible',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * edit()
+	 * @return  array
+	 */
+	private static function edit()
+	{
+		$retvals = array(
+			'action_name' => '項目の編集',
+//			'explanation' => '特殊な条件のない項目の編集権限。この権限しか付与されていないユーザは、項目を不可視、予約、期限切れにしたり、項目をごみ箱に入れることもできません。またコントローラがワークフロー管理されているときには、表示・非表示設定も変更できません。',
+			'explanation' => '特殊な条件のない項目の編集権限',
+			'dependencies' => array(
+				'index',
+				'view',
+				'edit',
+			)
+		);
+
+		return $retvals;
+	}
+
+	/**
+	 * edit_owner()
+	 * @return  array
+	 */
+	private static function edit_owner()
+	{
+		$retvals = array(
+			'owner_allowed' => TRUE,
+			'action_name' => '項目の編集',
+			'explanation' => '特殊な条件のない項目の編集権限',
+			'dependencies' => array(
+				'view',
+				'edit',
 			)
 		);
 		return $retvals;
@@ -181,27 +329,6 @@ class Actionset
 	}
 	
 	/**
-	 * edit()
-	 * @return  array
-	 */
-	private static function edit()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '項目の編集',
-//			'explanation' => '特殊な条件のない項目の編集権限。この権限しか付与されていないユーザは、項目を不可視、予約、期限切れにしたり、項目をごみ箱に入れることもできません。またコントローラがワークフロー管理されているときには、表示・非表示設定も変更できません。',
-			'explanation' => '特殊な条件のない項目の編集権限',
-			'dependencies' => array(
-				'index',
-				'view',
-				'edit',
-			)
-		);
-
-		return $retvals;
-	}
-
-	/**
 	 * edit_deleted()
 	 * @return  array
 	 */
@@ -218,6 +345,24 @@ class Actionset
 		);
 		return $retvals;
 	}
+
+	/**
+	 * edit_deleted_ower()
+	 * @return  array
+	 */
+	private static function edit_deleted_ower()
+	{
+		$retvals = array(
+			'owner_allowed' => TRUE,
+			'action_name' => '削除された項目の編集',
+			'explanation' => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
+			'dependencies' => array(
+				'view_deleted',
+				'edit_deleted',
+			)
+		);
+		return $retvals;
+	}
 	
 	/**
 	 * download_files()
@@ -227,8 +372,9 @@ class Actionset
 	{
 		$retvals = array(
 			'action_name' => 'ファイルへのアクセス権限',
-			'explanation' => 'セキュア領域に置かれたファイルへのアクセス権限',
+			'explanation' => 'アップロードされたファイルへのアクセス権限',
 			'dependencies' => array(
+				'download',
 			)
 		);
 		return $retvals;
@@ -244,6 +390,7 @@ class Actionset
 			'action_name' => 'ファイルアップロード権限',
 			'explanation' => '通常の項目に対するファイル添付の権限',
 			'dependencies' => array(
+				'upload',
 			)
 		);
 		return $retvals;
@@ -257,23 +404,42 @@ class Actionset
 	{
 		$retvals = array(
 			'action_name' => '強力なファイルアップロード権限',
-			'explanation' => '不可視、予約、期限切れ、ごみ箱の項目などのファイルアップロード権限。また、セキュア領域へのファイルアップロードの権限でもあります。',
+			'explanation' => '不可視、予約、期限切れ、削除の項目などのファイルアップロード権限。また、セキュア領域へのファイルアップロードの権限でもあります。',
 			'dependencies' => array(
+				'upload_all',
 			)
 		);
 		return $retvals;
 	}
 	
 	/**
-	 * delete_files()
+	 * delete_file()
 	 * @return  array
 	 */
-	private static function delete_files()
+	private static function delete_file()
 	{
 		$retvals = array(
 			'action_name' => 'ファイルの削除権限',
 			'explanation' => '添付ファイルの削除権限です。',
 			'dependencies' => array(
+				'delete_file',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * delete_file_owner()
+	 * @return  array
+	 */
+	private static function delete_file_owner()
+	{
+		$retvals = array(
+			'owner_allowed' => TRUE,
+			'action_name' => 'ファイルの削除権限',
+			'explanation' => '添付ファイルの削除権限です。',
+			'dependencies' => array(
+				'delete_file',
 			)
 		);
 		return $retvals;
@@ -298,7 +464,7 @@ class Actionset
 		);
 		return $retvals;
 	}
-	
+
 	/**
 	 * undelete()
 	 * @return  array
@@ -326,7 +492,6 @@ class Actionset
 	private static function purge()
 	{
 		$retvals = array(
-			'no_acl' => TRUE,
 			'action_name' => '項目の完全な削除',
 			'explanation' => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'dependencies' => array(

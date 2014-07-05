@@ -19,6 +19,10 @@ return array(
 		),
 		'package' => 
 		array(
+			'kontiki' => 
+			array(
+				0 => '001_create_users',
+			),
 		),
 	),
 	'folder' => 'migrations/',

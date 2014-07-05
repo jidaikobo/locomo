@@ -1,6 +1,7 @@
-creator_idとmodifier_idの実装とあわせてacl（とくにオーナaclを実装）
+php oil refine migrate:up --packages=kontiki
+delete from migration where 1 = 1;
 
-オーナaclを実装したら、userについては、creatorでなく、user_idの一致によるacl（アクションセット）も入れること
+＊　＊　＊
 
 存在するコンテンツの時限装置の考案
 

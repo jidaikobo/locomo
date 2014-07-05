@@ -31,7 +31,6 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 
 	/**
 	 * auth()
-	 * 
 	 */
 	public static function auth($controller = null, $action = null, $userinfo = null)
 	{
@@ -63,8 +62,19 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	}
 
 	/**
+	 * owner_auth()
+	 * オーナ権限はコントローラ依存性が強いので、各コントローラで実装。
+	 * 原則、abstract controllerにある
+	 */
+	public static function owner_auth($userinfo = null, $item = null)
+	{
+		if( ! \User\Controller_User::$is_user_logged_in) return false;
+		if($userinfo == null || $item == null) return false;
+		return ($userinfo['user_id'] === $item->creator_id);
+	}
+
+	/**
 	 * action_controller_index()
-	 * 
 	 */
 	public function action_controller_index()
 	{
@@ -103,7 +113,11 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		$controllers = \Acl\Model_Acl::get_controllers();
 		$usergroups  = \Acl\Model_Acl::get_usergroups();
 		$users       = \Acl\Model_Acl::get_users();
-		$actionsets  = \Kontiki\Actionset::actionItems($controller);
+		$actionsets  = (object) array();
+		foreach(\Kontiki\Actionset::actionItems($controller) as $actionset_name => $action):
+			if(isset($action['owner_allowed'])) continue;
+			$actionsets->{$actionset_name} = $action;
+		endforeach;
 
 		//check database
 		$q = \DB::select('action');

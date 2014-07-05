@@ -36,8 +36,7 @@ class Date extends \Orm\Observer
 	}
 
 	/**
-	 * Set the password property to hashed strings when insertion.
-	 *
+	 * before_insert()
 	 * @param  Model  Model object subject of this observer method
 	 */
 	public function before_insert(\Orm\Model $obj)
@@ -46,8 +45,7 @@ class Date extends \Orm\Observer
 	}
 
 	/**
-	 * Set the password property to hashed strings when \Input::post($this->_property) given.
-	 *
+	 * before_save()
 	 * @param  Model  Model object subject of this observer method
 	 */
 	public function before_save(\Orm\Model $obj)

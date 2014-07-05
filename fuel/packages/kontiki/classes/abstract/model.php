@@ -1,6 +1,5 @@
 <?php
 namespace Kontiki;
-
 abstract class Model extends \Orm\Model_Soft
 {
 	/**
@@ -26,6 +25,28 @@ abstract class Model extends \Orm\Model_Soft
 	}
 
 	/**
+	 * find_item_anyway($id)
+	 *
+	 * @param int   $id
+	 *
+	 * @return object | result
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function find_item_anyway($id = null)
+	{
+		if(empty($id)) return false;
+
+		//とにかく項目を取得する
+		$primary_key = static::$_primary_key[0];
+		$q = \DB::select($primary_key);
+		$q->from(static::$_table_name);
+		$q->where($primary_key, $id);
+		$item = self::find($id);
+		$item = $item ?: self::find_deleted($id);
+		return $item;
+	}
+
+	/**
 	 * find_item()
 	 *
 	 * @param int   $id
@@ -38,12 +59,7 @@ abstract class Model extends \Orm\Model_Soft
 		if(empty($id)) return false;
 
 		//まず取得（表示非表示を問わず取得する）
-		$primary_key = static::$_primary_key[0];
-		$q = \DB::select($primary_key);
-		$q->from(static::$_table_name);
-		$q->where($primary_key, $id);
-		$item = self::find($id);
-		$item = $item ?:  self::find_deleted($id);
+		$item = self::find_item_anyway($id);
 		if( ! $item) return false;
 
 		//表示制限要件がなければ許可
@@ -122,6 +138,16 @@ abstract class Model extends \Orm\Model_Soft
 		if(
 			\Acl\Controller_Acl::auth($controller, 'view_invisible', $userinfo) &&
 			$status == 'invisible'
+		):
+			return $item;
+		endif;
+
+		//オーナ権限を確認（\Acl\Controller_Acl::owner_auth()でないことに注意。このチェックはコントローラ依存する）
+		$request = \Request::forge();
+		$current_controller = '\\'.\Request::main()->controller;
+		$current_controller_obj = new $current_controller($request);
+		if(
+			$current_controller_obj->check_owner_acl($userinfo, $item)
 		):
 			return $item;
 		endif;

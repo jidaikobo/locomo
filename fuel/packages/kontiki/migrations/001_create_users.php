@@ -18,6 +18,8 @@ class Create_users
 			'created_at'     => array('type' => 'datetime', 'null' => true),
 			'expired_at'     => array('type' => 'datetime', 'null' => true),
 			'updated_at'     => array('type' => 'datetime', 'null' => true),
+			'creator_id'     => array('constraint' => 5, 'type' => 'int'),
+			'modifier_id'    => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 	}
 
