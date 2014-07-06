@@ -11,6 +11,8 @@ $this->request->action
 
 ＊　＊　＊
 
+scaffoldをつくっちゃう。
+
 適当なコントローラを作って、soft delete非対応時の処理を書く
 あと、purge依存しないようにしちゃうか。
 
