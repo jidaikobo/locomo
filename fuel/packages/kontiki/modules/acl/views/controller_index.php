@@ -63,7 +63,7 @@
 <div class="form-group">
 <?php
 	echo \Form::label('コントローラをドロップダウンから選択', 'controller', array('class'=>'control-label'));
-	echo Form::select('controller', 'none', $controllers, array('class' => 'col-md-4 form-control'));
+	echo Form::select('controller', 'none', $controllers_owner, array('class' => 'col-md-4 form-control'));
 ?>
 </div>
 <div class="form-group">

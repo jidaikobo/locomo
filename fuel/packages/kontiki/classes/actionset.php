@@ -17,16 +17,6 @@ class Actionset
 		$actions->view_deleted   = self::view_deleted();
 		$actions->view_invisible = self::view_invisible();
 		$actions->edit           = self::edit();
-
-		$actions->view_owner           = self::view_owner();
-		$actions->view_revision_owner  = self::view_revision_owner();
-		$actions->view_expired_owner   = self::view_expired_owner();
-		$actions->view_ye_ownert       = self::view_yet_owner();
-		$actions->view_deleted_owner   = self::view_deleted_owner();
-		$actions->view_invisible_owner = self::view_invisible_owner();
-		$actions->edit_owner           = self::edit_owner();
-		$actions->edit_deleted_ower    = self::edit_deleted_ower();
-
 		$actions->create         = self::create();
 		$actions->download_files = self::download_files();
 		$actions->upload         = self::upload();
@@ -36,26 +26,6 @@ class Actionset
 		$actions->undelete       = self::undelete();
 		$actions->purge          = self::purge();
 		return $actions;
-	}
-
-	/**
-	 * judge_set()
-	 *
-	 * @param str   $actions
-	 * @param array $actionsets
-	 *
-	 * @return  array
-	 */
-	public static function judge_set($actions, $actionsets)
-	{
-		//アクションセットの条件を満たすものを抽出
-		$results = array();
-		foreach($actionsets as $actionset_name => $v){
-			if( ! array_diff($v['dependencies'], $actions)){
-				$results[] = $actionset_name;
-			};
-		}
-		return $results;
 	}
 
 	/**
@@ -71,23 +41,6 @@ class Actionset
 			'explanation' => '通常項目の一覧と個票の閲覧権限です。',
 			'dependencies' => array(
 				'index',
-				'view',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * view_owner()
-	 * @return  array
-	 */
-	private static function view_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '閲覧（通常項目）',
-			'explanation' => '項目制作者への項目閲覧権限です。一覧の閲覧権限は許可されません。',
-			'dependencies' => array(
 				'view',
 			)
 		);
@@ -112,25 +65,6 @@ class Actionset
 		);
 		return $retvals;
 	}
-
-	/**
-	 * view_revision_owner()
-	 * @return  array
-	 */
-	private static function view_revision_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '閲覧（リビジョン）',
-			'explanation' => '作業履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴はみることができるようになります。また、通常項目の編集権限も許可されます。',
-			'dependencies' => array(
-				'view',
-				'edit',
-				'view_revision',
-			)
-		);
-		return $retvals;
-	}
 	
 	/**
 	 * view_expired()
@@ -143,23 +77,6 @@ class Actionset
 			'explanation' => '期限切れ項目の閲覧権限です。',
 			'dependencies' => array(
 				'index_expired',
-				'view_expired',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * view_expired_owner()
-	 * @return  array
-	 */
-	private static function view_expired_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '閲覧（期限切れ）',
-			'explanation' => '期限切れ項目の閲覧権限です。',
-			'dependencies' => array(
 				'view_expired',
 			)
 		);
@@ -184,23 +101,6 @@ class Actionset
 	}
 
 	/**
-	 * view_yet_owner()
-	 * @return  array
-	 */
-	private static function view_yet_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '閲覧（予約項目）',
-			'explanation' => '予約項目の閲覧権限です。',
-			'dependencies' => array(
-				'view_yet',
-			)
-		);
-		return $retvals;
-	}
-	
-	/**
 	 * view_deleted()
 	 * @return  array
 	 */
@@ -218,48 +118,12 @@ class Actionset
 	}
 
 	/**
-	 * view_deleted_owner()
-	 * @return  array
-	 */
-	private static function view_deleted_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '閲覧（削除された項目）',
-			'explanation' => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
-			'dependencies' => array(
-				'index_deleted',
-				'view_deleted',
-			)
-		);
-		return $retvals;
-	}
-	
-	/**
 	 * view_invisible()
 	 * @return  array
 	 */
 	private static function view_invisible()
 	{
 		$retvals = array(
-			'action_name' => '閲覧（不可視項目）',
-			'explanation' => '不可視項目の閲覧権限',
-			'dependencies' => array(
-				'index_invisible',
-				'view_invisible',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * view_invisible_owner()
-	 * @return  array
-	 */
-	private static function view_invisible_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
 			'action_name' => '閲覧（不可視項目）',
 			'explanation' => '不可視項目の閲覧権限',
 			'dependencies' => array(
@@ -287,24 +151,6 @@ class Actionset
 			)
 		);
 
-		return $retvals;
-	}
-
-	/**
-	 * edit_owner()
-	 * @return  array
-	 */
-	private static function edit_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '項目の編集',
-			'explanation' => '特殊な条件のない項目の編集権限',
-			'dependencies' => array(
-				'view',
-				'edit',
-			)
-		);
 		return $retvals;
 	}
 	
@@ -339,24 +185,6 @@ class Actionset
 			'explanation' => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
 			'dependencies' => array(
 				'index_deleted',
-				'view_deleted',
-				'edit_deleted',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * edit_deleted_ower()
-	 * @return  array
-	 */
-	private static function edit_deleted_ower()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
-			'action_name' => '削除された項目の編集',
-			'explanation' => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
-			'dependencies' => array(
 				'view_deleted',
 				'edit_deleted',
 			)
@@ -419,23 +247,6 @@ class Actionset
 	private static function delete_file()
 	{
 		$retvals = array(
-			'action_name' => 'ファイルの削除権限',
-			'explanation' => '添付ファイルの削除権限です。',
-			'dependencies' => array(
-				'delete_file',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * delete_file_owner()
-	 * @return  array
-	 */
-	private static function delete_file_owner()
-	{
-		$retvals = array(
-			'owner_allowed' => TRUE,
 			'action_name' => 'ファイルの削除権限',
 			'explanation' => '添付ファイルの削除権限です。',
 			'dependencies' => array(

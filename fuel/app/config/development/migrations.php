@@ -21,7 +21,10 @@ return array(
 		array(
 			'kontiki' => 
 			array(
-				0 => '001_create_users',
+				0 => '002_create_usergroups',
+				1 => '003_create_users_usergroups_r',
+				2 => '004_create_acls',
+				3 => '005_create_loginlog',
 			),
 		),
 	),

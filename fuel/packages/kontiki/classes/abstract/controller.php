@@ -13,14 +13,10 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	protected $model_name  = '';
 
 	/**
-	 * @var string table name
-	 */
-	protected $table_name  = '';
-
-	/**
 	 * @var array set by self::set_actionset()
 	 */
 	public static $actionset  = array();
+	public static $actionset_owner  = array();
 
 	/**
 	 * @var array default languages of flash messages
@@ -85,10 +81,8 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		//actionset
 		$this->set_actionset();
 
-		//vals
+		//model_name
 		$this->model_name  = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($this->request->module);
-		$model = $this->model_name ;
-		$this->table_name = $model::get_table_name();
 
 		//nicename
 		$controller = '\\'. (string) \Request::main()->controller;
@@ -127,7 +121,8 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	public function owner_acl($userinfo)
 	{
 		//オーナ権限を判定するコントローラには、creator_idフィールドが必須とする（creator_idを使わないとしても）
-		if( ! \DBUtil::field_exists($this->table_name, array('creator_id'))) return true;
+		$model = $this->model_name;
+		if( ! \DBUtil::field_exists($model::get_table_name(), array('creator_id'))) return true;
 
 		//adminたち（ユーザグループ-1や-2）は常にtrue
 		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
@@ -137,8 +132,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 		//オーナ権限に関係あるアクションセットを取得
 		$actionset4owner = array();
-		foreach(self::$actionset as $actionset_name => $action):
-			if( ! isset($action['owner_allowed'])) continue;
+		foreach(self::$actionset_owner as $actionset_name => $action):
 			$actionset4owner = array_merge($actionset4owner, $action['dependencies']);
 		endforeach;
 
@@ -157,31 +151,37 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		//adminでないのに、user_idがなかったり、コンテンツのcreator_idがなければfalse
 		if( ! $userinfo['user_id'] || ! $item->creator_id) return false;
 
-		return $this->check_owner_acl($userinfo, $item);
+		$controller = \Inflector::denamespace(\Request::main()->controller);
+		$controller = strtolower(substr($controller, 11));
+		return $this->check_owner_acl($controller, $this->request->action, $userinfo, $item);
 	}
 
 	/**
 	 * check_owner_acl()
 	 * オーナ権限は原則creator_idを確認するが、他を確認することがあるときはこのメソッドをオーバライドすること
 	*/
-	public function check_owner_acl($userinfo = null, $item = null)
+	public function check_owner_acl($controller = null, $action = null, $userinfo = null, $item = null)
 	{
-		if($userinfo == null || $item == null) return false;
-		return \Acl\Controller_Acl::owner_auth($userinfo, $item);
+		if($userinfo == null || $item == null || $controller == null || $action == null) return false;
+
+		//aclテーブルを確認して、アクションがなければ、false
+		if( ! \Acl\Controller_Acl::owner_auth($controller, $action, $userinfo, $item)) return false;
+
+		//アクションがあったらcreator_idとログイン中のuser_idを比較
+		return ($userinfo['user_id'] === $item->creator_id);
 	}
 
 	/**
 	 * set_actionset()
-	 * 
 	 */
 	public function set_actionset()
 	{
 		self::$actionset = \Kontiki\Actionset::actionItems($this->request->module);
+		self::$actionset_owner = \Kontiki\Actionset_Owner::actionItems($this->request->module);
 	}
 
 	/**
 	 * action_add_testdata()
-	 * 
 	 */
 	public function action_add_testdata($num = 10)
 	{
@@ -229,7 +229,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * index_core()
-	 * 
 	 * @param array $args
 	 * @param str   $args[mode] [deleted|yet|expired|reserved]
 	 * @param str   $args[action] [index|index_deleted]
@@ -282,7 +281,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_index()
-	 * 
 	 */
 	public function action_index($pagenum = 1)
 	{
@@ -294,7 +292,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_view()
-	 * 
 	 */
 	public function action_view($id = null)
 	{
@@ -319,7 +316,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * pre_save_hook()
-	 * 
 	 */
 	public function pre_save_hook($obj = null, $mode = 'edit')
 	{
@@ -329,7 +325,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * post_save_hook()
-	 * 
 	 */
 	public function post_save_hook($obj = null, $mode = 'edit')
 	{
@@ -339,7 +334,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_create()
-	 * 
 	 */
 	public function action_create()
 	{
@@ -349,7 +343,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 			if ($val->run() && \Security::check_token()):
 				$args = array();
 				foreach(\Input::post() as $field => $value):
-					if( ! \DBUtil::field_exists($this->table_name, array($field))) continue;
+					if( ! \DBUtil::field_exists($model::get_table_name(), array($field))) continue;
 					$args[$field] = $value;
 				endforeach;
 
@@ -385,7 +379,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * edit_core()
-	 * 
 	 */
 	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)
 	{
@@ -399,7 +392,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 		if ($val->run() && \Security::check_token()):
 			//prepare self fields
 			foreach(\Input::post() as $field => $value):
-				if( ! \DBUtil::field_exists($this->table_name, array($field))) continue;
+				if( ! \DBUtil::field_exists($model::get_table_name(), array($field))) continue;
 				$obj->$field = $value;
 			endforeach;
 
@@ -450,7 +443,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_edit()
-	 * 
 	 */
 	public function action_edit($id = null)
 	{
@@ -472,7 +464,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_delete()
-	 * 
 	 */
 	public function action_delete($id = null)
 	{
@@ -497,7 +488,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_index_deleted()
-	 * 
 	 */
 	public function action_index_deleted($pagenum = 1)
 	{
@@ -511,7 +501,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_index_yet()
-	 * 
 	 */
 	public function action_index_yet($pagenum = 1)
 	{
@@ -525,7 +514,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_index_expired()
-	 * 
 	 */
 	public function action_index_expired($pagenum = 1)
 	{
@@ -539,7 +527,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_confirm_delete()
-	 * 
 	 */
 	public function action_confirm_delete($id = null)
 	{
@@ -565,7 +552,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_undelete()
-	 * 
 	 */
 	public function action_undelete($id = null)
 	{
@@ -591,7 +577,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * action_delete_deleted()
-	 * 
 	 */
 	public function action_delete_deleted($id = null)
 	{
@@ -617,7 +602,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * get_items()
-	 * 
 	 */
 	public function get_items()
 	{
@@ -632,7 +616,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * get_item()
-	 * 
 	 */
 	public function get_item()
 	{

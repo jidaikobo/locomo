@@ -27,6 +27,8 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	public function set_actionset()
 	{
 		parent::set_actionset();
+		self::$actionset = array();
+		self::$actionset_owner = array();
 	}
 
 	/**
@@ -66,11 +68,20 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	 * オーナ権限はコントローラ依存性が強いので、各コントローラで実装。
 	 * 原則、abstract controllerにある
 	 */
-	public static function owner_auth($userinfo = null, $item = null)
+	public static function owner_auth($controller = null, $action = null, $userinfo = null, $item = null)
 	{
 		if( ! \User\Controller_User::$is_user_logged_in) return false;
 		if($userinfo == null || $item == null) return false;
-		return ($userinfo['user_id'] === $item->creator_id);
+
+		//check acl
+		$q = \DB::select('controller');
+		$q->from('acls');
+		$q->where('controller', $controller);
+		$q->where('action', $action);
+		$q->where('owner_auth', '=', '1');
+		$result = $q->execute()->current() ;
+
+		return $result;
 	}
 
 	/**
@@ -79,16 +90,18 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	public function action_controller_index()
 	{
 		//vals
-		$controllers = \Acl\Model_Acl::get_controllers();
-		$usergroups  = \Acl\Model_Acl::get_usergroups();
-		$users       = \Acl\Model_Acl::get_users();
+		$controllers       = \Acl\Model_Acl::get_controllers();
+		$controllers_owner = \Acl\Model_Acl::get_controllers($is_owner = 1);
+		$usergroups        = \Acl\Model_Acl::get_usergroups();
+		$users             = \Acl\Model_Acl::get_users();
 
 		//view
 		$view = \View::forge('controller_index');
 		$view->set_global('title', 'アクセス権限管理');
-		$view->set('controllers', $controllers);
-		$view->set('usergroups', $usergroups);
-		$view->set('users', $users);
+		$view->set('controllers',       $controllers);
+		$view->set('controllers_owner', $controllers_owner);
+		$view->set('usergroups',        $usergroups);
+		$view->set('users',             $users);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -113,11 +126,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		$controllers = \Acl\Model_Acl::get_controllers();
 		$usergroups  = \Acl\Model_Acl::get_usergroups();
 		$users       = \Acl\Model_Acl::get_users();
-		$actionsets  = (object) array();
-		foreach(\Kontiki\Actionset::actionItems($controller) as $actionset_name => $action):
-			if(isset($action['owner_allowed'])) continue;
-			$actionsets->{$actionset_name} = $action;
-		endforeach;
+		$actionsets  = \Acl\Model_Acl::get_controller_actionset($controller);
 
 		//check database
 		$q = \DB::select('action');
@@ -125,22 +134,22 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		$q->where('controller', '=', $controller);
 		if($usergroup_id) $q->where('usergroup_id', '=', $usergroup_id);
 		if($user_id) $q->where('user_id', '=', $user_id);
-		$q->where('owner_allowed','=', null);
+		$q->where('owner_auth','=', null);
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
-		$aprvd_actionset = \Kontiki\Actionset::judge_set($results, $actionsets);
+		$aprvd_actionset = \Acl\Model_Acl::judge_set($results, $actionsets);
 
 		//view
 		$view = \View::forge('actionset_index');
 		$view->set_global('title', 'アクセス権限管理: アクション選択');
-		$view->set('controller', $controllers[$controller]);
-		$view->set('usergroup', @$usergroups[$usergroup_id]);
-		$view->set('user', @$users[$user_id]);
+		$view->set('controller',        $controllers[$controller]);
+		$view->set('usergroup',        @$usergroups[$usergroup_id]);
+		$view->set('user',             @$users[$user_id]);
 		$view->set('hidden_controller', $controller);
-		$view->set('hidden_usergroup', $usergroup_id);
-		$view->set('hidden_user', $user_id);
-		$view->set('actionsets', $actionsets);
-		$view->set('aprvd_actionset', $aprvd_actionset);
+		$view->set('hidden_usergroup',  $usergroup_id);
+		$view->set('hidden_user',       $user_id);
+		$view->set('actionsets',        $actionsets);
+		$view->set('aprvd_actionset',   $aprvd_actionset);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -154,28 +163,24 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		//user requests
 		$controller   = \Input::param('controller') == 'none' ? null : \Input::param('controller') ;
 		if($controller == null):
-			\Session::set_flash('error', '必要項目を選択してから「次へ」を押してください。');
+			\Session::set_flash('error', '必要項目を選択してから「次へ」を押してください');
 			\Response::redirect(\Uri::create('/acl/controller_index/'));
 		endif;
 
-		//vals - get owner allowed actionset
-		$controllers = \Acl\Model_Acl::get_controllers();
-		$actionsets  = (object) array();
-		foreach(\Kontiki\Actionset::actionItems($controller) as $actionset_name => $action):
-			if( ! isset($action['owner_allowed'])) continue;
-			$actionsets->{$actionset_name} = $action;
-		endforeach;
+		//対象コントローラのオーナ向けアクションセットの取得
+		$actionsets = \Acl\Model_Acl::get_controller_actionset($controller, $is_owner = 1);
 
 		//check database
 		$q = \DB::select('action');
 		$q->from('acls');
 		$q->where('controller', '=', $controller);
-		$q->where('owner_allowed', '=', '1');
+		$q->where('owner_auth', '=', '1');
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
-		$aprvd_actionset = \Kontiki\Actionset::judge_set($results, $actionsets);
+		$aprvd_actionset = \Acl\Model_Acl::judge_set($results, $actionsets);
 
 		//view
+		$controllers = \Acl\Model_Acl::get_controllers($is_owner = 1);
 		$view = \View::forge('actionset_owner_index');
 		$view->set_global('title', 'オーナ用アクセス権限管理: アクション選択');
 		$view->set('controller', $controllers[$controller]);
@@ -194,7 +199,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 	public function action_update_acl()
 	{
 		//CSRF
-//		if( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
+		if( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 		//user requests
 		$controller   = \Input::param('controller') == 'none' ? null : \Input::param('controller') ;
@@ -206,7 +211,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		endif;
 
 		//vals
-		$actionsets = \Kontiki\Actionset::actionItems($controller);
+		$actionsets = \Acl\Model_Acl::get_controller_actionset($controller);
 
 		//query build
 		if (\Input::method() == 'POST'):
@@ -214,7 +219,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 			$q = \DB::delete('acls');
 			if($usergroup_id) $q->where('usergroup_id', '=', $usergroup_id);
 			if($user_id) $q->where('user_id', '=', $user_id);
-			$q->where('owner_allowed', '=', null);
+			$q->where('owner_auth', '=', null);
 			$q->execute();
 
 			//aclを更新
@@ -258,13 +263,13 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 		if($controller == null) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 		//vals
-		$actionsets = \Kontiki\Actionset::actionItems($controller);
+		$actionsets = \Acl\Model_Acl::get_controller_actionset($controller, $is_owner = 1);
 
 		//query build
 		if (\Input::method() == 'POST'):
 			//まずすべて削除
 			$q = \DB::delete('acls');
-			$q->where('owner_allowed', '=', '1');
+			$q->where('owner_auth', '=', '1');
 			$q->execute();
 
 			//aclを更新
@@ -277,7 +282,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller
 							'action' => $each_action,
 							'usergroup_id' => null,
 							'user_id' => null,
-							'owner_allowed' => true
+							'owner_auth' => true
 							)
 						);
 						$q->execute();

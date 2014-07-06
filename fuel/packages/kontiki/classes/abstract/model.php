@@ -146,8 +146,15 @@ abstract class Model extends \Orm\Model_Soft
 		$request = \Request::forge();
 		$current_controller = '\\'.\Request::main()->controller;
 		$current_controller_obj = new $current_controller($request);
+		$controller = \Inflector::denamespace($current_controller);
+		$controller = strtolower(substr($controller, 11));
 		if(
-			$current_controller_obj->check_owner_acl($userinfo, $item)
+			$current_controller_obj->check_owner_acl(
+				$controller,
+				$current_controller_obj->request->action,
+				$userinfo,
+				$item
+			)
 		):
 			return $item;
 		endif;

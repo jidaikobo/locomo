@@ -12,6 +12,9 @@ class Model_Acl_Abstract extends \Kontiki\Model
 		'user_id',
 	);
 
+	/**
+	 * validate()
+	 */
 	public static function validate($factory, $id = '')
 	{
 		$val = \Kontiki_Validation::forge($factory);
@@ -23,8 +26,27 @@ class Model_Acl_Abstract extends \Kontiki\Model
 	}
 
 	/**
+	 * judge_set()
+	 *
+	 * @param str   $actions
+	 * @param array $actionsets
+	 *
+	 * @return  array
+	 */
+	public static function judge_set($actions, $actionsets)
+	{
+		//アクションセットの条件を満たすものを抽出
+		$results = array();
+		foreach($actionsets as $actionset_name => $v){
+			if( ! array_diff($v['dependencies'], $actions)){
+				$results[] = $actionset_name;
+			};
+		}
+		return $results;
+	}
+
+	/**
 	 * get_usergroups()
-	 * 
 	 */
 	public static function get_usergroups()
 	{
@@ -37,7 +59,6 @@ class Model_Acl_Abstract extends \Kontiki\Model
 
 	/**
 	 * get_users()
-	 * 
 	 */
 	public static function get_users()
 	{
@@ -50,17 +71,41 @@ class Model_Acl_Abstract extends \Kontiki\Model
 
 	/**
 	 * get_controllers()
-	 * 
+	 * configで指定されたacl対象コントローラの取得（とりあえずモジュール形式だけ）
 	 */
-	public static function get_controllers()
+	public static function get_controllers($is_owner = false)
 	{
-		$modules_from_config = \Config::get('acl');
-		$modules = array('none' => '選択してください');
-		foreach($modules_from_config as $module):
-			$class = '\\'.ucfirst($module).'\\Controller_'.ucfirst($module);
+		$controllers_from_config = \Config::get('acl');
+		$controllers = array('none' => '選択してください');
+		foreach($controllers_from_config as $controller):
+			//アクションセットのないコントローラは対象外にする
+			if( ! self::get_controller_actionset($controller, $is_owner)) continue;
+			//classの存在確認
+			$class = '\\'.ucfirst($controller).'\\Controller_'.ucfirst($controller);
 			if( ! class_exists($class)) continue;
-			$modules[$module] = $class::$nicename ;
+			$controllers[$controller] = $class::$nicename ;
 		endforeach;
-		return $modules;
+		return $controllers;
+	}
+
+	/**
+	 * get_controller_actionset()
+	 * packageconfigで指定されたacl対象コントローラの取得
+	 */
+	public static function get_controller_actionset($controller = null, $is_owner = false)
+	{
+		$class = '\\'.ucfirst($controller).'\\Controller_'.ucfirst($controller);
+		if( ! class_exists($class)) return false;
+
+		//アクションセットの取得
+		$request = \Request::forge();
+		$controller_obj = new $class($request);
+		$controller_obj->set_actionset();
+
+		if($is_owner):
+			return $controller_obj::$actionset_owner;
+		else:
+			return $controller_obj::$actionset;
+		endif;
 	}
 }

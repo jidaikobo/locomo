@@ -43,6 +43,7 @@ Autoloader::add_classes(array(
 
 	//actionset
 	'Kontiki\Actionset' => __DIR__.'/classes/actionset.php',
+	'Kontiki\Actionset_Owner' => __DIR__.'/classes/actionset_owner.php',
 ));
 
 // Register the autoloader

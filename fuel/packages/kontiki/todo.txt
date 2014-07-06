@@ -1,7 +1,19 @@
 php oil refine migrate:up --packages=kontiki
 delete from migration where 1 = 1;
 
+//現在のコントローラ
+'\\'.\Request::main()->controller
+$controller = \Inflector::denamespace(\Request::main()->controller);
+$controller = strtolower(substr($controller, 11));
+
+//現在のアクション
+$this->request->action
+
 ＊　＊　＊
+
+適当なコントローラを作って、soft delete非対応時の処理を書く
+あと、purge依存しないようにしちゃうか。
+
 
 存在するコンテンツの時限装置の考案
 

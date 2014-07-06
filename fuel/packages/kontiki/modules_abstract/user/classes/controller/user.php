@@ -20,18 +20,26 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 	/**
 	 * test datas
-	 * 
 	 */
 	protected $test_datas = array(
-		'user_name' => 'text',
-		'password'  => 'text',
-		'email'     => 'email',
-		'status'    => 'int',
+		'user_name'   => 'text',
+		'password'    => 'text',
+		'email'       => 'email',
+		'status'      => 'int',
+		'creator_id'  => 'int',
+		'modifier_id' => 'int',
 	);
 
 	/**
+	 * set_actionset()
+	 */
+	public function set_actionset()
+	{
+		parent::set_actionset();
+	}
+
+	/**
 	 * post_save_hook()
-	 * 
 	 */
 	public function post_save_hook($obj = NULL, $mode = 'edit')
 	{
@@ -67,10 +75,16 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	 * check_owner_acl()
 	 * creator_idだけでなく、ユーザIDが一致したら許可する
 	*/
-	public function check_owner_acl($userinfo = null, $item = null)
+	public function check_owner_acl($controller = null, $action = null, $userinfo = null, $item = null)
 	{
-		$result = parent::check_owner_acl($userinfo, $item);
+		$result = parent::check_owner_acl($controller, $action, $userinfo, $item);
+
+		//parentでやってるけど、こちらでもアクションの存在確認は必要。なければfalse
+		if( ! \Acl\Controller_Acl::owner_auth($controller, $action, $userinfo, $item)) return false;
+
+		//creator_idか、個票のidが一致したら、true
 		$is_users_item = ($userinfo['user_id'] === $item->id);
+
 		return ($result || $is_users_item);
 	}
 
@@ -78,7 +92,6 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 	 * set_userinfo()
 	 * ログイン中のユーザ情報のセット。
 	 * \Kontiki\Controller::before()から呼ばれる。
-	 * 
 	 */
 	public static function set_userinfo()
 	{
@@ -103,7 +116,6 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 	/**
 	 * action_login()
-	 * 
 	 */
 	public function action_login($redirect = NULL)
 	{
@@ -195,7 +207,6 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller
 
 	/**
 	 * action_logout()
-	 * 
 	 */
 	public function action_logout()
 	{
