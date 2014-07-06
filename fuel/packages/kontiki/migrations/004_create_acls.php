@@ -1,7 +1,5 @@
 <?php
-
 namespace Fuel\Migrations;
-
 class Create_acls
 {
 	public function up()

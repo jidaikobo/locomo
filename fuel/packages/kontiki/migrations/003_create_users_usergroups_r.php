@@ -1,7 +1,5 @@
 <?php
-
 namespace Fuel\Migrations;
-
 class Create_users_usergroups_r
 {
 	public function up()

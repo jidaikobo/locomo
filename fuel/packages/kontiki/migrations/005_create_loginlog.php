@@ -1,7 +1,5 @@
 <?php
-
 namespace Fuel\Migrations;
-
 class Create_loginlog
 {
 	public function up()

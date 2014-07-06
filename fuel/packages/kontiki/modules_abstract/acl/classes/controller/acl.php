@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Controller_Acl_Abstract extends \Kontiki\Controller
+abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
 	 * router()

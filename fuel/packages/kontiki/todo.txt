@@ -14,6 +14,7 @@ $this->request->action
 適当なコントローラを作って、soft delete非対応時の処理を書く
 あと、purge依存しないようにしちゃうか。
 
+＊　＊　＊
 
 存在するコンテンツの時限装置の考案
 
@@ -51,12 +52,19 @@ array(
 	//以降の配列は属性と承認者情報が入る
 	array(
 		'type' => 'OR',
-		'users' => array(1),
+		'users' => array(
+			1 => 'YYYY-MM-DD',
+		),
 		'usergroups' => array(),
 	),
 	array(
 		'type' => 'AND',
-		'users' => array(1,3),
-		'usergroups' => array(3),
+		'users' => array(
+			1 => 'YYYY-MM-DD',
+			3 => 'YYYY-MM-DD',
+		),
+		'usergroups' => array(
+			3 => 'YYYY-MM-DD',
+		),
 	),
 )

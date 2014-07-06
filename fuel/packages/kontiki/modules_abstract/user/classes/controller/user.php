@@ -1,7 +1,7 @@
 <?php
 namespace Kontiki;
 
-abstract class Controller_User_Abstract extends \Kontiki\Controller
+abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
 	* @var string name for human

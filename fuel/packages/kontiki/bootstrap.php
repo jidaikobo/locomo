@@ -15,9 +15,10 @@ Autoloader::add_namespace('Kontiki', PKGPATH.'kontiki/');
 
 Autoloader::add_classes(array(
 	//base abstract classes
-	'Kontiki\Controller' => __DIR__.'/classes/abstract/controller.php',
-	'Kontiki\Model'      => __DIR__.'/classes/abstract/model.php',
-	'Kontiki\ViewModel'  => __DIR__.'/classes/abstract/view.php',
+	'Kontiki\Controller'      => __DIR__.'/classes/abstract/controller.php',
+	'Kontiki\Controller_Crud' => __DIR__.'/classes/abstract/controller_crud.php',
+	'Kontiki\Model'           => __DIR__.'/classes/abstract/model.php',
+	'Kontiki\ViewModel'       => __DIR__.'/classes/abstract/view.php',
 
 	//base abstract modules
 	'Kontiki\Controller_Content_Abstract'      => __DIR__.'/modules_abstract/content/classes/controller/Content.php',
