@@ -1,5 +1,5 @@
-/***/.DS_Store
+.DS_Store
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
-fuel/packages/kontiki/config/packageconfig.php 
+fuel/packages/kontiki/config/packageconfig.php
 fuel/app/config/development/db.php

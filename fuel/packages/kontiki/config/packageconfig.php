@@ -1,5 +1,5 @@
 <?php
-//root user
+//root user_
 define('ROOT_USER_NAME','root');
 define('ROOT_USER_PASS','131313');
 
