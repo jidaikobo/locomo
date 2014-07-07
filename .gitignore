@@ -2,4 +2,4 @@
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
 fuel/packages/kontiki/config/packageconfig.php 
-fuel/html/fuel/app/config/development/db.php
+fuel/app/config/development/db.php
