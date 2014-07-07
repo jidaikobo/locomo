@@ -306,7 +306,6 @@ class Security
 		{
 			static::set_token(true);
 		}
-
 		return $value === static::$csrf_old_token;
 	}
 
