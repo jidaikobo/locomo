@@ -77,12 +77,12 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	*/
 	public function owner_acl($userinfo)
 	{
-		//オーナ権限を判定するコントローラには、creator_idフィールドが必須とする（creator_idを使わないとしても）
-		$model = $this->model_name;
-		if( ! \DBUtil::field_exists($model::get_table_name(), array('creator_id'))) return true;
-
 		//adminたち（ユーザグループ-1や-2）は常にtrue
 		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
+
+		//オーナ権限を判定するコントローラには、creator_idフィールドが必須とする（creator_idを使わないとしても）
+		$model = $this->model_name;
+		if( ! \DBUtil::field_exists($model::get_table_name(), array('creator_id'))) return false;
 
 		//オーナ権限なのでゲストは常にfalse
 		if( ! \User\Controller_User::$is_user_logged_in) return false;
