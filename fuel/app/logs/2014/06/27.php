@@ -27,3 +27,15 @@ WARNING - 2014-06-27 15:02:30 --> Fuel\Core\Fuel::init - The configured locale j
 WARNING - 2014-06-27 15:02:30 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
 WARNING - 2014-06-27 15:02:38 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
 WARNING - 2014-06-27 15:02:38 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:30:59 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:34:20 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:34:54 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:36:58 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:38:02 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:38:32 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:39:45 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:40:09 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:40:33 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:41:10 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+WARNING - 2014-06-27 15:41:16 --> Fuel\Core\Fuel::init - The configured locale ja_JP.utf8 is not installed on your system.
+ERROR - 2014-06-27 15:41:16 --> 2002 - No such file or directory in /Users/jidaikobo/Sites/fuel/html/fuel/core/classes/database/mysql/connection.php on line 116

@@ -10,7 +10,7 @@ return array(
 			'hostname' => 'localhost',
 //			'dsn' => 'mysql:host=localhost;dbname=fuel',
 //			'hostname' => '127.0.0.1',
-			'socket'   => '/opt/local/var/run/mysql5/mysqld.sock',
+//			'socket'   => '/opt/local/var/run/mysql5/mysqld.sock',
 //			'port' => '3306',
 			'database' => 'fuel',
 			'username' => 'root',
