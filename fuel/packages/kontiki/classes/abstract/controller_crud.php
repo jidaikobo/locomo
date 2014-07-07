@@ -246,7 +246,6 @@ abstract class Controller_Crud extends \Kontiki\Controller
 					if($k == 'submit') continue;
 					$obj->$k = $v;
 				endforeach;
-
 				\Session::set_flash('error', $val->error());
 			endif;
 
