@@ -26,8 +26,8 @@ return array(
 
 	//modules settings
 	'module_paths' => array(
-		APPPATH.'modules'.DS,
-		PKGPATH.'kontiki/modules'.DS
+		PKGPATH.'kontiki/modules'.DS,
+		PKGPATH.'kontiki/modules_base'.DS
 	),
 
 	//acl modules settings

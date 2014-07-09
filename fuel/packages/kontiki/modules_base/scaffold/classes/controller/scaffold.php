@@ -407,7 +407,6 @@ FILES;
 		return $val;
 	}
 
-
 	//===replaces===
 	private static function replaces($name,$tpl)
 	{
@@ -422,8 +421,8 @@ FILES;
 	{
 		touch($path) ;
 		$fp = fopen($path, 'w');
-		fwrite($fp, "<?php\n".$val);
-//			fwrite($fp, pack('C*',0xEF,0xBB,0xBF));//BOM -> php is unacceptable BOM
+		fwrite($fp, $val);
+//			fwrite($fp, pack('C*',0xEF,0xBB,0xBF));//BOM -> php unaccept BOM
 		fclose($fp) ;
 	}
 }
