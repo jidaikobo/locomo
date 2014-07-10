@@ -25,6 +25,20 @@ abstract class Model extends \Orm\Model_Soft
 	}
 
 	/**
+	 * validate()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function validate($factory, $id = '')
+	{
+		$val = \Kontiki\Validation::forge($factory);
+		return $val;
+	}
+
+	/**
 	 * find_item_anyway($id)
 	 *
 	 * @param int   $id
@@ -38,11 +52,22 @@ abstract class Model extends \Orm\Model_Soft
 
 		//とにかく項目を取得する
 		$primary_key = static::$_primary_key[0];
-		$q = \DB::select($primary_key);
-		$q->from(static::$_table_name);
-		$q->where($primary_key, $id);
-		$item = self::find($id);
-		$item = $item ?: self::find_deleted($id);
+
+		/*
+		deleted_atフィールドがある場合はfind()でとれるが、このフィールドがない場合は、
+		クエリビルダで取得する。この場合オブジェクトを取得してviewにわたすとエラーに
+		なるため、array()で取得するが、メソッドが使えないためdeleteなどについて、
+		個別の処理を行う必要がある。
+		*/
+		if(\DBUtil::field_exists(static::$_table_name, array('deleted_at'))):
+			$item = self::find($id);
+			$item = $item ?: self::find_deleted($id);
+		else:
+			$q = \DB::select('*');
+			$q->from(static::$_table_name);
+			$q->where($primary_key, $id);
+			$item = $q->execute()->current();
+		endif;
 		return $item;
 	}
 
@@ -181,9 +206,6 @@ abstract class Model extends \Orm\Model_Soft
 	 */
 	public static function find_items($args = array())
 	{
-		//acl確認
-		
-
 		//args
 		$limit      = @intval( $args['limit'] )    ?: false ;
 		$offset     = @intval( $args['offset'] )   ?: 0 ;
@@ -284,5 +306,24 @@ abstract class Model extends \Orm\Model_Soft
 		endif;
 
 		return $obj ;
+	}
+
+	/**
+	 * delete_item()
+	 *
+	 * replace purge()
+	 *
+	 * @return object | result
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function delete_item($id = null)
+	{
+		if(empty($id)) return false;
+
+		$primary_key = static::$_primary_key[0];
+		$q = \DB::delete();
+		$q->table(static::$_table_name);
+		$q->where($primary_key, $id);
+		return $q->execute();
 	}
 }

@@ -151,6 +151,24 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	}
 
 	/**
+	 * pre_delete_hook()
+	 */
+	public function pre_delete_hook($obj = null, $mode = 'edit')
+	{
+		if($obj == null) \Response::redirect($this->request->module);
+		return $obj;
+	}
+
+	/**
+	 * post_delete_hook()
+	 */
+	public function post_delete_hook($obj = null, $mode = 'edit')
+	{
+		if($obj == null) \Response::redirect($this->request->module);
+		return $obj;
+	}
+
+	/**
 	 * action_create()
 	 */
 	public function action_create()
@@ -288,7 +306,23 @@ abstract class Controller_Crud extends \Kontiki\Controller
 		is_null($id) and \Response::redirect($this->request->module);
 
 		if ($obj = $model::find_item($id)):
-			$obj->delete();
+			if(\DBUtil::field_exists($model::get_table_name(), array('deleted_at'))):
+				//pre_delete_hook
+				$obj = $this->pre_delete_hook($obj, 'soft_delete');
+
+				$obj->delete();
+
+				//post_delete_hook
+				$obj = $this->post_delete_hook($obj, 'soft_delete');
+			else:
+				//pre_delete_hook
+				$obj = $this->pre_delete_hook($obj, 'delete');
+
+				$model::delete_item($id);
+
+				//pre_delete_hook
+				$obj = $this->pre_delete_hook($obj, 'delete');
+			endif;
 			\Session::set_flash(
 				'success',
 				sprintf($this->messages['delete_success'], self::$nicename, $id)
@@ -401,8 +435,16 @@ abstract class Controller_Crud extends \Kontiki\Controller
 		is_null($id) and \Response::redirect($this->request->module);
 
 		if ($obj = $model::find_item($id)):
-			//なぜか削除されないが、親クラスである\Orm\Model::delete()のカスケーディング削除の恩恵にあずかるためには、これを使うべきっぽいので、とりあえずおいておく。
-			$obj->purge();
+			//本来は$obj->purge()で行うべきだが、なぜか削除されないのでとりあえず別の関数で対応する。このため現在は、Cascading deleteの恩恵を受けられない
+
+			//pre_delete_hook
+			$obj = $this->pre_delete_hook($obj, 'delete');
+
+			$model::delete_item($id);
+
+			//pre_delete_hook
+			$obj = $this->pre_delete_hook($obj, 'delete');
+
 			\Session::set_flash(
 				'success',
 				sprintf($this->messages['purge_success'], self::$nicename, $id)

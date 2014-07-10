@@ -14,6 +14,7 @@
 		<a href="/acl/controller_index/">acl</a>
 		<a href="/user/">user</a>
 		<a href="/usergroup/">usergroup</a>
+		<a href="/scaffold/main">scaffold</a>
 		<?php if( ! $is_user_logged_in): ?>
 			<a href="/user/login/<?php echo base64_encode($current_uri) ?>">login</a>
 		<?php else: ?>

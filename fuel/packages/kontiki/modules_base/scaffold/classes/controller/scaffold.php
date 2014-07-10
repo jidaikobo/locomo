@@ -1,6 +1,6 @@
 <?php
 namespace Scaffold;
-class Controller_Scaffold extends \Kontiki\Controller
+class Controller_Scaffold extends \Kontiki\Controller_Crud
 {
 	/**
 	* @var string name for human
@@ -58,11 +58,11 @@ class Controller_Scaffold extends \Kontiki\Controller
 			$viewmodel  = self::generate_view($name);
 
 			//molding - view
-			$tpl_index       = self::generate_views_index($name);
-			$tpl_view        = self::generate_views_view($name, $cmds);
-			$tpl_form        = self::generate_views_form($name, $cmds);
-			$tpl_create      = self::generate_views_create($name);
-			$tpl_edit        = self::generate_views_edit($name);
+			$tpl_index  = self::generate_views_index($name);
+			$tpl_view   = self::generate_views_view($name, $cmds);
+			$tpl_form   = self::generate_views_form($name, $cmds);
+			$tpl_create = self::generate_views_create($name);
+			$tpl_edit   = self::generate_views_edit($name);
 
 			//mkdir
 			$scfldpath = PKGPATH.'kontiki/modules/'.$name;
@@ -80,12 +80,12 @@ class Controller_Scaffold extends \Kontiki\Controller
 			if( ! file_exists($scfldpath.'/classes/view')) mkdir($scfldpath.'/classes/view');
 			self::putfiles($scfldpath.'/classes/view/'.$name.'.php', $viewmodel) ;
 			if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');
-			self::putfiles($scfldpath.'/views/index.html', $tpl_index) ;
-			self::putfiles($scfldpath.'/views/index_admin.html', $tpl_index) ;
-			self::putfiles($scfldpath.'/views/view.html', $tpl_view) ;
-			self::putfiles($scfldpath.'/views/_form.html', $tpl_form) ;
-			self::putfiles($scfldpath.'/views/create.html', $tpl_create) ;
-			self::putfiles($scfldpath.'/views/edit.html', $tpl_edit) ;
+			self::putfiles($scfldpath.'/views/index.php', $tpl_index) ;
+			self::putfiles($scfldpath.'/views/index_admin.php', $tpl_index) ;
+			self::putfiles($scfldpath.'/views/view.php', $tpl_view) ;
+			self::putfiles($scfldpath.'/views/_form.php', $tpl_form) ;
+			self::putfiles($scfldpath.'/views/create.php', $tpl_create) ;
+			self::putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
 
 			$explanation = <<<TXT
 <p class="cmt">モジュールの基礎を生成しました。<br />
@@ -232,12 +232,12 @@ TXT;
 		require(PKGPATH.'oil/classes/generate/migration/actions.php');
 		$migration = call_user_func("\Oil\Generate_Migration_Actions::create", $subjects, $fields);
 		list($up, $down) = $migration;
-		$migration_name = ucfirst(strtolower($name));
+		$migration_name = strtolower($name);
 
 		$migration = <<<MIGRATION
 <?php
 namespace Fuel\Migrations;
-class {$migration_name}
+class Create_{$migration_name}
 {
 	public function up()
 	{
@@ -262,7 +262,7 @@ MIGRATION;
 		$str = <<<FILES
 <?php
 namespace {$name};
-class Controller_{$name} extends \Kontiki\Controller
+class Controller_{$name} extends \Kontiki\Controller_Crud
 {
 	/**
 	* @var string name for human
@@ -279,7 +279,9 @@ FILES;
 	public function generate_model($name, $cmds)
 	{
 		$name = ucfirst($name);
+		$table_name = \Inflector::tableize($name);
 		$field_str = '';
+		$field_str.= "\t\t'id',\n";//fuel's spec
 		foreach($cmds as $field):
 			list($field, $attr) = explode(':', $field);
 			$field_str.= "\t\t'".$field."',\n";
@@ -290,7 +292,7 @@ FILES;
 namespace {$name};
 class Model_{$name} extends \Kontiki\Model
 {
-	protected static \$_table_name = '{$name}';
+	protected static \$_table_name = '{$table_name}';
 
 	protected static \$_properties = array(
 {$field_str}	);
@@ -321,7 +323,7 @@ FILES;
 	private static function generate_views_index($name)
 	{
 		//mold - read.html
-		$val = file_get_contents(PKGPATH.'kontiki/modules/scaffold/classes/views/index.php');
+		$val = file_get_contents(PKGPATH.'kontiki/modules_base/scaffold/classes/views/index.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -346,7 +348,7 @@ FILES;
 		}
 		
 		//mold - read.html
-		$val = file_get_contents(PKGPATH.'kontiki/modules/scaffold/classes/views/view.php');
+		$val = file_get_contents(PKGPATH.'kontiki/modules_base/scaffold/classes/views/view.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###fields###', $fields , $val) ;
 	
@@ -378,7 +380,7 @@ FILES;
 		}
 		
 		//mold - read.html
-		$val = file_get_contents(PKGPATH.'kontiki/modules/scaffold/classes/views/_form.php');
+		$val = file_get_contents(PKGPATH.'kontiki/modules_base/scaffold/classes/views/_form.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###fields###', $fields , $val) ;
 
@@ -391,7 +393,7 @@ FILES;
 	private static function generate_views_create($name)
 	{
 		//mold - read.html
-		$val = file_get_contents(PKGPATH.'kontiki/modules/scaffold/classes/views/create.php');
+		$val = file_get_contents(PKGPATH.'kontiki/modules_base/scaffold/classes/views/create.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -402,7 +404,7 @@ FILES;
 	private static function generate_views_edit($name)
 	{
 		//mold - read.html
-		$val = file_get_contents(PKGPATH.'kontiki/modules/scaffold/classes/views/edit.php');
+		$val = file_get_contents(PKGPATH.'kontiki/modules_base/scaffold/classes/views/edit.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -424,5 +426,6 @@ FILES;
 		fwrite($fp, $val);
 //			fwrite($fp, pack('C*',0xEF,0xBB,0xBF));//BOM -> php unaccept BOM
 		fclose($fp) ;
+		chmod($path, 0777);
 	}
 }
