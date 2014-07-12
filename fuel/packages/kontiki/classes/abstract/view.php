@@ -26,6 +26,15 @@ abstract class ViewModel extends \ViewModel
 //		$view->set_global('query_string', \Uri::create(\input::get()));
 //		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/'));
 		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
+
+		//include template closure
+		$include_tpl = function($tpl) {
+			$override_tpl = PKGPATH.'kontiki/views/'.$tpl;
+			$default_tpl  = PKGPATH.'kontiki/views_base/'.$tpl;
+			$ret_tpl = file_exists($override_tpl) ? $override_tpl : $default_tpl;
+			return \View::forge($ret_tpl);
+		};
+		$view->set_global('include_tpl', $include_tpl);
 	}
 
 	/**

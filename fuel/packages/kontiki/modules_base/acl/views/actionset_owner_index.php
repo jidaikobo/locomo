@@ -1,4 +1,4 @@
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
+<?php echo $include_tpl('inc_header.php'); ?>
 
 <p>対象コントローラ：<code><?php echo $controller ?></code></p>
 
@@ -33,4 +33,4 @@ echo Form::hidden('owner', $hidden_owner);
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>
+<?php echo $include_tpl('inc_footer.php'); ?>

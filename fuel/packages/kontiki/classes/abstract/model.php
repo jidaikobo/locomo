@@ -53,20 +53,17 @@ abstract class Model extends \Orm\Model_Soft
 		//とにかく項目を取得する
 		$primary_key = static::$_primary_key[0];
 
-		/*
-		deleted_atフィールドがある場合はfind()でとれるが、このフィールドがない場合は、
-		クエリビルダで取得する。この場合オブジェクトを取得してviewにわたすとエラーに
-		なるため、array()で取得するが、メソッドが使えないためdeleteなどについて、
-		個別の処理を行う必要がある。
-		*/
+		//Orm_Softでとれる場合
 		if(\DBUtil::field_exists(static::$_table_name, array('deleted_at'))):
 			$item = self::find($id);
 			$item = $item ?: self::find_deleted($id);
 		else:
+		//Orm_Softでとれない場合（deleted_atがないテーブル）
+			$modelname = get_called_class();
 			$q = \DB::select('*');
 			$q->from(static::$_table_name);
 			$q->where($primary_key, $id);
-			$item = $q->execute()->current();
+			$item = $q->as_object($modelname)->execute()->current();
 		endif;
 		return $item;
 	}
@@ -320,6 +317,12 @@ abstract class Model extends \Orm\Model_Soft
 	{
 		if(empty($id)) return false;
 
+		//deleted_atがあればsoft delete
+		if(\DBUtil::field_exists(self::get_table_name(), array('deleted_at'))):
+			return $obj->delete();
+		endif;
+
+		//deleted_atがなければ削除
 		$primary_key = static::$_primary_key[0];
 		$q = \DB::delete();
 		$q->table(static::$_table_name);

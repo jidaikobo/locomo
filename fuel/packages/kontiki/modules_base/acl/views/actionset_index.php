@@ -1,4 +1,4 @@
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
+<?php echo $include_tpl('inc_header.php'); ?>
 
 <p><?php if($user): ?>
 対象：<code><?php echo $user ?></code><br />
@@ -41,4 +41,4 @@ echo Form::hidden('usergroup', $hidden_usergroup);
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>
+<?php echo $include_tpl('inc_footer.php'); ?>

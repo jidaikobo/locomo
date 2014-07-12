@@ -1,4 +1,11 @@
 /*
+ * OVERVIEW
+ */
+
+
+
+
+/*
  * APPPATH.config/config.php
  */
 
@@ -10,6 +17,7 @@
 		 	'user',
 		 	'usergroup',
 		 ),
+
 
 - Security settingsの
 	'csrf_autoload'    => false,

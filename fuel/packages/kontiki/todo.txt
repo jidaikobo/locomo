@@ -15,9 +15,10 @@ $this->request->action
 ＊　＊　＊
 
 scaffoldをつくっちゃう。
+scaffoldからmigrationする
+scaffoldでmigrationのみを生成する
 
-適当なコントローラを作って、soft delete非対応時の処理を書く
-あと、purge依存しないようにしちゃうか。
+
 
 ＊　＊　＊
 

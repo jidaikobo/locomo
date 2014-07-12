@@ -306,23 +306,14 @@ abstract class Controller_Crud extends \Kontiki\Controller
 		is_null($id) and \Response::redirect($this->request->module);
 
 		if ($obj = $model::find_item($id)):
-			if(\DBUtil::field_exists($model::get_table_name(), array('deleted_at'))):
-				//pre_delete_hook
-				$obj = $this->pre_delete_hook($obj, 'soft_delete');
+			//pre_delete_hook
+			$obj = $this->pre_delete_hook($obj, 'delete');
 
-				$obj->delete();
+			$model::delete_item($id);
 
-				//post_delete_hook
-				$obj = $this->post_delete_hook($obj, 'soft_delete');
-			else:
-				//pre_delete_hook
-				$obj = $this->pre_delete_hook($obj, 'delete');
+			//pre_delete_hook
+			$obj = $this->pre_delete_hook($obj, 'delete');
 
-				$model::delete_item($id);
-
-				//pre_delete_hook
-				$obj = $this->pre_delete_hook($obj, 'delete');
-			endif;
 			\Session::set_flash(
 				'success',
 				sprintf($this->messages['delete_success'], self::$nicename, $id)

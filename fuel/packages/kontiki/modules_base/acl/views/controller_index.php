@@ -1,4 +1,4 @@
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
+<?php echo $include_tpl('inc_header.php'); ?>
 
 <ul>
 	<li>アクセス権限は「ユーザグループ単位」「ユーザ単位」のいずれかごとに設定できます。</li>
@@ -76,4 +76,4 @@
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>
+<?php echo $include_tpl('inc_footer.php'); ?>

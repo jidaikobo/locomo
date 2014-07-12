@@ -1,4 +1,4 @@
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
+<?php echo $include_tpl('inc_header.php'); ?>
 
 <ul>
 	<li><a href="/usergroup/index">通常</a></li>
@@ -55,4 +55,4 @@
 
 </p>
 
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>
+<?php echo $include_tpl('inc_footer.php'); ?>

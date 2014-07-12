@@ -1,4 +1,4 @@
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
+<?php echo $include_tpl('inc_header.php'); ?>
 
 <?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret, 'class'=>'form-horizontal')); ?>
 
@@ -25,4 +25,4 @@ echo \Form::submit('submit', 'ログイン', array('class' => 'btn btn-primary')
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>
+<?php echo $include_tpl('inc_footer.php'); ?>

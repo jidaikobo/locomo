@@ -1,4 +1,4 @@
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_header.php'); ?>
+<?php echo $include_tpl('inc_header.php'); ?>
 
 <ul>
 	<li><a href="/xxx/index">通常</a></li>
@@ -54,4 +54,4 @@
 	<?php echo Html::anchor('xxx/create', 'Add new XXX', array('class' => 'btn btn-success')); ?>
 </p>
 
-<?php echo \View::forge(PKGPATH.'kontiki/views/inc_footer.php'); ?>
+<?php echo $include_tpl('inc_footer.php'); ?>
