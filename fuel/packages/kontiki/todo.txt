@@ -14,11 +14,17 @@ $this->request->action
 
 ＊　＊　＊
 
+現在のモジュールのアクションセットを取得し、管理者のため、メニューを生成する。
+テンプレート（footer）には、またクロージャでこれを記述しておくことで、コンテクストメニューとして使う（viewmodelで定義する）
+
 scaffoldをつくっちゃう。
 scaffoldからmigrationする
 scaffoldでmigrationのみを生成する
 
+moduleにmigrationを持たせる
+moduleのmigrationは001.phpというような形式
 
+destroyもいつか作る
 
 ＊　＊　＊
 
