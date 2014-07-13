@@ -10,7 +10,7 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	/**
 	* @var string adminindex
 	*/
-	public static $adminindex = 'adminindex';
+	public static $adminindex = 'index_admin';
 
 	/**
 	 * @var string model name

@@ -10,7 +10,7 @@ class Actionset
 	{
 		$actions = (object) array();
 		$actions->index           = self::index($controller, $item);
-		$actions->adminindex      = self::adminindex($controller, $item);
+		$actions->index_admin     = self::index_admin($controller, $item);
 		$actions->view            = self::view($controller, $item);
 		$actions->index_deleted   = self::index_deleted($controller, $item);
 		$actions->view_deleted    = self::view_deleted($controller, $item);
@@ -74,13 +74,13 @@ class Actionset
 	}
 
 	/**
-	 * adminindex()
+	 * index_admin()
 	 * @return  array
 	 */
-	private static function adminindex($controller, $item)
+	private static function index_admin($controller, $item)
 	{
-		$url = "$controller/adminindex" ;
-		$url = self::check_auth4url($controller, 'adminindex', $url);
+		$url = "$controller/index_admin" ;
+		$url = self::check_auth4url($controller, 'index_admin', $url);
 
 		$retvals = array(
 			'is_index'     => true,
@@ -90,7 +90,7 @@ class Actionset
 			'menu_str'     => '管理者向け一覧',
 			'explanation'  => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
 			'dependencies' => array(
-				'adminindex',
+				'index_admin',
 			)
 		);
 		return $retvals;

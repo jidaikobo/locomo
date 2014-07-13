@@ -27,23 +27,38 @@ return array(
 	//modules settings
 	'module_paths' => array(
 		PKGPATH.'kontiki/modules'.DS,
-		PKGPATH.'kontiki/modules_base'.DS
+		PKGPATH.'kontiki/modules_default'.DS
 	),
 
 	//modules settings
-	//'{$module_name}' => array('is_admin_only' => bool)
+	//'{$module_name}' => array('is_admin_only' => bool...)
 	//is_admin_onlyがtrueだと、aclの候補にならず、かつ管理者向けメニューにか表示されなくなります
 	'modules' => array(
-		'user'      => array('is_admin_only' => false,),
-		'usergroup' => array('is_admin_only' => false,),
-		'acl'       => array('is_admin_only' => false,),
-		'scaffold'  => array('is_admin_only' => true,),
-	),
-
-	//acl modules settings
-	'acl' => array(
-		'user',
-		'usergroup',
+		'content' => array(
+			'nicename'      => 'トップページ',
+			'adminindex'    => 'home',
+			'is_admin_only' => false,
+		),
+		'user' => array(
+			'nicename'      => 'ユーザ',
+			'adminindex'    => 'index_admin',
+			'is_admin_only' => false,
+		),
+		'usergroup' => array(
+			'nicename'      => 'ユーザグループ',
+			'adminindex'    => 'index_admin',
+			'is_admin_only' => false,
+		),
+		'acl' => array(
+			'nicename'      => 'アクセス権管理',
+			'adminindex'    => 'controller_index',
+			'is_admin_only' => false,
+		),
+		'scaffold' => array(
+			'nicename'      => '足場組み',
+			'adminindex'    => 'main',
+			'is_admin_only' => true,
+		),
 	),
 
 	//always guest allowed actions

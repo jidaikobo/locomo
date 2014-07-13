@@ -1,13 +1,5 @@
 <?php echo $include_tpl('inc_header.php'); ?>
 
-<ul>
-	<li><a href="/xxx/index">通常</a></li>
-	<li><a href="/xxx/index_deleted">削除済み</a></li>
-	<li><a href="/xxx/index_yet">予約</a></li>
-	<li><a href="/xxx/index_expired">期限切れ</a></li>
-	<li><a href="/xxx/add_testdata">10件のテストデータ追加</a></li>
-</ul>
-
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
 <br>
 <?php if ($items): ?>
@@ -50,8 +42,5 @@
 <p>ユーザが存在しません。</p>
 
 <?php endif; ?>
-<p>
-	<?php echo Html::anchor('xxx/create', 'Add new XXX', array('class' => 'btn btn-success')); ?>
-</p>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

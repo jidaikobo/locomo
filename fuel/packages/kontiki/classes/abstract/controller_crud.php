@@ -24,7 +24,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	 * @var array default languages of page title
 	 */
 	protected $titles = array(
-		'adminindex'      => '%1$s',
+		'index_admin'     => '%1$s',
 		'index'           => '%1$s',
 		'view'            => '%1$s',
 		'create'          => '%1$sの新規作成',
@@ -100,13 +100,13 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	}
 
 	/**
-	 * action_adminindex()
+	 * action_index_admin()
 	 */
-	public function action_adminindex($pagenum = 1)
+	public function action_index_admin($pagenum = 1)
 	{
 		$args = array(
 			'pagenum'  => $pagenum,
-			'template' => 'adminindex',
+			'template' => 'index_admin',
 		);
 		return self::index_core($args);
 	}
