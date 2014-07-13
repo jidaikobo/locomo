@@ -1,13 +1,5 @@
 <?php echo $include_tpl('inc_header.php'); ?>
 
-<ul>
-	<li><a href="/usergroup/index">通常</a></li>
-	<li><a href="/usergroup/index_deleted">削除済み</a></li>
-	<li><a href="/usergroup/index_yet">予約</a></li>
-	<li><a href="/usergroup/index_expired">期限切れ</a></li>
-	<li><a href="/usergroup/add_testdata">10件のテストデータ追加</a></li>
-</ul>
-
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
 <br>
 <?php if ($items): ?>
