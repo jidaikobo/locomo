@@ -6,3 +6,6 @@ fuel/packages/kontiki/modules/*
 fuel/packages/kontiki/views/*
 fuel/app/config/development/db.php
 fuel/app/config/crypt.php
+view/css/*
+view/js/*
+view/images/*

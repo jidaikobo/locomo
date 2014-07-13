@@ -32,10 +32,19 @@ abstract class ViewModel extends \ViewModel
 		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
 		$view->set_global('home_uri', \Uri::base());
 
+		//include用にオーバーライドのCSSとjsを取得するクロージャ
+		$include_asset = function($file) {
+			$override_file = DOCROOT.'views/'.$file;
+			$default_file  = DOCROOT.'views/default/'.$tpl;
+			$ret_file = file_exists($override_file) ? $override_file : $default_file;
+			return $ret_file;
+		};
+		$view->set_global('include_tpl', $include_tpl);
+
 		//include用に指定テンプレートを取得するクロージャ
 		$include_tpl = function($tpl) {
 			$override_tpl = PKGPATH.'kontiki/views/'.$tpl;
-			$default_tpl  = PKGPATH.'kontiki/views_base/'.$tpl;
+			$default_tpl  = PKGPATH.'kontiki/views_default/'.$tpl;
 			$ret_tpl = file_exists($override_tpl) ? $override_tpl : $default_tpl;
 			return \View::forge($ret_tpl);
 		};

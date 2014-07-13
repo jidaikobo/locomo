@@ -14,7 +14,7 @@ $this->request->action
 
 ＊　＊　＊
 
-scaffoldをつくっちゃう。
+scaffoldを完成させる。
 scaffoldからmigrationする
 scaffoldでmigrationのみを生成する
 
