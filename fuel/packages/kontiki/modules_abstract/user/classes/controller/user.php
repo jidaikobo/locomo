@@ -1,13 +1,7 @@
 <?php
 namespace Kontiki;
-
 abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 {
-	/**
-	* @var string name for human
-	*/
-	public static $nicename = 'ユーザ';
-
 	/**
 	* @var user information
 	*/
@@ -23,20 +17,12 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 	 */
 	protected $test_datas = array(
 		'user_name'   => 'text',
-		'password'    => 'text',
+		'password'    => 'text:test',
 		'email'       => 'email',
-		'status'      => 'int',
+		'status'      => 'text:public',
 		'creator_id'  => 'int',
 		'modifier_id' => 'int',
 	);
-
-	/**
-	 * set_actionset()
-	 */
-	public function set_actionset()
-	{
-		parent::set_actionset();
-	}
 
 	/**
 	 * post_save_hook()
@@ -72,19 +58,19 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 	}
 
 	/**
-	 * check_owner_acl()
+	 * owner_acl()
 	 * creator_idだけでなく、ユーザIDが一致したら許可する
 	*/
-	public function check_owner_acl($controller = null, $action = null, $userinfo = null, $item = null)
+	public function owner_acl($userinfo = null, $current_action = null, $item = null)
 	{
-		$result = parent::check_owner_acl($controller, $action, $userinfo, $item);
+		if($userinfo == null || $current_action == null || $item == null) return false;
+		$result = parent::owner_acl($userinfo, $current_action, $item);
 
 		//parentでやってるけど、こちらでもアクションの存在確認は必要。なければfalse
-		if( ! \Acl\Controller_Acl::owner_auth($controller, $action, $userinfo, $item)) return false;
+		if( ! \Acl\Controller_Acl::owner_auth($current_action, $userinfo)) return false;
 
 		//creator_idか、個票のidが一致したら、true
 		$is_users_item = ($userinfo['user_id'] === $item->id);
-
 		return ($result || $is_users_item);
 	}
 
@@ -107,6 +93,31 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 			self::$userinfo['user_id'] = null;
 		endif;
 		self::$userinfo['usergroup_ids'][] = 0;
+
+		//acl
+		$q = \DB::select('controller','action');
+		$q->from('Acls');
+		$q->where('usergroup_id', 'in', self::$userinfo['usergroup_ids']);
+		$q->or_where('user_id', '=', self::$userinfo['user_id']);
+		$acls = array('content/home');
+		foreach($q->execute()->as_array() as $v):
+			$acls[] = $v['controller'].'/'.$v['action'];
+		endforeach;
+		self::$userinfo['acls'] = array_unique($acls);
+
+		//owner acl
+		//ゲストやadminは確認する必要がない
+		self::$userinfo['acls_ower'] = array();
+		if(self::$userinfo['user_id'] >= 1):
+			$q = \DB::select('controller','action');
+			$q->from('Acls');
+			$q->where('owner_auth', 1);
+			$acls_ower = array();
+			foreach($q->execute()->as_array() as $v):
+				$acls_ower[] = $v['controller'].'/'.$v['action'];
+			endforeach;
+			self::$userinfo['acls_ower'] = array_unique($acls_ower);
+		endif;
 
 		//view
 		$view = \View::forge();

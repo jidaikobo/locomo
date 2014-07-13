@@ -3,11 +3,6 @@ namespace Kontiki;
 abstract class Controller_Usergroup_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
-	* @var string name for human
-	*/
-	public static $nicename = 'ユーザグループ';
-
-	/**
 	 * test datas
 	 * 
 	 */

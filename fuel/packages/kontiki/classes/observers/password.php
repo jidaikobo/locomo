@@ -53,6 +53,8 @@ class Password extends \Orm\Observer
 	public function before_save(\Orm\Model $obj)
 	{
 		$property = \Input::post($this->_property);
+		$property = $property ? $property : @$obj->{$this->_property};
+
 		if ( ! empty($property)):
 			$obj->{$this->_property} = md5($property);
 		else:

@@ -30,13 +30,23 @@ return array(
 		PKGPATH.'kontiki/modules_base'.DS
 	),
 
+	//modules settings
+	//'{$module_name}' => array('is_admin_only' => bool)
+	//is_admin_onlyがtrueだと、aclの候補にならず、かつ管理者向けメニューにか表示されなくなります
+	'modules' => array(
+		'user'      => array('is_admin_only' => false,),
+		'usergroup' => array('is_admin_only' => false,),
+		'acl'       => array('is_admin_only' => false,),
+		'scaffold'  => array('is_admin_only' => true,),
+	),
+
 	//acl modules settings
 	'acl' => array(
 		'user',
 		'usergroup',
 	),
 
-	//always guest allowed controllers
+	//always guest allowed actions
 	'always_allowed' => array(
 		'user/login',
 		'user/logout',

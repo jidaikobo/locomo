@@ -3,6 +3,16 @@ namespace Kontiki;
 abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
+	* @var string name for human
+	*/
+	public static $nicename = 'アクセス権管理';
+
+	/**
+	* @var string adminindex
+	*/
+	public static $adminindex = 'controller_index';
+
+	/**
 	 * router()
 	 * 
 	 */
@@ -22,66 +32,45 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 
 	/**
 	 * set_actionset()
-	 * 
 	 */
-	public function set_actionset()
+	public function set_actionset($controller = null, $id = null)
 	{
 		parent::set_actionset();
-		self::$actionset = array();
+		require_once(__DIR__.'/actionset.php');
+		self::$actionset = \Acl\Actionset::actionItems();
 		self::$actionset_owner = array();
 	}
 
 	/**
 	 * auth()
 	 */
-	public static function auth($controller = null, $action = null, $userinfo = null)
+	public static function auth($current_action = null, $userinfo = null)
 	{
-		//false
-		if($controller === null || $action === null) return false;
-		if($userinfo === null) return false;
-
-		//always guest allowed controllers
-		$always_allowed = \Config::get('always_allowed');
-		$check_str = $controller.'/'.$action;
-		if(in_array($check_str, $always_allowed)) return true;
-
-		//admin and root user is always allowed
+		//管理者は許可
 		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
 
-		//check acl
-		$q = \DB::select('controller');
-		$q->from('acls');
-		$q->where('controller', $controller);
-		$q->where('action', $action);
-		if( ! empty($userinfo['usergroup_ids'])):
-			$q->where('usergroup_id','IN' , $userinfo['usergroup_ids']);
-		else:
-			$q->where('user_id', $userinfo['user_id']);
-		endif;
-		$result = $q->execute()->current() ;
+		//configを確認
+		if($current_action === null || $userinfo === null) return false;
+		$always_allowed = \Config::get('always_allowed');
+		if(in_array($current_action, $always_allowed)) return true;
 
-		return ($result) ? true : false ;
+		//userinfoを確認
+		return (in_array($current_action, @$userinfo['acls']));
 	}
 
 	/**
 	 * owner_auth()
 	 * オーナ権限はコントローラ依存性が強いので、各コントローラで実装。
-	 * 原則、abstract controllerにある
+	 * 原則、abstract controllerにあるが、個別の実装は、userモジュールのコントローラを参考にすること。
 	 */
-	public static function owner_auth($controller = null, $action = null, $userinfo = null, $item = null)
+	public static function owner_auth($current_action = null, $userinfo = null)
 	{
-		if( ! \User\Controller_User::$is_user_logged_in) return false;
-		if($userinfo == null || $item == null) return false;
+		//管理者は許可
+		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
 
-		//check acl
-		$q = \DB::select('controller');
-		$q->from('acls');
-		$q->where('controller', $controller);
-		$q->where('action', $action);
-		$q->where('owner_auth', '=', '1');
-		$result = $q->execute()->current() ;
-
-		return $result;
+		//userinfoを確認
+		if($current_action === null || $userinfo === null) return false;
+		return in_array($current_action, @$userinfo['acls_ower']);
 	}
 
 	/**
@@ -127,6 +116,10 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 		$usergroups  = \Acl\Model_Acl::get_usergroups();
 		$users       = \Acl\Model_Acl::get_users();
 		$actionsets  = \Acl\Model_Acl::get_controller_actionset($controller);
+
+		foreach($actionsets as $k => $actionset):
+			if(isset($actionset['admin_only'])) unset($actionsets->$k);
+		endforeach;
 
 		//check database
 		$q = \DB::select('action');

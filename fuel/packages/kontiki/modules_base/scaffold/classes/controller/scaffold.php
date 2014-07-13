@@ -3,18 +3,18 @@ namespace Scaffold;
 class Controller_Scaffold extends \Kontiki\Controller_Crud
 {
 	/**
-	* @var string name for human
+	* @var string adminindex
 	*/
-	public static $nicename = '足場組み';
+	public static $adminindex = 'main';
 
 	/**
 	 * set_actionset()
 	 */
-	public function set_actionset()
+	public function set_actionset($controller = null, $id = null)
 	{
 		parent::set_actionset();
-		require(__DIR__.'/actionset.php');
-		self::$actionset = Actionset::actionItems();
+		require_once(__DIR__.'/actionset.php');
+		self::$actionset = \Scaffold\Actionset::actionItems();
 		self::$actionset_owner = array();
 	}
 

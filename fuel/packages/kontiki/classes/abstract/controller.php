@@ -8,9 +8,19 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	public static $nicename = '';
 
 	/**
+	* @var string adminindex
+	*/
+	public static $adminindex = 'adminindex';
+
+	/**
 	 * @var string model name
 	 */
 	protected $model_name  = '';
+
+	/**
+	* @var string current_id
+	*/
+	public static $current_id = '';
 
 	/**
 	 * @var array set by self::set_actionset()
@@ -34,26 +44,56 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 		//set and get userinfo
 		\User\Controller_User::set_userinfo();
+		$userinfo = \User\Controller_User::$userinfo;
+
+		//model_name
+		$controller = \Inflector::denamespace(\Request::main()->controller);
+		$controller = strtolower(substr($controller, 11));
+		$this->model_name  = '\\'.ucfirst($controller).'\\Model_'.ucfirst($controller);
 
 		//actionset
 		$this->set_actionset();
 
-		//model_name
-		$this->model_name  = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($this->request->module);
+		//set_current_id
+		$this->set_current_id();
+
+		//可能であれば、とりあえず取得してみる
+		$item = false;
+		if(self::$current_id):
+			$model = $this->model_name;
+			$item = $model::find_item_anyway(self::$current_id);
+		endif;
 
 		//nicename
-		$controller = '\\'. (string) \Request::main()->controller;
-		self::$nicename  = $controller::$nicename;
 
+		$controllers_from_config = \Config::get('modules');
+		self::$nicename = $controllers_from_config[$controller]['nicename'];
+
+		$is_allowed = false;
 		//acl まずユーザ／ユーザグループ単位を確認する。
-		if( ! $this->acl(\User\Controller_User::$userinfo)):
-			//ユーザ／ユーザグループで失敗したら、オーナ権限を確認する
-			if( ! $this->owner_acl(\User\Controller_User::$userinfo)):
-				//双方駄目ならエラー
-				\Session::set_flash('error', $this->messages['auth_error']);
-				\Response::redirect(\Uri::base(false));
-			endif;
+		$is_allowed = $this->acl($userinfo) ? true : $is_allowed ;
+
+		//ユーザ／ユーザグループで失敗したら、オーナ権限を確認する
+		if( ! $is_allowed && $item):
+			$current_action = $this->request->module.'/'.$this->request->action ;
+			$is_allowed = $this->owner_acl($userinfo, $current_action, $item) ? true : $is_allowed ;
 		endif;
+
+		//双方駄目ならエラー
+		if( ! $is_allowed):
+			\Session::set_flash('error', $this->messages['auth_error']);
+			\Response::redirect(\Uri::base(false));
+		endif;
+	}
+
+	/**
+	 * set_current_id()
+	*/
+	public function set_current_id()
+	{
+		$id_segment = @self::$actionset->{$this->request->action}['id_segment'];
+		if( ! $id_segment) return null;
+		self::$current_id = \URI::segment($id_segment);
 	}
 
 	/**
@@ -69,72 +109,54 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	*/
 	public function acl($userinfo)
 	{
-		return \Acl\Controller_Acl::auth($this->request->module, $this->request->action, $userinfo);
+		//adminたち（ユーザグループ-1や-2）は常にtrue
+		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
+
+		//auth
+		$current_action = $this->request->module.'/'.$this->request->action;
+		return \Acl\Controller_Acl::auth($current_action, $userinfo);
 	}
 
 	/**
 	* owner_acl()
+	* オーバライドの例はuserモジュール参照。
 	*/
-	public function owner_acl($userinfo)
+	public function owner_acl($userinfo = null, $current_action = null, $item = null)
 	{
+		if($userinfo == null || $current_action == null || $item == null) return false;
+
 		//adminたち（ユーザグループ-1や-2）は常にtrue
 		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
 
 		//オーナ権限を判定するコントローラには、creator_idフィールドが必須とする（creator_idを使わないとしても）
 		$model = $this->model_name;
+		if( ! $model):
+			$current_actions = explode('/',$current_action);//アクションが三つ目の引数にくる場合もあるのでlist()不可。
+			$model = '\\'.ucfirst($current_actions[0]).'\\Model_'.ucfirst($current_actions[0]);
+		endif;
 		if( ! \DBUtil::field_exists($model::get_table_name(), array('creator_id'))) return false;
 
 		//オーナ権限なのでゲストは常にfalse
 		if( ! \User\Controller_User::$is_user_logged_in) return false;
 
-		//オーナ権限に関係あるアクションセットを取得
-		$actionset4owner = array();
-		foreach(self::$actionset_owner as $actionset_name => $action):
-			$actionset4owner = array_merge($actionset4owner, $action['dependencies']);
-		endforeach;
+		//acls_owerがなければ、false
+		$current_action = $current_action ? $current_action : $this->request->module.'/'.$this->request->action ;
+		if( ! \Acl\Controller_Acl::owner_auth($current_action, $userinfo)) return false;
 
-		//オーナ権限の関係ないアクションであれば常にfalse
-		if( ! in_array($this->request->action, $actionset4owner)) return false;
-
-		//オーナ権限のあるアクションは原理的に個票なので第一引数はid
-		$id = is_numeric(\URI::segment(3)) ? \URI::segment(3) : \URI::segment(4);
-		if( ! $id) return false;
-
-		//オーバヘッドだが権限確認用に取得
-		$model = $this->model_name ;
-		$item = $model::find_item_anyway($id);
-		if( ! $item) return false;
-
-		//adminでないのに、user_idがなかったり、コンテンツのcreator_idがなければfalse
+		//user_idがなかったり、コンテンツのcreator_idがなければfalse
 		if( ! $userinfo['user_id'] || ! $item->creator_id) return false;
 
-		$controller = \Inflector::denamespace(\Request::main()->controller);
-		$controller = strtolower(substr($controller, 11));
-		return $this->check_owner_acl($controller, $this->request->action, $userinfo, $item);
-	}
-
-	/**
-	 * check_owner_acl()
-	 * オーナ権限は原則creator_idを確認するが、他を確認することがあるときはこのメソッドをオーバライドすること
-	*/
-	public function check_owner_acl($controller = null, $action = null, $userinfo = null, $item = null)
-	{
-		if($userinfo == null || $item == null || $controller == null || $action == null) return false;
-
-		//aclテーブルを確認して、アクションがなければ、false
-		if( ! \Acl\Controller_Acl::owner_auth($controller, $action, $userinfo, $item)) return false;
-
-		//アクションがあったらcreator_idとログイン中のuser_idを比較
+		//creator_idとログイン中のuser_idを比較してreturn
 		return ($userinfo['user_id'] === $item->creator_id);
 	}
 
 	/**
 	 * set_actionset()
 	 */
-	public function set_actionset()
+	public function set_actionset($controller = null, $id = null)
 	{
-		self::$actionset = \Kontiki\Actionset::actionItems($this->request->module);
-		self::$actionset_owner = \Kontiki\Actionset_Owner::actionItems($this->request->module);
+		self::$actionset = \Kontiki\Actionset::actionItems($controller, $id);
+		self::$actionset_owner = \Kontiki\Actionset_Owner::actionItems($controller, $id);
 	}
 
 	/**
@@ -155,24 +177,31 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 		for($n = 1; $n <= $num; $n++):
 			foreach($this->test_datas as $k => $v):
-				switch($v):
+				$type = $v;
+				$default = null;
+				//test_datasにコロンがあったらデフォルト文字列と見なす
+				if(strpos($v,':')):
+					list($type, $default) = explode(':', $v);
+				endif;
+
+				switch($type):
 					case 'text':
-						$val = $this->request->module.'-'.$k.'-'.md5(microtime()) ;
+						$val = $default ? $default : $this->request->module.'-'.$k.'-'.md5(microtime()) ;
 						break;
 					case 'email':
-						$val = $this->request->module.'-'.$k.'-'.md5(microtime()).'@example.com' ;
+						$val = $default ? $default : $this->request->module.'-'.$k.'-'.md5(microtime()).'@example.com' ;
 						break;
 					case 'int':
-						$val = 1 ;
+						$val = $default ? $default : 1 ;
 						break;
 					case 'date':
-						$val = date('Y-m-d') ;
+						$val = $default ? $default : date('Y-m-d') ;
 						break;
 					case 'datetime':
-						$val = date('Y-m-d H:i:s') ;
+						$val = $default ? $default : date('Y-m-d H:i:s') ;
 						break;
 					case 'geometry':
-						$val = "GeomFromText('POINT(138.72777769999993 35.3605555)')" ;//Mt. fuji
+						$val = $default ? $default : "GeomFromText('POINT(138.72777769999993 35.3605555)')" ;//Mt. fuji
 						break;
 				endswitch;
 				$args[$k] = $val;

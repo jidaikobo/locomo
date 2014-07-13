@@ -107,20 +107,27 @@ abstract class Model extends \Orm\Model_Soft
 		$userinfo   = \User\Controller_User::$userinfo;
 
 		//まず一般表示権限を確認
+		$is_guest_viewable = false;
 		if(
-			\Acl\Controller_Acl::auth($controller, 'view', $userinfo) &&
 			$status != 'revision' &&
 			$status != 'invisible' &&
 			$deleted_at == null &&
 			strtotime($created_at) <= time() &&
 			strtotime($expired_at) >= time()
 		):
+			$is_guest_viewable = true;
+		endif;
+
+		if(
+			\Acl\Controller_Acl::auth($controller.'/view', $userinfo) &&
+			$is_guest_viewable
+		):
 			return $item;
 		endif;
 
 		//削除された項目を確認
 		if(
-			\Acl\Controller_Acl::auth($controller, 'view_deleted', $userinfo) &&
+			\Acl\Controller_Acl::auth($controller.'/view_deleted', $userinfo) &&
 			$status != 'revision' &&
 			$deleted_at != null
 		):
@@ -129,7 +136,7 @@ abstract class Model extends \Orm\Model_Soft
 
 		//期限切れ項目を確認
 		if(
-			\Acl\Controller_Acl::auth($controller, 'view_expired', $userinfo) &&
+			\Acl\Controller_Acl::auth($controller.'/view_expired', $userinfo) &&
 			$status != 'revision' &&
 			$deleted_at != null &&
 			strtotime($expired_at) <= time()
@@ -139,7 +146,7 @@ abstract class Model extends \Orm\Model_Soft
 
 		//予約項目を確認
 		if(
-			\Acl\Controller_Acl::auth($controller, 'view_yet', $userinfo) &&
+			\Acl\Controller_Acl::auth($controller.'/view_yet', $userinfo) &&
 			$status != 'revision' &&
 			$deleted_at == null &&
 			strtotime($created_at) >= time() &&
@@ -150,7 +157,7 @@ abstract class Model extends \Orm\Model_Soft
 
 		//リビジョンを確認
 		if(
-			\Acl\Controller_Acl::auth($controller, 'view_revision', $userinfo) &&
+			\Acl\Controller_Acl::auth($controller.'/view_revision', $userinfo) &&
 			$status == 'revision'
 		):
 			return $item;
@@ -158,28 +165,48 @@ abstract class Model extends \Orm\Model_Soft
 
 		//不可視項目を確認
 		if(
-			\Acl\Controller_Acl::auth($controller, 'view_invisible', $userinfo) &&
+			\Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo) &&
 			$status == 'invisible'
 		):
 			return $item;
 		endif;
 
-		//オーナ権限を確認（\Acl\Controller_Acl::owner_auth()でないことに注意。このチェックはコントローラ依存する）
+		//オーナ権限を確認（ここから）
+
+		//コンテンツの状況を確認
+		$conditions   = $is_guest_viewable               ? array('view')    : array();
+		$conditions[] = $item->deleted_at                ? 'view_deleted'   : '';
+		$conditions[] = $item->deleted_at                ? 'view_deleted'   : '';
+		$conditions[] = strtotime($created_at) >= time() ? 'view_yet'       : '';
+		$conditions[] = strtotime($expired_at) <= time() ? 'view_expired'   : '';
+		$conditions[] = $status == 'revision'            ? 'view_revision'  : '';
+		$conditions[] = $status == 'invisible'           ? 'view_invisible' : '';
+
+		//コントローラの情報を取得
 		$request = \Request::forge();
 		$current_controller = '\\'.\Request::main()->controller;
 		$current_controller_obj = new $current_controller($request);
 		$controller = \Inflector::denamespace($current_controller);
 		$controller = strtolower(substr($controller, 11));
-		if(
-			$current_controller_obj->check_owner_acl(
-				$controller,
-				$current_controller_obj->request->action,
-				$userinfo,
-				$item
-			)
-		):
-			return $item;
-		endif;
+
+		//権限の確認
+		$is_owner_allowed = false;
+		foreach($conditions as $condition):
+			if( ! $condition) continue;
+			//\Acl\Controller_Acl::owner_auth()でないことに注意。このチェックはコントローラ依存する
+			if(
+				$current_controller_obj->owner_acl(
+					$userinfo,
+					$controller.'/'.$condition,
+					$item
+				)
+			):
+				$is_owner_allowed = true;
+				break;
+			endif;
+		endforeach;
+		if($is_owner_allowed) return $item;
+		//オーナ権限を確認（ここまで）
 
 		return false ;
 	}
@@ -313,9 +340,9 @@ abstract class Model extends \Orm\Model_Soft
 	 * @return object | result
 	 * @author shibata@jidaikobo.com
 	 */
-	public static function delete_item($id = null)
+	public static function delete_item($obj = null)
 	{
-		if(empty($id)) return false;
+		if(empty($obj)) return false;
 
 		//deleted_atがあればsoft delete
 		if(\DBUtil::field_exists(self::get_table_name(), array('deleted_at'))):
@@ -324,6 +351,7 @@ abstract class Model extends \Orm\Model_Soft
 
 		//deleted_atがなければ削除
 		$primary_key = static::$_primary_key[0];
+		$id = $obj->$primary_key;
 		$q = \DB::delete();
 		$q->table(static::$_table_name);
 		$q->where($primary_key, $id);

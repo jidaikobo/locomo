@@ -24,16 +24,18 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	 * @var array default languages of page title
 	 */
 	protected $titles = array(
-		'index'          => '%1$s',
-		'view'           => '%1$s',
-		'create'         => '%1$sの新規作成',
-		'edit'           => '%1$sの編集',
-		'index_deleted'  => '%1$sの削除済み項目',
-		'index_yet'      => '%1$sの予約項目',
-		'index_expired'  => '%1$sの期限切れ項目',
-		'view_deleted'   => '%1$s（削除済み）',
-		'edit_deleted'   => '%1$s（削除済み）の編集',
-		'confirm_delete' => '%1$sを完全に削除してよろしいですか？',
+		'adminindex'      => '%1$s',
+		'index'           => '%1$s',
+		'view'            => '%1$s',
+		'create'          => '%1$sの新規作成',
+		'edit'            => '%1$sの編集',
+		'index_deleted'   => '%1$sの削除済み項目',
+		'index_yet'       => '%1$sの予約項目',
+		'index_expired'   => '%1$sの期限切れ項目',
+		'index_invisible' => '%1$sの不可視項目',
+		'view_deleted'    => '%1$s（削除済み）',
+		'edit_deleted'    => '%1$s（削除済み）の編集',
+		'confirm_delete'  => '%1$sを完全に削除してよろしいですか？',
 	);
 
 	/**
@@ -95,6 +97,18 @@ abstract class Controller_Crud extends \Kontiki\Controller
 		$view->set_global('title', sprintf($this->titles[$action], self::$nicename));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	 * action_adminindex()
+	 */
+	public function action_adminindex($pagenum = 1)
+	{
+		$args = array(
+			'pagenum'  => $pagenum,
+			'template' => 'adminindex',
+		);
+		return self::index_core($args);
 	}
 
 	/**
@@ -305,11 +319,11 @@ abstract class Controller_Crud extends \Kontiki\Controller
 		$model = $this->model_name ;
 		is_null($id) and \Response::redirect($this->request->module);
 
-		if ($obj = $model::find_item($id)):
+		if($obj = $model::find_item($id)):
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
 
-			$model::delete_item($id);
+			$model::delete_item($obj);
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
@@ -363,6 +377,19 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			'pagenum' => $pagenum,
 			'action'  => 'index_expired',
 			'mode'    => 'expired',
+		);
+		return self::index_core($args);
+	}
+
+	/**
+	 * action_index_invisible()
+	 */
+	public function action_index_invisible($pagenum = 1)
+	{
+		$args = array(
+			'pagenum' => $pagenum,
+			'action'  => 'index_invisible',
+			'mode'    => 'invisible',
 		);
 		return self::index_core($args);
 	}

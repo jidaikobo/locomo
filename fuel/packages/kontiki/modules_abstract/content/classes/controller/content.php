@@ -3,11 +3,6 @@ namespace Kontiki;
 abstract class Controller_Content_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
-	* @var string name for human
-	*/
-	public static $nicename = 'コンテンツ';
-
-	/**
 	 * router()
 	 * 
 	 */
@@ -23,6 +18,16 @@ abstract class Controller_Content_Abstract extends \Kontiki\Controller_Crud
 			$action = 'action_'.$method;
 			return $this->$action($params);
 		endif;
+	}
+
+	/**
+	 * set_actionset()
+	 */
+	public function set_actionset($controller = null, $id = null)
+	{
+		parent::set_actionset();
+		self::$actionset = array();
+		self::$actionset_owner = array();
 	}
 
 	/**

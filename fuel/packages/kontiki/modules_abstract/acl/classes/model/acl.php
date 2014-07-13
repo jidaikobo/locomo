@@ -75,15 +75,16 @@ class Model_Acl_Abstract extends \Kontiki\Model
 	 */
 	public static function get_controllers($is_owner = false)
 	{
-		$controllers_from_config = \Config::get('acl');
+		$controllers_from_config = \Config::get('modules');
 		$controllers = array('none' => '選択してください');
-		foreach($controllers_from_config as $controller):
+		foreach($controllers_from_config as $controller => $settings):
+			//admin_onlyだったらaclの対象外
+			if($settings['is_admin_only']) continue;
+
 			//アクションセットのないコントローラは対象外にする
 			if( ! self::get_controller_actionset($controller, $is_owner)) continue;
-			//classの存在確認
-			$class = '\\'.ucfirst($controller).'\\Controller_'.ucfirst($controller);
-			if( ! class_exists($class)) continue;
-			$controllers[$controller] = $class::$nicename ;
+
+			$controllers[$controller] = $settings['nicename'] ;
 		endforeach;
 		return $controllers;
 	}

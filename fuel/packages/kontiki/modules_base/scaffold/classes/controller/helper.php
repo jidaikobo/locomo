@@ -162,10 +162,6 @@ MIGRATION;
 namespace {$name};
 class Controller_{$name} extends \Kontiki\Controller_Crud
 {
-	/**
-	* @var string name for human
-	*/
-	public static \$nicename = '{$name}';
 }
 FILES;
 		return $str;
