@@ -34,12 +34,12 @@ abstract class ViewModel extends \ViewModel
 
 		//include用にオーバーライドのCSSとjsを取得するクロージャ
 		$include_asset = function($file) {
-			$override_file = DOCROOT.'views/'.$file;
-			$default_file  = DOCROOT.'views/default/'.$tpl;
+			$override_file = \Uri::base().'view/'.$file;
+			$default_file  = \Uri::base().'view/default/'.$file;
 			$ret_file = file_exists($override_file) ? $override_file : $default_file;
 			return $ret_file;
 		};
-		$view->set_global('include_tpl', $include_tpl);
+		$view->set_global('include_asset', $include_asset);
 
 		//include用に指定テンプレートを取得するクロージャ
 		$include_tpl = function($tpl) {

@@ -3,18 +3,18 @@
 <head>
 	<meta charset="utf-8">
 	<title><?php echo $title; ?></title>
-	<?php echo Asset::css('bootstrap.css'); ?>
-	<style>
-		body { margin: 40px; }
-	</style>
+
+	<!--stylesheet-->
+	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/base.css'); ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/admin.css'); ?>" />
+
+	<!--JavaScript-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="<?php echo $include_asset('js/jquery.inc.js'); ?>" type="text/javascript"></script>
 </head>
 <body>
 	<div class="container">
 	<div id="tmp_menu">
-		<a href="/acl/controller_index/">acl</a>
-		<a href="/user/">user</a>
-		<a href="/usergroup/">usergroup</a>
-		<a href="/scaffold/main">scaffold</a>
 		<?php if( ! $is_user_logged_in): ?>
 			<a href="/user/login/<?php echo base64_encode($current_uri) ?>">login</a>
 		<?php else: ?>
