@@ -51,10 +51,6 @@ Autoloader::add_classes(array(
 Autoloader::register();
 Autoloader::add_namespace('Kontiki_Observer', __DIR__.'/classes/observers/');
 
-Module::load('user', PKGPATH.'kontiki/modules_default/user/');
-Module::load('acl', PKGPATH.'kontiki/modules_default/acl/');
-Module::load('usergroup', PKGPATH.'kontiki/modules_default/usergroup/');
-
 // load  the package with the config file.
 if(file_exists(PKGPATH.'kontiki/config/packageconfig.php')):
 	Config::load('packageconfig.php');

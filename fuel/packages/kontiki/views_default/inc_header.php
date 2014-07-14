@@ -6,7 +6,7 @@
 
 	<!--stylesheet-->
 	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/base.css'); ?>" />
-	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/admin.css'); ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/layout.css'); ?>" />
 
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
