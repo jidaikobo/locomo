@@ -932,10 +932,8 @@ a.zip:before,a.icon[href$=".zip"]:before       { content: url( '../images/icons/
 a.lzh:before,a.icon[href$=".lzh"]:before       { content: url( '../images/icons/icon_lzh.gif' ); }
 a.txt:before,a.icon[href$=".txt"]:before       { content: url( '../images/icons/icon_txt.gif' ); }
 a.tar.gz:before,a.icon[href$=".tar.gz"]:before { content: url( '../images/icons/icon_tgz.gif' ); }
-
-a._blank:after,a.icon[target="_blank"]:after { content: '(新しい窓で開きます)' }
-a.lock:after,a.icona[href^="https:"]:after { content: '(安全な接続です)' }
-
+a.lock:after,a.icon[href^="https:"]:before     { content: url( '../images/icons/lock.gif' ); }
+a._blank:after,a.icon[target="_blank"]:after   { content: url( '../images/icons/window.gif' ); }
 
 a.noicon:before,
 .noicon a:before
@@ -1087,8 +1085,3 @@ a.edit_link span span
 	font-family: "Lucida Grande", "ヒラギノ丸ゴ ProN W4", "Hiragino Maru Gothic ProN", Meiryo, Arial, sans-serif;
 }
 
-
-
-/*=== なんやかんやの動作テスト ===*/
-a.icon[href$=".pdf"]:before { content:'(PDF)' }
-a.icon[href$=".doc"]:before { content:'(Word Doc)'}
