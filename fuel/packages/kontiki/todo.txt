@@ -2,8 +2,6 @@ php oil refine migrate:current --packages=kontiki
 php oil refine migrate:up --packages=kontiki
 delete from migration where 1 = 1;
 
-
-
 //現在のコントローラ
 '\\'.\Request::main()->controller
 $controller = \Inflector::denamespace(\Request::main()->controller);

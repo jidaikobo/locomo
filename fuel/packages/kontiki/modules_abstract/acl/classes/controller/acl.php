@@ -18,6 +18,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 	 */
 	public function router($method, $params)
 	{
+		parent::router($method, $params);
 		$banned_action = array(
 			'index',
 			'view',

@@ -17,7 +17,13 @@ modulename
 - migrations
 - views
 
+ただし、コントローラをコンパクトに書くための独自ルーティングがあります。
+modules/MODNAME/classes/controller/MODNAME_ACTNAME.phpで、1ファイルに1つのアクションを独立して書くことができます。この際、継承するclassは適宜気をつけてください。ほとんどの場合は、\kontiki\controllerでなく、MODNAMEにあたるclassを継承することになるはずです。
+
 kontikiには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
+
+
+
 
 
 
