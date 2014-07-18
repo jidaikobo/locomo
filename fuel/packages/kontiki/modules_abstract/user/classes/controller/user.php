@@ -224,7 +224,7 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 		//session
 		$session = \Session::instance();
 		$session->delete('user');
-		\Session::set_flash( 'error', 'ログアウトしました');
+		\Session::set_flash( 'success', 'ログアウトしました');
 		\Response::redirect('user/login/');
 	}
 }

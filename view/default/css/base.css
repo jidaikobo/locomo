@@ -1,17 +1,41 @@
+@charset "UTF-8";
 /* http://jigsaw.w3.org/css-validator/ */
 
-/* === text === */
+html
+{
+	height:100%;
+	margin-bottom:1px;
+}
 
 body
 {
-	font-family: 'Meiryo','Hiragino Kaku Gothic Pro','Osaka',sans-serif;
+	background-color: #fff;
+	color: #000;
+	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
 	margin: 0;
 	padding: 0;
 	position: relative;
 }
 
-dl,
+
+/* === for html5set === */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section
+{
+	display: block;
+}
+
 p,
+dl,
 ul,
 ol
 {
@@ -30,10 +54,22 @@ h6
 	clear: both;
 	line-height: 160%;
 }
+/* === フォントサイズをいったんリセットして与えなおしたほうがよい？ === */
+
+/* max-width */
+img,
+table
+{
+	max-width: 100%;
+}
+img
+{
+	height: auto;
+}
 
 /* === hyper-link activities (normal) === */
 
-a:link    {color: #33d;}
+a:link    {color: #1122cc;}
 a:visited {color: #515;}
 a:hover   {text-decoration: none;}
 a img
@@ -57,19 +93,17 @@ a.nfb:hover
 	text-decoration: none !important;
 }
 
-/* === image hyper-link (.fb) === */
-
 a.fb:link img
 {
-	border: 1px #33d dotted;
+	outline: 1px dotted #33d;
 }
 a.fb:visited img
 {
-	border: 1px #515 dotted;
+	outline: 1px dotted #515;
 }
 a.fb:hover img
 {
-	border: 1px #900 solid !important;
+	outline: 1px solid #900 !important;
 }
 a.fb
 {
@@ -81,11 +115,33 @@ a.fb:hover
 }
 img.nfb
 {
-	border: 1px #fff solid;
+	outline: 1px solid #fff;
+}
+/* === focus === */
+
+:focus
+{
+	outline:4px solid rgb(153,198,200);
+	outline: -webkit-focus-ring-color auto 4px;
+}
+body:focus{
+	outline: none;
 }
 
-/* === em , strong === */
+/* === hover activities (opacity) === */
+.bt.op:hover *,
+.ro.op:hover *{
+	opacity: .6; /* Standard: FF gt 1.5, Opera, Safari */
+	filter: alpha(opacity=60); /* IE lt 8 */
+	-ms-filter: "alpha(opacity=60)"; /* IE 8 */
+	-khtml-opacity: .6; /* Safari 1.x */
+	-moz-opacity: .6; /* FF lt 1.5, Netscape */
+}
 
+
+
+/* === em , strong === */
+/* あとで */
 em,
 strong
 {
@@ -109,7 +165,11 @@ strong strong
 {
 	border-bottom: 3px #a20 double;
 }
-
+strong.strong2{
+	color: #000;
+	border-bottom:2px solid #ff6; 
+	box-shadow:0 -.45em 0 #ff6 inset; 
+}
 /* === abbr , acronym === */
 
 abbr,
@@ -190,8 +250,10 @@ dfn
 .forscreenreader,
 .skip
 {
-	position: absolute;
-	left: -9000px;
+	position: absolute !important;
+	left: auto;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
 }
 
 .div,
@@ -206,14 +268,6 @@ dfn
 	clear: none !important;
 }
 
-hr.div,
-br.div
-{
-	clear: both;
-	visibility: hidden;
-	margin: 0;
-	padding: 0;
-}
 
 /* === clearfix === */
 
@@ -282,7 +336,6 @@ ol.cmt
 }
 
 /* === dl.cmt === */
-
 dl.cmt
 {
 	color: #111;
@@ -794,7 +847,7 @@ table.list th
 }
 
 /* === dl.search_results === */
-
+/* atode */
 dl.search_results dt
 {
 	margin: 0;
@@ -821,7 +874,7 @@ dl.search_results dd strong
 }
 
 /* === div.pagenavi === */
-
+/*atode*/
 .hits
 {
 	margin: 0;
@@ -866,17 +919,23 @@ dl.search_results dd strong
 }
 
 /* === Download Icons (disable:  Win IE,Opera) === */
+
+/* atode matomel */
 /* thx argon and XCL project */
-a.pdf:before    { content: url( '../images/icons/icon_pdf.gif' ); }
-a.ppt:before    { content: url( '../images/icons/icon_ppt.gif' ); }
-a.doc:before    { content: url( '../images/icons/icon_doc.gif' ); }
-a.docx:before   { content: url( '../images/icons/icon_doc.gif' ); }
-a.xls:before    { content: url( '../images/icons/icon_xls.gif' ); }
-a.xlsx:before   { content: url( '../images/icons/icon_xls.gif' ); }
-a.zip:before    { content: url( '../images/icons/icon_zip.gif' ); }
-a.lzh:before    { content: url( '../images/icons/icon_lzh.gif' ); }
-a.txt:before    { content: url( '../images/icons/icon_txt.gif' ); }
-a.tar.gz:before { content: url( '../images/icons/icon_tgz.gif' ); }
+a.pdf:before,a.icon[href$=".pdf"]:before       { content: url( '../images/icons/icon_pdf.gif' ); }
+a.ppt:before,a.icon[href$=".ppt"]:before       { content: url( '../images/icons/icon_ppt.gif' ); }
+a.doc:before,a.icon[href$=".doc]:before        { content: url( '../images/icons/icon_doc.gif' ); }
+a.docx:before,a.icon[href$=".docx"]:before     { content: url( '../images/icons/icon_doc.gif' ); }
+a.xls:before,a.icon[href$=".xls"]:before       { content: url( '../images/icons/icon_xls.gif' ); }
+a.xlsx:before,a.icon[href$=".xlsx"]:before     { content: url( '../images/icons/icon_xls.gif' ); }
+a.zip:before,a.icon[href$=".zip"]:before       { content: url( '../images/icons/icon_zip.gif' ); }
+a.lzh:before,a.icon[href$=".lzh"]:before       { content: url( '../images/icons/icon_lzh.gif' ); }
+a.txt:before,a.icon[href$=".txt"]:before       { content: url( '../images/icons/icon_txt.gif' ); }
+a.tar.gz:before,a.icon[href$=".tar.gz"]:before { content: url( '../images/icons/icon_tgz.gif' ); }
+
+a._blank:after,a.icon[target="_blank"]:after { content: '(新しい窓で開きます)' }
+a.lock:after,a.icona[href^="https:"]:after { content: '(安全な接続です)' }
+
 
 a.noicon:before,
 .noicon a:before
@@ -886,29 +945,35 @@ a.noicon:before,
 
 /* === box model (.fr , .fl , etc) === */
 
-.fr
+.fr,
+.alignright
 {
+	display: block;
 	float:right;
 	margin:0 0 10px 10px;
 }
 
-.fl
+.fl,
+.alignleft
 {
+	display: block;
 	float:left;
 	margin:0 10px 10px 0;
 }
+.fc,
+.aligncenter{
+	clear: both;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
 
-.w50{width: 50px;}
-.w100{width: 100px;}
-.w150{width: 150px;}
-.w200{width: 200px;}
-.w250{width: 150px;}
 
 /* === a.lb img === */
 
 .lb img
 {
-	border: 1px #eee solid;
+	outline: 1px #eee solid;
 }
 
 .lb:hover img
@@ -939,7 +1004,8 @@ span.subtitle
 
 span.date
 {
-	font-size: 85%;
+	display: inline-block;
+	font-size: 90%;
 	color: #555;
 }
 
@@ -982,10 +1048,47 @@ a.edit_link:hover span
 }
 a.edit_link:hover
 {
-	opacity: 0.8;
+	opacity: .6; /* Standard: FF gt 1.5, Opera, Safari */
+	-khtml-opacity: .6; /* Safari 1.x */
+	-moz-opacity: .6; /* FF lt 1.5, Netscape */
+}
+a.edit_link:hover *{
+	filter: alpha(opacity=60); /* IE lt 8 */
+	-ms-filter: "alpha(opacity=60)"; /* IE 8 */
 }
 
-a.edit_link span span{
-	position: absolute;
-	left: -100000px;
+a.edit_link span span
+{
+	position: absolute !important;
+	left: auto;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
 }
+
+/* === 追加分で浮いているもの === */
+
+/* === font === */
+
+.mincho,
+.serif
+{
+	font-family: "Times New Roman", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "HGS明朝E" ,"游明朝", YuMincho, "MS PMincho" , "メイリオ", Meiryo, serif;
+}
+
+.gothic,
+.sans-serif
+{
+	font-family: Verdana, "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN",  "游ゴシック", YuGothic,"メイリオ", Meiryo, sans-serif;
+}
+/* === ？本文フォントは游明朝を使わずに、クラスで指定した時だけ設定されるようにする？ === */
+
+.marugo,
+.rounded{
+	font-family: "Lucida Grande", "ヒラギノ丸ゴ ProN W4", "Hiragino Maru Gothic ProN", Meiryo, Arial, sans-serif;
+}
+
+
+
+/*=== なんやかんやの動作テスト ===*/
+a.icon[href$=".pdf"]:before { content:'(PDF)' }
+a.icon[href$=".doc"]:before { content:'(Word Doc)'}
