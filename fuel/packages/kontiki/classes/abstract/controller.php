@@ -35,6 +35,30 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	protected $test_datas = array();
 
 	/**
+	 * router()
+	 * コントローラを短く書くための独自ルーティング。
+	 * modules/MODNAME/classes/controller/MODNAME_ACTNAME.phpで、個別のアクションを書けるようにする
+	*/
+	public function router($method, $params)
+	{
+		$class = "{$this->request->module}_{$method}";
+		$file = PKGPATH."kontiki/modules/{$this->request->module}/classes/controller/{$class}.php";
+
+		if(method_exists($this, 'action_'.$method)):
+			return parent::router($method, $params);
+		elseif(file_exists($file)):
+			require($file);
+			$request = \Request::forge();
+			$class = "\\".ucfirst($this->request->module)."\\Controller_".\Inflector::words_to_upper($class);
+			$action = "action_".$method;
+			if( ! class_exists($class) || ! method_exists($class, $action))
+				\Response::redirect(\Uri::base());
+			$controller_obj = new $class($request);
+			return $controller_obj->$action($params);
+		endif;
+	}
+
+	/**
 	* before()
 	*/
 	public function before()
