@@ -285,6 +285,7 @@ return array(
 		 	'acl',
 		 	'user',
 		 	'usergroup',
+		 	'revision',
 		 ),
 
 		/**

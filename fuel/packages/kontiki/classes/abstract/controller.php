@@ -8,11 +8,6 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 	public static $nicename = '';
 
 	/**
-	* @var string adminindex
-	*/
-	public static $adminindex = 'index_admin';
-
-	/**
 	 * @var string model name
 	 */
 	protected $model_name  = '';
@@ -90,8 +85,8 @@ abstract class Controller extends \Fuel\Core\Controller_Rest
 
 		//nicename
 
-		$controllers_from_config = \Config::get('modules');
-		self::$nicename = $controllers_from_config[$controller]['nicename'];
+		$controllers_from_config = \Config::load($controller);
+		self::$nicename = $controllers_from_config['nicename'];
 
 		$is_allowed = false;
 		//acl まずユーザ／ユーザグループ単位を確認する。

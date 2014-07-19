@@ -23,6 +23,7 @@ php oil refine migrate:up --modules=loginlog
 		 	'acl',
 		 	'user',
 		 	'usergroup',
+		 	'revision',
 		 ),
 
 - Security settingsの

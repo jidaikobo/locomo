@@ -1,11 +1,17 @@
 <?php echo $include_tpl('inc_header.php'); ?>
 
-<h2>Editing <span class='muted'>User</span></h2>
-<br>
-
 <?php echo render('_form'); ?>
+
 <p>
-	<?php echo Html::anchor('user/view/'.$item->id, 'View'); ?> |
-	<?php echo Html::anchor('user', 'Back'); ?></p>
+	<?php
+	if(@$is_revision):
+		echo Html::anchor('user/index_revision/'.$item->controller_id, '履歴一覧に戻る',array('class'=>'button'));
+		echo Html::anchor('user/edit/'.$item->controller_id, '編集画面に戻る',array('class'=>'button'));
+	else:
+		echo Html::anchor('user/view/'.$item->id, '表示',array('class'=>'button'));
+		echo Html::anchor('user', '一覧に戻る',array('class'=>'button'));
+	endif;
+	?>
+</p>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

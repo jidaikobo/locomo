@@ -162,6 +162,14 @@ MIGRATION;
 namespace {$name};
 class Controller_{$name} extends \Kontiki\Controller_Crud
 {
+	/**
+	 * set_actionset()
+	 */
+	public function set_actionset(\$controller = null, \$id = null)
+	{
+		parent::set_actionset(\$controller, \$id);
+		//unset(self::\$actionset->view_revision);
+	}
 }
 FILES;
 		return $str;
@@ -216,7 +224,6 @@ FILES;
 	 */
 	public function generate_views_index($name)
 	{
-		//mold - read.html
 		$val = file_get_contents(dirname(__DIR__).'/templates/index.php');
 		$val = self::replaces($name, $val);
 		return $val;
@@ -241,7 +248,7 @@ FILES;
 			$fields.= '</tr>'."\n\n" ;
 		}
 		
-		//mold - read.html
+		//mold
 		$val = file_get_contents(dirname(__DIR__).'/templates/view.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###fields###', $fields , $val) ;
@@ -273,7 +280,7 @@ FILES;
 			$fields.= '</tr>'."\n\n" ;
 		}
 		
-		//mold - read.html
+		//mold
 		$val = file_get_contents(dirname(__DIR__).'/templates/_form.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###fields###', $fields , $val) ;
@@ -286,7 +293,6 @@ FILES;
 	 */
 	public function generate_views_create($name)
 	{
-		//mold - read.html
 		$val = file_get_contents(dirname(__DIR__).'/templates/create.php');
 		$val = self::replaces($name, $val);
 		return $val;
@@ -297,8 +303,17 @@ FILES;
 	 */
 	public function generate_views_edit($name)
 	{
-		//mold - read.html
 		$val = file_get_contents(dirname(__DIR__).'/templates/edit.php');
+		$val = self::replaces($name, $val);
+		return $val;
+	}
+
+	/**
+	 * generate_config()
+	 */
+	public function generate_config($name)
+	{
+		$val = file_get_contents(dirname(__DIR__).'/templates/config.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}

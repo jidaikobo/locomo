@@ -20,6 +20,10 @@ return array(
 			array(
 				0 => '001_create_loginlog',
 			),
+			'revision' => 
+			array(
+				0 => '001_create_revision',
+			),
 		),
 		'package' => 
 		array(

@@ -55,11 +55,20 @@
 		<?php echo \Form::input('expired_at', Input::post('expired_at', isset($item) ? $item->expired_at : ''), array('class' => 'col-md-4 form-control', 'placeholder'=> date('Y-m-d H:i:s'))); ?>
 	</div>
 
+	<div class="form-group revision_comment">
+		<?php echo Form::label('編集メモ', 'revision_comment', array('class'=>'control-label')); ?>
+		<?php echo Form::textarea('revision_comment', Input::post('revision_comment', isset($item->comment) ? $item->comment : ''), array('class' => 'col-md-4 form-control', 'placeholder'=>'')); ?>
+	</div>
+
 	<div class="form-group">
-		<label class='control-label'>&nbsp;</label>
-		<?php echo Form::hidden($token_key, $token); ?>
-		<?php echo \Form::submit('submit', 'Save', array('class' => 'btn btn-primary')); ?>
+		<?php
+		if( ! @$is_revision): 
+			echo Form::hidden($token_key, $token);
+			echo Form::submit('submit', 'Save', array('class' => 'button main'));
+		endif;
+		?>
 	</div>
 
 </fieldset>
+
 <?php echo \Form::close(); ?>

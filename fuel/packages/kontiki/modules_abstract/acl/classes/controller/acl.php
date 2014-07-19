@@ -3,16 +3,6 @@ namespace Kontiki;
 abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
-	* @var string name for human
-	*/
-	public static $nicename = 'アクセス権管理';
-
-	/**
-	* @var string adminindex
-	*/
-	public static $adminindex = 'controller_index';
-
-	/**
 	 * router()
 	 * 
 	 */

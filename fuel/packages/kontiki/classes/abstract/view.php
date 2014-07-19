@@ -94,32 +94,43 @@ abstract class ViewModel extends \ViewModel
 			//対象モジュールを取得する
 			$controllers = array();
 			$userinfo = \User\Controller_User::$userinfo;
+			$n = 0 ;
 			foreach(\Config::get('module_paths') as $path):
 				foreach (glob($path.'*') as $dirname):
 					if( ! is_dir($dirname)) continue;
 					//config
 					$config = \Config::load($dirname.'/config/'.basename($dirname).'.php', true, true);
 					if( ! $config) continue;
+					if( ! $config['adminindex']) continue;
 
 					//adminindexへのurlを取得する
 					$url = basename($dirname).'/'.$config['adminindex'];
 
 					//管理者はすべてのコントローラへのリンクを得る
 					if($userinfo['user_id'] <= -1):
-						$controllers[$config['order_in_menu']]['url']      = $url;
-						$controllers[$config['order_in_menu']]['nicename'] = $config['nicename'];
+						$controllers[$n]['url']      = $url;
+						$controllers[$n]['nicename'] = $config['nicename'];
+						$controllers[$n]['order']    = $config['order_in_menu'];
 					else:
 						//管理者向けコントローラは表示しない
 						if($settings['is_admin_only']) continue;
 	
 						//adminindexが許されていない場合は表示しない
 						if( ! in_array($url, $userinfo['acls'])) continue;
-						$controllers[$config['order_in_menu']]['url']      = $url;
-						$controllers[$config['order_in_menu']]['nicename'] = $config['nicename'];
+						$controllers[$n]['url']      = $url;
+						$controllers[$n]['nicename'] = $config['nicename'];
+						$controllers[$n]['order']    = $config['order_in_menu'];
 					endif;
+				$n++;
 				endforeach;
 			endforeach;
-			ksort($controllers);
+
+			//array_multisort
+			foreach($controllers as $key => $row):
+				$order[$key]  = $row['order'];
+			endforeach;
+			array_multisort($order, SORT_ASC, $controllers);
+
 			return $controllers;
 		};
 		$view->set_global('get_controllers', $get_controllers);

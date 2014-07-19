@@ -37,6 +37,10 @@ Autoloader::add_classes(array(
 	'Kontiki\Model_Acl_Abstract'            => __DIR__.'/modules_abstract/acl/classes/model/acl.php',
 	'Kontiki\View_Acl_Abstract'             => __DIR__.'/modules_abstract/acl/classes/view/acl.php',
 
+	'Kontiki\Controller_Revision_Abstract'       => __DIR__.'/modules_abstract/revision/classes/controller/revision.php',
+	'Kontiki\Model_Revision_Abstract'            => __DIR__.'/modules_abstract/revision/classes/model/revision.php',
+	'Kontiki\View_Revision_Abstract'             => __DIR__.'/modules_abstract/revision/classes/view/revision.php',
+
 	'Kontiki\Model_Meta_Abstract'           => __DIR__.'/modules_abstract/meta/classes/model/meta.php',
 
 	//validation

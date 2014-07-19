@@ -467,7 +467,7 @@ class Actionset
 	 */
 	private static function view_revision($controller, $item)
 	{
-		$url = isset($item->id) ? "$controller/revision/$item->id" : null ;
+		$url = isset($item->id) ? "$controller/index_revision/$item->id" : null ;
 		$url = self::check_auth4url($controller, 'index_revision', $url);
 
 		$retvals = array(
@@ -478,7 +478,9 @@ class Actionset
 			'explanation'  => '作業履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴はみることができるようになります。また、通常項目の編集権限も許可されます。',
 			'dependencies' => array(
 				'view',
+				'edit',
 				'view_revision',
+				'index_revision',
 			)
 		);
 		return $retvals;

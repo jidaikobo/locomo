@@ -3,11 +3,6 @@ namespace Scaffold;
 class Controller_Scaffold extends \Kontiki\Controller_Crud
 {
 	/**
-	* @var string adminindex
-	*/
-	public static $adminindex = 'main';
-
-	/**
 	 * set_actionset()
 	 */
 	public function set_actionset($controller = null, $id = null)
@@ -51,6 +46,7 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$controller = $scaffold_helper->generate_controller($name);
 			$model      = $scaffold_helper->generate_model($name, $cmds);
 			$viewmodel  = $scaffold_helper->generate_view($name);
+			$config     = $scaffold_helper->generate_config($name);
 
 			//molding - view
 			$tpl_index  = $scaffold_helper->generate_views_index($name);
@@ -84,8 +80,8 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$scaffold_helper->putfiles($scfldpath.'/classes/view/'.$name.'.php', $viewmodel) ;
 
 			//config
-			if( ! file_exists($scfldpath.'/classes/config')) mkdir($scfldpath.'/classes/config');
-			copy(dirname(__DIR__).'/templates/config.php', $scfldpath.'/classes/config/'.$name.'.php');
+			if( ! file_exists($scfldpath.'/config')) mkdir($scfldpath.'/config');
+			$scaffold_helper->putfiles($scfldpath.'/config/'.$name.'.php', $config) ;
 
 			//views
 			if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');

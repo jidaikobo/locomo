@@ -25,10 +25,26 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 	);
 
 	/**
+	 * modify_array()
+	 * ユーザグループも保存してしまう？
+	 */
+	public function modify_array($arr, $mode = null)
+	{
+		if($mode == 'insert_revision'):
+			$arr['usergroup'] = serialize(\Input::post('usergroup'));
+		elseif($mode == 'view_revision'):
+			//do nothing - ユーザモジュールについては、たまたまinsert_revisionの仕方がうまくいったのでこのまま取得できる
+		endif;
+		return $arr;
+	}
+
+	/**
 	 * post_save_hook()
 	 */
 	public function post_save_hook($obj = NULL, $mode = 'edit')
 	{
+		$obj = parent::post_save_hook($obj, $mode);
+
 		//ユーザが所属するグループを更新
 		if (\Input::method() == 'POST'):
 			$user_id = intval($obj->id);
