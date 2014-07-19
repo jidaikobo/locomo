@@ -35,7 +35,7 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 
 		//scaffold
 		if(\Input::method() == 'POST'):
-//			if( ! \Security::check_token()) die();
+			if( ! \Security::check_token()) die();
 			$cmd = \Input::post('cmd');
 			$cmd = str_replace(array('php oil g '), '', $cmd);
 			$cmds = explode(' ', $cmd);
@@ -65,15 +65,25 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 
 			//put files
 			$name = strtolower($name);
+
+			//migrations
 			if( ! file_exists($scfldpath.'/migrations')) mkdir($scfldpath.'/migrations');
-			$scaffold_helper->putfiles($scfldpath.'/migrations/'.$name.'.php', $migration) ;
+			$scaffold_helper->putfiles($scfldpath.'/migrations/001_create_'.$name.'.php', $migration) ;
+
+			//controller
 			if( ! file_exists($scfldpath.'/classes')) mkdir($scfldpath.'/classes');
 			if( ! file_exists($scfldpath.'/classes/controller')) mkdir($scfldpath.'/classes/controller');
 			$scaffold_helper->putfiles($scfldpath.'/classes/controller/'.$name.'.php', $controller) ;
+
+			//model
 			if( ! file_exists($scfldpath.'/classes/model')) mkdir($scfldpath.'/classes/model');
 			$scaffold_helper->putfiles($scfldpath.'/classes/model/'.$name.'.php', $model) ;
+
+			//viewmodel
 			if( ! file_exists($scfldpath.'/classes/view')) mkdir($scfldpath.'/classes/view');
 			$scaffold_helper->putfiles($scfldpath.'/classes/view/'.$name.'.php', $viewmodel) ;
+
+			//views
 			if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');
 			$scaffold_helper->putfiles($scfldpath.'/views/index.php', $tpl_index) ;
 			$scaffold_helper->putfiles($scfldpath.'/views/index_admin.php', $tpl_index) ;
@@ -82,47 +92,12 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$scaffold_helper->putfiles($scfldpath.'/views/create.php', $tpl_create) ;
 			$scaffold_helper->putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
 
-			$explanation = 'scaffoldしました。';
-			$view->set('explanation', $explanation, false);
+//			$explanation = 'scaffoldしました。php oil refine migrate:up --modules=post';
+//			$view->set('explanation', $explanation, false);
 		endif;
 
 		//view
 		$view->set_global('title', '足場組み');
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-	}
-
-
-	/**
-	 * action_migration()
-	 */
-	public function action_migration()
-	{
-
-		//view
-		$view = \View::forge('migration');
-
-		//対象モジュール
-		include(PKGPATH.'kontiki/modules/post_user_r/migrations/post_user_r.php');
-		$obj = new \Fuel\Migrations\Create_post_user_r;
-		$obj->up();
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $obj ) ;
-echo '</textarea>' ;
-die();
-
-
-		//scaffold
-		if(\Input::method() == 'POST'):
-//			if( ! \Security::check_token()) die();
-
-
-
-			$view->set('explanation', $explanation, false);
-		endif;
-
-		//view
-		$view->set_global('title', '足場組み：マイグレーション');
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
