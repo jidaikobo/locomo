@@ -12,14 +12,8 @@ $this->request->action
 
 ＊　＊　＊
 
-scaffoldを完成させる。
-scaffoldからmigrationする
-scaffoldでmigrationのみを生成する
-
-moduleにmigrationを持たせる
-moduleのmigrationは001.phpというような形式
-
-destroyもいつか作る
+actionsetの整理
+destroyをいつか作る
 
 ＊　＊　＊
 
