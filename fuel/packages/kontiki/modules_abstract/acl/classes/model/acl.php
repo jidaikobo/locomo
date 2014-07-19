@@ -77,25 +77,45 @@ class Model_Acl_Abstract extends \Kontiki\Model
 	{
 		$controllers_from_config = \Config::get('modules');
 		$controllers = array('none' => '選択してください');
-		foreach($controllers_from_config as $controller => $settings):
-			//admin_onlyだったらaclの対象外
-			if($settings['is_admin_only']) continue;
 
-			//アクションセットのないコントローラは対象外にする
-			if( ! self::get_controller_actionset($controller, $is_owner)) continue;
+		foreach(\Config::get('module_paths') as $path):
+			foreach (glob($path.'*') as $dirname):
+				if( ! is_dir($dirname)) continue;
+				//config
+				$config = \Config::load($dirname.'/config/'.basename($dirname).'.php', $use_default_name = true, $reload = true);
+				if( ! $config) continue;
 
-			$controllers[$controller] = $settings['nicename'] ;
+				//admin_onlyだったらaclの対象外
+				if(@$config['is_admin_only']) continue;
+
+				//アクションセットのないコントローラは対象外にする
+				$controller = basename($dirname);
+				if( ! self::get_controller_actionset($controller, $is_owner)) continue;
+
+				$controllers[$controller] = $config['nicename'] ;
+			endforeach;
 		endforeach;
+
 		return $controllers;
 	}
 
 	/**
 	 * get_controller_actionset()
-	 * packageconfigで指定されたacl対象コントローラの取得
+	 * acl対象コントローラのアクションセット取得
 	 */
 	public static function get_controller_actionset($controller = null, $is_owner = false)
 	{
 		$class = '\\'.ucfirst($controller).'\\Controller_'.ucfirst($controller);
+
+		//モジュールの存在確認
+		foreach(\Config::get('module_paths') as $path):
+			foreach (glob($path.'*') as $dirname):
+				if( ! is_dir($dirname)) continue;
+				$ctlfile = $dirname.DS.'classes/controller/'.basename($dirname).'.php';
+				if( ! file_exists($ctlfile)) continue;
+				require_once($ctlfile);
+			endforeach;
+		endforeach;
 		if( ! class_exists($class)) return false;
 
 		//アクションセットの取得

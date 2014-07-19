@@ -1,7 +1,7 @@
 <?php echo $include_tpl('inc_header.php'); ?>
 
 <h2>書式例</h2>
-<p>php oil g model post title:varchar[50] body:text user_id:int</p>
+<pre class="pre">php oil g model post title:varchar[50] body:text user_id:int</pre>
 
 <?php echo \Form::open(array("class"=>"form-horizontal")); ?>
 <fieldset>

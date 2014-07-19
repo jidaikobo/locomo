@@ -217,7 +217,7 @@ FILES;
 	public function generate_views_index($name)
 	{
 		//mold - read.html
-		$val = file_get_contents(dirname(__DIR__).'/views/index.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/index.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -242,7 +242,7 @@ FILES;
 		}
 		
 		//mold - read.html
-		$val = file_get_contents(dirname(__DIR__).'/views/view.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/view.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###fields###', $fields , $val) ;
 	
@@ -274,7 +274,7 @@ FILES;
 		}
 		
 		//mold - read.html
-		$val = file_get_contents(dirname(__DIR__).'/views/_form.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/_form.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###fields###', $fields , $val) ;
 
@@ -287,7 +287,7 @@ FILES;
 	public function generate_views_create($name)
 	{
 		//mold - read.html
-		$val = file_get_contents(dirname(__DIR__).'/views/create.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/create.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -298,7 +298,7 @@ FILES;
 	public function generate_views_edit($name)
 	{
 		//mold - read.html
-		$val = file_get_contents(dirname(__DIR__).'/views/edit.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/edit.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}

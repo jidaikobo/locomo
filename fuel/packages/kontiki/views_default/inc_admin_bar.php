@@ -13,9 +13,9 @@ if($is_user_logged_in):
 		$html.= '<div style="float:left;width:33%;font-size:90%;">';
 		$html.= '<h2>コントローラメニュー</h2>';
 		$html.= '<ul>';
-		foreach($controller4menu as $url => $menu_str):
-			if( ! $url) continue;
-			$html.= "<li><a href=\"{$home_uri}{$url}\">{$menu_str}</a></li>";
+		foreach($controller4menu as $v):
+			if( ! $v['url']) continue;
+			$html.= "<li><a href=\"{$home_uri}{$v['url']}\">{$v['nicename']}</a></li>";
 		endforeach;
 		$html.= '</ul>';
 		$html.= '</div>';

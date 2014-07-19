@@ -10,6 +10,7 @@ return array(
 		array(
 			'post' => 
 			array(
+				0 => '001_create_post',
 			),
 			'usergroup' => 
 			array(

@@ -83,6 +83,10 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 			if( ! file_exists($scfldpath.'/classes/view')) mkdir($scfldpath.'/classes/view');
 			$scaffold_helper->putfiles($scfldpath.'/classes/view/'.$name.'.php', $viewmodel) ;
 
+			//config
+			if( ! file_exists($scfldpath.'/classes/config')) mkdir($scfldpath.'/classes/config');
+			copy(dirname(__DIR__).'/templates/config.php', $scfldpath.'/classes/config/'.$name.'.php');
+
 			//views
 			if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');
 			$scaffold_helper->putfiles($scfldpath.'/views/index.php', $tpl_index) ;
@@ -92,8 +96,17 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$scaffold_helper->putfiles($scfldpath.'/views/create.php', $tpl_create) ;
 			$scaffold_helper->putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
 
-//			$explanation = 'scaffoldしました。php oil refine migrate:up --modules=post';
-//			$view->set('explanation', $explanation, false);
+			//messages
+			$messages   = array();
+			$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
+			$messages[] = "sudo chmod -R 777 {$scfldpath}";
+			$messages[] = "migrationとconfigを調整したら、コマンドラインで";
+			$messages[] = "cd ".DOCROOT;
+			$messages[] = "php oil refine migrate:up --modules={$name}";
+			$messages[] = "を実行してください。";
+
+			\Session::set_flash('success', $messages);
+			\Response::redirect(\Uri::create('/scaffold/main/'));
 		endif;
 
 		//view
