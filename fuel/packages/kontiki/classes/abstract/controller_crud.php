@@ -184,6 +184,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			$args['data']          = serialize($obj);
 			$args['comment']       = \Input::post('revision_comment') ?: '';
 			$args['created_at']    = date('Y-m-d H:i:s');
+			$args['modifier_id']   = isset($obj->modifier_id) ? $obj->modifier_id : 0;
 			$args                  = $this->modify_array($args, 'insert_revision');
 			$model = \Revision\Model_Revision::forge($args);
 			$model->insert_revision();

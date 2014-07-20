@@ -6,12 +6,12 @@ class Create_revision
 	{
 		\DBUtil::create_table('revisions', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
-			'controller' => array('constraint' => 50, 'type' => 'varchar'),
+			'controller'    => array('constraint' => 50, 'type' => 'varchar'),
 			'controller_id' => array('constraint' => 11, 'type' => 'int'),
-			'data' => array('type' => 'longtext'),
-			'comment' => array('type' => 'text'),
-			'created_at' => array('type' => 'datetime'),
-
+			'data'          => array('type' => 'longtext'),
+			'comment'       => array('type' => 'text'),
+			'created_at'    => array('type' => 'datetime'),
+			'modifier_id'   => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 	}
 
