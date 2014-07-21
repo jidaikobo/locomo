@@ -24,6 +24,10 @@ return array(
 			array(
 				0 => '001_create_revision',
 			),
+			'workflow' => 
+			array(
+				0 => '001_create_workflow',
+			),
 		),
 		'package' => 
 		array(

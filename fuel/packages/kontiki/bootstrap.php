@@ -21,27 +21,35 @@ Autoloader::add_classes(array(
 	'Kontiki\ViewModel'       => __DIR__.'/classes/abstract/view.php',
 
 	//base abstract modules
-	'Kontiki\Controller_Content_Abstract'   => __DIR__.'/modules_abstract/content/classes/controller/Content.php',
-	'Kontiki\Model_Content_Abstract'        => __DIR__.'/modules_abstract/content/classes/model/Content.php',
-	'Kontiki\View_Content_Abstract'         => __DIR__.'/modules_abstract/content/classes/view/Content.php',
+	//content
+	'Kontiki\Controller_Content_Abstract' => __DIR__.'/modules_abstract/content/classes/controller/Content.php',
+	'Kontiki\Model_Content_Abstract'      => __DIR__.'/modules_abstract/content/classes/model/Content.php',
+	'Kontiki\View_Content_Abstract'       => __DIR__.'/modules_abstract/content/classes/view/Content.php',
 
-	'Kontiki\Controller_User_Abstract'      => __DIR__.'/modules_abstract/user/classes/controller/user.php',
-	'Kontiki\Model_User_Abstract'           => __DIR__.'/modules_abstract/user/classes/model/user.php',
-	'Kontiki\View_User_Abstract'            => __DIR__.'/modules_abstract/user/classes/view/user.php',
+	//user
+	'Kontiki\Controller_User_Abstract' => __DIR__.'/modules_abstract/user/classes/controller/user.php',
+	'Kontiki\Model_User_Abstract'      => __DIR__.'/modules_abstract/user/classes/model/user.php',
+	'Kontiki\View_User_Abstract'       => __DIR__.'/modules_abstract/user/classes/view/user.php',
 
+	//usergroup
 	'Kontiki\Controller_Usergroup_Abstract' => __DIR__.'/modules_abstract/usergroup/classes/controller/usergroup.php',
 	'Kontiki\Model_Usergroup_Abstract'      => __DIR__.'/modules_abstract/usergroup/classes/model/usergroup.php',
 	'Kontiki\View_Usergroup_Abstract'       => __DIR__.'/modules_abstract/usergroup/classes/view/usergroup.php',
 
-	'Kontiki\Controller_Acl_Abstract'       => __DIR__.'/modules_abstract/acl/classes/controller/acl.php',
-	'Kontiki\Model_Acl_Abstract'            => __DIR__.'/modules_abstract/acl/classes/model/acl.php',
-	'Kontiki\View_Acl_Abstract'             => __DIR__.'/modules_abstract/acl/classes/view/acl.php',
+	//acl
+	'Kontiki\Controller_Acl_Abstract' => __DIR__.'/modules_abstract/acl/classes/controller/acl.php',
+	'Kontiki\Model_Acl_Abstract'      => __DIR__.'/modules_abstract/acl/classes/model/acl.php',
+	'Kontiki\View_Acl_Abstract'       => __DIR__.'/modules_abstract/acl/classes/view/acl.php',
 
-	'Kontiki\Controller_Revision_Abstract'       => __DIR__.'/modules_abstract/revision/classes/controller/revision.php',
-	'Kontiki\Model_Revision_Abstract'            => __DIR__.'/modules_abstract/revision/classes/model/revision.php',
-	'Kontiki\View_Revision_Abstract'             => __DIR__.'/modules_abstract/revision/classes/view/revision.php',
+	//revision
+	'Kontiki\Controller_Revision_Abstract' => __DIR__.'/modules_abstract/revision/classes/controller/revision.php',
+	'Kontiki\Model_Revision_Abstract'      => __DIR__.'/modules_abstract/revision/classes/model/revision.php',
+	'Kontiki\View_Revision_Abstract'       => __DIR__.'/modules_abstract/revision/classes/view/revision.php',
 
-	'Kontiki\Model_Meta_Abstract'           => __DIR__.'/modules_abstract/meta/classes/model/meta.php',
+	//workflow
+	'Kontiki\Controller_Workflow_Abstract' => __DIR__.'/modules_abstract/workflow/classes/controller/workflow.php',
+	'Kontiki\Model_Workflow_Abstract'      => __DIR__.'/modules_abstract/workflow/classes/model/workflow.php',
+	'Kontiki\View_Workflow_Abstract'       => __DIR__.'/modules_abstract/workflow/classes/view/workflow.php',
 
 	//validation
 	'Kontiki\Validation' => __DIR__.'/classes/validation.php',

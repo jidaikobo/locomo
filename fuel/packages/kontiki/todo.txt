@@ -25,8 +25,6 @@ $this->is_workflowed
 を設定。trueだったら、項目をワークフロー管理する
 ワークフロー管理するコントローラには
 - statusフィールド
-- workflow_route_idフィールド
-- workflow_routeフィールド
 必須とする。
 $this->is_workflowed = true
 なのに、このフィールドがないときにはエラーを出す
@@ -45,6 +43,40 @@ workflowコントローラでは、経路設定ができる
 +       +    +group1 +
 +       +    +user2  +
 +-------+    +-------+
+
+*workflows
+id
+name [XXセンター]
+
+*workflow_steps
+id
+name [室長|事務局|事務局長....]
+workflow_id
+condition [and|or|atlease]
+order
+
+*workflow_step_actions
+id
+step_id
+action [array(notice,mail)]
+
+*workflow_allowers
+id
+step_id
+user_id
+usergroup_id (ユーザグループの誰かが許可したらステップが進む)
+
+*workflow_logs
+id
+workflow_id
+controller
+controller_id
+current_step
+status	[default|apply|rejected|remanded|finished]
+comment
+created_at
+creator_id
+
 
 workflow_routeフィールドはこうなる。
 array(

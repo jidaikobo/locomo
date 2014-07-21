@@ -5,7 +5,7 @@ class Create_revision
 	public function up()
 	{
 		\DBUtil::create_table('revisions', array(
-			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'id'            => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'controller'    => array('constraint' => 50, 'type' => 'varchar'),
 			'controller_id' => array('constraint' => 11, 'type' => 'int'),
 			'data'          => array('type' => 'longtext'),

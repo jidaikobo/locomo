@@ -4,6 +4,7 @@ class Create_users
 {
 	public function up()
 	{
+		//users
 		\DBUtil::create_table('users', array(
 			'id'             => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'user_name'      => array('constraint' => 50, 'type' => 'varchar'),
@@ -19,10 +20,22 @@ class Create_users
 			'creator_id'     => array('constraint' => 5, 'type' => 'int'),
 			'modifier_id'    => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
+
+		//loginlog
+		\DBUtil::create_table('loginlog', array(
+			'loginlog_id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'login_id'    => array('constraint' => 255, 'type' => 'varchar'),
+			'login_pass'  => array('constraint' => 255, 'type' => 'varchar'),
+			'status'      => array('constraint' => 11, 'type' => 'int'),
+			'ipaddress'   => array('constraint' => 255, 'type' => 'varchar'),
+			'add_at'      => array('type' => 'datetime', 'null' => true),
+			'count'       => array('constraint' => 11, 'type' => 'int'),
+		), array('loginlog_id'));
 	}
 
 	public function down()
 	{
 		\DBUtil::drop_table('users');
+		\DBUtil::drop_table('loginlog');
 	}
 }
