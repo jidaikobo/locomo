@@ -3,6 +3,11 @@ namespace Kontiki;
 abstract class Controller_Crud extends \Kontiki\Controller
 {
 	/**
+	 * @var bool is_workflowed
+	 */
+	public $is_workflowed = false;
+
+	/**
 	 * @var array default languages of flash messages
 	 */
 	protected $messages = array(

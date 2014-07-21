@@ -33,16 +33,15 @@ $this->is_workflowed = true
 のコントローラは、フォームにstatusを変更できるスイッチがあったとしても、すべて無効になる。つまり編集者／承認者は項目の可視属性等をまったく変更できない。
 statusはworkflowedかpublicのいずれかしか存在しない。
 
+workflow管理下のコントローラでは、特殊なACLになる。
+- ゲスト（一般公開。すべて承認されたコンテンツ。statusはpublic）
+- 作成者（非公開。statusはworkflowed）
+- 承認者（非公開。statusはworkflowed）
+
+
 workflowコントローラを作る
 workflowコントローラでは、経路設定ができる
 最初に、承認ステップ数を決定する（ステップ数は最低2。1の場合は、自動的に承認される）
-
-              OR or AND
-+-------+    +-------+
-+creator+ -> +user1  +
-+       +    +group1 +
-+       +    +user2  +
-+-------+    +-------+
 
 *workflows
 id
@@ -75,27 +74,3 @@ comment
 created_at
 creator_id
 
-
-workflow_routeフィールドはこうなる。
-array(
-	//最初の配列は、申請済みなら1が入る。そうでなければ0
-	array(1),
-	//以降の配列は属性と承認者情報が入る
-	array(
-		'type' => 'OR',
-		'users' => array(
-			1 => 'YYYY-MM-DD',
-		),
-		'usergroups' => array(),
-	),
-	array(
-		'type' => 'AND',
-		'users' => array(
-			1 => 'YYYY-MM-DD',
-			3 => 'YYYY-MM-DD',
-		),
-		'usergroups' => array(
-			3 => 'YYYY-MM-DD',
-		),
-	),
-)
