@@ -51,9 +51,8 @@
 <?php else: ?>
 <p>ユーザが存在しません。</p>
 
-<?php endif; ?><p>
-	<?php echo Html::anchor('user/create', 'Add new User', array('class' => 'btn btn-success')); ?>
+<?php endif; ?>
 
-</p>
+<p><?php echo Html::anchor('user/create', 'Add new User', array('class' => 'btn btn-success')); ?></p>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

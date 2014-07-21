@@ -6,8 +6,9 @@ class Create_workflow
 	{
 		//workflows
 		\DBUtil::create_table('workflows', array(
-			'id'   => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
-			'name' => array('constraint' => 50, 'type' => 'varchar'),
+			'id'         => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'name'       => array('constraint' => 50, 'type' => 'varchar'),
+			'deleted_at' => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 
 		//workflow_steps
@@ -28,11 +29,9 @@ class Create_workflow
 
 		//workflow_allowers
 		\DBUtil::create_table('workflow_allowers', array(
-			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'step_id'      => array('constraint' => 11, 'type' => 'int'),
 			'user_id'      => array('constraint' => 11, 'type' => 'int'),
-			'usergroup_id' => array('constraint' => 11, 'type' => 'int'),
-		), array('id'));
+		), array());
 
 		//workflow_logs
 		\DBUtil::create_table('workflow_logs', array(

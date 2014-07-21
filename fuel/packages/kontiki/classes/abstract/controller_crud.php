@@ -130,7 +130,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_view($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
@@ -243,7 +243,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 						'success',
 						sprintf($this->messages['create_success'], self::$nicename, $obj->id)
 					);
-					\Response::redirect($this->request->module);
+					\Response::redirect(\Uri::create($this->request->module.'/edit/'.$obj->id));
 				else:
 					\Session::set_flash(
 						'error',
@@ -331,7 +331,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_edit($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ( ! $obj = $model::find_item($id)):
 			\Session::set_flash(
@@ -352,7 +352,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_delete($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if($obj = $model::find_item($id)):
 			//pre_delete_hook
@@ -374,7 +374,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			);
 		endif;
 
-		return \Response::redirect($this->request->module);
+		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
 	}
 
 	/**
@@ -383,9 +383,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_deleted($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_deleted',
-			'mode'    => 'deleted',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_deleted',
+			'template' => 'index_admin',
+			'mode'     => 'deleted',
 		);
 		return self::index_core($args);
 	}
@@ -396,9 +397,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_yet($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_yet',
-			'mode'    => 'yet',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_yet',
+			'template' => 'index_admin',
+			'mode'     => 'yet',
 		);
 		return self::index_core($args);
 	}
@@ -409,9 +411,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_expired($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_expired',
-			'mode'    => 'expired',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_expired',
+			'template' => 'index_admin',
+			'mode'     => 'expired',
 		);
 		return self::index_core($args);
 	}
@@ -422,9 +425,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_invisible($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_invisible',
-			'mode'    => 'invisible',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_invisible',
+			'template' => 'index_admin',
+			'mode'     => 'invisible',
 		);
 		return self::index_core($args);
 	}
@@ -435,14 +439,14 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_confirm_delete($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
 				'error',
 				sprintf($this->messages['view_error'], self::$nicename, $id)
 			);
-			\Response::redirect($this->request->module);
+			\Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
 		endif;
 
 		//view
@@ -460,7 +464,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_undelete($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ($obj = $model::find_item($id)):
 			$obj->undelete();
@@ -476,7 +480,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			);
 		endif;
 
-		\Response::redirect($this->request->module);
+		return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 	}
 
 	/**
@@ -485,7 +489,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_delete_deleted($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ($obj = $model::find_item($id)):
 			//本来は$obj->purge()で行うべきだが、なぜか削除されないのでとりあえず別の関数で対応する。このため現在は、Cascading deleteの恩恵を受けられない
@@ -509,7 +513,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			);
 		endif;
 
-		return \Response::redirect($this->request->module.'/index_deleted/');
+		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
 	}
 
 	/**
@@ -517,7 +521,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	 */
 	public function action_index_revision($id = null)
 	{
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 		$model = \Revision\Model_Revision::forge();
 
 		if ( ! $revisions = $revisions = $model::find_revisions($this->request->module, $id)):
@@ -547,7 +551,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	 */
 	public function action_view_revision($id = null)
 	{
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 		$model = \Revision\Model_Revision::forge();
 
 		if ( ! $revisions = $revisions = $model::find_revision($id)):
@@ -555,7 +559,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 				'error',
 				sprintf($this->messages['revision_error'], self::$nicename, $id)
 			);
-			\Response::redirect($this->request->module);
+			\Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 		endif;
 
 		//unserialize

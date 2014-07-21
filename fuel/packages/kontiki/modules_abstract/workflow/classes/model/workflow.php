@@ -6,69 +6,149 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 
 	protected static $_properties = array(
 		'id',
-		'controller',
-		'controller_id',
-		'data',
-		'comment',
-		'created_at',
+		'name',
+		'deleted_at',
+	);
+
+	protected static $_soft_delete = array(
+		'deleted_field'   => 'deleted_at',
+		'mysql_timestamp' => true,
 	);
 
 	/**
-	 * find_revisions()
+	 * find_workflow_setting()
 	*/
-	public static function find_revisions($controller = null, $controller_id = null)
+	public static function find_workflow_setting($id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect($this->request->module);
+		if(is_null($id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 
-		//リビジョンの一覧を取得
+		//workflow_steps取得
 		$q = \DB::select('*');
-		$q->from('revisions');
-		$q->where('controller', $controller);
-		$q->where('controller_id', $controller_id);
-		return $q->as_object()->execute()->as_array();
+		$q->from('workflow_steps');
+		$q->where('workflow_id', $id);
+		$q->order_by('order', 'ASC');
+		$steps = $q->execute()->as_array();
+		
+		$retvals = array();
+		$n = 1;
+		foreach($steps as $k => $step):
+			$retvals[$n] = $step;
+			$step_id = $step['id'];
+
+			//workflow_step_actions取得
+			$q = \DB::select('action');
+			$q->from('workflow_step_actions');
+			$q->where('step_id', $step_id);
+			$action = $q->execute()->current();
+			$retvals[$n]['actions'] = $action['action'];
+
+			//workflow_allowers取得
+			$q = \DB::select('user_id');
+			$q->from('workflow_allowers');
+			$q->where('step_id', $step_id);
+			$allowers = $q->execute()->as_array();
+			$allowers = \Arr::flatten($allowers);
+			$allower_str = join(',',$allowers);
+			$retvals[$n]['allowers'] = $allower_str;
+
+			$n++;
+		endforeach;
+		return $retvals;
 	}
 
 	/**
-	 * find_revision()
+	 * update_workflow()
 	*/
-	public static function find_revision($id = null)
+	public static function update_workflow($workflow_id = null, $args = null)
 	{
-		is_null($id) and \Response::redirect($this->request->module);
+		if(is_null($workflow_id) || is_null($args)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 
-		//リビジョンを取得
-		$q = \DB::select('*');
-		$q->from('revisions');
-		$q->where('id', $id);
-		return $q->as_object()->execute()->current();
+		//loop
+		foreach($args as $order => $arg):
+			//workflow_stepsテーブルの確認
+			$q = \DB::select('id');
+			$q->from('workflow_steps');
+			$q->where('workflow_id', $workflow_id);
+			$q->where('order', $order);
+			$step_id = $q->execute()->current();
+
+			//値の準備
+			$set = array(
+				'name'        => $arg['name'],
+				'workflow_id' => $workflow_id,
+				'condition'   => $arg['condition'],
+				'order'       => $order,
+			);
+
+			if($step_id):
+				//更新
+				$q = \DB::update();
+				$q->table('workflow_steps');
+				$q->set($set);
+				$q->where('id', $step_id['id']);
+				$q->execute();
+			else:
+				//新規作成
+				$q = \DB::insert();
+				$q->table('workflow_steps');
+				$q->set($set);
+				$q->execute();
+
+				//id
+				$q = \DB::select(\DB::Expr('last_insert_id()'));
+				$q->from('workflow_steps');
+				$last_insert_id = $q->execute()->current();
+				$step_id['id'] = $last_insert_id['last_insert_id()'];
+			endif;
+
+			//workflow_step_actionsテーブルの確認
+			$q = \DB::select('id');
+			$q->from('workflow_step_actions');
+			$q->where('step_id', $step_id['id']);
+			$actions_id = $q->execute()->current();
+
+			//値の準備
+			$set = array(
+				'step_id' => $step_id['id'],
+				'action'  => $arg['actions'],
+			);
+			if($actions_id):
+				//更新
+				$q = \DB::update();
+				$q->table('workflow_step_actions');
+				$q->set($set);
+				$q->where('id', $actions_id['id']);
+				$q->execute();
+			else:
+				//新規作成
+				$q = \DB::insert();
+				$q->table('workflow_step_actions');
+				$q->set($set);
+				$q->execute();
+			endif;
+
+			//workflow_allowersテーブルを初期化
+			$q = \DB::delete();
+			$q->table('workflow_allowers');
+			$q->where('step_id', $step_id['id']);
+			$q->execute();
+
+			foreach(explode(',',$arg['allowers']) as $allower):
+				$allower = intval($allower);
+				//値の準備
+				$set = array(
+					'step_id' => $step_id['id'],
+					'user_id' => $allower,
+				);
+				//新規作成
+				$q = \DB::insert();
+				$q->table('workflow_allowers');
+				$q->set($set);
+				$q->execute();
+			endforeach;
+		endforeach;
+
+		return true;
 	}
 
-	/**
-	 * insert_revision()
-	*/
-	public function insert_revision()
-	{
-		//当該コンテンツの最新データを取得
-		$q = \DB::select('created_at');
-		$q->from('revisions');
-		$q->where('controller', $this->controller);
-		$q->where('controller_id', $this->controller_id);
-		$result = $q->execute()->current();
-		$created_at = $result['created_at'];
-
-		//configからrevision間隔を取得
-		$config = \Config::load(dirname(dirname(__DIR__)).'/config/revision.php');
-
-		//最新データと規定時間との比較 - $created_at がゼロのときは初めて
-		if(
-			$created_at && strtotime($created_at) >= time() - intval($config['revision_interval']) &&
-			empty($this->comment)
-		):
-			return;
-		endif;
-	
-		//保存
-		$this->save();
-
-		return;
-	}
 }

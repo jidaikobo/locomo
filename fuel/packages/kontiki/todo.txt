@@ -61,10 +61,8 @@ step_id
 action [array(notice,mail)]
 
 *workflow_allowers
-id
 step_id
 user_id
-usergroup_id (ユーザグループの誰かが許可したらステップが進む)
 
 *workflow_logs
 id
