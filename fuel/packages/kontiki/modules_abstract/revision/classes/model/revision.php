@@ -56,7 +56,9 @@ class Model_Revision_Abstract extends \Kontiki\Model
 		$created_at = $result['created_at'];
 
 		//configからrevision間隔を取得
-		$config = \Config::load(dirname(dirname(__DIR__)).'/config/revision.php');
+		$config_path = PKGPATH.'kontiki/modules/revision/config/revision.php';
+		$config_path_default = PKGPATH.'kontiki/modules_default/revision/config/revision.php';
+		$config = file_exists($config_path) ? \Config::load($config_path) : \Config::load($config_path_default);
 
 		//最新データと規定時間との比較 - $created_at がゼロのときは初めて
 		if(

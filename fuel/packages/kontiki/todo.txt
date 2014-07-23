@@ -37,6 +37,7 @@ workflow管理下のコントローラでは、特殊なACLになる。
 - ゲスト（一般公開。すべて承認されたコンテンツ。statusはpublic）
 - 作成者（非公開。statusはworkflowed）
 - 承認者（非公開。statusはworkflowed）
+編集中はeditingとか？
 
 
 workflowコントローラを作る
@@ -57,7 +58,7 @@ order
 *workflow_step_actions
 id
 step_id
-action [array(notice,mail)]
+action [array(mail)]
 
 *workflow_allowers
 step_id
@@ -69,8 +70,27 @@ workflow_id
 controller
 controller_id
 current_step
-status	[default|apply|rejected|remanded|finished]
+status	[default|apply|approve|reject|remand|finish]
 comment
 created_at
 creator_id
+
+却下はゴミ箱
+差し戻し先は選べる。
+柴田が推敲を経て（-/2）、申請する（0/2）
+有松承認（1/2）、石田が有松に差し戻すと、柴田が申請した段階（0/2）になる。
+有松、石田が柴田に差し戻すと、申請前（-/2）の状態になり、編集可能になる。
+申請された項目は編集できない。
+編集可能状態（-/2）は、ワークフロー経路の変更もできる。
+
+ワークフロー管理されたコントローラでは、（-/N）のコンテンツ（申請前）の一覧
+ワークフロー管理されたコントローラでは、（n/N）のコンテンツ（承認進行中）の一覧
+ワークフロー管理されたコントローラでは、（n/N）のコンテンツ（自分が承認すべき項目）の一覧
+
+をみられる
+
+recruit
+recrute
+
+
 
