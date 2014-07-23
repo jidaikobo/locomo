@@ -3,16 +3,6 @@ namespace Kontiki;
 abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
-	* @var string name for human
-	*/
-	public static $nicename = 'アクセス権管理';
-
-	/**
-	* @var string adminindex
-	*/
-	public static $adminindex = 'controller_index';
-
-	/**
 	 * router()
 	 * 
 	 */
@@ -88,10 +78,10 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 		//view
 		$view = \View::forge('controller_index');
 		$view->set_global('title', 'アクセス権限管理');
-		$view->set('controllers',       $controllers);
-		$view->set('controllers_owner', $controllers_owner);
-		$view->set('usergroups',        $usergroups);
-		$view->set('users',             $users);
+		$view->set('controllers4acl',       $controllers);
+		$view->set('controllers_owner4acl', $controllers_owner);
+		$view->set('usergroups',            $usergroups);
+		$view->set('users',                 $users);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}

@@ -39,7 +39,7 @@
 <?php echo $pagination; ?>
 
 <?php else: ?>
-<p>ユーザが存在しません。</p>
+<p>xxxが存在しません。</p>
 
 <?php endif; ?>
 

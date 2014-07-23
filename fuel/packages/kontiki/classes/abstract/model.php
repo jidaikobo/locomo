@@ -14,6 +14,17 @@ abstract class Model extends \Orm\Model_Soft
 	}
 
 	/**
+	 * get_primary_key()
+	 *
+	 * @return  str
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function get_primary_key()
+	{
+		return static::$_primary_key;
+	}
+
+	/**
 	 * get_original_values()
 	 *
 	 * @return  array

@@ -3,6 +3,11 @@ namespace Kontiki;
 abstract class Controller_Crud extends \Kontiki\Controller
 {
 	/**
+	 * @var bool is_workflowed
+	 */
+	public $is_workflowed = false;
+
+	/**
 	 * @var array default languages of flash messages
 	 */
 	protected $messages = array(
@@ -18,6 +23,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 		'undelete_error'   => '%1$sの #%2$d を復活できませんでした',
 		'purge_success'    => '%1$sの #%2$d を完全に削除しました',
 		'purge_error'      => '%1$sの #%2$d を削除できませんでした',
+		'revision_error'   => '%1$sの #%2$d の編集履歴を取得できませんでした',
 	);
 
 	/**
@@ -36,6 +42,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 		'view_deleted'    => '%1$s（削除済み）',
 		'edit_deleted'    => '%1$s（削除済み）の編集',
 		'confirm_delete'  => '%1$sを完全に削除してよろしいですか？',
+		'revision'        => '%1$sの編集履歴',
 	);
 
 	/**
@@ -128,7 +135,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_view($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
@@ -156,11 +163,38 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	}
 
 	/**
+	 * modify_array()
+	 * なんだかいかにもアドホックなメソッドだけど許して……
+	 */
+	public function modify_array($arr, $mode = null)
+	{
+		return $arr;
+	}
+
+	/**
 	 * post_save_hook()
 	 */
 	public function post_save_hook($obj = null, $mode = 'edit')
 	{
 		if($obj == null) \Response::redirect($this->request->module);
+
+		//actionsetでrevisionが有効だったらrevisionを追加する
+		if( ! array_key_exists ('view_revision' , self::$actionset)):
+			return $obj;
+		else:
+			$primary_key = $obj::get_primary_key();
+
+			$args['controller']    = $this->request->module;
+			$args['controller_id'] = $obj->$primary_key[0];
+			$args['data']          = serialize($obj);
+			$args['comment']       = \Input::post('revision_comment') ?: '';
+			$args['created_at']    = date('Y-m-d H:i:s');
+			$args['modifier_id']   = isset($obj->modifier_id) ? $obj->modifier_id : 0;
+			$args                  = $this->modify_array($args, 'insert_revision');
+			$model = \Revision\Model_Revision::forge($args);
+			$model->insert_revision();
+		endif;
+
 		return $obj;
 	}
 
@@ -199,8 +233,14 @@ abstract class Controller_Crud extends \Kontiki\Controller
 
 				$obj = $model::forge($args);
 
+				//pre_save_hook
+				$obj = $this->pre_save_hook($obj, 'create');
+
 				if ($obj and $obj->save()):
-					
+
+					//post_save_hook
+					$obj = $this->post_save_hook($obj, 'create');
+
 					//save relations
 //					$obj = $model::insert_relations($obj->id);
 					
@@ -208,7 +248,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 						'success',
 						sprintf($this->messages['create_success'], self::$nicename, $obj->id)
 					);
-					\Response::redirect($this->request->module);
+					\Response::redirect(\Uri::create($this->request->module.'/edit/'.$obj->id));
 				else:
 					\Session::set_flash(
 						'error',
@@ -296,7 +336,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_edit($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ( ! $obj = $model::find_item($id)):
 			\Session::set_flash(
@@ -317,7 +357,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_delete($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if($obj = $model::find_item($id)):
 			//pre_delete_hook
@@ -339,7 +379,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			);
 		endif;
 
-		return \Response::redirect($this->request->module);
+		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
 	}
 
 	/**
@@ -348,9 +388,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_deleted($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_deleted',
-			'mode'    => 'deleted',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_deleted',
+			'template' => 'index_admin',
+			'mode'     => 'deleted',
 		);
 		return self::index_core($args);
 	}
@@ -361,9 +402,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_yet($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_yet',
-			'mode'    => 'yet',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_yet',
+			'template' => 'index_admin',
+			'mode'     => 'yet',
 		);
 		return self::index_core($args);
 	}
@@ -374,9 +416,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_expired($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_expired',
-			'mode'    => 'expired',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_expired',
+			'template' => 'index_admin',
+			'mode'     => 'expired',
 		);
 		return self::index_core($args);
 	}
@@ -387,9 +430,10 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_index_invisible($pagenum = 1)
 	{
 		$args = array(
-			'pagenum' => $pagenum,
-			'action'  => 'index_invisible',
-			'mode'    => 'invisible',
+			'pagenum'  => $pagenum,
+			'action'   => 'index_invisible',
+			'template' => 'index_admin',
+			'mode'     => 'invisible',
 		);
 		return self::index_core($args);
 	}
@@ -400,14 +444,14 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_confirm_delete($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
 				'error',
 				sprintf($this->messages['view_error'], self::$nicename, $id)
 			);
-			\Response::redirect($this->request->module);
+			\Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
 		endif;
 
 		//view
@@ -425,7 +469,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_undelete($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ($obj = $model::find_item($id)):
 			$obj->undelete();
@@ -441,7 +485,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			);
 		endif;
 
-		\Response::redirect($this->request->module);
+		return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 	}
 
 	/**
@@ -450,7 +494,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function action_delete_deleted($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect($this->request->module);
+		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ($obj = $model::find_item($id)):
 			//本来は$obj->purge()で行うべきだが、なぜか削除されないのでとりあえず別の関数で対応する。このため現在は、Cascading deleteの恩恵を受けられない
@@ -474,7 +518,69 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			);
 		endif;
 
-		return \Response::redirect($this->request->module.'/index_deleted/');
+		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
+	}
+
+	/**
+	 * action_index_revision()
+	 */
+	public function action_index_revision($id = null)
+	{
+		is_null($id) and \Response::redirect(\Uri::base());
+		$model = \Revision\Model_Revision::forge();
+
+		if ( ! $revisions = $revisions = $model::find_revisions($this->request->module, $id)):
+			\Session::set_flash(
+				'error',
+				sprintf($this->messages['revision_error'], self::$nicename, $id)
+			);
+			\Response::redirect($this->request->module);
+		endif;
+
+		//view
+		$tpl_path         = PKGPATH.'kontiki/modules/revision/views/index.php';
+		$tpl_path_default = PKGPATH.'kontiki/modules_default/revision/views/index.php';
+		if(file_exists($tpl_path)):
+			$view = \View::forge($tpl_path);
+		else:
+			$view = \View::forge($tpl_path_default);
+		endif;
+		$view->set_global('items', $revisions);
+		$view->set_global('title', sprintf($this->titles['revision'], self::$nicename));
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	 * action_view_revision()
+	 */
+	public function action_view_revision($id = null)
+	{
+		is_null($id) and \Response::redirect(\Uri::base());
+		$model = \Revision\Model_Revision::forge();
+
+		if ( ! $revisions = $revisions = $model::find_revision($id)):
+			\Session::set_flash(
+				'error',
+				sprintf($this->messages['revision_error'], self::$nicename, $id)
+			);
+			\Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		endif;
+
+		//unserialize
+		$data                = unserialize($revisions->data);
+		$data->controller    = $revisions->controller;
+		$data->controller_id = $revisions->controller_id;
+		$data->comment       = $revisions->comment;
+		$data                = $this->modify_array($data, 'view_revision');
+
+		//view
+		$view = \View::forge('edit');
+		$view->set_global('item', $data);
+		$view->set_global('title', sprintf($this->titles['revision'], self::$nicename));
+		$view->set_global('is_revision', true);
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**

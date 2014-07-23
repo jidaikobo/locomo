@@ -13,6 +13,11 @@ abstract class Model_Usergroup_Abstract extends \Kontiki\Model
 		'updated_at',
 	);
 
+	protected static $_soft_delete = array(
+		'deleted_field'   => 'deleted_at',
+		'mysql_timestamp' => true,
+	);
+
 	protected static $_observers = array(
 		'Orm\Observer_CreatedAt' => array(
 			'events' => array('before_insert'),
