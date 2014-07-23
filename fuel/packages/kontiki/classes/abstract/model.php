@@ -119,7 +119,7 @@ abstract class Model extends \Orm\Model_Soft
 
 		//ワークフロー処理する（workflow_statusがある）コントローラで、in_progressだったらstatusをinvisibleに
 		if(isset($item->workflow_status) && $item->workflow_status == 'in_progress'):
-			$item->status = 'invisible';
+			$status = 'invisible';
 		endif;
 
 		//まず一般表示権限を確認

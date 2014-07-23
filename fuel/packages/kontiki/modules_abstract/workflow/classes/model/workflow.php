@@ -16,6 +16,115 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	);
 
 	/**
+	 * get_current_step()
+	*/
+	public static function get_current_step($controller = null, $controller_id = null)
+	{
+		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+
+		//コントローラとidからworkflow_logs取得
+		$q = \DB::select('id','workflow_id','current_step');
+		$q->from('workflow_logs');
+		$q->where('controller', $controller);
+		$q->where('controller_id', $controller_id);
+		$log = $q->execute()->current();
+
+		//logが存在していない場合は申請前コンテンツなので、-1/Nを返す
+		$step = '-1/N';
+
+		//logが存在していたら、全体のステップ数（N）を確認し、current_step/Nを返す
+		if($log):
+			$total_step = self::get_total_step($log['workflow_id']);
+			$step = $log['current_step'].'/'.$total_step;
+		endif;
+
+		return $step;
+	}
+
+	/**
+	 * set_route()
+	 * 経路設定。
+	*/
+	public static function set_route($route_id = null, $controller = null, $controller_id = null)
+	{
+		if(is_null($route_id) || is_null($controller) || is_null($controller_id))
+			\Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+
+		//値の準備
+		$set = array(
+			'workflow_id'   => $route_id,
+			'controller'    => $controller,
+			'controller_id' => $controller_id,
+			'current_step'  => '-1',
+			'status'        => '',
+			'comment'       => '',
+			'created_at'    => date('Y-m-d H:i:s'),
+			'creator_id'    => \User\Controller_User::$userinfo['user_id'],
+		);
+
+		//insert
+		$q = \DB::insert();
+		$q->table('workflow_logs');
+		$q->set($set);
+		$q->execute();
+	}
+
+	/**
+	 * get_route()
+	*/
+	public static function get_route($controller = null, $controller_id = null)
+	{
+		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+
+		//ワークフローの全体のステップを取得
+		$q = \DB::select('id');
+		$q->from('workflow_logs');
+		$q->where('controller', $controller);
+		$q->where('controller_id', $controller_id);
+		$id = $q->execute()->current();
+
+		return $id;
+	}
+
+	/**
+	 * get_total_step()
+	*/
+	public static function get_total_step($workflow_id = null)
+	{
+		if(is_null($workflow_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+
+		//ワークフローの全体のステップを取得
+		$q = \DB::select(\DB::expr('count(id)'));
+		$q->from('workflow_steps');
+		$q->where('workflow_id', $workflow_id);
+		$count = $q->execute()->current();
+
+		return $count ? $count['count(id)'] : false ;
+	}
+
+	/**
+	 * increase_step()
+	*/
+	public static function increase_step($current_step = null, $log_id = null)
+	{
+		if(is_null($log_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		//current_stepを加算
+
+	}
+
+	/**
+	 * decrease_step()
+	*/
+	public static function decrease_step($current_step = 0, $log_id = null)
+	{
+		if(is_null($log_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		//current_stepが0だったらそのまま
+
+		//current_stepを減算
+
+	}
+
+	/**
 	 * find_workflow_setting()
 	*/
 	public static function find_workflow_setting($id = null)

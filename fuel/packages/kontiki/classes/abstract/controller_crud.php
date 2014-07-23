@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Controller_Crud extends \Kontiki\Controller
+abstract class Controller_Crud extends \Kontiki\Controller_Workflow
 {
 	/**
 	 * @var bool is_workflowed
@@ -12,7 +12,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	 */
 	protected $messages = array(
 		'auth_error'       => '権限がありません',
-		'view_error'       => '%1$s #%2$d は見つかりませんでした',
+		'view_error'       => '%1$s #%2$d は表示できません',
 		'create_success'   => '%1$sに #%2$d を新規作成しました',
 		'create_error'     => '%1$sに保存できませんでした',
 		'edit_success'     => '%1$sの #%2$d を更新しました',
@@ -164,7 +164,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 
 	/**
 	 * modify_array()
-	 * override前提。revision関係で使う。ユーザモジュールなんかで使っている
+	 * override前提。主にrevision関係で使う。ユーザモジュールなんかで使っている
 	 * なんだかいかにもアドホックなメソッドだけど許して……
 	 */
 	public function modify_array($arr, $mode = null)
@@ -178,6 +178,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 	public function post_save_hook($obj = null, $mode = 'edit')
 	{
 		if($obj == null) \Response::redirect($this->request->module);
+		$obj = parent::post_save_hook($obj, $mode);
 
 		//actionsetでrevisionが有効だったらrevisionを追加する
 		if( ! array_key_exists ('view_revision' , self::$actionset)):
@@ -194,20 +195,6 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			$args                  = $this->modify_array($args, 'insert_revision');
 			$model = \Revision\Model_Revision::forge($args);
 			$model->insert_revision();
-		endif;
-
-		//workflow
-		if($this->is_workflowed):
-			//error
-			$model = $this->model_name ;
-			if( ! \DBUtil::field_exists($model::get_table_name(), array('status'))):
-				die('ワークフロー管理するコントローラにはworkflow_statusフィールドが必要です。');
-			endif;
-			//承認段階を確認し、最終承認がまだであれば常にworkflow_statusをin_progressにする
-			if(0):
-				$obj->workflow_status = 'in_progress';
-				$obj->save();
-			endif;
 		endif;
 
 		return $obj;

@@ -160,8 +160,8 @@ abstract class ViewModel extends \ViewModel
 			$retvals['index']   = array();
 			$retvals['control'] = array();
 			foreach($obj::$actionset as $v):
-				if( ! $v['url']) continue;
-				if(isset($v['is_index'])):
+				if( ! @$v['url']) continue;
+				if(@$v['is_index']):
 					$retvals['index'][$v['url']] = $v;
 				else:
 					$retvals['control'][$v['url']] = $v;

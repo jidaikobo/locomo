@@ -9,24 +9,26 @@ class Actionset
 	public static function actionItems($controller = null, $item = null)
 	{
 		$actions = (object) array();
-		$actions->index           = self::index($controller, $item);
-		$actions->index_admin     = self::index_admin($controller, $item);
-		$actions->view            = self::view($controller, $item);
-		$actions->index_deleted   = self::index_deleted($controller, $item);
-		$actions->view_deleted    = self::view_deleted($controller, $item);
-		$actions->index_expired   = self::index_expired($controller, $item);
-		$actions->view_expired    = self::view_expired($controller, $item);
-		$actions->index_yet       = self::index_yet($controller, $item);
-		$actions->view_yet        = self::view_yet($controller, $item);
-		$actions->index_invisible = self::index_invisible($controller, $item);
-		$actions->view_invisible  = self::view_invisible($controller, $item);
-		$actions->edit            = self::edit($controller, $item);
-		$actions->create          = self::create($controller, $item);
-		$actions->delete          = self::delete($controller, $item);
-		$actions->undelete        = self::undelete($controller, $item);
-		$actions->delete_deleted  = self::delete_deleted($controller, $item);
-		$actions->view_revision   = self::view_revision($controller, $item);
-		$actions->add_testdata    = self::add_testdata($controller, $item);
+		$actions->index            = self::index($controller, $item);
+		$actions->index_admin      = self::index_admin($controller, $item);
+		$actions->view             = self::view($controller, $item);
+		$actions->index_deleted    = self::index_deleted($controller, $item);
+		$actions->view_deleted     = self::view_deleted($controller, $item);
+		$actions->index_expired    = self::index_expired($controller, $item);
+		$actions->view_expired     = self::view_expired($controller, $item);
+		$actions->index_yet        = self::index_yet($controller, $item);
+		$actions->view_yet         = self::view_yet($controller, $item);
+		$actions->index_invisible  = self::index_invisible($controller, $item);
+		$actions->view_invisible   = self::view_invisible($controller, $item);
+		$actions->edit             = self::edit($controller, $item);
+		$actions->create           = self::create($controller, $item);
+		$actions->delete           = self::delete($controller, $item);
+		$actions->undelete         = self::undelete($controller, $item);
+		$actions->delete_deleted   = self::delete_deleted($controller, $item);
+		$actions->view_revision    = self::view_revision($controller, $item);
+		$actions->add_testdata     = self::add_testdata($controller, $item);
+		$actions->workflow         = self::workflow($controller, $item);
+		$actions->workflow_actions = self::workflow_actions($controller, $item);
 
 //		$actions->download_files = self::download_files($controller, $item);
 //		$actions->upload         = self::upload($controller, $item);
@@ -251,6 +253,68 @@ class Actionset
 				'index_yet',
 				'view_yet',
 			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * workflow()
+	 * @return  array
+	 */
+	private static function workflow($controller, $item)
+	{
+		$retvals = array(
+			'is_index'     => false,
+			'url'          => '',
+			'id_segment'   => null,
+			'action_name'  => 'ワークフロー作業',
+			'menu_str'     => 'ワークフロー作業',
+			'explanation'  => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。不可視項目の閲覧権限などに依存します。',
+			'dependencies' => array(
+				'view',
+				'edit',
+				'create',
+				'index_admin',
+				'index_invisible',
+				'view_invisible',
+				'apply',
+				'route',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * workflow_actions()
+	 * @return  array
+	 */
+	private static function workflow_actions($controller, $item)
+	{
+		if(is_null($controller) || empty($item)) return array('dependencies'=>array());
+
+		//idがあれば申請資格がある
+		$url = isset($item->id) ? "{$controller}/apply/{$item->id}" : null ;
+		$menu_str = '承認申請';
+
+		//ワークフロー段階が0/n以外なら申請資格はない
+		
+
+		//経路が設定されていなければ、申請できない。経路設定URLを表示
+		if(\Kontiki\Model_Workflow_Abstract::get_current_step($controller, $item->id) == '-1/N'):
+			$url = "{$controller}/route/{$item->id}" ;
+			$menu_str = '経路設定';
+		endif;
+
+
+		$retvals = array(
+			'is_acl'       => false,
+			'is_index'     => false,
+			'url'          => $url,
+			'id_segment'   => null,
+			'action_name'  => 'ワークフロー作業（承認申請）',
+			'menu_str'     => $menu_str,
+			'explanation'  => 'ワークフロー管理下コントローラにおける承認申請です。「ワークフロー作業」を有効にすると自動的に有効になります。',
+			'dependencies' => array()
 		);
 		return $retvals;
 	}

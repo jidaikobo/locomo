@@ -116,8 +116,8 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 		$q = \DB::select('action');
 		$q->from('acls');
 		$q->where('controller', '=', $controller);
-		if($usergroup_id) $q->where('usergroup_id', '=', $usergroup_id);
-		if($user_id) $q->where('user_id', '=', $user_id);
+		if( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
+		if( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
 		$q->where('owner_auth','=', null);
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
@@ -201,8 +201,9 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 		if (\Input::method() == 'POST'):
 			//まずすべて削除
 			$q = \DB::delete('acls');
-			if($usergroup_id) $q->where('usergroup_id', '=', $usergroup_id);
-			if($user_id) $q->where('user_id', '=', $user_id);
+			$q->where('controller', '=', $controller);
+			if( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
+			if( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
 			$q->where('owner_auth', '=', null);
 			$q->execute();
 
