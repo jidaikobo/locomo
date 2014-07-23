@@ -164,6 +164,7 @@ abstract class Controller_Crud extends \Kontiki\Controller
 
 	/**
 	 * modify_array()
+	 * override前提。revision関係で使う。ユーザモジュールなんかで使っている
 	 * なんだかいかにもアドホックなメソッドだけど許して……
 	 */
 	public function modify_array($arr, $mode = null)
@@ -193,6 +194,20 @@ abstract class Controller_Crud extends \Kontiki\Controller
 			$args                  = $this->modify_array($args, 'insert_revision');
 			$model = \Revision\Model_Revision::forge($args);
 			$model->insert_revision();
+		endif;
+
+		//workflow
+		if($this->is_workflowed):
+			//error
+			$model = $this->model_name ;
+			if( ! \DBUtil::field_exists($model::get_table_name(), array('status'))):
+				die('ワークフロー管理するコントローラにはworkflow_statusフィールドが必要です。');
+			endif;
+			//承認段階を確認し、最終承認がまだであれば常にworkflow_statusをin_progressにする
+			if(0):
+				$obj->workflow_status = 'in_progress';
+				$obj->save();
+			endif;
 		endif;
 
 		return $obj;

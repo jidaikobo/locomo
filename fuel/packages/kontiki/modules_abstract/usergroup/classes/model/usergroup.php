@@ -7,6 +7,7 @@ abstract class Model_Usergroup_Abstract extends \Kontiki\Model
 	protected static $_properties = array(
 		'id',
 		'usergroup_name',
+		'workflow_status',
 		'deleted_at',
 		'created_at',
 		'expired_at',

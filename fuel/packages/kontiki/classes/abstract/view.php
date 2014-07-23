@@ -113,7 +113,7 @@ abstract class ViewModel extends \ViewModel
 						$controllers[$n]['order']    = $config['order_in_menu'];
 					else:
 						//管理者向けコントローラは表示しない
-						if($settings['is_admin_only']) continue;
+						if(@$settings['is_admin_only']) continue;
 	
 						//adminindexが許されていない場合は表示しない
 						if( ! in_array($url, $userinfo['acls'])) continue;

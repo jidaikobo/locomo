@@ -106,16 +106,17 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 
 		//guest
 		if( ! self::$userinfo['user_id']):
-			self::$userinfo['user_id'] = null;
+			self::$userinfo['user_id'] = 0;
 		endif;
 		self::$userinfo['usergroup_ids'][] = 0;
 
 		//acl
+		$acls = array('content/home');
 		$q = \DB::select('controller','action');
 		$q->from('Acls');
 		$q->where('usergroup_id', 'in', self::$userinfo['usergroup_ids']);
 		$q->or_where('user_id', '=', self::$userinfo['user_id']);
-		$acls = array('content/home');
+
 		foreach($q->execute()->as_array() as $v):
 			$acls[] = $v['controller'].'/'.$v['action'];
 		endforeach;
