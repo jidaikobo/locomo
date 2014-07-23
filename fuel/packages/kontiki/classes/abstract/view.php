@@ -162,15 +162,11 @@ abstract class ViewModel extends \ViewModel
 			foreach($obj::$actionset as $v):
 				if( ! $v['url']) continue;
 				if(isset($v['is_index'])):
-					$retvals['index'][] = $v;
+					$retvals['index'][$v['url']] = $v;
 				else:
-					$retvals['control'][] = $v;
+					$retvals['control'][$v['url']] = $v;
 				endif;
 			endforeach;
-
-			//URLが同じアクションをまとめる
-			$retvals['index']   = \Arr::assoc_to_keyval($retvals['index'], 'url', 'menu_str');
-			$retvals['control'] = \Arr::assoc_to_keyval($retvals['control'], 'url', 'menu_str');
 
 			return $retvals;
 		};

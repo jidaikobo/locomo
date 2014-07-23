@@ -30,18 +30,22 @@ if($is_user_logged_in):
 	if($actions['index']):
 		$html.= '<h3>各種インデクス</h3>';
 		$html.= '<ul>';
-		foreach($actions['index'] as $url => $menu_str):
+		foreach($actions['index'] as $url => $v):
 			if( ! $url) continue;
-			$html.= "<li><a href=\"{$home_uri}{$url}\">{$menu_str}</a></li>";
+			$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
+			$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
+			$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
 		endforeach;
 		$html.= '</ul>';
 	endif;
 	if($actions['control']):
 		$html.= '<h3>各種コントロール</h3>';
 		$html.= '<ul>';
-		foreach($actions['control'] as $url => $menu_str):
+		foreach($actions['control'] as $url => $v):
 			if( ! $url) continue;
-			$html.= "<li><a href=\"{$home_uri}{$url}\">{$menu_str}</a></li>";
+			$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
+			$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
+			$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
 		endforeach;
 		$html.= '</ul>';
 	endif;

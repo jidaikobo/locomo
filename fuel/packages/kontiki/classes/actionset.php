@@ -391,6 +391,7 @@ class Actionset
 		$retvals = array(
 			'url'          => $url,
 			'id_segment'   => 3,
+			'confirm'      => true,
 			'action_name'  => '項目の削除',
 			'menu_str'     => '削除',
 			'explanation'  => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
@@ -502,6 +503,7 @@ class Actionset
 			'admin_only'   => true,
 			'url'          => $url,
 			'id_segment'   => null,
+			'confirm'      => true,
 			'action_name'  => 'テストデータの追加',
 			'menu_str'     => 'テストデータの追加',
 			'explanation'  => '開発者向けメニュー。テストデータの追加です。',
