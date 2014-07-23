@@ -1,0 +1,56 @@
+
+.forpc{
+	display:block;
+}
+.forsp,.forsp2{
+	display:none;
+}
+
+body{
+	-webkit-text-size-adjust: 100%;
+}
+
+
+@media screen and (max-width: 600px){
+
+.fl,
+.fr {
+	float:none !important;
+	margin:0 auto 10px !important;
+	width:100%;
+}
+
+body {
+	font-size:90%;
+}
+body *{
+	float:none !important;
+	top:none;
+	left:none;
+	right:none;
+	max-width:100%;
+}
+
+body .forpc{
+	display:none !important;
+}
+
+body .forsp{
+	display:block ;
+}
+
+body #wrapper{
+	width:95%;
+	margin:0 auto;
+	text-align:left;
+}
+
+}
+/* footer */
+
+/* header */
+
+
+@media screen and (max-width: 345px){
+
+}
