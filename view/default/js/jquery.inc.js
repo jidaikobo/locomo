@@ -1,5 +1,5 @@
 $(function(){
-
+alert(default);
 ////lowvision menuimg 
 function replacemenuimg(a){
 	imgalt = a.find('img').attr('alt');
@@ -272,6 +272,7 @@ $('a#sm_options_btn').click(function(){
 
 
 //lightbox
+//$(document).ready(function(){}); いらない？
 $(document).ready(function(){
 	$('a').filter(function(){
 		return /\.(jpe?g|png|gif)$/i.test(this.href);
@@ -282,4 +283,14 @@ $(document).ready(function(){
 			return str;
 		}
 	});
+
+
+
+///// baseとして追加予定のもの /////
+
+//JavaScript有効時に表示する、無効時には非表示にする（CSS）
+$("body").removeClass("hide-if-no-js");
+
+
+
 });

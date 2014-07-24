@@ -5,6 +5,7 @@ html
 {
 	height:100%;
 	margin-bottom:1px;
+	overflow-y: scroll;
 }
 
 body
@@ -1291,4 +1292,11 @@ a.edit_link span span
 	background-image: -webkit-gradient(linear, center top, center bottom, from(#aaa), to(#eee));
 	background-image: -webkit-linear-gradient(top, #aaa, #eee);
 	background-image: linear-gradient(top, #aaa, #eee);
+}
+
+
+/* === hide if js/no-js === */
+
+.hide-if-no-js{
+	display: none !important;
 }
