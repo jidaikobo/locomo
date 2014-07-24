@@ -3,6 +3,11 @@ namespace Kontiki;
 abstract class Controller_Usergroup_Abstract extends \Kontiki\Controller_Crud
 {
 	/**
+	 * @var bool is_workflowed
+	 */
+	public $is_workflowed = true;
+
+	/**
 	 * test datas
 	 * 
 	 */

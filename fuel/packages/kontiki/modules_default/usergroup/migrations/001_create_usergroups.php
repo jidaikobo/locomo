@@ -6,8 +6,9 @@ class Create_usergroups
 	{
 		//usergroups
 		\DBUtil::create_table('usergroups', array(
-			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'id'             => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'usergroup_name' => array('constraint' => 50, 'type' => 'varchar'),
+			'status'         => array('constraint' => 20, 'type' => 'varchar'),
 			'deleted_at'     => array('type' => 'datetime', 'null' => true),
 			'created_at'     => array('type' => 'datetime', 'null' => true),
 			'expired_at'     => array('type' => 'datetime', 'null' => true),

@@ -14,7 +14,10 @@
 <legend><?php echo $controller ?>設定（ユーザグループ単位）</legend>
 <div class="form-group">
 <table>
-<?php foreach($actionsets as $action => $actionset): ?>
+<?php
+foreach($actionsets as $action => $actionset):
+if( ! isset($actionset['action_name'])) continue;
+?>
 <tr>
 	<th style="white-space: nowrap;">
 		<?php

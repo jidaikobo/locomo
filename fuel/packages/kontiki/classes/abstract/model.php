@@ -117,6 +117,11 @@ abstract class Model extends \Orm\Model_Soft
 		$action     = \Request::active()->action;
 		$userinfo   = \User\Controller_User::$userinfo;
 
+		//ワークフロー処理する（workflow_statusがある）コントローラで、in_progressだったらstatusをinvisibleに
+		if(isset($item->workflow_status) && $item->workflow_status == 'in_progress'):
+			$status = 'invisible';
+		endif;
+
 		//まず一般表示権限を確認
 		$is_guest_viewable = false;
 		if(

@@ -55,7 +55,7 @@ abstract class ViewModel extends \ViewModel
 		$include_asset = function($file) {
 			$override_file = \Uri::base().'view/'.$file;
 			$default_file  = \Uri::base().'view/default/'.$file;
-			$ret_file = file_exists($override_file) ? $override_file : $default_file;
+			$ret_file = file_exists(DOCROOT.'view/'.$file) ? $override_file : $default_file;
 			return $ret_file;
 		};
 		$view->set_global('include_asset', $include_asset);
@@ -113,7 +113,7 @@ abstract class ViewModel extends \ViewModel
 						$controllers[$n]['order']    = $config['order_in_menu'];
 					else:
 						//管理者向けコントローラは表示しない
-						if($settings['is_admin_only']) continue;
+						if(@$settings['is_admin_only']) continue;
 	
 						//adminindexが許されていない場合は表示しない
 						if( ! in_array($url, $userinfo['acls'])) continue;
@@ -160,8 +160,8 @@ abstract class ViewModel extends \ViewModel
 			$retvals['index']   = array();
 			$retvals['control'] = array();
 			foreach($obj::$actionset as $v):
-				if( ! $v['url']) continue;
-				if(isset($v['is_index'])):
+				if( ! @$v['url']) continue;
+				if(@$v['is_index']):
 					$retvals['index'][$v['url']] = $v;
 				else:
 					$retvals['control'][$v['url']] = $v;
