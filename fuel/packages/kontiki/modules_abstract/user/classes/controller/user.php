@@ -25,6 +25,15 @@ abstract class Controller_User_Abstract extends \Kontiki\Controller_Crud
 	);
 
 	/**
+	 * set_actionset()
+	 */
+	public function set_actionset($controller = null, $id = null)
+	{
+		parent::set_actionset($controller, $id);
+		unset( self::$actionset->workflow_actions );
+	}
+
+	/**
 	 * modify_array()
 	 * ユーザグループも保存してしまう？
 	 */

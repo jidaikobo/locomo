@@ -109,7 +109,7 @@ abstract class Controller_Acl_Abstract extends \Kontiki\Controller_Crud
 		$actionsets  = \Acl\Model_Acl::get_controller_actionset($controller);
 
 		foreach($actionsets as $k => $actionset):
-			if(isset($actionset['admin_only'])) unset($actionsets->$k);
+			if(isset($actionset['is_admin_only'])) unset($actionsets->$k);
 		endforeach;
 
 		//check database

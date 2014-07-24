@@ -2,7 +2,6 @@
 namespace Kontiki;
 abstract class Controller_Workflow extends \Kontiki\Controller
 {
-
 	/**
 	 * post_save_hook()
 	 */
@@ -11,14 +10,14 @@ abstract class Controller_Workflow extends \Kontiki\Controller
 		if($obj == null) \Response::redirect($this->request->module);
 
 		//workflow
-		if($this->is_workflowed):
+		if(array_key_exists('workflow_actions', self::$actionset)):
 			//error
 			$model = $this->model_name ;
 			if( ! \DBUtil::field_exists($model::get_table_name(), array('workflow_status'))):
 				die('ワークフロー管理するコントローラにはworkflow_statusフィールドが必要です。');
 			endif;
 			//承認段階を確認し、最終承認がまだであれば常にworkflow_statusをin_progressにする
-			if( ! \Kontiki\Model_Workflow_Abstract::check_workflow_staus($this->request->module, $obj->$primary_key[0])):
+			if( ! \Workflow\Model_Workflow::check_workflow_staus($this->request->module, $obj->$primary_key[0])):
 				$obj->workflow_status = 'in_progress';
 				$obj->save();
 			endif;
@@ -35,17 +34,10 @@ abstract class Controller_Workflow extends \Kontiki\Controller
 		$model = $this->model_name ;
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		//テンプレートをforge（revisionでも似た措置をしているので、ここ、あとで関数にまとめる）
-		$tpl_path         = PKGPATH.'kontiki/modules/workflow/views/route.php';
-		$tpl_path_default = PKGPATH.'kontiki/modules_default/workflow/views/route.php';
-		if(file_exists($tpl_path)):
-			$view = \View::forge($tpl_path);
-		else:
-			$view = \View::forge($tpl_path_default);
-		endif;
 
-		//モデル
-		$model = \Kontiki\Model_Workflow_Abstract::forge();
+		//model and view
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/route.php'));
+		$model = \Workflow\Model_Workflow::forge();
 
 		//postがあったら経路設定して、編集画面に戻る
 		if (\Input::method() == 'POST'):
@@ -79,14 +71,27 @@ abstract class Controller_Workflow extends \Kontiki\Controller
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 
+		$model = \Workflow\Model_Workflow::forge();
+
+		//postがあったら経路設定して、編集画面に戻る
+		if (\Input::method() == 'POST'):
+			$comment = \Input::post('comment');
+			$model::add_log('increase', null, $this->request->module, $id, $comment);
+			\Session::set_flash('success', '申請しました');
+			return \Response::redirect(\Uri::create($this->request->module.'/edit/'.$id));
+		endif;
+
 		//コメント入力viewを表示
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/comment.php'));
 
-
-//あとで\Kontiki\Model_Workflow_Abstractを探してきちんと直す
-		$model = \Kontiki\Model_Workflow_Abstract::forge();
+		//assign
+		$view->set_global('title', 'コメント入力');
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 
 		//現在のステップの確認
 		$step = $model::get_current_step($this->request->module, $id);
+
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/route.php'));
 
 
 echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
@@ -125,7 +130,7 @@ mailアクション
 */
 /*
 			//承認段階を確認し、最終承認がまだであれば常にworkflow_statusをin_progressにする
-			if( ! \Kontiki\Model_Workflow_Abstract::get_current_step($this->request->module, $obj->$primary_key[0])):
+			if( ! \Workflow\Model_Workflow::get_current_step($this->request->module, $obj->$primary_key[0])):
 				$obj->workflow_status = 'in_progress';
 				$obj->save();
 			endif;

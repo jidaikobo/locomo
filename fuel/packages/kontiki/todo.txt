@@ -20,18 +20,18 @@ destroyをいつか作る
 存在するコンテンツの時限装置の考案
 
 ■承認管理システム（いわゆるワークフロー）の実装相談
-abstract controllerに
-$this->is_workflowed
-を設定。trueだったら、項目をワークフロー管理する
+
+
+workflow_actionsのアクションセットが有効なコントローラでは、
+項目をワークフロー管理する
 ワークフロー管理するコントローラには
-- statusフィールド
+- workflow_statusフィールド
 必須とする。
-$this->is_workflowed = true
+workflow_actionsがあるのに、
 なのに、このフィールドがないときにはエラーを出す
 
-$this->is_workflowed = true
-のコントローラは、フォームにstatusを変更できるスイッチがあったとしても、すべて無効になる。つまり編集者／承認者は項目の可視属性等をまったく変更できない。
-statusはworkflowedかpublicのいずれかしか存在しない。
+対象のコントローラは、フォームにstatusを変更できるスイッチがあったとしても、すべて無効になる。つまり編集者／承認者は項目の可視属性等をまったく変更できない。
+workflow_statusはin_progressかfinishedのいずれかしか存在しない。
 
 workflow管理下のコントローラでは、特殊なACLになる。
 - ゲスト（一般公開。すべて承認されたコンテンツ。statusはpublic）
@@ -88,9 +88,3 @@ creator_id
 ワークフロー管理されたコントローラでは、（n/N）のコンテンツ（自分が承認すべき項目）の一覧
 
 をみられる
-
-recruit
-recrute
-
-
-
