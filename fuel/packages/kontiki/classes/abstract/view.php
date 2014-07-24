@@ -55,7 +55,7 @@ abstract class ViewModel extends \ViewModel
 		$include_asset = function($file) {
 			$override_file = \Uri::base().'view/'.$file;
 			$default_file  = \Uri::base().'view/default/'.$file;
-			$ret_file = file_exists($override_file) ? $override_file : $default_file;
+			$ret_file = file_exists(DOCROOT.'view/'.$file) ? $override_file : $default_file;
 			return $ret_file;
 		};
 		$view->set_global('include_asset', $include_asset);
