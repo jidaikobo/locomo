@@ -168,15 +168,21 @@ abstract class ViewModel extends \ViewModel
 			foreach($obj::$actionset as $v):
 				if( ! @$v['url']) continue;
 
-				//現在のURLと同じだったらメニューに表示しない
-				if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;
+				$key = (@$v['is_index']) ? 'index' : 'control';
 
-				if(@$v['is_index']):
-					$retvals['index'][$v['url']] = $v;
+				//urlはarrayの場合がある（workflow）
+				if(is_array($v['url'])):
+					foreach($v['url'] as $vv):
+						$v['menu_str'] = $vv[0];//0がmenu_strで、1がurl
+						if(substr($current, 0, strlen($vv[1])) == $vv[1]) continue;//not same url
+						$retvals[$key][$vv[1]] = $v;
+					endforeach;
 				else:
-					$retvals['control'][$v['url']] = $v;
+					if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url
+					$retvals[$key][$v['url']] = $v;
 				endif;
 			endforeach;
+
 
 			return $retvals;
 		};

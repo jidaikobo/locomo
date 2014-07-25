@@ -316,12 +316,11 @@ class Actionset
 			$menu_str = '承認申請';
 		elseif($current_step < $total_step):
 		//ワークフロー進行中だったら承認・却下・差戻しができる
-			$menus = array(
+			$url = array(
 				array('承認',   "{$controller}/approve/{$item->id}"),
 				array('却下',   "{$controller}/reject/{$item->id}"),
 				array('差戻し', "{$controller}/remand/{$item->id}"),
 			);
-			$url = "" ;
 			$menu_str = '';
 		elseif($current_step == $total_step):
 		//すでに承認が終わっていたら何もできない
