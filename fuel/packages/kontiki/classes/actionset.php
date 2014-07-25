@@ -26,9 +26,9 @@ class Actionset
 		$actions->undelete         = self::undelete($controller, $item);
 		$actions->delete_deleted   = self::delete_deleted($controller, $item);
 		$actions->view_revision    = self::view_revision($controller, $item);
-		$actions->add_testdata     = self::add_testdata($controller, $item);
 		$actions->workflow         = self::workflow($controller, $item);
 		$actions->workflow_actions = self::workflow_actions($controller, $item);
+		$actions->add_testdata     = self::add_testdata($controller, $item);
 
 //		$actions->download_files = self::download_files($controller, $item);
 //		$actions->upload         = self::upload($controller, $item);
@@ -51,6 +51,17 @@ class Actionset
 		endif;
 		return $url;
 	}
+
+	/*
+	(bool) is_admin_only 管理者のみに許された行為。ACL設定画面に表示されなくなる
+	(bool) is_index      メニューに表示する際、インデクス系として表示する
+	(str)  url           メニューに表示するリンク先
+	(int)  id_segment    \Kontiki\Controller::set_current_id()で用いる。個票系の際は必要
+	(str)  action_name   ACL設定画面で用いる
+	(str)  explanation   ACL設定画面で用いる説明文
+	(str)  menu_str      メニューで用いる
+	(arr)  dependencies  このアクションセットが依存するアクション
+	*/
 
 	/**
 	 * index()
@@ -198,7 +209,6 @@ class Actionset
 		$url = self::check_auth4url($controller, 'index_expired', $url);
 
 		$retvals = array(
-			'is_index'     => true,
 			'url'          => $url,
 			'id_segment'   => 3,
 			'action_name'  => '閲覧（期限切れ）',
@@ -286,18 +296,38 @@ class Actionset
 
 	/**
 	 * workflow_actions()
+	 * 重たい処理。ワークフローが不要なコントローラでは読まないように注意。
 	 * @return  array
 	 */
 	private static function workflow_actions($controller, $item)
 	{
-		if(is_null($controller) || empty($item)) return array('dependencies'=>array());
+		$retval = array('dependencies'=>array());
+		if(is_null($controller) || empty($item) || ! isset($item->id)) return $retval;
 
-		//idがあれば申請資格がある
-		$url = isset($item->id) ? "{$controller}/apply/{$item->id}" : null ;
-		$menu_str = '承認申請';
+		//ステップを取得
+		$model = \Workflow\Model_Workflow::forge();
+		$current_step = $model::get_current_step($controller, $item->id);
+		$route_id = $model::get_route($controller, $item->id);
+		$total_step = $route_id ? $model::get_total_step($route_id) : -2;
 
-		//ワークフロー段階が0/n以外なら申請資格はない
-		
+		//-1の場合は、承認申請
+		if($current_step == -1):
+			$url = "{$controller}/apply/{$item->id}" ;
+			$menu_str = '承認申請';
+		elseif($current_step < $total_step):
+		//ワークフロー進行中だったら承認・却下・差戻しができる
+			$menus = array(
+				array('承認',   "{$controller}/approve/{$item->id}"),
+				array('却下',   "{$controller}/reject/{$item->id}"),
+				array('差戻し', "{$controller}/remand/{$item->id}"),
+			);
+			$url = "" ;
+			$menu_str = '';
+		elseif($current_step == $total_step):
+		//すでに承認が終わっていたら何もできない
+			$url = "" ;
+			$menu_str = '';
+		endif;
 
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
 		if(\Kontiki\Model_Workflow_Abstract::get_current_step($controller, $item->id) == '-1/N'):
@@ -305,9 +335,7 @@ class Actionset
 			$menu_str = '経路設定';
 		endif;
 
-
 		$retvals = array(
-			'is_acl'       => false,
 			'is_index'     => false,
 			'url'          => $url,
 			'id_segment'   => null,
@@ -352,7 +380,6 @@ class Actionset
 		$url = self::check_auth4url($controller, 'index_invisible', $url);
 
 		$retvals = array(
-			'is_index'     => true,
 			'url'          => $url,
 			'id_segment'   => 3,
 			'action_name'  => '閲覧（不可視項目）',
@@ -539,8 +566,8 @@ class Actionset
 			'url'          => $url,
 			'id_segment'   => 3,
 			'action_name'  => '閲覧（リビジョン）',
-			'menu_str'     => '更新履歴',
-			'explanation'  => '作業履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴はみることができるようになります。また、通常項目の編集権限も許可されます。',
+			'menu_str'     => '編集履歴',
+			'explanation'  => '編集履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴はみることができるようになります。また、通常項目の編集権限も許可されます。',
 			'dependencies' => array(
 				'view',
 				'edit',
@@ -559,19 +586,24 @@ class Actionset
 	{
 		$url = '';
 		$usergroup_ids = \User\Controller_User::$userinfo['usergroup_ids'];
-		if(in_array(-2, $usergroup_ids) || in_array(-1, $usergroup_ids)):
+
+		//ルート管理者のみ
+		if(in_array(-2, $usergroup_ids)):
 			$url = "$controller/add_testdata";
 		endif;
 
+		//インデクスでしか表示しない
+		$url = (substr(\Uri::string(), -12) == '/index_admin') ? $url : '';
+
 		$retvals = array(
-			'admin_only'   => true,
-			'url'          => $url,
-			'id_segment'   => null,
-			'confirm'      => true,
-			'action_name'  => 'テストデータの追加',
-			'menu_str'     => 'テストデータの追加',
-			'explanation'  => '開発者向けメニュー。テストデータの追加です。',
-			'dependencies' => array(
+			'is_admin_only' => true,
+			'url'           => $url,
+			'id_segment'    => null,
+			'confirm'       => true,
+			'action_name'   => 'テストデータの追加',
+			'menu_str'      => 'テストデータ追加',
+			'explanation'   => '開発者向けメニュー。テストデータの追加です。',
+			'dependencies'  => array(
 				'add_testdata',
 			)
 		);
@@ -585,8 +617,8 @@ class Actionset
 	private static function download_files($controller, $item)
 	{
 		$retvals = array(
-			'action_name' => 'ファイルへのアクセス権限',
-			'explanation' => 'アップロードされたファイルへのアクセス権限',
+			'action_name'  => 'ファイルへのアクセス権限',
+			'explanation'  => 'アップロードされたファイルへのアクセス権限',
 			'dependencies' => array(
 				'download',
 			)

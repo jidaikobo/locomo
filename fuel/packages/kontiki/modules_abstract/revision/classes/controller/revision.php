@@ -1,5 +1,5 @@
 <?php
 namespace Kontiki;
-class Controller_Revision_Abstract extends \Kontiki\Controller_Crud
+class Controller_Revision_Abstract
 {
 }

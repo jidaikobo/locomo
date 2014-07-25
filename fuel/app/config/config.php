@@ -282,10 +282,6 @@ return array(
 		 * A path must be set in module_paths for this to work.
 		 */
 		 'modules'  => array(
-		 	'acl',
-		 	'user',
-		 	'usergroup',
-		 	'revision',
 		 ),
 
 		/**

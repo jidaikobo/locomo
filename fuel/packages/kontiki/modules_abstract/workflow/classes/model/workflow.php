@@ -16,17 +16,18 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	);
 
 	/**
-	 * get_current_step()
+	 * get_current_step_str()
 	*/
-	public static function get_current_step($controller = null, $controller_id = null)
+	public static function get_current_step_str($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 
-		//コントローラとidからworkflow_logs取得
+		//コントローラとidから最新のworkflow_logs取得
 		$q = \DB::select('id','workflow_id','current_step');
 		$q->from('workflow_logs');
 		$q->where('controller', $controller);
 		$q->where('controller_id', $controller_id);
+		$q->order_by('created_at', 'DESC');
 		$log = $q->execute()->current();
 
 		//logが存在していない場合は申請前コンテンツなので、-1/Nを返す
@@ -42,31 +43,32 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	}
 
 	/**
+	 * get_current_step()
+	*/
+	public static function get_current_step($controller = null, $controller_id = null)
+	{
+		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
+
+		//コントローラとidから最新のworkflow_logs取得
+		$q = \DB::select('id','workflow_id','current_step');
+		$q->from('workflow_logs');
+		$q->where('controller', $controller);
+		$q->where('controller_id', $controller_id);
+		$q->order_by('created_at', 'DESC');
+		$log = $q->execute()->current();
+
+		//logが存在していない場合は申請前コンテンツなので、-1を返す
+		return ($log) ? intval($log['current_step']) : -1;
+	}
+
+	/**
 	 * set_route()
 	 * 経路設定。
 	*/
 	public static function set_route($route_id = null, $controller = null, $controller_id = null)
 	{
-		if(is_null($route_id) || is_null($controller) || is_null($controller_id))
-			\Response::redirect(\Uri::create($this->request->module.'/index_admin'));
-
-		//値の準備
-		$set = array(
-			'workflow_id'   => $route_id,
-			'controller'    => $controller,
-			'controller_id' => $controller_id,
-			'current_step'  => '-1',
-			'status'        => '',
-			'comment'       => '',
-			'created_at'    => date('Y-m-d H:i:s'),
-			'creator_id'    => \User\Controller_User::$userinfo['user_id'],
-		);
-
-		//insert
-		$q = \DB::insert();
-		$q->table('workflow_logs');
-		$q->set($set);
-		$q->execute();
+		if(is_null($route_id) || is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
+		self::add_log($mode = 'increase', $route_id, $controller, $controller_id);
 	}
 
 	/**
@@ -74,7 +76,7 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	*/
 	public static function get_route($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 
 		//ワークフローの全体のステップを取得
 		$q = \DB::select('id');
@@ -91,7 +93,7 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	*/
 	public static function get_total_step($workflow_id = null)
 	{
-		if(is_null($workflow_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		if(is_null($workflow_id)) \Response::redirect(\Uri::base());
 
 		//ワークフローの全体のステップを取得
 		$q = \DB::select(\DB::expr('count(id)'));
@@ -103,13 +105,42 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	}
 
 	/**
-	 * increase_step()
+	 * add_log()
 	*/
-	public static function increase_step($current_step = null, $log_id = null)
+	public static function add_log($mode = 'increase', $route_id = null, $controller = null, $controller_id = null, $comment = null)
 	{
-		if(is_null($log_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
-		//current_stepを加算
+		if(is_null($controller) || is_null($controller_id) ) \Response::redirect(\Uri::base());
 
+		//workflow_idと現在のステップを取得
+		$route_id = $route_id ? $route_id : self::get_route($controller, $controller_id);
+		$current_step = self::get_current_step($controller, $controller_id);
+
+		//current stepの変更
+		if($mode == 'init'):
+			$current_step = -1;
+		elseif($mode == 'increase'):
+			$current_step++;
+		else:
+			$current_step--;
+		endif;
+
+		//値の準備
+		$set = array(
+			'workflow_id'   => $route_id,
+			'controller'    => $controller,
+			'controller_id' => $controller_id,
+			'current_step'  => $current_step,
+			'status'        => '',
+			'comment'       => $comment,
+			'created_at'    => date('Y-m-d H:i:s'),
+			'creator_id'    => \User\Controller_User::$userinfo['user_id'],
+		);
+
+		//insert
+		$q = \DB::insert();
+		$q->table('workflow_logs');
+		$q->set($set);
+		$q->execute();
 	}
 
 	/**
@@ -117,7 +148,7 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	*/
 	public static function decrease_step($current_step = 0, $log_id = null)
 	{
-		if(is_null($log_id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		if(is_null($log_id)) \Response::redirect(\Uri::base());
 		//current_stepが0だったらそのまま
 
 		//current_stepを減算
@@ -129,7 +160,7 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	*/
 	public static function find_workflow_setting($id = null)
 	{
-		if(is_null($id)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		if(is_null($id)) \Response::redirect(\Uri::base());
 
 		//workflow_steps取得
 		$q = \DB::select('*');
@@ -170,7 +201,7 @@ class Model_Workflow_Abstract extends \Kontiki\Model
 	*/
 	public static function update_workflow($workflow_id = null, $args = null)
 	{
-		if(is_null($workflow_id) || is_null($args)) \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		if(is_null($workflow_id) || is_null($args)) \Response::redirect(\Uri::base());
 
 		//loop
 		foreach($args as $order => $arg):

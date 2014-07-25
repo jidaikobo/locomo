@@ -106,20 +106,25 @@ abstract class ViewModel extends \ViewModel
 					//adminindexへのurlを取得する
 					$url = basename($dirname).'/'.$config['adminindex'];
 
+					//すでにあるURLは足さない（オーバライドモジュールなんかは重複する）
+					if(\Arr::in_array_recursive($url, $controllers)) continue;
+
+					//links
+					$links = array();
+					$links['url']      = $url;
+					$links['nicename'] = $config['nicename'];
+					$links['order']    = $config['order_in_menu'];
+
 					//管理者はすべてのコントローラへのリンクを得る
 					if($userinfo['user_id'] <= -1):
-						$controllers[$n]['url']      = $url;
-						$controllers[$n]['nicename'] = $config['nicename'];
-						$controllers[$n]['order']    = $config['order_in_menu'];
+						$controllers[$n] = $links;
 					else:
 						//管理者向けコントローラは表示しない
 						if(@$settings['is_admin_only']) continue;
 	
 						//adminindexが許されていない場合は表示しない
 						if( ! in_array($url, $userinfo['acls'])) continue;
-						$controllers[$n]['url']      = $url;
-						$controllers[$n]['nicename'] = $config['nicename'];
-						$controllers[$n]['order']    = $config['order_in_menu'];
+						$controllers[$n] = $links;
 					endif;
 				$n++;
 				endforeach;
@@ -149,11 +154,12 @@ abstract class ViewModel extends \ViewModel
 			if( ! \User\Controller_User::$is_user_logged_in) return false;
 
 			//コントローラからactionsetを取得
-			$controller_ucfirst = ucfirst($controller);
-			$controller_lower = strtolower($controller);
-			$controller = "\\$controller_ucfirst\Controller_".$controller_ucfirst;
-			$obj = new $controller(\Request::forge());
-			$obj->set_actionset($controller_lower, $item);
+			$controller_obj = \Kontiki\Util::get_controller_valid_name($controller);
+			$obj = new $controller_obj(\Request::forge());
+			$obj->set_actionset($controller, $item);
+
+			//現在のURL（base urlをのぞく）
+			$current = \Uri::string();
 
 			//インデクス系のアクションセットを区別する
 			$retvals            = array();
@@ -161,6 +167,10 @@ abstract class ViewModel extends \ViewModel
 			$retvals['control'] = array();
 			foreach($obj::$actionset as $v):
 				if( ! @$v['url']) continue;
+
+				//現在のURLと同じだったらメニューに表示しない
+				if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;
+
 				if(@$v['is_index']):
 					$retvals['index'][$v['url']] = $v;
 				else:

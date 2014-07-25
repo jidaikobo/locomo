@@ -6,7 +6,6 @@ class Actionset
 	{
 	return (object) array(
 		'main' => array(
-			'is_acl'       => false,
 			'is_index'     => true,
 			'url'          => '/scaffold/main',
 			'id_segment'   => null,

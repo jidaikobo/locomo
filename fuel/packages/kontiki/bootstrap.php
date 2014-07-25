@@ -21,6 +21,9 @@ Autoloader::add_classes(array(
 	'Kontiki\Model'               => __DIR__.'/classes/abstract/model.php',
 	'Kontiki\ViewModel'           => __DIR__.'/classes/abstract/view.php',
 
+	//class
+	'Kontiki\Util' => __DIR__.'/classes/util.php',
+
 	//base abstract modules
 	//content
 	'Kontiki\Controller_Content_Abstract' => __DIR__.'/modules_abstract/content/classes/controller/Content.php',
@@ -64,11 +67,18 @@ Autoloader::add_classes(array(
 Autoloader::register();
 Autoloader::add_namespace('Kontiki_Observer', __DIR__.'/classes/observers/');
 
-// load  the package with the config file.
+// load the package with the config file.
 if(file_exists(PKGPATH.'kontiki/config/packageconfig.php')):
 	Config::load('packageconfig.php');
 else:
 	Config::load('packageconfig.default.php');
 endif;
+
+//always load module
+\Module::load('acl');
+\Module::load('user');
+\Module::load('usergroup');
+\Module::load('revision');
+\Module::load('workflow');
 
 /* End of file bootstrap.php */

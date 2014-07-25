@@ -3,11 +3,6 @@ namespace Kontiki;
 abstract class Controller_Crud extends \Kontiki\Controller_Workflow
 {
 	/**
-	 * @var bool is_workflowed
-	 */
-	public $is_workflowed = false;
-
-	/**
 	 * @var array default languages of flash messages
 	 */
 	protected $messages = array(
@@ -540,13 +535,8 @@ abstract class Controller_Crud extends \Kontiki\Controller_Workflow
 		endif;
 
 		//view
-		$tpl_path         = PKGPATH.'kontiki/modules/revision/views/index.php';
-		$tpl_path_default = PKGPATH.'kontiki/modules_default/revision/views/index.php';
-		if(file_exists($tpl_path)):
-			$view = \View::forge($tpl_path);
-		else:
-			$view = \View::forge($tpl_path_default);
-		endif;
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/revision/views/index.php'));
+
 		$view->set_global('items', $revisions);
 		$view->set_global('title', sprintf($this->titles['revision'], self::$nicename));
 
