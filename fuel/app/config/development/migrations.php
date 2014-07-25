@@ -28,6 +28,14 @@ return array(
 			array(
 				0 => '001_create_workflow',
 			),
+			'user' => 
+			array(
+				0 => '001_create_users',
+			),
+			'acl' => 
+			array(
+				0 => '001_create_acls',
+			),
 		),
 		'package' => 
 		array(

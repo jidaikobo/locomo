@@ -1,5 +1,4 @@
 $(function(){
-alert(default);
 ////lowvision menuimg 
 function replacemenuimg(a){
 	imgalt = a.find('img').attr('alt');

@@ -6,11 +6,12 @@ if($is_user_logged_in):
 	$item = isset($items) ? $items : $item;
 	
 	$html = '';
+	$html.= '<div id="admin_bar">';
 
 	//controller menu
 	$controller4menu = $get_controllers();
 	if($controller4menu):
-		$html.= '<div style="float:left;width:33%;font-size:90%;">';
+		$html.= '<div id="admin_bar_controller">';
 		$html.= '<h2>コントローラメニュー</h2>';
 		$html.= '<ul>';
 		foreach($controller4menu as $v):
@@ -24,7 +25,7 @@ if($is_user_logged_in):
 	//context menu
 	$actions = $get_actionset($controller, $item);
 	if($actions['index'] || $actions['control']):
-		$html.= '<div style="float:left;width:33%;font-size:90%;">';
+		$html.= '<div id="admin_bar_context_menu">';
 		$html.= '<h2>コンテクストメニュー</h2>';
 	endif;
 	if($actions['index']):
@@ -54,11 +55,12 @@ if($is_user_logged_in):
 	endif;
 
 	//user menu
-	$html.= '<div style="float:left;width:33%;font-size:90%;">';
+	$html.= '<div id="admin_bar_user">';
 	$html.= '<h2>ユーザメニュー</h2>';
 	$html.= '<ul>';
 	$html.= "<li><a href=\"{$home_uri}user/logout\">ログアウト</a></li>";
 	$html.= '</ul>';
+	$html.= '</div>';
 	$html.= '</div>';
 
 	echo $html;
