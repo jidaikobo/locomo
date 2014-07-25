@@ -1282,7 +1282,7 @@ a.edit_link span span
 	border-radius: 10px;
 }
 
-.gradiant{
+.gradient{
 	background-color: #eee;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#aaaaaa', endColorstr = '#eeeeee');
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr = '#aaaaaa', endColorstr = '#eeeeee')";
@@ -1294,6 +1294,20 @@ a.edit_link span span
 	background-image: linear-gradient(top, #aaa, #eee);
 }
 
+.boxshadow{
+	box-shadow: 5px 5px 5px #555;
+	-moz-box-shadow: 5px 5px 5px #555;
+	-o-box-shadow: 5px 5px 5px #555;
+	-ms-box-shadow: 5px 5px 5px #555;
+/*
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true), 
+*/
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+/*
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
+*/
+}
 
 /* === hide if js/no-js === */
 

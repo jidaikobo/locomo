@@ -22,47 +22,63 @@ footer{
 	font-size: .8em;
 }
 
+/*=== admin_bar ===*/
+
 #admin_bar{
 	position: fixed;
 	top: 0;
+	left: 0;
+	right: 0;
 	padding: 10px 20px;
 	background-color: #fff;
+	height: 1.5em;
 }
 
-#admin_bar_controller,
-#admin_bar_context,
-#admin_bar_user
+#admin_bar div
 {
+	position: absolute;
+	width: auto;
+	background-color: #fff;
+	border-radius:0 0 10px 10px ;
+}
 
+#admin_bar_controller{
+	left: 10px;
 }
 #admin_bar_context{
-	left: 31%;
+	left: 25%;
 }
-#admin_bar_user{
-	right: 30px;
+#admin_bar #admin_bar_user{
+	right: 10px;
 }
-#adminbar div *
+#admin_bar_user li{
+	display: block;
+}
+#admin_bar_controller *,
+#admin_bar_context *
 {
 	display: none;
 	padding: 0;
 }
-
 #admin_bar div h2
 {
 	display: block;
+	padding: 0 20px;
 	margin-bottom: 5px;
 }
-#admin_bar div:hover
+#admin_bar div h3
 {
-	background-color: #f0f0f0;
-	border-radius:0 0 10px 10px ;
+	padding: 0 20px;
 }
-#admin_bar div:hover *{
-	display: block;
-}
-
 #admin_bar div ul
 {
+	padding:0 20px;
 	margin-bottom: 10px;
 }
 
+/* hover action */
+
+#admin_bar_controller:hover *,
+#admin_bar_context:hover *{
+	display: block;
+}

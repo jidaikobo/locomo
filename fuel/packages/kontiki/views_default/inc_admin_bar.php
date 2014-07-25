@@ -25,7 +25,7 @@ if($is_user_logged_in):
 	//context menu
 	$actions = $get_actionset($controller, $item);
 	if($actions['index'] || $actions['control']):
-		$html.= '<div id="admin_bar_context_menu">';
+		$html.= '<div id="admin_bar_context">';
 		$html.= '<h2>コンテクストメニュー</h2>';
 	endif;
 	if($actions['index']):
