@@ -19,6 +19,19 @@ class Util
 			return false;
 		endif;
 	}
+	
+	/**
+	 * object_merge()
+	 * thx http://d.hatena.ne.jp/rsky/20070808/1186578579
+	 */
+	public static function object_merge()
+	{
+		$args = func_get_args();
+		if ( ! $args) {
+			return null;
+		}
+		return (object) call_user_func_array('array_merge', array_map('get_object_vars', $args));
+	}
 
 	/**
 	 * get_controller_valid_name()

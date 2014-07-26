@@ -15,16 +15,12 @@
 
 <p>
 	<?php
-		echo Form::submit('submit', 'ワークフロー処理を進める', array('class' => 'button main'));
+		echo Html::anchor($controller.'/view/'.$id, '戻る',array('class'=>'button'));
+//		echo Html::anchor('workflow/index_admin', '戻る',array('class'=>'button'));
+		echo Form::submit('submit', $button, array('class' => 'button main'));
 	?>
 </p>
 
 <?php echo \Form::close(); ?>
-<p>
-	<?php
-//		echo Html::anchor('workflow/view/'.$workflow_id, '表示',array('class'=>'button'));
-		echo Html::anchor('workflow/index_admin', '一覧に戻る',array('class'=>'button'));
-	?>
-</p>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

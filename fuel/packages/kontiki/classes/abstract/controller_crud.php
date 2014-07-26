@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Controller_Crud extends \Kontiki\Controller_Workflow
+abstract class Controller_Crud extends \Kontiki\Controller
 {
 	/**
 	 * @var array default languages of flash messages
@@ -173,7 +173,6 @@ abstract class Controller_Crud extends \Kontiki\Controller_Workflow
 	public function post_save_hook($obj = null, $mode = 'edit')
 	{
 		if($obj == null) \Response::redirect($this->request->module);
-		$obj = parent::post_save_hook($obj, $mode);
 
 		//actionsetでrevisionが有効だったらrevisionを追加する
 		if( ! array_key_exists ('view_revision' , self::$actionset)):

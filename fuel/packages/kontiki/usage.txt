@@ -62,9 +62,9 @@ kontikiには、基本的なcrudを実装した基礎classがあります。こ�
 
 kontikiのscaffoldを利用している場合は、コントローラの
 
-//unset( self::$actionset->view_revision );
+unset( self::$actionset->view_revision );
 
-のコメントアウトを外すと、コントローラでの編集履歴が有効になります。
+をコメントアウト（あるいは削除すると）、コントローラでの編集履歴が有効になります。
 編集履歴は、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
 あと任意ですが、対象コントローラの編集画面に下記フォームを足すと、コメントとして保存されます。
 
@@ -77,8 +77,4 @@ kontikiのscaffoldを利用している場合は、コントローラの
  * ワークフロー管理
  */
 
-ワークフロー管理をするためには、
-
-//unset( self::$actionset->workflow_actions );
-
-のコメントアウトを外してください。また、対象コントローラには、workflow_status varchar(50)というフィールドを持つようにしてください。
+ワークフロー管理をするためには、kontikiのscaffoldで出来上がったset_actionsetのWorkflow関連部分のコメントアウトを外してください。あとclass宣言部分のextendsもとを\Kontiki\Controller_Workflowに差し替えてください。

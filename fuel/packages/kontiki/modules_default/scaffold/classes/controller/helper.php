@@ -161,6 +161,7 @@ MIGRATION;
 <?php
 namespace {$name};
 class Controller_{$name} extends \Kontiki\Controller_Crud
+//class Controller_{$name} extends \Kontiki\Controller_Workflow
 {
 	/**
 	 * set_actionset()
@@ -168,8 +169,16 @@ class Controller_{$name} extends \Kontiki\Controller_Crud
 	public function set_actionset(\$controller = null, \$id = null)
 	{
 		parent::set_actionset(\$controller, \$id);
-		unset(self::\$actionset->workflow_actions);
 		unset(self::\$actionset->view_revision);
+
+/*
+		//workflow
+		require_once(PKGPATH.'kontiki/classes/actionset_workflow.php');
+		self::\$actionset = \Kontiki\Util::object_merge(
+			self::\$actionset,
+			\Kontiki\Actionset_Workflow::actionItems(\$controller, \$id)
+		);
+*/
 	}
 }
 FILES;

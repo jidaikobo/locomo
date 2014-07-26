@@ -19,8 +19,8 @@
 
 <?php
 //buttons
-echo Html::anchor('/', '戻る', array('class' => 'btn btn-small'));
-echo \Form::submit('submit', 'ログイン', array('class' => 'btn btn-primary'));
+echo Html::anchor('/', '戻る', array('class' => 'button'));
+echo \Form::submit('submit', 'ログイン', array('class' => 'button main'));
 ?>
 </fieldset>
 <?php echo \Form::close(); ?>

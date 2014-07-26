@@ -12,7 +12,7 @@
 		<?php echo \Form::label('ステップ名', "steps_{$step}_name", array('class'=>'control-label')); ?>
 		<?php echo \Form::input("steps[$step][name]", Input::post("steps[$step][name]", isset($steps[$step]) ? $steps[$step]['name'] : ''), array('id' => "form_steps_{$step}_name", 'class' => 'col-md-4 form-control', 'placeholder'=>'ステップ名称（室長|事務局|事務局長）')); ?>
 	</div>
-
+<!--
 	<div class="form-group">
 		<?php echo \Form::label('承認条件', "steps_{$step}_condition", array('class'=>'control-label')); ?>
 		<?php
@@ -20,10 +20,12 @@
 			echo \Form::select("steps[$step][condition]", Input::post("steps[$step][condition]", isset($steps[$step]) ? $steps[$step]['condition'] : ''), $conditions, array('id' => "form_steps_{$step}_condition", 'class' => 'col-md-4 form-control'));
 		?>
 	</div>
+-->
+	<?php echo \Form::hidden("steps[$step][condition]", 'single'); ?>
 
 	<div class="form-group">
 		<?php echo \Form::label('承認者', "steps_{$step}_allowers", array('class'=>'control-label')); ?>
-		<em class="exp">承認ユーザIDをカンマ区切りで入力してください。</em>
+		<em class="exp">承認ユーザIDをカンマ区切りで入力してください。このうちの一名が承認したら承認プロセスが進みます。</em>
 		<?php echo \Form::input("steps[$step][allowers]", Input::post("steps[$step][allowers]", isset($steps[$step]) ? $steps[$step]['allowers'] : ''), array('id' => "form_steps_{$step}_allowers", 'class' => 'col-md-4 form-control', 'placeholder'=>'1,2,3')); ?>
 	</div>
 

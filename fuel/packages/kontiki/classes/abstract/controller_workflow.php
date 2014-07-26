@@ -1,25 +1,48 @@
 <?php
 namespace Kontiki;
-abstract class Controller_Workflow extends \Kontiki\Controller
+abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 {
+	/**
+	 * pre_save_hook()
+	 */
+	public function pre_save_hook($obj = null, $mode = 'edit')
+	{
+		if($obj == null) \Response::redirect($this->request->module);
+		$obj = parent::pre_save_hook($obj, $mode);
+
+		//ワークフロー管理
+		if(array_key_exists('workflow_actions', self::$actionset)):
+			//ワークフロー管理するコントローラにはworkflow_statusを作る
+			$model = $this->model_name ;
+			if( ! \DBUtil::field_exists($model::get_table_name(), array('workflow_status'))):
+				\DBUtil::add_fields($model::get_table_name(),array(
+					'workflow_status' => array('constraint' => 50, 'type' => 'varchar', 'null' => true),
+				));
+				\Session::set_flash('success', 'ワークフロー管理をするために、workflow_statusフィールドを追加しました。当該モジュールのモデルの$_propertiesにworkflow_statusを足してください。');
+			endif;
+		endif;
+
+		return $obj;
+	}
+
 	/**
 	 * post_save_hook()
 	 */
 	public function post_save_hook($obj = null, $mode = 'edit')
 	{
 		if($obj == null) \Response::redirect($this->request->module);
+		$obj = parent::post_save_hook($obj, $mode);
 
-		//workflow
+		//ワークフロー管理
 		if(array_key_exists('workflow_actions', self::$actionset)):
-			//error
-			$model = $this->model_name ;
-			if( ! \DBUtil::field_exists($model::get_table_name(), array('workflow_status'))):
-				die('ワークフロー管理するコントローラにはworkflow_statusフィールドが必要です。');
-			endif;
 			//承認段階を確認し、最終承認がまだであれば常にworkflow_statusをin_progressにする
-			if( ! \Workflow\Model_Workflow::check_workflow_staus($this->request->module, $obj->$primary_key[0])):
-				$obj->workflow_status = 'in_progress';
-				$obj->save();
+			$model = $this->model_name ;
+			$primary_key = $model::get_primary_key();
+			if(isset($obj->$primary_key[0])):
+				if(\Workflow\Model_Workflow::is_in_workflow($this->request->module, $obj->$primary_key[0])):
+					$obj->workflow_status = 'in_progress';
+					$obj->save();
+				endif;
 			endif;
 		endif;
 
@@ -46,6 +69,8 @@ abstract class Controller_Workflow extends \Kontiki\Controller
 				$model::set_route($route_id, $this->request->module, $id);
 				\Session::set_flash('success', 'ルートを設定しました');
 				return \Response::redirect(\Uri::create($this->request->module.'/edit/'.$id));
+			else:
+				\Session::set_flash('error', 'ルートを選択してください');
 			endif;
 		endif;
 
@@ -57,6 +82,7 @@ abstract class Controller_Workflow extends \Kontiki\Controller
 
 		//assign
 		$view->set_global('title', 'ルート設定');
+		$view->set('button', '申請する');
 		$view->set('items', $items);
 		$view->set('route_id', $route_id);
 
@@ -65,7 +91,7 @@ abstract class Controller_Workflow extends \Kontiki\Controller
 
 
 	/**
-	 * action_apply() at workflowed controller
+	 * action_apply()
 	 */
 	public function action_apply($id = null)
 	{
@@ -85,59 +111,78 @@ abstract class Controller_Workflow extends \Kontiki\Controller
 		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/comment.php'));
 
 		//assign
-		$view->set_global('title', 'コメント入力');
+		$view->set_global('title', '承認申請');
+		$view->set('button', '申請する');
+		$view->set('id', $id);
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
 
-		//現在のステップの確認
-		$step = $model::get_current_step($this->request->module, $id);
+	/**
+	 * action_approve()
+	 */
+	public function action_approve($id = null)
+	{
+		$model = $this->model_name ;
+		is_null($id) and \Response::redirect(\Uri::base());
 
-		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/route.php'));
+		//model and view
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/comment.php'));
+		$model = \Workflow\Model_Workflow::forge();
 
+		//postがあったら経路設定して、編集画面に戻る
+		if (\Input::method() == 'POST'):
+			$route_id = $model::get_route($this->request->module, $id);
 
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $step ) ;
-echo '</textarea>' ;
-die();
-
-		//現在のステップが-1/Nだったら、ステップを一つ進める
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $step ) ;
-echo '</textarea>' ;
-die();
-
-/*
-承認段階を確認し、actionがapplyで、0/Nなら申請。
-workflow_logs.current_stepを0にセット
-
-
-actionがapproveか？
-workflow_logs.current_stepを加算
-承認段階が最後の一つであれば、項目のworkflow_statusをfinishedにセット
-
-actionがremandか？
-$progress（差し戻し先）を確認し、
-workflow_logs.current_stepを当該差し戻し先に減算。
-
-actionがrejectか？
-項目のworkflow_statusをそのままにして、delete_atを付与（ソフトデリート）。
-
-ステップに設定されているアクション（mail）を処理
-
-mailアクション
-ワークフロー関係者のメールアドレスを収集。
-
-*/
-/*
-			//承認段階を確認し、最終承認がまだであれば常にworkflow_statusをin_progressにする
-			if( ! \Workflow\Model_Workflow::get_current_step($this->request->module, $obj->$primary_key[0])):
-				$obj->workflow_status = 'in_progress';
-				$obj->save();
+			if($route_id):
+				$comment = \Input::post('comment');
+				$model::add_log($mode = 'increase',$route_id, $this->request->module, $id,$comment);
+				\Session::set_flash('success', '承認しました');
+				return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
 			endif;
-*/
+		endif;
 
+		//assign
+		$view->set_global('title', '承認');
+		$view->set('button', '承認する');
+		$view->set('id', $id);
 
-		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	 * action_reject()
+	 */
+	public function action_reject($id = null)
+	{
+		is_null($id) and \Response::redirect(\Uri::base());
+
+		//model and view
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/comment.php'));
+		$model = \Workflow\Model_Workflow::forge();
+
+		//postがあったら経路設定して、編集画面に戻る
+		if (\Input::method() == 'POST'):
+			$route_id = $model::get_route($this->request->module, $id);
+
+			if($route_id):
+				$comment = \Input::post('comment');
+				$model::add_log($mode = 'reject',$route_id, $this->request->module, $id,$comment);
+				\Session::set_flash('success', '項目を却下しました');
+
+				//項目を削除する（可能であればソフトデリートする）
+				$target_model = $this->model_name ;
+				$obj = $target_model::find_item_anyway($id);
+				$target_model::delete_item($obj);
+				return \Response::redirect(\Uri::create($this->request->module));
+			endif;
+		endif;
+
+		//assign
+		$view->set_global('title', '却下の確認');
+		$view->set('button', '却下する');
+		$view->set('id', $id);
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 }

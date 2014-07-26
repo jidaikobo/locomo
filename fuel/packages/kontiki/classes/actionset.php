@@ -26,8 +26,6 @@ class Actionset
 		$actions->undelete         = self::undelete($controller, $item);
 		$actions->delete_deleted   = self::delete_deleted($controller, $item);
 		$actions->view_revision    = self::view_revision($controller, $item);
-		$actions->workflow         = self::workflow($controller, $item);
-		$actions->workflow_actions = self::workflow_actions($controller, $item);
 		$actions->add_testdata     = self::add_testdata($controller, $item);
 
 //		$actions->download_files = self::download_files($controller, $item);
@@ -38,18 +36,18 @@ class Actionset
 	}
 
 	/**
-	 * check_auth4url()
-	 * @return  array
+	 * check_auth()
+	 * @return  bool
 	 */
-	private static function check_auth4url($controller, $action, $url)
+	public static function check_auth($controller, $action)
 	{
 		if(
 			! \Acl\Controller_Acl::auth($controller.'/'.$action, \User\Controller_User::$userinfo) &&
 			! \Acl\Controller_Acl::owner_auth($controller.'/'.$action, \User\Controller_User::$userinfo) 
 		):
-			$url = null ;
+			return false;
 		endif;
-		return $url;
+		return true;
 	}
 
 	/*
@@ -70,7 +68,7 @@ class Actionset
 	private static function index($controller, $item)
 	{
 		$url = "$controller/index" ;
-		$url = self::check_auth4url($controller, 'index', $url);
+		$url = self::check_auth($controller, 'index') ? $url : '' ;
 
 		$retvals = array(
 			'is_index'     => true,
@@ -93,7 +91,7 @@ class Actionset
 	private static function index_admin($controller, $item)
 	{
 		$url = "$controller/index_admin" ;
-		$url = self::check_auth4url($controller, 'index_admin', $url);
+		$url = self::check_auth($controller, 'index_admin') ? $url : '';
 
 		$retvals = array(
 			'is_index'     => true,
@@ -116,7 +114,7 @@ class Actionset
 	private static function view($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'view', $url);
+		$url = self::check_auth($controller, 'view') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -138,7 +136,7 @@ class Actionset
 	private static function index_deleted($controller, $item)
 	{
 		$url = "$controller/index_deleted" ;
-		$url = self::check_auth4url($controller, 'index_deleted', $url);
+		$url = self::check_auth($controller, 'index_deleted') ? $url : '';
 
 		$retvals = array(
 			'is_index'     => true,
@@ -161,7 +159,7 @@ class Actionset
 	private static function view_deleted($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'view_deleted', $url);
+		$url = self::check_auth($controller, 'view_deleted') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -183,7 +181,7 @@ class Actionset
 	private static function index_expired($controller, $item)
 	{
 		$url = "$controller/index_expired" ;
-		$url = self::check_auth4url($controller, 'index_expired', $url);
+		$url = self::check_auth($controller, 'index_expired') ? $url : '';
 
 		$retvals = array(
 			'is_index'     => true,
@@ -206,7 +204,7 @@ class Actionset
 	private static function view_expired($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'index_expired', $url);
+		$url = self::check_auth($controller, 'index_expired') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -228,7 +226,7 @@ class Actionset
 	private static function index_yet($controller, $item)
 	{
 		$url = "$controller/index_yet" ;
-		$url = self::check_auth4url($controller, 'index_yet', $url);
+		$url = self::check_auth($controller, 'index_yet') ? $url : '';
 
 		$retvals = array(
 			'is_index'     => true,
@@ -251,7 +249,7 @@ class Actionset
 	private static function view_yet($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'view_yet', $url);
+		$url = self::check_auth($controller, 'view_yet') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -268,92 +266,13 @@ class Actionset
 	}
 
 	/**
-	 * workflow()
-	 * @return  array
-	 */
-	private static function workflow($controller, $item)
-	{
-		$retvals = array(
-			'is_index'     => false,
-			'url'          => '',
-			'id_segment'   => null,
-			'action_name'  => 'ワークフロー作業',
-			'menu_str'     => 'ワークフロー作業',
-			'explanation'  => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。不可視項目の閲覧権限などに依存します。',
-			'dependencies' => array(
-				'view',
-				'edit',
-				'create',
-				'index_admin',
-				'index_invisible',
-				'view_invisible',
-				'apply',
-				'route',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * workflow_actions()
-	 * 重たい処理。ワークフローが不要なコントローラでは読まないように注意。
-	 * @return  array
-	 */
-	private static function workflow_actions($controller, $item)
-	{
-		$retval = array('dependencies'=>array());
-		if(is_null($controller) || empty($item) || ! isset($item->id)) return $retval;
-
-		//ステップを取得
-		$model = \Workflow\Model_Workflow::forge();
-		$current_step = $model::get_current_step($controller, $item->id);
-		$route_id = $model::get_route($controller, $item->id);
-		$total_step = $route_id ? $model::get_total_step($route_id) : -2;
-
-		//-1の場合は、承認申請
-		if($current_step == -1):
-			$url = "{$controller}/apply/{$item->id}" ;
-			$menu_str = '承認申請';
-		elseif($current_step < $total_step):
-		//ワークフロー進行中だったら承認・却下・差戻しができる
-			$url = array(
-				array('承認',   "{$controller}/approve/{$item->id}"),
-				array('却下',   "{$controller}/reject/{$item->id}"),
-				array('差戻し', "{$controller}/remand/{$item->id}"),
-			);
-			$menu_str = '';
-		elseif($current_step == $total_step):
-		//すでに承認が終わっていたら何もできない
-			$url = "" ;
-			$menu_str = '';
-		endif;
-
-		//経路が設定されていなければ、申請できない。経路設定URLを表示
-		if(\Kontiki\Model_Workflow_Abstract::get_current_step($controller, $item->id) == '-1/N'):
-			$url = "{$controller}/route/{$item->id}" ;
-			$menu_str = '経路設定';
-		endif;
-
-		$retvals = array(
-			'is_index'     => false,
-			'url'          => $url,
-			'id_segment'   => null,
-			'action_name'  => 'ワークフロー作業（承認申請）',
-			'menu_str'     => $menu_str,
-			'explanation'  => 'ワークフロー管理下コントローラにおける承認申請です。「ワークフロー作業」を有効にすると自動的に有効になります。',
-			'dependencies' => array()
-		);
-		return $retvals;
-	}
-
-	/**
 	 * index_invisible()
 	 * @return  array
 	 */
 	private static function index_invisible($controller, $item)
 	{
 		$url = "$controller/index_invisible" ;
-		$url = self::check_auth4url($controller, 'index_invisible', $url);
+		$url = self::check_auth($controller, 'index_invisible') ? $url: '';
 
 		$retvals = array(
 			'is_index'     => true,
@@ -376,7 +295,7 @@ class Actionset
 	private static function view_invisible($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'index_invisible', $url);
+		$url = self::check_auth($controller, 'index_invisible') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -399,7 +318,7 @@ class Actionset
 	private static function edit($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/edit/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'edit', $url);
+		$url = self::check_auth($controller, 'edit') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -422,7 +341,10 @@ class Actionset
 	private static function create($controller, $item)
 	{
 		$url = "$controller/create" ;
-		$url = self::check_auth4url($controller, 'create', $url);
+		$url = self::check_auth($controller, 'create') ? $url : '';
+
+		//edit画面では出さない
+		$url = (strpos( \Uri::string(), 'edit' ) !== false) ? '' : $url;
 
 		$retvals = array(
 			'url'          => $url,
@@ -447,7 +369,7 @@ class Actionset
 	private static function edit_deleted($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/edit/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'edit_deleted', $url);
+		$url = self::check_auth($controller, 'edit_deleted') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -475,7 +397,7 @@ class Actionset
 		if(isset($item->deleted_at) && $item->deleted_at == null):
 			$url = isset($item->id) ? "$controller/delete/$item->id" : null ;
 		endif;
-		$url = self::check_auth4url($controller, 'delete', $url);
+		$url = self::check_auth($controller, 'delete') ? $url :'';
 
 		//retval
 		$retvals = array(
@@ -505,7 +427,7 @@ class Actionset
 		if(isset($item->deleted_at) && $item->deleted_at):
 			$url = isset($item->id) ? "$controller/undelete/$item->id" : null ;
 		endif;
-		$url = self::check_auth4url($controller, 'undelete', $url);
+		$url = self::check_auth($controller, 'undelete') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -534,7 +456,7 @@ class Actionset
 		if(isset($item->deleted_at) && $item->deleted_at):
 			$url = isset($item->id) ? "$controller/delete_deleted/$item->id" : null ;
 		endif;
-		$url = self::check_auth4url($controller, 'delete_deleted', $url);
+		$url = self::check_auth($controller, 'delete_deleted') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,
@@ -559,7 +481,7 @@ class Actionset
 	private static function view_revision($controller, $item)
 	{
 		$url = isset($item->id) ? "$controller/index_revision/$item->id" : null ;
-		$url = self::check_auth4url($controller, 'index_revision', $url);
+		$url = self::check_auth($controller, 'index_revision') ? $url : '';
 
 		$retvals = array(
 			'url'          => $url,

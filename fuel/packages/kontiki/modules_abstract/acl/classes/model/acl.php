@@ -75,7 +75,6 @@ class Model_Acl_Abstract extends \Kontiki\Model
 	 */
 	public static function get_controllers($is_owner = false)
 	{
-		$controllers_from_config = \Config::get('modules');
 		$controllers = array('none' => '選択してください');
 
 		foreach(\Config::get('module_paths') as $path):

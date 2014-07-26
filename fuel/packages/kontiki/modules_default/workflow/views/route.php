@@ -19,6 +19,7 @@
 <p>
 <?php
 echo Form::hidden($token_key, $token);
+echo Html::anchor($controller.'/edit/'.$item->id, '戻る',array('class'=>'button'));
 echo Form::submit('submit', '経路設定する', array('class' => 'button main'));
 ?>
 </p>
