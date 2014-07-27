@@ -222,7 +222,7 @@ FILES;
 		$str = <<<FILES
 <?php
 namespace {$name};
-class View_{$name} extends \Kontiki\ViewModel
+class View_{$name} extends \Kontiki\View
 {
 }
 FILES;

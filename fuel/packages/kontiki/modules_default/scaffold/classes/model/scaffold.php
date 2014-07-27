@@ -1,6 +1,5 @@
 <?php
 namespace Scaffold;
-class Model_Scaffold extends \Kontiki\Model
+class Model_Scaffold extends \Kontiki\Model_Scaffold
 {
-	protected static $_table_name = '';
 }

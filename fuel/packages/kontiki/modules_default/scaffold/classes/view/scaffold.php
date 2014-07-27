@@ -1,5 +1,5 @@
 <?php
 namespace Scaffold;
-class View_Scaffold extends \Kontiki\ViewModel
+class View_Scaffold extends \Kontiki\View
 {
 }

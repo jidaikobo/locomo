@@ -56,7 +56,7 @@ if($is_user_logged_in):
 
 	//user menu
 	$html.= '<div id="admin_bar_user">';
-	$html.= '<h2>ユーザメニュー</h2>';
+	$html.= '<h2>'.\User\Controller_User::$userinfo['user_name'].'</h2>';
 	$html.= '<ul>';
 	$html.= "<li><a href=\"{$home_uri}user/logout\">ログアウト</a></li>";
 	$html.= '</ul>';

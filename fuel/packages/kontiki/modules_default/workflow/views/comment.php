@@ -5,13 +5,21 @@
 <h2>ワークフロー名</h2>
 
 <fieldset>
-	<legend>コメント</legend>
+	<legend><?php echo \Form::label('コメント', "comment", array('class'=>'control-label')); ?></legend>
 
 	<div class="form-group">
-		<?php echo \Form::label('コメント', "comment", array('class'=>'control-label')); ?>
 		<?php echo \Form::textarea("comment", '', array('class' => 'col-md-4 form-control')); ?>
 	</div>
 </fieldset>
+
+<?php if(@$target_steps): ?>
+<fieldset>
+	<legend>差戻し先</legend>
+	<div class="form-group">
+		<?php echo \Form::select("target_step", '', $target_steps, array('class' => 'col-md-4 form-control')); ?>
+	</div>
+</fieldset>
+<?php endif; ?>
 
 <p>
 	<?php

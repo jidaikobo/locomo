@@ -1,5 +1,5 @@
 <?php
 namespace Acl;
-class Model_Acl extends \Kontiki\Model_Acl_Abstract
+class Model_Acl extends \Kontiki\Model_Acl
 {
 }

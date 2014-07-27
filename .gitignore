@@ -4,6 +4,7 @@ fuel/app/cache/*/*
 fuel/packages/kontiki/config/packageconfig.php
 fuel/packages/kontiki/modules/*
 fuel/packages/kontiki/views/*
+fuel/packages/kontiki/_test
 fuel/app/config/development/db.php
 fuel/app/config/crypt.php
 view/css/*
