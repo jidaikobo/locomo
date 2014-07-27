@@ -12,7 +12,8 @@ $this->request->action
 
 ＊　＊　＊
 
-actionsetの整理
+coreディレクトリを作る？
+
 destroyをいつか作る
 
 ＊　＊　＊
