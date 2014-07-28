@@ -138,6 +138,7 @@ img.nfb
 {
 	outline:4px solid rgb(153,198,200);
 	outline: -webkit-focus-ring-color auto 4px;
+	z-index: 99;
 }
 body:focus{
 	outline: none;
@@ -926,7 +927,7 @@ table.radius { /* 上、左にborder */
 	border-collapse: separate;
 	border-spacing: 0;
 */
-	border-radius: 10px;
+	border-radius: 4px;
 /*
 	border-top: 1px solid #bbb;
 	border-left: 1px solid #bbb;
@@ -955,11 +956,11 @@ table.radius td { /* 右、下にborder */
 /* 1行目、左端の要素 */
 table.radius tr:first-child th:first-child,
 table.radius tr:first-child td:first-child {
-	border-top-left-radius: 10px; /* 左上角丸 */
+	border-top-left-radius: 4px; /* 左上角丸 */
 }
 table.radius tr:first-child th:last-child,
 table.radius tr:first-child td:last-child {
-	border-top-right-radius: 10px; /* 右上角丸 */
+	border-top-right-radius: 4px; /* 右上角丸 */
 }
 
 /* theadのない場合のtbody > th（thead > thと同様のスタイルに。） */
@@ -984,12 +985,12 @@ table.radius thead ~ tbody tr:first-child td:last-child {
 /* trもたすradiusぐらいにする */
 table.radius tbody tr:last-child th:first-child,
 table.radius tbody tr:last-child td:first-child {
-	border-bottom-left-radius: 10px; /* 左下角丸 */
+	border-bottom-left-radius: 4px; /* 左下角丸 */
 }
 
 /* tbodyのラスト1行、右端の要素 */
 table.radius tbody tr:last-child td:last-child {
-	border-bottom-right-radius: 10px; /* 右下角丸 */
+	border-bottom-right-radius: 4px; /* 右下角丸 */
 }
 
 /* ----- tfootがある場合にtbodyの角丸を解除  ----- */
@@ -1006,13 +1007,13 @@ table.radius tfoot ~ tbody tr:last-child td:last-child {
 table.radius tfoot tr:last-child th:first-child,
 table.radius tfoot tr:last-child td:first-child {
 	border-top-left-radius: 0; /* 左上角 */
-	border-bottom-left-radius: 10px; /* 左下角丸 */
+	border-bottom-left-radius: 4px; /* 左下角丸 */
 }
 
 /* tfootのラスト1行、右端の要素 */
 table.radius tfoot tr:last-child td:last-child{
 	border-top-right-radius: 0; /* 右上角 */
-	border-bottom-right-radius: 10px; /* 右下角丸 */
+	border-bottom-right-radius: 4px; /* 右下角丸 */
 }
 
 
@@ -1277,9 +1278,9 @@ a.edit_link span span
 
 /* === ついかぶんでういているもの === */
 .radius{
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 }
 
 .gradient{
