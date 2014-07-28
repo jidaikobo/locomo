@@ -290,6 +290,9 @@ $(document).ready(function(){
 //JavaScript有効時に表示する、無効時には非表示にする（CSS）
 $("body").removeClass("hide-if-no-js");
 
+$( 'a.listOpen' ).click( function () {
+	console.log($(this));
+} );
 
 
 });

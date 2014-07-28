@@ -11,12 +11,15 @@ body{
 	box-sizing : border-box ;
 
 	min-height: 100%;
-	height: auto;
+	height: auto !important;
+	height: 100%;
 	padding: 0 30px 120px;
+	margin-bottom: -120px;
 	position: relative;
 }
-footer{
-	position: absolute;
+footer,
+#footer{
+	position: re;
 	bottom: 0;
 	height: 80px;
 	padding: 10px 0;
@@ -25,11 +28,13 @@ footer{
 
 /*=== admin_bar ===*/
 
-#admin_bar{
+#admin_bar
+{
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
+	z-index: 100;
 	padding: 10px 20px;
 	background-color: #eee;
 	height: 1.5em;
@@ -55,18 +60,20 @@ footer{
 #admin_bar_user li{
 	display: block;
 }
-#admin_bar_controller *,
-#admin_bar_context *
-{
-	display: none;
-	padding: 0;
-}
 #admin_bar div h2
 {
-	display: block;
 	padding: 0 20px;
 	margin-bottom: 5px;
 }
+
+#admin_bar div h2 a{
+	color: #000;
+	text-decoration: none;
+}
+.admin_bar_sub{
+	display: none;
+}
+
 #admin_bar div h3
 {
 	padding: 0 20px;
@@ -79,7 +86,8 @@ footer{
 
 /* hover action */
 
-#admin_bar_controller:hover *,
-#admin_bar_context:hover *{
+#admin_bar_controller:hover .admin_bar_sub,
+#admin_bar_context:hover .admin_bar_sub
+{
 	display: block;
 }
