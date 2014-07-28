@@ -34,14 +34,14 @@ abstract class Model_User extends \Kontiki\Model
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Kontiki_Observer\Password' => array(
+		'Kontiki\Observer\Password' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Kontiki_Observer\Date' => array(
+		'Kontiki\Observer\Date' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Kontiki_Observer\Userids' => array(
+		'Kontiki\Observer\Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
 	);

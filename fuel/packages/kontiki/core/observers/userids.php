@@ -1,5 +1,5 @@
 <?php
-namespace Kontiki_Observer;
+namespace Kontiki\Observer;
 class Userids extends \Orm\Observer
 {
 	/**

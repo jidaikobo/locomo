@@ -1,5 +1,5 @@
 <?php
-namespace Kontiki_Observer;
+namespace Kontiki\Observer;
 class Date extends \Orm\Observer
 {
 	/**

@@ -27,7 +27,7 @@ return array(
 	//modules settings
 	'module_paths' => array(
 		PKGPATH.'kontiki/modules'.DS,
-		PKGPATH.'kontiki/modules_default'.DS
+		PKGPATH.'kontiki/core/modules'.DS
 	),
 
 	//always guest allowed actions

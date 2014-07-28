@@ -27,7 +27,7 @@ abstract class Model_Usergroup extends \Kontiki\Model
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Kontiki_Observer\Date' => array(
+		'Kontiki\Observer\Date' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
