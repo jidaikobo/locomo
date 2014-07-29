@@ -58,6 +58,35 @@ abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 	}
 
 	/**
+	 * action_index_workflow()
+	 */
+	public function action_index_workflow($page = null)
+	{
+		is_null($id) and \Response::redirect(\Uri::base());
+
+		//model and view
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/index_workflow.php'));
+		$model = \Workflow\Model_Workflow::forge();
+
+die();
+
+/*
+		//現在のユーザにできる承認行為を一覧する
+		$items = $model->find_items();
+
+		//現在設定されている経路を取得
+		$route_id = $model::get_route($this->request->module, $id);
+
+		//assign
+		$view->set_global('title', 'ルート設定');
+		$view->set('button', '申請する');
+		$view->set('items', $items);
+		$view->set('route_id', $route_id);
+*/
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
 	 * edit_core() - override
 	 */
 	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)
@@ -108,7 +137,6 @@ abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
-
 
 	/**
 	 * action_apply()

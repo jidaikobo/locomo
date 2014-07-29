@@ -170,15 +170,6 @@ class Controller_{$name} extends \Kontiki\Controller_Crud
 	{
 		parent::set_actionset(\$controller, \$id);
 		unset(self::\$actionset->view_revision);
-
-/*
-		//workflow
-		require_once(PKGPATH.'kontiki/classes/actionset_workflow.php');
-		self::\$actionset = \Kontiki\Util::object_merge(
-			self::\$actionset,
-			\Kontiki\Actionset_Workflow::actionItems(\$controller, \$id)
-		);
-*/
 	}
 }
 FILES;

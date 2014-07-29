@@ -9,8 +9,8 @@ abstract class Util_Abstract
 	{
 		is_null($path) and \Response::redirect(\Uri::base());
 
-		$tpl_path         = PKGPATH.'kontiki/modules/'.$path;
-		$tpl_path_default = PKGPATH.'kontiki/modules_default/'.$path;
+		$tpl_path         = PKGAPPPATH.'modules/'.$path;
+		$tpl_path_default = PKGCOREPATH.'modules/'.$path;
 		if(file_exists($tpl_path)):
 			return $tpl_path;
 		elseif(file_exists($tpl_path_default)):
@@ -20,19 +20,6 @@ abstract class Util_Abstract
 		endif;
 	}
 	
-	/**
-	 * object_merge()
-	 * thx http://d.hatena.ne.jp/rsky/20070808/1186578579
-	 */
-	public static function object_merge()
-	{
-		$args = func_get_args();
-		if ( ! $args) {
-			return null;
-		}
-		return (object) call_user_func_array('array_merge', array_map('get_object_vars', $args));
-	}
-
 	/**
 	 * get_controller_valid_name()
 	 */
