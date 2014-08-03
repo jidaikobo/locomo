@@ -35,13 +35,6 @@ abstract class Model_Workflowadmin extends \Kontiki\Model
 			$retvals[$n] = $step;
 			$step_id = $step['id'];
 
-			//workflow_step_actions取得
-			$q = \DB::select('action');
-			$q->from('workflow_step_actions');
-			$q->where('step_id', $step_id);
-			$action = $q->execute()->current();
-			$retvals[$n]['actions'] = $action['action'];
-
 			//workflow_allowers取得
 			$q = \DB::select('user_id');
 			$q->from('workflow_allowers');
@@ -78,6 +71,7 @@ abstract class Model_Workflowadmin extends \Kontiki\Model
 				'workflow_id' => $workflow_id,
 				'condition'   => $arg['condition'],
 				'order'       => $order,
+				'action'      => $arg['action'],
 			);
 
 			if($step_id):
@@ -99,32 +93,6 @@ abstract class Model_Workflowadmin extends \Kontiki\Model
 				$q->from('workflow_steps');
 				$last_insert_id = $q->execute()->current();
 				$step_id['id'] = $last_insert_id['last_insert_id()'];
-			endif;
-
-			//workflow_step_actionsテーブルの確認
-			$q = \DB::select('id');
-			$q->from('workflow_step_actions');
-			$q->where('step_id', $step_id['id']);
-			$actions_id = $q->execute()->current();
-
-			//値の準備
-			$set = array(
-				'step_id' => $step_id['id'],
-				'action'  => $arg['actions'],
-			);
-			if($actions_id):
-				//更新
-				$q = \DB::update();
-				$q->table('workflow_step_actions');
-				$q->set($set);
-				$q->where('id', $actions_id['id']);
-				$q->execute();
-			else:
-				//新規作成
-				$q = \DB::insert();
-				$q->table('workflow_step_actions');
-				$q->set($set);
-				$q->execute();
 			endif;
 
 			//workflow_allowersテーブルを初期化

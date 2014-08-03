@@ -196,6 +196,7 @@ namespace {$name};
 class Model_{$name} extends \Kontiki\Model
 {
 	protected static \$_table_name = '{$table_name}';
+	protected static \$_primary_name = '';
 
 	protected static \$_properties = array(
 {$field_str}	);

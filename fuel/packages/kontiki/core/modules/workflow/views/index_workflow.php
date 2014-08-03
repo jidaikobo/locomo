@@ -2,28 +2,21 @@
 
 <h2>ルート設定</h2>
 
-<?php echo \Form::open(array("class"=>"form-horizontal")); ?>
-<ul class="nlm">
-<?php foreach($items->results as $item): ?>
-	<li>
-	<label>
-	<?php
-		echo \Form::radio('route', $item->id, (\Input::post('route') == $item->id || $route_id == $item->id), array('class' => 'col-md-4 form-control'));
-		echo $item->name;
-	?>
-	</label>
-	</li>
+<table class="tbl">
+<?php foreach($items as $item): ?>
+	<tr>
+		<td class="id">
+			<?php if($item['is_current']): ?>
+				<a href="<?php echo \Uri::create($item['controller'].'/view/'.$item['controller_id']); ?>" class="button">
+					<span class="skip"><?php echo $item['item']->{$item['primary_name_field']} ?>を</span>確認
+				</a>
+			<?php else: ?>
+				進行中
+			<?php endif; ?>
+		</td>
+		<td><?php echo $item['item']->{$item['primary_name_field']} ?></td>
+	</tr>
 <?php endforeach; ?>
-</ul>
-
-<p>
-<?php
-echo Form::hidden($token_key, $token);
-echo Html::anchor($controller.'/edit/'.$item->id, '戻る',array('class'=>'button'));
-echo Form::submit('submit', '経路設定する', array('class' => 'button main'));
-?>
-</p>
-
-<?php echo \Form::close(); ?>
+</table>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

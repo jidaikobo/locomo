@@ -167,6 +167,62 @@ abstract class Model_Workflow extends \Kontiki\Model
 	}
 
 	/**
+	 * get_related_current_available_items()
+	*/
+	public static function get_related_current_available_items($controller = null, $userinfo = null)
+	{
+		$userinfo = $userinfo ? $userinfo : \User\Controller_User::$userinfo;
+
+		//ユーザがいまアクションできる項目のコントローラとidを得る
+		$q = \DB::select('*');
+		$q->from('workflow_current_users');
+		$q->where('user_id', $userinfo['user_id']);
+		if($controller) $q->where('controller', $controller);
+		$q->limit('256');
+		$availables = $q->as_object()->execute()->as_array();
+
+		return $availables;
+	}
+
+	/**
+	 * get_related_current_items()
+	*/
+	public static function get_related_current_items($controller = null, $userinfo = null)
+	{
+		$userinfo = $userinfo ? $userinfo : \User\Controller_User::$userinfo;
+
+		//ユーザidからworkflow_idを取得
+		$q = \DB::select('workflow_steps.workflow_id');
+		$q->from('workflow_steps');
+		$q->join('workflow_allowers');
+		$q->on('workflow_steps.id', '=', 'workflow_allowers.step_id');
+		$q->where('workflow_allowers.user_id', $userinfo['user_id']);
+		$workflow_ids = \Arr::flatten($q->execute()->as_array());
+
+		//workflow_idから進行中のコントローラとidを得る
+		$retvals = array();
+		$n = 0;
+		foreach($workflow_ids as $workflow_id):
+			$q = \DB::select('workflow_logs.controller','workflow_logs.controller_id');
+			$q->distinct();
+			$q->from('workflow_logs');
+			$q->where('workflow_logs.workflow_id', $workflow_id);
+			$q->where('workflow_logs.status', '<>', 'finish');
+			$q->limit('256');
+			$ctrls = $q->execute()->as_array();
+			if( ! $ctrls) continue;
+				foreach($ctrls as $ctrl):
+				$retvals[$n] = (object) array();
+				$retvals[$n]->controller    = $ctrl['controller'];
+				$retvals[$n]->controller_id = $ctrl['controller_id'];
+				$n++;
+			endforeach;
+		endforeach;
+
+		return $retvals;
+	}
+
+	/**
 	 * add_log()
 	*/
 	public static function add_log($status = 'approve', $workflow_id = null, $controller = null, $controller_id = null, $comment = '', $target_step = null)
@@ -180,7 +236,7 @@ abstract class Model_Workflow extends \Kontiki\Model
 		//current stepの変更
 		if($status == 'init'):
 			$current_step = -1;
-		elseif($status == 'approve'):
+		elseif($status == 'approve' || $status == 'finish'):
 			$current_step++;
 		elseif($status == 'reject'):
 			$current_step = -3;
@@ -197,14 +253,53 @@ abstract class Model_Workflow extends \Kontiki\Model
 			'status'        => $status,
 			'comment'       => $comment,
 			'created_at'    => date('Y-m-d H:i:s'),
-			'creator_id'    => \User\Controller_User::$userinfo['user_id'],
+			'did_user_id'   => \User\Controller_User::$userinfo['user_id'],
 		);
 
-		//insert
+		//ログのアップデート
 		$q = \DB::insert();
 		$q->table('workflow_logs');
 		$q->set($set);
 		$q->execute();
+
+		//ログのidを取得
+		$q = \DB::select(\DB::Expr('last_insert_id()'));
+		$q->from('workflow_logs');
+		$last_insert_id = $q->execute()->current();
+		$log_id = $last_insert_id['last_insert_id()'];
+
+		//「次のユーザたち」をいったん削除
+		$q = \DB::delete();
+		$q->table('workflow_current_users');
+		$q->where('controller', $controller);
+		$q->where('controller_id', $controller_id);
+		$q->execute();
+
+		//最後の承認か、ルート設定直後だったら、「次のユーザたち」を削除後return
+		if($status == 'finish' || $status == 'init'):
+			return;
+		endif;
+
+		//現在のステップのidを取得
+		$step_id = self::get_current_step_id($workflow_id, $current_step);
+
+		//次のステップのユーザたちを取得
+		$members = self::get_members($workflow_id, $step_id);
+
+		foreach($members as $user_id):
+			$set = array(
+				'log_id'        => $log_id,
+				'controller'    => $controller,
+				'controller_id' => $controller_id,
+				'user_id'       => $user_id,
+			);
+			$q = \DB::insert();
+			$q->table('workflow_current_users');
+			$q->set($set);
+			$q->execute();
+		endforeach;
+
+		return;
 	}
 
 }

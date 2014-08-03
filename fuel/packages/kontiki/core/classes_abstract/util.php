@@ -21,12 +21,22 @@ abstract class Util_Abstract
 	}
 	
 	/**
-	 * get_controller_valid_name()
+	 * get_valid_controller_name()
 	 */
-	public static function get_controller_valid_name($controller = null)
+	public static function get_valid_controller_name($controller = null)
 	{
 		is_null($controller) and \Response::redirect(\Uri::base());
 		$controller_ucfirst = ucfirst($controller);
 		return "\\$controller_ucfirst\Controller_".$controller_ucfirst;
+	}
+
+	/**
+	 * get_valid_model_name()
+	 */
+	public static function get_valid_model_name($controller = null)
+	{
+		is_null($controller) and \Response::redirect(\Uri::base());
+		$controller_ucfirst = ucfirst($controller);
+		return "\\$controller_ucfirst\Model_".$controller_ucfirst;
 	}
 }

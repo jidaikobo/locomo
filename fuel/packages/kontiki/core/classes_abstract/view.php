@@ -154,7 +154,7 @@ abstract class View_Abstract extends \ViewModel
 			if( ! \User\Controller_User::$is_user_logged_in) return false;
 
 			//コントローラからactionsetを取得
-			$controller_obj = \Kontiki\Util::get_controller_valid_name($controller);
+			$controller_obj = \Kontiki\Util::get_valid_controller_name($controller);
 			$obj = new $controller_obj(\Request::forge());
 			$obj->set_actionset($controller, $item);
 

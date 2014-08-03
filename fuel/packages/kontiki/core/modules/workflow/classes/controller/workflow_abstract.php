@@ -60,29 +60,45 @@ abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 	/**
 	 * action_index_workflow()
 	 */
-	public function action_index_workflow($page = null)
+	public function action_index_workflow($pagenum = null)
 	{
-		is_null($id) and \Response::redirect(\Uri::base());
-
 		//model and view
 		$view = \View::forge(\Kontiki\Util::fetch_tpl('/workflow/views/index_workflow.php'));
 		$model = \Workflow\Model_Workflow::forge();
 
-die();
+		//ユーザが関わっている項目すべて
+		$current_items   = $model->get_related_current_items();
 
-/*
-		//現在のユーザにできる承認行為を一覧する
-		$items = $model->find_items();
+		//ユーザが行動しなければならない項目のみ
+		$available_items = $model->get_related_current_available_items();
 
-		//現在設定されている経路を取得
-		$route_id = $model::get_route($this->request->module, $id);
+		//比較用配列
+		$cmp_arr = array();
+		foreach($available_items as $available_item):
+			$cmp_arr[] = $available_item->controller.'::'.$available_item->controller_id;
+		endforeach;
+
+		//一覧用にマージ
+		$items = array();
+		foreach($current_items as $k => $current_item):
+			//存在比較用文字列
+			$cmp_str = $current_item->controller.'::'.$current_item->controller_id;
+
+			//一覧用配列を作る
+			$items[$k]['controller']    = $current_item->controller;
+			$items[$k]['controller_id'] = $current_item->controller_id;
+			$items[$k]['is_current']    = in_array($cmp_str, $cmp_arr) ? true : false;
+			$items[$k]['item']          = $model::find_item_by_ctrl_and_id($current_item->controller, $current_item->controller_id);
+
+			//表示用の名称
+			$modelname = \Kontiki\Util::get_valid_model_name($current_item->controller);
+			$items[$k]['primary_name_field'] = $modelname::get_primary_name();
+		endforeach;
 
 		//assign
-		$view->set_global('title', 'ルート設定');
-		$view->set('button', '申請する');
-		$view->set('items', $items);
-		$view->set('route_id', $route_id);
-*/
+		$view->set_global('title', '関連ワークフロー');
+		$view->set('items', \Arr::sort($items, 'is_current', 'desc'));
+
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
@@ -126,7 +142,7 @@ die();
 		//設定されている経路をすべて取得
 		$items = $model->find_items();
 
-		//現在設定されている経路を取得
+		//現在設定されている経路を取得（将来のルート変更用）
 		$route_id = $model::get_route($this->request->module, $id);
 
 		//assign
@@ -134,6 +150,7 @@ die();
 		$view->set('button', '申請する');
 		$view->set('items', $items);
 		$view->set('route_id', $route_id);
+		$view->set('item_id', $id);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -187,11 +204,28 @@ die();
 		//postがあったら承認処理をして、閲覧画面に戻る
 		if (\Input::method() == 'POST'):
 			$route_id = $model::get_route($this->request->module, $id);
-
 			if($route_id):
 				$comment = \Input::post('comment');
-				$model::add_log('approve',$route_id, $this->request->module, $id,$comment);
-				\Session::set_flash('success', '承認しました');
+
+				//最後の承認かどうか確認する
+				$current_step = $model::get_current_step($this->request->module, $id) + 1;
+				$total_step   = $model::get_total_step($route_id);
+				$mode = $current_step == $total_step ? 'finish' : 'approve';
+
+				//add_log
+				$model::add_log($mode, $route_id, $this->request->module, $id,$comment);
+
+				//最後の承認であれば、項目のステータスを変更する
+				if($mode == 'finish'):
+					$target_model = $this->model_name ;
+					$obj = $target_model::find_item_anyway($id);
+					$obj->workflow_status = 'finish';
+					$obj->save();
+					\Session::set_flash('success', '最終の承認をしました');
+				else:
+					\Session::set_flash('success', '承認しました');
+				endif;
+
 				return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
 			endif;
 		endif;
