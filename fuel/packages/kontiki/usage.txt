@@ -92,7 +92,6 @@ unset( self::$actionset->view_revision );
 また、オプション用のtableには、id, name, order, is_availableは、使わなくても必須です。これにほかのカラムを追加して使うこともできます。
 
 例）
-
 postモジュールにオプションを足します。
 migrationは、002_create_postcategories.phpとします。
 ファイルを設置したら、
@@ -126,4 +125,10 @@ class Create_postcategories
 	}
 }
 ────────────────ここまで▲
+
+2、モジュールのactionsetを追記します。
+
+例）
+postモジュールにpostcategoriesを足す場合です。
+
 

@@ -177,6 +177,26 @@ FILES;
 	}
 
 	/**
+	 * generate_actionset()
+	 */
+	public function generate_actionset($name)
+	{
+		$val = file_get_contents(dirname(__DIR__).'/templates/actionset.php');
+		$val = self::replaces($name, $val);
+		return $val;
+	}
+
+	/**
+	 * generate_actionset_owner()
+	 */
+	public function generate_actionset_owner($name)
+	{
+		$val = file_get_contents(dirname(__DIR__).'/templates/actionset_owner.php');
+		$val = self::replaces($name, $val);
+		return $val;
+	}
+
+	/**
 	 * generate_model()
 	 */
 	public function generate_model($name, $cmds)
