@@ -13,6 +13,8 @@ php oil refine migrate:up --modules=user
 php oil refine migrate:up --modules=usergroup
 php oil refine migrate:up --modules=users_usergroups_r
 php oil refine migrate:up --modules=loginlog
+php oil refine migrate:up --modules=workflowadmin
+php oil refine migrate:up --modules=revision
 
 //APPPATH.config/config.php
 
@@ -78,3 +80,50 @@ unset( self::$actionset->view_revision );
  */
 
 ワークフロー管理をするためには、kontikiのscaffoldで出来上がったset_actionsetのWorkflow関連部分のコメントアウトを外してください。あとclass宣言部分のextendsもとを\Kontiki\Controller_Workflowに差し替えてください。
+
+/*
+ * オプション
+ */
+
+モジュール内でユーザが編集できるオプション項目をcrudするコントローラを使いたいときには、以下の手順で作成してください。
+
+1、モジュールのmigrationsフォルダに、マイグレーション用のファイルを置き、oilでmigrationします。
+オプション用のtable名は自由ですが、中間テーブルの名前はオプション用のtable名に_rの接尾辞をつけるようにしてください。
+また、オプション用のtableには、id, name, order, is_availableは、使わなくても必須です。これにほかのカラムを追加して使うこともできます。
+
+例）
+
+postモジュールにオプションを足します。
+migrationは、002_create_postcategories.phpとします。
+ファイルを設置したら、
+php oil refine migrate:up --modules=post
+で、migrationします。
+
+▼ここから────────────────
+<?php
+namespace Fuel\Migrations;
+class Create_postcategories
+{
+	public function up()
+	{
+		\DBUtil::create_table('postcategories', array(
+			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'name'         => array('constraint' => 50, 'type' => 'varchar'),
+			'order'        => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'is_available' => array('constraint' => 1, 'type' => 'tinyint'),
+		), array('id'));
+		
+		\DBUtil::create_table('postcategories_r', array(
+			'item_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'option_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+		), array('item_id','option_id'));
+	}
+
+	public function down()
+	{
+		\DBUtil::drop_table('postcategories');
+		\DBUtil::drop_table('postcategories_r');
+	}
+}
+────────────────ここまで▲
+

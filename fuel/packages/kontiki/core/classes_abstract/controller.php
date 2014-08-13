@@ -47,12 +47,11 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 		$this->model_name  = '\\'.ucfirst($controller).'\\Model_'.ucfirst($controller);
 
 		//actionset
-		$this->set_actionset();
-
-		//set_current_id
-		$this->set_current_id();
+		//set_current_id()で、最初にactionsetを必要とするので、ここで設定する
+		$this->set_actionset($controller);
 
 		//可能であれば、とりあえず取得してみる
+		$this->set_current_id();
 		$item = false;
 		if(self::$current_id):
 			$model = $this->model_name;
@@ -60,13 +59,11 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 		endif;
 
 		//nicename
-
 		$controllers_from_config = \Config::load($controller);
 		self::$nicename = $controllers_from_config['nicename'];
 
-		$is_allowed = false;
 		//acl まずユーザ／ユーザグループ単位を確認する。
-		$is_allowed = $this->acl($userinfo) ? true : $is_allowed ;
+		$is_allowed = $this->acl($userinfo) ? true : false ;
 
 		//ユーザ／ユーザグループで失敗したら、オーナ権限を確認する
 		if( ! $is_allowed && $item):
@@ -107,8 +104,8 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
-		//アクションセットで定義されていないアクションへのアクセスの拒否
-//self::$actionset
+		//アクションセットで定義されていないアクションへのアクセスの拒否（まだ書いてない）。いまはアクションが存在していたら、アクションセットがなくても実行できてしまうので、controller_crudにあるメソッドが実行できてしまう。
+		//self::$actionset
 
 
 		//アクションが普通に存在していれば、そのまま実行
@@ -180,8 +177,24 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 	 */
 	public function set_actionset($controller = null, $id = null)
 	{
-		self::$actionset = \Kontiki\Actionset::actionItems($controller, $id);
-		self::$actionset_owner = \Kontiki\Actionset_Owner::actionItems($controller, $id);
+		is_null($controller) and die('set_actionset() needs controller');
+
+		//アクションセット用のファイルを取得
+		$default_path  = PKGCOREPATH."modules/{$controller}/classes/actionset/actionset.php";
+		$override_path = PKGAPPPATH ."modules/{$controller}/classes/actionset/actionset.php";
+		if(file_exists($override_path)):
+			require_once($override_path);
+			require_once(PKGAPPPATH."modules/{$controller}/classes/actionset/actionset_owner.php");
+		else:
+			require_once($default_path);
+			require_once(PKGCOREPATH."modules/{$controller}/classes/actionset/actionset_owner.php");
+		endif;
+
+		//アクションセットの設定
+		$actionset_class = \Kontiki\Util::get_valid_actionset_name($controller);
+		$actionset_owner_class = \Kontiki\Util::get_valid_actionset_name($controller, $is_owner = true);
+		self::$actionset = $actionset_class::actionItems($controller, $id);
+		self::$actionset_owner = $actionset_owner_class::actionItems($controller, $id);
 	}
 
 	/**

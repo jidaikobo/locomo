@@ -21,6 +21,20 @@ abstract class Util_Abstract
 	}
 	
 	/**
+	 * get_valid_actionset_name()
+	 */
+	public static function get_valid_actionset_name($controller = null, $is_ownerset = false)
+	{
+		is_null($controller) and \Response::redirect(\Uri::base());
+		$controller_ucfirst = ucfirst($controller);
+		if($is_ownerset):
+			return "\\$controller_ucfirst\Actionset_Owner_".$controller_ucfirst;
+		else:
+			return "\\$controller_ucfirst\Actionset_".$controller_ucfirst;
+		endif;
+	}
+
+	/**
 	 * get_valid_controller_name()
 	 */
 	public static function get_valid_controller_name($controller = null)

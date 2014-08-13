@@ -3,17 +3,6 @@ namespace Kontiki;
 abstract class Controller_Scaffold extends \Kontiki\Controller_Crud
 {
 	/**
-	 * set_actionset()
-	 */
-	public function set_actionset($controller = null, $id = null)
-	{
-		parent::set_actionset();
-		require_once(dirname(__DIR__).'/actionset/scaffold.php');
-		self::$actionset = \Scaffold\Actionset_Scaffold::actionItems();
-		self::$actionset_owner = array();
-	}
-
-	/**
 	 * action_main()
 	 */
 	public function action_main()

@@ -25,7 +25,6 @@ abstract class Controller_Content extends \Kontiki\Controller_Crud
 	 */
 	public function set_actionset($controller = null, $id = null)
 	{
-		parent::set_actionset();
 		self::$actionset = array();
 		self::$actionset_owner = array();
 	}
@@ -45,6 +44,12 @@ abstract class Controller_Content extends \Kontiki\Controller_Crud
 	*/
 	public function action_home()
 	{
+		//このアクションはトップページ専用として、content/homeへのアクセスはできないようにする。
+		if(substr(\Uri::string(),0,12) == 'content/home'):
+			return \Response::redirect('/', 'location', 404);
+		endif;
+
+		//描画
 		$view = \View::forge('home');
 		$view->set_global('title', \Config::get('site_title'));
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));

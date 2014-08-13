@@ -50,7 +50,7 @@ foreach (glob(PKGCOREPATH."observers".DS."*") as $filename):
 	//class names and pathes
 	$class = substr(\Inflector::words_to_upper(basename($filename)), 0, -4);//remove .php
 	$l_class = strtolower($class);
-	$default_path = PKGCOREPATH."observers/{$l_class}.php";
+	$default_path  = PKGCOREPATH."observers/{$l_class}.php";
 	$override_path = PKGAPPPATH."observers/{$l_class}.php";
 
 	//setting

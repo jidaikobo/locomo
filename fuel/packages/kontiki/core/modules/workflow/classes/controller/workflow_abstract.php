@@ -3,16 +3,6 @@ namespace Kontiki;
 abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 {
 	/**
-	 * set_actionset() - override
-	 */
-	public function set_actionset($controller = null, $item = null)
-	{
-		parent::set_actionset();
-		require_once(dirname(__DIR__).'/actionset/workflow.php');
-		self::$actionset = \Workflow\Actionset_Workflow::actionItems($controller, $item);
-	}
-
-	/**
 	 * pre_save_hook() - override
 	 */
 	public function pre_save_hook($obj = null, $mode = 'edit')
