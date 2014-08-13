@@ -3,35 +3,17 @@ namespace Kontiki;
 abstract class Controller_Options_Abstract extends \Kontiki\Controller
 {
 	/**
-	 * action_generate()
+	 * action_options()
 	 */
-	public function action_generate($id = null)
+	public function action_options($optname = null)
 	{
-/*
-■オプションの作り方
-●前提
-原則、中間テーブルを用いることで、レコードにalter tableをかけずにテーブルを増やせるようにする。
-オプションテーブルは、コントローラ名をprefixにする。（post_magazinesendways）
-中間テーブルは_rのsuffixを持つ（post_magazinesendways_r）が自動生成される
-アクションセットも必要
-モジュールのoptionsディレクトリにmigrationファイルとアクションセットを持っておく
-
-migrateを作る
-migrateの例
-\DBUtil::create_table('post_magazinesendways', array(
-	'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
-	'name'         => array('constraint' => 50, 'type' => 'varchar'),
-	'order'        => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
-	'is_available' => array('constraint' => 1, 'type' => 'tinyint'),
-), array('id'));
-
-\DBUtil::create_table('post_magazinesendways_r', array(
-	'item_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
-	'option_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
-), array('item_id','option_id'));
+		is_null($optname) and die();
 
 
-*/
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
+var_dump( $optname ) ;
+echo '</textarea>' ;
+die();
 
 
 
