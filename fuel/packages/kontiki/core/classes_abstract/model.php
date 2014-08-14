@@ -420,4 +420,56 @@ abstract class Model_Abstract extends \Orm\Model_Soft
 		$q->where($primary_key, $id);
 		return $q->execute();
 	}
+
+	/**
+	 * add_option()
+	 *
+	 * @return object | result
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function add_option($table = null, $vals = null)
+	{
+		if(empty($table) || empty($vals)) return false;
+
+		//set
+		$sets = array();
+		foreach($vals as $field => $val):
+			if( ! \DBUtil::field_exists($table, array($field))) continue;
+			$sets[$field] = $val;
+
+		endforeach;
+
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
+var_dump( $sets ) ;
+echo '</textarea>' ;
+
+die();
+
+		//sql
+		$q = \DB::insert();
+		$q->table($table);
+		$q->set();
+		return $q->execute();
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
+var_dump( $vals ) ;
+echo '</textarea>' ;
+die();
+
+
+/*
+		//deleted_atがあればsoft delete
+		if(\DBUtil::field_exists(self::get_table_name(), array('deleted_at'))):
+			return $obj->delete();
+		endif;
+
+		//deleted_atがなければ削除
+		$primary_key = static::$_primary_key[0];
+		$id = $obj->$primary_key;
+		$q = \DB::delete();
+		$q->table(static::$_table_name);
+		$q->where($primary_key, $id);
+		return $q->execute();
+*/
+	}
 }

@@ -31,11 +31,13 @@ abstract class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$subjects   = array($table_name, $table_name);
 
 			//molding - logic
-			$migration  = $scaffold_helper->migration($name, $subjects, $cmds);
-			$controller = $scaffold_helper->generate_controller($name);
-			$model      = $scaffold_helper->generate_model($name, $cmds);
-			$viewmodel  = $scaffold_helper->generate_view($name);
-			$config     = $scaffold_helper->generate_config($name);
+			$migration       = $scaffold_helper->migration($name, $subjects, $cmds);
+			$controller      = $scaffold_helper->generate_controller($name);
+			$actionset       = $scaffold_helper->generate_actionset($name);
+			$actionset_owner = $scaffold_helper->generate_actionset_owner($name);
+			$model           = $scaffold_helper->generate_model($name, $cmds);
+			$viewmodel       = $scaffold_helper->generate_view($name);
+			$config          = $scaffold_helper->generate_config($name);
 
 			//molding - view
 			$tpl_index  = $scaffold_helper->generate_views_index($name);
@@ -59,6 +61,11 @@ abstract class Controller_Scaffold extends \Kontiki\Controller_Crud
 			if( ! file_exists($scfldpath.'/classes')) mkdir($scfldpath.'/classes');
 			if( ! file_exists($scfldpath.'/classes/controller')) mkdir($scfldpath.'/classes/controller');
 			$scaffold_helper->putfiles($scfldpath.'/classes/controller/'.$name.'.php', $controller) ;
+
+			//actionset
+			if( ! file_exists($scfldpath.'/classes/actionset')) mkdir($scfldpath.'/classes/actionset');
+			$scaffold_helper->putfiles($scfldpath.'/classes/actionset/actionset.php', $actionset) ;
+			$scaffold_helper->putfiles($scfldpath.'/classes/actionset/actionset_owner.php', $actionset_owner) ;
 
 			//model
 			if( ! file_exists($scfldpath.'/classes/model')) mkdir($scfldpath.'/classes/model');
