@@ -41,7 +41,7 @@ dl,
 ul,
 ol
 {
-	line-height: 160%;
+	line-height: 1.6;
 	margin: 0;
 	padding: 0;
 }
@@ -58,7 +58,7 @@ h6
 	clear: both;
 	font-size: 100%;	
 	font-weight: bold;
-	line-height: 160%;
+	line-height: 1.6;
 	margin: 0;
 }
 /* header footer */
@@ -66,7 +66,7 @@ header,
 #header,
 footer,
 #footer{
-	line-height: 100%;
+	line-height: 1;
 }
 
 
@@ -225,7 +225,7 @@ kbd
 
 ruby
 {
-	line-height: 100%;
+	line-height: 1;
 }
 rt,
 rp
@@ -381,7 +381,7 @@ dl.cmt
 }
 dl.cmt dt
 {
-	line-height: 100%;
+	line-height: 1;
 	position: relative;
 	color: #111;
 	background-color: #f8f8f8;
@@ -417,7 +417,7 @@ dl.list
 dl.list dt
 {
 	font-weight: bold;
-	line-height: 100%;
+	line-height: 1;
 	position: relative;
 	margin: 0;
 	padding: 4px 0;
@@ -585,15 +585,13 @@ a.button:hover
 input.button:active,
 a.button:active
 {
-/*
 	background-repeat: no-repeat;
 	background-image: -moz-linear-gradient(#e0e0e0, #f0f0f0);
 	background-image: -o-linear-gradient(#e0e0e0, #f0f0f0); 
 	background-image: -webkit-linear-gradient(#e0e0e0, #f0f0f0); 
 	background-image: linear-gradient(#e0e0e0, #f0f0f0);
-*/
-/*	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#e0e0e0', endColorstr='#f0f0f0');*//* IE6-7 */
-/*	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#e0e0e0', endColorstr='#f0f0f0')";	/* IE8 */
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#e0e0e0', endColorstr='#f0f0f0');/* IE6-7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#e0e0e0', endColorstr='#f0f0f0')";	/* IE8 */
 }
 
 /* === forms - mainbutton === */
@@ -644,6 +642,7 @@ a.button.main:active
 	background-image: linear-gradient(#e0e0e0, #f0f0f0);
 /*	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#e0e0e0', endColorstr='#f0f0f0);*//* IE6-7 */
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#e0e0e0', endColorstr='#f0f0f0')";	/* IE8 */
+	padding: 2px 10px;
 }
 
 select
