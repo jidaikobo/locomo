@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Model_Abstract extends \Orm\Model_Soft
+abstract class Model_Abstract extends \Kontiki\Model_Options
 {
 	/**
 	 * _primary_name
@@ -419,78 +419,5 @@ abstract class Model_Abstract extends \Orm\Model_Soft
 		$q->table(static::$_table_name);
 		$q->where($primary_key, $id);
 		return $q->execute();
-	}
-
-	/**
-	 * add_option()
-	 */
-	public static function add_option($table = null, $vals = null)
-	{
-		if(empty($table) || empty($vals)) return false;
-
-		//set
-		$sets = array();
-		foreach($vals as $field => $val):
-			if( ! \DBUtil::field_exists($table, array($field))) continue;
-			$sets[$field] = $val;
-		endforeach;
-		$sets['is_available'] = true;
-
-		//sql
-		$q = \DB::insert();
-		$q->table($table);
-		$q->set($sets);
-		return $q->execute();
-	}
-
-	/**
-	 * delete_option()
-	 */
-	public static function delete_option($table = null, $id = null)
-	{
-		if(empty($table) || empty($id)) return false;
-
-		//sql
-		$q = \DB::delete();
-		$q->table($table);
-		$q->where('id', $id);
-		return $q->execute();
-	}
-
-	/**
-	 * update_option()
-	 */
-	public static function update_option($table = null, $vals = null)
-	{
-		if(empty($table) || empty($vals)) return false;
-
-		//set
-		$sets = array();
-		foreach($vals as $field => $val):
-			if( ! \DBUtil::field_exists($table, array($field))) continue;
-			if($field == 'id') continue;
-			$sets[$field] = $val;
-		endforeach;
-
-		//sql
-		$q = \DB::update();
-		$q->table($table);
-		$q->set($sets);
-		$q->where('id', (int) $vals['id']);
-		return $q->execute();
-	}
-
-	/**
-	 * find_options()
-	 */
-	public static function find_options($table = null)
-	{
-		if(empty($table)) return false;
-
-		//sql
-		$q = \DB::select('*');
-		$q->from($table);
-		$q->order_by('order', 'ASC');
-		return $q->as_object()->execute()->as_array();
 	}
 }

@@ -183,7 +183,7 @@ abstract class View_Abstract extends \ViewModel
 
 				$key = (@$v['is_index']) ? 'index' : 'control';
 
-				//urlはarrayの場合がある（workflow）
+				//urlはarrayの場合がある（workflowなど）
 				if(is_array($v['url'])):
 					foreach($v['url'] as $vv):
 						$v['menu_str'] = $vv[0];//0がmenu_strで、1がurl

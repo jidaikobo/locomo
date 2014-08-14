@@ -35,16 +35,16 @@ abstract class Controller_User extends \Kontiki\Controller_Crud
 
 	/**
 	 * modify_array()
-	 * ユーザグループも保存してしまう？
+	 * ユーザグループも保存してしまう
 	 */
-	public function modify_array($arr, $mode = null)
+	public function modify_array($obj, $mode = null)
 	{
 		if($mode == 'insert_revision'):
-			$arr['usergroup'] = serialize(\Input::post('usergroup'));
+			$obj->usergroup = \Input::post('usergroup');
 		elseif($mode == 'view_revision'):
 			//do nothing - ユーザモジュールについては、たまたまinsert_revisionの仕方がうまくいったのでこのまま取得できる
 		endif;
-		return $arr;
+		return $obj;
 	}
 
 	/**

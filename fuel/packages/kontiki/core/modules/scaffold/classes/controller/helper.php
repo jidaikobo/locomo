@@ -279,6 +279,16 @@ FILES;
 	}
 
 	/**
+	 * generate_views_options()
+	 */
+	public function generate_views_options($name)
+	{
+		$val = file_get_contents(dirname(__DIR__).'/templates/options_samples.php');
+		$val = self::replaces($name, $val);
+		return $val;
+	}
+
+	/**
 	 * generate_views_form()
 	 */
 	public function generate_views_form($name, $cmds)

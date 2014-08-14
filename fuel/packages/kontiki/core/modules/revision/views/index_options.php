@@ -1,17 +1,18 @@
 <?php echo $include_tpl('inc_header.php'); ?>
 
+
 <?php if ($items): ?>
-<table class="table table-striped">
+<table class="tbl2">
 	<thead>
 		<tr>
-			<th>更新日時</th>
+			<th class="ctrl">更新日時</th>
 			<th>コメント</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr>
-			<td><a href="<?php echo \Uri::base().$item->controller.'/view_revision/'.$item->id ?>"><?php echo $item->created_at; ?></a></td>
+			<th style="white-space: nowrap;"><a href="<?php echo \Uri::base().$controller.'/options_revision/'.$optname.'/'.strtotime($item->created_at) ?>"><?php echo $item->created_at; ?></a></th>
 			<td><?php echo $item->comment; ?></td>
 		</tr>
 <?php endforeach; ?>
@@ -23,6 +24,6 @@
 
 <?php endif; ?>
 
-<p><a href="<?php echo \Uri::base().$item->controller.'/edit/'.$item->controller_id ?>">編集画面に戻る</a></p>
+<p><a href="<?php echo \Uri::base().$controller.'/options/'.$optname ?>" class="button">編集画面に戻る</a></p>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

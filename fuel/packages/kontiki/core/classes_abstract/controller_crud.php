@@ -63,9 +63,9 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 	 * override前提。主にrevision関係で使う。ユーザモジュールなんかで使っている
 	 * なんだかいかにもアドホックなメソッドだけど許して……
 	 */
-	public function modify_array($arr, $mode = null)
+	public function modify_array($obj, $mode = null)
 	{
-		return $arr;
+		return $obj;
 	}
 
 	/**
@@ -83,11 +83,10 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 			$args = array();
 			$args['controller']    = $this->request->module;
 			$args['controller_id'] = $obj->$primary_key[0];
-			$args['data']          = serialize($obj);
+			$args['data']          = serialize($this->modify_array($obj, 'insert_revision'));
 			$args['comment']       = \Input::post('revision_comment') ?: '';
 			$args['created_at']    = date('Y-m-d H:i:s');
 			$args['modifier_id']   = isset($obj->modifier_id) ? $obj->modifier_id : 0;
-			$args                  = $this->modify_array($args, 'insert_revision');
 			$model = \Revision\Model_Revision::forge($args);
 			$model->insert_revision();
 		endif;
@@ -525,12 +524,12 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 		is_null($id) and \Response::redirect(\Uri::base());
 		$model = \Revision\Model_Revision::forge();
 
-		if ( ! $revisions = $revisions = $model::find_revisions($this->request->module, $id)):
+		if ( ! $revisions = $model::find_revisions($this->request->module, $id)):
 			\Session::set_flash(
 				'error',
 				sprintf($this->messages['revision_error'], self::$nicename, $id)
 			);
-			\Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+			return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 		endif;
 
 		//view
@@ -550,7 +549,7 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 		is_null($id) and \Response::redirect(\Uri::base());
 		$model = \Revision\Model_Revision::forge();
 
-		if ( ! $revisions = $revisions = $model::find_revision($id)):
+		if ( ! $revisions = $model::find_revision($id)):
 			\Session::set_flash(
 				'error',
 				sprintf($this->messages['revision_error'], self::$nicename, $id)

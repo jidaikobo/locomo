@@ -63,7 +63,58 @@ abstract class Controller_Options_Abstract extends \Kontiki\Controller
 		//view
 		$view = \View::forge('options_'.$optname);
 		$view->set_global('items', $items);
-		$view->set_global('title', $optinfo['menu_str']);
+		$view->set_global('title', $optinfo['action_name']);
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	 * action_options_revisions()
+	 */
+	public function action_options_revisions($optname = null)
+	{
+		is_null($optname) and die();
+		$model = \Revision\Model_Revision::forge();
+
+		if ( ! $revisions = $model::find_options_revisions($optname)):
+			\Session::set_flash('error','履歴がありません');
+			return \Response::redirect(\Uri::base());
+		endif;
+
+		//view
+		$view = \View::forge(\Kontiki\Util::fetch_tpl('/revision/views/index_options.php'));
+
+		$view->set_global('items', $revisions);
+		$view->set_global('optname', $optname);
+		$view->set_global('title', 'オプションの編集履歴');
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	 * action_options_revision()
+	 */
+	public function action_options_revision($optname = null, $datetime = null)
+	{
+		if(is_null($optname) || is_null($datetime)) die();
+		$model = \Revision\Model_Revision::forge();
+
+		if ( ! $revisions = $model::find_options_revision($optname, $datetime)):
+			\Session::set_flash('error','履歴がありません');
+			return \Response::redirect(\Uri::base());
+		endif;
+
+		//unserialize
+		$data = (object) array();
+		$data          = (object) unserialize($revisions->data);
+		$data->comment = $revisions->comment;
+
+		//view
+		$view = \View::forge('options_'.$optname);
+		$view->set_global('optname', $optname);
+		$view->set_global('items', $data);
+		$view->set_global('title', '編集履歴');
+		$view->set_global('is_revision', true);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
