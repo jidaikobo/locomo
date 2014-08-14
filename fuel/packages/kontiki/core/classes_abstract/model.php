@@ -423,9 +423,6 @@ abstract class Model_Abstract extends \Orm\Model_Soft
 
 	/**
 	 * add_option()
-	 *
-	 * @return object | result
-	 * @author shibata@jidaikobo.com
 	 */
 	public static function add_option($table = null, $vals = null)
 	{
@@ -436,40 +433,64 @@ abstract class Model_Abstract extends \Orm\Model_Soft
 		foreach($vals as $field => $val):
 			if( ! \DBUtil::field_exists($table, array($field))) continue;
 			$sets[$field] = $val;
-
 		endforeach;
-
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $sets ) ;
-echo '</textarea>' ;
-
-die();
+		$sets['is_available'] = true;
 
 		//sql
 		$q = \DB::insert();
 		$q->table($table);
-		$q->set();
+		$q->set($sets);
 		return $q->execute();
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $vals ) ;
-echo '</textarea>' ;
-die();
+	}
 
+	/**
+	 * delete_option()
+	 */
+	public static function delete_option($table = null, $id = null)
+	{
+		if(empty($table) || empty($id)) return false;
 
-/*
-		//deleted_atがあればsoft delete
-		if(\DBUtil::field_exists(self::get_table_name(), array('deleted_at'))):
-			return $obj->delete();
-		endif;
-
-		//deleted_atがなければ削除
-		$primary_key = static::$_primary_key[0];
-		$id = $obj->$primary_key;
+		//sql
 		$q = \DB::delete();
-		$q->table(static::$_table_name);
-		$q->where($primary_key, $id);
+		$q->table($table);
+		$q->where('id', $id);
 		return $q->execute();
-*/
+	}
+
+	/**
+	 * update_option()
+	 */
+	public static function update_option($table = null, $vals = null)
+	{
+		if(empty($table) || empty($vals)) return false;
+
+		//set
+		$sets = array();
+		foreach($vals as $field => $val):
+			if( ! \DBUtil::field_exists($table, array($field))) continue;
+			if($field == 'id') continue;
+			$sets[$field] = $val;
+		endforeach;
+
+		//sql
+		$q = \DB::update();
+		$q->table($table);
+		$q->set($sets);
+		$q->where('id', (int) $vals['id']);
+		return $q->execute();
+	}
+
+	/**
+	 * find_options()
+	 */
+	public static function find_options($table = null)
+	{
+		if(empty($table)) return false;
+
+		//sql
+		$q = \DB::select('*');
+		$q->from($table);
+		$q->order_by('order', 'ASC');
+		return $q->as_object()->execute()->as_array();
 	}
 }

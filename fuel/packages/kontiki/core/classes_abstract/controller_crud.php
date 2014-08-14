@@ -80,7 +80,7 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 			return $obj;
 		else:
 			$primary_key = $obj::get_primary_key();
-
+			$args = array();
 			$args['controller']    = $this->request->module;
 			$args['controller_id'] = $obj->$primary_key[0];
 			$args['data']          = serialize($obj);
