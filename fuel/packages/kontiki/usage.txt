@@ -20,11 +20,11 @@ php oil refine migrate:up --modules=revision
 
 - always_loadに、kontikiをたす
 
-- Security settingsの
-	'csrf_autoload'    => false,
-	'csrf_token_key'   => 'fuel_csrf_token',
-	'csrf_expiration'  => 0,
-	コメントアウトを外す
+- Security settingsのコメントアウトを外して、以下のように設定
+
+		 'csrf_autoload'    => false,
+		 'csrf_token_key'   => 'kontiki_csrf_token',
+		 'csrf_expiration'  => 300,
 
 //APPPATH.config/routes.php
 
@@ -126,7 +126,7 @@ class Create_postcategories
 }
 ────────────────ここまで▲
 
-2、モジュールのactionsetを追記します。
+2、モジュールのactionset.phpに、オプション用のアクションセットを設定します。
 
 例）
 postモジュールにpostcategoriesを足す場合です。
@@ -143,6 +143,7 @@ class Actionset_Post extends \Kontiki\Actionset
 	public static function actionItems($controller = null, $item = null)
 	{
 		$actions = parent::actionItems($controller, $item);
+		//postcategoriesの部分は任意の文字列ですが、table名にしておくのがよいです。
 		$actions->postcategories = self::postcategories($controller, $item);
 		return $actions;
 	}
@@ -160,11 +161,11 @@ class Actionset_Post extends \Kontiki\Actionset
 			'is_index'      => true,
 			'url'           => $url,
 			'id_segment'    => null,
-			'action_name'   => 'postcategories',
-			'explanation'   => 'postcategories',
-			'menu_str'      => 'postcategories',
+			'action_name'   => 'カテゴリ',
+			'explanation'   => 'postコントローラのカテゴリです。',
+			'menu_str'      => 'カテゴリ設定',
 			'dependencies' => array(
-				'options/postcategories',
+				'options/postcategories',//options/table名にしてください。
 			)
 		);
 		return $retvals;
@@ -172,3 +173,8 @@ class Actionset_Post extends \Kontiki\Actionset
 }
 
 ────────────────ここまで▲
+
+3、当該モジュールに編集用テンプレートを用意します。テンプレート名は、options_テーブル名.phpです。
+
+例）
+modules/views/options_postcategories.php

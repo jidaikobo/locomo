@@ -21,7 +21,7 @@ class Actionset_XXX extends \Kontiki\Actionset
 	(str)  action_name   ACL設定画面で用いる
 	(str)  explanation   ACL設定画面で用いる説明文
 	(str)  menu_str      メニューで用いる
-	(arr)  dependencies  このアクションセットが依存するアクション。通常はactionだけだが、action/argumentのように書くこともできる。
+	(arr)  dependencies  このアクションセットが依存するアクション。通常はactionだけだが、action/argumentのように書くこともできる。前後のスラッシュはつけないこと
 	*/
 
 	/**
