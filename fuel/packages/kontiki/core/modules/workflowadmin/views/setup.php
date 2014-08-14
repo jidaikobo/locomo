@@ -30,9 +30,9 @@
 	</div>
 
 	<div class="form-group">
-		<?php echo \Form::label('承認アクション', "steps_{$step}_actions", array('class'=>'control-label')); ?>
+		<?php echo \Form::label('承認アクション', "steps_{$step}_action", array('class'=>'control-label')); ?>
 		<em class="exp">承認アクションをカンマ区切りで入力してください。入力できるアクションは現在は<code>mail</code>です。</em>
-		<?php echo \Form::input("steps[$step][actions]", Input::post("steps[$step][actions]", isset($steps[$step]) ? $steps[$step]['actions'] : ''), array('id' => "steps_{$step}_actions", 'class' => 'col-md-4 form-control', 'placeholder'=>'mail')); ?>
+		<?php echo \Form::input("steps[$step][action]", Input::post("steps[$step][action]", isset($steps[$step]) ? $steps[$step]['action'] : ''), array('id' => "steps_{$step}_action", 'class' => 'col-md-4 form-control', 'placeholder'=>'mail')); ?>
 	</div>
 </fieldset>
 <?php endforeach; ?>

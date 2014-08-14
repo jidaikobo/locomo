@@ -3,17 +3,6 @@ namespace Kontiki;
 abstract class Controller_Workflowadmin extends \Kontiki\Controller_Crud
 {
 	/**
-	 * set_actionset()
-	 */
-	public function set_actionset($controller = null, $id = null)
-	{
-		parent::set_actionset();
-		require_once(dirname(__DIR__).'/actionset/workflowadmin.php');
-		self::$actionset = \Workflowadmin\Actionset_Workflowadmin::actionItems($controller, $id);
-		self::$actionset_owner = array();
-	}
-
-	/**
 	 * action_setup()
 	 */
 	public function action_setup($id = null)

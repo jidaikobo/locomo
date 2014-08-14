@@ -22,17 +22,6 @@ abstract class Controller_Acl extends \Kontiki\Controller_Crud
 	}
 
 	/**
-	 * set_actionset()
-	 */
-	public function set_actionset($controller = null, $id = null)
-	{
-		parent::set_actionset();
-		require_once(dirname(__DIR__).'/actionset/acl.php');
-		self::$actionset = \Acl\Actionset_Acl::actionItems();
-		self::$actionset_owner = array();
-	}
-
-	/**
 	 * auth()
 	 */
 	public static function auth($current_action = null, $userinfo = null)

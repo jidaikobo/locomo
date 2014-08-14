@@ -1,6 +1,6 @@
 <?php
 namespace Fuel\Migrations;
-class Create_workflow
+class Create_workflowadmin
 {
 	public function up()
 	{
@@ -18,13 +18,7 @@ class Create_workflow
 			'workflow_id' => array('constraint' => 11, 'type' => 'int'),
 			'condition'   => array('constraint' => 50, 'type' => 'varchar'),
 			'order'       => array('constraint' => 11, 'type' => 'int'),
-		), array('id'));
-
-		//workflow_step_actions
-		\DBUtil::create_table('workflow_step_actions', array(
-			'id'      => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
-			'step_id' => array('constraint' => 11, 'type' => 'int'),
-			'action'  => array('constraint' => 50, 'type' => 'varchar'),
+			'action'      => array('constraint' => 200, 'type' => 'varchar'),
 		), array('id'));
 
 		//workflow_allowers
@@ -42,9 +36,17 @@ class Create_workflow
 			'current_step'  => array('constraint' => 11, 'type' => 'int'),
 			'status'        => array('constraint' => 50, 'type' => 'varchar'),
 			'created_at'    => array('type' => 'datetime', 'null' => true),
-			'creator_id'    => array('constraint' => 11, 'type' => 'int'),
+			'did_user_id'   => array('constraint' => 11, 'type' => 'int'),
 			'comment'       => array('type' => 'text'),
 		), array('id'));
+
+		//workflow_current_users
+		\DBUtil::create_table('workflow_current_users', array(
+			'log_id'        => array('constraint' => 11, 'type' => 'int'),
+			'controller'    => array('constraint' => 50, 'type' => 'varchar'),
+			'controller_id' => array('constraint' => 11, 'type' => 'int'),
+			'user_id'       => array('constraint' => 11, 'type' => 'int'),
+		), array());
 	}
 
 	public function down()

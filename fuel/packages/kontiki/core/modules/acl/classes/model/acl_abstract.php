@@ -120,7 +120,7 @@ abstract class Model_Acl extends \Kontiki\Model
 		//アクションセットの取得
 		$request = \Request::forge();
 		$controller_obj = new $class($request);
-		$controller_obj->set_actionset();
+		$controller_obj->set_actionset($controller);
 
 		if($is_owner):
 			return $controller_obj::$actionset_owner;

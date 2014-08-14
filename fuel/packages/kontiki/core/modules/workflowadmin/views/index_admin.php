@@ -11,8 +11,8 @@
 		</tr>
 	</thead>
 	<tbody>
-<?php foreach ($items as $item): ?>		<tr>
-
+<?php foreach ($items as $item): ?>
+		<tr>
 			<td><?php echo $item->id; ?></td>
 			<td><?php echo $item->name; ?></td>
 			<td>
@@ -20,13 +20,14 @@
 					<div class="btn-group">
 						<?php
 						$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
-						echo Html::anchor('workflowadmin/view'.'/'.$item->id, '<i class="icon-eye-open"></i> View', array('class' => 'btn btn-small'));
-						echo Html::anchor('workflowadmin/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'btn btn-small'));
+						echo Html::anchor('workflowadmin/setup'.'/'.$item->id, '<i class="icon-wrench"></i> 設定', array('class' => 'btn btn-small'));
+						echo Html::anchor('workflowadmin/view'.'/'.$item->id, '<i class="icon-eye-open"></i> 閲覧', array('class' => 'btn btn-small'));
+						echo Html::anchor('workflowadmin/edit'.'/'.$item->id, '<i class="icon-wrench"></i> 編集', array('class' => 'btn btn-small'));
 						if($is_deleted):
-							echo Html::anchor('workflowadmin/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> Undelete', array('class' => 'btn btn-small'));
-							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'btn btn-small btn-danger'));
+							echo Html::anchor('workflowadmin/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> 復活', array('class' => 'btn btn-small'));
+							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> 削除', array('class' => 'btn btn-small btn-danger'));
 						else:
-							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'btn btn-small btn-danger', 'onclick' => "return confirm('Are you sure?')", 'onkeypress' => "return confirm('Are you sure?')"));
+							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> 削除', array('class' => 'btn btn-small btn-danger', 'onclick' => "return confirm('削除してよろしいですか？')", 'onkeypress' => "return confirm('削除してよろしいですか？')"));
 						endif;
 						?>
 					</div>

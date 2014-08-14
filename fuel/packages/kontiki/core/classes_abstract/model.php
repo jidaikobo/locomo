@@ -3,6 +3,13 @@ namespace Kontiki;
 abstract class Model_Abstract extends \Orm\Model_Soft
 {
 	/**
+	 * _primary_name
+	 * to draw items title
+	 *
+	 */
+	protected static $_primary_name = '';
+
+	/**
 	 * get_table_name()
 	 *
 	 * @return  str
@@ -22,6 +29,17 @@ abstract class Model_Abstract extends \Orm\Model_Soft
 	public static function get_primary_key()
 	{
 		return static::$_primary_key;
+	}
+
+	/**
+	 * get_primary_name()
+	 *
+	 * @return  str
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function get_primary_name()
+	{
+		return static::$_primary_name;
 	}
 
 	/**
@@ -58,6 +76,23 @@ abstract class Model_Abstract extends \Orm\Model_Soft
 	{
 		$val = \Kontiki\Validation::forge($factory);
 		return $val;
+	}
+
+	/**
+	 * find_item_by_ctrl_and_id($controller = null, $id = null)
+	 *
+	 * @param str   $controller
+	 * @param int   $id
+	 *
+	 * @return object | result
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function find_item_by_ctrl_and_id($controller = null, $id = null)
+	{
+		if(is_null($controller) || is_null($id)) return false;
+		$modelname = \Kontiki\Util::get_valid_model_name($controller);
+		$model     = $modelname::forge();
+		return $model::find_item_anyway($id);
 	}
 
 	/**

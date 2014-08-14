@@ -9,6 +9,7 @@ class Actionset_Workflow extends \Kontiki\Actionset
 	public static function actionItems($controller = null, $item = null)
 	{
 		$actions = parent::actionItems($controller, $item);
+		$actions->index_workflow   = self::index_workflow($controller, $item);
 		$actions->workflow         = self::workflow($controller, $item);
 		$actions->workflow_process = self::workflow_process($controller, $item);
 		$actions->workflow_actions = self::workflow_actions($controller, $item);
@@ -19,6 +20,28 @@ class Actionset_Workflow extends \Kontiki\Actionset
 		endif;
 
 		return $actions;
+	}
+
+	/**
+	 * index_workflow()
+	 * @return  array
+	 */
+	private static function index_workflow($controller, $item)
+	{
+		$url = parent::check_auth($controller, 'index_workflow') ? "{$controller}/index_workflow" : '';
+
+		$retvals = array(
+			'is_index'     => true,
+			'url'          => $url,
+			'id_segment'   => null,
+			'action_name'  => 'ワークフロー承認項目一覧',
+			'menu_str'     => '承認項目一覧',
+			'explanation'  => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
+			'dependencies' => array(
+				'index_workflow',
+			)
+		);
+		return $retvals;
 	}
 
 	/**
@@ -42,6 +65,7 @@ class Actionset_Workflow extends \Kontiki\Actionset
 				'index_admin',
 				'index_invisible',
 				'view_invisible',
+				'index_workflow',
 				'apply',
 				'route',
 			)
@@ -68,6 +92,7 @@ class Actionset_Workflow extends \Kontiki\Actionset
 				'view',
 				'index_invisible',
 				'view_invisible',
+				'index_workflow',
 				'approve',
 				'reject',
 				'remand',

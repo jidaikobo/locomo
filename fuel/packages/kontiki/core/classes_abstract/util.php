@@ -9,8 +9,8 @@ abstract class Util_Abstract
 	{
 		is_null($path) and \Response::redirect(\Uri::base());
 
-		$tpl_path         = PKGPATH.'kontiki/modules/'.$path;
-		$tpl_path_default = PKGPATH.'kontiki/modules_default/'.$path;
+		$tpl_path         = PKGAPPPATH.'modules/'.$path;
+		$tpl_path_default = PKGCOREPATH.'modules/'.$path;
 		if(file_exists($tpl_path)):
 			return $tpl_path;
 		elseif(file_exists($tpl_path_default)):
@@ -21,25 +21,36 @@ abstract class Util_Abstract
 	}
 	
 	/**
-	 * object_merge()
-	 * thx http://d.hatena.ne.jp/rsky/20070808/1186578579
+	 * get_valid_actionset_name()
 	 */
-	public static function object_merge()
+	public static function get_valid_actionset_name($controller = null, $is_ownerset = false)
 	{
-		$args = func_get_args();
-		if ( ! $args) {
-			return null;
-		}
-		return (object) call_user_func_array('array_merge', array_map('get_object_vars', $args));
+		is_null($controller) and \Response::redirect(\Uri::base());
+		$controller_ucfirst = ucfirst($controller);
+		if($is_ownerset):
+			return "\\$controller_ucfirst\Actionset_Owner_".$controller_ucfirst;
+		else:
+			return "\\$controller_ucfirst\Actionset_".$controller_ucfirst;
+		endif;
 	}
 
 	/**
-	 * get_controller_valid_name()
+	 * get_valid_controller_name()
 	 */
-	public static function get_controller_valid_name($controller = null)
+	public static function get_valid_controller_name($controller = null)
 	{
 		is_null($controller) and \Response::redirect(\Uri::base());
 		$controller_ucfirst = ucfirst($controller);
 		return "\\$controller_ucfirst\Controller_".$controller_ucfirst;
+	}
+
+	/**
+	 * get_valid_model_name()
+	 */
+	public static function get_valid_model_name($controller = null)
+	{
+		is_null($controller) and \Response::redirect(\Uri::base());
+		$controller_ucfirst = ucfirst($controller);
+		return "\\$controller_ucfirst\Model_".$controller_ucfirst;
 	}
 }
