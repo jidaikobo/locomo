@@ -17,6 +17,11 @@ return array(
 				0 => '001_create_post',
 				1 => '002_create_postcategories',
 			),
+			'user' => 
+			array(
+				0 => '001_create_users',
+				1 => '002_create_usergroups',
+			),
 		),
 		'package' => 
 		array(

@@ -16,21 +16,21 @@ function kontiki_attempt_focus(){
 kontiki_attempt_focus();
 </script>
 
-<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret, 'class'=>'form-horizontal')); ?>
+<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret)); ?>
 
 <fieldset>
 <legend>ログイン</legend>
 
 <!--ユーザ名かメールアドレス-->
 <div class="form-group">
-	<?php echo \Form::label('アカウント', 'account', array('class'=>'control-label')); ?>
-	<?php echo \Form::input('account', Input::post('account', isset($item) ? $item->account : ''), array('class' => 'col-md-4 form-control', 'id' => 'account', 'placeholder'=>'ユーザ名かメールアドレスを入力')); ?>
+	<?php echo \Form::label('アカウント', 'account'); ?>
+	<?php echo \Form::input('account', Input::post('account', isset($item) ? $item->account : ''), array('id' => 'account', 'placeholder'=>'ユーザ名かメールアドレスを入力')); ?>
 </div>
 
 <!--パスワード-->
 <div class="form-group">
-	<?php echo \Form::label('パスワード', 'password', array('class'=>'control-label')); ?>
-	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('class' => 'col-md-4 form-control', 'placeholder'=>'パスワードを入力')); ?>
+	<?php echo \Form::label('パスワード', 'password'); ?>
+	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('placeholder'=>'パスワードを入力')); ?>
 </div>
 
 <?php

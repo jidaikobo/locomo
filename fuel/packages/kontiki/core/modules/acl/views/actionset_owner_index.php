@@ -2,10 +2,9 @@
 
 <p>対象コントローラ：<code><?php echo $controller ?></code></p>
 
-<?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_owner_acl/', 'class'=>'form-horizontal')); ?>
+<?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_owner_acl/')); ?>
 <fieldset>
 <legend><?php echo $controller ?>設定（オーナ向け）</legend>
-<div class="form-group">
 <table>
 <?php foreach($actionsets as $action => $actionset): ?>
 <tr>
@@ -21,16 +20,16 @@
 </table>
 
 <?php
-echo Form::hidden($token_key, $token);
-echo Form::hidden('controller', $hidden_controller);
-echo Form::hidden('owner', $hidden_owner);
+echo \Form::hidden($token_key, $token);
+echo \Form::hidden('controller', $hidden_controller);
+echo \Form::hidden('owner', $hidden_owner);
 ?>
-</div>
-<div class="form-group">
-	<?php echo Html::anchor('acl/controller_index/', '<i class="icon-eye-open"></i> 戻る', array('class' => 'btn btn-small')); ?>
-	<?php echo \Form::submit('submit', '保存する', array('class' => 'btn btn-primary')); ?>
-</div>
 </fieldset>
+
+<div class="button_group">
+	<?php echo Html::anchor('acl/controller_index/', '戻る', array('class' => 'button')); ?>
+	<?php echo \Form::submit('submit', '保存する', array('class' => 'button main')); ?>
+</div>
 <?php echo \Form::close(); ?>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

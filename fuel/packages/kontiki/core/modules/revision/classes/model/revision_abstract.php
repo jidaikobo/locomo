@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Model_Revision extends \Kontiki\Model
+abstract class Model_Revision extends \Kontiki\Model_Crud
 {
 	protected static $_table_name = 'revisions';
 

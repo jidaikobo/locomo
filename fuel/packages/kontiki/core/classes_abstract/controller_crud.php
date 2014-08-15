@@ -554,7 +554,7 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 				'error',
 				sprintf($this->messages['revision_error'], self::$nicename, $id)
 			);
-			\Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+			return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 		endif;
 
 		//unserialize
@@ -562,7 +562,6 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 		$data->controller    = $revisions->controller;
 		$data->controller_id = $revisions->controller_id;
 		$data->comment       = $revisions->comment;
-		$data                = $this->modify_array($data, 'view_revision');
 
 		//view
 		$view = \View::forge('edit');

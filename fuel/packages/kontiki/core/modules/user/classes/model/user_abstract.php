@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Model_User extends \Kontiki\Model
+abstract class Model_User extends \Kontiki\Model_Crud
 {
 	protected static $_table_name = 'users';
 
@@ -100,20 +100,8 @@ abstract class Model_User extends \Kontiki\Model
 		//parent
 		$item = parent::find_item($id);
 
-		//現在のユーザが所属するグループ
 		if($item):
-			$now = date('Y-m-d H:i:s', time());
-			$user_id = intval($item->id);
-			$q = \DB::select('usergroup_id');
-			$q->from('users_usergroups_r');
-			$q->join('usergroups');
-			$q->on('users_usergroups_r.usergroup_id', '=', 'usergroups.id');
-			$q->where('users_usergroups_r.user_id', $user_id);
-			$q->where('usergroups.created_at', '<=', $now);
-			$q->where('usergroups.expired_at', '>=', $now);
-			$q->where('usergroups.deleted_at', '=', null);
-			$resuls = $q->execute()->as_array();
-			$item->usergroups = $resuls ? \Arr::flatten_assoc($resuls) : array();
+			$item->usergroups = \User\Model_User::get_selected_options('usergroups', $id);
 		endif;
 
 		return $item;
@@ -154,18 +142,7 @@ abstract class Model_User extends \Kontiki\Model
 	public static function get_usergroups($user_id = null)
 	{
 		if($user_id == null) return false;
-
-		//query
-		$q = \DB::select('users_usergroups_r.usergroup_id');
-		$q->distinct();
-		$q->from('usergroups');
-		$q->from('users_usergroups_r');
-		$q->where('users_usergroups_r.user_id', '=', $user_id);
-		$q->where('usergroups.deleted_at', '=', null);
-		$q->where('usergroups.deleted_at', '=', null);
-		$q->where('usergroups.created_at', '<=', date('Y-m-d H:i:s'));
-		$q->where('usergroups.expired_at', '>=', date('Y-m-d H:i:s'));
-		return \Arr::flatten_assoc($q->execute()->as_array());
+		return \User\Model_User::get_selected_options('usergroups', $user_id);
 	}
 
 	/**

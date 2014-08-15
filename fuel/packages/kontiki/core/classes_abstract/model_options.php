@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Model_Options_Abstract extends \Orm\Model_Soft
+abstract class Model_Options_Abstract extends \Kontiki\Model
 {
 	/**
 	 * add_option()

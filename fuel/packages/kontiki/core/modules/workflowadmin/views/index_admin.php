@@ -20,14 +20,14 @@
 					<div class="btn-group">
 						<?php
 						$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
-						echo Html::anchor('workflowadmin/setup'.'/'.$item->id, '<i class="icon-wrench"></i> 設定', array('class' => 'btn btn-small'));
-						echo Html::anchor('workflowadmin/view'.'/'.$item->id, '<i class="icon-eye-open"></i> 閲覧', array('class' => 'btn btn-small'));
-						echo Html::anchor('workflowadmin/edit'.'/'.$item->id, '<i class="icon-wrench"></i> 編集', array('class' => 'btn btn-small'));
+						echo Html::anchor('workflowadmin/setup'.'/'.$item->id, '<i class="icon-wrench"></i> 設定', array('class' => 'button'));
+						echo Html::anchor('workflowadmin/view'.'/'.$item->id, '閲覧', array('class' => 'button'));
+						echo Html::anchor('workflowadmin/edit'.'/'.$item->id, '<i class="icon-wrench"></i> 編集', array('class' => 'button'));
 						if($is_deleted):
-							echo Html::anchor('workflowadmin/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> 復活', array('class' => 'btn btn-small'));
-							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> 削除', array('class' => 'btn btn-small btn-danger'));
+							echo Html::anchor('workflowadmin/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> 復活', array('class' => 'button'));
+							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> 削除', array('class' => 'button btn-danger'));
 						else:
-							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> 削除', array('class' => 'btn btn-small btn-danger', 'onclick' => "return confirm('削除してよろしいですか？')", 'onkeypress' => "return confirm('削除してよろしいですか？')"));
+							echo Html::anchor('workflowadmin/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> 削除', array('class' => 'button btn-danger', 'onclick' => "return confirm('削除してよろしいですか？')", 'onkeypress' => "return confirm('削除してよろしいですか？')"));
 						endif;
 						?>
 					</div>

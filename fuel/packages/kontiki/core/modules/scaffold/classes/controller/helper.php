@@ -213,7 +213,7 @@ FILES;
 		$str = <<<FILES
 <?php
 namespace {$name};
-class Model_{$name} extends \Kontiki\Model
+class Model_{$name} extends \Kontiki\Model_Crud
 {
 	protected static \$_table_name = '{$table_name}';
 	protected static \$_primary_name = '';
@@ -298,7 +298,7 @@ FILES;
 			list($field, $attr) = explode(':', $field);
 			$fields.= '<tr>'."\n" ;
 			//label
-			$fields.= "\t<th><?php echo \Form::label('{$field}', '{$field}', array('class'=>'control-label')); ?></th>\n" ;
+			$fields.= "\t<th><?php echo \Form::label('{$field}', '{$field}'); ?></th>\n" ;
 			
 			//field
 			if(substr($field,0,4)=='name'){//textarea - recently name tend to be multi line.
@@ -307,7 +307,7 @@ FILES;
 				$fields.= "\t\$checked = Input::post('{$field}') ? ' checked=\"checked\" : null;'\n";
 				$fields.= "\t<td><label><?php echo \Form::checkbox(\"{$field}\", 1, array('class' => '', \$checked)).{$field}.' ?></label></td>\n";
 			}else{//input
-				$fields.= "\t<td><?php echo \Form::input('{$field}', Input::post('{$field}', isset(\$item) ? \$item->{$field} : ''), array('class' => 'col-md-4 form-control', 'placeholder' => '{$field}')); ?></td>\n" ;
+				$fields.= "\t<td><?php echo \Form::input('{$field}', Input::post('{$field}', isset(\$item) ? \$item->{$field} : ''), array('placeholder' => '{$field}')); ?></td>\n" ;
 			}
 			$fields.= '</tr>'."\n\n" ;
 		}

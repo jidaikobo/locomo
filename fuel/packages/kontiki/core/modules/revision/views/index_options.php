@@ -1,6 +1,5 @@
 <?php echo $include_tpl('inc_header.php'); ?>
 
-
 <?php if ($items): ?>
 <table class="tbl2">
 	<thead>
@@ -21,7 +20,6 @@
 
 <?php else: ?>
 <p>編集履歴が存在しません。</p>
-
 <?php endif; ?>
 
 <p><a href="<?php echo \Uri::base().$controller.'/options/'.$optname ?>" class="button">編集画面に戻る</a></p>
