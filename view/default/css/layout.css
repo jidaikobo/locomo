@@ -91,3 +91,125 @@ footer,
 {
 	display: block;
 }
+
+/* button */
+
+input.button.primary,
+input.btn.primary,
+a.button.primary,
+a.btn.primary
+{
+	border-color: #357ebd;
+	background-color: #428bca;
+	color: #fff;
+}
+
+input.button.primary:hover,
+input.btn.primary:hover,
+a.button.primary:hover,
+a.btn.primary:hover
+{
+	border-color: #357ebd;
+	background-color: #357ebd;
+	color: #fff;
+}
+
+input.button.primary:active,
+input.btn.primary:active,
+a.button.primary:active,
+a.btn.primary:active
+{
+	border: 2px solid #285e8e;
+	padding: 4px 12px;
+	background-color: #357ebd;
+}
+
+input.button.danger,
+input.btn.danger,
+a.button.danger,
+a.btn.danger
+{
+	border-color: #d43f3a;
+	background-color: #d9534f;
+	color: #fff;
+}
+
+input.button.danger:hover,
+input.btn.danger:hover,
+a.button.danger:hover,
+a.btn.danger:hover
+{
+	border-color: #ac2925;
+	background-color: #c9302c;
+	color: #fff;
+}
+
+
+input.button.danger:active,
+input.btn.danger:active,
+a.button.danger:active,
+a.btn.danger:active
+{
+	border-color: #ac2925;
+	background-color: #c9302c;
+}
+
+input.btn-small,
+input.btn.small,
+input.button.small,
+a.btn-small,
+a.btn.small,
+a.button.small{
+	padding: 2px 8px;
+	margin: 0 2px 0 0;
+}
+input.btn-small.main,
+input.btn.small.main,
+input.button.small.main,
+a.btn-small.main,
+a.btn.small.main,
+a.button.small.main{
+	padding: 1px 7px;
+	font-weight: normal;
+}
+input.btn-small.main:hover,
+input.btn.small.main:hover,
+input.button.small.main:hover,
+a.btn-small.main:hover,
+a.btn.small.main:hover,
+a.button.small.main:hover{
+	border-width: 3px;
+	padding: 0 6px;
+}
+
+input.btn-small.main:active,
+input.btn.small.main:active,
+input.button.small.main:active,
+a.btn-small.main:active,
+a.btn.small.main:active,
+a.button.small.main:active{
+	padding: 0 6px;
+}
+
+input.btn.disabled,
+a.btn.disabled,
+input.btn[disabled],
+a.btn[disabled],
+fieldset[disabled] input.btn ,
+fieldset[disabled] a.btn {
+	cursor: not-allowed;
+	pointer-events: none; /* IEは11以上から */
+	opacity: .65;
+	filter: alpha(opacity=65);
+	-webkit-box-shadow: none;
+}
+
+/* alert */
+.alert-success{
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+	color: #111;
+}
+.alert-success strong{
+	color :#3c763d;
+}
