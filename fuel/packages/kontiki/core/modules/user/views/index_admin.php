@@ -29,13 +29,13 @@
 					<div class="btn-group">
 						<?php
 						$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
-						echo Html::anchor('user/view'.'/'.$item->id, '<i class="icon-eye-open"></i> View', array('class' => 'btn btn-small'));
-						echo Html::anchor('user/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'btn btn-small'));
+						echo Html::anchor('user/view'.'/'.$item->id, 'View', array('class' => 'button'));
+						echo Html::anchor('user/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'button'));
 						if($is_deleted):
-							echo Html::anchor('user/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> Undelete', array('class' => 'btn btn-small'));
-							echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'btn btn-small btn-danger'));
+							echo Html::anchor('user/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> Undelete', array('class' => 'button'));
+							echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'button btn-danger'));
 						else:
-							echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'btn btn-small btn-danger', 'onclick' => "return confirm('Are you sure?')", 'onkeypress' => "return confirm('Are you sure?')"));
+							echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'button btn-danger', 'onclick' => "return confirm('Are you sure?')", 'onkeypress' => "return confirm('Are you sure?')"));
 						endif;
 						?>
 					</div>

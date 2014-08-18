@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Model_Revision extends \Kontiki\Model
+abstract class Model_Revision extends \Kontiki\Model_Crud
 {
 	protected static $_table_name = 'revisions';
 
@@ -43,6 +43,36 @@ abstract class Model_Revision extends \Kontiki\Model
 	}
 
 	/**
+	 * find_options_revisions()
+	*/
+	public static function find_options_revisions($optname = null)
+	{
+		if(is_null($optname)) \Response::redirect(\Uri::base());
+
+		//リビジョンの一覧を取得
+		$q = \DB::select('*');
+		$q->from('revisions');
+		$q->where('controller', $optname);
+		return $q->as_object()->execute()->as_array();
+	}
+
+	/**
+	 * find_options_revision()
+	*/
+	public static function find_options_revision($optname = null, $datetime = null)
+	{
+		if(is_null($optname) || is_null($datetime)) \Response::redirect(\Uri::base());
+		$datetime = date('Y-m-d H:i:s', $datetime);
+
+		//リビジョンを取得
+		$q = \DB::select('*');
+		$q->from('revisions');
+		$q->where('controller', $optname);
+		$q->where('created_at', $datetime);
+		return $q->as_object()->execute()->current();
+	}
+
+	/**
 	 * insert_revision()
 	*/
 	public function insert_revision()
@@ -52,6 +82,7 @@ abstract class Model_Revision extends \Kontiki\Model
 		$q->from('revisions');
 		$q->where('controller', $this->controller);
 		$q->where('controller_id', $this->controller_id);
+		$q->order_by('created_at', 'DESC');
 		$result = $q->execute()->current();
 		$created_at = $result['created_at'];
 
@@ -67,7 +98,7 @@ abstract class Model_Revision extends \Kontiki\Model
 		):
 			return;
 		endif;
-	
+
 		//保存
 		$this->save();
 

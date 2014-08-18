@@ -20,7 +20,7 @@ php oil refine migrate:up --modules=revision
 
 - always_loadに、kontikiをたす
 
-- Security settingsのコメントアウトを外して、以下のように設定
+- Security settingsのコメントアウトを外して、以下のように設定する
 
 		 'csrf_autoload'    => false,
 		 'csrf_token_key'   => 'kontiki_csrf_token',
@@ -80,12 +80,18 @@ unset( self::$actionset->view_revision );
  */
 
 ワークフロー管理をするためには、kontikiのscaffoldで出来上がったset_actionsetのWorkflow関連部分のコメントアウトを外してください。あとclass宣言部分のextendsもとを\Kontiki\Controller_Workflowに差し替えてください。
+対象モデルの$_propertiesにworkflow_statusを足します。
 
 /*
  * オプション
  */
 
-モジュール内でユーザが編集できるオプション項目をcrudするコントローラを使いたいときには、以下の手順で作成してください。
+モジュール内でユーザが編集できるオプション項目をcrudするコントローラを使いたいときには、以下の手順で作成してください。おおまかには、
+1. migrationの作成
+2. actionsetの作成
+3. テーブル構造にあわせてtemplateを用意する
+4. コントローラに実装する
+という流れです。
 
 1、モジュールのmigrationsフォルダに、マイグレーション用のファイルを置き、oilでmigrationします。
 オプション用のtable名は自由ですが、中間テーブルの名前はオプション用のtable名に_rの接尾辞をつけるようにしてください。
@@ -155,26 +161,103 @@ class Actionset_Post extends \Kontiki\Actionset
 	private static function postcategories($controller, $item)
 	{
 		$url = parent::check_auth($controller, 'postcategories') ? "{$controller}/options/postcategories" : '';
+		$url_rev = $url ? "{$controller}/options_revisions/postcategories" : '';
+		$urls = array(
+			array('カテゴリ設定', $url),
+			array('カテゴリ設定履歴', $url_rev),
+		);
 
 		$retvals = array(
 			'is_admin_only' => false,
 			'is_index'      => true,
-			'url'           => $url,
+			'url'           => $urls,
 			'id_segment'    => null,
 			'action_name'   => 'カテゴリ',
 			'explanation'   => 'postコントローラのカテゴリです。',
-			'menu_str'      => 'カテゴリ設定',
+			'menu_str'      => '',
 			'dependencies' => array(
-				'options/postcategories',//options/table名にしてください。
+				'options/postcategories',
 			)
 		);
 		return $retvals;
 	}
 }
-
 ────────────────ここまで▲
 
-3、当該モジュールに編集用テンプレートを用意します。テンプレート名は、options_テーブル名.phpです。
+3、当該モジュールに編集用テンプレートを用意します。テンプレート名は、options_テーブル名.phpです。scaffoldで作られるoptions_samples.phpをもとにtable構造にあわせて編集してください。
 
-例）
-modules/views/options_postcategories.php
+4、テンプレートとコントローラに実装します。nameは、table名かtable名の配列にしてください。
+
+例）テンプレートへの実装
+▼ここから────────────────
+<?php
+foreach(\Post\Model_Post::get_options('postcategories') as $key => $option):
+	$checked = false; 
+	if(
+		(isset($item) && in_array($key, $item->postcategories)) ||
+		(is_array(\Input::post('postcategories')) && array_key_exists($key, \Input::post('postcategories')))
+	):
+		$checked = true; 
+	endif;
+	echo '<label>'.\Form::checkbox('postcategories[]', $key, $checked ).$option.'</label>';
+endforeach;
+?>
+────────────────ここまで▲
+
+コントローラは、post_save_hook()で保存時フックする。
+
+▼ここから────────────────
+	/**
+	 * post_save_hook()
+	 */
+	public function post_save_hook($obj = null, $mode = 'edit')
+	{
+		if($obj == null) \Response::redirect($this->request->module);
+		$obj = parent::post_save_hook($obj, $mode);
+
+		//postcategories
+		$model = $this->model_name;
+		$model::update_options_relations('postcategories', $obj->id);
+
+		return $obj;
+	}
+────────────────ここまで▲
+
+加えて、コントローラのmodify_array()を編集すると、オプションの値がリビジョンに保存される。以下例はarray()だが、array()でない場合は適宜変更する
+
+▼ここから────────────────
+	/**
+	 * modify_array()
+	 */
+	public function modify_array($obj, $mode = null)
+	{
+		if($mode == 'insert_revision'):
+			$postcategories = is_array(\Input::post('postcategories')) ? \Input::post('postcategories') : array();
+			$obj->postcategories = $postcategories;
+		endif;
+		return $obj;
+	}
+────────────────ここまで▲
+
+モデルはfind_item()をオーバライドする
+
+▼ここから────────────────
+	/**
+	 * find_item()
+	 */
+	public static function find_item($id = null)
+	{
+		//parent
+		$item = parent::find_item($id);
+
+		//オプションの取得
+		if($item):
+			$item->postcategories = \Post\Model_Post::get_selected_options('postcategories', $id);
+		endif;
+
+		return $item;
+	}
+────────────────ここまで▲
+
+以上でオプションの値が保存される。
+

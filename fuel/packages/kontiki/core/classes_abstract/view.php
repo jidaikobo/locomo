@@ -25,6 +25,19 @@ abstract class View_Abstract extends \ViewModel
 		//ユーザ情報
 		$view->set_global('userinfo', \User\Controller_User::$userinfo);
 		$view->set_global('is_user_logged_in', \User\Controller_User::$is_user_logged_in);
+		$view->set_global('is_admin', false);
+		$view->set_global('is_root',  false);
+		$view->set_global('is_guest', false);
+		if(\User\Controller_User::$userinfo['user_id'] == -1):
+			$view->set_global('is_admin', true);
+		endif;
+		if(\User\Controller_User::$userinfo['user_id'] == -2):
+			$view->set_global('is_root',  true);
+			$view->set_global('is_admin', true);
+		endif;
+		if(\User\Controller_User::$userinfo['user_id'] == 0):
+			$view->set_global('is_guest', true);
+		endif;
 
 		//anti CSRF
 		$view->set_global('token_key', \Config::get('security.csrf_token_key'));
@@ -170,7 +183,7 @@ abstract class View_Abstract extends \ViewModel
 
 				$key = (@$v['is_index']) ? 'index' : 'control';
 
-				//urlはarrayの場合がある（workflow）
+				//urlはarrayの場合がある（workflowなど）
 				if(is_array($v['url'])):
 					foreach($v['url'] as $vv):
 						$v['menu_str'] = $vv[0];//0がmenu_strで、1がurl

@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Model_Acl extends \Kontiki\Model
+abstract class Model_Acl extends \Kontiki\Model_Crud
 {
 	protected static $_table_name = 'acls';
 
@@ -50,10 +50,8 @@ abstract class Model_Acl extends \Kontiki\Model
 	 */
 	public static function get_usergroups()
 	{
-		$usergroups_model = \Usergroup\Model_Usergroup::forge();
-		$args = array('type' => 'array');
 		$usergroups = array('none' => '選択してください', 0 => 'ゲスト');
-		$usergroups += \Arr::assoc_to_keyval($usergroups_model->find_items($args)->results, 'id', 'usergroup_name');
+		$usergroups += \User\Model_User::get_options('usergroups');
 		return $usergroups;
 	}
 

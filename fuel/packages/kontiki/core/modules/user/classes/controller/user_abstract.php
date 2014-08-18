@@ -35,16 +35,14 @@ abstract class Controller_User extends \Kontiki\Controller_Crud
 
 	/**
 	 * modify_array()
-	 * ユーザグループも保存してしまう？
 	 */
-	public function modify_array($arr, $mode = null)
+	public function modify_array($obj, $mode = null)
 	{
 		if($mode == 'insert_revision'):
-			$arr['usergroup'] = serialize(\Input::post('usergroup'));
-		elseif($mode == 'view_revision'):
-			//do nothing - ユーザモジュールについては、たまたまinsert_revisionの仕方がうまくいったのでこのまま取得できる
+			$usergroups = is_array(\Input::post('usergroups')) ? \Input::post('usergroups') : array();
+			$obj->usergroups = $usergroups;
 		endif;
-		return $arr;
+		return $obj;
 	}
 
 	/**
@@ -54,31 +52,10 @@ abstract class Controller_User extends \Kontiki\Controller_Crud
 	{
 		$obj = parent::post_save_hook($obj, $mode);
 
-		//ユーザが所属するグループを更新
-		if (\Input::method() == 'POST'):
-			$user_id = intval($obj->id);
-			//まずすべて削除
-			$q = \DB::delete();
-			$q->table('users_usergroups_r');
-			$q->where('user_id', $user_id);
-			$q->execute();
+		//usergroups
+		$model = $this->model_name;
+		$model::update_options_relations('usergroups', $obj->id);
 
-			//ユーザグループを更新
-			if(is_array(\Input::post('usergroup'))):
-				foreach(\Input::post('usergroup') as $group_id => $v):
-					$group_id = intval($group_id);
-
-					$q = \DB::insert();
-					$q->table('users_usergroups_r');
-					$q->set(array(
-						'user_id' => $user_id,
-						'usergroup_id' => $group_id,
-					));
-					$q->execute();
-
-				endforeach;
-			endif;
-		endif;
 		return $obj;
 	}
 

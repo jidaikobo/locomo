@@ -1,23 +1,20 @@
 <?php echo $include_tpl('inc_header.php'); ?>
 
-<h2>書式例</h2>
-<pre class="pre">php oil g model post title:varchar[50] body:text user_id:int</pre>
-
-<?php echo \Form::open(array("class"=>"form-horizontal")); ?>
-<fieldset>
-	<legend><?php echo \Form::label('oilコマンド書式', 'cmd', array('class'=>'control-label')); ?></legend>
-	<div class="form-group">
-		<?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('class' => 'col-md-4 form-control', 'placeholder'=>'oilコマンド書式')); ?>
-	</div>
-
-	<div class="form-group">
-		<?php echo Form::hidden($token_key, $token); ?>
-		<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'btn btn-primary')); ?>
-	</div>
-</fieldset>
+<?php echo \Form::open(); ?>
+<dl class="list">
+<dt><?php echo \Form::label('oilコマンド書式', 'cmd'); ?></dt>
+	<dd><?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('style' => 'width:100%;', 'placeholder'=>'oilコマンド書式')); ?></dd>
+</dl>
+<div class="button_group">
+	<?php echo \Form::hidden($token_key, $token); ?>
+	<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'button main')); ?>
+</div>
 <?php echo \Form::close(); ?>
 
 <h2>使い方</h2>
+
+<h3>書式例</h3>
+<pre class="pre">php oil g model post title:varchar[50] body:text user_id:int</pre>
 
 <h3>足場組み</h3>
 <p>oilコマンド書式をpostしたあと、<code>PKGPATH.kontiki/modules</code>にモジュールが展開されます。</p>

@@ -11,7 +11,7 @@
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr>
-			<td style="white-space: nowrap;"><a href="<?php echo \Uri::base().$item->controller.'/view_revision/'.$item->id ?>"><?php echo $item->created_at; ?></a></td>
+			<th style="white-space: nowrap;"><a href="<?php echo \Uri::base().$controller.'/options_revision/'.$optname.'/'.strtotime($item->created_at) ?>"><?php echo $item->created_at; ?></a></th>
 			<td><?php echo $item->comment; ?></td>
 		</tr>
 <?php endforeach; ?>
@@ -22,6 +22,6 @@
 <p>編集履歴が存在しません。</p>
 <?php endif; ?>
 
-<p><a href="<?php echo \Uri::base().$item->controller.'/edit/'.$item->controller_id ?>" class="button">編集画面に戻る</a></p>
+<p><a href="<?php echo \Uri::base().$controller.'/options/'.$optname ?>" class="button">編集画面に戻る</a></p>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

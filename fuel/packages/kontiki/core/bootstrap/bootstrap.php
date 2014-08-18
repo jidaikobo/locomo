@@ -68,7 +68,6 @@ endif;
 //always load module
 \Module::load('acl');
 \Module::load('user');
-\Module::load('usergroup');
 \Module::load('revision');
 \Module::load('workflow');
 

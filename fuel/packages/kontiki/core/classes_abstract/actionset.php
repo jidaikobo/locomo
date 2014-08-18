@@ -27,11 +27,6 @@ abstract class Actionset_Abstract
 		$actions->delete_deleted   = self::delete_deleted($controller, $item);
 		$actions->view_revision    = self::view_revision($controller, $item);
 		$actions->add_testdata     = self::add_testdata($controller, $item);
-
-//		$actions->download_files = self::download_files($controller, $item);
-//		$actions->upload         = self::upload($controller, $item);
-//		$actions->upload_all     = self::upload_all($controller, $item);
-//		$actions->delete_file    = self::delete_file($controller, $item);
 		return $actions;
 	}
 
@@ -488,7 +483,7 @@ abstract class Actionset_Abstract
 			'id_segment'   => 3,
 			'action_name'  => '閲覧（リビジョン）',
 			'menu_str'     => '編集履歴',
-			'explanation'  => '編集履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴はみることができるようになります。また、通常項目の編集権限も許可されます。',
+			'explanation'  => '編集履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴は閲覧することができるようになります。また、通常項目の編集権限も許可されます。',
 			'dependencies' => array(
 				'view',
 				'edit',
@@ -526,70 +521,6 @@ abstract class Actionset_Abstract
 			'explanation'   => '開発者向けメニュー。テストデータの追加です。',
 			'dependencies'  => array(
 				'add_testdata',
-			)
-		);
-		return $retvals;
-	}
-	
-	/**
-	 * download_files()
-	 * @return  array
-	 */
-	private static function download_files($controller, $item)
-	{
-		$retvals = array(
-			'action_name'  => 'ファイルへのアクセス権限',
-			'explanation'  => 'アップロードされたファイルへのアクセス権限',
-			'dependencies' => array(
-				'download',
-			)
-		);
-		return $retvals;
-	}
-	
-	/**
-	 * upload()
-	 * @return  array
-	 */
-	private static function upload($controller, $item)
-	{
-		$retvals = array(
-			'action_name' => 'ファイルアップロード権限',
-			'explanation' => '通常の項目に対するファイル添付の権限',
-			'dependencies' => array(
-				'upload',
-			)
-		);
-		return $retvals;
-	}
-	
-	/**
-	 * upload_all()
-	 * @return  array
-	 */
-	private static function upload_all($controller, $item)
-	{
-		$retvals = array(
-			'action_name' => '強力なファイルアップロード権限',
-			'explanation' => '不可視、予約、期限切れ、削除の項目などのファイルアップロード権限。また、セキュア領域へのファイルアップロードの権限でもあります。',
-			'dependencies' => array(
-				'upload_all',
-			)
-		);
-		return $retvals;
-	}
-	
-	/**
-	 * delete_file()
-	 * @return  array
-	 */
-	private static function delete_file($controller, $item)
-	{
-		$retvals = array(
-			'action_name' => 'ファイルの削除権限',
-			'explanation' => '添付ファイルの削除権限です。',
-			'dependencies' => array(
-				'delete_file',
 			)
 		);
 		return $retvals;

@@ -2,13 +2,13 @@
 
 <h2>ルート設定</h2>
 
-<?php echo \Form::open(array("class"=>"form-horizontal")); ?>
+<?php echo \Form::open(); ?>
 <ul class="nlm">
 <?php foreach($items->results as $item): ?>
 	<li>
 	<label>
 	<?php
-		echo \Form::radio('route', $item->id, (\Input::post('route') == $item->id || $route_id == $item->id), array('class' => 'col-md-4 form-control'));
+		echo \Form::radio('route', $item->id, (\Input::post('route') == $item->id || $route_id == $item->id));
 		echo $item->name;
 	?>
 	</label>
@@ -18,9 +18,9 @@
 
 <p>
 <?php
-echo Form::hidden($token_key, $token);
+echo \Form::hidden($token_key, $token);
 echo Html::anchor($controller.'/edit/'.$item_id, '戻る',array('class'=>'button'));
-echo Form::submit('submit', '経路設定する', array('class' => 'button main'));
+echo \Form::submit('submit', '経路設定する', array('class' => 'button main'));
 ?>
 </p>
 
