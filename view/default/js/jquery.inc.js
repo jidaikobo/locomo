@@ -1,4 +1,15 @@
 $(function(){
+///// baseとして追加予定のもの /////
+
+//JavaScript有効時に表示する、無効時には非表示にする（CSS）
+$("body *").removeClass("hide-if-no-js");
+
+
+$( 'a.listOpen' ).click(function() {
+	$(this).parent().next('div').toggle();
+} );
+
+/*
 ////lowvision menuimg 
 function replacemenuimg(a){
 	imgalt = a.find('img').attr('alt');
@@ -284,15 +295,5 @@ $(document).ready(function(){
 	});
 
 
-
-///// baseとして追加予定のもの /////
-
-//JavaScript有効時に表示する、無効時には非表示にする（CSS）
-$("body").removeClass("hide-if-no-js");
-
-$( 'a.listOpen' ).click( function () {
-	console.log($(this));
-} );
-
-
+*/
 });
