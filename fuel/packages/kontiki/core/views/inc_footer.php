@@ -1,11 +1,11 @@
 		</div>
-		<div id="footer">
-			<p class="pull-right">Page rendered in {exec_time}s using {mem_usage}mb of memory.</p>
-			<p>
-				<a href="http://fuelphp.com">FuelPHP</a> is released under the MIT license.<br>
-				<small>Version: <?php echo e(Fuel::VERSION); ?></small>
-			</p>
-		</div>
+	</div><!-- /.container -->
+	<div id="footer">
+		<p class="pull-right">Page rendered in {exec_time}s using {mem_usage}mb of memory.</p>
+		<p>
+			<a href="http://fuelphp.com">FuelPHP</a> is released under the MIT license.<br>
+			<small>Version: <?php echo e(Fuel::VERSION); ?></small>
+		</p>
 	</div>
 
 <?php echo $include_tpl('inc_admin_bar.php'); ?>

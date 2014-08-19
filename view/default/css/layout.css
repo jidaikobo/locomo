@@ -19,10 +19,10 @@ body{
 }
 footer,
 #footer{
-	position: re;
+	position: relative;
 	bottom: 0;
-	height: 80px;
-	padding: 10px 0;
+	min-height: 80px;
+	padding: 30px 30px 10px;
 	font-size: .8em;
 }
 
@@ -93,51 +93,66 @@ footer,
 }
 
 /* button */
-
-input.button.primary,
-input.btn.primary,
+a.btn.primary,
 a.button.primary,
-a.btn.primary
-{
-	border-color: #357ebd;
-	background-color: #428bca;
-	color: #fff;
-}
-
-input.button.primary:hover,
-input.btn.primary:hover,
+a.btn.primary:hover,
 a.button.primary:hover,
-a.btn.primary:hover
+a.btn.primary:active,
+a.button.primary:active
 {
-	border-color: #357ebd;
-	background-color: #357ebd;
 	color: #fff;
 }
 
-input.button.primary:active,
-input.btn.primary:active,
-a.button.primary:active,
-a.btn.primary:active
+.btn.primary,
+.button.primary
+{
+	border-color: #357ebd;
+	background-color: #2a78ca;
+	color: #fff;
+}
+
+.btn.primary:hover,
+.button.primary:hover
+{
+	border-color: #285e8e;
+	background-color: #29619d;
+	color: #fff;
+}
+
+.btn.primary:active,
+.button.primary:active
 {
 	border: 2px solid #285e8e;
 	padding: 4px 12px;
-	background-color: #357ebd;
+	background-color: #29619d;
 }
-
-input.button.danger,
-input.btn.danger,
+a.btn-danger,
+a.btn-danger:hover,
+a.btn-danger:active,
+a.btn.danger,
 a.button.danger,
-a.btn.danger
+a.btn.danger:hover,
+a.button.danger:hover,
+a.btn.danger:active,
+a.button.danger:active
 {
+/*	color: #fff; */
+}
+.btn-danger,
+.btn.danger,
+.button.danger
+{
+/*
 	border-color: #d43f3a;
 	background-color: #d9534f;
 	color: #fff;
+*/
+	background-color: #f6cccc;
 }
 
-input.button.danger:hover,
-input.btn.danger:hover,
-a.button.danger:hover,
-a.btn.danger:hover
+.btn-danger:hover,
+.btn.danger:hover,
+.button.danger:hover
 {
 	border-color: #ac2925;
 	background-color: #c9302c;
@@ -145,58 +160,48 @@ a.btn.danger:hover
 }
 
 
-input.button.danger:active,
-input.btn.danger:active,
-a.button.danger:active,
-a.btn.danger:active
+.btn-danger:active,
+.button.danger:active
 {
 	border-color: #ac2925;
 	background-color: #c9302c;
+	color: #fff;
 }
 
-input.btn-small,
-input.btn.small,
-input.button.small,
-a.btn-small,
-a.btn.small,
-a.button.small{
+.btn.small,
+.button.small
+{
 	padding: 2px 8px;
 	margin: 0 2px 0 0;
 }
-input.btn-small.main,
-input.btn.small.main,
-input.button.small.main,
-a.btn-small.main,
-a.btn.small.main,
-a.button.small.main{
+
+.btn.small.primary,
+.button.small.primary
+{
 	padding: 1px 7px;
 	font-weight: normal;
 }
-input.btn-small.main:hover,
-input.btn.small.main:hover,
-input.button.small.main:hover,
-a.btn-small.main:hover,
-a.btn.small.main:hover,
-a.button.small.main:hover{
+
+.btn.small.primary:hover,
+.button.small.primary:hover
+{
 	border-width: 3px;
 	padding: 0 6px;
 }
 
-input.btn-small.main:active,
-input.btn.small.main:active,
-input.button.small.main:active,
-a.btn-small.main:active,
-a.btn.small.main:active,
-a.button.small.main:active{
+.btn.small.primary:active,
+.button.small.primary:active
+{
 	padding: 0 6px;
 }
 
-input.btn.disabled,
-a.btn.disabled,
-input.btn[disabled],
-a.btn[disabled],
-fieldset[disabled] input.btn ,
-fieldset[disabled] a.btn {
+.btn.disabled,
+.button.disabled,
+input.button[disabled],
+a.button[disabled],
+fieldset[disabled] input.button,
+fieldset[disabled] a.button
+{
 	cursor: not-allowed;
 	pointer-events: none; /* IEは11以上から */
 	opacity: .65;
@@ -205,6 +210,9 @@ fieldset[disabled] a.btn {
 }
 
 /* alert */
+div.alert{
+	padding:5px 10px;
+}
 .alert-success{
 	background-color: #dff0d8;
 	border-color: #d6e9c6;
@@ -212,4 +220,22 @@ fieldset[disabled] a.btn {
 }
 .alert-success strong{
 	color :#3c763d;
+}
+
+/* pagenation */
+
+.pagination
+{
+	padding: 10px;
+	text-align: center;
+}
+.pagination a
+{
+	padding: 5px 10px;
+}
+
+.pagination .active a
+{
+	font-weight: bold;
+	background-color: #cef;
 }
