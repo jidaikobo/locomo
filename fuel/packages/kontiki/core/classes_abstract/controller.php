@@ -104,9 +104,13 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
-		//アクションセットで定義されていないアクションへのアクセスの拒否（まだ書いてない）。いまはアクションが存在していたら、アクションセットがなくても実行できてしまうので、controller_crudにあるメソッドが実行できてしまう。
-		//self::$actionset
-
+		//コントローラのアクションセットにないアクションは実行できない
+		$actionsets = array();
+		foreach(self::$actionset as $actionset):
+			$actionsets = array_merge($actionsets, $actionset['dependencies']);
+		endforeach;
+		if( ! in_array($method, $actionsets) )
+			return \Response::redirect(\Uri::base());
 
 		//アクションが普通に存在していれば、そのまま実行
 		$class = "{$this->request->module}_{$method}";
@@ -120,7 +124,7 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 			$class = "\\".ucfirst($this->request->module)."\\Controller_".\Inflector::words_to_upper($class);
 			$action = "action_".$method;
 			if( ! class_exists($class) || ! method_exists($class, $action))
-				\Response::redirect(\Uri::base());
+				return \Response::redirect(\Uri::base());
 			$controller_obj = new $class($request);
 			return $controller_obj->$action($params);
 		endif;

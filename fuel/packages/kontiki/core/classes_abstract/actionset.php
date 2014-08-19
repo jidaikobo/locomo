@@ -25,7 +25,6 @@ abstract class Actionset_Abstract
 		$actions->delete           = self::delete($controller, $item);
 		$actions->undelete         = self::undelete($controller, $item);
 		$actions->delete_deleted   = self::delete_deleted($controller, $item);
-		$actions->view_revision    = self::view_revision($controller, $item);
 		$actions->add_testdata     = self::add_testdata($controller, $item);
 		return $actions;
 	}
@@ -464,31 +463,6 @@ abstract class Actionset_Abstract
 				'view_deleted',
 				'index_deleted',
 				'delete_deleted',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * view_revision()
-	 * @return  array
-	 */
-	private static function view_revision($controller, $item)
-	{
-		$url = isset($item->id) ? "$controller/index_revision/$item->id" : null ;
-		$url = self::check_auth($controller, 'index_revision') ? $url : '';
-
-		$retvals = array(
-			'url'          => $url,
-			'id_segment'   => 3,
-			'action_name'  => '閲覧（リビジョン）',
-			'menu_str'     => '編集履歴',
-			'explanation'  => '編集履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴は閲覧することができるようになります。また、通常項目の編集権限も許可されます。',
-			'dependencies' => array(
-				'view',
-				'edit',
-				'view_revision',
-				'index_revision',
 			)
 		);
 		return $retvals;

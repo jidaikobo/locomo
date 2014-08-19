@@ -156,24 +156,9 @@ MIGRATION;
 	 */
 	public function generate_controller($name)
 	{
-		$name = ucfirst($name);
-		$str = <<<FILES
-<?php
-namespace {$name};
-class Controller_{$name} extends \Kontiki\Controller_Crud
-//class Controller_{$name} extends \Kontiki\Controller_Workflow
-{
-	/**
-	 * set_actionset()
-	 */
-	public function set_actionset(\$controller = null, \$id = null)
-	{
-		parent::set_actionset(\$controller, \$id);
-		unset(self::\$actionset->view_revision);
-	}
-}
-FILES;
-		return $str;
+		$val = file_get_contents(dirname(__DIR__).'/templates/controller.php');
+		$val = self::replaces($name, $val);
+		return $val;
 	}
 
 	/**
@@ -219,7 +204,9 @@ class Model_{$name} extends \Kontiki\Model_Crud
 	protected static \$_primary_name = '';
 
 	protected static \$_properties = array(
-{$field_str}	);
+{$field_str}
+// 'workflow_status',
+	);
 }
 FILES;
 		return $str;
