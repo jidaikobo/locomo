@@ -11,7 +11,16 @@ $( 'a.listOpen' ).click(function() {
 } );
 //外をクリックでとじられるようにできるといいなあ？
 
-
+var tabbed = false;
+$("body").keydown(function(event){
+  // 入力されたキーのコード
+  var keyCode = event.keyCode;
+	if( keyCode == 9 && tabbed == false ){
+		console.log(keyCode);
+		$('[tabindex=1]').focus();
+		tabbed=true;
+	}
+});
 
 
 /*
