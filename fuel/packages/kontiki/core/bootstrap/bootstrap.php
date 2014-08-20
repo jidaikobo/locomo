@@ -38,9 +38,20 @@ foreach (glob(PKGCOREPATH."modules".DS."*") as $dirname):
 	$path = PKGCOREPATH."modules/{$l_module}/classes/";
 
 	//setting
-	$module_names["Kontiki\\Controller_{$module}"] = $path."controller/{$l_module}_abstract.php";
-	$module_names["Kontiki\\Model_{$module}"]      = $path."model/{$l_module}_abstract.php";
-	$module_names["Kontiki\\View_{$module}"]       = $path."view/{$l_module}_abstract.php";
+	if(file_exists($path."controller/{$l_module}_abstract.php"))
+		$module_names["Kontiki\\Controller_{$module}"] = $path."controller/{$l_module}_abstract.php";
+
+	if(file_exists($path."model/{$l_module}_abstract.php"))
+		$module_names["Kontiki\\Model_{$module}"] = $path."model/{$l_module}_abstract.php";
+
+	if(file_exists($path."view/{$l_module}_abstract.php"))
+		$module_names["Kontiki\\View_{$module}"] = $path."view/{$l_module}_abstract.php";
+
+	//trait
+	$trait_path = $dirname.'/traits/';
+	foreach (glob($trait_path."*") as $filename):
+		Fuel::load($filename);
+	endforeach;
 endforeach;
 Autoloader::add_classes($module_names);
 
@@ -59,16 +70,16 @@ endforeach;
 Autoloader::add_classes($observer_class_names);
 
 // load the package with the config file.
-if(file_exists(PKGPATH.'kontiki/config/packageconfig.php')):
+if(file_exists(PKGAPPPATH.'config/packageconfig.php')):
 	Config::load('packageconfig.php');
 else:
-	Config::load(PKGCOREPATH.'/config/packageconfig.php');
+	Config::load(PKGCOREPATH.'config/packageconfig.php');
 endif;
 
 //always load module
-\Module::load('acl');
-\Module::load('user');
-\Module::load('revision');
-\Module::load('workflow');
+Module::load('acl');
+Module::load('user');
+Module::load('revision');
+Module::load('workflow');
 
 /* End of file bootstrap.php */

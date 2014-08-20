@@ -1,27 +1,7 @@
 <?php
 namespace Workflow;
-class Actionset_Workflow extends \Kontiki\Actionset
+trait Actionset_Workflow
 {
-	/**
-	 * actionItems()
-	 * @return  obj
-	 */
-	public static function actionItems($controller = null, $item = null)
-	{
-		$actions = parent::actionItems($controller, $item);
-		$actions->index_workflow   = self::index_workflow($controller, $item);
-		$actions->workflow         = self::workflow($controller, $item);
-		$actions->workflow_process = self::workflow_process($controller, $item);
-		$actions->workflow_actions = self::workflow_actions($controller, $item);
-
-		//in_progressな項目は、編集できない
-		if(@$item->workflow_status == 'in_progress'):
-			unset($actions->edit);
-		endif;
-
-		return $actions;
-	}
-
 	/**
 	 * index_workflow()
 	 * @return  array

@@ -2,6 +2,9 @@
 namespace XXX;
 class Actionset_XXX extends \Kontiki\Actionset
 {
+	//use \Revision\Controller_Revision;
+	//use \Workflow\Actionset_Workflow;
+
 	/**
 	 * actionItems()
 	 * @return  obj
@@ -10,6 +13,21 @@ class Actionset_XXX extends \Kontiki\Actionset
 	{
 		$actions = parent::actionItems($controller, $item);
 //		$actions->sample_action = self::sample_action($controller, $item);
+
+		//revision
+		/*
+		$actions->view_revision = self::view_revision($controller, $item);
+		*/
+
+		//workflow
+		/*
+		$actions->index_workflow   = self::index_workflow($controller, $item);
+		$actions->workflow         = self::workflow($controller, $item);
+		$actions->workflow_process = self::workflow_process($controller, $item);
+		$actions->workflow_actions = self::workflow_actions($controller, $item);
+		if(@$item->workflow_status == 'in_progress') unset($actions->edit);
+		*/
+
 		return $actions;
 	}
 

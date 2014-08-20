@@ -1,15 +1,12 @@
 <?php
-namespace Kontiki;
-abstract class Controller_Workflow extends \Kontiki\Controller_Crud
+namespace Workflow;
+trait Controller_Workflow
 {
 	/**
-	 * pre_save_hook() - override
+	 * pre_workflow_save_hook()
 	 */
-	public function pre_save_hook($obj = null, $mode = 'edit')
+	public function pre_workflow_save_hook($obj = null, $mode = 'edit')
 	{
-		if($obj == null) \Response::redirect($this->request->module);
-		$obj = parent::pre_save_hook($obj, $mode);
-
 		//ワークフロー管理
 		if(array_key_exists('workflow_actions', self::$actionset)):
 			//ワークフロー管理するコントローラにはworkflow_statusを作る
@@ -26,16 +23,13 @@ abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 	}
 
 	/**
-	 * post_save_hook()
+	 * workflow_save_hook()
 	 */
-	public function post_save_hook($obj = null, $mode = 'edit')
+	public function workflow_save_hook($obj = null, $mode = 'edit')
 	{
-		if($obj == null) \Response::redirect($this->request->module);
-		$obj = parent::post_save_hook($obj, $mode);
-
 		//ワークフロー管理
 		if($mode == 'create' && array_key_exists('workflow_actions', self::$actionset)):
-			//ワークフロー管理下のコンテンツはbefore_progressで作成される
+			//ワークフロー管理下のコンテンツのworkflow_statusはbefore_progressで作成される
 			$model = $this->model_name ;
 			$primary_key = $model::get_primary_key();
 			if(isset($obj->$primary_key[0])):
@@ -45,6 +39,19 @@ abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 		endif;
 
 		return $obj;
+	}
+
+	/**
+	 * workflow_edit_core()
+	 */
+	public function workflow_edit_core($id = null, $obj = null, $redirect = null, $title = null)
+	{
+		if(@$obj->workflow_status == 'in_progress'):
+			\Session::set_flash('error','この項目はワークフロー管理下にあり、現在、編集できません。');
+			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
+		endif;
+		//in_progressでない項目であれば、編集できる。
+		return parent::edit_core($id, $obj, $redirect, $title);
 	}
 
 	/**
@@ -90,19 +97,6 @@ abstract class Controller_Workflow extends \Kontiki\Controller_Crud
 		$view->set('items', \Arr::sort($items, 'is_current', 'desc'));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-	}
-
-	/**
-	 * edit_core() - override
-	 */
-	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)
-	{
-		if(@$obj->workflow_status == 'in_progress'):
-			\Session::set_flash('error','この項目はワークフロー管理下にあり、現在、編集できません。');
-			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
-		endif;
-		//in_progressでない項目であれば、編集できる。
-		return parent::edit_core($id, $obj, $redirect, $title);
 	}
 
 	/**

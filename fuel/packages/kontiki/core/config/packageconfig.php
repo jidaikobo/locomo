@@ -24,6 +24,9 @@ return array(
 		'limit_time'      => 300, //◯秒間バンする
 	),
 
+	//use_login_as_top
+	'use_login_as_top' => false,
+
 	//modules settings
 	'module_paths' => array(
 		PKGPATH.'kontiki/modules'.DS,

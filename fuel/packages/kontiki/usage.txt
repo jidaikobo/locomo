@@ -53,34 +53,92 @@ MODNAME
 	- MODNAME.php
 - views
 
-ただし、コントローラをコンパクトに書くための独自ルーティングがあります。
-modules/MODNAME/classes/controller/MODNAME_ACTNAME.phpで、1ファイルに1つのアクションを独立して書くことができます。この際、継承するclassは適宜気をつけてください。ほとんどの場合は、\kontiki\controllerでなく、MODNAMEにあたるclassを継承することになるはずです。
-
 kontikiには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
 
 /*
  * revision（編集履歴）
  */
 
-kontikiのscaffoldを利用している場合は、コントローラの
+revisionを適用したいコントローラで、
+▼ここから────────────────
+	use \Revision\Controller_Revision;
+────────────────ここまで▲
+のコメントアウトを外します。
+同じくコントローラで、post_save_hook()をオーバライドし、リビジョン用の処理を加えてください。
+▼ここから────────────────
+	public function post_save_hook($obj = null, $mode = 'edit')
+	{
+		$obj = parent::post_save_hook($obj, $mode);
+		$obj = $this->revision_save_hook($obj, $mode);
+		return $obj;
+	}
+────────────────ここまで▲
 
-unset( self::$actionset->view_revision );
+同アクションセットで、
+▼ここから────────────────
+	use \Revision\Actionset_Revision;
+────────────────ここまで▲
+のコメントアウトを外します。
+アクションセットでは、
+▼ここから────────────────
+		//revision
+		$actions->view_revision = self::view_revision($controller, $item);
+────────────────ここまで▲
+を追加します。
 
-をコメントアウト（あるいは削除すると）、コントローラでの編集履歴が有効になります。
+これでコントローラでの編集履歴が有効になります。
 編集履歴は、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
-あと任意ですが、対象コントローラの編集画面に下記フォームを足すと、コメントとして保存されます。
-
-<div class="form-group revision_comment">
-	<?php echo Form::label('編集メモ', 'revision_comment')); ?>
-	<?php echo Form::textarea('revision_comment', Input::post('revision_comment', isset($item->comment) ? $item->comment : '')); ?>
-</div>
 
 /*
  * ワークフロー管理
  */
 
-ワークフロー管理をするためには、kontikiのscaffoldで出来上がったset_actionsetのWorkflow関連部分のコメントアウトを外してください。あとclass宣言部分のextendsもとを\Kontiki\Controller_Workflowに差し替えてください。
+▼ここから────────────────
+	use \Workflow\Controller_Workflow;
+────────────────ここまで▲
+のコメントアウトを外します。
+同じくコントローラで、pre_save_hook()、post_save_hook()、edit_core()をオーバライドし、ワークフロー用の処理を加えてください。
+▼ここから────────────────
+	public function pre_save_hook($obj = null, $mode = 'edit')
+	{
+		$obj = parent::post_save_hook($obj, $mode);
+		$obj = $this->pre_workflow_save_hook($obj, $mode);
+		return $obj;
+	}
+
+	public function post_save_hook($obj = null, $mode = 'edit')
+	{
+		$obj = parent::post_save_hook($obj, $mode);
+		$obj = $this->workflow_save_hook($obj, $mode);
+		return $obj;
+	}
+
+	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)
+	{
+		return $this->workflow_edit_core($id, $obj, $redirect, $title);
+	}
+────────────────ここまで▲
+
 対象モデルの$_propertiesにworkflow_statusを足します。
+
+同アクションセットで、
+▼ここから────────────────
+	use \Workflow\Actionset_Workflow;
+────────────────ここまで▲
+のコメントアウトを外します。
+アクションセットでは、
+▼ここから────────────────
+		//workflow
+		$actions->index_workflow   = self::index_workflow($controller, $item);
+		$actions->workflow         = self::workflow($controller, $item);
+		$actions->workflow_process = self::workflow_process($controller, $item);
+		$actions->workflow_actions = self::workflow_actions($controller, $item);
+		if(@$item->workflow_status == 'in_progress') unset($actions->edit);
+────────────────ここまで▲
+を追加します。
+
+これでコントローラでのワークフローが有効になります。
+ワークフローは、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
 
 /*
  * オプション
@@ -223,13 +281,13 @@ endforeach;
 	}
 ────────────────ここまで▲
 
-加えて、コントローラのmodify_array()を編集すると、オプションの値がリビジョンに保存される。以下例はarray()だが、array()でない場合は適宜変更する
+加えて、コントローラのrevision_modify_data()を編集すると、オプションの値がリビジョンに保存される。以下例はarray()だが、array()でない場合は適宜変更する
 
 ▼ここから────────────────
 	/**
-	 * modify_array()
+	 * revision_modify_data()
 	 */
-	public function modify_array($obj, $mode = null)
+	public function revision_modify_data($obj, $mode = null)
 	{
 		if($mode == 'insert_revision'):
 			$postcategories = is_array(\Input::post('postcategories')) ? \Input::post('postcategories') : array();

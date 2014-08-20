@@ -34,9 +34,9 @@ abstract class Controller_User extends \Kontiki\Controller_Crud
 	}
 
 	/**
-	 * modify_array()
+	 * revision_modify_data()
 	 */
-	public function modify_array($obj, $mode = null)
+	public function revision_modify_data($obj, $mode = null)
 	{
 		if($mode == 'insert_revision'):
 			$usergroups = is_array(\Input::post('usergroups')) ? \Input::post('usergroups') : array();

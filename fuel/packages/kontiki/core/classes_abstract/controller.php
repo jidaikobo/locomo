@@ -41,6 +41,15 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 		\User\Controller_User::set_userinfo();
 		$userinfo = \User\Controller_User::$userinfo;
 
+		//current_action
+		$current_action = $this->request->module.'/'.$this->request->action ;
+
+		//ログイン画面をトップページにする処理（router()では遅いみたい）
+		$use_login_as_top = \Config::get('use_login_as_top');
+		if($use_login_as_top && $current_action == 'content/home' && $userinfo['user_id'] == 0):
+			return \Response::redirect(\Uri::create('user/login'));
+		endif;
+
 		//model_name
 		$controller = \Inflector::denamespace(\Request::main()->controller);
 		$controller = strtolower(substr($controller, 11));
@@ -67,7 +76,6 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 
 		//ユーザ／ユーザグループで失敗したら、オーナ権限を確認する
 		if( ! $is_allowed && $item):
-			$current_action = $this->request->module.'/'.$this->request->action ;
 			$is_allowed = $this->owner_acl($userinfo, $current_action, $item) ? true : $is_allowed ;
 		endif;
 
@@ -98,31 +106,25 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 
 	/**
 	 * router()
-	 * コントローラを短く書くための独自ルーティング
-	 * modules/MODNAME/classes/controller/MODNAME_ACTNAME.phpで、個別のアクションを書けるようにする
-	 * アクションセットで定義されていないアクションへのアクセスの拒否
 	*/
 	public function router($method, $params)
 	{
-		//アクションセットで定義されていないアクションへのアクセスの拒否（まだ書いてない）。いまはアクションが存在していたら、アクションセットがなくても実行できてしまうので、controller_crudにあるメソッドが実行できてしまう。
-		//self::$actionset
-
+		//アクションセットで定義されていないアクションへのアクセスの拒否
+		$current_action = $this->request->module.'/'.$method ;
+		$actionsets = array();
+		foreach(self::$actionset as $actionset):
+			$actionsets = array_merge($actionsets, $actionset['dependencies']);
+		endforeach;
+		$always_allowed = \Config::get('always_allowed');
+		if( ! in_array($current_action, $always_allowed) && ! in_array($method, $actionsets) ):
+			return \Response::redirect(\Uri::base());
+		endif;
 
 		//アクションが普通に存在していれば、そのまま実行
 		$class = "{$this->request->module}_{$method}";
 		$file = PKGPATH."kontiki/modules/{$this->request->module}/classes/controller/{$class}.php";
 		if(method_exists($this, 'action_'.$method)):
 			return parent::router($method, $params);
-		//個別アクションファイルがあったらそれを実行
-		elseif(file_exists($file)):
-			require($file);
-			$request = \Request::forge();
-			$class = "\\".ucfirst($this->request->module)."\\Controller_".\Inflector::words_to_upper($class);
-			$action = "action_".$method;
-			if( ! class_exists($class) || ! method_exists($class, $action))
-				\Response::redirect(\Uri::base());
-			$controller_obj = new $class($request);
-			return $controller_obj->$action($params);
 		endif;
 	}
 
