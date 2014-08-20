@@ -24,13 +24,14 @@ abstract class Controller_Acl extends \Kontiki\Controller_Crud
 	/**
 	 * auth()
 	 */
-	public static function auth($current_action = null, $userinfo = null)
+	public static function auth($controller = null, $current_action = null, $userinfo = null)
 	{
+		if($controller === null || $current_action === null || $userinfo === null) return false;
+
 		//管理者は許可
 		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
 
 		//configのalways_allowed（ACLを通らないコントローラ）を確認
-		if($current_action === null || $userinfo === null) return false;
 		$always_allowed = \Config::get('always_allowed');
 		if(in_array($current_action, $always_allowed)) return true;
 
