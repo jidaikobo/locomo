@@ -36,6 +36,7 @@ class Actionset_User extends \Kontiki\Actionset
 			'menu_str'      => '',
 			'dependencies' => array(
 				'options/usergroups',
+				'options_revisions/usergroups',
 			)
 		);
 		return $retvals;
