@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title><?php echo $title; ?></title>
+	<title><?php echo $site_title.' - '.$title; ?></title>
 
 	<!--stylesheet-->
 	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/base.css'); ?>" />
@@ -14,13 +14,6 @@
 </head>
 <body>
 	<div class="container">
-	<div id="tmp_menu">
-		<?php if( ! $is_user_logged_in): ?>
-			<a href="/user/login/<?php echo base64_encode($current_uri) ?>">login</a>
-		<?php else: ?>
-			<a href="/user/logout">logout</a>
-		<?php endif; ?>
-	</div>
 
 		<div class="col-md-12">
 			<h1><?php echo $title; ?></h1>

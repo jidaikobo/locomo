@@ -22,6 +22,9 @@ abstract class View_Abstract extends \ViewModel
 	{
 		$view = \View::forge();
 
+		//site_title
+		$view->set_global('site_title', \Config::get('site_title'));
+
 		//ユーザ情報
 		$view->set_global('userinfo', \User\Controller_User::$userinfo);
 		$view->set_global('is_user_logged_in', \User\Controller_User::$is_user_logged_in);
