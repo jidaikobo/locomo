@@ -83,8 +83,8 @@ abstract class View_Abstract extends \ViewModel
 		$view = \View::forge();
 
 		$include_tpl = function($tpl) {
-			$override_tpl = PKGPATH.'kontiki/views/'.$tpl;
-			$default_tpl  = PKGPATH.'kontiki/core/views/'.$tpl;
+			$override_tpl = PKGAPPPATH.'views/'.$tpl;
+			$default_tpl  = PKGCOREPATH.'views/'.$tpl;
 			$ret_tpl = file_exists($override_tpl) ? $override_tpl : $default_tpl;
 			return \View::forge($ret_tpl);
 		};

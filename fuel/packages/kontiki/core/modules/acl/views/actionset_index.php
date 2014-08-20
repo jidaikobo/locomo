@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo $include_tpl('inc_admin_header.php'); ?>
 
 <p><?php if($user): ?>
 対象ユーザ：<code><?php echo $user ?></code><br />
@@ -44,4 +44,4 @@ echo \Form::hidden('usergroup', $hidden_usergroup);
 </div>
 <?php echo \Form::close(); ?>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo $include_tpl('inc_admin_footer.php'); ?>
