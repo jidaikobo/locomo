@@ -52,10 +52,17 @@ footer,
 	left: 10px;
 }
 #admin_bar_context{
-	left: 25%;
+	left: 20%;
+}
+#admin_bar div#admin_bar_context_control
+{
+	position: relative;
+	float: right;
+	padding-right: 90px;
 }
 #admin_bar #admin_bar_user{
 	right: 0;
+	width: 120px;
 }
 #admin_bar_user li{
 	display: block;
@@ -84,10 +91,15 @@ footer,
 	margin-bottom: 10px;
 }
 
+#admin_bar .openlist li
+{
+	display: inline;
+	padding: 0.5em;
+}
+
 /* hover action */
 
-#admin_bar_controller:hover .admin_bar_sub,
-#admin_bar_context:hover .admin_bar_sub
+#admin_bar .menulist:hover .admin_bar_sub
 {
 	display: block;
 }
@@ -221,6 +233,12 @@ div.alert{
 .alert-success strong{
 	color :#3c763d;
 }
+.alert-error{
+	background-color: #fae6e6;
+	border-color: #e9c6c6;
+	color: #111;
+}
+
 
 /* pagenation */
 
@@ -237,5 +255,5 @@ div.alert{
 .pagination .active a
 {
 	font-weight: bold;
-	background-color: #cef;
+	background-color: #eee;
 }

@@ -5,9 +5,29 @@ $(function(){
 $("body *").removeClass("hide-if-no-js");
 
 
+//リストの開け閉め
 $( 'a.listOpen' ).click(function() {
 	$(this).parent().next('div').toggle();
 } );
+//外をクリックでとじられるようにできるといいなあ？
+
+
+
+
+/*
+function kontiki_attempt_focus(){
+	setTimeout(
+		function(){
+			try{
+				account = document.getElementById('account');
+				account.focus();
+				account.select();
+			} catch(e){}
+		}, 200
+	);
+}
+kontiki_attempt_focus();
+*/
 
 /*
 ////lowvision menuimg 
