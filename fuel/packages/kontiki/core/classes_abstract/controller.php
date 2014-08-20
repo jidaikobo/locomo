@@ -109,23 +109,35 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
+
 		//アクションセットで定義されていないアクションへのアクセスの拒否
-		$current_action = $this->request->module.'/'.$method ;
+		//aclの仕事っぽいが、actionsetを確認するためコントローラで行う
+		//current_actionにはいくつかの可能性があるので検査用に配列を準備
+		$current_actions = array();
+		foreach(\Uri::segments() as $param):
+			$uris[] = $param;
+			$current_actions[] = join('/',$uris);
+		endforeach;
+
+		//存在するアクションセットを確認
+		$func =  function($v) { return $this->request->module.'/'.$v; };
 		$actionsets = array();
 		foreach(self::$actionset as $actionset):
-			$actionsets = array_merge($actionsets, $actionset['dependencies']);
+			$temp = array_map($func, $actionset['dependencies']);
+			$actionsets = array_merge($actionsets, $temp);
 		endforeach;
-		$always_allowed = \Config::get('always_allowed');
-		if( ! in_array($current_action, $always_allowed) && ! in_array($method, $actionsets) ):
-			return \Response::redirect(\Uri::base());
-		endif;
 
-		//アクションが普通に存在していれば、そのまま実行
-		$class = "{$this->request->module}_{$method}";
-		$file = PKGPATH."kontiki/modules/{$this->request->module}/classes/controller/{$class}.php";
-		if(method_exists($this, 'action_'.$method)):
-			return parent::router($method, $params);
-		endif;
+		//アクションセットを走査
+		$is_allow = false;
+		foreach($current_actions as $each_current_action):
+			if(in_array($each_current_action, $actionsets) ):
+				$is_allow = true;
+				break;
+			endif;
+		endforeach;
+		if( ! $is_allow ) return \Response::redirect(\Uri::base());
+
+		return parent::router($method, $params);
 	}
 
 	/**
