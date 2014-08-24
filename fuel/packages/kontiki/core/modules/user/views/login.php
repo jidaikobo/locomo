@@ -6,7 +6,7 @@ function kontiki_attempt_focus(){
 	setTimeout(
 		function(){
 			try{
-				account = document.getElementById('account');
+				account = document.getElementById('form_account');
 				account.focus();
 				account.select();
 			} catch(e){}
@@ -18,13 +18,11 @@ kontiki_attempt_focus();
 
 <?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret)); ?>
 
-<fieldset>
-<legend>ログイン</legend>
-
+<div class="form_group">
 <!--ユーザ名かメールアドレス-->
 <div class="form-group">
 	<?php echo \Form::label('アカウント', 'account'); ?>
-	<?php echo \Form::input('account', Input::post('account', isset($item) ? $item->account : ''), array('id' => 'account', 'placeholder'=>'ユーザ名かメールアドレスを入力')); ?>
+	<?php echo \Form::input('account', Input::post('account', isset($item) ? $item->account : ''), array('placeholder'=>'ユーザ名かメールアドレスを入力')); ?>
 </div>
 
 <!--パスワード-->
@@ -35,10 +33,13 @@ kontiki_attempt_focus();
 
 <?php
 //buttons
-echo Html::anchor('/', '戻る', array('class' => 'button'));
 echo \Form::submit('submit', 'ログイン', array('class' => 'button main'));
 ?>
-</fieldset>
-<?php echo \Form::close(); ?>
+</div>
+
+<?php
+echo Html::anchor('/', "{$site_title}へ");
+echo \Form::close();
+?>
 
 <?php echo $include_tpl('inc_footer.php'); ?>

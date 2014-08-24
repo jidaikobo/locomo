@@ -126,6 +126,8 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 			$temp = array_map($func, $actionset['dependencies']);
 			$actionsets = array_merge($actionsets, $temp);
 		endforeach;
+		$always_allowed = \Config::get('always_allowed');
+		$actionsets = array_merge($actionsets, $always_allowed);
 
 		//アクションセットを走査
 		$is_allow = false;
