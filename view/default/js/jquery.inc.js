@@ -4,10 +4,36 @@ $(function(){
 //JavaScript有効時に表示する、無効時には非表示にする（CSS）
 $("body *").removeClass("hide-if-no-js");
 
-
 $( 'a.listOpen' ).click(function() {
 	$(this).parent().next('div').toggle();
 } );
+
+//=== rollover ===
+$('.bt a:has(img)').hover(function(){
+	var imgsrc = $(this).find('img').attr('src');
+	if( ! $(this).hasClass("on") && imgsrc.indexOf('_ro.') == -1){
+		var imgsrc = imgsrc.replace(/\.(gif|png|jpg|jpeg)$/i,'_ro\.$1');
+		$(this).find('img').attr('src',imgsrc);
+	}
+},function(){
+	if(! $(this).hasClass("on")){
+		var imgsrc = $(this).find('img').attr('src').replace(/_ro\.(gif|png|jpg|jpeg)$/i,'\.$1');
+		$(this).find('img').attr('src',imgsrc);
+	}
+});
+
+//input.bt
+$('input.bt').hover(function(){
+	var imgsrc = $(this).attr('src');
+	if(imgsrc.indexOf('_ro.') == -1){
+		var imgsrc = imgsrc.replace(/\.(gif|png|jpg|jpeg)$/i,'_ro\.$1');
+		$(this).attr('src',imgsrc);
+	}
+},function(){
+	var imgsrc = $(this).attr('src').replace(/_ro\.(gif|png|jpg|jpeg)$/i,'\.$1');
+	$(this).attr('src',imgsrc);
+});
+
 
 /*
 ////lowvision menuimg 
