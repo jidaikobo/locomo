@@ -1,3 +1,5 @@
+//チートシート
+
 php oil refine migrate:current --packages=kontiki
 php oil refine migrate:up --packages=kontiki
 delete from migration where 1 = 1;
@@ -9,3 +11,9 @@ $controller = strtolower(substr($controller, 11));
 
 //現在のアクション
 $this->request->action
+
+＊　＊　＊
+
+scaffoldで作ったmigration:downに、acl削除を入れる
+なぜかACLを二度読みするので要確認。
+

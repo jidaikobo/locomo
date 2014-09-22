@@ -22,6 +22,10 @@ return array(
 				0 => '001_create_users',
 				1 => '002_create_usergroups',
 			),
+			'post2' => 
+			array(
+				0 => '001_create_post2',
+			),
 		),
 		'package' => 
 		array(

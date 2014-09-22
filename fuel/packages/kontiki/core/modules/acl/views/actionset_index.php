@@ -40,7 +40,7 @@ echo \Form::hidden('usergroup', $hidden_usergroup);
 
 <div class="button_group">
 	<?php echo Html::anchor('acl/controller_index/', '戻る', array('class' => 'button')); ?>
-	<?php echo \Form::submit('submit', '保存する', array('class' => 'button main')); ?>
+	<?php echo \Form::submit('submit', '保存する', array('class' => 'button primary')); ?>
 </div>
 <?php echo \Form::close(); ?>
 
