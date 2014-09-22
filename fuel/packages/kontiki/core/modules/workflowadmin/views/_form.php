@@ -11,7 +11,7 @@
 	<?php
 		echo \Form::hidden($token_key, $token);
 		echo Html::anchor('workflowadmin/index_admin', '一覧に戻る', array('class' => 'button'));
-		echo \Form::submit('submit', '保存', array('class' => 'button main'));
+		echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 	?>
 </div>
 

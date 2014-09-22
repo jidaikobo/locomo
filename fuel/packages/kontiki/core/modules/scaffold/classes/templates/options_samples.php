@@ -15,7 +15,7 @@
 		<?php
 			echo \Form::hidden($token_key, $token);
 			echo \Form::hidden('mode', 'add');
-			echo \Form::submit('submit', '新規追加', array('class' => 'button main'));
+			echo \Form::submit('submit', '新規追加', array('class' => 'button primary'));
 		?>
 	</div>
 </div>
@@ -80,7 +80,7 @@ if( ! empty($flag)):
 		else:
 			echo \Form::hidden($token_key, $token);
 			echo \Form::hidden('mode', 'edit');
-			echo \Form::submit('submit', '保存', array('class' => 'button main'));
+			echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 		endif;
 		?>
 	</div>

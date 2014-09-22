@@ -19,7 +19,7 @@
 	<?php
 	if( ! @$is_revision): 
 		echo \Form::hidden($token_key, $token);
-		echo \Form::submit('submit', '保存する', array('class' => 'button main'));
+		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 	endif;
 	?>
 </p>

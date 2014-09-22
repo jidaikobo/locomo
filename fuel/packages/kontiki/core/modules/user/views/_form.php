@@ -70,7 +70,7 @@
 		else:
 			echo \Form::hidden($token_key, $token);
 			echo Html::anchor('user', '一覧に戻る',array('class'=>'button'));
-			echo \Form::submit('submit', '保存', array('class' => 'button main'));
+			echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 		endif;
 		?>
 </div>

@@ -7,7 +7,7 @@
 </dl>
 <div class="button_group">
 	<?php echo \Form::hidden($token_key, $token); ?>
-	<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'button main')); ?>
+	<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'button primary')); ?>
 </div>
 <?php echo \Form::close(); ?>
 
