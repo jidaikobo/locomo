@@ -2,7 +2,7 @@
 namespace XXX;
 class Actionset_XXX extends \Kontiki\Actionset
 {
-	//use \Revision\Controller_Revision;
+	//use \Revision\Actionset_Revision;
 	//use \Workflow\Actionset_Workflow;
 
 	/**
