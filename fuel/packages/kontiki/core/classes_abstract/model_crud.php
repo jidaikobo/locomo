@@ -142,7 +142,7 @@ abstract class Model_Crud_Abstract extends \Kontiki\Model_Options
 		$item = self::find_item_anyway($id);
 		if( ! $item) return false;
 
-		//表示制限要件がなければ許可
+		//表示制限要件がいっさいなければ許可
 		if(
 			! isset($item->status) &&
 			! isset($item->deleted_at) &&

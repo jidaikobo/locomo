@@ -32,11 +32,13 @@ class Actionset_User extends \Kontiki\Actionset
 			'url'           => $urls,
 			'id_segment'    => null,
 			'action_name'   => 'ユーザグループ',
-			'explanation'   => 'ユーザが所属するユーザグループです。',
+			'explanation'   => 'ユーザが所属するユーザグループです。コントローラオプションのため、この権限を許可するとほかのオプション類も許可されます。',
 			'menu_str'      => '',
 			'dependencies' => array(
-				'options/usergroups',
-				'options_revisions/usergroups',
+				'options',
+				'options_revisions',
+//				'options/usergroups',
+//				'options_revisions/usergroups',
 			)
 		);
 		return $retvals;
