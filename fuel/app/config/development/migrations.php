@@ -22,6 +22,10 @@ return array(
 				0 => '001_create_users',
 				1 => '002_create_usergroups',
 			),
+			'revision' => 
+			array(
+				0 => '001_create_revision',
+			),
 		),
 		'package' => 
 		array(
