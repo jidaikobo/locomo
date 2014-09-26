@@ -1,0 +1,259 @@
+body{
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	height: 100%;
+	padding: 50px 0 0;
+}
+.container {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	padding: 0 30px 120px;
+	margin-bottom: -120px;
+	position: relative;
+}
+footer,
+#footer{
+	position: relative;
+	bottom: 0;
+	min-height: 80px;
+	padding: 30px 30px 10px;
+	font-size: .8em;
+}
+
+/*=== admin_bar ===*/
+
+#admin_bar
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	padding: 10px 20px;
+	background-color: #eee;
+	height: 1.5em;
+}
+
+#admin_bar div
+{
+	position: absolute;
+	width: auto;
+	background-color: #eee;
+	border-radius:0 0 4px 4px ;
+}
+
+#admin_bar_controller{
+	left: 10px;
+}
+#admin_bar_context{
+	left: 20%;
+}
+#admin_bar div#admin_bar_context_control
+{
+	position: relative;
+	float: right;
+	padding-right: 90px;
+}
+#admin_bar #admin_bar_user{
+	right: 0;
+	width: 120px;
+}
+#admin_bar_user li{
+	display: block;
+}
+#admin_bar div h2
+{
+	padding: 0 20px;
+	margin-bottom: 5px;
+}
+
+#admin_bar div h2 a{
+	color: #000;
+	text-decoration: none;
+}
+.admin_bar_sub{
+	display: none;
+}
+
+#admin_bar div h3
+{
+	padding: 0 20px;
+}
+#admin_bar div ul
+{
+	padding:0 20px;
+	margin-bottom: 10px;
+}
+
+#admin_bar .openlist li
+{
+	display: inline;
+	padding: 0.5em;
+}
+
+/* hover action */
+
+#admin_bar .menulist:hover .admin_bar_sub
+{
+	display: block;
+}
+
+/* button */
+a.btn.primary,
+a.button.primary,
+a.btn.primary:hover,
+a.button.primary:hover,
+a.btn.primary:active,
+a.button.primary:active
+{
+	color: #fff;
+}
+
+.btn.primary,
+.button.primary
+{
+	border-color: #357ebd;
+	background-color: #2a78ca;
+	color: #fff;
+}
+
+.btn.primary:hover,
+.button.primary:hover
+{
+	border-color: #285e8e;
+	background-color: #29619d;
+	color: #fff;
+}
+
+.btn.primary:active,
+.button.primary:active
+{
+	border: 2px solid #285e8e;
+	padding: 4px 12px;
+	background-color: #29619d;
+}
+a.btn-danger,
+a.btn-danger:hover,
+a.btn-danger:active,
+a.btn.danger,
+a.button.danger,
+a.btn.danger:hover,
+a.button.danger:hover,
+a.btn.danger:active,
+a.button.danger:active
+{
+/*	color: #fff; */
+}
+.btn-danger,
+.btn.danger,
+.button.danger
+{
+/*
+	border-color: #d43f3a;
+	background-color: #d9534f;
+	color: #fff;
+*/
+	background-color: #f6cccc;
+}
+
+.btn-danger:hover,
+.btn.danger:hover,
+.button.danger:hover
+{
+	border-color: #ac2925;
+	background-color: #c9302c;
+	color: #fff;
+}
+
+
+.btn-danger:active,
+.button.danger:active
+{
+	border-color: #ac2925;
+	background-color: #c9302c;
+	color: #fff;
+}
+
+.btn.small,
+.button.small
+{
+	padding: 2px 8px;
+	margin: 0 2px 0 0;
+}
+
+.btn.small.primary,
+.button.small.primary
+{
+	padding: 1px 7px;
+	font-weight: normal;
+}
+
+.btn.small.primary:hover,
+.button.small.primary:hover
+{
+	border-width: 3px;
+	padding: 0 6px;
+}
+
+.btn.small.primary:active,
+.button.small.primary:active
+{
+	padding: 0 6px;
+}
+
+.btn.disabled,
+.button.disabled,
+input.button[disabled],
+a.button[disabled],
+fieldset[disabled] input.button,
+fieldset[disabled] a.button
+{
+	cursor: not-allowed;
+	pointer-events: none; /* IEは11以上から */
+	opacity: .65;
+	filter: alpha(opacity=65);
+	-webkit-box-shadow: none;
+}
+
+/* alert */
+div.alert{
+	padding:5px 10px;
+}
+.alert-success{
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+	color: #111;
+}
+.alert-success strong{
+	color :#3c763d;
+}
+.alert-error{
+	background-color: #fae6e6;
+	border-color: #e9c6c6;
+	color: #111;
+}
+
+
+/* pagenation */
+
+.pagination
+{
+	padding: 10px;
+	text-align: center;
+}
+.pagination a
+{
+	padding: 5px 10px;
+}
+
+.pagination .active a
+{
+	font-weight: bold;
+	background-color: #eee;
+}
