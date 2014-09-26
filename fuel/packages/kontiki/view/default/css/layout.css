@@ -52,7 +52,6 @@ footer,
 	left: 10px;
 }
 #admin_bar_context{
-<<<<<<< HEAD
 	left: 20%;
 }
 #admin_bar div#admin_bar_context_control
@@ -64,12 +63,9 @@ footer,
 #admin_bar #admin_bar_user{
 	right: 0;
 	width: 120px;
-=======
-	left: 25%;
 }
 #admin_bar #admin_bar_user{
 	right: 0;
->>>>>>> a39ae1b2b5a9840b50a6864e124365a5b0d9d3b4
 }
 #admin_bar_user li{
 	display: block;
@@ -97,8 +93,6 @@ footer,
 	padding:0 20px;
 	margin-bottom: 10px;
 }
-
-<<<<<<< HEAD
 #admin_bar .openlist li
 {
 	display: inline;
@@ -108,12 +102,7 @@ footer,
 /* hover action */
 
 #admin_bar .menulist:hover .admin_bar_sub
-=======
-/* hover action */
-
-#admin_bar_controller:hover .admin_bar_sub,
 #admin_bar_context:hover .admin_bar_sub
->>>>>>> a39ae1b2b5a9840b50a6864e124365a5b0d9d3b4
 {
 	display: block;
 }
@@ -247,15 +236,11 @@ div.alert{
 .alert-success strong{
 	color :#3c763d;
 }
-<<<<<<< HEAD
 .alert-error{
 	background-color: #fae6e6;
 	border-color: #e9c6c6;
 	color: #111;
 }
-
-=======
->>>>>>> a39ae1b2b5a9840b50a6864e124365a5b0d9d3b4
 
 /* pagenation */
 
@@ -272,9 +257,5 @@ div.alert{
 .pagination .active a
 {
 	font-weight: bold;
-<<<<<<< HEAD
 	background-color: #eee;
-=======
-	background-color: #cef;
->>>>>>> a39ae1b2b5a9840b50a6864e124365a5b0d9d3b4
 }

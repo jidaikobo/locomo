@@ -4,17 +4,11 @@ $(function(){
 //JavaScript有効時に表示する、無効時には非表示にする（CSS）
 $("body *").removeClass("hide-if-no-js");
 
-<<<<<<< HEAD
-
 //リストの開け閉め
-=======
->>>>>>> a39ae1b2b5a9840b50a6864e124365a5b0d9d3b4
 $( 'a.listOpen' ).click(function() {
 	$(this).parent().next('div').toggle();
 } );
-
-<<<<<<< HEAD
-
+/*
 var tabbed = false;
 $("body").keydown(function(event){
   // 入力されたキーのコード
@@ -27,7 +21,7 @@ $("body").keydown(function(event){
 		return false;
 	}
 });
-
+*/
 
 /*
 function kontiki_attempt_focus(){
@@ -43,7 +37,6 @@ function kontiki_attempt_focus(){
 }
 kontiki_attempt_focus();
 */
-=======
 //=== rollover ===
 $('.bt a:has(img)').hover(function(){
 	var imgsrc = $(this).find('img').attr('src');
@@ -70,7 +63,6 @@ $('input.bt').hover(function(){
 	$(this).attr('src',imgsrc);
 });
 
->>>>>>> a39ae1b2b5a9840b50a6864e124365a5b0d9d3b4
 
 /*
 ////lowvision menuimg 
