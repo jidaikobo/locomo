@@ -207,6 +207,28 @@ class Model_{$name} extends \Kontiki\Model_Crud
 {$field_str}
 // 'workflow_status',
 	);
+
+/*
+	//observers
+	protected static \$_soft_delete = array(
+		'deleted_field'   => 'deleted_at',
+		'mysql_timestamp' => true,
+	);
+	protected static \$_observers = array(
+		'Orm\Observer_CreatedAt' => array(
+			'events' => array('before_insert'),
+			'mysql_timestamp' => true,
+		),
+		'Orm\Observer_UpdatedAt' => array(
+			'events' => array('before_save'),
+			'mysql_timestamp' => true,
+		),
+		'Kontiki\Observer\Date' => array(
+			'events' => array('before_insert', 'before_save'),
+			'properties' => array('expired_at'),
+		),
+	);
+*/
 }
 FILES;
 		return $str;
@@ -270,7 +292,7 @@ FILES;
 	 */
 	public function generate_views_options($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/options_samples.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/option_samples.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}

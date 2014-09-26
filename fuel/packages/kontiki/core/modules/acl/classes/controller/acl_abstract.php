@@ -35,20 +35,6 @@ abstract class Controller_Acl extends \Kontiki\Controller_Crud
 		$always_allowed = \Config::get('always_allowed');
 		if(in_array($current_action, $always_allowed)) return true;
 
-		//リクエストされたURIを確認
-		$uris = array();
-		$is_allow = false;
-		//リクエストされたURIのパターンを生成し確認
-		foreach(\Uri::segments() as $param):
-			$uris[] = $param;
-			$str = join('/',$uris);
-			if(in_array($str, @$userinfo['acls'])):
-				$is_allow = true;
-				break;
-			endif;
-		endforeach;
-		if($is_allow) return true;
-
 		//userinfoを確認
 		return (in_array($current_action, @$userinfo['acls']));
 	}

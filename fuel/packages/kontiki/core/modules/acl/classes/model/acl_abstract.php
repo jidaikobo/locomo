@@ -102,13 +102,18 @@ abstract class Model_Acl extends \Kontiki\Model_Crud
 	 */
 	public static function get_controller_actionset($controller = null, $is_owner = false)
 	{
-		static $checked_controller;
+		static $checked_controller = array();
 
-		$class = '\\'.ucfirst($controller).'\\Controller_'.ucfirst($controller);
-		$checked_controller[] = $class;
+		//なぜか二度読むのであとで見直し
+		static $retval = array();
+		static $retval4owner = array();
+		if($is_owner && $retval4owner) return $retval4owner;
+		if( ! $is_owner && $retval) return $retval;
 
 		//すでにclassが存在している場合はオーバライドされているのでfalse
+		$class = '\\'.ucfirst($controller).'\\Controller_'.ucfirst($controller);
 		if(in_array($class, $checked_controller)) return false;
+		$checked_controller[] = $class;
 
 		//モジュールの存在確認
 		foreach(\Config::get('module_paths') as $path):
@@ -125,10 +130,11 @@ abstract class Model_Acl extends \Kontiki\Model_Crud
 		$request = \Request::forge();
 		$controller_obj = new $class($request);
 		$controller_obj->set_actionset($controller);
+
 		if($is_owner):
-			return $controller_obj::$actionset_owner;
+			return $retval4owner = $controller_obj::$actionset_owner;
 		else:
-			return $controller_obj::$actionset;
+			return $retval =  $controller_obj::$actionset;
 		endif;
 	}
 }

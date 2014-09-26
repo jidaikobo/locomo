@@ -33,7 +33,7 @@ kontiki_attempt_focus();
 
 <?php
 //buttons
-echo \Form::submit('submit', 'ログイン', array('class' => 'button main'));
+echo \Form::submit('submit', 'ログイン', array('class' => 'button primary'));
 ?>
 </div>
 

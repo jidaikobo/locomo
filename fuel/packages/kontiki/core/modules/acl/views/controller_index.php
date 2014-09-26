@@ -25,7 +25,7 @@
 <p>
 <?php
 	echo \Form::hidden($token_key, $token);
-	echo \Form::submit('submit', '次へ', array('class' => 'button main'));
+	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
 </p>
 </fieldset>
@@ -50,7 +50,7 @@
 <p>
 <?php
 	echo \Form::hidden($token_key, $token);
-	echo \Form::submit('submit', '次へ', array('class' => 'button main'));
+	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
 </p>
 </fieldset>
@@ -70,7 +70,7 @@
 <?php
 	echo \Form::hidden($token_key, $token);
 	echo \Form::hidden('owner', '1');
-	echo \Form::submit('submit', '次へ', array('class' => 'button main'));
+	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
 </p>
 </fieldset>

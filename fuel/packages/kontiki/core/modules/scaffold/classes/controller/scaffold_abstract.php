@@ -88,7 +88,7 @@ abstract class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$scaffold_helper->putfiles($scfldpath.'/views/_form.php', $tpl_form) ;
 			$scaffold_helper->putfiles($scfldpath.'/views/create.php', $tpl_create) ;
 			$scaffold_helper->putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
-			$scaffold_helper->putfiles($scfldpath.'/views/options_samples.php', $tpl_option) ;
+			$scaffold_helper->putfiles($scfldpath.'/views/option_samples.php', $tpl_option) ;
 
 			//messages
 			$messages   = array();

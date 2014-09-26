@@ -19,8 +19,8 @@ class Actionset_User extends \Kontiki\Actionset
 	 */
 	private static function usergroups($controller, $item)
 	{
-		$url = parent::check_auth($controller, 'usergroups') ? "{$controller}/options/usergroups" : '';
-		$url_rev = $url ? "{$controller}/options_revisions/usergroups" : '';
+		$url = parent::check_auth($controller, 'usergroups') ? "{$controller}/option/usergroups" : '';
+		$url_rev = $url ? "{$controller}/option_revisions/usergroups" : '';
 		$urls = array(
 			array('ユーザグループ設定', $url),
 			array('ユーザグループ設定履歴', $url_rev),
@@ -32,11 +32,13 @@ class Actionset_User extends \Kontiki\Actionset
 			'url'           => $urls,
 			'id_segment'    => null,
 			'action_name'   => 'ユーザグループ',
-			'explanation'   => 'ユーザが所属するユーザグループです。',
+			'explanation'   => 'ユーザが所属するユーザグループです。コントローラオプションのため、この権限を許可するとほかのオプション類も許可されます。',
 			'menu_str'      => '',
 			'dependencies' => array(
-				'options/usergroups',
-				'options_revisions/usergroups',
+				'option',
+				'option_revisions',
+//				'option/usergroups',
+//				'option_revisions/usergroups',
 			)
 		);
 		return $retvals;

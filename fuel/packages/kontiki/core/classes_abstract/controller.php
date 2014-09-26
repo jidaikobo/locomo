@@ -13,6 +13,11 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 	protected $model_name  = '';
 
 	/**
+	* @var string current_action
+	*/
+	protected $current_action = '';
+
+	/**
 	* @var string current_id
 	*/
 	public static $current_id = '';
@@ -42,11 +47,15 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 		$userinfo = \User\Controller_User::$userinfo;
 
 		//current_action
-		$current_action = $this->request->module.'/'.$this->request->action ;
+		$this->current_action = $this->request->module.'/'.$this->request->action ;
 
 		//ログイン画面をトップページにする処理（router()では遅いみたい）
 		$use_login_as_top = \Config::get('use_login_as_top');
-		if($use_login_as_top && $current_action == 'content/home' && $userinfo['user_id'] == 0):
+		if(
+			$use_login_as_top && //configで設定
+			$userinfo['user_id'] == 0 && //ログイン画面はゲスト用
+			$this->current_action == 'content/home' //トップページを求められているとき
+		):
 			return \Response::redirect(\Uri::create('user/login'));
 		endif;
 
@@ -55,28 +64,30 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 		$controller = strtolower(substr($controller, 11));
 		$this->model_name  = '\\'.ucfirst($controller).'\\Model_'.ucfirst($controller);
 
+		//nicename 人間向けのモジュール名
+		$controllers_from_config = \Config::load($controller);
+		self::$nicename = $controllers_from_config['nicename'];
+
 		//actionset
 		//set_current_id()で、最初にactionsetを必要とするので、ここで設定する
 		$this->set_actionset($controller);
 
-		//可能であれば、とりあえず取得してみる
-		$this->set_current_id();
-		$item = false;
-		if(self::$current_id):
-			$model = $this->model_name;
-			$item = $model::find_item_anyway(self::$current_id);
-		endif;
-
-		//nicename
-		$controllers_from_config = \Config::load($controller);
-		self::$nicename = $controllers_from_config['nicename'];
-
-		//acl まずユーザ／ユーザグループ単位を確認する。
+		//ユーザ／ユーザグループ単位のACLを確認する。
 		$is_allowed = $this->acl($userinfo) ? true : false ;
 
 		//ユーザ／ユーザグループで失敗したら、オーナ権限を確認する
-		if( ! $is_allowed && $item):
-			$is_allowed = $this->owner_acl($userinfo, $current_action, $item) ? true : $is_allowed ;
+		if( ! $is_allowed):
+			//オーナ権限確認のため、可能であれば、オーバヘッドだがとりあえず取得してみる
+			$this->set_current_id();
+			$item = false;
+			if(self::$current_id):
+				$model = $this->model_name;
+				$item = $model::find_item(self::$current_id);
+			endif;
+
+			if($item):
+				$is_allowed = $this->owner_acl($userinfo, $this->current_action, $item) ? true : $is_allowed ;
+			endif;
 		endif;
 
 		//双方駄目ならエラー
@@ -109,19 +120,19 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
-
 		//アクションセットで定義されていないアクションへのアクセスの拒否
 		//aclの仕事っぽいが、actionsetを確認するためコントローラで行う
-		//current_actionにはいくつかの可能性があるので検査用に配列を準備
+		//this->current_actionにはいくつかの可能性があるので検査用に配列を準備
 		$current_actions = array();
 		foreach(\Uri::segments() as $param):
 			$uris[] = $param;
 			$current_actions[] = join('/',$uris);
 		endforeach;
 
-		//存在するアクションセットを確認
+		//コントローラに存在するアクションセットを確認
 		$func =  function($v) { return $this->request->module.'/'.$v; };
 		$actionsets = array();
+		//アクションセットの配列から「モジュール名/アクション」の文字列を取得
 		foreach(self::$actionset as $actionset):
 			$temp = array_map($func, $actionset['dependencies']);
 			$actionsets = array_merge($actionsets, $temp);
@@ -148,11 +159,14 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 	public function acl($userinfo)
 	{
 		//adminたち（ユーザグループ-1や-2）は常にtrue
-		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
+		if(
+			in_array(-2, $userinfo['usergroup_ids']) ||
+			in_array(-1, $userinfo['usergroup_ids'])
+		)
+		return true;
 
 		//auth
-		$current_action = $this->request->module.'/'.$this->request->action;
-		return \Acl\Controller_Acl::auth($current_action, $userinfo);
+		return \Acl\Controller_Acl::auth($this->current_action, $userinfo);
 	}
 
 	/**
@@ -205,6 +219,8 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 			require_once($default_path);
 			require_once(PKGCOREPATH."modules/{$controller}/classes/actionset/actionset_owner.php");
 		endif;
+
+
 
 		//アクションセットの設定
 		$actionset_class = \Kontiki\Util::get_valid_actionset_name($controller);

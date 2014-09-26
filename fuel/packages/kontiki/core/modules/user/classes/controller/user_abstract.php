@@ -2,6 +2,9 @@
 namespace Kontiki;
 abstract class Controller_User extends \Kontiki\Controller_Crud
 {
+	//trait
+	use \Option\Controller_Option;
+
 	/**
 	* @var user information
 	*/
@@ -121,11 +124,6 @@ abstract class Controller_User extends \Kontiki\Controller_Crud
 			endforeach;
 			self::$userinfo['acls_ower'] = array_unique($acls_ower);
 		endif;
-
-		//view
-		$view = \View::forge();
-		$view->set_global('user', self::$userinfo);
-		$view->set_global('is_user_logged_in', (self::$is_user_logged_in) ? true : false);
 	}
 
 	/**

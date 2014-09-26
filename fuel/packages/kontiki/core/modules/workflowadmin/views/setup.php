@@ -42,8 +42,8 @@
 		echo \Form::hidden($token_key, $token);
 		echo \Form::hidden('allstep', $allstep);
 		echo Html::anchor('workflowadmin/index_admin', '一覧に戻る',array('class'=>'button'));
-		echo \Form::submit('add_step', '承認ステップを1つ増やす', array('class' => 'button main'));
-		echo \Form::submit('submit', '保存', array('class' => 'button main'));
+		echo \Form::submit('add_step', '承認ステップを1つ増やす', array('class' => 'button primary'));
+		echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 	?>
 </p>
 
