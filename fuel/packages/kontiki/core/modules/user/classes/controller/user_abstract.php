@@ -2,6 +2,9 @@
 namespace Kontiki;
 abstract class Controller_User extends \Kontiki\Controller_Crud
 {
+	//trait
+	use \Option\Controller_Option;
+
 	/**
 	* @var user information
 	*/

@@ -292,7 +292,7 @@ FILES;
 	 */
 	public function generate_views_options($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/options_samples.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/option_samples.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
