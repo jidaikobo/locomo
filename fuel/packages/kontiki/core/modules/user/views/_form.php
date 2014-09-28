@@ -11,7 +11,7 @@
 		<?php echo \Form::label('Usergroups', 'usergroups'); ?>
 		<div>
 		<?php
-		foreach(\User\Model_User::get_options('usergroups') as $key => $option):
+		foreach(\Option\Model_Option::get_options('usergroups') as $key => $option):
 			$checked = false; 
 			if(
 				(isset($item) && in_array($key, $item->usergroups)) ||

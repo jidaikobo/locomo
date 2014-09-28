@@ -101,7 +101,7 @@ abstract class Model_User extends \Kontiki\Model_Crud
 		$item = parent::find_item($id);
 
 		if($item):
-			$item->usergroups = \User\Model_User::get_selected_options('usergroups', $id);
+			$item->usergroups = \Option\Model_Option::get_selected_options('usergroups', $id);
 		endif;
 
 		return $item;
