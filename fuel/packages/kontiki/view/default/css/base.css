@@ -80,6 +80,7 @@ table
 img
 {
 	height: auto;
+	vertical-align: bottom;
 }
 
 /* === hyper-link activities (normal) === */
@@ -153,6 +154,10 @@ a.danger:visited
 body:focus{
 	outline: none;
 }
+::-moz-focus-inner {
+	border:0;
+}
+
 
 /* === hover activities (opacity) === */
 .bt.opro:hover *,

@@ -4,10 +4,39 @@ $(function(){
 //JavaScript有効時に表示する、無効時には非表示にする（CSS）
 $("body *").removeClass("hide-if-no-js");
 
+//リストの開け閉め
 $( 'a.listOpen' ).click(function() {
 	$(this).parent().next('div').toggle();
 } );
+/*
+var tabbed = false;
+$("body").keydown(function(event){
+  // 入力されたキーのコード
+  var keyCode = event.keyCode;
+	console.log(keyCode);
+	if( keyCode == 9 && tabbed == false ){
+		$('[tabindex=1]').focus();
+		tabbed=true;
+		alert('tabutta!');
+		return false;
+	}
+});
+*/
 
+/*
+function kontiki_attempt_focus(){
+	setTimeout(
+		function(){
+			try{
+				account = document.getElementById('account');
+				account.focus();
+				account.select();
+			} catch(e){}
+		}, 200
+	);
+}
+kontiki_attempt_focus();
+*/
 //=== rollover ===
 $('.bt a:has(img)').hover(function(){
 	var imgsrc = $(this).find('img').attr('src');
