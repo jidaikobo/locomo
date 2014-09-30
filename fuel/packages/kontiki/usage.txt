@@ -12,7 +12,6 @@ oilコマンドで基礎モジュールのmigrationを実行する
 
 php oil refine migrate:up --modules=acl
 php oil refine migrate:up --modules=user
-php oil refine migrate:up --modules=usergroup
 php oil refine migrate:up --modules=workflowadmin
 php oil refine migrate:up --modules=revision
 

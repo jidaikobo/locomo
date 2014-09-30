@@ -2,8 +2,7 @@
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
 fuel/packages/kontiki/config/packageconfig.php
-fuel/packages/kontiki/modules/*
-fuel/packages/kontiki/views/*
+fuel/packages/kontiki/projects/*
 fuel/packages/kontiki/_test
 fuel/packages/kontiki/_bookmarks
 fuel/app/config/development/db.php

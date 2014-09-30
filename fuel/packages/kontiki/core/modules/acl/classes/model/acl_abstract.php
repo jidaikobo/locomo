@@ -51,7 +51,7 @@ abstract class Model_Acl extends \Kontiki\Model_Crud
 	public static function get_usergroups()
 	{
 		$usergroups = array('none' => '選択してください', 0 => 'ゲスト');
-		$usergroups += \User\Model_User::get_options('usergroups');
+		$usergroups += \Option\Model_Option::get_options('usergroups');
 		return $usergroups;
 	}
 
