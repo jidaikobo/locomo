@@ -8,7 +8,7 @@ $("body *").removeClass("hide-if-no-js");
 $( 'a.listOpen' ).click(function() {
 	$(this).parent().next('div').toggle();
 } );
-/*
+/*	
 var tabbed = false;
 $("body").keydown(function(event){
   // 入力されたキーのコード

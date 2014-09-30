@@ -42,7 +42,11 @@ footer,
 
 #admin_bar div
 {
-	position: absolute;
+	position: relative;
+	vertical-align: top;
+	display: inline-block;
+	*display: inline;
+	*zoom:1;
 	width: auto;
 	background-color: #eee;
 	border-radius:0 0 4px 4px ;
@@ -52,16 +56,16 @@ footer,
 	left: 10px;
 }
 #admin_bar_context{
-	left: 20%;
+/*	left: 20%; */
 }
 #admin_bar div#admin_bar_context_control
 {
-	position: relative;
 	float: right;
-	padding-right: 90px;
+	padding-right: 120px;
 }
 #admin_bar #admin_bar_user{
-	right: 0;
+	position: absolute;
+	right: 10px;
 	width: 120px;
 }
 #admin_bar #admin_bar_user{
@@ -80,7 +84,7 @@ footer,
 	color: #000;
 	text-decoration: none;
 }
-.admin_bar_sub{
+#admin_bar div .admin_bar_sub{
 	display: none;
 }
 
