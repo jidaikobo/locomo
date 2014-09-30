@@ -25,7 +25,7 @@ return array(
 	),
 
 	//use_login_as_top
-	'use_login_as_top' => false,
+	'use_login_as_top' => true,
 
 	//modules settings
 	'module_paths' => array(
@@ -37,11 +37,5 @@ return array(
 	'always_allowed' => array(
 		'user/login',
 		'user/logout',
-		'content/home',
-		'content/404',
-		'content/fetch_view',
 	),
-
-	//
-
 );

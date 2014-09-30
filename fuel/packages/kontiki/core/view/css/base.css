@@ -1200,18 +1200,18 @@ dl.search_results dd strong
 
 /* atode matomel */
 /* thx argon and XCL project */
-a.pdf:before, a.icon[href$=".pdf"]:before       { content: url( '../images/icons/icon_pdf.gif' ); }
-a.ppt:before, a.icon[href$=".ppt"]:before       { content: url( '../images/icons/icon_ppt.gif' ); }
-a.doc:before, a.icon[href$=".doc"]:before        { content: url( '../images/icons/icon_doc.gif' ); }
-a.docx:before, a.icon[href$=".docx"]:before     { content: url( '../images/icons/icon_doc.gif' ); }
-a.xls:before, a.icon[href$=".xls"]:before       { content: url( '../images/icons/icon_xls.gif' ); }
-a.xlsx:before, a.icon[href$=".xlsx"]:before     { content: url( '../images/icons/icon_xls.gif' ); }
-a.zip:before, a.icon[href$=".zip"]:before       { content: url( '../images/icons/icon_zip.gif' ); }
-a.lzh:before, a.icon[href$=".lzh"]:before       { content: url( '../images/icons/icon_lzh.gif' ); }
-a.txt:before, a.icon[href$=".txt"]:before       { content: url( '../images/icons/icon_txt.gif' ); }
-a.tar.gz:before, a.icon[href$=".tar.gz"]:before { content: url( '../images/icons/icon_tgz.gif' ); }
-a.lock:after, a.icon[href^="https:"]:before     { content: url( '../images/icons/lock.gif' ); }
-a._blank:after, a.icon[target="_blank"]:after   { content: url( '../images/icons/window.gif' ); }
+a.pdf:before,    a.icon[href$=".pdf"]:before    { content: url( '../images/icons/icon_pdf.gif' ); }
+a.ppt:before,    a.icon[href$=".ppt"]:before    { content: url( '../images/icons/icon_ppt.gif' ); }
+a.doc:before,    a.icon[href$=".doc"]:before    { content: url( '../images/icons/icon_doc.gif' ); }
+a.docx:before,   a.icon[href$=".docx"]:before   { content: url( '../images/icons/icon_doc.gif' ); }
+a.xls:before,    a.icon[href$=".xls"]:before    { content: url( '../images/icons/icon_xls.gif' ); }
+a.xlsx:before,   a.icon[href$=".xlsx"]:before   { content: url( '../images/icons/icon_xls.gif' ); }
+a.zip:before,    a.icon[href$=".zip"]:before    { content: url( '../images/icons/icon_zip.gif' ); }
+a.lzh:before,    a.icon[href$=".lzh"]:before    { content: url( '../images/icons/icon_lzh.gif' ); }
+a.txt:before,    a.icon[href$=".txt"]:before    { content: url( '../images/icons/icon_txt.gif' ); }
+a.tar_gz:before, a.icon[href$=".tar.gz"]:before { content: url( '../images/icons/icon_tgz.gif' ); }
+a.lock:after,    a.icon[href^="https:"]:before  { content: url( '../images/icons/lock.gif' ); }
+a._blank:after,  a.icon[target="_blank"]:after  { content: url( '../images/icons/window.gif' ); }
 
 a.noicon:before,
 .noicon a:before

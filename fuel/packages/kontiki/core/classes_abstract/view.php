@@ -70,7 +70,7 @@ abstract class View_Abstract extends \ViewModel
 
 		$include_asset = function($file) {
 			$override_file = \Uri::base().'view/'.$file;
-			$default_file  = \Uri::base().'view/default/'.$file;
+			$default_file  = \Uri::base().'content/fetch_view/'.$file;
 			$ret_file = file_exists(DOCROOT.'view/'.$file) ? $override_file : $default_file;
 			return $ret_file;
 		};

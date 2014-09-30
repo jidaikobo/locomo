@@ -53,4 +53,5 @@ abstract class Util_Abstract
 		$controller_ucfirst = ucfirst($controller);
 		return "\\$controller_ucfirst\Model_".$controller_ucfirst;
 	}
+
 }
