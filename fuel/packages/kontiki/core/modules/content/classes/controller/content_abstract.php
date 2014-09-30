@@ -3,33 +3,6 @@ namespace Kontiki;
 abstract class Controller_Content extends \Kontiki\Controller_Crud
 {
 	/**
-	 * router()
-	 * 
-	 */
-	public function router($method, $params)
-	{
-		$allowed_action = array(
-			'home',
-			'404',
-		);
-		if( ! in_array($method, $allowed_action)):
-			return \Response::redirect('/', 'location', 404);
-		else:
-			$action = 'action_'.$method;
-			return $this->$action($params);
-		endif;
-	}
-
-	/**
-	 * set_actionset()
-	 */
-	public function set_actionset($controller = null, $id = null)
-	{
-		self::$actionset = array();
-		self::$actionset_owner = array();
-	}
-
-	/**
 	* acl()
 	* contents allowed to all user
 	*/
@@ -64,5 +37,37 @@ abstract class Controller_Content extends \Kontiki\Controller_Crud
 		$view = \View::forge('404');
 		$view->set_global('title', 'page not found');
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	 * action_fetch_view()
+	 * fetch files view
+	 */
+	public function action_fetch_view()
+	{
+		//ヘンなアクセスを追い返す
+		$ext = \Input::extension();
+		$args = func_get_args();
+		$path = join('/', $args).'.'.$ext;
+		if(empty($path) || empty($ext))
+			return \Response::redirect('/', 'location', 404);
+
+		//存在確認
+		$filename = PKGCOREPATH."view/{$path}";
+		if( ! file_exists($filename)) return \Response::forge();
+
+		//projectごとに違うコンフィグを読む工夫は後で考える
+		$config = \Config::load(PKGCOREPATH.'/config/upload.php');
+		$ext = strtolower($ext);
+		if( ! isset($config['mime_whitelist'][$ext])) return \Response::forge();
+
+		//profilerをoffに
+		\Fuel\Core\Fuel::$profiling = false;
+
+		//描画
+		$headers = array( 'Content-type' => $config['mime_whitelist'][$ext] );
+		$view = \View::forge('fetch_view');
+		$view->set_global('item', file_get_contents($filename), false);
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view),200, $headers);
 	}
 }

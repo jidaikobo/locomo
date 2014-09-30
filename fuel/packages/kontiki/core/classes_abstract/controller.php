@@ -129,6 +129,10 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 			$current_actions[] = join('/',$uris);
 		endforeach;
 
+		//current_actionsにはalways_allowedを足す。
+		$always_allowed = \Config::get('always_allowed');
+		$current_actions = $current_actions + $always_allowed;
+
 		//コントローラに存在するアクションセットを確認
 		$func =  function($v) { return $this->request->module.'/'.$v; };
 		$actionsets = array();
@@ -137,11 +141,11 @@ abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
 			$temp = array_map($func, $actionset['dependencies']);
 			$actionsets = array_merge($actionsets, $temp);
 		endforeach;
-		$always_allowed = \Config::get('always_allowed');
 		$actionsets = array_merge($actionsets, $always_allowed);
 
 		//アクションセットを走査
 		$is_allow = false;
+
 		foreach($current_actions as $each_current_action):
 			if(in_array($each_current_action, $actionsets) ):
 				$is_allow = true;

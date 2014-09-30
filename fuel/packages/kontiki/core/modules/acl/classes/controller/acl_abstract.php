@@ -6,6 +6,7 @@ abstract class Controller_Acl extends \Kontiki\Controller_Crud
 	 * router()
 	 * 
 	 */
+/*
 	public function router($method, $params)
 	{
 		parent::router($method, $params);
@@ -20,6 +21,7 @@ abstract class Controller_Acl extends \Kontiki\Controller_Crud
 			return $this->$action($params);
 		endif;
 	}
+*/
 
 	/**
 	 * auth()
