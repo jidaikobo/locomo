@@ -2,13 +2,45 @@
  * deploy
  */
 
+//projectを展開する
+
+projects.tplディレクトリを参考に、projectsディレクトリ内に同様のフォルダ構造を作ります。
+ディレクトリ名称は任意ですが、projects.iniに、HTTP_HOSTの値とペアになるディレクトリ（およびviewディレクトリ）のセットを書き定義してください。
+
+projects.iniのcli_hostの値は、oilコマンドがコマンドラインから実行する際のHTTP_HOSTの値です。
+
 //APPPATH.config/development/db.php 
 
-APPPATHのdb.phpに、データベース接続情報を設定する
+APPPATHのdb.phpに、データベース接続情報を設定します。
+書き方は少々独特です。$retvalsを定義して、そのキーをプロジェクト名として設定します。
+複数のプロジェクト（場合によるとテスト環境）がある場合は、ここに定義します。
+
+▼ここから────────────────
+$retvals = array();
+$retvals['proj_a'] = array(
+	'default' => array(
+		'type' => 'mysql',
+		'connection' => array(
+			'hostname' => 'localhost',
+//			'dsn' => 'mysql:host=localhost;dbname=fuel',
+//			'hostname' => '127.0.0.1',
+			'socket'   => '/opt/local/var/run/mysql5/mysqld.sock',
+//			'port' => '3306',
+			'database' => 'proj_a',
+			'username' => 'database_username',
+			'password' => 'database_password',
+//			'charset'      => 'utf8',
+			'enable_cache' => true,
+		),
+		'profiling' => true,
+	),
+);
+return $retvals[PROJECTDIR];
+────────────────ここまで▲
 
 //oil
 
-oilコマンドで基礎モジュールのmigrationを実行する
+oilコマンドで基礎モジュールのmigrationを実行してください。
 
 php oil refine migrate:up --modules=acl
 php oil refine migrate:up --modules=user
@@ -37,7 +69,7 @@ php oil refine migrate:up --modules=revision
 
 Kontikiパッケージ（以下kontiki）はfuelphpのmoduleを基礎にしています。
 
-kontikiを用いて構築する際は、原則PKGPATH.'kontiki/modules/'以下に、以下のような構成のファイルをおいてください。kontikiのscaffoldを使うと簡単に生成できます。
+kontikiを用いて構築する際は、原則PKGPATH.'/projects/PROJECTNAME/modules/'以下に、以下のような構成のファイルをおいてください。kontikiのscaffoldを使うと簡単に生成できます。
 
 MODNAME
 - classes
