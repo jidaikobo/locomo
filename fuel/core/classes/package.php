@@ -88,7 +88,6 @@ class Package
 		{
 			throw new \PackageNotFoundException("Package '$package' could not be found at '".\Fuel::clean_path($path)."'");
 		}
-
 		\Finder::instance()->add_path($path, 1);
 		\Fuel::load($path.'bootstrap.php');
 		static::$packages[$package] = $path;

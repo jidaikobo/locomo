@@ -48,7 +48,7 @@ abstract class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$tpl_option = $scaffold_helper->generate_views_options($name);
 
 			//mkdir
-			$scfldpath = PKGPATH.'kontiki/modules/'.$name;
+			$scfldpath = PKGAPPPATH.'modules/'.$name;
 			if( ! file_exists($scfldpath)) mkdir($scfldpath);
 
 			//put files

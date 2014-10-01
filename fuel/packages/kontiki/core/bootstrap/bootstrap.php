@@ -3,9 +3,26 @@
  *オーバライドがあったら優先してAutoloaderに加える仕様のbootstrap
  */
 
+//project.iniを確認
+$ini_path = dirname(dirname(__DIR__)).DS.'projects/projects.ini';
+if( ! file_exists($ini_path)) die('projects.ini is missing');
+$projects = parse_ini_file($ini_path, true);
+
+//HTTP_HOSTを確認
+if( ! (bool) defined('STDIN')):
+	$host = \Input::server('HTTP_HOST');
+	if( ! isset($projects['hosts'][$host])):
+		die();
+	endif;
+else:
+	$host = $projects['hosts']['cli_host'];
+endif;
+
 //PKGPATH
 define('PKGCOREPATH', dirname(__DIR__).DS);
-define('PKGAPPPATH', dirname(dirname(__DIR__)).DS);
+define('PKGAPPPATH', dirname(dirname(__DIR__)).DS.'projects/'.$projects['hosts'][$host].DS);
+define('PROJECTDIR', $projects['hosts'][$host]);
+define('PROJECTVIEWDIR', $projects['view'][$host]);
 
 //Autoloader - kontiki
 Autoloader::register();
@@ -71,7 +88,7 @@ Autoloader::add_classes($observer_class_names);
 
 // load the package with the config file.
 if(file_exists(PKGAPPPATH.'config/packageconfig.php')):
-	Config::load('packageconfig.php');
+	Config::load(PKGAPPPATH.'config/packageconfig.php');
 else:
 	Config::load(PKGCOREPATH.'config/packageconfig.php');
 endif;
