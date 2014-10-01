@@ -10,4 +10,3 @@ fuel/app/config/crypt.php
 view/css/*
 view/js/*
 view/images/*
-tmp
