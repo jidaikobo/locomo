@@ -313,8 +313,8 @@ FILES;
 			if(substr($field,0,4)=='name'){//textarea - recently name tend to be multi line.
 				$fields.= "\t".'<td><textarea class="subject" id="'.$field.'" name="'.$field.'"><{$vals.'.$field.'|escape}></textarea></td>'."\n" ;
 			}elseif(substr($field,0,3)=='is_'){//checkbox
-				$fields.= "\t\$checked = Input::post('{$field}') ? ' checked=\"checked\" : null;'\n";
-				$fields.= "\t<td><label><?php echo \Form::checkbox(\"{$field}\", 1, array('class' => '', \$checked)).{$field}.' ?></label></td>\n";
+				$fields.= "\t<?php \$checked = Input::post('{$field}') ? ' checked=\"checked\"' : null;?>\n";
+				$fields.= "\t<td><label><?php echo \Form::checkbox(\"{$field}\", 1, array('class' => '', \$checked)).'{$field}' ?></label></td>\n";
 			}else{//input
 				$fields.= "\t<td><?php echo \Form::input('{$field}', Input::post('{$field}', isset(\$item) ? \$item->{$field} : ''), array('placeholder' => '{$field}')); ?></td>\n" ;
 			}
