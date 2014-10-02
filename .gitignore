@@ -10,3 +10,4 @@ fuel/app/config/crypt.php
 view/css/*
 view/js/*
 view/images/*
+fuel/app/config/development/migrations.php
