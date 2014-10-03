@@ -272,9 +272,9 @@ FILES;
 			$fields.= '<tr>'."\n" ;
 			$fields.= "\t<th>".$field."</th>\n" ;
 			if(substr($field,0,3)=='is_'){
-				$fields.= "\t".'<td><?php echo $item->'.$field.'; ?>Yes<?php else: ?>No<?php endif; ?></td>'."\n";
+				$fields.= "\t".'<td>===OPENPHPSCRIPT=== echo $item->'.$field.'; ===CLOSEPHPSCRIPT===Yes===OPENPHPSCRIPT=== else: ===CLOSEPHPSCRIPT===No===OPENPHPSCRIPT=== endif; ===CLOSEPHPSCRIPT===</td>'."\n";
 			}else{
-				$fields.= "\t<td>".'<?php echo $item->'.$field.'; ?>'."</td>\n" ;
+				$fields.= "\t<td>".'===OPENPHPSCRIPT=== echo $item->'.$field.'; ===CLOSEPHPSCRIPT==='."</td>\n" ;
 			}
 			$fields.= '</tr>'."\n\n" ;
 		}
@@ -365,6 +365,8 @@ FILES;
 		$tpl = str_replace ('XXX', ucfirst($name) , $tpl);
 		$tpl = str_replace ('xxx', strtolower($name) , $tpl);
 		$tpl = str_replace ('YYY', $name , $tpl);
+		$tpl = str_replace ('===OPENPHPSCRIPT===', '<?php' , $tpl);
+		$tpl = str_replace ('===CLOSEPHPSCRIPT===', '?>' , $tpl);
 		return $tpl;
 	}
 
