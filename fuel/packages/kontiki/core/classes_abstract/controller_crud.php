@@ -249,13 +249,6 @@ abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
 		//validation succeed
 		if ($val->run() && \Security::check_token()):
 
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( \Input::post() ) ;
-echo '</textarea>' ;
-die();
-
-
 			//prepare self fields
 			foreach(\Input::post() as $field => $value):
 				if( ! \DBUtil::field_exists($model::get_table_name(), array($field))) continue;
