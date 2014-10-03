@@ -282,6 +282,13 @@ FILES;
 		//mold
 		$val = file_get_contents(dirname(__DIR__).'/templates/view.php');
 		$val = self::replaces($name, $val);
+
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
+var_dump( $val ) ;
+echo '</textarea>' ;
+die();
+
 		$val = str_replace ('###fields###', $fields , $val) ;
 	
 		return $val;
