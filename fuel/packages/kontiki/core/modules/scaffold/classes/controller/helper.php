@@ -271,24 +271,17 @@ FILES;
 			list($field, $attr) = explode(':', $field);
 			$fields.= '<tr>'."\n" ;
 			$fields.= "\t<th>".$field."</th>\n" ;
-			if(substr($field,0,3)=='is_'){
-				$fields.= "\t".'<td>===OPENPHPSCRIPT=== echo $item->'.$field.'; ===CLOSEPHPSCRIPT===Yes===OPENPHPSCRIPT=== else: ===CLOSEPHPSCRIPT===No===OPENPHPSCRIPT=== endif; ===CLOSEPHPSCRIPT===</td>'."\n";
-			}else{
-				$fields.= "\t<td>".'===OPENPHPSCRIPT=== echo $item->'.$field.'; ===CLOSEPHPSCRIPT==='."</td>\n" ;
-			}
+			if(substr($field,0,3)=='is_'):
+				$fields.= "\t<td><?php echo \$item->{$field} ? 'Yes' : 'No' ; ?></td>\n";
+			else:
+				$fields.= "\t<td>".'<?php echo $item->'.$field.'; ?>'."</td>\n";
+			endif;
 			$fields.= '</tr>'."\n\n" ;
 		}
 		
 		//mold
 		$val = file_get_contents(dirname(__DIR__).'/templates/view.php');
 		$val = self::replaces($name, $val);
-
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $val ) ;
-echo '</textarea>' ;
-die();
-
 		$val = str_replace ('###fields###', $fields , $val) ;
 	
 		return $val;
@@ -320,8 +313,7 @@ die();
 			if(substr($field,0,4)=='name'){//textarea - recently name tend to be multi line.
 				$fields.= "\t".'<td><textarea class="subject" id="'.$field.'" name="'.$field.'"><{$vals.'.$field.'|escape}></textarea></td>'."\n" ;
 			}elseif(substr($field,0,3)=='is_'){//checkbox
-				$fields.= "\t<?php \$checked = Input::post('{$field}') ? ' checked=\"checked\"' : null;?>\n";
-				$fields.= "\t<td><label><?php echo \Form::checkbox(\"{$field}\", 1, array('class' => '', \$checked)).'{$field}' ?></label></td>\n";
+				$fields.= "\t<td><label><?php echo \Form::checkbox(\"{$field}\", 1, Input::post('{$field}', isset(\$item) ? \$item->{$field} : ''), array('class' => '')).'{$field}' ?></label></td>\n";
 			}else{//input
 				$fields.= "\t<td><?php echo \Form::input('{$field}', Input::post('{$field}', isset(\$item) ? \$item->{$field} : ''), array('placeholder' => '{$field}')); ?></td>\n" ;
 			}
@@ -372,8 +364,6 @@ die();
 		$tpl = str_replace ('XXX', ucfirst($name) , $tpl);
 		$tpl = str_replace ('xxx', strtolower($name) , $tpl);
 		$tpl = str_replace ('YYY', $name , $tpl);
-		$tpl = str_replace ('===OPENPHPSCRIPT===', '<?php' , $tpl);
-		$tpl = str_replace ('===CLOSEPHPSCRIPT===', '?>' , $tpl);
 		return $tpl;
 	}
 
