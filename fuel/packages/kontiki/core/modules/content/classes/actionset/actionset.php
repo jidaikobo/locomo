@@ -8,10 +8,10 @@ class Actionset_Content
 		//home
 		'home' => array(
 			'is_index'     => false,
-			'url'          => '/content/home',
+			'url'          => '',
 			'id_segment'   => null,
 			'action_name'  => 'ホーム',
-			'menu_str'     => 'ホーム',
+			'menu_str'     => '',
 			'explanation'  => 'サイトのトップです',
 			'dependencies' => array(
 				'home',
@@ -20,10 +20,10 @@ class Actionset_Content
 		//404
 		'404' => array(
 			'is_index'     => false,
-			'url'          => '/content/404',
+			'url'          => '',
 			'id_segment'   => null,
 			'action_name'  => 'not found用のエラーページ',
-			'menu_str'     => 'not found',
+			'menu_str'     => '',
 			'explanation'  => 'not found用のエラーページです',
 			'dependencies' => array(
 				'404',
@@ -32,11 +32,11 @@ class Actionset_Content
 		//fetch_view
 		'fetch_view' => array(
 			'is_index'     => false,
-			'url'          => '/content/fetch_view',
+			'url'          => '',
 			'id_segment'   => null,
-			'action_name'  => 'view',
-			'menu_str'     => 'アクセス権限設定',
-			'explanation'  => 'アクセス権限設定権限です。',
+			'action_name'  => 'パイプ用アクション',
+			'menu_str'     => '',
+			'explanation'  => 'viewディレクトリからcoreディレクトリ内にアクセスするためのアクションです',
 			'dependencies' => array(
 				'fetch_view',
 			)
