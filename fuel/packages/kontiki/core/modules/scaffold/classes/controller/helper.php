@@ -132,22 +132,12 @@ class Helper
 		list($up, $down) = $migration;
 		$migration_name = strtolower($name);
 
-		$migration = <<<MIGRATION
-<?php
-namespace Fuel\Migrations;
-class Create_{$migration_name}
-{
-	public function up()
-	{
-{$up}
-	}
+		//template
+		$val = file_get_contents(dirname(__DIR__).'/templates/migrations.php');
+		$migration = str_replace('===MN===',   $migration_name, $val);
+		$migration = str_replace('===UP===',   $up,             $migration);
+		$migration = str_replace('===DOWN===', $down,           $migration);
 
-	public function down()
-	{
-{$down}
-	}
-}
-MIGRATION;
 		return $migration;
 	}
 
@@ -184,53 +174,33 @@ MIGRATION;
 	/**
 	 * generate_model()
 	 */
-	public function generate_model($name, $cmds)
+	public function generate_model($name, $cmd_orig)
 	{
+		//vals
+		$cmds = explode(' ', $cmd_orig);
+		array_shift($cmds);//remove name
 		$name = ucfirst($name);
 		$table_name = \Inflector::tableize($name);
+
+		//fieldset
 		$field_str = '';
 		$field_str.= "\t\t'id',\n";//fuel's spec
 		foreach($cmds as $field):
 			list($field, $attr) = explode(':', $field);
-			$field_str.= "\t\t'".$field."',\n";
+			$nicename = self::get_nicename($field);
+			$field    = self::remove_nicename($field);
+			
+			$field_str.= "\t\t'".$field."' => array(\n";
+			$field_str.= "\t\t\t'label' => '".$nicename."',\n";
+			$field_str.= "\t\t),\n";
 		endforeach;
 
-		$str = <<<FILES
-<?php
-namespace {$name};
-class Model_{$name} extends \Kontiki\Model_Crud
-{
-	protected static \$_table_name = '{$table_name}';
-	protected static \$_primary_name = '';
+		//template
+		$str = file_get_contents(dirname(__DIR__).'/templates/model.php');
+		$str = str_replace('===NAME===',       $name,       $str);
+		$str = str_replace('===TABLE_NAME===', $table_name, $str);
+		$str = str_replace('===FIELD_STR===',  $field_str,  $str);
 
-	protected static \$_properties = array(
-{$field_str}
-// 'workflow_status',
-	);
-
-/*
-	//observers
-	protected static \$_soft_delete = array(
-		'deleted_field'   => 'deleted_at',
-		'mysql_timestamp' => true,
-	);
-	protected static \$_observers = array(
-		'Orm\Observer_CreatedAt' => array(
-			'events' => array('before_insert'),
-			'mysql_timestamp' => true,
-		),
-		'Orm\Observer_UpdatedAt' => array(
-			'events' => array('before_save'),
-			'mysql_timestamp' => true,
-		),
-		'Kontiki\Observer\Date' => array(
-			'events' => array('before_insert', 'before_save'),
-			'properties' => array('expired_at'),
-		),
-	);
-*/
-}
-FILES;
 		return $str;
 	}
 
@@ -239,15 +209,9 @@ FILES;
 	 */
 	public function generate_view($name)
 	{
-		$name = ucfirst($name);
-		$str = <<<FILES
-<?php
-namespace {$name};
-class View_{$name} extends \Kontiki\View
-{
-}
-FILES;
-		return $str;
+		$val = file_get_contents(dirname(__DIR__).'/templates/viewmodel.php');
+		$val = self::replaces($name, $val);
+		return $val;
 	}
 
 	/**
@@ -351,14 +315,22 @@ FILES;
 	/**
 	 * generate_config()
 	 */
-	public function generate_config($name)
+	public function generate_config($cmd_orig)
 	{
+		//vals
+		$cmds = explode(' ', $cmd_orig);
+		$name = array_shift($cmds);
+		$nicename = self::get_nicename($name);
+
+		//template
 		$val = file_get_contents(dirname(__DIR__).'/templates/config.php');
-		$val = self::replaces($name, $val);
+		$val = str_replace ('###nicename###', $nicename , $val) ;
 		return $val;
 	}
 
-	//===replaces===
+	/**
+	 * replaces()
+	 */
 	public function replaces($name,$tpl)
 	{
 		$tpl = str_replace ('XXX', ucfirst($name) , $tpl);
@@ -367,7 +339,9 @@ FILES;
 		return $tpl;
 	}
 
-	//===putfiles===
+	/**
+	 * putfiles()
+	 */
 	public function putfiles($path, $val)
 	{
 		touch($path) ;
@@ -376,5 +350,23 @@ FILES;
 //			fwrite($fp, pack('C*',0xEF,0xBB,0xBF));//BOM -> php unaccept BOM
 		fclose($fp) ;
 		chmod($path, 0777);
+	}
+
+
+	/**
+	 * get_nicename()
+	 */
+	public function get_nicename($str)
+	{
+		preg_match('/\((.*?)\)/', $str, $m);
+		return @$m[1];
+	}
+
+	/**
+	 * remove_nicename()
+	 */
+	public function remove_nicename($str)
+	{
+		return preg_replace('/\(.*?\)/', '', $str);
 	}
 }

@@ -2,6 +2,8 @@
 namespace XXX;
 class Controller_XXX extends \Kontiki\Controller_Crud
 {
+	//trait
+//	use \Option\Controller_Option;
 //	use \Workflow\Controller_Workflow;
 //	use \Revision\Controller_Revision;
 

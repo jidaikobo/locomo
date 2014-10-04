@@ -19,13 +19,19 @@ abstract class Controller_Scaffold extends \Kontiki\Controller_Crud
 
 		//scaffold
 		if(\Input::method() == 'POST'):
-			if( ! \Security::check_token()) die();
-			$cmd = \Input::post('cmd');
-			$cmd = str_replace(array('php oil g '), '', $cmd);
+/*
+			if( ! \Security::check_token()):
+				\Session::set_flash('error', 'please check token');
+				return \Response::redirect(\Uri::create('/scaffold/main/'));
+			endif;
+*/
+
+			//vals
+			$cmd_orig = \Input::post('cmd');
+			$cmd  = $scaffold_helper->remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
 
 			//migration
-			$type       = array_shift($cmds);
 			$name       = array_shift($cmds);
 			$table_name = \Inflector::pluralize($name);
 			$subjects   = array($table_name, $table_name);
@@ -35,9 +41,9 @@ abstract class Controller_Scaffold extends \Kontiki\Controller_Crud
 			$controller      = $scaffold_helper->generate_controller($name);
 			$actionset       = $scaffold_helper->generate_actionset($name);
 			$actionset_owner = $scaffold_helper->generate_actionset_owner($name);
-			$model           = $scaffold_helper->generate_model($name, $cmds);
+			$model           = $scaffold_helper->generate_model($name, $cmd_orig);
 			$viewmodel       = $scaffold_helper->generate_view($name);
-			$config          = $scaffold_helper->generate_config($name);
+			$config          = $scaffold_helper->generate_config($cmd_orig);
 
 			//molding - view
 			$tpl_index  = $scaffold_helper->generate_views_index($name);
