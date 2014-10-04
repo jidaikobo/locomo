@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Model_Crud_Abstract extends \Kontiki\Model_Options
+abstract class Model_Crud_Abstract extends \Kontiki\Model
 {
 	/**
 	 * _primary_name

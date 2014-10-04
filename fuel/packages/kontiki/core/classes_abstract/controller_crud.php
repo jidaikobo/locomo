@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki;
-abstract class Controller_Crud_Abstract extends \Kontiki\Controller_Options
+abstract class Controller_Crud_Abstract extends \Kontiki\Controller
 {
 	/**
 	 * @var array default languages of flash messages
