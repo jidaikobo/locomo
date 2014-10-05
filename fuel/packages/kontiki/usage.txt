@@ -64,7 +64,7 @@ php oil refine migrate:up --modules=revision
 	'_404_'   => 'content/404',
 
 /*
- * Development
+ * モジュール開発
  */
 
 Kontikiパッケージ（以下kontiki）はfuelphpのmoduleを基礎にしています。
@@ -85,6 +85,12 @@ MODNAME
 - views
 
 kontikiには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
+
+/*
+ * クラスと名前空間について
+ */
+
+プロジェクトごとのクラスは、PROJPATH.classに設置すること。コアのclassを拡張する場合は、\Kontiki_Coreの名前空間でextendsできる。
 
 /*
  * 特別な名前のカラム
