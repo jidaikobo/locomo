@@ -1,5 +1,5 @@
 <?php
-namespace Acl;
-class View_Acl extends \Kontiki\View_Acl
+namespace Kontiki_Core_Module\Acl;
+class View_Acl extends \Kontiki\View_Base
 {
 }

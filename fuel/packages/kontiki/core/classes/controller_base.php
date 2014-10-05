@@ -215,11 +215,11 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		//アクションセット用のファイルを取得
 		$default_path  = PKGCOREPATH."modules/{$controller}/classes/actionset/actionset.php";
-		$override_path = PKGAPPPATH ."modules/{$controller}/classes/actionset/actionset.php";
+		$override_path = PKGPROJPATH ."modules/{$controller}/classes/actionset/actionset.php";
 
 		if(file_exists($override_path)):
 			require_once($override_path);
-			require_once(PKGAPPPATH."modules/{$controller}/classes/actionset/actionset_owner.php");
+			require_once(PKGPROJPATH."modules/{$controller}/classes/actionset/actionset_owner.php");
 		else:
 			require_once($default_path);
 			require_once(PKGCOREPATH."modules/{$controller}/classes/actionset/actionset_owner.php");

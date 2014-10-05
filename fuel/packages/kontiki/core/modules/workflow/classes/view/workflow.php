@@ -1,5 +1,5 @@
 <?php
-namespace Workflow;
-class View_Workflow extends \Kontiki\View_Workflow
+namespace Kontiki_Core_Module\Workflow;
+class View_Workflow extends \Kontiki\View_Base
 {
 }

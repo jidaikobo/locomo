@@ -86,6 +86,13 @@ MODNAME
 
 kontikiには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
 
+パッケージコアモジュールのclassをオーバライドする場合は、パッケージのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作り、各classは、Kontiki_Core_Moduleの名前空間に対して行うことで、パッケージコアモジュールの機能を生かしてextendsできます。
+
+▼ここから────────────────
+namespace User;
+class Controller_User extends \Kontiki_Core_Module\User\Controller_User
+────────────────ここまで▲
+
 /*
  * クラスと名前空間について
  */

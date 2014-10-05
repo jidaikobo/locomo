@@ -86,7 +86,7 @@ class View_Base extends \ViewModel
 		$view = \View::forge();
 
 		$include_tpl = function($tpl) {
-			$override_tpl = PKGAPPPATH.'views/'.$tpl;
+			$override_tpl = PKGPROJPATH.'views/'.$tpl;
 			$default_tpl  = PKGCOREPATH.'views/'.$tpl;
 			$ret_tpl = file_exists($override_tpl) ? $override_tpl : $default_tpl;
 			return \View::forge($ret_tpl);
