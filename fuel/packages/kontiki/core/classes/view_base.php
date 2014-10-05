@@ -1,6 +1,6 @@
 <?php
-namespace Kontiki;
-abstract class View_Abstract extends \ViewModel
+namespace Kontiki_Core;
+class View_Base extends \ViewModel
 {
 	/**
 	* view()

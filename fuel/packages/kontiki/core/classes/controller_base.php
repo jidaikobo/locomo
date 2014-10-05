@@ -1,6 +1,6 @@
 <?php
-namespace Kontiki;
-abstract class Controller_Abstract extends \Fuel\Core\Controller_Rest
+namespace Kontiki_Core;
+class Controller_Base extends \Fuel\Core\Controller_Rest
 {
 	/**
 	* @var string name for human

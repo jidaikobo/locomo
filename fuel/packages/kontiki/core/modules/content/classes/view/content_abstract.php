@@ -1,5 +1,5 @@
 <?php
 namespace Kontiki;
-abstract class View_Content extends \Kontiki\View
+abstract class View_Content extends View_Base
 {
 }

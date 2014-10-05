@@ -1,9 +1,7 @@
 <?php
-namespace Kontiki;
-abstract class Model_Option extends \Kontiki\Model_Crud
+namespace Option;
+trait Model_Option
 {
-	protected static $_table_name = 'options';
-
 	/**
 	 * add_option()
 	 */

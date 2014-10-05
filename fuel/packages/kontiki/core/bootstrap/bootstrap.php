@@ -24,27 +24,29 @@ define('PKGAPPPATH', dirname(dirname(__DIR__)).DS.'projects/'.$projects['hosts']
 define('PROJECTDIR', $projects['hosts'][$host]);
 define('PROJECTVIEWDIR', $projects['view'][$host]);
 
-//Autoloader - kontiki
+//Autoloader::register()
 Autoloader::register();
-Autoloader::add_namespace('Kontiki', PKGCOREPATH.'classes');
 
-//Autoloader - classes
-$class_names = array();
-foreach (glob(PKGCOREPATH."classes_abstract".DS."*") as $filename):
+//Autoloader - add_core_namespace 'Kontiki_Core'
+//Kontiki_Coreは、コア名前空間として登録する。
+Autoloader::add_core_namespace('Kontiki_Core', PKGCOREPATH.'classes');
+
+//coreのclassを走査
+foreach (glob(PKGCOREPATH."classes".DS."*") as $filename):
 	//class names and pathes
 	$class = substr(\Inflector::words_to_upper(basename($filename)), 0, -4);//remove .php
 	$l_class = strtolower($class);
-	$abstract_path = PKGCOREPATH."classes_abstract/{$l_class}.php";
-	$default_path  = PKGCOREPATH."classes/{$l_class}.php";
-	$override_path = PKGAPPPATH."classes/{$l_class}.php";
 
-	//abstract
-	$class_names["Kontiki\\{$class}_Abstract"] = $abstract_path;
-
-	//override
-	$class_names["Kontiki\\{$class}"] = file_exists($override_path) ? $override_path : $default_path;
+	//Kontiki_Core名前空間の登録
+	Autoloader::add_class("Kontiki_Core\\{$class}", PKGCOREPATH."classes/{$l_class}.php");
+	if(file_exists(PKGAPPPATH."classes/{$l_class}.php")):
+		//プロジェクト側にオーバライドがあったらKontiki名前空間として登録
+		Autoloader::add_class("Kontiki\\{$class}", PKGAPPPATH."classes/{$l_class}.php");
+	else:
+		//プロジェクト側にオーバライドがなければ、Kontiki名前空間をKontiki_Core名前空間と見なす
+		Autoloader::alias_to_namespace("Kontiki_Core\\{$class}", 'Kontiki');
+	endif;
 endforeach;
-Autoloader::add_classes($class_names);
 
 //Autoloader - base modules
 $module_names = array();
@@ -92,6 +94,9 @@ if(file_exists(PKGAPPPATH.'config/packageconfig.php')):
 else:
 	Config::load(PKGCOREPATH.'config/packageconfig.php');
 endif;
+
+//
+Config::load(PKGCOREPATH.'config/form.php','form');
 
 //always load module
 Module::load('acl');

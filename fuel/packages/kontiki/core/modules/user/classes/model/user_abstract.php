@@ -2,6 +2,8 @@
 namespace Kontiki;
 abstract class Model_User extends \Kontiki\Model_Crud
 {
+	use \Option\Model_Option;
+
 	protected static $_table_name = 'users';
 
 	protected static $_properties = array(

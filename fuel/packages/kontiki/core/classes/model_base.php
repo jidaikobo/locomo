@@ -1,6 +1,6 @@
 <?php
-namespace Kontiki;
-abstract class Model_Abstract extends \Orm\Model_Soft
+namespace Kontiki_Core;
+class Model_Base extends \Orm\Model_Soft
 {
 	/**
 	 * _primary_name
