@@ -190,9 +190,10 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	public function action_create()
 	{
 		$model = $this->model_name ;
+		$form = $model::form_definition('edit');
+
 		if (\Input::method() == 'POST'):
-			$val = $model::validate('create');
-			if ($val->run() && \Security::check_token()):
+			if ($form->validation()->run() && \Security::check_token()):
 				$args = array();
 				foreach(\Input::post() as $field => $value):
 					if( ! \DBUtil::field_exists($model::get_table_name(), array($field))) continue;
@@ -224,13 +225,15 @@ class Controller_Crud extends \Kontiki\Controller_Base
 					);
 				endif;
 			else:
-				\Session::set_flash('error', $val->error());
+				$form->repopulate();
+				\Session::set_flash('error', $form->error());
 			endif;
 		endif;
 
 		//view
 		$view = \View::forge('create');
 		$view->set_global('title', sprintf($this->titles['create'], self::$nicename));
+		$view->set_global('form', $form, false);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -243,11 +246,11 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		if($id == null || $obj == null || $redirect == null) \Response::redirect($this->request->module);
 
 		$model = $this->model_name ;
-		$val = $model::validate('edit',$id);
+		$form = $model::form_definition('edit', $obj, $id);
 		$view = \View::forge('edit');
 
 		//validation succeed
-		if ($val->run() && \Security::check_token()):
+		if ($form->validation()->run() && \Security::check_token()):
 
 			//prepare self fields
 			foreach(\Input::post() as $field => $value):
@@ -283,18 +286,17 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		//edit view or validation failed of CSRF suspected
 		else:
 			if (\Input::method() == 'POST'):
-				foreach(\Input::post() as $k => $v):
-					if($k == 'submit') continue;
-					$obj->$k = $v;
-				endforeach;
-				\Session::set_flash('error', $val->error());
+				$form->repopulate();
+				\Session::set_flash('error', $form->error());
 			endif;
 
-			$view->set_global('item', $obj, false);
+//			$view->set_global('item', $obj, false);
 		endif;
 
 		//view
 		$view->set_global('title', sprintf($this->titles['edit'], self::$nicename));
+		$view->set_global('item', $obj, false);
+		$view->set_global('form', $form, false);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}

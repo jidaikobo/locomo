@@ -4,7 +4,7 @@
 <fieldset>
 	<legend>編集</legend>
 	<table class="tbl">
-	###fields###
+	###FIELDS###
 	</table>
 </fieldset>
 
@@ -17,6 +17,7 @@
 
 <p>
 	<?php
+###HIDDEN_FIELDS###
 	if( ! @$is_revision): 
 		echo \Form::hidden($token_key, $token);
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));

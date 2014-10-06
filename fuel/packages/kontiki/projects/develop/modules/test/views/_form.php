@@ -5,38 +5,28 @@
 	<legend>編集</legend>
 	<table class="tbl">
 	<tr>
-	<th><?php echo \Form::label('title', 'title'); ?></th>
-	<td><?php echo \Form::input('title', Input::post('title', isset($item) ? $item->title : ''), array('placeholder' => 'title')); ?></td>
+	<th><?php echo $form->field('title')->set_template('{label}{required}'); ?></th>
+	<td><?php echo $form->field('title')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 <tr>
-	<th><?php echo \Form::label('body', 'body'); ?></th>
-	<td><?php echo \Form::input('body', Input::post('body', isset($item) ? $item->body : ''), array('placeholder' => 'body')); ?></td>
+	<th><?php echo $form->field('body')->set_template('{label}{required}'); ?></th>
+	<td><?php echo $form->field('body')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 <tr>
-	<th><?php echo \Form::label('is_bool', 'is_bool'); ?></th>
-	<td><label><?php echo \Form::checkbox("is_bool", 1, Input::post('is_bool', isset($item) ? $item->is_bool : ''), array('class' => '')).'is_bool' ?></label></td>
+	<th><?php echo $form->field('is_bool')->set_template('{label}{required}'); ?></th>
+	<td><?php echo $form->field('is_bool')->set_template('{fields} {field} {label}<br /> {fields}'); ?></td>
 </tr>
 
 <tr>
-	<th><?php echo \Form::label('status', 'status'); ?></th>
-	<td><?php echo \Form::input('status', Input::post('status', isset($item) ? $item->status : ''), array('placeholder' => 'status')); ?></td>
+	<th><?php echo $form->field('created_at')->set_template('{label}{required}'); ?></th>
+	<td><?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 <tr>
-	<th><?php echo \Form::label('created_at', 'created_at'); ?></th>
-	<td><?php echo \Form::input('created_at', Input::post('created_at', isset($item) ? $item->created_at : ''), array('placeholder' => 'created_at')); ?></td>
-</tr>
-
-<tr>
-	<th><?php echo \Form::label('expired_at', 'expired_at'); ?></th>
-	<td><?php echo \Form::input('expired_at', Input::post('expired_at', isset($item) ? $item->expired_at : ''), array('placeholder' => 'expired_at')); ?></td>
-</tr>
-
-<tr>
-	<th><?php echo \Form::label('deleted_at', 'deleted_at'); ?></th>
-	<td><?php echo \Form::input('deleted_at', Input::post('deleted_at', isset($item) ? $item->deleted_at : ''), array('placeholder' => 'deleted_at')); ?></td>
+	<th><?php echo $form->field('expired_at')->set_template('{label}{required}'); ?></th>
+	<td><?php echo $form->field('expired_at')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 
@@ -52,6 +42,8 @@
 
 <p>
 	<?php
+	echo $form->field('status')->set_template('{error_msg}{field}');
+
 	if( ! @$is_revision): 
 		echo \Form::hidden($token_key, $token);
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));

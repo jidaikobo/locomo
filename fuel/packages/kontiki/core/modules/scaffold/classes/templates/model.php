@@ -33,16 +33,16 @@ class Model_===NAME=== extends \Kontiki\Model_Crud
 */
 
 	/**
-	 * validate()
+	 * form_definition()
 	 *
 	 * @param str $factory
 	 * @param int $id
 	 *
 	 * @return  obj
 	 */
-	public static function validate($factory, $id = '')
+	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$val = \Kontiki\Validation::forge($factory);
+		$form = \Fieldset::forge('form', \Config::get('form'));
 /*
 		//user_name
 		$val->add('name', 'サンプル')
@@ -55,6 +55,8 @@ class Model_===NAME=== extends \Kontiki\Model_Crud
 			->add_rule('max_length', 255)
 			->add_rule('unique', "users.email.{$id}");
 */
-		return $val;
+===FORM_DEFINITION===
+
+		return $form;
 	}
 }

@@ -49,44 +49,98 @@ class Model_User extends \Kontiki\Model_Crud
 	);
 
 	/**
-	 * validate()
+	 * form_definition()
 	 *
 	 * @param str $factory
 	 * @param int $id
 	 *
 	 * @return  obj
 	 */
-	public static function validate($factory, $id = '')
+	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$val = \Kontiki\Validation::forge($factory);
+		$form = \Fieldset::forge('form', \Config::get('form'));
 
 		//user_name
-		$val->add('user_name', 'ユーザ名')
+		$form->add(
+				'user_name',
+				'ユーザ名',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->user_name)
 			->add_rule('required')
 			->add_rule('max_length', 50)
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
 			->add_rule('unique', "users.user_name.{$id}");
 
-		//confirm_password
-		$val->add('confirm_password', '確認用パスワード')
-			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+		//usergroups
+		$usergroups = \Option\Model_Option::get_options('usergroups');
+		$form->add(
+				'usergroups',
+				'ユーザグループ',
+				array('type' => 'checkbox', 'options' => $usergroups)
+			)
+			->set_value(@$obj->usergroups);
 
 		//password
-		$val->add('password', 'パスワード')
+		$form->add(
+				'password',
+				'パスワード',
+				array('type' => 'text', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください')
+			)
+			->set_value('')
 			->add_rule('require_once', "users.password.{$id}")
 			->add_rule('min_length', 8)
 			->add_rule('max_length', 50)
 			->add_rule('match_field', 'confirm_password')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 
-		//password
-		$val->add('email', 'メールアドレス')
+		//confirm_password
+		$form->add(
+				'confirm_password',
+				'確認用パスワード',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value('')
+			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+
+		//email
+		$form->add(
+				'email',
+				'メールアドレス',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->email)
 			->add_rule('required')
 			->add_rule('valid_email')
 			->add_rule('max_length', 255)
 			->add_rule('unique', "users.email.{$id}");
 
-		return $val;
+		//status
+		$form->add(
+				'status',
+				'status',
+				array('type' => 'hidden')
+			)
+			->set_value(@$obj->status);
+
+		//created_at
+		$form->add(
+				'created_at',
+				'作成日',
+				array('type' => 'text', 'size' => 20, 'placeholder' => date('Y-m-d H:i:s'))
+			)
+			->set_value(@$obj->created_at);
+//未来の日付を入れると、予約項目になります。
+
+		//email
+		$form->add(
+				'deleted_at',
+				'削除日',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->deleted_at);
+
+		return $form;
 	}
 
 	/**

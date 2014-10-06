@@ -184,15 +184,61 @@ class Helper
 
 		//fieldset
 		$field_str = '';
+		$form_definition_str = '';
 		$field_str.= "\t\t'id',\n";//fuel's spec
 		foreach($cmds as $field):
 			list($field, $attr) = explode(':', $field);
 			$nicename = self::get_nicename($field);
 			$field    = self::remove_nicename($field);
 			
-			$field_str.= "\t\t'".$field."' => array(\n";
-			$field_str.= "\t\t\t'label' => '".$nicename."',\n";
-			$field_str.= "\t\t),\n";
+			//field_str
+			$field_str.= "\t\t'{$field}',\n";
+
+			//attribute
+			$max  = preg_match('/\[(.*?)\]/', $attr, $m) ? intval($m[1]) : 0 ;
+			$size = $max >= 30 ? 30 : $max ;
+			$size = $max == 0  ? 30 : $max ;
+
+			//form_definition
+			$form_definition_str.= "\t\t//{$field}\n";
+			$form_definition_str.= "\t\t\$form->add(\n";
+			$form_definition_str.= "\t\t\t'{$field}',\n";
+			$form_definition_str.= $nicename ? "\t\t\t'{$nicename}',\n" : "\t\t\t'{$field}',\n";
+			//field
+			if(in_array($field, array('name', 'title', 'subject', 'text', 'memo', 'body', 'content', 'etc', 'message'))):
+				//textarea
+				$form_definition_str.= "\t\t\tarray('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;')\n";
+			elseif(in_array($field, array('status'))):
+				//status - temporary
+				$form_definition_str.= "\t\t\tarray('type' => 'hidden')\n";
+			elseif(substr($field,0,3)=='is_'):
+				//bool
+				$form_definition_str.= "\t\t\tarray('type' => 'checkbox', 'options' => array(0, 1))\n";
+			elseif(substr($field,-3)=='_at'):
+				//date
+				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => 20, 'class' => 'calendar', 'placeholder' => date('Y-m-d H:i:s'))\n";
+			else:
+				//text
+				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => {$size})\n";
+			endif;
+			$form_definition_str.= "\t\t)\n";
+			//require
+			if(in_array($field, array('name', 'title', 'subject'))):
+				$form_definition_str.= "\t\t->add_rule('required')\n";
+			endif;
+			//require
+			if($max):
+				$form_definition_str.= "\t\t->add_rule('max_length', {$max})\n";
+			endif;
+
+			//default value
+			if($field == 'created_at'):
+				//created_at
+				$form_definition_str.= "\t\t->set_value(isset(\$obj->created_at) ? \$obj->created_at : date('Y-m-d H:i:s'));\n\n";
+			else:
+				//others
+				$form_definition_str.= "\t\t->set_value(@\$obj->{$field});\n\n";
+			endif;
 		endforeach;
 
 		//template
@@ -200,6 +246,7 @@ class Helper
 		$str = str_replace('===NAME===',       $name,       $str);
 		$str = str_replace('===TABLE_NAME===', $table_name, $str);
 		$str = str_replace('===FIELD_STR===',  $field_str,  $str);
+		$str = str_replace('===FORM_DEFINITION===',  $form_definition_str,  $str);
 
 		return $str;
 	}
@@ -238,7 +285,7 @@ class Helper
 			if(substr($field,0,3)=='is_'):
 				$fields.= "\t<td><?php echo \$item->{$field} ? 'Yes' : 'No' ; ?></td>\n";
 			else:
-				$fields.= "\t<td>".'<?php echo $item->'.$field.'; ?>'."</td>\n";
+				$fields.= "\t<td><?php echo \$item->{$field}; ?></td>\n";
 			endif;
 			$fields.= '</tr>'."\n\n" ;
 		}
@@ -266,28 +313,38 @@ class Helper
 	 */
 	public function generate_views_form($name, $cmds)
 	{
+		$hiddens = array('status');
+		$banned = array('modified_at', 'updated_at', 'deleted_at');
+
 		$fields = '' ;
+		$hidden_fields = '' ;
 		foreach($cmds as $field){
 			list($field, $attr) = explode(':', $field);
-			$fields.= '<tr>'."\n" ;
-			//label
-			$fields.= "\t<th><?php echo \Form::label('{$field}', '{$field}'); ?></th>\n" ;
-			
-			//field
-			if(substr($field,0,4)=='name'){//textarea - recently name tend to be multi line.
-				$fields.= "\t".'<td><textarea class="subject" id="'.$field.'" name="'.$field.'"><{$vals.'.$field.'|escape}></textarea></td>'."\n" ;
-			}elseif(substr($field,0,3)=='is_'){//checkbox
-				$fields.= "\t<td><label><?php echo \Form::checkbox(\"{$field}\", 1, Input::post('{$field}', isset(\$item) ? \$item->{$field} : ''), array('class' => '')).'{$field}' ?></label></td>\n";
-			}else{//input
-				$fields.= "\t<td><?php echo \Form::input('{$field}', Input::post('{$field}', isset(\$item) ? \$item->{$field} : ''), array('placeholder' => '{$field}')); ?></td>\n" ;
-			}
-			$fields.= '</tr>'."\n\n" ;
+			if(in_array($field, $banned)) continue;
+
+			//hidden
+			if(in_array($field, $hiddens)):
+				$hidden_fields.= "\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n" ;
+			else:
+				$fields.= '<tr>'."\n" ;
+				//label
+				$fields.= "\t<th><?php echo \$form->field('{$field}')->set_template('{label}{required}'); ?></th>\n" ;
+				
+				//field
+				if(substr($field,0,3)=='is_'){//checkbox
+					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{fields} {field} {label}<br /> {fields}'); ?></td>\n" ;
+				}else{//input
+					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{error_msg}{field}'); ?></td>\n" ;
+				}
+				$fields.= '</tr>'."\n\n" ;
+			endif;
 		}
 		
 		//mold
 		$val = file_get_contents(dirname(__DIR__).'/templates/_form.php');
 		$val = self::replaces($name, $val);
-		$val = str_replace ('###fields###', $fields , $val) ;
+		$val = str_replace ('###FIELDS###', $fields , $val) ;
+		$val = str_replace ('###HIDDEN_FIELDS###', $hidden_fields , $val) ;
 
 		return $val;
 	}

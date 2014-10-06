@@ -177,7 +177,8 @@ class Model_Crud extends \Kontiki\Model_Base
 			$status != 'invisible' &&
 			$deleted_at == null &&
 			strtotime($created_at) <= time() &&
-			strtotime($expired_at) >= time()
+			strtotime($expired_at) >= time() ||
+			is_null($expired_at) 
 		):
 			$is_guest_viewable = true;
 		endif;
@@ -359,8 +360,12 @@ class Model_Crud extends \Kontiki\Model_Base
 		else:
 			if(\DBUtil::field_exists(static::$_table_name, array('created_at')))
 				$q->where('created_at', '<=', $now);
-			if(\DBUtil::field_exists(static::$_table_name, array('expired_at')))
+			if(\DBUtil::field_exists(static::$_table_name, array('expired_at'))):
+				$q->where_open();
 				$q->where('expired_at', '>=', $now);
+				$q->or_where('expired_at', 'is', null);
+				$q->where_close();
+			endif;
 			if(\DBUtil::field_exists(static::$_table_name, array('deleted_at')))
 				$q->where('deleted_at', '=', null);
 		endif;

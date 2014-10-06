@@ -28,7 +28,7 @@ define('PROJECTVIEWDIR', $projects['view'][$host]);
 Autoloader::register();
 
 //Autoloader - add_core_namespace 'Kontiki_Core'
-//Kontiki_Coreは、コア名前空間として登録する。
+//Kontiki_Coreは、ルート名前空間として登録する。
 Autoloader::add_core_namespace('Kontiki_Core', PKGCOREPATH.'classes');
 
 //coreのclassを走査
@@ -63,10 +63,16 @@ foreach (glob(PKGCOREPATH."modules".DS."*") as $dirname):
 		if(file_exists($coremodpath."{$mvc}/{$l_module}.php")):
 			$umvc = ucfirst($mvc);
 			//まず、Kontiki_Core_Moduleの名前空間で登録しておく
-			Autoloader::add_class("Kontiki_Core_Module\\{$module}\\{$umvc}_{$module}", $coremodpath."{$mvc}/{$l_module}.php");
+			Autoloader::add_class(
+				"Kontiki_Core_Module\\{$module}\\{$umvc}_{$module}",
+				$coremodpath."{$mvc}/{$l_module}.php"
+			);
 			//コアモジュールをオーバライドするプロジェクトモジュールがなければ、Kontiki_Core_Moduleをデフォルトのモジュール名前空間と見なす
 			if( ! file_exists($projmodpath."{$mvc}/{$l_module}.php")):
-				Autoloader::alias_to_namespace("Kontiki_Core_Module\\{$module}\\{$umvc}_{$module}", "{$module}");
+				Autoloader::alias_to_namespace(
+					"Kontiki_Core_Module\\{$module}\\{$umvc}_{$module}",
+					"{$module}"
+				);
 			endif;
 		endif;
 	endforeach;
@@ -77,8 +83,6 @@ foreach (glob(PKGCOREPATH."modules".DS."*") as $dirname):
 		Fuel::load($filename);
 	endforeach;
 endforeach;
-//Autoloader::add_classes($module_names);
-
 
 //Autoloader - observer
 $observer_class_names = array();

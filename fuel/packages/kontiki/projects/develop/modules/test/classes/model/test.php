@@ -7,32 +7,17 @@ class Model_Test extends \Kontiki\Model_Crud
 
 	protected static $_properties = array(
 		'id',
-		'title' => array(
-			'label' => '表題',
-		),
-		'body' => array(
-			'label' => '本文',
-		),
-		'is_bool' => array(
-			'label' => '真偽値',
-		),
-		'status' => array(
-			'label' => '状態',
-		),
-		'created_at' => array(
-			'label' => '',
-		),
-		'expired_at' => array(
-			'label' => '',
-		),
-		'deleted_at' => array(
-			'label' => '',
-		),
+		'title',
+		'body',
+		'is_bool',
+		'status',
+		'created_at',
+		'expired_at',
+		'deleted_at',
 
 // 'workflow_status',
 	);
 
-/*
 	//observers
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
@@ -52,7 +37,6 @@ class Model_Test extends \Kontiki\Model_Crud
 			'properties' => array('expired_at'),
 		),
 	);
-*/
 
 	/**
 	 * form_definition()
@@ -62,28 +46,81 @@ class Model_Test extends \Kontiki\Model_Crud
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $id = '')
+	public static function form_definition($factory, $obj = null, $id = '')
 	{
 		$form = \Fieldset::forge('form', \Config::get('form'));
-
+/*
 		//user_name
-		$form->add(
-				'title',
-				'ユーザ名',
-				array('type' => 'textarea', 'cols' => 70, 'rows' => 2)
-			)
+		$val->add('name', 'サンプル')
 			->add_rule('required')
 			->add_rule('max_length', 50)
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
-			->add_rule('unique', "tests.title.{$id}");
-
-		//user_name
+			->add_rule('unique', "users.user_name.{$id}");
+			->add_rule('required')
+			->add_rule('valid_email')
+			->add_rule('max_length', 255)
+			->add_rule('unique', "users.email.{$id}");
+*/
+		//title
 		$form->add(
-				'body',
-				'ほんぶん',
-				array('type' => 'textarea', 'cols' => 70, 'rows' => 3)
-			)
-			->add_rule('required');
+			'title',
+			'表題',
+			array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;')
+		)
+		->add_rule('required')
+		->add_rule('max_length', 50)
+		->set_value(@$obj->title);
+
+		//body
+		$form->add(
+			'body',
+			'本文',
+			array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;')
+		)
+		->set_value(@$obj->body);
+
+		//is_bool
+		$form->add(
+			'is_bool',
+			'真偽値',
+			array('type' => 'checkbox', 'options' => array(0, 1))
+		)
+		->set_value(@$obj->is_bool);
+
+		//status
+		$form->add(
+			'status',
+			'状態',
+			array('type' => 'hidden')
+		)
+		->add_rule('max_length', 20)
+		->set_value(@$obj->status);
+
+		//created_at
+		$form->add(
+			'created_at',
+			'created_at',
+			array('type' => 'text', 'size' => 20, 'class' => 'calendar', 'placeholder' => date('Y-m-d H:i:s'))
+		)
+		->set_value(isset($obj->created_at) ? $obj->created_at : date('Y-m-d H:i:s'));
+
+		//expired_at
+		$form->add(
+			'expired_at',
+			'expired_at',
+			array('type' => 'text', 'size' => 20, 'class' => 'calendar', 'placeholder' => date('Y-m-d H:i:s'))
+		)
+		->set_value(@$obj->expired_at);
+
+		//deleted_at
+		$form->add(
+			'deleted_at',
+			'deleted_at',
+			array('type' => 'text', 'size' => 20, 'class' => 'calendar', 'placeholder' => date('Y-m-d H:i:s'))
+		)
+		->set_value(@$obj->deleted_at);
+
+
 
 		return $form;
 	}
