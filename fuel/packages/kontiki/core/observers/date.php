@@ -51,20 +51,25 @@ class Date extends \Orm\Observer
 	public function before_save(\Orm\Model $obj)
 	{
 		//unixtimeの上限
-		$end_of_unixtime = date('Y-m-d H:i:s', 2147483647);
+//		$end_of_unixtime = date('Y-m-d H:i:s', 2147483647);
+//		$maxdate = '9999-12-31 23:59:59';
 
 		//日付の形式に
 		foreach($this->_properties as $property):
 			$value = \Input::post($property);
 			if ( ! empty($value)):
 				$value = strtotime($value);
-				$obj->{$property} = $value >= 2147483647 ? $end_of_unixtime : date('Y-m-d H:i:s', $value);
+				$obj->{$property} = date('Y-m-d H:i:s', $value);
+//				$obj->{$property} = $value >= 253402268398 ? $maxdate : date('Y-m-d H:i:s', $value);
 			endif;
 		endforeach;
 
 		//期限切れは特別扱い。空の場合は、unixtimeの上限を入れる
-		if(in_array($this->_expired_filed,$this->_properties)):
-			$obj->expired_at = \Input::post($this->_expired_filed) ?: $end_of_unixtime ;
+		if(in_array($this->_expired_filed, $this->_properties)):
+			if (empty($obj->{$property})):
+				$obj->expired_at = null ;
+	//			$obj->expired_at = \Input::post($this->_expired_filed) ?: $maxdate ;
+			endif;
 		endif;
 	}
 }
