@@ -10,6 +10,7 @@ trait Controller_Option
 		is_null($optname) and die();
 		$optinfo = self::$actionset->$optname;
 		$items = \Option\Model_Option::find_options($optname);
+		$model = $this->model_name;
 
 		//view
 		if (\Input::method() == 'POST' && \Security::check_token()):
