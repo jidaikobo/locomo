@@ -43,13 +43,6 @@
 	?>
 	</div>
 
-	<div class="form-group">
-	<?php
-	echo $form->field('deleted_at')->set_template('{label}{required}');
-	echo $form->field('deleted_at')->set_template('{error_msg}{field}');
-	?>
-	</div>
-
 	<fieldset>
 		<legend><?php echo \Form::label('編集履歴用メモ', 'revision_comment'); ?></legend>
 		<?php echo \Form::textarea('revision_comment', Input::post('revision_comment', isset($item->comment) ? $item->comment : ''), array('style'=>'width: 100%;')); ?>
