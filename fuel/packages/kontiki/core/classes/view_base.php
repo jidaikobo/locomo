@@ -194,11 +194,10 @@ class View_Base extends \ViewModel
 						$retvals[$key][$vv[1]] = $v;
 					endforeach;
 				else:
-					if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url
+					if($key == 'control' && substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url
 					$retvals[$key][$v['url']] = $v;
 				endif;
 			endforeach;
-
 
 			return $retvals;
 		};
