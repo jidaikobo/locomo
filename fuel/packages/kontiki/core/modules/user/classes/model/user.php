@@ -74,12 +74,20 @@ class Model_User extends \Kontiki\Model_Crud
 
 		//usergroups
 		$usergroups = \Option\Model_Option::get_options('usergroups');
-		$form->add(
-				'usergroups',
-				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $usergroups)
-			)
-			->set_value(@$obj->usergroups);
+		if($usergroups):
+			$form->add(
+					'usergroups',
+					'ユーザグループ',
+					array('type' => 'checkbox', 'options' => $usergroups)
+				)
+				->set_value(@$obj->usergroups);
+		else:
+			$form->add(
+					'usergroups',
+					'ユーザグループ',
+					array('type' => 'hidden')
+				);
+		endif;
 
 		//password
 		$form->add(

@@ -1,9 +1,9 @@
 <?php echo \Form::open(); ?>
 
 <div class="form_group">
-
+	<h2>編集</h2>
 	<fieldset>
-		<legend>編集</legend>
+		<legend>項目</legend>
 		<div class="form-group">
 		<?php
 		echo $form->field('user_name')->set_template('{label}{required}');
