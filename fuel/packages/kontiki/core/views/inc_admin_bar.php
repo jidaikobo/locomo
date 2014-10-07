@@ -9,11 +9,28 @@ if($is_user_logged_in):
 	$html.= '<div id="admin_bar">';
 	$html.= '<a href="#anchor_admin_bar" class="skip show-if-focus" tabindex="1">管理バーに移動</a>';
 	$html.= '<a id="anchor_admin_bar" class="skip" tabindex="0">管理バー</a>';
+
+	//admin controller menu
+	$controller4menu = $get_controllers($is_admin = true);
+	if($controller4menu):
+		$html.= '<div id="admin_bar_controller" class="menulist">';
+		$html.= '<h2><a href="javascript:void(0);" class="listOpen">管理者</a></h2>';
+		$html.= '<div class="admin_bar_sub">';
+		$html.= '<ul>';
+		foreach($controller4menu as $v):
+			if( ! $v['url']) continue;
+			$html.= "<li><a href=\"{$home_uri}{$v['url']}\">{$v['nicename']}</a></li>";
+		endforeach;
+		$html.= '</ul>';
+		$html.= '</div><!-- /.admin_bar_sub -->';
+		$html.= '</div><!-- /.menulist -->';
+	endif;
+
 	//controller menu
 	$controller4menu = $get_controllers();
 	if($controller4menu):
 		$html.= '<div id="admin_bar_controller" class="menulist">';
-		$html.= '<h2><a href="javascript:void(0);" class="listOpen">コントローラメニュー</a></h2>';
+		$html.= '<h2><a href="javascript:void(0);" class="listOpen">メニュー</a></h2>';
 		$html.= '<div class="admin_bar_sub">';
 		$html.= '<ul>';
 		foreach($controller4menu as $v):
@@ -29,7 +46,7 @@ if($is_user_logged_in):
 	$actions = $get_actionset($controller, $item);
 	if($actions['index']):
 		$html.= '<div id="admin_bar_context" class="menulist">';
-		$html.= '<h2><a href="javascript:void(0);" class="listOpen">コンテクストメニュー</a></h2>';
+		$html.= '<h2><a href="javascript:void(0);" class="listOpen">インデクス</a></h2>';
 //	endif;
 //	if($actions['index']):
 		$html.= '<div class="admin_bar_sub">';
