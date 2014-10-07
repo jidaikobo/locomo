@@ -93,8 +93,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//双方駄目ならエラー
 		if( ! $is_allowed):
 			$page = \Request::forge('content/404')->execute();
-			echo $page;
-			die();
+			return new \Response($page, 404);
 		endif;
 	}
 
@@ -155,8 +154,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		endforeach;
 		if( ! $is_allow ){
 			$page = \Request::forge('content/404')->execute();
-			echo $page;
-			die();
+			return new \Response($page, 404);
 		}
 
 		return parent::router($method, $params);
