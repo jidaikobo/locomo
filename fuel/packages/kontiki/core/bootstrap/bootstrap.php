@@ -24,16 +24,16 @@ define('PKGPROJPATH', dirname(dirname(__DIR__)).DS.'projects/'.$projects['hosts'
 define('PROJECTDIR', $projects['hosts'][$host]);
 define('PROJECTVIEWDIR', $projects['view'][$host]);
 
+//検索パスの追加
+\Finder::instance()->add_path(PKGCOREPATH);
+\Finder::instance()->add_path(PKGPROJPATH);
+
 //Autoloader::register()
 Autoloader::register();
 
 //Autoloader - add_core_namespace 'Kontiki_Core'
 //Kontiki_Coreは、ルート名前空間として登録する。
 Autoloader::add_core_namespace('Kontiki_Core', PKGCOREPATH.'classes');
-
-//検索パスの追加
-\Finder::instance()->add_path(PKGCOREPATH);
-\Finder::instance()->add_path(PKGPROJPATH);
 
 //class走査用のクロージャ
 $func_get_classname = function($filename){
