@@ -92,8 +92,9 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		//双方駄目ならエラー
 		if( ! $is_allowed):
-			\Session::set_flash('error', $this->messages['auth_error']);
-			\Response::redirect(\Uri::base(false));
+			$page = \Request::forge('content/404')->execute();
+			echo $page;
+			die();
 		endif;
 	}
 
@@ -131,7 +132,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		//current_actionsにはalways_allowedを足す。
 		$always_allowed = \Config::get('always_allowed');
-		$current_actions = $current_actions + $always_allowed;
+		$current_actions = $current_actions ? $current_actions : $current_actions + array(\Config::get('home_url')) ;
+
 
 		//コントローラに存在するアクションセットを確認
 		$func =  function($v) { return $this->request->module.'/'.$v; };
@@ -145,14 +147,17 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		//アクションセットを走査
 		$is_allow = false;
-
 		foreach($current_actions as $each_current_action):
 			if(in_array($each_current_action, $actionsets) ):
 				$is_allow = true;
 				break;
 			endif;
 		endforeach;
-		if( ! $is_allow ) return \Response::redirect(\Uri::base());
+		if( ! $is_allow ){
+			$page = \Request::forge('content/404')->execute();
+			echo $page;
+			die();
+		}
 
 		return parent::router($method, $params);
 	}

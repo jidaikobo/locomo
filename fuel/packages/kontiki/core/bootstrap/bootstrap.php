@@ -99,14 +99,25 @@ endforeach;
 Autoloader::add_classes($observer_class_names);
 
 // load the package with the config file.
-if(file_exists(PKGPROJPATH.'config/packageconfig.php')):
-	Config::load(PKGPROJPATH.'config/packageconfig.php');
-else:
-	Config::load(PKGCOREPATH.'config/packageconfig.php');
-endif;
-
-//
-Config::load(PKGCOREPATH.'config/form.php','form');
+foreach (glob(PKGCOREPATH."config".DS."*") as $path):
+	$filename = basename($path);
+	$name = substr(strtolower(basename($filename)), 0, -4);//remove .php
+	$projpath = PKGPROJPATH."config".DS.$filename;
+	$name = $filename == 'packageconfig.php' ? '' : $name ;
+	if(file_exists($projpath)):
+		if($name):
+			Config::load($projpath,$name);
+		else:
+			Config::load($projpath);
+		endif;
+	else:
+		if($name):
+			Config::load($path,$name);
+		else:
+			Config::load($path);
+		endif;
+	endif;
+endforeach;
 
 //always load module
 Module::load('acl');

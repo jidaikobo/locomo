@@ -103,7 +103,7 @@ class View_Base extends \ViewModel
 	{
 		$view = \View::forge();
 
-		$get_controllers = function() {
+		$get_controllers = function($is_admin = false) {
 			//ログインした人向けのメニューなので、ゲストには何も返さない
 			if( ! \User\Controller_User::$is_user_logged_in) return false;
 
@@ -114,10 +114,15 @@ class View_Base extends \ViewModel
 			foreach(\Config::get('module_paths') as $path):
 				foreach (glob($path.'*') as $dirname):
 					if( ! is_dir($dirname)) continue;
+
 					//config
 					$config = \Config::load($dirname.'/config/'.basename($dirname).'.php', true, true);
 					if( ! $config) continue;
 					if( ! $config['adminindex']) continue;
+
+					$adminmodule = isset($config['adminmodule']) ?: false;
+					if($is_admin && ! $adminmodule) continue;
+					if( ! $is_admin && $adminmodule) continue;
 
 					//adminindexへのurlを取得する
 					$url = basename($dirname).'/'.$config['adminindex'];
@@ -194,11 +199,10 @@ class View_Base extends \ViewModel
 						$retvals[$key][$vv[1]] = $v;
 					endforeach;
 				else:
-					if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url
+					if($key == 'control' && substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url at control
 					$retvals[$key][$v['url']] = $v;
 				endif;
 			endforeach;
-
 
 			return $retvals;
 		};

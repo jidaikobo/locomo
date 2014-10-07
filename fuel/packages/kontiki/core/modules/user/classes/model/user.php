@@ -74,12 +74,24 @@ class Model_User extends \Kontiki\Model_Crud
 
 		//usergroups
 		$usergroups = \Option\Model_Option::get_options('usergroups');
-		$form->add(
-				'usergroups',
-				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $usergroups)
-			)
-			->set_value(@$obj->usergroups);
+
+$usergroups = array(1 => 'validation', 2 => 'hoge') ;
+//エラーメッセージ出力部分を捕まえて、どうLangを使っているか確認する
+
+		if($usergroups):
+			$form->add(
+					'usergroups',
+					'ユーザグループ',
+					array('type' => 'checkbox', 'options' => $usergroups)
+				)
+				->set_value(@$obj->usergroups);
+		else:
+			$form->add(
+					'usergroups',
+					'ユーザグループ',
+					array('type' => 'hidden')
+				);
+		endif;
 
 		//password
 		$form->add(

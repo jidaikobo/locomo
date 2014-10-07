@@ -1,47 +1,51 @@
 <?php echo \Form::open(); ?>
 
 <div class="form_group">
-	<div class="form-group">
-	<?php
-	echo $form->field('user_name')->set_template('{label}{required}');
-	echo $form->field('user_name')->set_template('{error_msg}{field}');
-	?>
-	</div>
-	
-	<div class="form-group">
-	<?php echo $form->field('usergroups')->set_template('{label}{required}'); ?>
-		<div>
-			<?php echo $form->field('usergroups')->set_template('{fields} {field} {label}<br /> {fields}'); ?>
+	<h2>編集</h2>
+	<fieldset>
+		<legend>項目</legend>
+		<div class="form-group">
+		<?php
+		echo $form->field('user_name')->set_template('{label}{required}');
+		echo $form->field('user_name')->set_template('{error_msg}{field}');
+		?>
 		</div>
-	</div>
-
-	<div class="form-group">
-	<?php
-	echo $form->field('password')->set_template('{label}{required}');
-	echo $form->field('password')->set_template('{error_msg}{field}');
-	?>
-	</div>
-
-	<div class="form-group">
-	<?php
-	echo $form->field('confirm_password')->set_template('{label}{required}');
-	echo $form->field('confirm_password')->set_template('{error_msg}{field}');
-	?>
-	</div>
-
-	<div class="form-group">
-	<?php
-	echo $form->field('email')->set_template('{label}{required}');
-	echo $form->field('email')->set_template('{error_msg}{field}');
-	?>
-	</div>
-
-	<div class="form-group">
-	<?php
-	echo $form->field('created_at')->set_template('{label}{required}');
-	echo $form->field('created_at')->set_template('{error_msg}{field}');
-	?>
-	</div>
+		
+		<div class="form-group">
+		<?php echo $form->field('usergroups')->set_template('{label}{required}'); ?>
+			<div>
+				<?php echo $form->field('usergroups')->set_template('{fields} {field} {label}<br /> {fields}'); ?>
+			</div>
+		</div>
+	
+		<div class="form-group">
+		<?php
+		echo $form->field('password')->set_template('{label}{required}');
+		echo $form->field('password')->set_template('{error_msg}{field}');
+		?>
+		</div>
+	
+		<div class="form-group">
+		<?php
+		echo $form->field('confirm_password')->set_template('{label}{required}');
+		echo $form->field('confirm_password')->set_template('{error_msg}{field}');
+		?>
+		</div>
+	
+		<div class="form-group">
+		<?php
+		echo $form->field('email')->set_template('{label}{required}');
+		echo $form->field('email')->set_template('{error_msg}{field}');
+		?>
+		</div>
+	
+		<div class="form-group">
+		<?php
+		echo $form->field('created_at')->set_template('{label}{required}');
+		echo $form->field('created_at')->set_template('{error_msg}{field}');
+		?>
+		</div>
+	</fieldset>
 
 	<fieldset>
 		<legend><?php echo \Form::label('編集履歴用メモ', 'revision_comment'); ?></legend>
