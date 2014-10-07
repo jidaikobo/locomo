@@ -301,7 +301,7 @@ return array(
 		 */
 		// 'config'  => array(),
 		 'config'  => array(
-//		 'jpaddress', // 霑ｽ蜉 
+//		 'jpaddress', // 
 		 ),
 		/**
 		 * Language files to autoload

@@ -33,6 +33,9 @@ return array(
 	//use_login_as_top
 	'use_login_as_top' => false,
 
+	//home_url
+	'home_url' => 'content/home',
+
 	//always guest allowed actions
 	'always_allowed' => array(
 		'user/login',
