@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <h2>Viewing #<?php echo $item->id; ?></h2>
 
@@ -6,4 +6,4 @@
 ###fields###
 </table>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>

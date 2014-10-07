@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_admin_header.php'); ?>
+<?php echo render('inc_admin_header'); ?>
 
 <ul>
 	<li>アクセス権限は「ユーザグループ単位」「ユーザ単位」のいずれかごとに設定できます。</li>
@@ -76,4 +76,4 @@
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo $include_tpl('inc_admin_footer.php'); ?>
+<?php echo render('inc_admin_footer'); ?>

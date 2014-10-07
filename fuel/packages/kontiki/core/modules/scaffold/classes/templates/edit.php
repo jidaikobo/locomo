@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_admin_header.php'); ?>
+<?php echo render('inc_admin_header'); ?>
 
 <h2>Editing <span class='muted'>XXX</span></h2>
 
@@ -17,4 +17,4 @@
 	?>
 </p>
 
-<?php echo $include_tpl('inc_admin_footer.php'); ?>
+<?php echo render('inc_admin_footer'); ?>

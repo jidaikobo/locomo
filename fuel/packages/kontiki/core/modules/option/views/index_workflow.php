@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <h2>ルート設定</h2>
 
@@ -19,4 +19,4 @@
 <?php endforeach; ?>
 </table>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>

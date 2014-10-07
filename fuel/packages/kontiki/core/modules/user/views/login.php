@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <script type="text/javascript">
 <!--thx WordPress-->
@@ -42,4 +42,4 @@ echo Html::anchor('/', "{$site_title}へ");
 echo \Form::close();
 ?>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>
