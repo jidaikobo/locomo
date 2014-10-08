@@ -8,7 +8,7 @@
 		</footer>
 	</div>
 
-<?php echo $include_tpl('inc_admin_bar.php'); ?>
+<?php echo render('inc_admin_bar'); ?>
 
 </body>
 </html>

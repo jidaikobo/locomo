@@ -521,7 +521,6 @@ class Fieldset_Field
 						{
 							$attributes['id'] = null;
 						}
-
 						$build_field[$form->label($label, null, array('for' => $attributes['id']))] = $this->type == 'radio'
 							? $form->radio($attributes)
 							: $form->checkbox($attributes);
