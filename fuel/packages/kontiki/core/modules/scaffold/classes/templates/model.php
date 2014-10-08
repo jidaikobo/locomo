@@ -10,6 +10,9 @@ class Model_===NAME=== extends \Kontiki\Model_Crud
 // 'workflow_status',
 	);
 
+	protected static $_depend_modules = array(
+	);
+
 /*
 	//observers
 	protected static $_soft_delete = array(
@@ -31,6 +34,17 @@ class Model_===NAME=== extends \Kontiki\Model_Crud
 		),
 	);
 */
+
+	/*
+	 * __construct
+	*/
+	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
+	{
+		parent::__construct($data, $new, $view, $cache);
+		foreach (self::$_depend_modules as $module) {
+			\Module::load($module);
+		}
+	}
 
 	/**
 	 * form_definition()
