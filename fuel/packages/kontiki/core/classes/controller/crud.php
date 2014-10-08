@@ -415,7 +415,13 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	public function action_confirm_delete($id = null)
 	{
 		$model = $this->model_name ;
-		is_null($id) and \Response::redirect(\Uri::base());
+		if ($id) {
+			\Session::set_flash(
+				'error',
+				sprintf($this->messages['view_error'], self::$nicename, $id)
+			);
+			\Response::redirect(\Uri::base());
+		}
 
 		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
@@ -467,14 +473,16 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		$model = $this->model_name ;
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		if ($obj = $model::find_item($id)):
+		// 下記で見つからなければ、存在しないか
+		// 削除済み項目
+		if ($obj = $model::find_deleted($id)):
 			// Cascading deleteの恩恵を受けられない
-			$obj->purge();
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
 
-			$model::delete_item($id);
+			$obj->purge();
+			// $model::delete_item($id);
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
