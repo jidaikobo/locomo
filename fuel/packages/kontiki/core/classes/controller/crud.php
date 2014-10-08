@@ -324,19 +324,17 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 	/**
 	 * action_delete()
-	 * Model=>delete()
-	 * Model_Soft=>soft delete()
 	 */
 	public function action_delete($id = null)
 	{
-		$model = $this->model_name;
+		$model = $this->model_name ;
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		if($obj = $model::find_item($id)):
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
 
-			$obj->delete(null, true);
+			$model::delete_item($obj);
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
@@ -357,7 +355,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 	/**
 	 * action_index_deleted()
-	 * todo model_soft のみ?
 	 */
 	public function action_index_deleted($pagenum = 1)
 	{
@@ -464,28 +461,19 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 	/**
 	 * action_delete_deleted()
-	 * todo transactionの失敗メッセージに変える
 	 */
 	public function action_delete_deleted($id = null)
 	{
-
-		$model = $this->model_name;
+		$model = $this->model_name ;
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		if ($obj = $model::find_deleted($id)) :
+		if ($obj = $model::find_item($id)):
+			//本来は$obj->purge()で行うべきだが、なぜか削除されないのでとりあえず別の関数で対応する。このため現在は、Cascading deleteの恩恵を受けられない
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
-/*
-		echo '|   |   |   |   ';
-		var_dump($obj instanceof  \Orm\Model_Soft);
-		var_dump($obj);
-				var_dump(method_exists($obj, 'purge'));
-				die();
- */
 
-		$obj->purge(true, true);
-			// $model::delete_item($id);
+			$model::delete_item($id);
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');

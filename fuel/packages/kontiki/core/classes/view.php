@@ -9,13 +9,12 @@ class View extends \Fuel\Core\View
 		// set find_file's one-time-only search paths
 		\Finder::instance()->flash($this->request_paths);
 
-		/*
 		//jidaikobo - start
 		//PROJPATHのviewsを優先検索対象にする
 		$request = \Request::active();
 		\Finder::instance()->flash(PKGPROJPATH.'views'.DS.$request->module);
 		//jidaikobo - end
-		 */
+
 		// locate the view file
 		if (($path = \Finder::search('views', $file, '.'.$this->extension, false, false)) === false)
 		{

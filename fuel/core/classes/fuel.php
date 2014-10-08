@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -29,7 +29,7 @@ class Fuel
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.7.2';
+	const VERSION = '1.7.1';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -138,14 +138,8 @@ class Fuel
 
 		\Config::load($config);
 
-		// Disable output compression if the client doesn't support it
-		if (static::$is_cli or ! in_array('gzip', explode(', ', \Input::headers('Accept-Encoding', ''))))
-		{
-			\Config::set('ob_callback', null);
-		}
-
 		// Start up output buffering
-		ob_start(\Config::get('ob_callback'));
+		static::$is_cli or ob_start(\Config::get('ob_callback', null));
 
 		if (\Config::get('caching', false))
 		{
@@ -255,7 +249,7 @@ class Fuel
 				}
 			}
 			// Restart the output buffer and send the new output
-			ob_start(\Config::get('ob_callback'));
+			ob_start();
 			echo $output;
 		}
 	}

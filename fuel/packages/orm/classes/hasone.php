@@ -8,7 +8,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -116,6 +116,9 @@ class HasOne extends Relation
 		{
 			return;
 		}
+
+
+
 
 		if ( ! $model_to instanceof $this->model_to and $model_to !== null)
 		{
