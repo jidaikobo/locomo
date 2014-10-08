@@ -468,7 +468,8 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ($obj = $model::find_item($id)):
-			//本来は$obj->purge()で行うべきだが、なぜか削除されないのでとりあえず別の関数で対応する。このため現在は、Cascading deleteの恩恵を受けられない
+			// Cascading deleteの恩恵を受けられない
+			$obj->purge();
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
