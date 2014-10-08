@@ -14,6 +14,27 @@ class Model_===NAME=== extends \Kontiki\Model_Crud
 	);
 
 /*
+	protected static $_has_many = array(
+		'foo' => array(
+			'key_from' => 'id',
+			'model_to' => 'Model_Foo',
+			'key_to' => 'bar_id',
+			'cascade_save' => true,
+			'cascade_delete' => false
+		)
+	);
+	protected static $_belongs_to = array(
+		'foo' => array(
+						'key_from' => 'foo_id',
+						'model_to' => 'Model_Foo',
+						'key_to' => 'id',
+						'cascade_save' => true,
+						'cascade_delete' => false,
+					)
+	);
+*/
+
+/*
 	//observers
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
