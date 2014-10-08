@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_admin_header.php'); ?>
+<?php echo render('inc_admin_header'); ?>
 
 <p>対象コントローラ：<code><?php echo $controller ?></code></p>
 
@@ -32,4 +32,4 @@ echo \Form::hidden('owner', $hidden_owner);
 </div>
 <?php echo \Form::close(); ?>
 
-<?php echo $include_tpl('inc_admin_footer.php'); ?>
+<?php echo render('inc_admin_footer'); ?>

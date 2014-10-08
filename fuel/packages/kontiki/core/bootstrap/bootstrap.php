@@ -24,6 +24,10 @@ define('PKGPROJPATH', dirname(dirname(__DIR__)).DS.'projects/'.$projects['hosts'
 define('PROJECTDIR', $projects['hosts'][$host]);
 define('PROJECTVIEWDIR', $projects['view'][$host]);
 
+//検索パスの追加
+\Finder::instance()->add_path(PKGCOREPATH);
+\Finder::instance()->add_path(PKGPROJPATH);
+
 //Autoloader::register()
 Autoloader::register();
 
@@ -31,17 +35,37 @@ Autoloader::register();
 //Kontiki_Coreは、ルート名前空間として登録する。
 Autoloader::add_core_namespace('Kontiki_Core', PKGCOREPATH.'classes');
 
-//coreのclassを走査
-foreach (glob(PKGCOREPATH."classes".DS."*") as $filename):
-	//class names and pathes
-	$class = substr(\Inflector::words_to_upper(basename($filename)), 0, -4);//remove .php
-	$l_class = strtolower($class);
+//class走査用のクロージャ
+$func_get_classname = function($filename){
+		return substr(\Inflector::words_to_upper(basename($filename)), 0, -4);
+	};
 
+//coreのclassを走査
+$classes = array();
+foreach (glob(PKGCOREPATH."classes".DS."*") as $filename):
+	//is_dir()
+	if(is_dir($filename)):
+		//follow fuel's way - relate class must be in same name dir
+		foreach (glob($filename.DS."*") as $child_filename):
+			$child_dirname = basename(dirname($child_filename));
+			$child_filename = basename($child_filename);
+			$path_part = $child_dirname.'/'.$child_filename;
+			$class = $func_get_classname($child_dirname.'_'.$child_filename);
+			$classes[$path_part] = $class;
+		endforeach;
+	//file
+	else:
+		$path_part = basename($filename);
+		$class = $func_get_classname($path_part);
+		$classes[$path_part] = $class;
+	endif;
+endforeach;
+foreach($classes as $path_part => $class):
 	//Kontiki_Core名前空間の登録
-	Autoloader::add_class("Kontiki_Core\\{$class}", PKGCOREPATH."classes/{$l_class}.php");
-	if(file_exists(PKGPROJPATH."classes/{$l_class}.php")):
+	Autoloader::add_class("Kontiki_Core\\{$class}", PKGCOREPATH."classes/{$path_part}");
+	if(file_exists(PKGPROJPATH."classes/{$path_part}")):
 		//プロジェクト側にオーバライドがあったらKontiki名前空間として登録
-		Autoloader::add_class("Kontiki\\{$class}", PKGPROJPATH."classes/{$l_class}.php");
+		Autoloader::add_class("Kontiki\\{$class}", PKGPROJPATH."classes/{$path_part}");
 	else:
 		//プロジェクト側にオーバライドがなければ、Kontiki名前空間をKontiki_Core名前空間と見なす
 		Autoloader::alias_to_namespace("Kontiki_Core\\{$class}", 'Kontiki');

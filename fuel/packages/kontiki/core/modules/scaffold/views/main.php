@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <?php echo \Form::open(); ?>
 <h3><?php echo \Form::label('拡張oilコマンド書式', 'cmd'); ?></h3>
@@ -25,4 +25,4 @@
 <textarea class="pre" style="width: 100%;">php oil refine migrate:down --modules=モジュール名</textarea>
 <p>を実行した後、<code>PROJPATH./modules</code>に展開されたモジュールファイルを削除してください。</p>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>

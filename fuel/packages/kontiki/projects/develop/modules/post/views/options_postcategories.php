@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_admin_header.php'); ?>
+<?php echo render('inc_admin_header'); ?>
 
 <?php echo \Form::open(array("class"=>"form-horizontal")); ?>
 <?php if( ! @$is_revision): ?>
@@ -89,4 +89,4 @@
 <p>まだ設定されていません。</p>
 <?php endif; ?>
 
-<?php echo $include_tpl('inc_admin_footer.php'); ?>
+<?php echo render('inc_admin_footer'); ?>

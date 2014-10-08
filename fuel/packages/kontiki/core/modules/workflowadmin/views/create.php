@@ -1,8 +1,8 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <h2>新規ワークフロー</h2>
 
 <?php echo render('_form'); ?>
 
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>

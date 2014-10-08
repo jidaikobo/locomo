@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
 <br>
@@ -43,4 +43,4 @@
 
 <?php endif; ?>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>

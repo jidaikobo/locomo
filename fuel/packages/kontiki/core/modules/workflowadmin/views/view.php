@@ -1,5 +1,5 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <h2>ワークフロー <span class='muted'><?php echo $item->name; ?></span></h2>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>

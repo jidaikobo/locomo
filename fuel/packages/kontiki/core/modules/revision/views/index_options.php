@@ -1,4 +1,4 @@
-<?php echo $include_tpl('inc_header.php'); ?>
+<?php echo render('inc_header'); ?>
 
 <?php if ($items): ?>
 <table class="tbl2">
@@ -24,4 +24,4 @@
 
 <p><a href="<?php echo \Uri::base().$controller.'/options/'.$optname ?>" class="button">編集画面に戻る</a></p>
 
-<?php echo $include_tpl('inc_footer.php'); ?>
+<?php echo render('inc_footer'); ?>

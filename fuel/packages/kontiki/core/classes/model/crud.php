@@ -309,6 +309,10 @@ class Model_Crud extends \Kontiki\Model_Base
 		$searches = \Input::get('searches') ?: $searches ;
 		$likes    = \Input::get('likes')    ?: $likes ;
 
+		$orders   = is_array($orders)   ? $orders   : array($orders) ;
+		$searches = is_array($searches) ? $searches : array($searches) ;
+		$likes    = is_array($likes)    ? $likes    : array($likes) ;
+
 		//retval
 		$obj = (object) array();
 

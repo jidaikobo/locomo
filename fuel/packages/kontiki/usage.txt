@@ -97,7 +97,13 @@ class Controller_User extends \Kontiki_Core_Module\User\Controller_User
  * クラスと名前空間について
  */
 
-プロジェクトごとのクラスは、PROJPATH.classに設置すること。コアのclassを拡張する場合は、\Kontiki_Coreの名前空間でextendsできる。
+プロジェクトごとのクラスは、\Kontiki_Coreの名前空間のクラスをextendsして、PROJPATH.classに設置すること。コアのclassを拡張する場合も同様です。
+
+/*
+ * テンプレートのオーバライド
+ */
+
+モジュールのテンプレートだけオーバライドする場合は、PROJPATH.views/MODNAME/views/に同じ名前のファイルで設置すること。inc_header等のオーバライドに関しては、PROJPATH.views/に設置できます。
 
 /*
  * 特別な名前のカラム

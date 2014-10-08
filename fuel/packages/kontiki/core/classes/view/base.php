@@ -9,7 +9,6 @@ class View_Base extends \ViewModel
 	{
 		//base_assign
 		self::base_assign();
-		self::include_tpl();
 		self::include_asset();
 		self::get_controllers();
 		self::get_actionset();
@@ -76,24 +75,6 @@ class View_Base extends \ViewModel
 		};
 		$view->set_global('include_asset', $include_asset);
 	}
-
-	/**
-	* include_tpl()
-	* include用に指定テンプレートを取得するクロージャ
-	*/
-	public function include_tpl()
-	{
-		$view = \View::forge();
-
-		$include_tpl = function($tpl) {
-			$override_tpl = PKGPROJPATH.'views/'.$tpl;
-			$default_tpl  = PKGCOREPATH.'views/'.$tpl;
-			$ret_tpl = file_exists($override_tpl) ? $override_tpl : $default_tpl;
-			return \View::forge($ret_tpl);
-		};
-		$view->set_global('include_tpl', $include_tpl);
-	}
-
 
 	/**
 	* get_controllers()
