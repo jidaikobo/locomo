@@ -16,8 +16,7 @@ function kontiki_attempt_focus(){
 kontiki_attempt_focus();
 </script>
 
-<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret)); ?>
-
+<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret,'class' => 'login')); ?>
 <div class="form_group">
 <!--ユーザ名かメールアドレス-->
 <div class="form-group">

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+<g id="star">
+	<g>
+		<path fill="#004896" d="M20-0.134l-5.654,9.792h11.308L20-0.134z M2.5,30.175h11.847L8.424,19.917L2.5,30.175z M25.654,30.175
+			h11.845l-5.922-10.257L25.654,30.175z M2.501,9.658l5.923,10.259l5.922-10.259H2.501z M20,39.97l5.654-9.795H14.347L20,39.97z
+			 M37.5,9.658H25.653l5.924,10.26L37.5,9.658z"/>
+	</g>
+</g>
+<polygon id="bg_x5F_white" fill="#FFFFFF" points="25.652,9.658 14.346,9.658 8.423,19.917 14.347,30.175 25.654,30.175 
+	31.576,19.918 "/>
+<circle id="circle" fill="none" stroke="#000000" stroke-width="0.7122" stroke-miterlimit="10" cx="20" cy="20.033" r="8.51"/>
+<g>
+	<path d="M25.358,22.923c-0.157,0.838-0.576,2.762-0.72,3.299h-9.597v-0.681c1.742-0.145,1.951-0.249,1.951-1.911v-7.292
+		c0-1.637-0.209-1.754-1.728-1.885v-0.681h6.009v0.681c-1.505,0.131-1.689,0.249-1.689,1.885v7.475c0,0.903,0.065,1.23,0.472,1.401
+		c0.367,0.131,0.877,0.144,1.493,0.144c0.838,0,1.558-0.131,2.016-0.642c0.367-0.405,0.721-1.008,1.113-2.003L25.358,22.923z"/>
+</g>
+</svg>

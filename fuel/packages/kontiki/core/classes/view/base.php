@@ -24,6 +24,33 @@ class View_Base extends \ViewModel
 		//site_title
 		$view->set_global('site_title', \Config::get('site_title'));
 
+		//identity
+		$project_logo_svg = \Config::get('identity.logo.svg') ;
+		$project_logo_image = \Config::get('identity.logo.image') ;
+
+		$logo_svg   = $project_logo_svg ? \Uri::base().PROJECTVIEWDIR.'/images/logos/'.$project_logo_svg : \Uri::base().'content/fetch_view/images/logos/logo.svg';
+		$logo_imgage = $project_logo_image ? \Uri::base().PROJECTVIEWDIR.'/images/logos/'.$project_logo_image : \Uri::base().'content/fetch_view/images/logos/logo.png';
+
+		if($project_logo_svg && ! $project_logo_image):
+			die('svg needs image');
+		elseif(! $project_logo_svg && $project_logo_image):
+			$logo = "<img src=\"{$logo_imgage}\" alt=\"\">";
+		elseif($project_logo_svg && $project_logo_image):
+			$logo = "<svg>";
+			$logo .= "<img src=\"{$logo_imgage}\" alt=\"\">";
+			$logo .= "</svg>";
+		endif;
+
+		//colorは片方だけ設定されるということを許す？
+		$colors = array(
+				'background' => \Config::get('identity.color.background') ? \Config::get('identity.color.background') : '#362f27',
+				'figure'     => \Config::get('identity.color.figure') ? \Config::get('identity.color.figure') : '#fff',
+		);
+		
+		$view->set_global('identity_logo', $logo);
+		$view->set_global('identity_color', $colors);
+		
+
 		//ユーザ情報
 		$view->set_global('userinfo', \User\Controller_User::$userinfo);
 		$view->set_global('is_user_logged_in', \User\Controller_User::$is_user_logged_in);
