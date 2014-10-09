@@ -42,6 +42,10 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//parent
 		parent::before();
 
+		//テンプレートの検索パスを追加
+		$request = \Request::active();
+		$request->add_path(PKGPROJPATH.'views'.DS.$this->request->module.DS,true);
+
 		//set and get userinfo
 		\User\Controller_User::set_userinfo();
 		$userinfo = \User\Controller_User::$userinfo;
