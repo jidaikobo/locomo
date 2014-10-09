@@ -21,7 +21,7 @@ return array(
 
 	//original
 	'require_once'    => ':labelは入力必須項目です。',
-	'unique'          => ':valueは既に使われています。別の値を試してください。',
+	'unique'          => ':valueは既に使われています。',
 	'alnum'           => ':valueの値はアルファベットか数字にしてください。',
 	'alnumplus'       => ':valueの値はハイフン、アンダーバー、アルファベット、数字にしてください。',
 );

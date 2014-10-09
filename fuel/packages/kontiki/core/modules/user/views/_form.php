@@ -9,8 +9,15 @@
 		echo $form->field('user_name')->set_template('{label}{required}');
 		echo $form->field('user_name')->set_template('{error_msg}{field}');
 		?>
-		</div>
 		
+		</div>
+		<div class="form-group">
+		<?php
+		echo $form->field('display_name')->set_template('{label}{required}');
+		echo $form->field('display_name')->set_template('{error_msg}{field}');
+		?>
+		</div>
+				
 		<div class="form-group">
 		<?php echo $form->field('usergroups')->set_template('{label}{required}'); ?>
 			<div>
