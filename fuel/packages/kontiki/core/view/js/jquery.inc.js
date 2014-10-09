@@ -6,7 +6,14 @@ $("body *").removeClass("hide-if-no-js");
 
 //リストの開け閉め
 $( 'a.listOpen' ).click(function() {
-	$(this).parent().next('div').toggle();
+console.log($(this).parent('h2').parent());
+//	$(this).parent().next('div').toggle();
+	if($(this).parent('h2').parent().hasClass('currentmenu')){
+		$('.currentmenu').removeClass('currentmenu');
+	}else{
+		$('.currentmenu').removeClass('currentmenu');
+		$(this).parent('h2').parent().addClass('currentmenu');
+	}
 } );
 /*	
 var tabbed = false;
