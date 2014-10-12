@@ -314,7 +314,7 @@ class Helper
 	public function generate_views_form($name, $cmds)
 	{
 		$hiddens = array('status');
-		$banned = array('modified_at', 'updated_at', 'deleted_at');
+		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status');
 
 		$fields = '' ;
 		$hidden_fields = '' ;
