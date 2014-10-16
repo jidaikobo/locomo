@@ -11,18 +11,23 @@ class Actionset
 		$actions = (object) array();
 		$actions->index            = self::index($controller, $item);
 		$actions->index_admin      = self::index_admin($controller, $item);
-		$actions->view             = self::view($controller, $item);
-		$actions->index_deleted    = self::index_deleted($controller, $item);
-		$actions->view_deleted     = self::view_deleted($controller, $item);
 		$actions->index_expired    = self::index_expired($controller, $item);
-		$actions->view_expired     = self::view_expired($controller, $item);
-		$actions->index_yet        = self::index_yet($controller, $item);
-		$actions->view_yet         = self::view_yet($controller, $item);
 		$actions->index_invisible  = self::index_invisible($controller, $item);
+		$actions->index_yet        = self::index_yet($controller, $item);
+		$actions->index_deleted    = self::index_deleted($controller, $item);
+		$actions->index_all        = self::index_all($controller, $item);
+		$actions->index_revision   = self::index_revision($controller, $item);
+		$actions->revision_list    = self::revision_list($controller, $item);
+
+		$actions->view             = self::view($controller, $item);
+		$actions->view_deleted     = self::view_deleted($controller, $item);
+		$actions->view_expired     = self::view_expired($controller, $item);
+		$actions->view_yet         = self::view_yet($controller, $item);
 		$actions->view_invisible   = self::view_invisible($controller, $item);
 		$actions->edit             = self::edit($controller, $item);
 		$actions->create           = self::create($controller, $item);
 		$actions->delete           = self::delete($controller, $item);
+		$actions->confirm_delete   = self::confirm_delete($controller, $item);
 		$actions->undelete         = self::undelete($controller, $item);
 		$actions->delete_deleted   = self::delete_deleted($controller, $item);
 		$actions->add_testdata     = self::add_testdata($controller, $item);
@@ -439,7 +444,32 @@ class Actionset
 		);
 		return $retvals;
 	}
-	
+
+	private static function confirm_delete($controller, $item)
+	{
+		//url
+		$url = null ;
+		if(isset($item->deleted_at) && $item->deleted_at == null):
+			$url = isset($item->id) ? "$controller/confirm_delete/$item->id" : null ;
+		endif;
+		$url = self::check_auth($controller, 'confirm_delete') ? $url :'';
+
+		//retval
+		$retvals = array(
+			'is_index'     => false,
+			'url'          => $url,
+			'id_segment'   => 3,
+			'confirm'      => true,
+			'action_name'  => '項目の削除の確認',
+			'menu_str'     => '項目の削除の確認',
+			'explanation'  => '項目の削除の確認',
+			'dependencies' => array(
+				'confirm_delete',
+			)
+		);
+		return $retvals;
+	}
+
 	/**
 	 * delete_deleted()
 	 * @return  array
@@ -499,4 +529,85 @@ class Actionset
 		);
 		return $retvals;
 	}
+
+	private static function index_all($controller, $item)
+	{
+		$url = 'oya/index_all';
+		/*
+		$url_rev = $url ? "{$controller}/options_revisions/postcategories" : '';
+		$urls = array(
+			array('カテゴリ設定', $url),
+			array('カテゴリ設定履歴', $url_rev),
+		);
+		 */
+
+		$retvals = array(
+			'is_index'     => true,
+			'url'          => $url,
+			'id_segment'   => null,
+			'action_name'  => '削除を含む全項目一覧',
+			'menu_str'     => '全項目一覧',
+			'explanation'  => '全項目項目一覧の権限です。',
+			'dependencies' => array(
+				'index_all',
+			)
+		);
+		return $retvals;
+	}
+
+	private static function index_revision($controller, $item)
+	{
+		$url = 'oya/index_revision';
+		/*
+		$url_rev = $url ? "{$controller}/options_revisions/postcategories" : '';
+		$urls = array(
+			array('カテゴリ設定', $url),
+			array('カテゴリ設定履歴', $url_rev),
+		);
+		 */
+
+		$retvals = array(
+			'is_index'     => true,
+			'url'          => $url,
+			'id_segment'   => null,
+			'action_name'  => 'リビジョン項目一覧',
+			'menu_str'     => 'リビジョン一覧',
+			'explanation'  => 'リビジョン項目一覧の権限です。',
+			'dependencies' => array(
+				'index_yet',
+			)
+		);
+		return $retvals;
+	}
+
+	private static function revision_list($controller, $item)
+	{
+		$url = 'oya/revision_list';
+		/*
+		$url_rev = $url ? "{$controller}/options_revisions/postcategories" : '';
+		$urls = array(
+			array('カテゴリ設定', $url),
+			array('カテゴリ設定履歴', $url_rev),
+		);
+		 */
+		$retvals = array(
+			'url'          => $url,
+			'id_segment'   => 3,
+			'action_name'  => '記事ごとのリビジョン一覧',
+			'menu_str'     => '記事ごとのリビジョン一覧',
+			'explanation'  => '記事ごとのリビジョン一覧を閲覧する権限',
+			'dependencies' => array(
+				'index',
+				'view',
+				'view_deleted',
+				'index_deleted',
+				'undelete',
+			)
+		);
+		return $retvals;
+	}
+
+
+
+
 }

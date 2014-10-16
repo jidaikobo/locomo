@@ -136,7 +136,7 @@ class View_Base extends \ViewModel
 			foreach($controllers as $key => $row):
 				$order[$key]  = $row['order'];
 			endforeach;
-			array_multisort($order, SORT_ASC, $controllers);
+			//array_multisort($order, SORT_ASC, $controllers);
 
 			return $controllers;
 		};
