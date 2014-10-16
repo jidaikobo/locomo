@@ -11,7 +11,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	/**
 	 * @var string model name
 	 */
-	protected $model_name  = '';
+	protected $model_name = '';
 
 	/**
 	* @var string current_action
@@ -26,8 +26,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	/**
 	 * @var array set by self::set_actionset()
 	 */
-	public static $actionset  = array();
-	public static $actionset_owner  = array();
+	public static $actionset = array();
+	public static $actionset_owner = array();
 
 	/**
 	* @var test datas
@@ -47,80 +47,23 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$request = \Request::active();
 		$request->add_path(PKGPROJPATH.'views'.DS.$this->request->module.DS,true);
 
-		//set and get userinfo
+		//ユーザ情報のセット
 		\User\Controller_User::set_userinfo();
-		$userinfo = \User\Controller_User::$userinfo;
 
-		//current_action
-		$this->current_action = $this->request->module.'/'.$this->request->action ;
-
-		//ログイン画面をトップページにする処理（router()では遅いみたい）
-		$use_login_as_top = \Config::get('use_login_as_top');
-		if(
-			$use_login_as_top && //configで設定
-			$userinfo['user_id'] == 0 && //ログイン画面はゲスト用
-			$this->current_action == 'content/home' //トップページを求められているとき
-		):
-			return \Response::redirect(\Uri::create('user/login'));
-		endif;
+		//current_actionのセット
+		//HMVCの場合は、呼ばれたモジュールに応じたものにかわる
+		$this->current_action = $this->request->module.DS.$this->request->action ;
 
 		//model_name
-		$controller = \Inflector::denamespace(\Request::main()->controller);
-		$controller = strtolower(substr($controller, 11));
-		$this->controller_name = $controller;
-		$this->model_name  = '\\'.ucfirst($controller).'\\Model_'.ucfirst($controller);
+		$controller = ucfirst($this->request->module);
+		$this->model_name = '\\'.$controller.'\\Model_'.$controller;
 
 		//nicename 人間向けのモジュール名
 		$controllers_from_config = \Config::load($controller);
 		self::$nicename = $controllers_from_config['nicename'];
 
-		//actionset
-		//set_current_id()で、最初にactionsetを必要とするので、ここで設定する
-		$this->set_actionset($controller);
-
-		//ユーザ／ユーザグループ単位のACLを確認する。
-		$is_allowed = $this->acl($userinfo) ? true : false ;
-
-		//ユーザ／ユーザグループで失敗したら、オーナ権限を確認する
-		if( ! $is_allowed):
-			//オーナ権限確認のため、可能であれば、オーバヘッドだがとりあえず取得してみる
-			$this->set_current_id();
-			$item = false;
-			if(self::$current_id):
-				$model = $this->model_name;
-				// $item = $model::find_item(self::$current_id);
-				$item = $model::find(self::$current_id);
-				if (!$item) $model::find_deleted(self::$current_id);
-			endif;
-
-			if($item):
-				$is_allowed = $this->owner_acl($userinfo, $this->current_action, $item) ? true : $is_allowed ;
-			endif;
-		endif;
-
-		//双方駄目ならエラー
-		if( ! $is_allowed):
-			$page = \Request::forge('content/404')->execute();
-			return new \Response($page, 404);
-		endif;
-	}
-
-	/**
-	 * set_current_id()
-	*/
-	public function set_current_id()
-	{
-		$id_segment = @self::$actionset->{$this->request->action}['id_segment'];
-		if( ! $id_segment) return null;
-		self::$current_id = \URI::segment($id_segment);
-	}
-
-	/**
-	* after()
-	*/
-	public function after($response)
-	{
-		return parent::after($response);
+		//アクションセットのセット
+		$this->set_actionset($this->request->module);
 	}
 
 	/**
@@ -128,31 +71,45 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
+		//ユーザ／ユーザグループ単位のACLを確認する。
+		if( ! $this->acl(\User\Controller_User::$userinfo)):
+			$page = \Request::forge('content/403')->execute();
+			return new \Response($page, 403);
+		endif;
+
+		//ログイン画面をトップページにする処理
+		$use_login_as_top = \Config::get('use_login_as_top');
+		if(
+			$use_login_as_top && //configで設定
+			\User\Controller_User::$userinfo['user_id'] == 0 && //ログイン画面はゲスト用
+			$this->request->module.DS.$method == 'content/home' //トップページを求められているとき
+		):
+			return \Response::redirect(\Uri::create('user/login'));
+		endif;
+
 		//アクションセットで定義されていないアクションへのアクセスの拒否
-		//aclの仕事っぽいが、actionsetを確認するためコントローラで行う
-		//this->current_actionにはいくつかの可能性があるので検査用に配列を準備
+		//$this->current_actionにはいくつかの可能性があるので検査用に配列を準備
 		$current_actions = array();
 		foreach(\Uri::segments() as $param):
 			$uris[] = $param;
 			$current_actions[] = join('/',$uris);
 		endforeach;
 
-		//current_actionsにはalways_allowedを足す。
-		$always_allowed = \Config::get('always_allowed');
-		$current_actions = $current_actions ? $current_actions : $current_actions + array(\Config::get('home_url')) ;
-
+		//current_actionsが存在しないときにはhome_urlを判定対象とする
+		$current_actions = $current_actions ? $current_actions : array(\Config::get('home_url')) ;
 
 		//コントローラに存在するアクションセットを確認
-		$func =  function($v) { return $this->request->module.'/'.$v; };
-		$actionsets = array();
 		//アクションセットの配列から「モジュール名/アクション」の文字列を取得
+		//それにalways_allowedを足す
+		$actionsets = array();
+		$func = function($v) { return $this->request->module.'/'.$v; };
 		foreach(self::$actionset as $actionset):
 			$temp = array_map($func, $actionset['dependencies']);
 			$actionsets = array_merge($actionsets, $temp);
 		endforeach;
-		$actionsets = array_merge($actionsets, $always_allowed);
+		$actionsets = array_merge($actionsets, \Config::get('always_allowed'));
 
-		//アクションセットを走査
+		//アクションセットを走査し、存在しないアクションセットへのアクセスはbanする
 		$is_allow = false;
 		foreach($current_actions as $each_current_action):
 			if(in_array($each_current_action, $actionsets) ):
@@ -160,11 +117,13 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 				break;
 			endif;
 		endforeach;
+		//なければ404
 		if( ! $is_allow ){
 			$page = \Request::forge('content/404')->execute();
 			return new \Response($page, 404);
 		}
 
+		//通常の処理に渡す
 		return parent::router($method, $params);
 	}
 

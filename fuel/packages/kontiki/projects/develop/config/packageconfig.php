@@ -53,6 +53,7 @@ return array(
 		'user/login',
 		'user/logout',
 		'content/home',
+		'content/403',
 		'content/404',
 		'content/fetch_view',
 	),

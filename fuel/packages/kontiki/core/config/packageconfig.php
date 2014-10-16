@@ -42,6 +42,7 @@ return array(
 		'user/logout',
 		'content/home',
 		'content/404',
+		'content/403',
 		'content/fetch_view',
 	),
 

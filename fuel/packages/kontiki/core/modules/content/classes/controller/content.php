@@ -35,7 +35,18 @@ class Controller_Content extends \Kontiki\Controller_Crud
 	public function action_404()
 	{
 		$view = \View::forge('404');
-		$view->set_global('title', 'page not found');
+		$view->set_global('title', 'Page Not Found');
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	* action_403()
+	* 403
+	*/
+	public function action_403()
+	{
+		$view = \View::forge('403');
+		$view->set_global('title', 'Forbidden');
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
