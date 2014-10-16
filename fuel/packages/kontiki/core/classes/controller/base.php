@@ -1,5 +1,6 @@
 <?php
 namespace Kontiki_Core;
+// extends を　Controller_Hybrid に
 class Controller_Base extends \Fuel\Core\Controller_Rest
 {
 	/**
@@ -66,6 +67,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//model_name
 		$controller = \Inflector::denamespace(\Request::main()->controller);
 		$controller = strtolower(substr($controller, 11));
+		$this->controller_name = $controller;
 		$this->model_name  = '\\'.ucfirst($controller).'\\Model_'.ucfirst($controller);
 
 		//nicename 人間向けのモジュール名
@@ -86,7 +88,9 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 			$item = false;
 			if(self::$current_id):
 				$model = $this->model_name;
-				$item = $model::find_item(self::$current_id);
+				// $item = $model::find_item(self::$current_id);
+				$item = $model::find(self::$current_id);
+				if (!$item) $model::find_deleted(self::$current_id);
 			endif;
 
 			if($item):
@@ -116,7 +120,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	public function after($response)
 	{
-		return $response;
+		return parent::after($response);
 	}
 
 	/**

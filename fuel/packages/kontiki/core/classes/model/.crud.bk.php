@@ -136,7 +136,7 @@ class Model_Crud extends \Kontiki\Model_Base
 	 */
 	public static function find_item($id = null)
 	{
-		if(empty($id)) return false;
+		//if(empty($id)) return false;
 
 		//まず取得（表示非表示を問わず取得する）
 		$item = self::find_item_anyway($id);
@@ -430,4 +430,3 @@ class Model_Crud extends \Kontiki\Model_Base
 		return $q->execute();
 	}
 }
-

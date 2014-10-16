@@ -6,6 +6,16 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	// public $template = 'index_admin';
 	public $template = 'index';
 
+	/*
+	 * todo
+	 * 追加
+	 * get で渡されると不味いもの
+	 * config に whitelist がベストかも?
+	 * memo -> fuel のプロパティは $_ で始める(特にモデル)
+	 */
+	protected $_get_black_list = array(
+	);
+	
 	/**
 	 * @var array default languages of flash messages
 	 */
@@ -38,7 +48,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		'index_yet'       => '%1$sの予約項目',
 		'index_expired'   => '%1$sの期限切れ項目',
 		'index_invisible' => '%1$sの不可視項目',
-		'index_all'       => '%1$s、削除を含む全項目',
 		'view_deleted'    => '%1$s（削除済み）',
 		'edit_deleted'    => '%1$s（削除済み）の編集',
 		'confirm_delete'  => '%1$sを完全に削除してよろしいですか？',
@@ -120,9 +129,15 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 		$view = \View::forge($this->template);
 
+		// $pagination とも兼ね合い
 		$pagination_config = $this->pagination_config;
 		$conditions['limit'] = \Input::get('limit') ?: $pagination_config['per_page'];
 		$conditions['offset'] = \Input::get('offset') ?: \Pagination::get('offset');
+		// 検索 $conditions に足していく
+		// $pagination とも兼ね合い
+		// 検索 $conditions に足していく
+		// todo 現状and検索のみ
+		// todo <, >, <=, >= の実装検討? core だからいらないか
 		$pagination_config = $this->pagination_config;
 		if (\Input::get()) {
 			if (\Input::get('orders')) {
@@ -145,22 +160,26 @@ class Controller_Crud extends \Kontiki\Controller_Base
 			}
 		}
 
+		// var_dump($conditions); die();
+
 		// 件数取得
 		$count = $model::count($conditions);
 		$view->set('hit', $count);
 
 		// pagination
 		$pagination_config['total_items'] = $count;
-		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), \Input::get());
+		// todo wl or bl の実装
+		$get_query = \input::get();
+		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $get_query);
 		\Pagination::set_config($pagination_config);
 		$view->set_safe('pagination', \Pagination::create_links());
 
-		if ($deleted === 'disabled') {
+		if ($deleted) {
+			$view->set('items', $model::deleted('all', $conditions));
+		} elseif($deleted == 'disabled') {
 			$model::disable_filter();
 			$view->set('items', $model::find('all', $conditions));
 			$deleted = false;
-		} elseif($deleted) {
-			$view->set('items', $model::find_deleted('all', $conditions));
 		} else {
 			$view->set('items', $model::find('all', $conditions));
 		}
@@ -228,6 +247,31 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 	}
 
+	public function action_index_revision() {
+	}
+
+	/*
+	 * $id を取るが、表示形式がリストなので
+	 * こちらに含めておく
+	 */
+	public function action_revision_list($id = null)
+	{
+		$model = $this->model_name;
+
+		if (!isset($model::properties()['status'])) {
+			throw new HttpNotFoundException;
+		}
+
+		// todo primary_key が 2 つ以上
+		$pk = $model::primary_key();
+		$conditions['where'][] = array('status', '=', 'revision');
+		$conditions['where'][] = array($pk[0], '=', $id);
+
+		return static::index_core($args);
+
+	}
+
+
 	/**
 	 * action_index_invisible()
 	 */
@@ -265,55 +309,21 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	public function action_index_all() {
 		$model = $this->model_name ;
 
-		$this->template = 'index_admin';
 		if ($model instanceof \Orm\Model_Soft) {
 			throw new HttpNotFoundException;
 		}
 
 		return static::index_core(array(), 'disabled');
-		
-		$obj = static::index_core(array(), 'disabled');
-		// $obj = $this->add_status_all($obj);
-		return $obj;
 	}
+
+
+
 
 	/*
-	 * index_add 用にステータスを付与する
-	 * 後、下記と統合する
+	 * ============================= 単票 data ココから =========================================
+	 * $id を取る
+	 * #元々はfind_item
 	 */
-	private function add_status_all($objects = array()) {
-		foreach ($objects as $obj) {
-			static::add_status($obj);
-		}
-		return $objects;
-	}
-
-	/*
-	 * @param \Orm\Model
-	 */
-	private function add_status($obj = null) {
-		if (!$obj->status) {
-			if (isset($obj::properties()['created_at'])) {
-				if (strtotime($obj->created_at) > time()) $status = 'yet';
-				if (isset($obj::properties()['expired_at'])) {
-					if (strtotime($obj->expired_at) < time()) $status = 'expired';
-					/*if (strtotime($obj->expired_at) > time())*/ $status = 'yet';
-				}
-			}
-			var_dump($obj->status); die();
-		}
-
-		array(
-			'invisible', // 不過視 in_progress
-			'revision', // リビジョン
-			'expired', // 期限切れ
-			'yet', // 予約済み
-			'deleted', // 削除済み
-		);
-	}
-
-
-
 
 	/**
 	 * action_view()
@@ -323,16 +333,14 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	{
 		$model = $this->model_name;
 
+		if(! $obj = $model::find($id)) throw new \HttpNotFoundException;
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		$authorized_option = $model::authorized_option();
-
-		if ( ! $data['item'] = $model::find($id, $authorized_option)):
+		if ( ! $data['item'] = $model::find_item($id)):
 			\Session::set_flash(
 				'error',
 				sprintf($this->messages['view_error'], self::$nicename, $id)
 			);
-			throw new \HttpNotFoundException;
 			\Response::redirect($this->request->module);
 		endif;
 
@@ -345,66 +353,50 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	}
 
 	public function action_create() {
-		return $this->action_edit(null);
+		$this->action_edit(null);
+	}
+
+	public function edit_core($id, $deleted) {
+		$model = $this->model_name ;
+		// todo
+		$form = $model::form_definition('edit', $obj, $id);
+
+		if ($model::properties()['workflow_status']) $conditions['where'][] = array('workflow_status', '!=', 'in_progress');
+		// コントローラで、in_progressだったらstatusをinvisibleに
+
+		/*
+		 * todo 実験用
+		 * ここから、Auth を observer に 含めない場合の実装
+		 * どちらが、軽いか?
+		 */
+		// OR 検索
+/*
+		if (
+			$model::properties()['status'] &&
+			\Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo)
+		) {
+			$conditions['where'][] = array('workflow_status', '!=', 'in_progress');
+		}
+*/
+
 	}
 
 	public function action_edit($id = null) {
 		$model = $this->model_name ;
 
-		if ($id) {
-			$obj = $model::find($id);
-			$authorized_option = $model::authorized_option();
-			$obj = $model::find($id, $authorized_option );
-			$title = sprintf($this->titles['edit'], $this->request->module);
-		} else {
-			$obj = $model::forge();
-			$title = sprintf($this->titles['create'], $this->request->module);
+
+		if (Input::post()) {
+			var_dump(Input::post()); die();
 		}
 
-		$form = $model::form_definition('edit', $obj, $id);
-
-		/*
-		 * save
-		 */
-		if ($form->validation()->run() && \Security::check_token()):
-
-			$obj->set(\Input::post());
-
-			//pre_save_hook
-			$obj = $this->pre_save_hook($obj, 'edit');
-
-			//save
-			if ($obj->save()):
-
-			//post_save_hook
-			$obj = $this->post_save_hook($obj, 'edit');
-
-			//message
-			\Session::set_flash(
-				'success',
-				sprintf($this->messages['edit_success'], self::$nicename, $id)
-			);
-			\Response::redirect($redirect);
-		else:
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['edit_error'], self::$nicename, $id)
-			);
-		endif;
-
-		//edit view or validation failed of CSRF suspected
-		else:
-			if (\Input::method() == 'POST'):
-				$form->repopulate();
-				\Session::set_flash('error', $form->error());
-			endif;
-		endif;
-
-
+		if ($id) {
+		} else {
+		}
 
 		$view = \View::forge('edit');
 
-		$view->set_global('title', $title);
+		//view
+		$view->set_global('title', sprintf($this->titles['edit'], self::$nicename));
 		$view->set_global('item', $obj, false);
 		$view->set_global('form', $form, false);
 
@@ -412,113 +404,23 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	}
 
 	/**
-	 * action_delete()
-	 */
-	public function action_delete($id = null)
-	{
-		$model = $this->model_name ;
-
-		is_null($id) and \Response::redirect(\Uri::base());
-
-		if ($obj = $model::find($id)):
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
-
-			$obj->delete();
-
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
-
-			\Session::set_flash(
-				'success',
-				sprintf($this->messages['delete_success'], self::$nicename, $id)
-			);
-		else:
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['delete_error'], self::$nicename, $id)
-			);
-		endif;
-
-		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
-	}
-
-
-	/**
-	 * action_confirm_delete()
-	 */
-	public function action_confirm_delete($id = null)
-	{
-		$model = $this->model_name ; 
-		if (!$id) {
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['view_error'], self::$nicename, $id)
-			);
-			\Response::redirect(\Uri::base());
-		}
-
-		if ( ! $data['item'] = $model::find_deleted($id)):
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['view_error'], self::$nicename, $id)
-			);
-			echo 'purge'; die();
-			\Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
-		endif;
-
-		//view
-		$view = \View::forge('view');
-		$view->set('item', $data['item']);
-		$view->set('is_delete_deleted', true);
-		$view->set_global('title', sprintf($this->titles['confirm_delete'], self::$nicename));
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-	}
-
-	/**
-	 * action_undelete()
-	 */
-	public function action_undelete($id = null)
-	{
-		$model = $this->model_name ;
-		is_null($id) and \Response::redirect(\Uri::base());
-
-		if ($obj = $model::find_deleted($id)):
-			$obj->undelete();
-
-			\Session::set_flash(
-				'success',
-				sprintf($this->messages['undelete_success'], self::$nicename, $id)
-			);
-		else:
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['undelete_error'], self::$nicename, $id)
-			);
-		endif;
-
-		return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
-	}
-
-
-
-	/**
 	 * action_delete_deleted()
 	 */
 	public function action_delete_deleted($id = null)
 	{
 		$model = $this->model_name ;
-
 		is_null($id) and \Response::redirect(\Uri::base());
 
+		// 下記で見つからなければ、存在しないか
+		// 削除済み項目
 		if ($obj = $model::find_deleted($id)):
+			// Cascading deleteの恩恵を受けられない
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
 
-			// 現状 Cascading deleteの恩恵を受けられない
 			$obj->purge();
+			// $model::delete_item($id);
 
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
@@ -562,30 +464,11 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		$this->response($model::find_item($id));
 	}
 
-	// リビジョン
-	/*
-	public function action_index_revision() {
-	}
+
+
+	/* ==================== ココから実験用 ========================
+	 * action_edit_xxx
+	 * 恐らくこれが一番軽い
 	 */
-
-	/*
-	public function action_revision_list($id = null)
-	{
-		$model = $this->model_name;
-
-		if (!isset($model::properties()['status'])) {
-			throw new HttpNotFoundException;
-		}
-
-		// todo primary_key が 2 つ以上
-		$pk = $model::primary_key();
-		$conditions['where'][] = array('status', '=', 'revision');
-		$conditions['where'][] = array($pk[0], '=', $id);
-
-		return static::index_core($args);
-	}
-	 */
-
 }
-
 
