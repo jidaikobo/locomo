@@ -190,7 +190,7 @@ class Model_User extends \Kontiki\Model_Crud
 		if($account == null || $password == null) return false;
 
 		//query
-		$q = \DB::select('id','user_name');
+		$q = \DB::select('id','user_name','display_name');
 		$q->from('users');
 		$q->where('password', self::hash($password));
 		$q->where('deleted_at', '=', null);

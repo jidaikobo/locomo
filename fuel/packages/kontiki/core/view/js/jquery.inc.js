@@ -2,19 +2,32 @@ $(function(){
 ///// baseとして追加予定のもの /////
 
 //JavaScript有効時に表示する、無効時には非表示にする（CSS）
-$("body *").removeClass("hide-if-no-js");
+$("body *").removeClass("hide_if_no_js");
 
-//リストの開け閉め
-$( 'a.listOpen' ).click(function() {
-console.log($(this).parent('h2').parent());
-//	$(this).parent().next('div').toggle();
-	if($(this).parent('h2').parent().hasClass('currentmenu')){
-		$('.currentmenu').removeClass('currentmenu');
-	}else{
-		$('.currentmenu').removeClass('currentmenu');
-		$(this).parent('h2').parent().addClass('currentmenu');
+//管理バーの高さに合わせてパディングを設定したい。リサイズ時の処理をちょっと考える
+//ExResize等プラグインを使う？　jQueryUIになにかある？
+if($('#adminbar')[0]){
+	var barHeight = $('.adminbar_main').height();
+	if($('#adminbar_context')[0]){
+		barHeight += $('#adminbar_context').height();
+	}
+	$('body').css('padding-top', barHeight+20+'px' );
+}
+//クリックイベント
+$(document).click(function(event){
+	var target = event.target;
+//リストの開け閉め 整理したい。
+	if( $(target).hasClass('listopen') && $(target).parent().next('ul').hasClass('currentmenu') ){
+		$('#adminbar .currentmenu').removeClass('currentmenu');
+	}else if($(target).hasClass('listopen')){
+		$('#adminbar .currentmenu').removeClass('currentmenu');
+		$(target).parent().next('ul').addClass('currentmenu');
+	}else if((!$.contains($('.currentmenu')[0], target))){
+		$('#adminbar .currentmenu').removeClass('currentmenu');
 	}
 } );
+
+
 /*	
 var tabbed = false;
 $("body").keydown(function(event){

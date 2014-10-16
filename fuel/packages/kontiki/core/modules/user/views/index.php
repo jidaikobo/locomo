@@ -1,9 +1,8 @@
 <?php echo render('inc_header'); ?>
-
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
 <br>
 <?php if ($items): ?>
-<table class="table table-striped">
+<table class="table table-striped tbl2">
 	<thead>
 		<tr>
 			<th>id</th>
@@ -16,8 +15,9 @@
 		</tr>
 	</thead>
 	<tbody>
-<?php foreach ($items as $item): ?>		<tr>
-
+	
+<?php foreach ($items as $item): ?>
+		<tr>
 			<td><?php echo $item->id; ?></td>
 			<td><?php echo \Str::truncate($item->user_name, 20); ?></td>
 			<td><?php echo \Str::truncate($item->email, 20); ?></td>

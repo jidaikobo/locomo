@@ -11,18 +11,6 @@ define('ADMN_USER_PASS','121212');
 return array(
 	//base
 	'site_title' => 'kontiki package',
-
-	//identity
-	'identity' => array(
-		'logo' => array(
-			'svg'   => '', //ex) logo.svg
-			'image' => '', //ex) logo.png
-		),
-		'color' => array(
-			'background' => '', //ex) #000
-			'figure' => '',     //ex) #fff
-		),
-	),
 	
 	//locale settings
 	'language'          => 'ja',
