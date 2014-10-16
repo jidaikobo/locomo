@@ -39,8 +39,9 @@ class View_Base extends \ViewModel
 		endif;
 		if(\User\Controller_User::$userinfo['user_id'] == 0):
 			$view->set_global('is_guest', true);
+			$view->set_global('display_name', '');
 		endif;
-
+		
 		//anti CSRF
 		$view->set_global('token_key', \Config::get('security.csrf_token_key'));
 		$view->set_global('token', \Security::fetch_token());
@@ -136,7 +137,7 @@ class View_Base extends \ViewModel
 			foreach($controllers as $key => $row):
 				$order[$key]  = $row['order'];
 			endforeach;
-			array_multisort($order, SORT_ASC, $controllers);
+//			array_multisort($order, SORT_ASC, $controllers);
 
 			return $controllers;
 		};

@@ -10,7 +10,19 @@ define('ADMN_USER_PASS','121212');
 //fuel config
 return array(
 	//base
-	'site_title' => 'kontiki package',
+	'site_title' => 'Light Staff',
+
+	//identity
+	'identity' => array(
+		'logo' => array(
+			'svg'   => '', //ex) logo.svg
+			'image' => 'logo.png', //ex) logo.png
+		),
+		'color' => array(
+			'background' => '9,73,153', //ex)  lighthouseのロゴカラーは#094999
+			'figure' => '',     //ex) #fff
+		),
+	),
 
 	//locale settings
 	'language'          => 'ja',

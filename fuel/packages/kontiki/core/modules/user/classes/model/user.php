@@ -9,6 +9,7 @@ class Model_User extends \Kontiki\Model_Crud
 	protected static $_properties = array(
 		'id',
 		'user_name',
+		'display_name',
 		'password',
 		'email',
 		'activation_key',
@@ -71,6 +72,16 @@ class Model_User extends \Kontiki\Model_Crud
 			->add_rule('max_length', 50)
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
 			->add_rule('unique', "users.user_name.{$id}");
+
+		//display_name
+		$form->add(
+				'display_name',
+				'表示名',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->display_name)
+			->add_rule('required')
+			->add_rule('max_length', 255);
 
 		//usergroups
 		$usergroups = \Option\Model_Option::get_options('usergroups');
@@ -179,7 +190,7 @@ class Model_User extends \Kontiki\Model_Crud
 		if($account == null || $password == null) return false;
 
 		//query
-		$q = \DB::select('id','user_name');
+		$q = \DB::select('id','user_name','display_name');
 		$q->from('users');
 		$q->where('password', self::hash($password));
 		$q->where('deleted_at', '=', null);

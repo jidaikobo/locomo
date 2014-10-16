@@ -6,29 +6,34 @@
 
 	<!--stylesheet-->
 	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/base.css'); ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/core.css'); ?>" />
 	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/layout.css'); ?>" />
 
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="<?php echo $include_asset('js/jquery.inc.js'); ?>" type="text/javascript"></script>
 </head>
-<body>
+<?php
+$class_arr = array(Request::main()->route->module, Request::main()->route->action );
+if( Request::main()->route->action == 'login' && \Config::get('use_login_as_top') ) $class_arr[] = 'home';
+$body_class = 'class="'.implode($class_arr,' ').'"';
+?>
+<body <?php echo $body_class ;?>>
 	<div class="container">
 
 		<div class="col-md-12">
-			<h1><?php echo $title; ?></h1>
-			<hr>
+			<h1 class="page_title"><?php echo $title; ?></h1>
 <?php if (Session::get_flash('success')): ?>
-			<div class="alert alert-success">
-				<strong>Success</strong>
+			<div class="alert alert_success">
+				<!-- <strong>Success</strong> -->
 				<p>
 				<?php echo implode('</p><p>', e((array) Session::get_flash('success'))); ?>
 				</p>
 			</div>
 <?php endif; ?>
 <?php if (Session::get_flash('error')): ?>
-			<div class="alert alert-error">
-				<strong>Error</strong>
+			<div class="alert alert_error">
+				<strong class="skip">エラー</strong>
 				<p>
 				<?php echo implode('</p><p>', e((array) Session::get_flash('error'))); ?>
 				</p>

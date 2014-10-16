@@ -166,6 +166,7 @@ class Controller_User extends \Kontiki\Controller_Crud
 			if($account == ROOT_USER_NAME && $password == ROOT_USER_PASS):
 				$user['user_id']       = -2;
 				$user['user_name']     = 'root';
+				$user['display_name']     = 'root権限管理者';
 				$user['usergroup_ids'] = array(-2);
 				$is_success = true;
 			endif;
@@ -174,6 +175,7 @@ class Controller_User extends \Kontiki\Controller_Crud
 			if($account == ADMN_USER_NAME && $password == ADMN_USER_PASS):
 				$user['user_id']       = -1;
 				$user['user_name']     = 'admin';
+				$user['display_name']     = '管理者';
 				$user['usergroup_ids'] = array(-1);
 				$is_success = true;
 			endif;
@@ -184,6 +186,7 @@ class Controller_User extends \Kontiki\Controller_Crud
 				$user_ids  = $user_model::get_userinfo($account, $password);
 				$user_id   = @$user_ids['id'] ;
 				$user_name = @$user_ids['user_name'] ;
+				$display_name = @$user_ids['display_name'] ;
 			endif;
 
 			//ユーザが存在したらUsergroupを取得
@@ -192,6 +195,7 @@ class Controller_User extends \Kontiki\Controller_Crud
 				//DBに存在したユーザ情報
 				$user['user_id']       = $user_id;
 				$user['user_name']     = $user_name;
+				$user['display_name']     = $display_name;
 				$user['usergroup_ids'] = $usergroup_ids ? $usergroup_ids : array();
 				$is_success = true;
 			endif;

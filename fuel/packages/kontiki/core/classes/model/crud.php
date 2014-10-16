@@ -430,3 +430,4 @@ class Model_Crud extends \Kontiki\Model_Base
 		return $q->execute();
 	}
 }
+

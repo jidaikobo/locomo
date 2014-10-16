@@ -11,7 +11,7 @@ define('ADMN_USER_PASS','121212');
 return array(
 	//base
 	'site_title' => 'kontiki package',
-
+	
 	//locale settings
 	'language'          => 'ja',
 	'language_fallback' => 'en',
@@ -44,7 +44,5 @@ return array(
 		'content/404',
 		'content/fetch_view',
 	),
-
-	//
 
 );
