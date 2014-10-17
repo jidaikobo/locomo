@@ -25,6 +25,7 @@ class Actionset
 		$actions->view_yet         = self::view_yet($controller, $item);
 		$actions->view_invisible   = self::view_invisible($controller, $item);
 		$actions->edit             = self::edit($controller, $item);
+		$actions->edit_anyway      = self::edit_anyway($controller, $item);
 		$actions->create           = self::create($controller, $item);
 		$actions->delete           = self::delete($controller, $item);
 		$actions->confirm_delete   = self::confirm_delete($controller, $item);
@@ -327,6 +328,27 @@ class Actionset
 			'explanation'  => '通常項目の編集権限',
 			'dependencies' => array(
 				'view',
+				'edit',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * edit_anyway()
+	 * @return  array
+	 */
+	private static function edit_anyway($controller, $item)
+	{
+		$retvals = array(
+			'url'          => '',
+			'id_segment'   => '',
+			'action_name'  => 'すべての項目の編集',
+			'menu_str'     => '',
+			'explanation'  => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限',
+			'dependencies' => array(
+				'view',
+				'view_anyway',
 				'edit',
 			)
 		);
