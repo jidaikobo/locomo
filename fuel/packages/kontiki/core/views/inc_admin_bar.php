@@ -15,7 +15,7 @@ if($is_user_logged_in):
 	$actions = $get_actionset($controller, $item);
 	if($actions['control']):
 		$html.='<div id="adminbar_context" class="clearfix">';
-		$html.='<h2>コントローラ名</h2>'; //ツールバーのアンカーにも足す？
+		$html.='コントローラ名'; //ツールバーのアンカーにも足す？
 		$html.= '<ul>';
 		foreach($actions['control'] as $url => $v):
 			if( ! $url) continue;
@@ -36,7 +36,7 @@ if($is_user_logged_in):
 	$controller4menu = $get_controllers();
 	if($controller4menu):
 		$html.= '<div id="admin_menu">';
-		$html.= '<h2><a href="javascript:void(0);" class="listopen">■ メニュー</a></h2>';
+		$html.= '<a href="javascript:void(0);" class="listopen" title="メニューを開く">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_menu.png\" alt=\"\" class=\"adminbar-icon\">".'メニュー</a>';
 		$html.= '<ul class="boxshadow">';
 		foreach($controller4menu as $v):
 			if( ! $v['url']) continue;
@@ -49,7 +49,7 @@ if($is_user_logged_in):
 	//index menu
 	if($actions['index']):
 		$html.= '<div id="adminbar_index">';
-		$html.= '<h2><a href="javascript:void(0);" class="listopen">インデクス</a></h2>';
+		$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
 		$html.= '<ul class="boxshadow">';
 		foreach($actions['index'] as $url => $v):
 			if( ! $url) continue;
@@ -65,7 +65,7 @@ if($is_user_logged_in):
 	$html.='<div class="adminbar_main_right">';
 	//user menu
 	$html.= '<div id="adminbar_user">';
-	$html.= '<h2><a href="javascript:void(0);" class="listopen">▲ '.\User\Controller_User::$userinfo["display_name"].'</a></h2>';
+	$html.= '<a href="javascript:void(0);" class="listopen modal" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user.png\" alt=\"\" class=\"adminbar-icon\">".\User\Controller_User::$userinfo["display_name"].'</a>';
 	$html.= '<ul class="boxshadow">';
 	$html.= '<li><a href="">ユーザ設定</a></li>';
 	$html.= "<li><a href=\"{$home_uri}user/logout\">ログアウト</a></li>";
@@ -76,7 +76,7 @@ if($is_user_logged_in):
 	$controller4menu = $get_controllers($is_admin = true);
 	if($controller4menu):
 		$html.= '<div id="admin_controller">';
-		$html.= '<h2><a href="javascript:void(0);" class="listopen" title="管理者メニュー">●(管理者メニュー)</a></h2>';
+		$html.= "<a href=\"javascript:void(0);\" class=\"listopen icononly\" title=\"管理者メニューを開く\"><img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_setting.png\" alt=\"管理者メニュー\" class=\"adminbar-icon\"></a>";
 		$html.= '<ul class="boxshadow">';
 		foreach($controller4menu as $v):
 			if( ! $v['url']) continue;
@@ -87,7 +87,7 @@ if($is_user_logged_in):
 	endif;
 
 	//help
-	$html.= '<a id ="admin_help" href="">？</a>';
+	$html.= '<a id ="admin_help" href="" title="ヘルプ">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\" class=\"adminbar-icon\">".'</a>';
 	
 	//処理速度
 	$html.= $is_admin ? '<span id="render_info">{exec_time}s  {mem_usage}mb</span>' : '';
