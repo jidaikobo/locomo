@@ -11,12 +11,13 @@ class Create_usergroups
 			'description'  => array('constraint' => 255, 'type' => 'varchar'),
 			'order'        => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 			'is_available' => array('constraint' => 1, 'type' => 'tinyint'),
+			'deleted_at'   => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 
 		//usergroups_r
 		\DBUtil::create_table('usergroups_r', array(
-			'item_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
-			'option_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'user_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'group_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 		), array('item_id','option_id'));
 	}
 
