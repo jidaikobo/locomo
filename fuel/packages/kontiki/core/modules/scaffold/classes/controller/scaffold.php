@@ -11,7 +11,7 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 //		if(\Fuel::$env != 'development') die();
 
 		//call helper
-		require(__DIR__.'/helper.php');
+		require(dirname(__DIR__).'/helper/scaffold.php');
 		$scaffold_helper = new \Scaffold\Helper();
 
 		//view
