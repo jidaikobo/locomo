@@ -8,7 +8,7 @@ if($is_user_logged_in):
 	$html = '';
 	$html.= '<div id="adminbar">';
 	$html.= '<a href="#anchor_adminbar" class="skip show_if_focus" tabindex="1">ツールバーに移動</a>';
-	$html.= '<a id="anchor_adminbar" class="skip" tabindex="0">ツールバー</a>';
+	$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="-1">ツールバー</a></h2>';
 
 //ツールバー下段
 	//context menu
