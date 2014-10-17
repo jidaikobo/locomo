@@ -8,7 +8,7 @@ if($is_user_logged_in):
 	$html = '';
 	$html.= '<div id="adminbar">';
 	$html.= '<a href="#anchor_adminbar" class="skip show_if_focus" tabindex="1">ツールバーに移動</a>';
-	$html.= '<a id="anchor_adminbar" class="skip" tabindex="0">ツールバー</a>';
+	$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="-1">ツールバー</a></h2>';
 
 //ツールバー下段
 	//context menu
@@ -36,7 +36,8 @@ if($is_user_logged_in):
 	$controller4menu = $get_controllers();
 	if($controller4menu):
 		$html.= '<div id="admin_menu">';
-		$html.= '<a href="javascript:void(0);" class="listopen" title="メニューを開く">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_menu.png\" alt=\"\" class=\"adminbar-icon\">".'メニュー</a>';
+		$html.= '<a href="javascript:void(0);" class="listopen" title="メニューを開く"><span class="adminbar-icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_menu.png\" alt=\"\">".'</span>メニュー</a>';
+		// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで包括要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
 		$html.= '<ul class="boxshadow">';
 		foreach($controller4menu as $v):
 			if( ! $v['url']) continue;
@@ -65,7 +66,7 @@ if($is_user_logged_in):
 	$html.='<div class="adminbar_main_right">';
 	//user menu
 	$html.= '<div id="adminbar_user">';
-	$html.= '<a href="javascript:void(0);" class="listopen modal" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user.png\" alt=\"\" class=\"adminbar-icon\">".\User\Controller_User::$userinfo["display_name"].'</a>';
+	$html.= '<a href="javascript:void(0);" class="listopen modal" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています"><span class="adminbar-icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user.png\" alt=\"\"></span>".\User\Controller_User::$userinfo["display_name"].'</a>';
 	$html.= '<ul class="boxshadow">';
 	$html.= '<li><a href="">ユーザ設定</a></li>';
 	$html.= "<li><a href=\"{$home_uri}user/logout\">ログアウト</a></li>";
@@ -76,7 +77,7 @@ if($is_user_logged_in):
 	$controller4menu = $get_controllers($is_admin = true);
 	if($controller4menu):
 		$html.= '<div id="admin_controller">';
-		$html.= "<a href=\"javascript:void(0);\" class=\"listopen icononly\" title=\"管理者メニューを開く\"><img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_setting.png\" alt=\"管理者メニュー\" class=\"adminbar-icon\"></a>";
+		$html.= "<a href=\"javascript:void(0);\" class=\"listopen icononly\" title=\"管理者メニューを開く\"><span class=\"adminbar-icon\"><img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_setting.png\" alt=\"管理者メニュー\"></span></a>";
 		$html.= '<ul class="boxshadow">';
 		foreach($controller4menu as $v):
 			if( ! $v['url']) continue;
@@ -87,7 +88,7 @@ if($is_user_logged_in):
 	endif;
 
 	//help
-	$html.= '<a id ="admin_help" href="" title="ヘルプ">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\" class=\"adminbar-icon\">".'</a>';
+	$html.= '<a id ="admin_help" href="" title="ヘルプ"><span class="adminbar-icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 	
 	//処理速度
 	$html.= $is_admin ? '<span id="render_info">{exec_time}s  {mem_usage}mb</span>' : '';
