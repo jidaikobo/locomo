@@ -51,6 +51,35 @@ class Controller_Content extends \Kontiki\Controller_Crud
 	}
 
 	/**
+	* action_help_index()
+	*/
+	public function action_help_index()
+	{
+		
+
+
+		//描画
+		$view = \View::forge('home');
+		$view->set_global('title', \Config::get('site_title'));
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+	/**
+	* action_help()
+	*/
+	public function action_help($filename)
+	{
+		
+
+
+		//描画
+		$view = \View::forge('home');
+		$view->set_global('title', \Config::get('site_title'));
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+	}
+
+
+	/**
 	 * action_fetch_view()
 	 * fetch files view
 	 */

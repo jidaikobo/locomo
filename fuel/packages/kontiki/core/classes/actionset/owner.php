@@ -17,7 +17,6 @@ class Actionset_Owner
 		$actions->view_deleted   = self::view_deleted();
 		$actions->view_invisible = self::view_invisible();
 		$actions->edit           = self::edit();
-		$actions->edit_deleted   = self::edit_deleted();
 		return $actions;
 	}
 
@@ -132,23 +131,6 @@ class Actionset_Owner
 			'dependencies' => array(
 				'view',
 				'edit',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * edit_deleted()
-	 * @return  array
-	 */
-	private static function edit_deleted()
-	{
-		$retvals = array(
-			'action_name' => '削除された項目の編集',
-			'explanation' => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
-			'dependencies' => array(
-				'view_deleted',
-				'edit_deleted',
 			)
 		);
 		return $retvals;

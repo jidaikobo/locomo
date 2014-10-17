@@ -2,7 +2,7 @@
 namespace Kontiki_Core_Module\User;
 class Model_User extends \Kontiki\Model_Crud
 {
-	use \Option\Model_Option;
+//	use \Option\Model_Option;
 
 	protected static $_table_name = 'users';
 
@@ -21,6 +21,19 @@ class Model_User extends \Kontiki\Model_Crud
 		'updated_at',
 		'creator_id',
 		'modifier_id',
+	);
+
+	protected static $_many_many = array(
+		'usergroup' => array(
+			'key_from' => 'id',
+			'key_through_from' => 'user_id',
+			'table_through' => 'usergroups_r',
+			'key_through_to' => 'group_id',
+			'model_to' => '\User\Model_Usergroup',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		)
 	);
 
 	protected static $_soft_delete = array(
@@ -90,7 +103,7 @@ class Model_User extends \Kontiki\Model_Crud
 				'ユーザグループ',
 				array('type' => 'checkbox', 'options' => $usergroups)
 			)
-			->set_value(@$obj->usergroups);
+			->set_value(@$obj->usergroup);
 
 		//password
 		$form->add(
