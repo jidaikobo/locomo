@@ -98,7 +98,6 @@ class Model_User extends \Kontiki\Model_Crud
 
 		//usergroups
 		$usergroups = \Option\Model_Option::get_options('usergroups');
-		var_dump($usergroups); die();
 		$form->add(
 				'usergroups',
 				'ユーザグループ',
