@@ -13,12 +13,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="<?php echo $include_asset('js/jquery.inc.js'); ?>" type="text/javascript"></script>
 </head>
-<?php
-$class_arr = array(Request::main()->route->module, Request::main()->route->action );
-if( Request::main()->route->action == 'login' && \Config::get('use_login_as_top') ) $class_arr[] = 'home';
-$body_class = 'class="'.implode($class_arr,' ').'"';
-?>
-<body <?php echo $body_class ;?>>
+<body class="<?php echo $body_class ;?>">
 	<div class="container">
 
 		<div class="col-md-12">

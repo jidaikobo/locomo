@@ -13,21 +13,63 @@ if($('#adminbar')[0]){
 	}
 	$('body').css('padding-top', barHeight+20+'px' );
 }
-//クリックイベント
+/*
+$('a.listopen').click(function(){
+	$('#adminbar .currentmenu').removeClass('currentmenu');
+	if(! $(this).parent().next('ul').hasClass('currentmenu') ){
+		$(this).parent().next('ul').addClass('currentmenu');
+//console.log('a');
+	}
+} );
 $(document).click(function(event){
-	var target = event.target;
-//リストの開け閉め 整理したい。
-	if( $(target).hasClass('listopen') && $(target).parent().next('ul').hasClass('currentmenu') ){
-		$('#adminbar .currentmenu').removeClass('currentmenu');
-	}else if($(target).hasClass('listopen')){
-		$('#adminbar .currentmenu').removeClass('currentmenu');
-		$(target).parent().next('ul').addClass('currentmenu');
-	}else if((!$.contains($('.currentmenu')[0], target))){
+//console.log('document');
+//	if($('.listopen')[0]&&($.contains($('.listopen')[0], event.target))){
+	if($('.modal')[0] && $(event.target).hasClass('modal')){
+		console.log(event.target);
+	}else if($('.currentmenu')[0]&&(!$.contains($('.currentmenu')[0], event.target))){
 		$('#adminbar .currentmenu').removeClass('currentmenu');
 	}
 } );
+*/
+//クリックイベント
+$(document).click(function(event){
+	var t = event.target;
+//リストの開け閉め もっといろいろかんがえたい
+//全てのカレントメニューを消してよいのか、排他的？な表示対象にそんな感じの名前を付けるか。
+	if( $(t).closest('.listopen').length != 0 && !$(t).closest('.listopen').next().hasClass('currentmenu')){
+	//対象のnextにcurrentmenuがなければ付与
+		$('.currentmenu').removeClass('currentmenu')
+		$(t).closest('.listopen').next().addClass('currentmenu')
+	}else if($('.currentmenu')[0] && $(t).closest('.currentmenu').length == 0){
+	//開いたメニューの外であればとにかくcurrentmenuを外しちゃう。
+		$('.currentmenu').removeClass('currentmenu');
+	}
+} );
 
+/*
+//クリックイベント
+$(document).click(function(event){
+	var t = event.target;
+//リストの開け閉め 整理したい。
+		console.log();
+if($('.listopen')[0]){
+	if($(t).closest('.listopen').length){
+	//ターゲットもしくは祖先要素に.listopenがあるか。
+		console.log(t);
+	}
 
+	if($(t).parent().next('ul').hasClass('currentmenu') ){
+		$('#adminbar .currentmenu').removeClass('currentmenu');
+	}else if($(t).hasClass('listopen')){
+		$('#adminbar .currentmenu').removeClass('currentmenu');
+		$(t).parent().next('ul').addClass('currentmenu');
+	}else if($('.currentmenu')[0] && (!$.contains($('.currentmenu')[0], t))){
+		$('#adminbar .currentmenu').removeClass('currentmenu');
+	}
+}
+
+} );
+*/
 /*	
 var tabbed = false;
 $("body").keydown(function(event){

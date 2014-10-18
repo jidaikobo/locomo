@@ -84,21 +84,23 @@ foreach (glob(PKGCOREPATH."modules".DS."*") as $dirname):
 
 	//MVCディレクトリを走査
 	foreach($mvcs as $mvc):
-		if(file_exists($coremodpath."{$mvc}/{$l_module}.php")):
+		foreach(glob($coremodpath."{$mvc}".DS."*") as $each_path):
+			$classname = ucfirst(substr(basename($each_path), 0, -4));
+			$l_classname = strtolower($classname);
 			$umvc = ucfirst($mvc);
 			//まず、Kontiki_Core_Moduleの名前空間で登録しておく
 			Autoloader::add_class(
-				"Kontiki_Core_Module\\{$module}\\{$umvc}_{$module}",
-				$coremodpath."{$mvc}/{$l_module}.php"
+				"Kontiki_Core_Module\\{$module}\\{$umvc}_{$classname}",
+				$coremodpath."{$mvc}/{$l_classname}.php"
 			);
 			//コアモジュールをオーバライドするプロジェクトモジュールがなければ、Kontiki_Core_Moduleをデフォルトのモジュール名前空間と見なす
-			if( ! file_exists($projmodpath."{$mvc}/{$l_module}.php")):
+			if( ! file_exists($projmodpath."{$mvc}/{$classname}.php")):
 				Autoloader::alias_to_namespace(
-					"Kontiki_Core_Module\\{$module}\\{$umvc}_{$module}",
+					"Kontiki_Core_Module\\{$module}\\{$umvc}_{$classname}",
 					"{$module}"
 				);
 			endif;
-		endif;
+		endforeach;
 	endforeach;
 
 	//trait

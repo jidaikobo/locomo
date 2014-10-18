@@ -109,16 +109,27 @@ body.login{
 	background-color: #fff;
 	font-size: .9em;
 }
-#adminbar a{
+.adminbar-icon {
+	width: 1.75em;
+	height: 2.5em;
+	padding: 0 .125em;
+	display: inline-block;
+}
+.adminbar-icon img{
+	width: 1.75em;
+	height: 1.75em;
+	vertical-align: middle;
+}
+#adminbar a {
 	text-decoration: none;
 }
-.adminbar_logo{
+.adminbar_logo {
 	height: 100%;
 	vertical-align: top;
 	background-color: #fff;
 	padding: 0 2px;
 }
-.adminbar_main{
+.adminbar_main {
 	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #7393c6;
 	background-color: #0e3664;
@@ -133,10 +144,14 @@ body.login{
 	position: absolute;
 	top: 0;
 }
-.adminbar_main a{
+.adminbar_main a {
 	color: #fff;
 }
-.adminbar_main li a{
+.adminbar_main a:hover {
+	background-color: rgba(255,255,255,.15);
+	border-radius: 3px;
+}
+.adminbar_main li a {
 	color: #333;
 	text-shadow: none;
 }
@@ -152,31 +167,28 @@ body.login{
 	*display: inline;
 	*zoom: 1;
 }
-.adminbar_main_left div{
+.adminbar_main_left div {
 	margin-left: 10px;
 	padding-left: 5px;
 }
 .adminbar_main_right {
 	float: right;
+	padding-right: 5px;
 }
-#render_info,
-#admin_controller,
-#admin_help,
-#adminbar_user {
+
+.adminbar_main_right > * {
 	float:right;
 	line-height: 2.5em;
 	vertical-align: middle;
-	padding: 0 10px 0 0;
+	padding: 0 5px 0;
 }
 #render_info {
 	opacity: .65;
 	font-size: .9em;
 	line-height: 3em;
 }
-.adminbar_main div h2 {
-	text-decoration: none;
+.adminbar_main div > a {
 	display: block;
-	font-weight: normal;
 	line-height: 2.5em;
 	vertical-align: middle;
 }
@@ -186,17 +198,18 @@ body.login{
 	background-position: right center;
 	background-repeat: no-repeat;
 }
+.adminbar_main .listopen.icononly{
+	padding-right: 8px;
+}
+
 .adminbar_main ul {
 	display: none;
 }
-
 #adminbar_context {
 	clear: both;
 	position: relative;
 	border-bottom: 1px solid #858c91;
-	background: #eee;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#fcfcfc', endColorstr = '#ebebeb');
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr = '#fcfcfc', endColorstr = '#ebebeb')";
+	background: #fafafa;
 	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
 	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
 	background-image: -o-linear-gradient(top, #fcfcfc, #ebebeb);
@@ -209,7 +222,6 @@ body.login{
 #adminbar_context {
 	text-shadow: 1px 1px 0 #fff;
 }
-#adminbar_context h2 ,
 #adminbar_context ul {
 	display: inline;
 }
@@ -217,7 +229,7 @@ div#adminbar_context li {
 	display: inline;
 	padding-right: 20px;
 }
-#adminbar_context ul a{
+#adminbar_context ul a {
 	color: #333 !important;
 }
 .context_info {
@@ -225,7 +237,6 @@ div#adminbar_context li {
 	font-style: italic;
 }
 
-/* currentmenu */
 .adminbar_main .currentmenu {
 	position: absolute;
 	left: 0;
@@ -235,20 +246,22 @@ div#adminbar_context li {
 	white-space: nowrap;
 	padding: .25em 0;
 	border-radius: 2px ;
+	background: rgb(250, 250, 250);
 	background: rgba(250, 250, 250, .95);
 }
-.adminbar_main .currentmenu li{
+.adminbar_main .currentmenu li {
 	display: block;
 }
 .adminbar_main .currentmenu li a {
 	display: block;
 	padding: 1px 20px;
 }
-.adminbar_main_right ul{
+.adminbar_main_right ul {
 	right: 0;
 	left: auto !important;
 }
-#adminbar .show_if_focus{
+
+#adminbar .show_if_focus {
 	left:4px;
 	top: 4px;
 }
