@@ -67,4 +67,5 @@ class Model_Base extends \Orm\Model_Soft
 
 		return $options;
 	}
+
 }
