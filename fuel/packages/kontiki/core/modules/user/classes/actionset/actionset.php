@@ -9,7 +9,7 @@ class Actionset_User extends \Kontiki\Actionset
 	public static function actionItems($controller = null, $item = null)
 	{
 		$actions = parent::actionItems($controller, $item);
-		$actions->usergroups = self::usergroups($controller, $item);
+//		$actions->usergroups = self::usergroups($controller, $item);
 		return $actions;
 	}
 
@@ -17,6 +17,7 @@ class Actionset_User extends \Kontiki\Actionset
 	 * usergroups()
 	 * @return  array
 	 */
+/*
 	private static function usergroups($controller, $item)
 	{
 		$url = parent::check_auth($controller, 'usergroups') ? "{$controller}/option/usergroups" : '';
@@ -43,4 +44,5 @@ class Actionset_User extends \Kontiki\Actionset
 		);
 		return $retvals;
 	}
+*/
 }

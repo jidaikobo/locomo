@@ -15,6 +15,7 @@ class Actionset_Acl
 			'dependencies' => array(
 				'controller_index',
 				'actionset_index',
+				'actionset_owner_index',
 				'update_acl',
 				'update_owner_acl',
 			)

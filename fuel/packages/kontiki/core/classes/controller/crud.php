@@ -351,9 +351,11 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		$model = $this->model_name ;
 
 		if ($id) {
-			$obj = $model::find($id);
-			$authorized_option = $model::authorized_option();
-			$obj = $model::find($id, $authorized_option );
+			$obj = $model::find($id, $model::authorized_option());
+			if( ! $obj){
+				$page = \Request::forge('content/403')->execute();
+				return new \Response($page, 403);
+			}
 			$title = sprintf($this->titles['edit'], $this->request->module);
 		} else {
 			$obj = $model::forge();
@@ -396,13 +398,10 @@ class Controller_Crud extends \Kontiki\Controller_Base
 			//edit view or validation failed of CSRF suspected
 			else:
 				if (\Input::method() == 'POST'):
-					$form->repopulate();
 					\Session::set_flash('error', $form->error());
 				endif;
 			endif;
 		endif;
-
-
 
 		$view = \View::forge('edit');
 

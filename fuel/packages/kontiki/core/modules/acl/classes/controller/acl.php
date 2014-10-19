@@ -10,7 +10,11 @@ class Controller_Acl extends \Kontiki\Controller_Crud
 		if($current_action === null || $userinfo === null) return false;
 
 		//管理者は許可
-		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
+		if(
+			in_array(-2, $userinfo['usergroup_ids']) ||
+			in_array(-1, $userinfo['usergroup_ids'])
+		)
+		return true;
 
 		//configのalways_allowed（ACLを通らないコントローラ）を確認
 		$always_allowed = \Config::get('always_allowed');
@@ -22,17 +26,43 @@ class Controller_Acl extends \Kontiki\Controller_Crud
 
 	/**
 	 * owner_auth()
-	 * オーナ権限はコントローラ依存性が強いので、各コントローラで実装。
-	 * 原則、abstract controllerにあるが、個別の実装は、userモジュールのコントローラを参考にすること。
 	 */
-	public static function owner_auth($current_action = null, $userinfo = null)
+	public static function owner_auth($controller = null, $action = null, $obj = null, $userinfo = null)
 	{
-		//管理者は許可
-		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
+		if( ! $obj) return false;
 
-		//userinfoを確認
-		if($current_action === null || $userinfo === null) return false;
-		return in_array($current_action, @$userinfo['acls_ower']);
+		//管理者は許可
+		if(
+			in_array(-2, $userinfo['usergroup_ids']) ||
+			in_array(-1, $userinfo['usergroup_ids'])
+		)
+		return true;
+
+		//$objのcreator_idカラムを確認し、user_idと比較する。
+		$column = isset($obj::$_creator_field_name) ?
+			$obj::$_creator_field_name :
+			$obj::$_default_creator_field_name;
+
+		if(self::is_exists_owner_auth($controller, $action)):
+			return ($obj->{$column} == $userinfo['user_id']);
+		else:
+			return false;
+		endif;
+	}
+
+	/**
+	 * is_exists_owner_auth()
+	 */
+	public static function is_exists_owner_auth($controller = null, $action = null)
+	{
+		$opt = array(
+			'where' => array(
+				array('controller', $controller),
+				array('action', $action),
+				array('owner_auth', '!=', null),
+			)
+		);
+		return ! is_null(\Acl\Model_Acl::find('first', $opt));
 	}
 
 	/**

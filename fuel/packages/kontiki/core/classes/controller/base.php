@@ -71,8 +71,18 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
+		$userinfo = \User\Controller_User::$userinfo;
+
 		//ユーザ／ユーザグループ単位のACLを確認する。
-		if( ! $this->acl(\User\Controller_User::$userinfo)):
+		$is_allow = \Acl\Controller_Acl::auth($this->current_action, $userinfo);
+
+		//権限がなくても、オーナACLがある行為だったらいったん留保
+		//modelのauthorized_option()に判断をゆだねる
+		if( ! $is_allow):
+			$is_allow = \Acl\Controller_Acl::is_exists_owner_auth($this->request->module, $method);
+		endif;
+
+		if( ! $is_allow):
 			$page = \Request::forge('content/403')->execute();
 			return new \Response($page, 403);
 		endif;
@@ -81,7 +91,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$use_login_as_top = \Config::get('use_login_as_top');
 		if(
 			$use_login_as_top && //configで設定
-			\User\Controller_User::$userinfo['user_id'] == 0 && //ログイン画面はゲスト用
+			$userinfo['user_id'] == 0 && //ログイン画面はゲスト用
 			$this->request->module.DS.$method == 'content/home' //トップページを求められているとき
 		):
 			return \Response::redirect(\Uri::create('user/login'));
@@ -127,55 +137,6 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		//通常の処理に渡す
 		return parent::router($method, $params);
-	}
-
-	/**
-	* acl()
-	*/
-	public function acl($userinfo)
-	{
-		//adminたち（ユーザグループ-1や-2）は常にtrue
-		if(
-			in_array(-2, $userinfo['usergroup_ids']) ||
-			in_array(-1, $userinfo['usergroup_ids'])
-		)
-		return true;
-
-		//auth
-		return \Acl\Controller_Acl::auth($this->current_action, $userinfo);
-	}
-
-	/**
-	* owner_acl()
-	* オーバライドの例はuserモジュール参照。
-	*/
-	public function owner_acl($userinfo = null, $current_action = null, $item = null)
-	{
-		if($userinfo == null || $current_action == null || $item == null) return false;
-
-		//adminたち（ユーザグループ-1や-2）は常にtrue
-		if(in_array(-2, $userinfo['usergroup_ids']) || in_array(-1, $userinfo['usergroup_ids'])) return true;
-
-		//オーナ権限を判定するコントローラには、creator_idフィールドが必須とする（creator_idを使わないとしても）
-		$model = $this->model_name;
-		if( ! $model):
-			$current_actions = explode('/',$current_action);//アクションが三つ目の引数にくる場合もあるのでlist()不可。
-			$model = '\\'.ucfirst($current_actions[0]).'\\Model_'.ucfirst($current_actions[0]);
-		endif;
-		if( ! \DBUtil::field_exists($model::get_table_name(), array('creator_id'))) return false;
-
-		//オーナ権限なのでゲストは常にfalse
-		if( ! \User\Controller_User::$is_user_logged_in) return false;
-
-		//acls_owerがなければ、false
-		$current_action = $current_action ? $current_action : $this->request->module.'/'.$this->request->action ;
-		if( ! \Acl\Controller_Acl::owner_auth($current_action, $userinfo)) return false;
-
-		//user_idがなかったり、コンテンツのcreator_idがなければfalse
-		if( ! $userinfo['user_id'] || ! $item->creator_id) return false;
-
-		//creator_idとログイン中のuser_idを比較してreturn
-		return ($userinfo['user_id'] === $item->creator_id);
 	}
 
 	/**

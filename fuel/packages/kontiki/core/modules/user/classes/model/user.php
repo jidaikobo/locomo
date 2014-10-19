@@ -6,6 +6,8 @@ class Model_User extends \Kontiki\Model_Crud
 
 	protected static $_table_name = 'users';
 
+	public static $_creator_field_name = 'id';
+
 	protected static $_properties = array(
 		'id',
 		'user_name',
