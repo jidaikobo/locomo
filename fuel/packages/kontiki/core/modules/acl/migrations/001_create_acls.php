@@ -5,12 +5,13 @@ class Create_acls
 	public function up()
 	{
 		\DBUtil::create_table('acls', array(
+			'id'             => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'controller'   => array('constraint' => 50, 'type' => 'varchar'),
 			'action'       => array('constraint' => 50, 'type' => 'varchar'),
 			'usergroup_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'user_id'      => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'owner_auth'   => array('constraint' => 1, 'type' => 'int', 'null' => true),
-		), array());
+		), array('id'));
 	}
 
 	public function down()
