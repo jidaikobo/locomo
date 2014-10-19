@@ -103,7 +103,11 @@ class Controller_User extends \Kontiki\Controller_Crud
 		$acls = array('content/home');
 
 		$acl_tmp = \Acl\Model_Acl::find('all',
-			array('where' => array(array('user_id', '=' , self::$userinfo['user_id'])))
+			array(
+				'select' => array('controller', 'action', 'user_id', 'usergroup_id', 'owner_auth'),
+				'where' => array(
+				array('user_id', '=' , self::$userinfo['user_id'])
+			))
 		);
 
 		foreach($acl_tmp as $v):
