@@ -18,7 +18,7 @@ class Create_usergroups
 		\DBUtil::create_table('usergroups_r', array(
 			'user_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 			'group_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
-		), array('item_id','option_id'));
+		), array('user_id','group_id'));
 	}
 
 	public function down()
