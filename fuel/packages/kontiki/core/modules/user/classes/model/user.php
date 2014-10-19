@@ -245,7 +245,6 @@ class Model_User extends \Kontiki\Model_Crud
 						->where("add_at", ">=", \DB::expr("NOW() - INTERVAL " . $limit_deny_time . " MINUTE"))
 						->where("count", ">=", $limit_count)
 						->execute()->as_array();
-		//var_dump($list);exit;
 
 		return (count($list) ? false : true);
 	}

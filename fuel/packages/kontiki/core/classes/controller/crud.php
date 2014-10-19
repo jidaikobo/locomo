@@ -202,10 +202,10 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 		if (!isset($model::properties()['created_at'])) throw new HttpNotFoundException;
 
-		$conditions['where'][] = array('created_at', '>=', date('Y-m-d'));
-		$conditions['where'][] = array('expired_at', '>=', date('Y-m-d'));
+		$options['where'][] = array('created_at', '>=', date('Y-m-d'));
+		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
 
-		return static::index_core($args);
+		return static::index_core($options);
 
 	}
 
@@ -218,10 +218,10 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 		if (!isset($model::properties()['created_at'])) throw new \HttpNotFoundException;
 
-		$conditions['where'][] = array('created_at', '<=', date('Y-m-d'));
-		$conditions['where'][] = array('expired_at', '>=', date('Y-m-d'));
+		$options['where'][] = array('created_at', '<=', date('Y-m-d'));
+		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
 
-		return static::index_core($args);
+		return static::index_core($options);
 
 	}
 
@@ -236,9 +236,9 @@ class Controller_Crud extends \Kontiki\Controller_Base
 			throw new HttpNotFoundException;
 		}
 
-		$conditions['where'][] = array('status', '=', 'invisible');
+		$options['where'][] = array('status', '=', 'invisible');
 
-		return static::index_core($args);
+		return static::index_core($options);
 	}
 
 
@@ -297,7 +297,7 @@ class Controller_Crud extends \Kontiki\Controller_Base
 					/*if (strtotime($obj->expired_at) > time())*/ $status = 'yet';
 				}
 			}
-			var_dump($obj->status); die();
+			// var_dump($obj->status); die();
 		}
 
 		array(
