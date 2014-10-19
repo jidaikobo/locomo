@@ -43,12 +43,12 @@ class Model_Wftest extends \Kontiki\Model_Crud
 	);
 */
 
-/*
 	//observers
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,
 	);
+
 	protected static $_observers = array(
 		'Orm\Observer_CreatedAt' => array(
 			'events' => array('before_insert'),
@@ -63,7 +63,6 @@ class Model_Wftest extends \Kontiki\Model_Crud
 			'properties' => array('expired_at'),
 		),
 	);
-*/
 
 	/*
 	 * __construct

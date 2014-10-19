@@ -19,9 +19,9 @@
 		</div>
 				
 		<div class="form-group">
-		<?php echo $form->field('usergroups')->set_template('{label}{required}'); ?>
+		<?php echo $form->field('usergroup')->set_template('{label}{required}'); ?>
 			<div>
-				<?php echo $form->field('usergroups')->set_template('{fields} {field} {label}<br /> {fields}'); ?>
+				<?php echo $form->field('usergroup')->set_template('{fields} {field} {label}<br /> {fields}'); ?>
 			</div>
 		</div>
 	

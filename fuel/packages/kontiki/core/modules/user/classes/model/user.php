@@ -97,13 +97,17 @@ class Model_User extends \Kontiki\Model_Crud
 			->add_rule('max_length', 255);
 
 		//usergroups
-		$usergroups = \Option\Model_Option::get_options('usergroups');
+		$usergroups = \User\Model_Usergroup::find('all', array('select' => array('name')));
+		$usergroups = \Arr::assoc_to_keyval($usergroups, 'id', 'name');
+	
+		$checked = isset($obj->usergroup) ? array_keys($obj->usergroup) : array();
+
 		$form->add(
-				'usergroups',
+				'usergroup',
 				'ユーザグループ',
 				array('type' => 'checkbox', 'options' => $usergroups)
 			)
-			->set_value(@$obj->usergroup);
+			->set_value($checked);
 
 		//password
 		$form->add(
