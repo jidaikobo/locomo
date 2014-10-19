@@ -101,27 +101,32 @@ class Controller_User extends \Kontiki\Controller_Crud
 
 		//acl
 		$acls = array('content/home');
-		$q = \DB::select('controller','action');
-		$q->from('Acls');
-		$q->where('usergroup_id', 'in', self::$userinfo['usergroup_ids']);
-		$q->or_where('user_id', '=', self::$userinfo['user_id']);
 
-		foreach($q->execute()->as_array() as $v):
-			$acls[] = $v['controller'].'/'.$v['action'];
+		$acl_tmp = \Acl\Model_Acl::find('all',
+			array('where' => array(array('user_id', '=' , self::$userinfo['user_id'])))
+		);
+
+		foreach($acl_tmp as $v):
+			$acls[] = $v->controller .'/'.$v->action;
 		endforeach;
+
+
 		self::$userinfo['acls'] = array_unique($acls);
 
 		//owner acl
 		//ゲストやadminは確認する必要がない
 		self::$userinfo['acls_ower'] = array();
+		$acls_ower = array();
 		if(self::$userinfo['user_id'] >= 1):
-			$q = \DB::select('controller','action');
-			$q->from('Acls');
-			$q->where('owner_auth', 1);
-			$acls_ower = array();
-			foreach($q->execute()->as_array() as $v):
-				$acls_ower[] = $v['controller'].'/'.$v['action'];
+
+			$acl_tmp = \Acl\Model_Acl::find('all',
+				array('where' => array(array('owner_auth', '=' , true)))
+			);
+
+			foreach($acl_tmp as $v):
+				$acls_owner[] = $v->controller .'/'.$v->action;
 			endforeach;
+
 			self::$userinfo['acls_ower'] = array_unique($acls_ower);
 		endif;
 	}
@@ -160,7 +165,6 @@ class Controller_User extends \Kontiki\Controller_Crud
 			endif;
 			//flag and value
 			$user = array();
-			$is_success = false;
 
 			//rootユーザ
 			if($account == ROOT_USER_NAME && $password == ROOT_USER_PASS):
@@ -168,7 +172,6 @@ class Controller_User extends \Kontiki\Controller_Crud
 				$user['user_name']     = 'root';
 				$user['display_name']  = 'root権限管理者';
 				$user['usergroup_ids'] = array(-2);
-				$is_success = true;
 			endif;
 
 			//adminユーザ
@@ -177,31 +180,31 @@ class Controller_User extends \Kontiki\Controller_Crud
 				$user['user_name']     = 'admin';
 				$user['display_name']  = '管理者';
 				$user['usergroup_ids'] = array(-1);
-				$is_success = true;
 			endif;
 
 			//データベースで確認
-			$user_id = 0;
 			if( ! $user || ! @is_numeric($user['user_id'])):
-				$user_ids     = $user_model::get_userinfo($account, $password);
-				$user_id      = @$user_ids['id'] ;
-				$user_name    = @$user_ids['user_name'] ;
-				$display_name = @$user_ids['display_name'] ;
-			endif;
-
-			//ユーザが存在したらUsergroupを取得
-			if($user_id):
-				$usergroup_ids = $user_model::get_usergroups($user_id);
-				//DBに存在したユーザ情報
-				$user['user_id']       = $user_id;
-				$user['user_name']     = $user_name;
-				$user['display_name']  = $display_name;
-				$user['usergroup_ids'] = $usergroup_ids ? $usergroup_ids : array();
-				$is_success = true;
+				$user_obj = Model_User::find('first', array(
+					'where' => array(
+						array('password', '=', Model_User::hash($password)),
+						array('created_at', '<=', date('Y-m-d H:i:s')),
+						array('expired_at', '>=', date('Y-m-d H:i:s')),
+						array(
+							array('user_name', '=', $account),
+							'or' => array('email', '=', $account),
+						)),
+					)
+				);
+			if ($user_obj) {
+				$user['user_id']       = $user_obj->id;
+				$user['user_name']     = $user_obj->user_name;
+				$user['display_name']  = $user_obj->display_name;
+				$user['usergroup_ids'] = array_keys($user_obj->usergroup);
+			}
 			endif;
 
 			//ログイン成功
-			if($is_success):
+			if($user):
 				//session
 				$session = \Session::instance();
 				$session->set('user', $user);

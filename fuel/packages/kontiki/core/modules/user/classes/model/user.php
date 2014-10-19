@@ -194,40 +194,12 @@ class Model_User extends \Kontiki\Model_Crud
 	/**
 	 * hash()
 	 */
-	private static function hash($str)
+	public static function hash($str)
 	{
 		return md5($str);
 	}
 
-	/**
-	 * get_userinfo()
-	 */
-	public static function get_userinfo($account = null, $password = null)
-	{
-		if($account == null || $password == null) return false;
 
-		//query
-		$q = \DB::select('id','user_name','display_name');
-		$q->from('users');
-		$q->where('password', self::hash($password));
-		$q->where('deleted_at', '=', null);
-		$q->where('created_at', '<=', date('Y-m-d H:i:s'));
-		$q->where('expired_at', '>=', date('Y-m-d H:i:s'));
-		$q->and_where_open();
-			$q->where('user_name', '=', $account);
-			$q->or_where('email', '=', $account);
-		$q->and_where_close();
-		return $q->execute()->current();
-	}
-
-	/**
-	 * get_usergroups()
-	 */
-	public static function get_usergroups($user_id = null)
-	{
-		if($user_id == null) return false;
-		return array_keys(self::find($user_id)->usergroup) ;
-	}
 
 	/**
 	 * check_deny()

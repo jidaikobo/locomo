@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki_Core_Module\Acl;
-class Model_Acl extends \Kontiki\Model_Crud
+class Model_Acl extends \Orm\Model
 {
 	protected static $_table_name = 'acls';
 
