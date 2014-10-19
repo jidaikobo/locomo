@@ -212,28 +212,32 @@ class Model_Base extends \Orm\Model_Soft
 			// many_many
 			// また、cascade_save は予期せぬ動作をする事から対応していない為 false のみに対応している true の際は別で設定する
 			// 関係テーブルはcascadeに関係なく依存する
-			} elseif (!static::relations()[$k]->cascade_save and
-				static::relations()[$k] instanceof \Orm\ManyMany and
-				isset($input_post[$k])
-			) {
-				$mm_model = static::relations()[$k]->model_to;
+			} elseif (!static::relations()[$k]->cascade_save and static::relations()[$k] instanceof \Orm\ManyMany) {
 
-				// セットされているフィールドで来ていないもの
-				$setted_unset_objs = \Arr::filter_keys($this[$k], $input_post[$k], true);
-				foreach ($setted_unset_objs as $unset_key => $vv) {
-					unset($this->{$k}[$unset_key]);
-				}
+				if (isset($input_post[$k])) {
+					$mm_model = static::relations()[$k]->model_to;
 
-				// セットされているもので来ているもの
-				$unseted_ids = array_flip(\Arr::filter_keys(array_flip($input_post[$k]), array_keys($this[$k]), true));
-				if (!empty($unseted_ids)) {
-					foreach ($unseted_ids as $unseted_id) {
-						$this->{$k}[$unseted_id] = $mm_model::find($unseted_id);
+					// セットされているフィールドで来ていないもの
+					$setted_unset_objs = \Arr::filter_keys($this[$k], $input_post[$k], true);
+					foreach ($setted_unset_objs as $unset_key => $vv) {
+						unset($this->{$k}[$unset_key]);
 					}
-				}
 
-				// Fieldset_Field なので populate じゃなく set_value
-				$repopulate and $form->field($k)->set_value(array_keys($this[$k]));
+					// セットされているもので来ているもの
+					$unseted_ids = array_flip(\Arr::filter_keys(array_flip($input_post[$k]), array_keys($this[$k]), true));
+					if (!empty($unseted_ids)) {
+						foreach ($unseted_ids as $unseted_id) {
+							$this->{$k}[$unseted_id] = $mm_model::find($unseted_id);
+						}
+					}
+
+					// Fieldset_Field なので populate じゃなく set_value
+					$repopulate and $form->field($k)->set_value(array_keys($this[$k]));
+
+				// 何も飛んでこなかったとき、form に存在していれば 全て unset する
+				} else {
+					if ($form->field($k) instanceof \Fieldset_Field) unset($this->{$k});
+				}
 			}
 		}
 
