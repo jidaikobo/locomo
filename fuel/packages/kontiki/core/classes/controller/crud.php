@@ -366,25 +366,26 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		 * save
 		 */
 		if (\Input::post()) :
-			if ($form->validation()->run() && \Security::check_token()):
-
-				$obj->set(\Input::post());
-
+			if (
+				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
+				 \Security::check_token()
+			):
+/*
 				//pre_save_hook
 				$obj = $this->pre_save_hook($obj, 'edit');
-
+*/
 				//save
 				if ($obj->save()):
-
+/*
 				//post_save_hook
 				$obj = $this->post_save_hook($obj, 'edit');
-
+*/
 				//message
 				\Session::set_flash(
 					'success',
-					sprintf($this->messages['edit_success'], self::$nicename, $id)
+					sprintf($this->messages['edit_success'], self::$nicename, $obj->id)
 				);
-				\Response::redirect($redirect);
+				\Response::redirect(\Uri::create($this->request->module.'/edit/'.$obj->id));
 			else:
 				\Session::set_flash(
 					'error',
