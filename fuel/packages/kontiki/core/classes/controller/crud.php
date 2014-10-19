@@ -170,9 +170,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		$view->set_global('title', sprintf($this->titles[$action], self::$nicename));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-
-
-
 	}
 
 	/**
@@ -312,9 +309,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		);
 	}
 
-
-
-
 	/**
 	 * action_view()
 	 */
@@ -344,8 +338,13 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
+
 	public function action_create() {
 		return $this->action_edit(null);
+	}
+
+	public function modify_cascaded($object = null) {
+		$object;
 	}
 
 	public function action_edit($id = null) {
@@ -366,37 +365,39 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		/*
 		 * save
 		 */
-		if ($form->validation()->run() && \Security::check_token()):
+		if (\Input::post()) :
+			if ($form->validation()->run() && \Security::check_token()):
 
-			$obj->set(\Input::post());
+				$obj->set(\Input::post());
 
-			//pre_save_hook
-			$obj = $this->pre_save_hook($obj, 'edit');
+				//pre_save_hook
+				$obj = $this->pre_save_hook($obj, 'edit');
 
-			//save
-			if ($obj->save()):
+				//save
+				if ($obj->save()):
 
-			//post_save_hook
-			$obj = $this->post_save_hook($obj, 'edit');
+				//post_save_hook
+				$obj = $this->post_save_hook($obj, 'edit');
 
-			//message
-			\Session::set_flash(
-				'success',
-				sprintf($this->messages['edit_success'], self::$nicename, $id)
-			);
-			\Response::redirect($redirect);
-		else:
-			\Session::set_flash(
-				'error',
-				sprintf($this->messages['edit_error'], self::$nicename, $id)
-			);
-		endif;
+				//message
+				\Session::set_flash(
+					'success',
+					sprintf($this->messages['edit_success'], self::$nicename, $id)
+				);
+				\Response::redirect($redirect);
+			else:
+				\Session::set_flash(
+					'error',
+					sprintf($this->messages['edit_error'], self::$nicename, $id)
+				);
+			endif;
 
-		//edit view or validation failed of CSRF suspected
-		else:
-			if (\Input::method() == 'POST'):
-				$form->repopulate();
-				\Session::set_flash('error', $form->error());
+			//edit view or validation failed of CSRF suspected
+			else:
+				if (\Input::method() == 'POST'):
+					$form->repopulate();
+					\Session::set_flash('error', $form->error());
+				endif;
 			endif;
 		endif;
 
