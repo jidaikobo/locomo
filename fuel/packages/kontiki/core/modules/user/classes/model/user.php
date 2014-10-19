@@ -226,7 +226,11 @@ class Model_User extends \Kontiki\Model_Crud
 	public static function get_usergroups($user_id = null)
 	{
 		if($user_id == null) return false;
-		return \User\Model_User::get_selected_options('usergroups', $user_id);
+
+		$usergroups = \User\Model_Usergroup::find('all', array('select' => array('name')));
+		$usergroups = \Arr::assoc_to_keyval($usergroups, 'id', 'name');
+
+		return $usergroups;
 	}
 
 	/**
