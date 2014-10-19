@@ -100,20 +100,17 @@ class Controller_User extends \Kontiki\Controller_Crud
 		self::$userinfo['usergroup_ids'][] = 0;
 
 		//acl
-		$acls = array('content/home');
+		$acls = array(\Config::get('home_url'));
 
 		$acl_tmp = \Acl\Model_Acl::find('all',
 			array(
-				'select' => array('controller', 'action', 'user_id', 'usergroup_id', 'owner_auth'),
-				'where' => array(
-				array('user_id', '=' , self::$userinfo['user_id'])
-			))
+				'where' => array(array('usergroup_id', 'IN' , self::$userinfo['usergroup_ids']))
+			)
 		);
 
 		foreach($acl_tmp as $v):
 			$acls[] = $v->controller .'/'.$v->action;
 		endforeach;
-
 
 		self::$userinfo['acls'] = array_unique($acls);
 
