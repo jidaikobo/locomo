@@ -90,7 +90,9 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//アクションセットで定義されていないアクションへのアクセスの拒否
 		//$this->current_actionにはいくつかの可能性があるので検査用に配列を準備
 		$current_actions = array();
-		foreach(\Uri::segments() as $param):
+		$uri_segments = \Uri::segments();
+		if(count($uri_segments) == 1) $uri_segments[] = 'index';
+		foreach($uri_segments as $param):
 			$uris[] = $param;
 			$current_actions[] = join('/',$uris);
 		endforeach;
