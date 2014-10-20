@@ -108,6 +108,7 @@ body.login{
 	padding: 2.5em 0 0;
 	background-color: #fff;
 	font-size: .9em;
+	-webkit-font-smoothing: subpixel-antialiased;
 }
 .adminbar-icon {
 	width: 1.75em;
