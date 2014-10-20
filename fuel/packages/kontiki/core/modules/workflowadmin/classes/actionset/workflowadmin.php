@@ -1,5 +1,5 @@
 <?php
-namespace Workflowadmin;
+namespace Kontiki_Core_Module\Workflowadmin;
 class Actionset_Workflowadmin
 {
 	/**

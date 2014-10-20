@@ -6,38 +6,39 @@ class Actionset
 	 * actionItems()
 	 * @return  obj
 	 */
-	public static function actionItems($controller = null, $item = null)
+	public static function actionItems($obj = null)
 	{
+		$module = \Util::get_module_name_from_class(get_called_class());
+
 		$actions = (object) array();
-		$actions->index            = self::index($controller, $item);
-		$actions->view             = self::view($controller, $item);
+		$actions->index            = self::index($module, $obj);
+		$actions->view             = self::view($module, $obj);
 
-		$actions->index_admin      = self::index_admin($controller, $item);
-		$actions->index_all        = self::index_all($controller, $item);
+		$actions->index_admin      = self::index_admin($module, $obj);
+		$actions->index_all        = self::index_all($module, $obj);
 
-		$actions->create           = self::create($controller, $item);
-		$actions->edit             = self::edit($controller, $item);
-		$actions->edit_anyway      = self::edit_anyway($controller, $item);
-		$actions->delete           = self::delete($controller, $item);
-		$actions->undelete         = self::undelete($controller, $item);
-		$actions->delete_deleted   = self::delete_deleted($controller, $item);
+		$actions->create           = self::create($module, $obj);
+		$actions->edit             = self::edit($module, $obj);
+		$actions->edit_anyway      = self::edit_anyway($module, $obj);
+		$actions->delete           = self::delete($module, $obj);
+		$actions->undelete         = self::undelete($module, $obj);
+		$actions->delete_deleted   = self::delete_deleted($module, $obj);
 
-		$actions->index_expired    = self::index_expired($controller, $item);
-		$actions->view_expired     = self::view_expired($controller, $item);
+		$actions->index_expired    = self::index_expired($module, $obj);
+		$actions->view_expired     = self::view_expired($module, $obj);
 
-		$actions->index_invisible  = self::index_invisible($controller, $item);
-		$actions->view_invisible   = self::view_invisible($controller, $item);
+		$actions->index_invisible  = self::index_invisible($module, $obj);
+		$actions->view_invisible   = self::view_invisible($module, $obj);
 
-		$actions->index_yet        = self::index_yet($controller, $item);
-		$actions->view_yet         = self::view_yet($controller, $item);
+		$actions->index_yet        = self::index_yet($module, $obj);
+		$actions->view_yet         = self::view_yet($module, $obj);
 
-		$actions->index_deleted    = self::index_deleted($controller, $item);
-		$actions->view_deleted     = self::view_deleted($controller, $item);
+		$actions->index_deleted    = self::index_deleted($module, $obj);
+		$actions->view_deleted     = self::view_deleted($module, $obj);
 
-		$actions->index_revision   = self::index_revision($controller, $item);
-		$actions->revision_list    = self::revision_list($controller, $item);
+		$actions->index_revision   = self::index_revision($module, $obj);
 
-		$actions->add_testdata     = self::add_testdata($controller, $item);
+		$actions->add_testdata     = self::add_testdata($module, $obj);
 		return $actions;
 	}
 
@@ -45,18 +46,18 @@ class Actionset
 	 * check_auth()
 	 * @return  bool
 	 */
-	public static function check_auth($controller, $action)
+	public static function check_auth($module, $action)
 	{
-		return \Acl\Controller_Acl::auth($controller.'/'.$action, \User\Controller_User::$userinfo);
+		return \Acl\Controller_Acl::auth($module.'/'.$action, \User\Controller_User::$userinfo);
 	}
 
 	/**
 	 * check_owner_auth()
 	 * @return  bool
 	 */
-	public static function check_owner_auth($controller, $action, $obj)
+	public static function check_owner_auth($module, $action, $obj)
 	{
-		return \Acl\Controller_Acl::owner_auth($controller, $action, $obj, \User\Controller_User::$userinfo) ;
+		return \Acl\Controller_Acl::owner_auth($module, $action, $obj, \User\Controller_User::$userinfo) ;
 	}
 
 	/*
@@ -74,10 +75,10 @@ class Actionset
 	 * index()
 	 * @return  array
 	 */
-	private static function index($controller, $item)
+	private static function index($module, $obj)
 	{
-		$url_str = "$controller/index" ;
-		$url = self::check_auth($controller, 'index') ? $url_str : '' ;
+		$url_str = "$module/index" ;
+		$url = self::check_auth($module, 'index') ? $url_str : '' ;
 
 		$retvals = array(
 			'is_index'     => true,
@@ -97,10 +98,10 @@ class Actionset
 	 * index_admin()
 	 * @return  array
 	 */
-	private static function index_admin($controller, $item)
+	private static function index_admin($module, $obj)
 	{
-		$url_str = "$controller/index_admin" ;
-		$url = self::check_auth($controller, 'index_admin') ? $url_str : '' ;
+		$url_str = "$module/index_admin" ;
+		$url = self::check_auth($module, 'index_admin') ? $url_str : '' ;
 
 		$retvals = array(
 			'is_index'     => true,
@@ -120,11 +121,11 @@ class Actionset
 	 * view()
 	 * @return  array
 	 */
-	private static function view($controller, $item)
+	private static function view($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth($controller, 'view') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'view', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/view/$obj->id" : null ;
+		$url = self::check_auth($module, 'view') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'view', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -143,10 +144,10 @@ class Actionset
 	 * create()
 	 * @return  array
 	 */
-	private static function create($controller, $item)
+	private static function create($module, $obj)
 	{
-		$url_str = "$controller/create" ;
-		$url = self::check_auth($controller, 'create') ? $url_str : '' ;
+		$url_str = "$module/create" ;
+		$url = self::check_auth($module, 'create') ? $url_str : '' ;
 
 		//edit画面では出さない
 //		$url = (strpos( \Uri::string(), 'edit' ) !== false) ? '' : $url;
@@ -171,11 +172,11 @@ class Actionset
 	 * edit()
 	 * @return  array
 	 */
-	private static function edit($controller, $item)
+	private static function edit($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/edit/$item->id" : null ;
-		$url = self::check_auth($controller, 'edit') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'edit', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/edit/$obj->id" : null ;
+		$url = self::check_auth($module, 'edit') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'edit', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -195,11 +196,11 @@ class Actionset
 	 * edit_anyway()
 	 * @return  array
 	 */
-	private static function edit_anyway($controller, $item)
+	private static function edit_anyway($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/edit/$item->id" : null ;
-		$url = self::check_auth($controller, 'edit_anyway') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'edit_anyway', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/edit/$obj->id" : null ;
+		$url = self::check_auth($module, 'edit_anyway') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'edit_anyway', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -221,11 +222,11 @@ class Actionset
 	 * edit_deleted()
 	 * @return  array
 	 */
-	private static function edit_deleted($controller, $item)
+	private static function edit_deleted($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/edit/$item->id" : null ;
-		$url = self::check_auth($controller, 'edit_deleted') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'edit_deleted', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/edit/$obj->id" : null ;
+		$url = self::check_auth($module, 'edit_deleted') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'edit_deleted', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -246,15 +247,15 @@ class Actionset
 	 * delete()
 	 * @return  array
 	 */
-	private static function delete($controller, $item)
+	private static function delete($module, $obj)
 	{
 		//url
 		$url_str = null ;
-		if(isset($item->deleted_at) && $item->deleted_at == null):
-			$url_str = isset($item->id) ? "$controller/delete/$item->id" : null ;
+		if(isset($obj->deleted_at) && $obj->deleted_at == null):
+			$url_str = isset($obj->id) ? "$module/delete/$obj->id" : null ;
 		endif;
-		$url = self::check_auth($controller, 'delete', $item) ? $url_str :'';
-		$url = self::check_owner_auth($controller, 'delete', $item) ? $url_str : '' ;
+		$url = self::check_auth($module, 'delete', $obj) ? $url_str :'';
+		$url = self::check_owner_auth($module, 'delete', $obj) ? $url_str : '' ;
 
 		//retval
 		$retvals = array(
@@ -279,14 +280,14 @@ class Actionset
 	 * undelete()
 	 * @return  array
 	 */
-	private static function undelete($controller, $item)
+	private static function undelete($module, $obj)
 	{
 		$url_str = null ;
-		if(isset($item->deleted_at) && $item->deleted_at):
-			$url_str = isset($item->id) ? "$controller/undelete/$item->id" : null ;
+		if(isset($obj->deleted_at) && $obj->deleted_at):
+			$url_str = isset($obj->id) ? "$module/undelete/$obj->id" : null ;
 		endif;
-		$url = self::check_auth($controller, 'undelete') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'undelete', $item) ? $url_str : '' ;
+		$url = self::check_auth($module, 'undelete') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'undelete', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -310,14 +311,14 @@ class Actionset
 	 * delete_deleted()
 	 * @return  array
 	 */
-	private static function delete_deleted($controller, $item)
+	private static function delete_deleted($module, $obj)
 	{
 		$url_str = null ;
-		if(isset($item->deleted_at) && $item->deleted_at):
-			$url_str = isset($item->id) ? "$controller/delete_deleted/$item->id" : null ;
+		if(isset($obj->deleted_at) && $obj->deleted_at):
+			$url_str = isset($obj->id) ? "$module/delete_deleted/$obj->id" : null ;
 		endif;
-		$url = self::check_auth($controller, 'delete_deleted') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'delete_deleted', $item) ? $url_str : '' ;
+		$url = self::check_auth($module, 'delete_deleted') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'delete_deleted', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -340,10 +341,10 @@ class Actionset
 	 * index_deleted()
 	 * @return  array
 	 */
-	private static function index_deleted($controller, $item)
+	private static function index_deleted($module, $obj)
 	{
-		$url_str = "$controller/index_deleted" ;
-		$url = self::check_auth($controller, 'index_deleted') ? $url_str : '' ;
+		$url_str = "$module/index_deleted" ;
+		$url = self::check_auth($module, 'index_deleted') ? $url_str : '' ;
 
 		$retvals = array(
 			'is_index'     => true,
@@ -363,11 +364,11 @@ class Actionset
 	 * view_deleted()
 	 * @return  array
 	 */
-	private static function view_deleted($controller, $item)
+	private static function view_deleted($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth($controller, 'view_deleted') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'view_deleted', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/view/$obj->id" : null ;
+		$url = self::check_auth($module, 'view_deleted') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'view_deleted', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -386,10 +387,10 @@ class Actionset
 	 * index_expired()
 	 * @return  array
 	 */
-	private static function index_expired($controller, $item)
+	private static function index_expired($module, $obj)
 	{
-		$url_str = "$controller/index_expired" ;
-		$url = self::check_auth($controller, 'index_expired') ? $url_str : '' ;
+		$url_str = "$module/index_expired" ;
+		$url = self::check_auth($module, 'index_expired') ? $url_str : '' ;
 
 		$retvals = array(
 			'is_index'     => true,
@@ -409,11 +410,11 @@ class Actionset
 	 * view_expired()
 	 * @return  array
 	 */
-	private static function view_expired($controller, $item)
+	private static function view_expired($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth($controller, 'view_expired') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'view_expired', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/view/$obj->id" : null ;
+		$url = self::check_auth($module, 'view_expired') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'view_expired', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -432,10 +433,10 @@ class Actionset
 	 * index_yet()
 	 * @return  array
 	 */
-	private static function index_yet($controller, $item)
+	private static function index_yet($module, $obj)
 	{
-		$url = "$controller/index_yet" ;
-		$url = self::check_auth($controller, 'index_yet') ? $url : '' ;
+		$url = "$module/index_yet" ;
+		$url = self::check_auth($module, 'index_yet') ? $url : '' ;
 
 		$retvals = array(
 			'is_index'     => true,
@@ -455,11 +456,11 @@ class Actionset
 	 * view_yet()
 	 * @return  array
 	 */
-	private static function view_yet($controller, $item)
+	private static function view_yet($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth($controller, 'view_yet') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'view_yet', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/view/$obj->id" : null ;
+		$url = self::check_auth($module, 'view_yet') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'view_yet', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -479,10 +480,10 @@ class Actionset
 	 * index_invisible()
 	 * @return  array
 	 */
-	private static function index_invisible($controller, $item)
+	private static function index_invisible($module, $obj)
 	{
-		$url = "$controller/index_invisible" ;
-		$url = self::check_auth($controller, 'index_invisible', $item) ? $url: '';
+		$url = "$module/index_invisible" ;
+		$url = self::check_auth($module, 'index_invisible', $obj) ? $url: '';
 
 		$retvals = array(
 			'is_index'     => true,
@@ -502,11 +503,11 @@ class Actionset
 	 * view_invisible()
 	 * @return  array
 	 */
-	private static function view_invisible($controller, $item)
+	private static function view_invisible($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/view/$item->id" : null ;
-		$url = self::check_auth($controller, 'view_invisible') ? $url_str : '' ;
-		$url = self::check_owner_auth($controller, 'view_invisible', $item) ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/view/$obj->id" : null ;
+		$url = self::check_auth($module, 'view_invisible') ? $url_str : '' ;
+		$url = self::check_owner_auth($module, 'view_invisible', $obj) ? $url_str : '' ;
 
 		$retvals = array(
 			'url'          => $url,
@@ -526,14 +527,14 @@ class Actionset
 	 * add_testdata()
 	 * @return  array
 	 */
-	private static function add_testdata($controller, $item)
+	private static function add_testdata($module, $obj)
 	{
 		$url = '';
 		$usergroup_ids = \User\Controller_User::$userinfo['usergroup_ids'];
 
 		//ルート管理者のみ
 		if(in_array(-2, $usergroup_ids)):
-			$url = "$controller/add_testdata";
+			$url = "$module/add_testdata";
 		endif;
 
 		//インデクスでしか表示しない
@@ -554,10 +555,10 @@ class Actionset
 		return $retvals;
 	}
 
-	private static function index_all($controller, $item)
+	private static function index_all($module, $obj)
 	{
-		$url_str = isset($item->id) ? "$controller/index_all" : null ;
-		$url = self::check_auth($controller, 'index_all') ? $url_str : '' ;
+		$url_str = isset($obj->id) ? "$module/index_all" : null ;
+		$url = self::check_auth($module, 'index_all') ? $url_str : '' ;
 
 		$retvals = array(
 			'is_index'     => true,
@@ -573,11 +574,11 @@ class Actionset
 		return $retvals;
 	}
 
-	private static function index_revision($controller, $item)
+	private static function index_revision($module, $obj)
 	{
 		$url = 'oya/index_revision';
 		/*
-		$url_rev = $url ? "{$controller}/options_revisions/postcategories" : '';
+		$url_rev = $url ? "{$module}/options_revisions/postcategories" : '';
 		$urls = array(
 			array('カテゴリ設定', $url),
 			array('カテゴリ設定履歴', $url_rev),
@@ -593,33 +594,6 @@ class Actionset
 			'explanation'  => 'リビジョン項目一覧の権限です。',
 			'dependencies' => array(
 				'index_yet',
-			)
-		);
-		return $retvals;
-	}
-
-	private static function revision_list($controller, $item)
-	{
-		$url = 'oya/revision_list';
-		/*
-		$url_rev = $url ? "{$controller}/options_revisions/postcategories" : '';
-		$urls = array(
-			array('カテゴリ設定', $url),
-			array('カテゴリ設定履歴', $url_rev),
-		);
-		 */
-		$retvals = array(
-			'url'          => $url,
-			'id_segment'   => 3,
-			'action_name'  => '記事ごとのリビジョン一覧',
-			'menu_str'     => '記事ごとのリビジョン一覧',
-			'explanation'  => '記事ごとのリビジョン一覧を閲覧する権限',
-			'dependencies' => array(
-				'index',
-				'view',
-				'view_deleted',
-				'index_deleted',
-				'undelete',
 			)
 		);
 		return $retvals;

@@ -10,9 +10,9 @@ class Controller_Wftest extends \Kontiki\Controller_Crud
 	/**
 	 * set_actionset()
 	 */
-	public function set_actionset($controller = null, $id = null)
+	public static function set_actionset($obj = null)
 	{
-		parent::set_actionset($controller, $id);
+		parent::set_actionset($obj);
 	}
 
 	/**

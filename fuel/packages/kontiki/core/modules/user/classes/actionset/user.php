@@ -1,5 +1,5 @@
 <?php
-namespace User;
+namespace Kontiki_Core_Module\User;
 class Actionset_User extends \Kontiki\Actionset
 {
 	/**

@@ -1,5 +1,5 @@
 <?php
-namespace Acl;
+namespace Kontiki_Core_Module\Acl;
 class Actionset_Acl
 {
 	public static function actionItems()

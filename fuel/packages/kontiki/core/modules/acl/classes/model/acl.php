@@ -127,6 +127,13 @@ class Model_Acl extends \Orm\Model
 		if( ! class_exists($class)) return false;
 
 		//アクションセットの取得
+/*
+$controller_obj = \Kontiki\Util::get_valid_controller_name($controller);
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
+var_dump( $controller ) ;
+var_dump( $controller_obj::$actionset ) ;
+echo '</textarea>' ;
+*/
 		$request = \Request::forge();
 		$controller_obj = new $class($request);
 		$controller_obj->set_actionset($controller);

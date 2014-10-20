@@ -1,6 +1,6 @@
 <?php
-namespace Content;
-class Actionset_Owner_Content
+namespace Kontiki_Core_Module\Workflow;
+class Actionset_Workflow_Owner
 {
 	/**
 	 * actionItems()

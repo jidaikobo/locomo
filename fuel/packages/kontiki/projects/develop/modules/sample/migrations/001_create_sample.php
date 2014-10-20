@@ -92,9 +92,7 @@ class Create_sample
 		\DBUtil::create_table('samples_manymany', array(
 			'sample_id' => array('constraint' => 11, 'type' => 'int'),
 			'manymany_id' => array('constraint' => 11, 'type' => 'int'),
-
 		));
-
 
 	}
 

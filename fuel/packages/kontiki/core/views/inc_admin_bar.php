@@ -2,8 +2,7 @@
 //$is_user_logged_in
 if($is_user_logged_in):
 	//item
-	$item = isset($item) ? $item : array();
-	$item = isset($items) ? $items : $item;
+	$item = isset($item) ? $item : null;
 	
 	$html = '';
 	$html.= '<div id="adminbar">';
@@ -68,7 +67,9 @@ if($is_user_logged_in):
 	$html.= '<div id="adminbar_user">';
 	$html.= '<a href="javascript:void(0);" class="listopen modal" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています"><span class="adminbar-icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user.png\" alt=\"\"></span>".\User\Controller_User::$userinfo["display_name"].'</a>';
 	$html.= '<ul class="boxshadow">';
-	$html.= '<li><a href="">ユーザ設定</a></li>';
+	if( ! $is_admin):
+		$html.= "<li><a href=\"{$home_uri}user/view/{$userinfo["user_id"]}\">ユーザ情報</a></li>";
+	endif;
 	$html.= "<li><a href=\"{$home_uri}user/logout\">ログアウト</a></li>";
 	$html.= '</ul>';
 	$html.= '</div>';

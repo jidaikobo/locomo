@@ -74,7 +74,7 @@ endforeach;
 
 //Autoloader - base modules
 $module_names = array();
-$mvcs = array('controller','model','view',);
+$mvcs = array('controller','model','view','actionset',);
 foreach (glob(PKGCOREPATH."modules".DS."*") as $dirname):
 	//module names and pathes
 	$module = ucfirst(basename($dirname));

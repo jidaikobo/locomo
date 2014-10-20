@@ -61,9 +61,6 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//nicename 人間向けのモジュール名
 		$controllers_from_config = \Config::load($controller);
 		self::$nicename = $controllers_from_config['nicename'];
-
-		//アクションセットのセット
-		$this->set_actionset($this->request->module);
 	}
 
 	/**
@@ -97,44 +94,6 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 			return \Response::redirect(\Uri::create('user/login'));
 		endif;
 
-		//アクションセットで定義されていないアクションへのアクセスの拒否
-		//$this->current_actionにはいくつかの可能性があるので検査用に配列を準備
-		$current_actions = array();
-		$uri_segments = \Uri::segments();
-		if(count($uri_segments) == 1) $uri_segments[] = 'index';
-		foreach($uri_segments as $param):
-			$uris[] = $param;
-			$current_actions[] = join('/',$uris);
-		endforeach;
-
-		//current_actionsが存在しないときにはhome_urlを判定対象とする
-		$current_actions = $current_actions ? $current_actions : array(\Config::get('home_url')) ;
-
-		//コントローラに存在するアクションセットを確認
-		//アクションセットの配列から「モジュール名/アクション」の文字列を取得
-		//それにalways_allowedを足す
-		$actionsets = array();
-		$func = function($v) { return $this->request->module.'/'.$v; };
-		foreach(self::$actionset as $actionset):
-			$temp = array_map($func, $actionset['dependencies']);
-			$actionsets = array_merge($actionsets, $temp);
-		endforeach;
-		$actionsets = array_merge($actionsets, \Config::get('always_allowed'));
-
-		//アクションセットを走査し、存在しないアクションセットへのアクセスはbanする
-		$is_allow = false;
-		foreach($current_actions as $each_current_action):
-			if(in_array($each_current_action, $actionsets) ):
-				$is_allow = true;
-				break;
-			endif;
-		endforeach;
-		//なければ404
-		if( ! $is_allow ){
-			$page = \Request::forge('content/404')->execute();
-			return new \Response($page, 404);
-		}
-
 		//通常の処理に渡す
 		return parent::router($method, $params);
 	}
@@ -142,27 +101,30 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	/**
 	 * set_actionset()
 	 */
-	public function set_actionset($controller = null, $id = null)
+	public static function set_actionset($obj = null)
 	{
-		is_null($controller) and die('set_actionset() needs controller');
-
-		//アクションセット用のファイルを取得
-		$default_path  = PKGCOREPATH."modules/{$controller}/classes/actionset/actionset.php";
-		$override_path = PKGPROJPATH ."modules/{$controller}/classes/actionset/actionset.php";
-
-		if(file_exists($override_path)):
-			require_once($override_path);
-			require_once(PKGPROJPATH."modules/{$controller}/classes/actionset/actionset_owner.php");
-		else:
-			require_once($default_path);
-			require_once(PKGCOREPATH."modules/{$controller}/classes/actionset/actionset_owner.php");
-		endif;
+		$controller = \Request::main()->module;
 
 		//アクションセットの設定
-		$actionset_class = \Kontiki\Util::get_valid_actionset_name($controller);
-		$actionset_owner_class = \Kontiki\Util::get_valid_actionset_name($controller, $is_owner = true);
-		self::$actionset = $actionset_class::actionItems($controller, $id);
-		self::$actionset_owner = $actionset_owner_class::actionItems($controller, $id);
+		$actionset = \Util::get_valid_actionset_name($controller);
+		$actionset_owner = \Util::get_valid_actionset_name($controller, $is_owner = true);
+
+		if(class_exists($actionset))
+			self::$actionset = $actionset::actionItems($obj);
+
+		if(class_exists($actionset_owner))
+			self::$actionset_owner = $actionset_owner::actionItems($obj);
+	}
+
+	/**
+	 * get_actionset()
+	 * メニュー生成のため、viewmodelから呼ばれます
+	 */
+	public static function get_actionset($obj = null)
+	{
+		if(static::$actionset) return static::$actionset;
+		static::set_actionset($obj);
+		return static::$actionset;
 	}
 
 	/**

@@ -40,7 +40,7 @@ return $retvals[PROJECTDIR];
 
 //oil
 
-oilコマンドで基礎モジュールのmigrationを実行してください。
+oilコマンドで基礎モジュールのmigrationを実行してください（ACLからrefineしてください）。
 
 php oil refine migrate:up --modules=acl
 php oil refine migrate:up --modules=user

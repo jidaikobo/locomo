@@ -1,6 +1,6 @@
 <?php
-namespace Scaffold;
-class Actionset_Owner_Scaffold
+namespace Kontiki_Core_Module\Content;
+class Actionset_Content_Owner
 {
 	/**
 	 * actionItems()

@@ -1,6 +1,6 @@
 <?php
-namespace Option;
-class Actionset_Owner_Option
+namespace Kontiki_Core_Module\Scaffold;
+class Actionset_Scaffold_Owner
 {
 	/**
 	 * actionItems()

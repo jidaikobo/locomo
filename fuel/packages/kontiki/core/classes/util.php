@@ -28,7 +28,7 @@ class Util
 		is_null($controller) and \Response::redirect(\Uri::base());
 		$controller_ucfirst = ucfirst($controller);
 		if($is_ownerset):
-			return "\\$controller_ucfirst\Actionset_Owner_".$controller_ucfirst;
+			return "\\$controller_ucfirst\Actionset_".$controller_ucfirst.'_Owner';
 		else:
 			return "\\$controller_ucfirst\Actionset_".$controller_ucfirst;
 		endif;
@@ -54,4 +54,18 @@ class Util
 		return "\\$controller_ucfirst\Model_".$controller_ucfirst;
 	}
 
+	/**
+	 * get_module_name_from_class()
+	 */
+	public static function get_module_name_from_class($class = null)
+	{
+		is_null($class) and \Response::redirect(\Uri::base());
+		$class = strtolower($class);
+		$strs = explode('\\', $class);
+		if(count($strs) > 2){
+			return $strs[1];
+		}else{
+			return $strs[0];
+		}
+	}
 }

@@ -171,7 +171,7 @@ class View_Base extends \ViewModel
 			$retvals            = array();
 			$retvals['index']   = array();
 			$retvals['control'] = array();
-			foreach($controller_obj::$actionset as $v):
+			foreach($controller_obj::get_actionset($item) as $v):
 				if( ! @$v['url']) continue;
 
 				$key = (@$v['is_index']) ? 'index' : 'control';
