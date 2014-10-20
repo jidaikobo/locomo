@@ -51,7 +51,7 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	protected $pagination_config = array(
 		'uri_segment' => 3,
 		'num_links' => 5,
-		'per_page' => 50,
+		'per_page' => 20,
 		'template' => array(
 			'wrapper_start' => '<div class="pagination">',
 			'wrapper_end' => '</div>',
@@ -112,17 +112,13 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 		$view = \View::forge($this->template);
 
-		$pagination_config = $this->pagination_config;
-		$conditions['limit'] = \Input::get('limit') ?: $pagination_config['per_page'];
-		$conditions['offset'] = \Input::get('offset') ?: \Pagination::get('offset');
-		$pagination_config = $this->pagination_config;
 		if (\Input::get()) {
 			if (\Input::get('orders')) {
 				$orders = array();
 				foreach (\Input::get('orders') as $k => $v) {
 					$orders[$k] = $v;
 				}
-				$conditions['order_by'] = array($orders);
+				$conditions['order_by'] = $orders;
 			}
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {
@@ -142,9 +138,14 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		$view->set('hit', $count);
 
 		// pagination
+		$pagination_config = $this->pagination_config;
+
+
 		$pagination_config['total_items'] = $count;
 		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), \Input::get());
 		\Pagination::set_config($pagination_config);
+		$conditions['offset'] = \Input::get('offset') ?: \Pagination::get('offset');
+		$conditions['limit'] = \Input::get('limit') ?: $pagination_config['per_page'];
 		$view->set_safe('pagination', \Pagination::create_links());
 
 		if ($deleted === 'disabled') {
