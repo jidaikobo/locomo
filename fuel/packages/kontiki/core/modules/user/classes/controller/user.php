@@ -159,7 +159,10 @@ class Controller_User extends \Kontiki\Controller_Crud
 					'where' => array(
 						array('password', '=', Model_User::hash($password)),
 						array('created_at', '<=', date('Y-m-d H:i:s')),
-						array('expired_at', '>=', date('Y-m-d H:i:s')),
+						array(
+							array('expired_at', '>=', date('Y-m-d H:i:s')),
+							'or' => array('expired_at', 'is', null),
+						),
 						array(
 							array('user_name', '=', $account),
 							'or' => array('email', '=', $account),
