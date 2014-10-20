@@ -163,8 +163,6 @@ class View_Base extends \ViewModel
 
 			//コントローラからactionsetを取得
 			$controller_obj = \Kontiki\Util::get_valid_controller_name($controller);
-			$obj = new $controller_obj(\Request::forge());
-			$obj->set_actionset($controller, $item);
 
 			//現在のURL（base urlをのぞく）
 			$current = \Uri::string();
@@ -173,7 +171,7 @@ class View_Base extends \ViewModel
 			$retvals            = array();
 			$retvals['index']   = array();
 			$retvals['control'] = array();
-			foreach($obj::$actionset as $v):
+			foreach($controller_obj::$actionset as $v):
 				if( ! @$v['url']) continue;
 
 				$key = (@$v['is_index']) ? 'index' : 'control';
