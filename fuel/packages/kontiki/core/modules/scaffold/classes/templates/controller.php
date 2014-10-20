@@ -10,7 +10,7 @@ class Controller_XXX extends \Kontiki\Controller_Crud
 	/**
 	 * set_actionset()
 	 */
-	public function set_actionset($controller = null, $id = null)
+	public static function set_actionset($controller = null, $id = null)
 	{
 		parent::set_actionset($controller, $id);
 	}
