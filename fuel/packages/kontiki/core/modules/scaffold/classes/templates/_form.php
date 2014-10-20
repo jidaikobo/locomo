@@ -4,6 +4,7 @@
 <fieldset>
 	<legend>編集</legend>
 	<table class="tbl">
+		<?php /* echo $form; */ ?>
 	###FIELDS###
 	</table>
 </fieldset>
