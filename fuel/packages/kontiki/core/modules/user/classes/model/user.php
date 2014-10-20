@@ -55,7 +55,7 @@ class Model_User extends \Kontiki\Model_Crud
 		'Kontiki\Observer\Password' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Kontiki\Observer\Date' => array(
+		'Kontiki\Observer\Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),

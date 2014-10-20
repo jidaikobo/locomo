@@ -49,7 +49,7 @@ class Model_===NAME=== extends \Kontiki\Model_Crud
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Kontiki\Observer\Date' => array(
+		'Kontiki\Observer\Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),

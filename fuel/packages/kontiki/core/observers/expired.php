@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki\Observer;
-class Date extends \Orm\Observer
+class Expired extends \Orm\Observer
 {
 	/**
 	 * @var  string  default property
