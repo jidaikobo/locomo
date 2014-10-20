@@ -96,14 +96,14 @@ class Controller_Acl extends \Kontiki\Controller_Crud
 
 		if(($controller == null) || ($usergroup_id == null && $user_id == null)):
 			\Session::set_flash('error', '必要項目を選択してから「次へ」を押してください。');
-			\Response::redirect(\Uri::create('/acl/controller_index/'));
+			return \Response::redirect(\Uri::create('/acl/controller_index/'));
 		endif;
 
 		//vals
 		$controllers = \Acl\Model_Acl::get_controllers();
 		$usergroups  = \Acl\Model_Acl::get_usergroups();
 		$users       = \Acl\Model_Acl::get_users();
-		$actionsets  = \Acl\Model_Acl::get_controller_actionset($controller);
+		$actionsets  = \Actionset::get_actionset($controller);
 
 		foreach($actionsets as $k => $actionset):
 			if(isset($actionset['is_admin_only']) && $actionset['is_admin_only'] == true) unset($actionsets->$k);
@@ -149,7 +149,7 @@ class Controller_Acl extends \Kontiki\Controller_Crud
 		endif;
 
 		//対象コントローラのオーナ向けアクションセットの取得
-		$actionsets = \Acl\Model_Acl::get_controller_actionset($controller, $is_owner = 1);
+		$actionsets = \Actionset_Owner::get_actionset($controller);
 
 		//check database
 		$q = \DB::select('action');
@@ -192,7 +192,7 @@ class Controller_Acl extends \Kontiki\Controller_Crud
 		endif;
 
 		//vals
-		$actionsets = \Acl\Model_Acl::get_controller_actionset($controller);
+		$actionsets = \Actionset::get_actionset($controller);
 
 		//query build
 		if (\Input::method() == 'POST'):
@@ -245,7 +245,7 @@ class Controller_Acl extends \Kontiki\Controller_Crud
 		if($controller == null) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 		//vals
-		$actionsets = \Acl\Model_Acl::get_controller_actionset($controller, $is_owner = 1);
+		$actionsets = \Actionset_Owne::get_actionset($controller);
 
 		//query build
 		if (\Input::method() == 'POST'):

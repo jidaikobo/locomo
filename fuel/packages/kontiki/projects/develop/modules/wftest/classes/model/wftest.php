@@ -1,6 +1,6 @@
 <?php
 namespace Wftest;
-class Model_Wftest extends \Kontiki\Model_Crud
+class Model_Wftest extends \Kontiki\Model_Base
 {
 	protected static $_table_name = 'wftests';
 	protected static $_primary_name = '';
@@ -15,8 +15,6 @@ class Model_Wftest extends \Kontiki\Model_Crud
 		'expired_at',
 		'deleted_at',
 		'workflow_status',
-
-// 'workflow_status',
 	);
 
 	protected static $_depend_modules = array(
@@ -62,18 +60,11 @@ class Model_Wftest extends \Kontiki\Model_Crud
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
+		'Kontiki\Observer\Workflow' => array(
+			'events' => array('before_insert', 'before_save'),
+			'properties' => array('workflow_status'),
+		),
 	);
-
-	/*
-	 * __construct
-	*/
-	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
-	{
-		parent::__construct($data, $new, $view, $cache);
-		foreach (self::$_depend_modules as $module) {
-			\Module::load($module);
-		}
-	}
 
 	/**
 	 * form_definition()
@@ -164,8 +155,6 @@ class Model_Wftest extends \Kontiki\Model_Crud
 			array('type' => 'text', 'size' => 30)
 		)
 		->set_value(@$obj->workflow_status);
-
-
 
 		return $form;
 	}

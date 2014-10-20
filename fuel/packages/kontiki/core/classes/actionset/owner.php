@@ -2,22 +2,48 @@
 namespace Kontiki_Core;
 class Actionset_Owner
 {
+	public static $actions;
+
 	/**
-	 * actionItems()
-	 * @param str $controller
+	 * get_actionset()
 	 * @return  obj
 	 */
-	public static function actionItems($controller = null)
+	public static function get_actionset($module = null)
 	{
-		$actions = (object) array();
-		$actions->view           = self::view();
-		$actions->view_revision  = self::view_revision();
-		$actions->view_expired   = self::view_expired();
-		$actions->view_yet       = self::view_yet();
-		$actions->view_deleted   = self::view_deleted();
-		$actions->view_invisible = self::view_invisible();
-		$actions->edit           = self::edit();
-		return $actions;
+		if( ! \Module::loaded($module)){
+			if( ! \Module::load($module)) die("module doesn't exist");
+		}
+
+		$path = \Module::exists($module)."classes/actionset/{$module}_owner.php";
+		if( ! file_exists($path)){
+			return false;
+		}
+
+		require_once($path);
+		$actionset_class = \Kontiki\Util::get_valid_actionset_name($module).'_Owner';
+
+		if(class_exists($actionset_class)){
+			self::set_actionset();
+			return self::$actions;
+		}
+		return false;
+	}
+
+	/**
+	 * set_actionset()
+	 * @param str $module
+	 * @return  obj
+	 */
+	public static function set_actionset()
+	{
+		static::$actions = (object) array();
+		static::$actions->view           = self::view();
+		static::$actions->view_revision  = self::view_revision();
+		static::$actions->view_expired   = self::view_expired();
+		static::$actions->view_yet       = self::view_yet();
+		static::$actions->view_deleted   = self::view_deleted();
+		static::$actions->view_invisible = self::view_invisible();
+		static::$actions->edit           = self::edit();
 	}
 
 	/**

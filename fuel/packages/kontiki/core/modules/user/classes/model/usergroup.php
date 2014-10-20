@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki_Core_Module\User;
-class Model_Usergroup extends \Kontiki\Model_Crud
+class Model_Usergroup extends \Kontiki\Model_Base
 {
 	protected static $_table_name = 'usergroups';
 

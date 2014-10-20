@@ -1,10 +1,10 @@
 <?php
 namespace Kontiki_Core_Module\Acl;
-class Actionset_Acl
+class Actionset_Acl extends \Actionset
 {
-	public static function actionItems()
+	public static function set_actionset($module = null, $obj = null)
 	{
-	return (object) array(
+	static::$actions = (object) array(
 		'controller_index' => array(
 			'is_index'     => true,
 			'url'          => '/acl/controller_index',

@@ -38,7 +38,7 @@ return array(
 
 	//module_paths
 	'module_paths' => array(
-		PKGPROJPATH.'/modules'.DS,
+		PKGPROJPATH.'modules'.DS,
 		PKGPATH.'kontiki/core/modules'.DS
 	),
 

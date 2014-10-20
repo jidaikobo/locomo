@@ -1,10 +1,10 @@
 <?php
 namespace Kontiki_Core_Module\Content;
-class Actionset_Content
+class Actionset_Content extends \Actionset
 {
-	public static function actionItems()
+	public static function set_actionset($module = null, $obj = null)
 	{
-	return (object) array(
+		static::$actions = (object) array(
 		//home
 		'home' => array(
 			'is_index'     => false,
@@ -15,6 +15,18 @@ class Actionset_Content
 			'explanation'  => 'サイトのトップです',
 			'dependencies' => array(
 				'home',
+			)
+		),
+		//403
+		'403' => array(
+			'is_index'     => false,
+			'url'          => '',
+			'id_segment'   => null,
+			'action_name'  => 'forbidden用のエラーページ',
+			'menu_str'     => '',
+			'explanation'  => 'forbidden用のエラーページです',
+			'dependencies' => array(
+				'403',
 			)
 		),
 		//404

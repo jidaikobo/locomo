@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Model_Sample extends \Kontiki\Model_Crud
+class Model_Sample extends \Kontiki\Model_Base
 {
 	protected static $_table_name = 'samples';
 	protected static $_primary_name = '';

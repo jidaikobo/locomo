@@ -50,8 +50,10 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_usergroups()
 	{
+		$options['select'][] = 'name';
+		$options['where'][] = array('is_available', '1');
 		$usergroups = array('none' => '選択してください', 0 => 'ゲスト');
-		$usergroups += \Option\Model_Option::get_options('usergroups');
+		$usergroups += \User\Model_Usergroup::get_options($options, $label = 'name');
 		return $usergroups;
 	}
 
@@ -60,10 +62,11 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_users()
 	{
-		$users_model = \User\Model_User::forge();
-		$args = array('type' => 'array');
+		$options['select'][] = 'user_name';
+		$options['where'][] = array('created_at', '<=', date('Y-m-d'));
+		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
 		$users = array('none' => '選択してください');
-		$users += \Arr::assoc_to_keyval($users_model->find_items($args)->results, 'id', 'user_name');
+		$users += \User\Model_User::get_options($options, $label = 'user_name');
 		return $users;
 	}
 
@@ -87,7 +90,8 @@ class Model_Acl extends \Orm\Model
 
 				//アクションセットのないコントローラは対象外にする
 				$controller = basename($dirname);
-				if( ! self::get_controller_actionset($controller, $is_owner)) continue;
+				if( ! \Actionset::get_actionset($controller) && ! $is_owner) continue;
+				if( ! \Actionset_Owner::get_actionset($controller) && $is_owner) continue;
 
 				$controllers[$controller] = $config['nicename'] ;
 			endforeach;
@@ -96,52 +100,4 @@ class Model_Acl extends \Orm\Model
 		return $controllers;
 	}
 
-	/**
-	 * get_controller_actionset()
-	 * acl対象コントローラのアクションセット取得
-	 */
-	public static function get_controller_actionset($controller = null, $is_owner = false)
-	{
-		static $checked_controller = array();
-
-		//なぜか二度読むのであとで見直し
-		static $retval = array();
-		static $retval4owner = array();
-		if($is_owner && $retval4owner) return $retval4owner;
-		if( ! $is_owner && $retval) return $retval;
-
-		//すでにclassが存在している場合はオーバライドされているのでfalse
-		$class = '\\'.ucfirst($controller).'\\Controller_'.ucfirst($controller);
-		if(in_array($class, $checked_controller)) return false;
-		$checked_controller[] = $class;
-
-		//モジュールの存在確認
-		foreach(\Config::get('module_paths') as $path):
-			foreach (glob($path.'*') as $dirname):
-				if( ! is_dir($dirname)) continue;
-				$ctlfile = $dirname.DS.'classes/controller/'.basename($dirname).'.php';
-				if( ! file_exists($ctlfile)) continue;
-				require_once($ctlfile);
-			endforeach;
-		endforeach;
-		if( ! class_exists($class)) return false;
-
-		//アクションセットの取得
-/*
-$controller_obj = \Kontiki\Util::get_valid_controller_name($controller);
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $controller ) ;
-var_dump( $controller_obj::$actionset ) ;
-echo '</textarea>' ;
-*/
-		$request = \Request::forge();
-		$controller_obj = new $class($request);
-		$controller_obj->set_actionset($controller);
-
-		if($is_owner):
-			return $retval4owner = $controller_obj::$actionset_owner;
-		else:
-			return $retval =  $controller_obj::$actionset;
-		endif;
-	}
 }
