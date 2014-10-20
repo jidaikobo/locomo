@@ -16,10 +16,6 @@ class Controller_Acl extends \Kontiki\Controller_Crud
 		)
 		return true;
 
-		//configのalways_allowed（ACLを通らないコントローラ）を確認
-		$always_allowed = \Config::get('always_allowed');
-		if(in_array($current_action, $always_allowed)) return true;
-
 		//userinfoを確認
 		return (in_array($current_action, @$userinfo['acls']));
 	}

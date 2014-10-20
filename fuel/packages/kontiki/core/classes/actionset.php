@@ -576,15 +576,15 @@ class Actionset
 
 	private static function index_revision($module, $obj)
 	{
-		$url = 'oya/index_revision';
-		/*
+	$url = '';
+/*
 		$url_rev = $url ? "{$module}/options_revisions/postcategories" : '';
+		$url = self::check_auth($module, 'index_revision') ? $url_str : '' ;
 		$urls = array(
 			array('カテゴリ設定', $url),
 			array('カテゴリ設定履歴', $url_rev),
 		);
-		 */
-
+*/
 		$retvals = array(
 			'is_index'     => true,
 			'url'          => $url,

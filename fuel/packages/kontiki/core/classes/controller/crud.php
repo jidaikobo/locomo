@@ -51,7 +51,7 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	protected $pagination_config = array(
 		'uri_segment' => 3,
 		'num_links' => 5,
-		'per_page' => 20,
+		'per_page' => 5000,
 		'template' => array(
 			'wrapper_start' => '<div class="pagination">',
 			'wrapper_end' => '</div>',

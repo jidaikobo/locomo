@@ -19,12 +19,13 @@ class Controller_User extends \Kontiki\Controller_Crud
 	 * test datas
 	 */
 	protected $test_datas = array(
-		'user_name'   => 'text',
-		'password'    => 'text:test',
-		'email'       => 'email',
-		'status'      => 'text:public',
-		'creator_id'  => 'int',
-		'modifier_id' => 'int',
+		'user_name'    => 'text',
+		'display_name' => 'text',
+		'password'     => 'text:test',
+		'email'        => 'email',
+		'status'       => 'text:public',
+		'creator_id'   => 'int',
+		'modifier_id'  => 'int',
 	);
 
 	/**
@@ -83,17 +84,20 @@ class Controller_User extends \Kontiki\Controller_Crud
 		self::$userinfo['usergroup_ids'][] = 0;
 
 		//acl
-		$acls = array(\Config::get('home_url'));
+		$acls = \Config::get('always_allowed');
 
-		$acl_tmp = \Acl\Model_Acl::find('all',
-			array(
-				'where' => array(array('usergroup_id', 'IN' , self::$userinfo['usergroup_ids']))
-			)
-		);
-
-		foreach($acl_tmp as $v):
-			$acls[] = $v->controller .'/'.$v->action;
-		endforeach;
+		//管理者はACLは原則全許可なので確認しない
+		if(self::$userinfo['user_id'] >= 0):
+			$acl_tmp = \Acl\Model_Acl::find('all',
+				array(
+					'where' => array(array('usergroup_id', 'IN' , self::$userinfo['usergroup_ids']))
+				)
+			);
+	
+			foreach($acl_tmp as $v):
+				$acls[] = $v->controller .'/'.$v->action;
+			endforeach;
+		endif;
 
 		self::$userinfo['acls'] = array_unique($acls);
 	}
