@@ -1,5 +1,5 @@
 <?php
-namespace Content;
+namespace Kontiki_Core_Module\Content;
 class Actionset_Content
 {
 	public static function actionItems()

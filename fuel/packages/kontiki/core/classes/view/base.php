@@ -58,6 +58,7 @@ class View_Base extends \ViewModel
 //		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/'));
 		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
 		$view->set_global('home_uri', \Uri::base());
+		$view->set_global('home_url', \Uri::base());
 		
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
@@ -163,8 +164,6 @@ class View_Base extends \ViewModel
 
 			//コントローラからactionsetを取得
 			$controller_obj = \Kontiki\Util::get_valid_controller_name($controller);
-			$obj = new $controller_obj(\Request::forge());
-			$obj->set_actionset($controller, $item);
 
 			//現在のURL（base urlをのぞく）
 			$current = \Uri::string();
@@ -173,7 +172,7 @@ class View_Base extends \ViewModel
 			$retvals            = array();
 			$retvals['index']   = array();
 			$retvals['control'] = array();
-			foreach($obj::$actionset as $v):
+			foreach($controller_obj::get_actionset($item) as $v):
 				if( ! @$v['url']) continue;
 
 				$key = (@$v['is_index']) ? 'index' : 'control';

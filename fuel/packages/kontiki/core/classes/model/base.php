@@ -8,6 +8,7 @@ class Model_Base extends \Orm\Model_Soft
 	protected static $_default_created_field_name    = 'created_at';
 	protected static $_default_expired_field_name    = 'expired_at';
 	protected static $_default_visibility_field_name = 'is_visible';
+	protected static $_default_creator_field_name    = 'creator_id';
 
 	/*
 	 * default authorize options
@@ -17,15 +18,8 @@ class Model_Base extends \Orm\Model_Soft
 		'auth_created',
 		'auth_deleted',
 		'auth_visibility',
+		'auth_owner',
 	);
-
-	/*
-	 * set_authorize_methods()
-	 */
-	public static function set_authorize_methods($method)
-	{
-		
-	}
 
 	/*
 	 * authorized_option()
@@ -50,7 +44,7 @@ class Model_Base extends \Orm\Model_Soft
 			// コントローラで、in_progressだったらstatusをinvisibleに
 			if (
 				isset(static::properties()['workflow_status']) &&
-				!\Acl\Controller_Acl::auth($controller . '/view_invisible', $userinfo)
+				! \Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo)
 			) {
 				$conditions['where'][] = array('workflow_status', '!=', 'in_progress');
 			}
@@ -61,15 +55,17 @@ class Model_Base extends \Orm\Model_Soft
 
 	/*
 	 * auth_expired()
-	*/
+	 */
 	public static function auth_expired($controller = null, $userinfo = null, $options = array())
 	{
-		$column = isset(static::$_expired_field_name) ?: static::$_default_expired_field_name;
+		$column = isset(static::$_expired_field_name) ?
+			static::$_expired_field_name :
+			static::$_default_expired_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Acl\Controller_Acl::auth($controller . '/view_expired', $userinfo)
+			! \Acl\Controller_Acl::auth($controller.'/view_expired', $userinfo)
 		) {
-			$options['where'][] = array(array($column, '<', date('Y-m-d'))
+			$options['where'][] = array(array($column, '>', date('Y-m-d'))
 				, 'or' => (array($column, 'is', null)));
 		}
 		return $options;
@@ -77,13 +73,15 @@ class Model_Base extends \Orm\Model_Soft
 
 	/*
 	 * auth_created()
-	*/
+	 */
 	public static function auth_created($controller = null, $userinfo = null, $options = array())
 	{
-		$column = isset(static::$_created_field_name) ?: static::$_default_created_field_name;
+		$column = isset(static::$_created_field_name) ?
+			static::$_created_field_name :
+			static::$_default_created_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			!\Acl\Controller_Acl::auth($controller . '/view_yet', $userinfo)
+			! \Acl\Controller_Acl::auth($controller.'/view_yet', $userinfo)
 		) {
 			$options['where'][] = array(array($column, '<', date('Y-m-d'))
 				, 'or' => (array($column, 'is', null)));
@@ -93,12 +91,12 @@ class Model_Base extends \Orm\Model_Soft
 
 	/*
 	 * auth_deleted()
-	*/
+	 */
 	public static function auth_deleted($controller = null, $userinfo = null, $options = array())
 	{
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			!\Acl\Controller_Acl::auth($controller . '/view_deleted', $userinfo)
+			! \Acl\Controller_Acl::auth($controller.'/view_deleted', $userinfo)
 		) {
 			static::enable_filter();
 		} else {
@@ -109,16 +107,43 @@ class Model_Base extends \Orm\Model_Soft
 
 	/*
 	 * auth_visibility()
-	*/
+	 */
 	public static function auth_visibility($controller = null, $userinfo = null, $options = array())
 	{
-		$column = isset(static::$_visibility_field_name) ?: static::$_default_visibility_field_name;
+		$column = isset(static::$_visibility_field_name) ?
+			static::$_visibility_field_name :
+			static::$_default_visibility_field_name;
+
 		if (
 			isset(static::properties()[$column]) &&
-			!\Acl\Controller_Acl::auth($controller . '/view_invisible', $userinfo)
+			! \Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo)
 		) {
 			$options['where'][] = array($column, '=', 'false');
 		}
+		return $options;
+	}
+
+	/*
+	 * auth_owner()
+	 */
+	public static function auth_owner($controller = null, $userinfo = null, $options = array())
+	{
+		//グループに許されている場合はオーナ権限は判定する必要がない（管理者もこれで貫通する）
+		if(\Acl\Controller_Acl::auth($controller.DS.\Request::main()->action, $userinfo))
+			return $options;
+
+		//グループに許されていない場合
+		$column = isset(static::$_creator_field_name) ?
+			static::$_creator_field_name :
+			static::$_default_creator_field_name;
+
+		if (
+			isset(static::properties()[$column]) &&
+			\Acl\Controller_Acl::is_exists_owner_auth($controller, 'view')
+		) {
+			$options['where'][] = array($column, '=', $userinfo['user_id']);
+		}
+
 		return $options;
 	}
 
@@ -131,7 +156,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public function cascade_set($input_post = null, $form = null, $repopulate = false)
 	{
-
 		if (!$input_post) $input_post = \Input::post();
 
 		if (!is_null($form)) {
@@ -188,22 +212,20 @@ class Model_Base extends \Orm\Model_Soft
 					} else {
 						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
 					}
-					!is_null($form) and $validated[] = $form->field($k)->field($k . '_row_' . $kk)->validation()->run($input_post[$k][$kk]);
-					$repopulate and $form->field($k)->field($k . '_row_' . $kk)->populate($input_post[$k][$kk]);
+					!is_null($form) and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
+					$repopulate and $form->field($k)->field($k.'_row_'.$kk)->populate($input_post[$k][$kk]);
 				}
 
-
-
 				// hm 新規列
-				if (isset($input_post[$k . '_new'])) {
+				if (isset($input_post[$k.'_new'])) {
 					$hm_model = static::relations()[$k]->model_to;
-					if (!is_null($input_post[$k . '_new'])) {
-						foreach ($input_post[$k . '_new'] as $kk => $vv) {
+					if (!is_null($input_post[$k.'_new'])) {
+						foreach ($input_post[$k.'_new'] as $kk => $vv) {
 							$vv = array_filter($vv);
 							if (!empty($vv)) { // array_filter で引数が全て空なら 空の配列が返る -> 新規の保存なし
 								$this->{$k}[] = $hm_model::forge()->set($vv);
-								!is_null($form) and $validated[] = $form->field($k)->field($k . '_new_' . $kk)->validation()->run($input_post[$k . '_new'][$kk]);
-								$repopulate and $form->field($k)->field($k . '_new_' . $kk)->populate($input_post[$k . '_new'][$kk]);
+								!is_null($form) and $validated[] = $form->field($k)->field($k.'_new_'.$kk)->validation()->run($input_post[$k.'_new'][$kk]);
+								$repopulate and $form->field($k)->field($k.'_new_'.$kk)->populate($input_post[$k.'_new'][$kk]);
 							}
 						}
 					}

@@ -19,20 +19,21 @@ class Controller_User extends \Kontiki\Controller_Crud
 	 * test datas
 	 */
 	protected $test_datas = array(
-		'user_name'   => 'text',
-		'password'    => 'text:test',
-		'email'       => 'email',
-		'status'      => 'text:public',
-		'creator_id'  => 'int',
-		'modifier_id' => 'int',
+		'user_name'    => 'text',
+		'display_name' => 'text',
+		'password'     => 'text:test',
+		'email'        => 'email',
+		'status'       => 'text:public',
+		'creator_id'   => 'int',
+		'modifier_id'  => 'int',
 	);
 
 	/**
 	 * set_actionset()
 	 */
-	public function set_actionset($controller = null, $id = null)
+	public static function set_actionset($obj = null)
 	{
-		parent::set_actionset($controller, $id);
+		parent::set_actionset($obj);
 		unset( self::$actionset->workflow_actions );
 	}
 
@@ -63,23 +64,6 @@ class Controller_User extends \Kontiki\Controller_Crud
 	}
 
 	/**
-	 * owner_acl()
-	 * creator_idだけでなく、ユーザIDが一致したら許可する
-	*/
-	public function owner_acl($userinfo = null, $current_action = null, $item = null)
-	{
-		if($userinfo == null || $current_action == null || $item == null) return false;
-		$result = parent::owner_acl($userinfo, $current_action, $item);
-
-		//parentでやってるけど、こちらでもアクションの存在確認は必要。なければfalse
-		if( ! \Acl\Controller_Acl::owner_auth($current_action, $userinfo)) return false;
-
-		//creator_idか、個票のidが一致したら、true
-		$is_users_item = ($userinfo['user_id'] === $item->id);
-		return ($result || $is_users_item);
-	}
-
-	/**
 	 * set_userinfo()
 	 * ログイン中のユーザ情報のセット。
 	 * \Kontiki\Controller_Base::before()から呼ばれる。
@@ -100,36 +84,22 @@ class Controller_User extends \Kontiki\Controller_Crud
 		self::$userinfo['usergroup_ids'][] = 0;
 
 		//acl
-		$acls = array(\Config::get('home_url'));
+		$acls = \Config::get('always_allowed');
 
-		$acl_tmp = \Acl\Model_Acl::find('all',
-			array(
-				'where' => array(array('usergroup_id', 'IN' , self::$userinfo['usergroup_ids']))
-			)
-		);
-
-		foreach($acl_tmp as $v):
-			$acls[] = $v->controller .'/'.$v->action;
-		endforeach;
+		//管理者はACLは原則全許可なので確認しない
+		if(self::$userinfo['user_id'] >= 0):
+			$acl_tmp = \Acl\Model_Acl::find('all',
+				array(
+					'where' => array(array('usergroup_id', 'IN' , self::$userinfo['usergroup_ids']))
+				)
+			);
+	
+			foreach($acl_tmp as $v):
+				$acls[] = $v->controller .'/'.$v->action;
+			endforeach;
+		endif;
 
 		self::$userinfo['acls'] = array_unique($acls);
-
-		//owner acl
-		//ゲストやadminは確認する必要がない
-		self::$userinfo['acls_ower'] = array();
-		$acls_ower = array();
-		if(self::$userinfo['user_id'] >= 1):
-
-			$acl_tmp = \Acl\Model_Acl::find('all',
-				array('where' => array(array('owner_auth', '=' , true)))
-			);
-
-			foreach($acl_tmp as $v):
-				$acls_owner[] = $v->controller .'/'.$v->action;
-			endforeach;
-
-			self::$userinfo['acls_ower'] = array_unique($acls_ower);
-		endif;
 	}
 
 	/**

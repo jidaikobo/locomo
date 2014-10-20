@@ -1,5 +1,5 @@
 <?php
-namespace Acl;
+namespace Kontiki_Core_Module\Acl;
 class Actionset_Acl
 {
 	public static function actionItems()
@@ -15,6 +15,7 @@ class Actionset_Acl
 			'dependencies' => array(
 				'controller_index',
 				'actionset_index',
+				'actionset_owner_index',
 				'update_acl',
 				'update_owner_acl',
 			)

@@ -1,6 +1,6 @@
 <?php
-namespace Acl;
-class Actionset_Owner_Acl
+namespace Kontiki_Core_Module\Option;
+class Actionset_Option_Owner
 {
 	/**
 	 * actionItems()

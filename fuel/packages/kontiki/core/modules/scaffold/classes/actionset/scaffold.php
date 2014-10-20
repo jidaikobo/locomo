@@ -1,5 +1,5 @@
 <?php
-namespace Scaffold;
+namespace Kontiki_Core_Module\Scaffold;
 class Actionset_Scaffold
 {
 	public static function actionItems()

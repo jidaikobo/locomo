@@ -32,6 +32,17 @@ class Create_users
 			'add_at'      => array('type' => 'datetime', 'null' => true),
 			'count'       => array('constraint' => 11, 'type' => 'int'),
 		), array('loginlog_id'));
+
+		//default acl
+		$query = \DB::insert('acls');
+		$query->columns(array(
+			'controller',
+			'action',
+			'owner_auth',
+		));
+		$query->values(array('user','view',1,));
+		$query->values(array('user','edit',1,));
+		$query->execute();
 	}
 
 	public function down()
