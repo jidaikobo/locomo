@@ -11,34 +11,34 @@ class Actionset
 		$module = \Util::get_module_name_from_class(get_called_class());
 
 		$actions = (object) array();
-		$actions->index            = self::index($module, $obj);
+		$actions->index            = self::index($module);
 		$actions->view             = self::view($module, $obj);
 
-		$actions->index_admin      = self::index_admin($module, $obj);
-		$actions->index_all        = self::index_all($module, $obj);
+		$actions->index_admin      = self::index_admin($module);
+		$actions->index_all        = self::index_all($module);
 
-		$actions->create           = self::create($module, $obj);
+		$actions->create           = self::create($module);
 		$actions->edit             = self::edit($module, $obj);
 		$actions->edit_anyway      = self::edit_anyway($module, $obj);
 		$actions->delete           = self::delete($module, $obj);
 		$actions->undelete         = self::undelete($module, $obj);
 		$actions->delete_deleted   = self::delete_deleted($module, $obj);
 
-		$actions->index_expired    = self::index_expired($module, $obj);
+		$actions->index_expired    = self::index_expired($module);
 		$actions->view_expired     = self::view_expired($module, $obj);
 
-		$actions->index_invisible  = self::index_invisible($module, $obj);
+		$actions->index_invisible  = self::index_invisible($module);
 		$actions->view_invisible   = self::view_invisible($module, $obj);
 
-		$actions->index_yet        = self::index_yet($module, $obj);
+		$actions->index_yet        = self::index_yet($module);
 		$actions->view_yet         = self::view_yet($module, $obj);
 
-		$actions->index_deleted    = self::index_deleted($module, $obj);
+		$actions->index_deleted    = self::index_deleted($module);
 		$actions->view_deleted     = self::view_deleted($module, $obj);
 
-		$actions->index_revision   = self::index_revision($module, $obj);
+		$actions->index_revision   = self::index_revision($module);
 
-		$actions->add_testdata     = self::add_testdata($module, $obj);
+		$actions->add_testdata     = self::add_testdata($module);
 		return $actions;
 	}
 
@@ -75,7 +75,7 @@ class Actionset
 	 * index()
 	 * @return  array
 	 */
-	private static function index($module, $obj)
+	private static function index($module)
 	{
 		$url_str = "$module/index" ;
 		$url = self::check_auth($module, 'index') ? $url_str : '' ;
@@ -98,7 +98,7 @@ class Actionset
 	 * index_admin()
 	 * @return  array
 	 */
-	private static function index_admin($module, $obj)
+	private static function index_admin($module)
 	{
 		$url_str = "$module/index_admin" ;
 		$url = self::check_auth($module, 'index_admin') ? $url_str : '' ;
@@ -144,7 +144,7 @@ class Actionset
 	 * create()
 	 * @return  array
 	 */
-	private static function create($module, $obj)
+	private static function create($module)
 	{
 		$url_str = "$module/create" ;
 		$url = self::check_auth($module, 'create') ? $url_str : '' ;
@@ -254,7 +254,7 @@ class Actionset
 		if(isset($obj->deleted_at) && $obj->deleted_at == null):
 			$url_str = isset($obj->id) ? "$module/delete/$obj->id" : null ;
 		endif;
-		$url = self::check_auth($module, 'delete', $obj) ? $url_str :'';
+		$url = self::check_auth($module, 'delete') ? $url_str :'';
 		$url = self::check_owner_auth($module, 'delete', $obj) ? $url_str : '' ;
 
 		//retval
@@ -341,7 +341,7 @@ class Actionset
 	 * index_deleted()
 	 * @return  array
 	 */
-	private static function index_deleted($module, $obj)
+	private static function index_deleted($module)
 	{
 		$url_str = "$module/index_deleted" ;
 		$url = self::check_auth($module, 'index_deleted') ? $url_str : '' ;
@@ -387,7 +387,7 @@ class Actionset
 	 * index_expired()
 	 * @return  array
 	 */
-	private static function index_expired($module, $obj)
+	private static function index_expired($module)
 	{
 		$url_str = "$module/index_expired" ;
 		$url = self::check_auth($module, 'index_expired') ? $url_str : '' ;
@@ -433,7 +433,7 @@ class Actionset
 	 * index_yet()
 	 * @return  array
 	 */
-	private static function index_yet($module, $obj)
+	private static function index_yet($module)
 	{
 		$url = "$module/index_yet" ;
 		$url = self::check_auth($module, 'index_yet') ? $url : '' ;
@@ -480,10 +480,10 @@ class Actionset
 	 * index_invisible()
 	 * @return  array
 	 */
-	private static function index_invisible($module, $obj)
+	private static function index_invisible($module)
 	{
 		$url = "$module/index_invisible" ;
-		$url = self::check_auth($module, 'index_invisible', $obj) ? $url: '';
+		$url = self::check_auth($module, 'index_invisible') ? $url: '';
 
 		$retvals = array(
 			'is_index'     => true,
@@ -527,7 +527,7 @@ class Actionset
 	 * add_testdata()
 	 * @return  array
 	 */
-	private static function add_testdata($module, $obj)
+	private static function add_testdata($module)
 	{
 		$url = '';
 		$usergroup_ids = \User\Controller_User::$userinfo['usergroup_ids'];
@@ -555,7 +555,7 @@ class Actionset
 		return $retvals;
 	}
 
-	private static function index_all($module, $obj)
+	private static function index_all($module)
 	{
 		$url_str = isset($obj->id) ? "$module/index_all" : null ;
 		$url = self::check_auth($module, 'index_all') ? $url_str : '' ;
@@ -574,7 +574,7 @@ class Actionset
 		return $retvals;
 	}
 
-	private static function index_revision($module, $obj)
+	private static function index_revision($module)
 	{
 	$url = '';
 /*
