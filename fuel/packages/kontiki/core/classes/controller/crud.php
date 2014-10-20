@@ -96,14 +96,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		return $obj;
 	}
 
-
-
-	/*
-	 * actions_index_***
-	 * リスト表示
-	 * # 元々は find_items で取っていた
-	 */
-
 	/**
 	 * index_core()
 	 * @param array    $conditions default conditions
@@ -179,7 +171,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	public function action_index_admin()
 	{
 		$this->template = 'index_admin';
-
 		return static::index_core();
 	}
 
@@ -240,7 +231,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 		return static::index_core($options);
 	}
-
 
 	/**
 	 * action_index_deleted()
@@ -337,7 +327,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
-
 
 	public function action_create() {
 		return $this->action_edit(null);
@@ -444,7 +433,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
 	}
 
-
 	/**
 	 * action_confirm_delete()
 	 */
@@ -503,7 +491,6 @@ class Controller_Crud extends \Kontiki\Controller_Base
 	}
 
 
-
 	/**
 	 * action_delete_deleted()
 	 */
@@ -518,7 +505,7 @@ class Controller_Crud extends \Kontiki\Controller_Base
 			//pre_delete_hook
 			$obj = $this->pre_delete_hook($obj, 'delete');
 
-			// 現状 Cascading deleteの恩恵を受けられない
+			// 現状 Cascading deleteの恩恵を受けられない？ 要確認
 			$obj->purge();
 
 			//pre_delete_hook
@@ -562,31 +549,4 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		$model = $this->model_name ;
 		$this->response($model::find_item($id));
 	}
-
-	// リビジョン
-	/*
-	public function action_index_revision() {
-	}
-	 */
-
-	/*
-	public function action_revision_list($id = null)
-	{
-		$model = $this->model_name;
-
-		if (!isset($model::properties()['status'])) {
-			throw new HttpNotFoundException;
-		}
-
-		// todo primary_key が 2 つ以上
-		$pk = $model::primary_key();
-		$conditions['where'][] = array('status', '=', 'revision');
-		$conditions['where'][] = array($pk[0], '=', $id);
-
-		return static::index_core($args);
-	}
-	 */
-
 }
-
-

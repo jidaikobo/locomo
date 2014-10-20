@@ -58,6 +58,7 @@ class View_Base extends \ViewModel
 //		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/'));
 		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
 		$view->set_global('home_uri', \Uri::base());
+		$view->set_global('home_url', \Uri::base());
 		
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
