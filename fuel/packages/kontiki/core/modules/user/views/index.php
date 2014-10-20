@@ -1,14 +1,15 @@
 <?php echo render('inc_header'); ?>
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
+<p><?php echo \Sort::sort_info('\User\Model_User'); ?></p>
 <br>
 <?php if ($items): ?>
 <table class="table table-striped tbl2">
 	<thead>
 		<tr>
-			<th>id</th>
-			<th>User name</th>
-			<th>Email</th>
-			<th>Last login</th>
+			<th><?php echo \Sort::sort('id', 'ID'); ?></th>
+			<th><?php echo \Sort::sort('user_name', 'User name'); ?></th>
+			<th><?php echo \Sort::sort('email', 'Email'); ?></th>
+			<th><?php echo \Sort::sort('last_login_at', 'Last login'); ?></th>
 			<th>Delete date</th>
 			<th>Status</th>
 			<th>&nbsp;</th>
@@ -57,3 +58,14 @@
 </p>
 
 <?php echo render('inc_footer'); ?>
+
+
+<style>
+th a.asc:after{
+	content: '[↓]';
+}
+th a.desc:after{
+	content: '[↑]';
+}
+
+</style>
