@@ -1,0 +1,394 @@
+/*
+ * deploy
+ */
+
+//projectを展開する
+
+projects.tplディレクトリを参考に、projectsディレクトリ内に同様のフォルダ構造を作ります。
+ディレクトリ名称は任意ですが、projects.iniに、HTTP_HOSTの値とペアになるディレクトリ（およびviewディレクトリ）のセットを書き定義してください。
+
+projects.iniのcli_hostの値は、oilコマンドがコマンドラインから実行する際のHTTP_HOSTの値です。
+
+//APPPATH.config/development/db.php 
+
+APPPATHのdb.phpに、データベース接続情報を設定します。
+書き方は少々独特です。$retvalsを定義して、そのキーをプロジェクト名として設定します。
+複数のプロジェクト（場合によるとテスト環境）がある場合は、ここに定義します。
+
+▼ここから────────────────
+$retvals = array();
+$retvals['proj_a'] = array(
+	'default' => array(
+		'type' => 'mysql',
+		'connection' => array(
+			'hostname' => 'localhost',
+//			'dsn' => 'mysql:host=localhost;dbname=fuel',
+//			'hostname' => '127.0.0.1',
+			'socket'   => '/opt/local/var/run/mysql5/mysqld.sock',
+//			'port' => '3306',
+			'database' => 'proj_a',
+			'username' => 'database_username',
+			'password' => 'database_password',
+//			'charset'      => 'utf8',
+			'enable_cache' => true,
+		),
+		'profiling' => true,
+	),
+);
+return $retvals[PROJECTDIR];
+────────────────ここまで▲
+
+//oil
+
+oilコマンドで基礎モジュールのmigrationを実行してください（ACLからrefineしてください）。
+
+php oil refine migrate:up --modules=acl
+php oil refine migrate:up --modules=user
+php oil refine migrate:up --modules=workflowadmin
+php oil refine migrate:up --modules=revision
+
+//APPPATH.config/config.php
+
+- always_loadに、locomoをたす
+
+- Security settingsのコメントアウトを外して、以下のように設定する
+
+		 'csrf_autoload'    => false,
+		 'csrf_token_key'   => 'locomo_csrf_token',
+		 'csrf_expiration'  => 300,
+
+//APPPATH.config/routes.php
+
+- トップページと404を変更
+	'_root_'  => 'content/home',
+	'_404_'   => 'content/404',
+
+/*
+ * モジュール開発
+ */
+
+Locomoパッケージ（以下locomo）はfuelphpのmoduleを基礎にしています。
+
+locomoを用いて構築する際は、原則PKGPATH.'/projects/PROJECTNAME/modules/'以下に、以下のような構成のファイルをおいてください。locomoのscaffoldを使うと簡単に生成できます。
+
+MODNAME
+- classes
+	- controller
+		- MODNAME.php
+	- model
+		- MODNAME.php
+	- view
+		- MODNAME.php
+- migrations
+- config
+	- MODNAME.php
+- views
+
+locomoには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
+
+パッケージコアモジュールのclassをオーバライドする場合は、パッケージのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作り、各classは、Locomo_Core_Moduleの名前空間に対して行うことで、パッケージコアモジュールの機能を生かしてextendsできます。
+
+▼ここから────────────────
+namespace User;
+class Controller_User extends \Locomo_Core_Module\User\Controller_User
+────────────────ここまで▲
+
+/*
+ * クラスと名前空間について
+ */
+
+プロジェクトごとのクラスは、\Locomo_Coreの名前空間のクラスをextendsして、PROJPATH.classに設置すること。コアのclassを拡張する場合も同様です。
+
+/*
+ * テンプレートのオーバライド
+ */
+
+モジュールのテンプレートだけオーバライドする場合は、PROJPATH.views/MODNAME/views/に同じ名前のファイルで設置すること。inc_header等のオーバライドに関しては、PROJPATH.views/に設置できます。
+
+/*
+ * 特別な名前のカラム
+ */
+
+tableを作るとき、以下のカラム名は特別な仕事をします。
+
+status:varchar[20]:null
+項目の状態を示すカラムです
+
+deleted_at:datetime:null
+削除フラグです。nullのときは表示され、dateが入っているときには削除されたことになります。
+
+created_at:datetime:null
+作成日です。未来の日付が入っていると予約項目になります。
+
+expired_at:datetime:null
+表示期日です。過去の日付が入っていると表示終了になります。
+
+/*
+ * revision（編集履歴）
+ */
+
+revisionを適用したいコントローラで、
+▼ここから────────────────
+	use \Revision\Controller_Revision;
+────────────────ここまで▲
+のコメントアウトを外します。
+同じくコントローラで、post_save_hook()をオーバライドし、リビジョン用の処理を加えてください。
+▼ここから────────────────
+	public function post_save_hook($obj = null, $mode = 'edit')
+	{
+		$obj = parent::post_save_hook($obj, $mode);
+		$obj = $this->revision_save_hook($obj, $mode);
+		return $obj;
+	}
+────────────────ここまで▲
+
+同アクションセットで、
+▼ここから────────────────
+	use \Revision\Actionset_Revision;
+────────────────ここまで▲
+のコメントアウトを外します。
+アクションセットでは、
+▼ここから────────────────
+		//revision
+		$actions->view_revision = self::view_revision($controller, $item);
+────────────────ここまで▲
+を追加します。
+
+これでコントローラでの編集履歴が有効になります。
+編集履歴は、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
+
+/*
+ * ワークフロー管理
+ */
+
+▼ここから────────────────
+	use \Workflow\Controller_Workflow;
+────────────────ここまで▲
+のコメントアウトを外します。
+同じくコントローラで、pre_save_hook()、post_save_hook()、edit_core()をオーバライドし、ワークフロー用の処理を加えてください。
+▼ここから────────────────
+	public function pre_save_hook($obj = null, $mode = 'edit')
+	{
+		$obj = parent::post_save_hook($obj, $mode);
+		$obj = $this->pre_workflow_save_hook($obj, $mode);
+		return $obj;
+	}
+
+	public function post_save_hook($obj = null, $mode = 'edit')
+	{
+		$obj = parent::post_save_hook($obj, $mode);
+		$obj = $this->workflow_save_hook($obj, $mode);
+		return $obj;
+	}
+
+	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)
+	{
+		return $this->workflow_edit_core($id, $obj, $redirect, $title);
+	}
+────────────────ここまで▲
+
+対象モデルの$_propertiesにworkflow_statusを足します。
+
+同アクションセットで、
+▼ここから────────────────
+	use \Workflow\Actionset_Workflow;
+────────────────ここまで▲
+のコメントアウトを外します。
+アクションセットでは、
+▼ここから────────────────
+		//workflow
+		$actions->index_workflow   = self::index_workflow($controller, $item);
+		$actions->workflow         = self::workflow($controller, $item);
+		$actions->workflow_process = self::workflow_process($controller, $item);
+		$actions->workflow_actions = self::workflow_actions($controller, $item);
+		if(@$item->workflow_status == 'in_progress') unset($actions->edit);
+────────────────ここまで▲
+を追加します。
+
+これでコントローラでのワークフローが有効になります。
+ワークフローは、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
+
+/*
+ * オプション（個別にtableを持つ場合のオプション）
+ */
+
+モジュール内でユーザが編集できるオプション項目をcrudするコントローラを使いたいときには、以下の手順で作成してください。おおまかには、
+1. migrationの作成
+2. actionsetの作成
+3. テーブル構造にあわせてtemplateを用意する
+4. コントローラに実装する
+という流れです。
+
+1、モジュールのmigrationsフォルダに、マイグレーション用のファイルを置き、oilでmigrationします。
+オプション用のtable名は自由ですが、中間テーブルの名前はオプション用のtable名に_rの接尾辞をつけるようにしてください。
+また、オプション用のtableには、id, name, order, is_availableは、使わなくても必須です。これにほかのカラムを追加して使うこともできます。
+
+例）
+postモジュールにオプションを足します。
+migrationは、002_create_postcategories.phpとします。
+ファイルを設置したら、
+php oil refine migrate:up --modules=post
+で、migrationします。
+
+▼ここから────────────────
+<?php
+namespace Fuel\Migrations;
+class Create_postcategories
+{
+	public function up()
+	{
+		\DBUtil::create_table('postcategories', array(
+			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'name'         => array('constraint' => 50, 'type' => 'varchar'),
+			'order'        => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'is_available' => array('constraint' => 1, 'type' => 'tinyint'),
+		), array('id'));
+		
+		\DBUtil::create_table('postcategories_r', array(
+			'item_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'option_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+		), array('item_id','option_id'));
+	}
+
+	public function down()
+	{
+		\DBUtil::drop_table('postcategories');
+		\DBUtil::drop_table('postcategories_r');
+	}
+}
+────────────────ここまで▲
+
+2、モジュールのactionset.phpに、オプション用のアクションセットを設定します。
+
+例）
+postモジュールにpostcategoriesを足す場合です。
+
+▼ここから────────────────
+<?php
+namespace Post;
+class Actionset_Post extends \Locomo\Actionset
+{
+	/**
+	 * actionItems()
+	 * @return  obj
+	 */
+	public static function actionItems($controller = null, $item = null)
+	{
+		$actions = parent::actionItems($controller, $item);
+		//postcategoriesの部分は任意の文字列ですが、table名にしておくのがよいです。
+		$actions->postcategories = self::postcategories($controller, $item);
+		return $actions;
+	}
+
+	/**
+	 * postcategories()
+	 * @return  array
+	 */
+	private static function postcategories($controller, $item)
+	{
+		$url = parent::check_auth($controller, 'postcategories') ? "{$controller}/options/postcategories" : '';
+		$url_rev = $url ? "{$controller}/options_revisions/postcategories" : '';
+		$urls = array(
+			array('カテゴリ設定', $url),
+			array('カテゴリ設定履歴', $url_rev),
+		);
+
+		$retvals = array(
+			'is_admin_only' => false,
+			'is_index'      => true,
+			'url'           => $urls,
+			'id_segment'    => null,
+			'action_name'   => 'カテゴリ',
+			'explanation'   => 'postコントローラのカテゴリです。',
+			'menu_str'      => '',
+			'dependencies' => array(
+				'options/postcategories',
+				'options_revisions/postcategories',
+			)
+		);
+		return $retvals;
+	}
+}
+────────────────ここまで▲
+
+3、当該モジュールに編集用テンプレートを用意します。テンプレート名は、options_テーブル名.phpです。scaffoldで作られるoptions_samples.phpをもとにtable構造にあわせて編集してください。
+
+4、テンプレートとコントローラに実装します。nameは、table名かtable名の配列にしてください。
+
+例）テンプレートへの実装
+▼ここから────────────────
+<?php
+foreach(\Post\Model_Post::get_options('postcategories') as $key => $option):
+	$checked = false; 
+	if(
+		(isset($item) && in_array($key, $item->postcategories)) ||
+		(is_array(\Input::post('postcategories')) && array_key_exists($key, \Input::post('postcategories')))
+	):
+		$checked = true; 
+	endif;
+	echo '<label>'.\Form::checkbox('postcategories[]', $key, $checked ).$option.'</label>';
+endforeach;
+?>
+────────────────ここまで▲
+
+コントローラは、post_save_hook()で保存時フックする。
+
+▼ここから────────────────
+	/**
+	 * post_save_hook()
+	 */
+	public function post_save_hook($obj = null, $mode = 'edit')
+	{
+		if($obj == null) \Response::redirect($this->request->module);
+		$obj = parent::post_save_hook($obj, $mode);
+
+		//postcategories
+		$model = $this->model_name;
+		$model::update_options_relations('postcategories', $obj->id);
+
+		return $obj;
+	}
+────────────────ここまで▲
+
+加えて、コントローラのrevision_modify_data()を編集すると、オプションの値がリビジョンに保存される。以下例はarray()だが、array()でない場合は適宜変更する
+
+▼ここから────────────────
+	/**
+	 * revision_modify_data()
+	 */
+	public function revision_modify_data($obj, $mode = null)
+	{
+		if($mode == 'insert_revision'):
+			$postcategories = is_array(\Input::post('postcategories')) ? \Input::post('postcategories') : array();
+			$obj->postcategories = $postcategories;
+		endif;
+		return $obj;
+	}
+────────────────ここまで▲
+
+モデルはfind_item()をオーバライドする
+
+▼ここから────────────────
+	/**
+	 * find_item()
+	 */
+	public static function find_item($id = null)
+	{
+		//parent
+		$item = parent::find_item($id);
+
+		//オプションの取得
+		if($item):
+			$item->postcategories = \Post\Model_Post::get_selected_options('postcategories', $id);
+		endif;
+
+		return $item;
+	}
+────────────────ここまで▲
+
+以上でオプションの値が保存される。
+
+/*
+ * オプション（オプションマスタを使う場合）
+ */
+

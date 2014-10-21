@@ -115,7 +115,7 @@ return array(
 	 */
 	'security' => array(
 		 'csrf_autoload'    => false,
-		 'csrf_token_key'   => 'kontiki_csrf_token',
+		 'csrf_token_key'   => 'locomo_csrf_token',
 		 'csrf_expiration'  => 300,
 
 		/**
@@ -270,7 +270,7 @@ return array(
 		 'packages'  => array(
 		 	'orm',
 		 	'auth',
-		 	'kontiki',
+		 	'locomo',
 		 ),
 
 		/**
