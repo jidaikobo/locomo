@@ -24,7 +24,7 @@
 					echo Html::anchor('user/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></span></td>
 			<td><div class="col_scroll" style="min-width: 10em;"  tabindex="-1"><?php echo $item->email; ?></div></td>
 			<td><div class="col_scroll" tabindex="-1"><?php echo $item->last_login_at; ?></div></td>
-			<td><?php echo $item->deleted_at; ?>121212121212</td>
+			<td><?php echo $item->deleted_at; ?></td>
 			<td><?php echo $item->status; ?></td>
 			<td>
 				<div class="btn_group">

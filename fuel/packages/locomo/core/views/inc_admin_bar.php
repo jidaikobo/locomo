@@ -14,7 +14,7 @@ if($is_user_logged_in):
 	$actions = $get_actionset($controller, $item);
 	if($actions['control']):
 		$html.='<div id="adminbar_context" class="clearfix">';
-		$html.='コントローラ名'; //ツールバーのアンカーにも足す？
+		$html.='<h3>コントローラ名<span class="skip">の操作</span></h3>'; //ツールバーのアンカーにも足す？
 		$html.= '<ul>';
 		foreach($actions['control'] as $url => $v):
 			if( ! $url) continue;
@@ -23,7 +23,6 @@ if($is_user_logged_in):
 			$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
 		endforeach;
 		$html.= '</ul>';
-		$html.= '<p class="context_info">事業所名？</p>';
 		$html.= '</div>';
 	endif;
 
@@ -31,6 +30,7 @@ if($is_user_logged_in):
 	$html.= '<div class="adminbar_main clearfix borderbox">' ; 
 	$html.= "<img src=\"{$home_uri}content/fetch_view/images/parts/logo.png\" class=\"adminbar_logo\" >" ;
 	$html.= '<div class="adminbar_main_left">';
+	$html.= '<h3 class="skip">メインメニュー</h3>';
 	//controller menu
 	$controller4menu = $get_controllers();
 	if($controller4menu):

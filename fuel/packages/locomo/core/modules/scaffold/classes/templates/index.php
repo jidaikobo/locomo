@@ -1,7 +1,6 @@
 <?php echo render('inc_header'); ?>
 
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
-<br>
 <?php if ($items): ?>
 <table class="table table-striped">
 	<thead>
