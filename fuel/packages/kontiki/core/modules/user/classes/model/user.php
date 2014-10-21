@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki_Core_Module\User;
-class Model_User extends \Kontiki\Model_Crud
+class Model_User extends \Kontiki\Model_Base
 {
 //	use \Option\Model_Option;
 
@@ -99,11 +99,10 @@ class Model_User extends \Kontiki\Model_Crud
 			->add_rule('max_length', 255);
 
 		//usergroups
-		$usergroups = \User\Model_Usergroup::find('all', array('select' => array('name')));
-		$usergroups = \Arr::assoc_to_keyval($usergroups, 'id', 'name');
-	
+		$options['select'][] = 'name';
+		$options['where'][] = array('is_available', '1');
+		$usergroups = \User\Model_Usergroup::get_options($options, $label = 'name');
 		$checked = isset($obj->usergroup) ? array_keys($obj->usergroup) : array();
-
 		$form->add(
 				'usergroup',
 				'ユーザグループ',

@@ -1,5 +1,5 @@
 <?php
 namespace Wftest;
-class Actionset_Owner_Wftest extends \Kontiki\Actionset_Owner
+class Actionset_Wftest_Owner extends \Actionset_Owner
 {
 }

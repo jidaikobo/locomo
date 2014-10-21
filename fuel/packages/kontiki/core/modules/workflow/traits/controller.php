@@ -25,6 +25,7 @@ trait Controller_Workflow
 	/**
 	 * workflow_save_hook()
 	 */
+/*
 	public function workflow_save_hook($obj = null, $mode = 'edit')
 	{
 		//ワークフロー管理
@@ -40,6 +41,7 @@ trait Controller_Workflow
 
 		return $obj;
 	}
+*/
 
 	/**
 	 * workflow_edit_core()

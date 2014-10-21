@@ -1,6 +1,6 @@
 <?php
 namespace ===NAME===;
-class Model_===NAME=== extends \Kontiki\Model_Crud
+class Model_===NAME=== extends \Kontiki\Model_Base
 {
 	protected static $_table_name = '===TABLE_NAME===';
 	protected static $_primary_name = '';

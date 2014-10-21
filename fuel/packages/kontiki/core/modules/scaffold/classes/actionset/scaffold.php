@@ -1,10 +1,10 @@
 <?php
 namespace Kontiki_Core_Module\Scaffold;
-class Actionset_Scaffold
+class Actionset_Scaffold extends \Actionset
 {
-	public static function actionItems()
+	public static function set_actionset($module = null, $obj = null)
 	{
-	return (object) array(
+		static::$actions = (object) array(
 		'main' => array(
 			'is_index'     => true,
 			'url'          => '/scaffold/main',

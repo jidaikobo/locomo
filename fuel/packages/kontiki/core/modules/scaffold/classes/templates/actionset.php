@@ -1,34 +1,31 @@
 <?php
 namespace XXX;
-class Actionset_XXX extends \Kontiki\Actionset
+class Actionset_XXX extends \Actionset
 {
 	//use \Revision\Actionset_Revision;
 	//use \Workflow\Actionset_Workflow;
 
 	/**
-	 * actionItems()
-	 * @return  obj
+	 * set_actionset()
 	 */
-	public static function actionItems($controller = null, $item = null)
+	public static function set_actionset($module = null, $obj = null)
 	{
-		$actions = parent::actionItems($controller, $item);
-//		$actions->sample_action = self::sample_action($controller, $item);
+		parent::actionItems($controller, $item);
+//		static::$actions->sample_action = self::sample_action($controller, $item);
 
 		//revision
 		/*
-		$actions->view_revision = self::view_revision($controller, $item);
+		static::$actions->view_revision = self::view_revision($controller, $item);
 		*/
 
 		//workflow
 		/*
-		$actions->index_workflow   = self::index_workflow($controller, $item);
-		$actions->workflow         = self::workflow($controller, $item);
-		$actions->workflow_process = self::workflow_process($controller, $item);
-		$actions->workflow_actions = self::workflow_actions($controller, $item);
-		if(@$item->workflow_status == 'in_progress') unset($actions->edit);
+		static::$actions->index_workflow   = self::index_workflow($controller, $item);
+		static::$actions->workflow         = self::workflow($controller, $item);
+		static::$actions->workflow_process = self::workflow_process($controller, $item);
+		static::$actions->workflow_actions = self::workflow_actions($controller, $item);
+		if(@$item->workflow_status == 'in_progress') unset(static::$actions->edit);
 		*/
-
-		return $actions;
 	}
 
 	/*

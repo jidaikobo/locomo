@@ -50,6 +50,10 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//ユーザ情報のセット
 		\User\Controller_User::set_userinfo();
 
+		//profile表示はrootだけ（当然ながらConfigでtrueだったら計測はされる）
+		if(\User\Controller_User::$userinfo['user_id'] >= -1)
+			\Fuel::$profiling = false;
+
 		//current_actionのセット
 		//HMVCの場合は、呼ばれたモジュールに応じたものにかわる
 		$this->current_action = $this->request->module.DS.$this->request->action ;
@@ -96,35 +100,6 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		//通常の処理に渡す
 		return parent::router($method, $params);
-	}
-
-	/**
-	 * set_actionset()
-	 */
-	public static function set_actionset($obj = null)
-	{
-		$controller = \Request::main()->module;
-
-		//アクションセットの設定
-		$actionset = \Util::get_valid_actionset_name($controller);
-		$actionset_owner = \Util::get_valid_actionset_name($controller, $is_owner = true);
-
-		if(class_exists($actionset))
-			self::$actionset = $actionset::actionItems($obj);
-
-		if(class_exists($actionset_owner))
-			self::$actionset_owner = $actionset_owner::actionItems($obj);
-	}
-
-	/**
-	 * get_actionset()
-	 * メニュー生成のため、viewmodelから呼ばれます
-	 */
-	public static function get_actionset($obj = null)
-	{
-		if(static::$actionset) return static::$actionset;
-		static::set_actionset($obj);
-		return static::$actionset;
 	}
 
 	/**

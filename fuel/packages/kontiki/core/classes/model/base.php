@@ -9,6 +9,9 @@ class Model_Base extends \Orm\Model_Soft
 	protected static $_default_expired_field_name    = 'expired_at';
 	protected static $_default_visibility_field_name = 'is_visible';
 	protected static $_default_creator_field_name    = 'creator_id';
+	protected static $_default_workflow_field_name   = 'workflow_status';
+
+	protected static $_depend_modules = array();
 
 	/*
 	 * default authorize options
@@ -19,13 +22,25 @@ class Model_Base extends \Orm\Model_Soft
 		'auth_deleted',
 		'auth_visibility',
 		'auth_owner',
+		'auth_workflow',
 	);
+
+	/*
+	 * __construct
+	 */
+	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
+	{
+		parent::__construct($data, $new, $view, $cache);
+		foreach (self::$_depend_modules as $module) {
+			\Module::load($module);
+		}
+	}
 
 	/*
 	 * authorized_option()
 	 * adjust Model::find(#, $options)
 	 */
-	public static function authorized_option($options = array())
+	public static function authorized_option($options = array(), $mode = null)
 	{
 		$userinfo = \User\Controller_User::$userinfo;
 		$controller = \Inflector::denamespace(\Request::main()->controller);
@@ -37,17 +52,8 @@ class Model_Base extends \Orm\Model_Soft
 		} else {
 			//モデルが持っている判定材料を、適宜$optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method):
-				$options = self::$authorize_method($controller, $userinfo, $options);
+				$options = self::$authorize_method($controller, $userinfo, $options, $mode);
 			endforeach;
-
-			// worlflow 権限は invisible
-			// コントローラで、in_progressだったらstatusをinvisibleに
-			if (
-				isset(static::properties()['workflow_status']) &&
-				! \Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo)
-			) {
-				$conditions['where'][] = array('workflow_status', '!=', 'in_progress');
-			}
 		}
 
 		return $options;
@@ -56,7 +62,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_expired()
 	 */
-	public static function auth_expired($controller = null, $userinfo = null, $options = array())
+	public static function auth_expired($controller = null, $userinfo = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_expired_field_name) ?
 			static::$_expired_field_name :
@@ -74,7 +80,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_created()
 	 */
-	public static function auth_created($controller = null, $userinfo = null, $options = array())
+	public static function auth_created($controller = null, $userinfo = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_created_field_name) ?
 			static::$_created_field_name :
@@ -92,7 +98,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_deleted()
 	 */
-	public static function auth_deleted($controller = null, $userinfo = null, $options = array())
+	public static function auth_deleted($controller = null, $userinfo = null, $options = array(), $mode = null)
 	{
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
@@ -108,7 +114,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_visibility()
 	 */
-	public static function auth_visibility($controller = null, $userinfo = null, $options = array())
+	public static function auth_visibility($controller = null, $userinfo = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_visibility_field_name) ?
 			static::$_visibility_field_name :
@@ -126,7 +132,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_owner()
 	 */
-	public static function auth_owner($controller = null, $userinfo = null, $options = array())
+	public static function auth_owner($controller = null, $userinfo = null, $options = array(), $mode = null)
 	{
 		//グループに許されている場合はオーナ権限は判定する必要がない（管理者もこれで貫通する）
 		if(\Acl\Controller_Acl::auth($controller.DS.\Request::main()->action, $userinfo))
@@ -142,6 +148,35 @@ class Model_Base extends \Orm\Model_Soft
 			\Acl\Controller_Acl::is_exists_owner_auth($controller, 'view')
 		) {
 			$options['where'][] = array($column, '=', $userinfo['user_id']);
+		}
+
+		return $options;
+	}
+
+	/*
+	 * auth_workflow()
+	 */
+	public static function auth_workflow($controller = null, $userinfo = null, $options = array(), $mode = null)
+	{
+		$column = isset(static::$_workflow_field_name) ?
+			static::$_workflow_field_name :
+			static::$_default_workflow_field_name;
+
+		//in_progressの項目は編集できない
+		if (isset(static::properties()[$column]) && $mode == 'edit') {
+			$options['where'][] = array(array($column, '<>', 'in_progress'));
+		}
+
+		//in_progress、before_progressの項目は、権限のない人には閲覧できない
+		
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
+var_dump( $userinfo ) ;
+echo '</textarea>' ;
+die();
+
+		if (isset(static::properties()[$column]) && $mode != 'edit') {
+			$options['where'][] = array(array($column, '<>', 'in_progress'));
 		}
 
 		return $options;
@@ -269,5 +304,16 @@ class Model_Base extends \Orm\Model_Soft
 			return true;
 		}
 
+	}
+
+	/*
+	 * get_options()
+	 */
+	public static function get_options($options, $label)
+	{
+		$primary_key = reset(self::$_primary_key);
+		$items = self::find('all', $options);
+		$items = \Arr::assoc_to_keyval($items, $primary_key, $label);
+		return $items;
 	}
 }

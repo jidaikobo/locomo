@@ -1,27 +1,25 @@
 <?php
 namespace Kontiki_Core_Module\User;
-class Actionset_User extends \Kontiki\Actionset
+class Actionset_User extends \Actionset
 {
 	/**
-	 * actionItems()
+	 * set_actionset()
 	 * @return  obj
 	 */
-	public static function actionItems($controller = null, $item = null)
+	public static function set_actionset($module = null, $obj = null)
 	{
-		$actions = parent::actionItems($controller, $item);
-//		$actions->usergroups = self::usergroups($controller, $item);
-		return $actions;
+		parent::set_actionset($module, $obj);
+		static::$actions->usergroups = self::usergroups($module, $obj);
 	}
 
 	/**
 	 * usergroups()
 	 * @return  array
 	 */
-/*
-	private static function usergroups($controller, $item)
+	private static function usergroups($module, $obj)
 	{
-		$url = parent::check_auth($controller, 'usergroups') ? "{$controller}/option/usergroups" : '';
-		$url_rev = $url ? "{$controller}/option_revisions/usergroups" : '';
+		$url = parent::check_auth($module, 'usergroups') ? "{$module}/option/usergroups" : '';
+		$url_rev = $url ? "{$module}/option_revisions/usergroups" : '';
 		$urls = array(
 			array('ユーザグループ設定', $url),
 			array('ユーザグループ設定履歴', $url_rev),
@@ -44,5 +42,4 @@ class Actionset_User extends \Kontiki\Actionset
 		);
 		return $retvals;
 	}
-*/
 }

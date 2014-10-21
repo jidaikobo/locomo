@@ -1,6 +1,6 @@
 <?php
-namespace Scaffold;
-class Helper
+namespace Kontiki_Core_Module\Scaffold;
+class Helper_Scaffold
 {
 	/**
 	* @var array $_default_constraints
@@ -15,7 +15,7 @@ class Helper
 	 * migration()
 	 * /packages/oil/classes/generate.php から移設
 	 */
-	public function migration($name, $subjects, $cmds)
+	public static function migration($name, $subjects, $cmds)
 	{
 		// We always pass in fields to a migration, so lets sort them out here.
 		$fields = array();
@@ -144,7 +144,7 @@ class Helper
 	/**
 	 * generate_controller()
 	 */
-	public function generate_controller($name)
+	public static function generate_controller($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/controller.php');
 		$val = self::replaces($name, $val);
@@ -154,7 +154,7 @@ class Helper
 	/**
 	 * generate_actionset()
 	 */
-	public function generate_actionset($name)
+	public static function generate_actionset($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/actionset.php');
 		$val = self::replaces($name, $val);
@@ -164,7 +164,7 @@ class Helper
 	/**
 	 * generate_actionset_owner()
 	 */
-	public function generate_actionset_owner($name)
+	public static function generate_actionset_owner($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/actionset_owner.php');
 		$val = self::replaces($name, $val);
@@ -174,7 +174,7 @@ class Helper
 	/**
 	 * generate_model()
 	 */
-	public function generate_model($name, $cmd_orig)
+	public static function generate_model($name, $cmd_orig)
 	{
 		//vals
 		$cmds = explode(' ', $cmd_orig);
@@ -254,7 +254,7 @@ class Helper
 	/**
 	 * generate_view()
 	 */
-	public function generate_view($name)
+	public static function generate_view($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/viewmodel.php');
 		$val = self::replaces($name, $val);
@@ -264,7 +264,7 @@ class Helper
 	/**
 	 * generate_views_index()
 	 */
-	public function generate_views_index($name)
+	public static function generate_views_index($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/index.php');
 		$val = self::replaces($name, $val);
@@ -274,7 +274,7 @@ class Helper
 	/**
 	 * generate_views_view()
 	 */
-	public function generate_views_view($name, $cmds)
+	public static function generate_views_view($name, $cmds)
 	{
 		$fields = '' ;
 
@@ -301,7 +301,7 @@ class Helper
 	/**
 	 * generate_views_options()
 	 */
-	public function generate_views_options($name)
+	public static function generate_views_options($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/option_samples.php');
 		$val = self::replaces($name, $val);
@@ -311,7 +311,7 @@ class Helper
 	/**
 	 * generate_views_form()
 	 */
-	public function generate_views_form($name, $cmds)
+	public static function generate_views_form($name, $cmds)
 	{
 		$hiddens = array('status');
 		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status');
@@ -352,7 +352,7 @@ class Helper
 	/**
 	 * generate_views_create()
 	 */
-	public function generate_views_create($name)
+	public static function generate_views_create($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/create.php');
 		$val = self::replaces($name, $val);
@@ -362,7 +362,7 @@ class Helper
 	/**
 	 * generate_views_edit()
 	 */
-	public function generate_views_edit($name)
+	public static function generate_views_edit($name)
 	{
 		$val = file_get_contents(dirname(__DIR__).'/templates/edit.php');
 		$val = self::replaces($name, $val);
@@ -372,7 +372,7 @@ class Helper
 	/**
 	 * generate_config()
 	 */
-	public function generate_config($cmd_orig)
+	public static function generate_config($cmd_orig)
 	{
 		//vals
 		$cmds = explode(' ', $cmd_orig);
@@ -388,7 +388,7 @@ class Helper
 	/**
 	 * replaces()
 	 */
-	public function replaces($name,$tpl)
+	public static function replaces($name,$tpl)
 	{
 		$tpl = str_replace ('XXX', ucfirst($name) , $tpl);
 		$tpl = str_replace ('xxx', strtolower($name) , $tpl);
@@ -399,7 +399,7 @@ class Helper
 	/**
 	 * putfiles()
 	 */
-	public function putfiles($path, $val)
+	public static function putfiles($path, $val)
 	{
 		touch($path) ;
 		$fp = fopen($path, 'w');
@@ -413,7 +413,7 @@ class Helper
 	/**
 	 * get_nicename()
 	 */
-	public function get_nicename($str)
+	public static function get_nicename($str)
 	{
 		preg_match('/\((.*?)\)/', $str, $m);
 		return @$m[1];
@@ -422,7 +422,7 @@ class Helper
 	/**
 	 * remove_nicename()
 	 */
-	public function remove_nicename($str)
+	public static function remove_nicename($str)
 	{
 		return preg_replace('/\(.*?\)/', '', $str);
 	}
