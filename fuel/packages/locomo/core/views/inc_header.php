@@ -15,7 +15,6 @@
 </head>
 <body class="<?php echo $body_class ;?>">
 	<div class="container">
-
 		<div class="contents">
 			<h1 class="page_title"><?php echo $title; ?></h1>
 <?php if (Session::get_flash('success')): ?>

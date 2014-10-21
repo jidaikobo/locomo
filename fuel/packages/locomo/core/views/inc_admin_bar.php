@@ -23,7 +23,6 @@ if($is_user_logged_in):
 			$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
 		endforeach;
 		$html.= '</ul>';
-		$html.= '<p class="context_info">事業所名？</p>';
 		$html.= '</div>';
 	endif;
 
