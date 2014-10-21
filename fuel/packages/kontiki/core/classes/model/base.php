@@ -195,10 +195,9 @@ class Model_Base extends \Orm\Model_Soft
 
 			// has_one or belongs_to
 			if (static::relations()[$k]->cascade_save and (static::relations()[$k] instanceof \Orm\HasOne or static::relations()[$k] instanceof \Orm\BelongsTo)) {
+				if (!$form->field($k)) continue;
+
 				isset($input_post[$k]) and $this[$k]->set($input_post[$k]);
-				// var_dump($k);
-				// var_dump($form->field('receiver'));
-				// var_dump(\$input_post($k));
 				!is_null($form) and $validated[] = $form->field($k)->validation()->run($input_post[$k]);
 				$repopulate and $form->field($k)->populate($input_post[$k]);
 

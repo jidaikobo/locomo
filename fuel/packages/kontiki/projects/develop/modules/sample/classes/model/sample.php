@@ -131,10 +131,10 @@ class Model_Sample extends \Kontiki\Model_Crud
 		// belongsto フォーム
 		$bt_form = Model_Belongsto::form_definition('belongsto', $obj->belongsto ?: $obj->belongsto = Model_Belongsto::forge())->populate($obj->belongsto);
 		$bt_form->set_input_name_array();
-		$form->add( $bt_form );
+		//$form->add( $bt_form );
 
 		// hasmany フォーム
-		$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
+		//$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
 
 
 
