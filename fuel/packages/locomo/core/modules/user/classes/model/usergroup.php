@@ -2,6 +2,8 @@
 namespace Locomo_Core_Module\User;
 class Model_Usergroup extends \Locomo\Model_Base
 {
+	use \Option\Model_Option;
+
 	protected static $_table_name = 'usergroups';
 
 	protected static $_properties = array(
@@ -29,6 +31,23 @@ class Model_Usergroup extends \Locomo\Model_Base
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,
+	);
+
+	protected static $_option_options = array(
+		'usergroup' => array(
+			'nicename' => 'ユーザグループ',
+			'label'    => 'name',
+			'option'   => 
+				array(
+					'select' => array('name'),
+					'where'  => array(
+						array('is_available', '1'),
+					),
+					'order_by'  => array(
+						array('order', 'ASC'),
+					)
+				)
+			)
 	);
 
 	/**

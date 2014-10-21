@@ -2,8 +2,6 @@
 namespace Locomo_Core_Module\User;
 class Model_User extends \Locomo\Model_Base
 {
-//	use \Option\Model_Option;
-
 	protected static $_table_name = 'users';
 
 	public static $_creator_field_name = 'id';
@@ -99,9 +97,8 @@ class Model_User extends \Locomo\Model_Base
 			->add_rule('max_length', 255);
 
 		//usergroups
-		$options['select'][] = 'name';
-		$options['where'][] = array('is_available', '1');
-		$usergroups = \User\Model_Usergroup::get_options($options, $label = 'name');
+		$opt = \User\Model_Usergroup::get_option_options('usergroup');
+		$usergroups = \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
 		$checked = isset($obj->usergroup) ? array_keys($obj->usergroup) : array();
 		$form->add(
 				'usergroup',

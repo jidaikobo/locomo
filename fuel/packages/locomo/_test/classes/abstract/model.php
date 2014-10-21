@@ -167,12 +167,6 @@ abstract class Model extends \Orm\Model_Soft
 			endforeach;
 		endforeach;
 
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $obj ) ;
-echo '</textarea>' ;
-die();
-
 		return $obj;
 
 	}

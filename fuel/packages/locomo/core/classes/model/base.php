@@ -26,6 +26,11 @@ class Model_Base extends \Orm\Model_Soft
 	);
 
 	/*
+	 * _option_options - see sample at \User\Model_Usergroup
+	 */
+	protected static $_option_options = array();
+
+	/*
 	 * __construct
 	 */
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
@@ -34,6 +39,14 @@ class Model_Base extends \Orm\Model_Soft
 		foreach (self::$_depend_modules as $module) {
 			\Module::load($module);
 		}
+	}
+
+	/**
+	 * get_option_options()
+	 */
+	public static function get_option_options($key = null)
+	{
+		return isset(static::$_option_options[$key]) ? static::$_option_options[$key] : static::$_option_options;
 	}
 
 	/*
@@ -169,12 +182,12 @@ class Model_Base extends \Orm\Model_Soft
 
 		//in_progress、before_progressの項目は、権限のない人には閲覧できない
 		
-
+/*
 echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
 var_dump( $userinfo ) ;
 echo '</textarea>' ;
 die();
-
+*/
 		if (isset(static::properties()[$column]) && $mode != 'edit') {
 			$options['where'][] = array(array($column, '<>', 'in_progress'));
 		}
