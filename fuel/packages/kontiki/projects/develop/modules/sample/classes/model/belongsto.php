@@ -31,8 +31,8 @@ class Model_Belongsto extends \Kontiki\Model_Base
 			'BELONGSTO NAME',
 			array('type' => 'text')
 		)
-		->add_rule('required')
-		->add_rule('max_length', 50)
+		//->add_rule('required')
+		//->add_rule('max_length', 50)
 		->set_value(@$obj->name);
 
 		return $form;
