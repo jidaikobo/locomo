@@ -1,15 +1,15 @@
 <?php echo render('inc_header'); ?>
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
-<p><?php echo \Sort::sort_info('\User\Model_User'); ?></p>
+<p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <br>
 <?php if ($items): ?>
 <table class="tbl datatable scrollable">
 	<thead>
 		<tr>
-			<th><?php echo \Sort::sort('id', 'ID'); ?></th>
-			<th><?php echo \Sort::sort('user_name', 'User name'); ?></th>
-			<th><?php echo \Sort::sort('email', 'Email'); ?></th>
-			<th><?php echo \Sort::sort('last_login_at', 'Last login'); ?></th>
+			<th><?php echo \Pagination::sort('id', 'ID', false); ?></th>
+			<th><?php echo \Pagination::sort('user_name', 'User name'); ?></th>
+			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
+			<th><?php echo \Pagination::sort('last_login_at', 'Last login'); ?></th>
 			<th>Delete date</th>
 			<th>Status</th>
 			<th>&nbsp;</th>

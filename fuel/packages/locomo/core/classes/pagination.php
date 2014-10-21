@@ -11,12 +11,10 @@
 
 namespace Locomo_Core;
 
-class Sort {
+class Pagination extends \Fuel\Core\Pagination {
 
-	protected static $label = '';
-	public static function sort($field, $label) {
+	public static function sort($field, $label, $reset = true) {
 
-		
 		$input_get = \Input::get();
 		if (isset($input_get['orders'][$field])) {
 			switch($input_get['orders'][$field]) {
@@ -39,10 +37,29 @@ class Sort {
 			$class = '';
 		}
 
-		$url = \Uri::create(\Uri::current(), array(), $input_get);
-		return \Html::anchor($url, $label ?: $field, array('class' => $class));
-	}
+		$p_seg = static::instance()->config['uri_segment'];
+		if ($reset) {
+			if ($p_seg and is_int($p_seg)) {
+				$url = \Uri::base();
+				$segments = \Uri::segments();
+				$p_seg--;
+				for ($i = 0; $i < count($segments); $i ++) {
+					if ($i == $p_seg) {
+						$url .= '1/';
+					} else {
+						$url .= $segments[$i] . '/';
+					}
+				}
+				$url = \Uri::create($url, array(), $input_get);
+				return \Html::anchor($url, $label ?: $field, array('class' => $class));
 
+			} elseif(is_string($p_seg)) {
+				unset($input_get[$p_seg]);
+			}
+		}
+			$url = \Uri::create(\Uri::current(), array(), $input_get);
+			return \Html::anchor($url, $label ?: $field, array('class' => $class));
+	}
 
 	public static function sort_info($model) {
 		if ( is_null( \Input::get('orders')) ) {
@@ -55,7 +72,7 @@ class Sort {
 		if ($model::primary_key()[0] == $field) {
 			$label = 'ID';
 		} else {
-			$form = $model::form_definition('fack');
+			$form = $model::form_definition('sort_info');
 			if ($form->field($field)) {
 				$label = $form->field($field)->label;
 			} else {
@@ -70,5 +87,6 @@ class Sort {
 		}
 
 	}
+
 }
 
