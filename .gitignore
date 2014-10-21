@@ -1,11 +1,11 @@
 .DS_Store
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
-fuel/packages/kontiki/config/packageconfig.php
-fuel/packages/kontiki/projects/*
-!fuel/packages/kontiki/projects/develop
-fuel/packages/kontiki/_test
-fuel/packages/kontiki/_bookmarks
+fuel/packages/locomo/config/packageconfig.php
+fuel/packages/locomo/projects/*
+!fuel/packages/locomo/projects/develop
+fuel/packages/locomo/_test
+fuel/packages/locomo/_bookmarks
 fuel/app/config/development/db.php
 fuel/app/config/crypt.php
 view/css/*
