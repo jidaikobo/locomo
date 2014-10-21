@@ -406,7 +406,7 @@ class Helper_Scaffold
 		fwrite($fp, $val);
 //			fwrite($fp, pack('C*',0xEF,0xBB,0xBF));//BOM -> php unaccept BOM
 		fclose($fp) ;
-		chmod($path, 0777);
+		@chmod($path, 0777);
 	}
 
 
