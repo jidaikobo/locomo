@@ -126,7 +126,7 @@ class Model_Sample extends \Kontiki\Model_Base
 		// hasone フォーム
 		$ho_form = Model_Hasone::form_definition('hasone', $obj->hasone ?: $obj->hasone = Model_Hasone::forge())->populate($obj->hasone);
 		$ho_form->set_input_name_array();
-		//$form->add( $ho_form );
+		$form->add( $ho_form );
 
 		// belongsto フォーム
 		$bt_form = Model_Belongsto::form_definition('belongsto', $obj->belongsto ?: $obj->belongsto = Model_Belongsto::forge())->populate($obj->belongsto);
@@ -134,7 +134,7 @@ class Model_Sample extends \Kontiki\Model_Base
 		$form->add( $bt_form );
 
 		// hasmany フォーム
-		$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
+		//$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
 
 
 
