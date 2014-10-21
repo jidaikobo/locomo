@@ -1,6 +1,6 @@
 <?php
 namespace Kontiki_Core_Module\Workflow;
-class Model_Workflow extends \Kontiki\Model_Crud
+class Model_Workflow extends \Kontiki\Model_Base
 {
 	protected static $_table_name = 'workflows';
 

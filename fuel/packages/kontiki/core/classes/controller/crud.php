@@ -341,7 +341,7 @@ class Controller_Crud extends \Kontiki\Controller_Base
 		$model = $this->model_name ;
 
 		if ($id) {
-			$obj = $model::find($id, $model::authorized_option());
+			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
 			if( ! $obj){
 				$page = \Request::forge('content/403')->execute();
 				return new \Response($page, 403);

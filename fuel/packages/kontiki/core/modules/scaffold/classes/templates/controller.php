@@ -8,14 +8,6 @@ class Controller_XXX extends \Kontiki\Controller_Crud
 //	use \Revision\Controller_Revision;
 
 	/**
-	 * set_actionset()
-	 */
-	public static function set_actionset($controller = null, $id = null)
-	{
-		parent::set_actionset($controller, $id);
-	}
-
-	/**
 	 * edit_core()
 	 */
 	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)

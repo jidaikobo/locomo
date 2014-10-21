@@ -23,15 +23,11 @@ class Util
 	/**
 	 * get_valid_actionset_name()
 	 */
-	public static function get_valid_actionset_name($controller = null, $is_ownerset = false)
+	public static function get_valid_actionset_name($module = null)
 	{
-		is_null($controller) and \Response::redirect(\Uri::base());
-		$controller_ucfirst = ucfirst($controller);
-		if($is_ownerset):
-			return "\\$controller_ucfirst\Actionset_".$controller_ucfirst.'_Owner';
-		else:
-			return "\\$controller_ucfirst\Actionset_".$controller_ucfirst;
-		endif;
+		is_null($module) and \Response::redirect(\Uri::base());
+		$module = ucfirst($module);
+		return "\\$module\Actionset_".$module;
 	}
 
 	/**

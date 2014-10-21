@@ -1,34 +1,30 @@
 <?php
 namespace Wftest;
-class Actionset_Wftest extends \Kontiki\Actionset
+class Actionset_Wftest extends \Actionset
 {
 	//use \Revision\Actionset_Revision;
-	//use \Workflow\Actionset_Workflow;
+	use \Workflow\Actionset_Workflow;
 
 	/**
 	 * actionItems()
 	 * @return  obj
 	 */
-	public static function actionItems($controller = null, $item = null)
+	public static function set_actionset($module = null, $obj = null)
 	{
-		$actions = parent::actionItems($controller, $item);
-//		$actions->sample_action = self::sample_action($controller, $item);
+		parent::set_actionset($module, $obj);
+//		static::$actions->sample_action = self::sample_action($module, $obj);
 
 		//revision
 		/*
-		$actions->view_revision = self::view_revision($controller, $item);
+		static::$actions->view_revision = self::view_revision($module, $obj);
 		*/
 
 		//workflow
-		/*
-		$actions->index_workflow   = self::index_workflow($controller, $item);
-		$actions->workflow         = self::workflow($controller, $item);
-		$actions->workflow_process = self::workflow_process($controller, $item);
-		$actions->workflow_actions = self::workflow_actions($controller, $item);
-		if(@$item->workflow_status == 'in_progress') unset($actions->edit);
-		*/
-
-		return $actions;
+		static::$actions->index_workflow   = self::index_workflow($module, $obj);
+		static::$actions->workflow         = self::workflow($module, $obj);
+		static::$actions->workflow_process = self::workflow_process($module, $obj);
+		static::$actions->workflow_actions = self::workflow_actions($module, $obj);
+		if(@$obj->workflow_status == 'in_progress') unset(static::$actions->edit);
 	}
 
 	/*
@@ -46,9 +42,9 @@ class Actionset_Wftest extends \Kontiki\Actionset
 	 * sample_action()
 	 * @return  array
 	 */
-	private static function sample_action($controller, $item)
+	private static function sample_action($module, $obj)
 	{
-		$url = parent::check_auth($controller, 'sample_action') ? "{$controller}/sample_action" : '';
+		$url = parent::check_auth($module, 'sample_action') ? "{$module}/sample_action" : '';
 
 		$retvals = array(
 			'is_admin_only' => false,

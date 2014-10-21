@@ -4,7 +4,7 @@ class Controller_Wftest extends \Kontiki\Controller_Crud
 {
 	//trait
 //	use \Option\Controller_Option;
-//	use \Workflow\Controller_Workflow;
+	use \Workflow\Controller_Workflow;
 //	use \Revision\Controller_Revision;
 
 	/**

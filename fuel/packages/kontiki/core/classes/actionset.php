@@ -2,44 +2,65 @@
 namespace Kontiki_Core;
 class Actionset
 {
+	public static $actions;
+
 	/**
-	 * actionItems()
+	 * get_actionset()
 	 * @return  obj
 	 */
-	public static function actionItems($obj = null)
+	public static function get_actionset($module = null, $obj = null)
 	{
-		$module = \Util::get_module_name_from_class(get_called_class());
+		if( ! \Module::loaded($module)){
+			if( ! \Module::load($module)) die("module doesn't exist");
+		}
 
-		$actions = (object) array();
-		$actions->index            = self::index($module);
-		$actions->view             = self::view($module, $obj);
+		$actionset_class = \Kontiki\Util::get_valid_actionset_name($module);
 
-		$actions->index_admin      = self::index_admin($module);
-		$actions->index_all        = self::index_all($module);
+		if(class_exists($actionset_class)){
+			$actionset_class::set_actionset($module, $obj);
+			return self::$actions;
+		}
+		return false;
+	}
 
-		$actions->create           = self::create($module);
-		$actions->edit             = self::edit($module, $obj);
-		$actions->edit_anyway      = self::edit_anyway($module, $obj);
-		$actions->delete           = self::delete($module, $obj);
-		$actions->undelete         = self::undelete($module, $obj);
-		$actions->delete_deleted   = self::delete_deleted($module, $obj);
+	/**
+	 * set_actionset()
+	 * @return  obj
+	 */
+	public static function set_actionset($module = null, $obj = null)
+	{
+		is_null($module) and die("module doesn't exist");
 
-		$actions->index_expired    = self::index_expired($module);
-		$actions->view_expired     = self::view_expired($module, $obj);
+		static::$actions = (object) array();
 
-		$actions->index_invisible  = self::index_invisible($module);
-		$actions->view_invisible   = self::view_invisible($module, $obj);
+		static::$actions->index            = self::index($module);
+		static::$actions->view             = self::view($module, $obj);
 
-		$actions->index_yet        = self::index_yet($module);
-		$actions->view_yet         = self::view_yet($module, $obj);
+		static::$actions->index_admin      = self::index_admin($module);
+		static::$actions->index_all        = self::index_all($module);
 
-		$actions->index_deleted    = self::index_deleted($module);
-		$actions->view_deleted     = self::view_deleted($module, $obj);
+		static::$actions->create           = self::create($module);
+		static::$actions->edit             = self::edit($module, $obj);
+		static::$actions->edit_anyway      = self::edit_anyway($module, $obj);
+		static::$actions->delete           = self::delete($module, $obj);
+		static::$actions->undelete         = self::undelete($module, $obj);
+		static::$actions->delete_deleted   = self::delete_deleted($module, $obj);
 
-		$actions->index_revision   = self::index_revision($module);
+		static::$actions->index_expired    = self::index_expired($module);
+		static::$actions->view_expired     = self::view_expired($module, $obj);
 
-		$actions->add_testdata     = self::add_testdata($module);
-		return $actions;
+		static::$actions->index_invisible  = self::index_invisible($module);
+		static::$actions->view_invisible   = self::view_invisible($module, $obj);
+
+		static::$actions->index_yet        = self::index_yet($module);
+		static::$actions->view_yet         = self::view_yet($module, $obj);
+
+		static::$actions->index_deleted    = self::index_deleted($module);
+		static::$actions->view_deleted     = self::view_deleted($module, $obj);
+
+		static::$actions->index_revision   = self::index_revision($module);
+
+		static::$actions->add_testdata     = self::add_testdata($module);
 	}
 
 	/**

@@ -158,12 +158,9 @@ class View_Base extends \ViewModel
 	{
 		$view = \View::forge();
 
-		$get_actionset = function($controller, $item) {
+		$get_actionset = function($module, $item) {
 			//ログインした人向けのメニューなので、ゲストには何も返さない
 			if( ! \User\Controller_User::$is_user_logged_in) return false;
-
-			//コントローラからactionsetを取得
-			$controller_obj = \Kontiki\Util::get_valid_controller_name($controller);
 
 			//現在のURL（base urlをのぞく）
 			$current = \Uri::string();
@@ -172,7 +169,7 @@ class View_Base extends \ViewModel
 			$retvals            = array();
 			$retvals['index']   = array();
 			$retvals['control'] = array();
-			foreach($controller_obj::get_actionset($item) as $v):
+			foreach(\Actionset::get_actionset($module, $item) as $v):
 				if( ! @$v['url']) continue;
 
 				$key = (@$v['is_index']) ? 'index' : 'control';
