@@ -10,7 +10,7 @@ class Actionset_XXX extends \Actionset
 	 */
 	public static function set_actionset($module = null, $obj = null)
 	{
-		parent::actionItems($controller, $item);
+		parent::set_actionset($module, $obj);
 //		static::$actions->sample_action = self::sample_action($controller, $item);
 
 		//revision

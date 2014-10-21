@@ -69,8 +69,8 @@ class Controller_Scaffold extends \Kontiki\Controller_Crud
 
 			//actionset
 			if( ! file_exists($scfldpath.'/classes/actionset')) mkdir($scfldpath.'/classes/actionset');
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/actionset.php', $actionset) ;
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/actionset_owner.php', $actionset_owner) ;
+			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/'.$name.'.php', $actionset) ;
+			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/'.$name.'_owner.php', $actionset_owner) ;
 
 			//model
 			if( ! file_exists($scfldpath.'/classes/model')) mkdir($scfldpath.'/classes/model');
