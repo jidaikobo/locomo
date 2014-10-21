@@ -15,7 +15,9 @@ if( ! (bool) defined('STDIN')):
 		die();
 	endif;
 else:
-	$host = $projects['hosts']['cli_host'];
+	$host = isset($_SERVER['LOCOMO_ENV']) ?
+		$_SERVER['LOCOMO_ENV'] :
+		$projects['hosts']['cli_host'];
 endif;
 
 //PKGPATH
