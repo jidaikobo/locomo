@@ -456,21 +456,21 @@ a.delete{
 }
 
 /* tbl datatable */
-.tbl.datatable{
+table.datatable{
 	font-size: .9em;
 }
-.tbl.datatable th,
-.tbl.datatable td{
+table.datatable th,
+table.datatable td{
 	border-bottom: 1px solid #eee;
 }
-.tbl.datatable td{
+table.datatable td{
 	white-space: nowrap;
 }
 
-.tbl.datatable tr:nth-child(even) {
+table.datatable tr:nth-child(even) {
 	background: #f6f6f6;
 }
-.tbl.datatable .col_scroll{
+table.datatable .col_scroll{
 	display: block;
 	white-space: normal;
 	overflow-y: auto;
