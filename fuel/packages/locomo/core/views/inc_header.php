@@ -16,7 +16,7 @@
 <body class="<?php echo $body_class ;?>">
 	<div class="container">
 
-		<div class="col-md-12">
+		<div class="contents">
 			<h1 class="page_title"><?php echo $title; ?></h1>
 <?php if (Session::get_flash('success')): ?>
 			<div class="alert alert_success">
@@ -34,5 +34,3 @@
 				</p>
 			</div>
 <?php endif; ?>
-		</div>
-		<div class="col-md-12">

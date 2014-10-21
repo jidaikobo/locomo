@@ -10,13 +10,14 @@ body{
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
 	box-sizing : border-box ;
-	min-height: 100%;
+/*	min-height: 100%;
 	height: auto !important;
+	*/
 	height: 100%;
-	padding: 0 30px 120px;
-	margin-bottom: -120px;
+	padding: 0 20px 10px;
 	position: relative;
 }
+
 footer,
 #footer{
 	position: relative;
@@ -31,7 +32,7 @@ body.login{
 /*	background-color: #aeb8bf;*/
 	background-color: #cdd7de;
 }
-.login .container {
+.login .contents {
 	min-height: inherit;
 	width: 22em;
 	height: 23.5em !important;
@@ -48,7 +49,7 @@ body.login{
 	border-radius: 3px;
 	text-align: center;
 }
-.login.home .container{
+.login.home .contents{
 	height: 20.5em !important;
 }
 .login h1{
@@ -59,7 +60,7 @@ body.login{
 	clip: rect(1px, 1px, 1px, 1px);
 }
 .login h2{
-	font-size: 2em;
+	font-size: 2em !important;
 	color: #004896;
 	font-weight: normal;
 	margin-bottom: .5em;
@@ -220,9 +221,10 @@ body.login{
 	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
 	margin-top: 1px;
 	padding: 2px 10px;
-}
-#adminbar_context {
 	text-shadow: 1px 1px 0 #fff;
+}
+#adminbar_context h3 {
+	display: inline;
 }
 #adminbar_context ul {
 	display: inline;
@@ -477,4 +479,25 @@ table.datatable .col_scroll{
 	height: 1.5em;
 	margin: -.25em -.5em -.25em;
 	padding: 0 .5em;
+}
+
+/*=== contents ===*/
+.contents {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	padding: 10px 20px;
+	margin: 10px auto 0;
+/*	background-color: #fafafa; */
+}
+.contents h1.page_title {
+	padding: 0.25em 0;
+	font-size: 1.5em;
+}
+.contents h2 {
+	font-size: 1.2em;
+	font-weight: normal;
 }
