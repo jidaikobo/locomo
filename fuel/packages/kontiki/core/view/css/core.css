@@ -148,7 +148,8 @@ body.login{
 .adminbar_main a {
 	color: #fff;
 }
-.adminbar_main a:hover {
+.adminbar_main a:hover,
+.adminbar_main a:focus {
 	background-color: rgba(255,255,255,.15);
 	border-radius: 3px;
 }
@@ -430,3 +431,50 @@ div.alert_error {
 
 /*  form  */
 
+/*  table  */
+.tbl{
+	background-color: #fefefe;
+}
+*>table.tbl thead th,
+*>table.tbl thead th,
+*>table.tbl thead td,
+*>table.tbl td,
+.tbl td{
+	padding:.25em .5em;
+}
+.btn_group{
+	white-space: nowrap;
+}
+.btn_group a{
+	margin-left: .5em;
+}
+.btn_group a:first-child{
+	margin-left: 0;
+}
+a.delete{
+	color: #a20;
+}
+
+/* tbl datatable */
+.tbl.datatable{
+	font-size: .9em;
+}
+.tbl.datatable th,
+.tbl.datatable td{
+	border-bottom: 1px solid #eee;
+}
+.tbl.datatable td{
+	white-space: nowrap;
+}
+
+.tbl.datatable tr:nth-child(even) {
+	background: #f6f6f6;
+}
+.tbl.datatable .col_scroll{
+	display: block;
+	white-space: normal;
+	overflow-y: auto;
+	height: 1.5em;
+	margin: -.25em -.5em -.25em;
+	padding: 0 .5em;
+}

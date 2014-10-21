@@ -2,7 +2,6 @@
 
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
 <p><?php echo \Sort::sort_info('\User\Model_User'); ?></p>
-<br>
 <?php if ($items): ?>
 <table class="table table-striped">
 	<thead>

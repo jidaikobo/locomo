@@ -3,7 +3,7 @@
 <p><?php echo \Sort::sort_info('\User\Model_User'); ?></p>
 <br>
 <?php if ($items): ?>
-<table class="table table-striped tbl2">
+<table class="tbl datatable scrollable">
 	<thead>
 		<tr>
 			<th><?php echo \Sort::sort('id', 'ID'); ?></th>
@@ -20,28 +20,30 @@
 <?php foreach ($items as $item): ?>
 		<tr>
 			<td><?php echo $item->id; ?></td>
-			<td><?php echo \Str::truncate($item->user_name, 20); ?></td>
-			<td><?php echo \Str::truncate($item->email, 20); ?></td>
-			<td><?php echo $item->last_login_at; ?></td>
-			<td><?php echo $item->deleted_at; ?></td>
+			<td><span class="col_scroll" style="min-width: 5em;" tabindex="-1"><?php 
+					echo Html::anchor('user/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></span></td>
+			<td><div class="col_scroll" style="min-width: 10em;"  tabindex="-1"><?php echo $item->email; ?></div></td>
+			<td><div class="col_scroll" tabindex="-1"><?php echo $item->last_login_at; ?></div></td>
+			<td><?php echo $item->deleted_at; ?>121212121212</td>
 			<td><?php echo $item->status; ?></td>
 			<td>
-				<div class="btn-toolbar">
-					<div class="btn-group">
-						<?php
-						$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
-						echo Html::anchor('user/view'.'/'.$item->id, 'View', array('class' => 'button'));
-						echo Html::anchor('user/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'button'));
-						if($is_deleted):
-							echo Html::anchor('user/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> Undelete', array('class' => 'button'));
-							echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'button btn-danger'));
-						else:
-							echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '<i class="icon-trash icon-white"></i> Delete', array('class' => 'button btn-danger', 'onclick' => "return confirm('Are you sure?')", 'onkeypress' => "return confirm('Are you sure?')"));
-						endif;
-						?>
-					</div>
+				<div class="btn_group">
+					<?php
+					/*
+					$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
+					echo Html::anchor('user/view'.'/'.$item->id, '閲覧', array('class' => 'view'));
+					*/
+					echo Html::anchor('user/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
+					/*
+					if($is_deleted):
+						echo Html::anchor('user/undelete/'.$item->id, '復活', array('class' => 'undelete'));
+						echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '削除', array('class' => 'delete'));
+					else:
+						echo Html::anchor('user/'.$delete_ctrl.'/'.$item->id, '削除', array('class' => 'delete', 'onclick' => "return confirm('Are you sure?')", 'onkeypress' => "return confirm('Are you sure?')"));
+					endif;
+					*/
+					?>
 				</div>
-
 			</td>
 		</tr>
 <?php endforeach; ?>
@@ -52,10 +54,7 @@
 <?php else: ?>
 <p>ユーザが存在しません。</p>
 
-<?php endif; ?><p>
-	<?php echo Html::anchor('user/create', 'Add new User', array('class' => 'btn btn-success')); ?>
-
-</p>
+<?php endif; ?>
 
 <?php echo render('inc_footer'); ?>
 
