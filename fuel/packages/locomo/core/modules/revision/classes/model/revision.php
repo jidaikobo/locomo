@@ -6,8 +6,8 @@ class Model_Revision extends \Locomo\Model_Base
 
 	protected static $_properties = array(
 		'id',
-		'controller',
-		'controller_id',
+		'model',
+		'pk_id',
 		'data',
 		'comment',
 		'created_at',
@@ -80,8 +80,8 @@ class Model_Revision extends \Locomo\Model_Base
 		//当該コンテンツの最新データを取得
 		$q = \DB::select('created_at');
 		$q->from('revisions');
-		$q->where('controller', $this->controller);
-		$q->where('controller_id', $this->controller_id);
+		$q->where('model', $this->model);
+		$q->where('pk_id', $this->pk_id);
 		$q->order_by('created_at', 'DESC');
 		$result = $q->execute()->current();
 		$created_at = $result['created_at'];

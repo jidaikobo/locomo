@@ -10,7 +10,8 @@ trait Controller_Option
 		is_null($optname) and die();
 		$model = substr(get_called_class(), 0, strrpos(get_called_class(), '\\')).'\\Model_'.ucfirst($optname);
 		$opt = $model::get_option_options($optname);
-		$items = $model::find('all', array('order_by' => array(array('order','ASC'))));
+		$order = @$opt['order_field'] ? array('order_by' => array(array($opt['order_field'],'ASC'))) : array() ;
+		$items = $model::find('all', $order);
 
 		//view
 		if (\Input::method() == 'POST' && \Security::check_token()):
@@ -62,12 +63,12 @@ trait Controller_Option
 			endforeach;
 
 			$args = array();
-			$args['controller']    = $optname;
-			$args['controller_id'] = 0;
-			$args['data']          = serialize($tmps);
-			$args['comment']       = \Input::post('revision_comment') ?: '';
-			$args['created_at']    = date('Y-m-d H:i:s');
-			$args['modifier_id']   = \User\Controller_User::$userinfo['user_id'];
+			$args['model']       = $optname;
+			$args['pk_id']       = 0;
+			$args['data']        = serialize($tmps);
+			$args['comment']     = \Input::post('revision_comment') ?: '';
+			$args['created_at']  = date('Y-m-d H:i:s');
+			$args['modifier_id'] = \User\Controller_User::$userinfo['user_id'];
 			$rev_model = \Revision\Model_Revision::forge($args);
 			$rev_model->insert_revision();
 
