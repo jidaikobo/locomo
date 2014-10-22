@@ -33,10 +33,14 @@ class Model_Usergroup extends \Locomo\Model_Base
 		'mysql_timestamp' => true,
 	);
 
+	/*
+	 * option setting
+	 */
 	protected static $_option_options = array(
 		'usergroup' => array(
 			'nicename' => 'ユーザグループ',
 			'label'    => 'name',
+			'order_field' => 'order',
 			'option'   => 
 				array(
 					'select' => array('name'),
