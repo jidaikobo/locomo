@@ -50,10 +50,10 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_usergroups()
 	{
-		$options['select'][] = 'name';
-		$options['where'][] = array('is_available', '1');
+		$opt = \User\Model_Usergroup::get_option_options('usergroup');
+		$usergroups = \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
 		$usergroups = array('none' => '選択してください', 0 => 'ゲスト');
-		$usergroups += \User\Model_Usergroup::get_options($options, $label = 'name');
+		$usergroups += \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
 		return $usergroups;
 	}
 

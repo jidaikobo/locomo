@@ -9,17 +9,17 @@ class Actionset_User extends \Actionset
 	public static function set_actionset($module = null, $obj = null)
 	{
 		parent::set_actionset($module, $obj);
-		static::$actions->usergroups = self::usergroups($module, $obj);
+		static::$actions->usergroup = self::usergroup($module, $obj);
 	}
 
 	/**
-	 * usergroups()
+	 * usergroup()
 	 * @return  array
 	 */
-	private static function usergroups($module, $obj)
+	private static function usergroup($module, $obj)
 	{
-		$url = parent::check_auth($module, 'usergroups') ? "{$module}/option/usergroups" : '';
-		$url_rev = $url ? "{$module}/option_revisions/usergroups" : '';
+		$url = parent::check_auth($module, 'usergroup') ? "{$module}/option/usergroup" : '';
+		$url_rev = $url ? "{$module}/option_revisions/usergroup" : '';
 		$urls = array(
 			array('ユーザグループ設定', $url),
 			array('ユーザグループ設定履歴', $url_rev),
@@ -36,8 +36,8 @@ class Actionset_User extends \Actionset
 			'dependencies' => array(
 				'option',
 				'option_revisions',
-//				'option/usergroups',
-//				'option_revisions/usergroups',
+//				'option/usergroup',
+//				'option_revisions/usergroup',
 			)
 		);
 		return $retvals;

@@ -8,9 +8,14 @@ trait Controller_Option
 	public function action_option($optname = null)
 	{
 		is_null($optname) and die();
-		$optinfo = self::$actionset->$optname;
-		$items = \Option\Model_Option::find_options($optname);
-		$model = $this->model_name;
+		$model = substr(get_called_class(), 0, strrpos(get_called_class(), '\\')).'\\Model_'.ucfirst($optname);
+		$opt = $model::get_option_options($optname);
+		$order = @$opt['order_field'] ? array('order_by' => array(array($opt['order_field'],'ASC'))) : array() ;
+		$items = $model::find('all', $order);
+
+
+		$form = $model::form_definition('edit',$items);
+
 
 		//view
 		if (\Input::method() == 'POST' && \Security::check_token()):
@@ -22,13 +27,13 @@ trait Controller_Option
 					\Session::set_flash('error', $err);
 				else:
 					//add_option()
-					$model::add_option($optname, \Input::post());
+					$model::add_option(\Input::post());
 					\Session::set_flash('success', '項目を新規追加しました');
 				endif;
 			//削除
 			elseif(\Input::post('delete')):
 				$id = key(\Input::post('delete'));
-				$model::delete_option($optname, $id);
+				$model::delete_option($id);
 				\Session::set_flash('success', '項目を削除しました');
 			//編集
 			elseif(\Input::post('mode') == 'edit'):
@@ -37,7 +42,7 @@ trait Controller_Option
 					if(empty($item['name'])):
 						$err = array('項目名が空の値については更新できませんでした');
 					else:
-						$model::update_option($optname, $item);
+						$model::update_option($item);
 					endif;
 				endforeach;
 				//編集のメッセージ
@@ -48,22 +53,38 @@ trait Controller_Option
 				endif;
 			endif;
 			//編集あるいは新規追加が終わったらリビジョンをアップデート
-			$items = $model::find_options($optname);
+			$items = $model::find('all');
+
+			//find()したものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
+			$tmps = array();
+			$n = 0;
+			foreach($items as $item):
+				$tmps[$n] = (object) array();
+				foreach($model::properties() as $property => $v):
+					$tmps[$n]->{$property} = $item->{$property};
+				endforeach;
+				$n++;
+			endforeach;
+
 			$args = array();
-			$args['controller']    = $optname;
-			$args['controller_id'] = 0;
-			$args['data']          = serialize($items);
-			$args['comment']       = \Input::post('revision_comment') ?: '';
-			$args['created_at']    = date('Y-m-d H:i:s');
-			$args['modifier_id']   = \User\Controller_User::$userinfo['user_id'];
+			$args['model']       = $optname;
+			$args['pk_id']       = 0;
+			$args['data']        = serialize($tmps);
+			$args['comment']     = \Input::post('revision_comment') ?: '';
+			$args['created_at']  = date('Y-m-d H:i:s');
+			$args['modifier_id'] = \User\Controller_User::$userinfo['user_id'];
 			$rev_model = \Revision\Model_Revision::forge($args);
 			$rev_model->insert_revision();
+
+			return \Response::redirect(\Uri::create($this->request->module.'/option/'.$optname));
 		endif;
 
 		//view
 		$view = \View::forge('option_'.$optname);
 		$view->set_global('items', $items);
-		$view->set_global('title', $optinfo['action_name']);
+		$view->set_global('title', $opt['nicename']);
+
+		$view->set_global('form', $form, false);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -82,7 +103,7 @@ trait Controller_Option
 		endif;
 
 		//view
-		$view = \View::forge(\Locomo\Util::fetch_tpl('/revision/views/index_option.php'));
+		$view = \View::forge(\Util::fetch_tpl('/revision/views/index_option.php'));
 
 		$view->set_global('items', $revisions);
 		$view->set_global('optname', $optname);
@@ -106,8 +127,14 @@ trait Controller_Option
 
 		//unserialize
 		$data = (object) array();
-		$data          = (object) unserialize($revisions->data);
-		$data->comment = $revisions->comment;
+		$data->comment = isset($revisions->comment) ? $revisions->comment : '' ;
+
+		//unserialize()した値をそのまま渡すとなぜか配列が倍に増えるので、ここで対応
+		$vals = (object) unserialize($revisions->data);
+		$retvals = (object) array();
+		foreach($vals as $k => $val):
+			$data->$k = (object) $val;
+		endforeach;
 
 		//view
 		$view = \View::forge('option_'.$optname);

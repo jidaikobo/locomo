@@ -11,6 +11,7 @@ class Util
 
 		$tpl_path         = PKGPROJPATH.'modules/'.$path;
 		$tpl_path_default = PKGCOREPATH.'modules/'.$path;
+
 		if(file_exists($tpl_path)):
 			return $tpl_path;
 		elseif(file_exists($tpl_path_default)):

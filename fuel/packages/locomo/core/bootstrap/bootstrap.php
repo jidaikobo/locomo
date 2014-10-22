@@ -107,8 +107,10 @@ foreach (glob(PKGCOREPATH."modules".DS."*") as $dirname):
 
 	//trait
 	$trait_path = $dirname.'/traits/';
-	foreach (glob($trait_path."*") as $filename):
-		Fuel::load($filename);
+	foreach (glob($trait_path."*") as $dirpath):
+		foreach (glob($dirpath.DS."*") as $filepath):
+			\Fuel::load($filepath);
+		endforeach;
 	endforeach;
 endforeach;
 

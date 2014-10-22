@@ -2,6 +2,8 @@
 namespace Locomo_Core_Module\User;
 class Model_Usergroup extends \Locomo\Model_Base
 {
+	use \Option\Model_Option;
+
 	protected static $_table_name = 'usergroups';
 
 	protected static $_properties = array(
@@ -31,6 +33,27 @@ class Model_Usergroup extends \Locomo\Model_Base
 		'mysql_timestamp' => true,
 	);
 
+	/*
+	 * option setting
+	 */
+	protected static $_option_options = array(
+		'usergroup' => array(
+			'nicename' => 'ユーザグループ',
+			'label'    => 'name',
+			'order_field' => 'order',
+			'option'   => 
+				array(
+					'select' => array('name'),
+					'where'  => array(
+						array('is_available', '1'),
+					),
+					'order_by'  => array(
+						array('order', 'ASC'),
+					)
+				)
+			)
+	);
+
 	/**
 	 * form_definition()
 	 *
@@ -41,7 +64,17 @@ class Model_Usergroup extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$form = \Fieldset::forge('form', \Config::get('form'));
+		$modulename = \Util::get_module_name_from_class(get_called_class());
+		$module_path = "modules/{$modulename}";
+		$paths = array(PKGCOREPATH.$module_path, PKGPROJPATH.$module_path, PKGCOREPATH);
+		$finder = \Finder::forge($paths);
+		$form_cg_path = $finder->locate('config/form', 'usergroup');
+		$hoge = \Config::load($form_cg_path, 'from', true);
+
+		$form = \Fieldset::forge('form', $hoge);
+
+
+
 
 		//user_name
 		$form->add(

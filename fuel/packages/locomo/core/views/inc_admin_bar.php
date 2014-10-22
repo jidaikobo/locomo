@@ -63,9 +63,13 @@ if($is_user_logged_in):
 	$html.= '</div><!-- /.adminbar_main_left -->';
 	
 	$html.='<div class="adminbar_main_right">';
+
+	//thx debe
+	$root_prefix = $is_root ? '_root' : '' ;
+
 	//user menu
 	$html.= '<div id="adminbar_user">';
-	$html.= '<a href="javascript:void(0);" class="listopen modal" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています"><span class="adminbar-icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user.png\" alt=\"\"></span>".\User\Controller_User::$userinfo["display_name"].'</a>';
+	$html.= '<a href="javascript:void(0);" class="listopen modal" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています"><span class="adminbar-icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span>".\User\Controller_User::$userinfo["display_name"].'</a>';
 	$html.= '<ul class="boxshadow">';
 	if( ! $is_admin):
 		$html.= "<li><a href=\"{$home_uri}user/view/{$userinfo["user_id"]}\">ユーザ情報</a></li>";
