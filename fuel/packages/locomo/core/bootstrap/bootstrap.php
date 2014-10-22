@@ -129,23 +129,16 @@ endforeach;
 Autoloader::add_classes($observer_class_names);
 
 // load the package with the config file.
-foreach (glob(PKGCOREPATH."config".DS."*") as $path):
+$paths = array(PKGPROJPATH, PKGCOREPATH);
+$finder = \Finder::forge($paths);
+foreach($finder->list_files('config') as $path):
 	$filename = basename($path);
 	$name = substr(strtolower(basename($filename)), 0, -4);//remove .php
-	$projpath = PKGPROJPATH."config".DS.$filename;
 	$name = $filename == 'packageconfig.php' ? '' : $name ;
-	if(file_exists($projpath)):
-		if($name):
-			Config::load($projpath,$name);
-		else:
-			Config::load($projpath);
-		endif;
+	if($name):
+		Config::load($path, $name);
 	else:
-		if($name):
-			Config::load($path,$name);
-		else:
-			Config::load($path);
-		endif;
+		Config::load($path);
 	endif;
 endforeach;
 
