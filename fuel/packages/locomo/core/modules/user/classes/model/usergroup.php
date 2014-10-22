@@ -64,7 +64,17 @@ class Model_Usergroup extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$form = \Fieldset::forge('form', \Config::get('form'));
+		$modulename = \Util::get_module_name_from_class(get_called_class());
+		$module_path = "modules/{$modulename}";
+		$paths = array(PKGCOREPATH.$module_path, PKGPROJPATH.$module_path, PKGCOREPATH);
+		$finder = \Finder::forge($paths);
+		$form_cg_path = $finder->locate('config/form', 'usergroup');
+		$hoge = \Config::load($form_cg_path, 'from', true);
+
+		$form = \Fieldset::forge('form', $hoge);
+
+
+
 
 		//user_name
 		$form->add(

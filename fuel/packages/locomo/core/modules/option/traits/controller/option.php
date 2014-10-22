@@ -13,6 +13,10 @@ trait Controller_Option
 		$order = @$opt['order_field'] ? array('order_by' => array(array($opt['order_field'],'ASC'))) : array() ;
 		$items = $model::find('all', $order);
 
+
+		$form = $model::form_definition('edit',$items);
+
+
 		//view
 		if (\Input::method() == 'POST' && \Security::check_token()):
 			//新規追加
@@ -79,6 +83,8 @@ trait Controller_Option
 		$view = \View::forge('option_'.$optname);
 		$view->set_global('items', $items);
 		$view->set_global('title', $opt['nicename']);
+
+		$view->set_global('form', $form, false);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}

@@ -23,8 +23,8 @@ class Model_Revision extends \Locomo\Model_Base
 		//リビジョンの一覧を取得
 		$q = \DB::select('*');
 		$q->from('revisions');
-		$q->where('controller', $controller);
-		$q->where('controller_id', $controller_id);
+		$q->where('model', $controller);
+		$q->where('pk_id', $controller_id);
 		return $q->as_object()->execute()->as_array();
 	}
 
@@ -52,7 +52,7 @@ class Model_Revision extends \Locomo\Model_Base
 		//リビジョンの一覧を取得
 		$q = \DB::select('*');
 		$q->from('revisions');
-		$q->where('controller', $optname);
+		$q->where('model', $optname);
 		return $q->as_object()->execute()->as_array();
 	}
 
@@ -67,7 +67,7 @@ class Model_Revision extends \Locomo\Model_Base
 		//リビジョンを取得
 		$q = \DB::select('*');
 		$q->from('revisions');
-		$q->where('controller', $optname);
+		$q->where('model', $optname);
 		$q->where('created_at', $datetime);
 		return $q->as_object()->execute()->current();
 	}

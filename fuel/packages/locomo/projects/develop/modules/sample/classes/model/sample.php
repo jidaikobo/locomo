@@ -134,7 +134,7 @@ class Model_Sample extends \Locomo\Model_Base
 		$form->add( $bt_form );
 
 		// hasmany フォーム
-		//$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
+		$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
 
 
 
