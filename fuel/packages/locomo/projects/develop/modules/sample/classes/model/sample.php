@@ -112,7 +112,7 @@ class Model_Sample extends \Locomo\Model_Base
 			array('type' => 'text', 'rows' => 7, 'style' => 'width:100%;')
 		)
 		->add_rule('required')
-		->add_rule('max_length', 50)
+		->add_rule('max_length', 5)
 		->set_value(@$obj->name);
 
 		//belongsto_id
@@ -155,14 +155,31 @@ class Model_Sample extends \Locomo\Model_Base
 	public static function bulk_form_definition($factory, $obj = null, $id = '') {
 
 		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		$form->add(
+			'id',
+			'ID',
+			array('type' => 'text', 'disabled' => true)
+		)
+		->set_value(@$obj->id);
+
 		$form->add(
 			'name',
 			'samples表題',
 			array('type' => 'text', 'rows' => 7, 'style' => 'width:100%;')
 		)
+		//->set_template('<td>{field}{error_msg}</td>')
 		->add_rule('required')
-		->add_rule('max_length', 2)
+		->add_rule('max_length', 5)
 		->set_value(@$obj->name);
+
+		//belongsto_id
+		$form->add(
+			'belongsto_id',
+			'BELONGSTO ID',
+			array('type' => 'text', 'size' => 30)
+		)
+		->set_value(@$obj->belongsto_id);
 
 		return $form;
 

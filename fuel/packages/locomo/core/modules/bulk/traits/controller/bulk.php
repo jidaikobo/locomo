@@ -6,7 +6,7 @@ trait Controller_Bulk
 	/*
 	 *
 	 */
-	public function action_bulk($page = 1, $deleted = false) {
+	public function action_bulk($page = 1) {//, $deleted = false) {
 
 		$model = $this->model_name;
 		$action = \Request::main()->action;
@@ -50,6 +50,7 @@ trait Controller_Bulk
 		$options['limit'] = \Input::get('limit') ?: $pagination_config['per_page'];
 		$view->set_safe('pagination', \Pagination::create_links());
 
+		/*
 		if ($deleted === 'disabled') {
 			$model::disable_filter();
 			$objects = $model::find('all', $options);
@@ -59,6 +60,8 @@ trait Controller_Bulk
 		} else {
 			$objects = $model::find('all', $options);
 		}
+		 */
+		$objects = $model::find('all', $options);
 
 
 		$bulk = \Bulk::forge();
@@ -83,7 +86,7 @@ trait Controller_Bulk
 			}
 		}
 
-		$form = $bulk->build();
+		//$form = $bulk->build();
 
 
 		$view->set_global('title', 'バルク品');

@@ -58,12 +58,9 @@ class Bulk {
 	public function build() {
 		$output = '';
 		foreach($this->forms as $form) {
-			$form->set_config('form_template', "\n\t\t\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t\n");
+			// $form->set_config('form_template', "\n\t\t\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t\n");
 			$output .= $form->build();
 		}
-		\Config::load('develop::form');
-		
-		var_dump(\Config::get('form')); die();
 		return $output;
 	}
 
@@ -85,7 +82,7 @@ class Bulk {
 		try
 		{
 			foreach ($this->models as $key => $model) {
-				if ($this->forms[$key]->populate(\Input::post())->validation()->run(\Input::post())) {
+				if ($this->forms[$key]->populate(\Input::post($key))->validation()->run(\Input::post($key))) {
 					$model->set(\Input::post($key));
 					$model->save(null, false);
 				} else {
@@ -107,11 +104,15 @@ class Bulk {
 			$use_transaction and $db->commit_transaction();
 			return true;
 		} else {
-			// rollback
+			// if catch error => rollback
 			$use_transaction and $db->rollback_transaction();
 			return false;
 		}
 	}
+
+	public function validation() {
+	}
+
 
 	public static function connection($writeable = false)
 	{

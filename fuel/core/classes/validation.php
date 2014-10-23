@@ -790,7 +790,6 @@ class Validation
 	 */
 	public function _validation_max_length($val, $length)
 	{
-		var_dump($val);
 		return $this->_empty($val) || \Str::length($val) <= $length;
 	}
 
