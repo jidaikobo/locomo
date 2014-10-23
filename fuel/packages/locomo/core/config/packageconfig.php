@@ -1,11 +1,11 @@
 <?php
 //root user
-define('ROOT_USER_NAME','root');
-define('ROOT_USER_PASS','131313');
+defined('ROOT_USER_NAME') or define('ROOT_USER_NAME','root');
+defined('ROOT_USER_PASS') or define('ROOT_USER_PASS','131313');
 
 //admin user
-define('ADMN_USER_NAME','admin');
-define('ADMN_USER_PASS','121212');
+defined('ADMN_USER_NAME') or define('ADMN_USER_NAME','admin');
+defined('ADMN_USER_PASS') or define('ADMN_USER_PASS','121212');
 
 //fuel config
 return array(
