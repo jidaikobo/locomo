@@ -333,10 +333,6 @@ class Controller_Crud extends \Locomo\Controller_Base
 		return $this->action_edit(null);
 	}
 
-	public function modify_cascaded($object = null) {
-		$object;
-	}
-
 	public function action_edit($id = null) {
 		$model = $this->model_name ;
 
@@ -367,7 +363,7 @@ class Controller_Crud extends \Locomo\Controller_Base
 				$obj = $this->pre_save_hook($obj, 'edit');
 */
 				//save
-				if ($obj->save()):
+				if ($obj->save(null, true)):
 /*
 				//post_save_hook
 				$obj = $this->post_save_hook($obj, 'edit');

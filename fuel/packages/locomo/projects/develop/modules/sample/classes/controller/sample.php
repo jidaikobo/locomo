@@ -3,7 +3,7 @@ namespace Sample;
 class Controller_Sample extends \Locomo\Controller_Crud
 {
 	//trait
-//	use \Option\Controller_Option;
+	use \Bulk\Controller_Bulk;
 //	use \Workflow\Controller_Workflow;
 //	use \Revision\Controller_Revision;
 

@@ -72,7 +72,7 @@ class Model_User extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$form = \Fieldset::forge('form', \Config::get('form'));
+		$form = \Fieldset::forge($factory, \Config::get('form'));
 
 		//user_name
 		$form->add(

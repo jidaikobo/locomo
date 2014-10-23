@@ -23,7 +23,7 @@ class Model_Belongsto extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$form = \Fieldset::forge('belongsto', \Config::get('form'));
+		$form = \Fieldset::forge($factory, \Config::get('form'));
 
 		//name
 		$form->add(

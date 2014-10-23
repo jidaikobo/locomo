@@ -92,7 +92,7 @@ class Model_Sample extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$form = \Fieldset::forge('sample', \Config::get('form'));
+		$form = \Fieldset::forge($factory, \Config::get('form'));
 /*
 		//user_name
 		$val->add('name', 'サンプル')
@@ -127,7 +127,6 @@ class Model_Sample extends \Locomo\Model_Base
 		$ho_form = Model_Hasone::form_definition('hasone', $obj->hasone ?: $obj->hasone = Model_Hasone::forge())->populate($obj->hasone);
 		$ho_form->set_input_name_array();
 		$form->add( $ho_form );
-
 		// belongsto フォーム
 		$bt_form = Model_Belongsto::form_definition('belongsto', $obj->belongsto ?: $obj->belongsto = Model_Belongsto::forge())->populate($obj->belongsto);
 		$bt_form->set_input_name_array();
@@ -150,5 +149,22 @@ class Model_Sample extends \Locomo\Model_Base
 
 
 		return $form;
+	}
+
+
+	public static function bulk_form_definition($factory, $obj = null, $id = '') {
+
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+		$form->add(
+			'name',
+			'samples表題',
+			array('type' => 'text', 'rows' => 7, 'style' => 'width:100%;')
+		)
+		->add_rule('required')
+		->add_rule('max_length', 2)
+		->set_value(@$obj->name);
+
+		return $form;
+
 	}
 }
