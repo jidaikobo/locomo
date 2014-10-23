@@ -11,7 +11,7 @@ if($('#adminbar')[0]){
 	if($('#adminbar_context')[0]){
 		barHeight += $('#adminbar_context').height();
 	}
-	$('body').css('padding-top', barHeight+5+5+'px' );
+	$('body').css('padding-top', barHeight+17+'px' );
 }
 /*
 $('a.listopen').click(function(){

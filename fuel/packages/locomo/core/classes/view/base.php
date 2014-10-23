@@ -47,9 +47,11 @@ class View_Base extends \ViewModel
 		$view->set_global('token', \Security::fetch_token());
 
 		//controller and action
-		$controller = \Inflector::denamespace(\Request::main()->controller);
+		$controller_class = \Request::main()->controller;
+		$controller = \Inflector::denamespace($controller_class);
 		$controller = strtolower(substr($controller, 11));
 		$action     = \Request::active()->action;
+
 
 		//url
 		$view->set_global('controller', $controller);
@@ -58,11 +60,15 @@ class View_Base extends \ViewModel
 //		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/'));
 		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
 		$view->set_global('home_uri', \Uri::base());
-		$view->set_global('home_url', \Uri::base());
-		
+
+		//controller_name
+		$controller_name = $controller_class::$nicename;
+		$view->set_global('controller_name', $controller_name);
+
 		//body_class
-		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
-		if( \Request::main()->route->action == 'login' && \Config::get('use_login_as_top') ) $class_arr[] = 'home';
+		$class_arr = array($controller, $action );
+		if($action == 'login' && \Config::get('use_login_as_top')) $class_arr[] = 'home';
+		if(\User\Controller_User::$is_user_logged_in) $class_arr[] = 'admin';
 		$view->set_global('body_class', implode($class_arr,' '));
 	}
 
@@ -190,5 +196,7 @@ class View_Base extends \ViewModel
 			return $retvals;
 		};
 		$view->set_global('get_actionset', $get_actionset);
+
+
 	}
 }
