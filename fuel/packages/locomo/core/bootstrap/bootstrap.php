@@ -129,7 +129,7 @@ endforeach;
 Autoloader::add_classes($observer_class_names);
 
 // load the package with the config file.
-$paths = array(PKGPROJPATH, PKGCOREPATH);
+$paths = array(PKGCOREPATH,PKGPROJPATH);
 $finder = \Finder::forge($paths);
 foreach($finder->list_files('config') as $path):
 	$filename = basename($path);
