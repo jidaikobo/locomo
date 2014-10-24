@@ -1,6 +1,6 @@
 <?php
 namespace Locomo_Core;
-class Model_Crud extends \Locomo\Model_Base
+class Model_Crud extends \Locomo_Core\Model_Base
 {
 	/**
 	 * _primary_name
@@ -74,7 +74,7 @@ class Model_Crud extends \Locomo\Model_Base
 	 */
 	public static function validate($factory, $id = '')
 	{
-		$val = \Locomo\Validation::forge($factory);
+		$val = \Locomo_Core\Validation::forge($factory);
 		return $val;
 	}
 
@@ -90,7 +90,7 @@ class Model_Crud extends \Locomo\Model_Base
 	public static function find_item_by_ctrl_and_id($controller = null, $id = null)
 	{
 		if(is_null($controller) || is_null($id)) return false;
-		$modelname = \Locomo\Util::get_valid_model_name($controller);
+		$modelname = \Util::get_valid_model_name($controller);
 		$model     = $modelname::forge();
 		return $model::find_item_anyway($id);
 	}

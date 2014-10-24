@@ -1,6 +1,6 @@
 <?php
-namespace Locomo_Core_Module\Acl;
-class Controller_Acl extends \Locomo\Controller_Crud
+namespace Acl;
+class Controller_Acl extends \Locomo_Core\Controller_Crud
 {
 	/**
 	 * auth()
@@ -68,7 +68,7 @@ class Controller_Acl extends \Locomo\Controller_Crud
 	{
 		//vals
 		$controllers       = \Acl\Model_Acl::get_controllers();
-		$controllers_owner = \Acl\Model_Acl::get_controllers($is_owner = 1);
+		$controllers_owner = \Acl\Model_Acl::get_controllers('owner');
 		$usergroups        = \Acl\Model_Acl::get_usergroups();
 		$users             = \Acl\Model_Acl::get_users();
 
@@ -103,11 +103,13 @@ class Controller_Acl extends \Locomo\Controller_Crud
 		$controllers = \Acl\Model_Acl::get_controllers();
 		$usergroups  = \Acl\Model_Acl::get_usergroups();
 		$users       = \Acl\Model_Acl::get_users();
-		$actionsets  = \Actionset::get_actionset($controller);
-
-		foreach($actionsets as $k => $actionset):
-			if(isset($actionset['is_admin_only']) && $actionset['is_admin_only'] == true) unset($actionsets->$k);
-		endforeach;
+		$actionsets = \Actionset::get_all_actionset_single(
+			$controller,
+			$realm = 'all',
+			$obj = false,
+			$get_authed_url = false,
+			$exceptions = array('owner')
+		);
 
 		//check database
 		$q = \DB::select('action');
@@ -118,7 +120,9 @@ class Controller_Acl extends \Locomo\Controller_Crud
 		$q->where('owner_auth','=', null);
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
-		$aprvd_actionset = \Acl\Model_Acl::judge_set($results, $actionsets);
+		foreach($actionsets as $realm => $actionset):
+			$aprvd_actionset[$realm] = \Acl\Model_Acl::judge_set($results, $actionset);
+		endforeach;
 
 		//view
 		$view = \View::forge('actionset_index');
@@ -149,7 +153,12 @@ class Controller_Acl extends \Locomo\Controller_Crud
 		endif;
 
 		//対象コントローラのオーナ向けアクションセットの取得
-		$actionsets = \Actionset_Owner::get_actionset($controller);
+		$actionsets = \Actionset::get_all_actionset_single(
+			$controller,
+			$realm = 'owner',
+			$obj = false,
+			$get_authed_url = false
+		);
 
 		//check database
 		$q = \DB::select('action');
@@ -158,16 +167,16 @@ class Controller_Acl extends \Locomo\Controller_Crud
 		$q->where('owner_auth', '=', '1');
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
-		$aprvd_actionset = \Acl\Model_Acl::judge_set($results, $actionsets);
+		$aprvd_actionset = \Acl\Model_Acl::judge_set($results, $actionsets['owner']);
 
 		//view
-		$controllers = \Acl\Model_Acl::get_controllers($is_owner = 1);
+		$controllers = \Acl\Model_Acl::get_controllers('owner');
 		$view = \View::forge('actionset_owner_index');
 		$view->set_global('title', 'オーナ用アクセス権限管理: アクション選択');
 		$view->set('controller', $controllers[$controller]);
 		$view->set('hidden_controller', $controller);
 		$view->set('hidden_owner', 1);
-		$view->set('actionsets', $actionsets);
+		$view->set('actionsets', $actionsets['owner']);
 		$view->set('aprvd_actionset', $aprvd_actionset);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
@@ -192,7 +201,13 @@ class Controller_Acl extends \Locomo\Controller_Crud
 		endif;
 
 		//vals
-		$actionsets = \Actionset::get_actionset($controller);
+		$actionsets = \Actionset::get_all_actionset_single(
+			$controller,
+			$realm = 'all',
+			$obj = false,
+			$get_authed_url = false,
+			$exceptions = array('owner')
+		);
 
 		//query build
 		if (\Input::method() == 'POST'):
@@ -206,17 +221,19 @@ class Controller_Acl extends \Locomo\Controller_Crud
 
 			//aclを更新
 			if(is_array(\Input::post('acls'))):
-				foreach($acls as $action => $v):
-					foreach($actionsets->{$action}['dependencies'] as $each_action):
-						$q = \DB::insert('acls');
-						$q->set(array(
-							'controller' => $controller,
-							'action' => $each_action,
-							'usergroup_id' => $usergroup_id,
-							'user_id' => $user_id
-							)
-						);
-						$q->execute();
+				foreach($acls as $realm => $acl):
+					foreach($acl as $action => $v):
+						foreach($actionsets[$realm]->{$action}['dependencies'] as $each_action):
+							$q = \DB::insert('acls');
+							$q->set(array(
+								'controller' => $controller,
+								'action' => $each_action,
+								'usergroup_id' => $usergroup_id,
+								'user_id' => $user_id
+								)
+							);
+							$q->execute();
+						endforeach;
 					endforeach;
 				endforeach;
 			endif;
@@ -245,7 +262,12 @@ class Controller_Acl extends \Locomo\Controller_Crud
 		if($controller == null) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 		//vals
-		$actionsets = \Actionset_Owne::get_actionset($controller);
+		$actionsets = \Actionset::get_all_actionset_single(
+			$controller,
+			$realm = 'owner',
+			$obj = false,
+			$get_authed_url = false
+		);
 
 		//query build
 		if (\Input::method() == 'POST'):
@@ -257,7 +279,7 @@ class Controller_Acl extends \Locomo\Controller_Crud
 			//aclを更新
 			if(is_array(\Input::post('acls'))):
 				foreach($acls as $action => $v):
-					foreach($actionsets->{$action}['dependencies'] as $each_action):
+					foreach($actionsets['owner']->{$action}['dependencies'] as $each_action):
 						$q = \DB::insert('acls');
 						$q->set(array(
 							'controller' => $controller,

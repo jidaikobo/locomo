@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Scaffold;
+namespace Scaffold;
 class Helper_Scaffold
 {
 	/**
@@ -152,11 +152,21 @@ class Helper_Scaffold
 	}
 
 	/**
-	 * generate_actionset()
+	 * generate_actionset_index()
 	 */
-	public static function generate_actionset($name)
+	public static function generate_actionset_index($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/actionset.php');
+		$val = file_get_contents(dirname(__DIR__).'/templates/actionset_index.php');
+		$val = self::replaces($name, $val);
+		return $val;
+	}
+
+	/**
+	 * generate_actionset_base()
+	 */
+	public static function generate_actionset_base($name)
+	{
+		$val = file_get_contents(dirname(__DIR__).'/templates/actionset_base.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}

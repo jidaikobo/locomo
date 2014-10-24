@@ -1,8 +1,8 @@
 <?php
-namespace Locomo_Core_Module\User;
-class Model_Usergroup extends \Locomo\Model_Base
+namespace User;
+class Model_Usergroup extends \Locomo_Core\Model_Base
 {
-	use \Option\Model_Option;
+	use \Option\Traits_Model_Option;
 
 	protected static $_table_name = 'usergroups';
 

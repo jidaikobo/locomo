@@ -1,6 +1,6 @@
 <?php
-namespace Locomo_Core_Module\User;
-class Model_User extends \Locomo\Model_Base
+namespace User;
+class Model_User extends \Locomo_Core\Model_Base
 {
 	protected static $_table_name = 'users';
 

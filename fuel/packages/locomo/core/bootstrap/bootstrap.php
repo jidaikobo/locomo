@@ -26,93 +26,52 @@ define('PKGPROJPATH', dirname(dirname(__DIR__)).DS.'projects/'.$projects['hosts'
 define('PROJECTDIR', $projects['hosts'][$host]);
 define('PROJECTVIEWDIR', $projects['view'][$host]);
 
-//検索パスの追加
+//add \Finder path
 \Finder::instance()->add_path(PKGCOREPATH);
 \Finder::instance()->add_path(PKGPROJPATH);
 
+//load config
+$finder = \Finder::forge(array(PKGPROJPATH, PKGCOREPATH));
+$loaded = array();
+foreach($finder->list_files('config') as $path):
+	$filename = basename($path);
+	if(in_array($filename, $loaded)) continue;
+	$name = substr(strtolower(basename($filename)), 0, -4);//remove .php
+	$name = $filename == 'packageconfig.php' ? null : $name ;
+	\Config::load($path, $name);
+	$loaded[] = $filename;
+endforeach;
+
 //Autoloader::register()
 Autoloader::register();
+Autoloader::add_namespace('Locomo_Core', PKGCOREPATH.'classes'.DS);
+Autoloader::add_core_namespace('Locomo_Core');
+Autoloader::add_core_namespace('Locomo_Core_Module');
 
-//Autoloader - add_core_namespace 'Locomo_Core'
-//Locomo_Coreは、ルート名前空間として登録する。
-Autoloader::add_core_namespace('Locomo_Core', PKGCOREPATH.'classes');
+//add to core namespace
+Autoloader::add_classes(array(
+	'Locomo_Core\\Actionset'       => PKGCOREPATH.DS.'classes'.DS.'actionset.php',
+	'Locomo_Core\\Actionset_Base'  => PKGCOREPATH.DS.'classes'.DS.'actionset/base.php',
+	'Locomo_Core\\Actionset_Owner' => PKGCOREPATH.DS.'classes'.DS.'actionset/owner.php',
+	'Locomo_Core\\Actionset_Index' => PKGCOREPATH.DS.'classes'.DS.'actionset/index.php',
+	'Locomo_Core\\Util'            => PKGCOREPATH.DS.'classes'.DS.'util.php',
+));
 
-//class走査用のクロージャ
-$func_get_classname = function($filename){
-		return substr(\Inflector::words_to_upper(basename($filename)), 0, -4);
-	};
+//core override class
+Autoloader::add_classes(array(
+	'Locomo_Core\\Validation' => PKGCOREPATH.DS.'classes'.DS.'validation.php',
+	'Locomo_Core\\Pagination' => PKGCOREPATH.DS.'classes'.DS.'pagination.php',
+	'Locomo_Core\\Fieldset'   => PKGCOREPATH.DS.'classes'.DS.'fieldset.php',
+	'Locomo_Core\\Module'     => PKGCOREPATH.DS.'classes'.DS.'module.php',
+));
 
-//coreのclassを走査
-$classes = array();
-foreach (glob(PKGCOREPATH."classes".DS."*") as $filename):
-	//is_dir()
-	if(is_dir($filename)):
-		//follow fuel's way - relate class must be in same name dir
-		foreach (glob($filename.DS."*") as $child_filename):
-			$child_dirname = basename(dirname($child_filename));
-			$child_filename = basename($child_filename);
-			$path_part = $child_dirname.'/'.$child_filename;
-			$class = $func_get_classname($child_dirname.'_'.$child_filename);
-			$classes[$path_part] = $class;
-		endforeach;
-	//file
-	else:
-		$path_part = basename($filename);
-		$class = $func_get_classname($path_part);
-		$classes[$path_part] = $class;
-	endif;
-endforeach;
-foreach($classes as $path_part => $class):
-	//Locomo_Core名前空間の登録
-	Autoloader::add_class("Locomo_Core\\{$class}", PKGCOREPATH."classes/{$path_part}");
-	if(file_exists(PKGPROJPATH."classes/{$path_part}")):
-		//プロジェクト側にオーバライドがあったらLocomo名前空間として登録
-		Autoloader::add_class("Locomo\\{$class}", PKGPROJPATH."classes/{$path_part}");
-	else:
-		//プロジェクト側にオーバライドがなければ、Locomo名前空間をLocomo_Core名前空間と見なす
-		Autoloader::alias_to_namespace("Locomo_Core\\{$class}", 'Locomo');
-	endif;
-endforeach;
+//always load module
+Module::load('acl');
+Module::load('user');
+Module::load('revision');
+Module::load('workflow');
+Module::load('option');
 
-//Autoloader - base modules
-$module_names = array();
-$mvcs = array('controller','model','view','actionset',);
-foreach (glob(PKGCOREPATH."modules".DS."*") as $dirname):
-	//module names and pathes
-	$module = ucfirst(basename($dirname));
-	$l_module = strtolower($module);
-	$coremodpath = PKGCOREPATH."modules/{$l_module}/classes/";
-	$projmodpath = PKGPROJPATH."modules/{$l_module}/classes/";
-
-	//MVCディレクトリを走査
-	foreach($mvcs as $mvc):
-		foreach(glob($coremodpath."{$mvc}".DS."*") as $each_path):
-			$classname = ucfirst(substr(basename($each_path), 0, -4));
-			$l_classname = strtolower($classname);
-			$umvc = ucfirst($mvc);
-			//まず、Locomo_Core_Moduleの名前空間で登録しておく
-			Autoloader::add_class(
-				"Locomo_Core_Module\\{$module}\\{$umvc}_{$classname}",
-				$coremodpath."{$mvc}/{$l_classname}.php"
-			);
-			//コアモジュールをオーバライドするプロジェクトモジュールがなければ、Locomo_Core_Moduleをデフォルトのモジュール名前空間と見なす
-			if( ! file_exists($projmodpath."{$mvc}/{$classname}.php")):
-				Autoloader::alias_to_namespace(
-					"Locomo_Core_Module\\{$module}\\{$umvc}_{$classname}",
-					"{$module}"
-				);
-			endif;
-		endforeach;
-	endforeach;
-
-	//trait
-	$trait_path = $dirname.'/traits/';
-	foreach (glob($trait_path."*") as $dirpath):
-		foreach (glob($dirpath.DS."*") as $filepath):
-			\Fuel::load($filepath);
-		endforeach;
-	endforeach;
-endforeach;
 
 //Autoloader - observer
 $observer_class_names = array();
@@ -127,26 +86,5 @@ foreach (glob(PKGCOREPATH."observers".DS."*") as $filename):
 	$observer_class_names["Locomo\\Observer\\{$class}"] = file_exists($override_path) ? $override_path : $default_path;
 endforeach;
 Autoloader::add_classes($observer_class_names);
-
-// load the package with the config file.
-$paths = array(PKGCOREPATH,PKGPROJPATH);
-$finder = \Finder::forge($paths);
-foreach($finder->list_files('config') as $path):
-	$filename = basename($path);
-	$name = substr(strtolower(basename($filename)), 0, -4);//remove .php
-	$name = $filename == 'packageconfig.php' ? '' : $name ;
-	if($name):
-		Config::load($path, $name);
-	else:
-		Config::load($path);
-	endif;
-endforeach;
-
-//always load module
-Module::load('acl');
-Module::load('user');
-Module::load('revision');
-Module::load('workflow');
-Module::load('option');
 
 /* End of file bootstrap.php */

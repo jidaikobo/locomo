@@ -19,5 +19,6 @@ $this->request->action
 ＊　＊　＊
 
 scaffoldで作ったmigration:downに、acl削除を入れる
-なぜかACLを二度読みするので要確認。
-
+ほかのモジュールでoptionを作ってみる
+ほかのモジュールでrevisionを作ってみる
+workflowへ

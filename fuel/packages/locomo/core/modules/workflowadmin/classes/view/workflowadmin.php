@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Workflowadmin;
-class View_Workflowadmin extends \Locomo\View_Base
+namespace Workflowadmin;
+class View_Workflowadmin extends \Locomo_Core\View_Base
 {
 }

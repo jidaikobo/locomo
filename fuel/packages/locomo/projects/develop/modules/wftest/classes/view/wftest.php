@@ -1,5 +1,5 @@
 <?php
 namespace Wftest;
-class View_Wftest extends \Locomo\View_Base
+class View_Wftest extends \Locomo_Core\View_Base
 {
 }

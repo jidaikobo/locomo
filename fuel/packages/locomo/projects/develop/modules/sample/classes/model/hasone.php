@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Model_Hasone extends \Locomo\Model_Base
+class Model_Hasone extends \Locomo_Core\Model_Base
 {
 	protected static $_table_name = 'hasone';
 

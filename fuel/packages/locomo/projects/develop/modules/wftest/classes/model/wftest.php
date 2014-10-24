@@ -1,6 +1,6 @@
 <?php
 namespace Wftest;
-class Model_Wftest extends \Locomo\Model_Base
+class Model_Wftest extends \Locomo_Core\Model_Base
 {
 	protected static $_table_name = 'wftests';
 	protected static $_primary_name = '';

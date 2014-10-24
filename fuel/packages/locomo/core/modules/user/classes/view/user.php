@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\User;
-class View_User extends \Locomo\View_Base
+namespace User;
+class View_User extends \Locomo_Core\View_Base
 {
 }

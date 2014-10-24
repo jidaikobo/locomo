@@ -1,6 +1,6 @@
 <?php
-namespace Locomo_Core_Module\Workflow;
-class Model_Workflow extends \Locomo\Model_Base
+namespace Workflow;
+class Model_Workflow extends \Locomo_Core\Model_Base
 {
 	protected static $_table_name = 'workflows';
 

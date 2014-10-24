@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Acl;
-class View_Acl extends \Locomo\View_Base
+namespace Acl;
+class View_Acl extends \Locomo_Core\View_Base
 {
 }

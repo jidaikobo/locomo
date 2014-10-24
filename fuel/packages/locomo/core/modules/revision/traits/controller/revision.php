@@ -53,7 +53,7 @@ trait Controller_Revision
 		endif;
 
 		//view
-		$view = \View::forge(\Locomo\Util::fetch_tpl('/revision/views/index.php'));
+		$view = \View::forge(\Util::fetch_tpl('/revision/views/index.php'));
 
 		$view->set_global('items', $revisions);
 		$view->set_global('title', sprintf($this->titles['revision'], self::$nicename));

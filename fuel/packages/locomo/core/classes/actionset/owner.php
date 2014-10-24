@@ -1,56 +1,12 @@
 <?php
 namespace Locomo_Core;
-class Actionset_Owner
+class Actionset_Owner extends Actionset
 {
-	public static $actions;
-
-	/**
-	 * get_actionset()
-	 * @return  obj
-	 */
-	public static function get_actionset($module = null)
-	{
-		if( ! \Module::loaded($module)){
-			if( ! \Module::load($module)) die("module doesn't exist");
-		}
-
-		$path = \Module::exists($module)."classes/actionset/{$module}_owner.php";
-		if( ! file_exists($path)){
-			return false;
-		}
-
-		require_once($path);
-		$actionset_class = \Locomo\Util::get_valid_actionset_name($module).'_Owner';
-
-		if(class_exists($actionset_class)){
-			self::set_actionset();
-			return self::$actions;
-		}
-		return false;
-	}
-
-	/**
-	 * set_actionset()
-	 * @param str $module
-	 * @return  obj
-	 */
-	public static function set_actionset()
-	{
-		static::$actions = (object) array();
-		static::$actions->view           = self::view();
-		static::$actions->view_revision  = self::view_revision();
-		static::$actions->view_expired   = self::view_expired();
-		static::$actions->view_yet       = self::view_yet();
-		static::$actions->view_deleted   = self::view_deleted();
-		static::$actions->view_invisible = self::view_invisible();
-		static::$actions->edit           = self::edit();
-	}
-
 	/**
 	 * view()
 	 * @return  array
 	 */
-	private static function view()
+	public static function actionset_view($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => '閲覧（通常項目）',
@@ -66,7 +22,7 @@ class Actionset_Owner
 	 * view_revision()
 	 * @return  array
 	 */
-	private static function view_revision()
+	public static function actionset_view_revision($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => '閲覧（リビジョン）',
@@ -84,7 +40,7 @@ class Actionset_Owner
 	 * view_expired()
 	 * @return  array
 	 */
-	private static function view_expired()
+	public static function actionset_view_expired($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => '閲覧（期限切れ）',
@@ -100,7 +56,7 @@ class Actionset_Owner
 	 * view_yet()
 	 * @return  array
 	 */
-	private static function view_yet()
+	public static function actionset_view_yet($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => '閲覧（予約項目）',
@@ -116,7 +72,7 @@ class Actionset_Owner
 	 * view_deleted()
 	 * @return  array
 	 */
-	private static function view_deleted()
+	public static function actionset_view_deleted($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => '閲覧（削除された項目）',
@@ -133,7 +89,7 @@ class Actionset_Owner
 	 * view_invisible()
 	 * @return  array
 	 */
-	private static function view_invisible()
+	public static function actionset_view_invisible($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => '閲覧（不可視項目）',
@@ -149,7 +105,7 @@ class Actionset_Owner
 	 * edit()
 	 * @return  array
 	 */
-	private static function edit()
+	public static function actionset_edit($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => '項目の編集',
@@ -166,7 +122,7 @@ class Actionset_Owner
 	 * delete_file()
 	 * @return  array
 	 */
-	private static function delete_file()
+	public static function actionset_delete_file($module, $obj, $get_authed_url)
 	{
 		$retvals = array(
 			'action_name' => 'ファイルの削除権限',

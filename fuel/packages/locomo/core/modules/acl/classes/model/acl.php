@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Acl;
+namespace Acl;
 class Model_Acl extends \Orm\Model
 {
 	protected static $_table_name = 'acls';
@@ -74,30 +74,16 @@ class Model_Acl extends \Orm\Model
 	 * get_controllers()
 	 * configで指定されたacl対象コントローラの取得（とりあえずモジュール形式だけ）
 	 */
-	public static function get_controllers($is_owner = false)
+	public static function get_controllers($realm = '')
 	{
-		$controllers = array('none' => '選択してください');
-
-		foreach(\Config::get('module_paths') as $path):
-			foreach (glob($path.'*') as $dirname):
-				if( ! is_dir($dirname)) continue;
-				//config
-				$config = \Config::load($dirname.'/config/'.basename($dirname).'.php', $use_default_name = true, $reload = true);
-				if( ! $config) continue;
-
-				//admin_onlyだったらaclの対象外
-				if(@$config['is_admin_only']) continue;
-
-				//アクションセットのないコントローラは対象外にする
-				$controller = basename($dirname);
-				if( ! \Actionset::get_actionset($controller) && ! $is_owner) continue;
-				if( ! \Actionset_Owner::get_actionset($controller) && $is_owner) continue;
-
-				$controllers[$controller] = $config['nicename'] ;
-			endforeach;
+		//nicename
+		$modules = array_keys(\Actionset::get_actionset(null, $realm));
+		$controllers = array();
+		foreach($modules as $module):
+			$config = \Config::load(\Actionset::get_modules()[$module].DS.'config'.DS.$module.'.php', $module);
+			$controllers[$module] = $config['nicename'];
 		endforeach;
-
-		return $controllers;
+		return array('none' => '選択してください') + $controllers;
 	}
 
 }

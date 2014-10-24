@@ -1,6 +1,6 @@
 <?php
 namespace Locomo_Core;
-class Controller_Crud extends \Locomo\Controller_Base
+class Controller_Crud extends Controller_Base
 {
 
 	// public $template = 'index_admin';

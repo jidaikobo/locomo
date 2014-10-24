@@ -1,6 +1,6 @@
 <?php
-namespace Locomo_Core_Module\Revision;
-class Model_Revision extends \Locomo\Model_Base
+namespace Revision;
+class Model_Revision extends \Locomo_Core\Model_Base
 {
 	protected static $_table_name = 'revisions';
 

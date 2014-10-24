@@ -159,17 +159,20 @@ class View_Base extends \ViewModel
 		$view = \View::forge();
 
 		$get_actionset = function($module, $item) {
+
 			//ログインした人向けのメニューなので、ゲストには何も返さない
 			if( ! \User\Controller_User::$is_user_logged_in) return false;
 
 			//現在のURL（base urlをのぞく）
 			$current = \Uri::string();
+			$actionset = \Actionset::get_actionset($module, 'base', $item, $get_authed_url = true);
+			if( ! $actionset) return false;
 
 			//インデクス系のアクションセットを区別する
 			$retvals            = array();
 			$retvals['index']   = array();
 			$retvals['control'] = array();
-			foreach(\Actionset::get_actionset($module, $item) as $v):
+			foreach($actionset as $v):
 				if( ! @$v['url']) continue;
 
 				$key = (@$v['is_index']) ? 'index' : 'control';

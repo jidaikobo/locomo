@@ -1,6 +1,7 @@
 <?php
 namespace Sample;
-class Controller_Sample extends \Locomo\Controller_Crud
+//class Controller_Sample extends \Locomo_Core\Controller_Crud
+class Controller_Sample
 {
 	//trait
 //	use \Option\Controller_Option;
