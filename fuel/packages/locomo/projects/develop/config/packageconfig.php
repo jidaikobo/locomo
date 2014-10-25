@@ -12,6 +12,14 @@ return array(
 	//base
 	'site_title' => 'Light Staff',
 
+	//security
+	'security' => array(
+		'csrf_autoload'    => false,
+		'csrf_token_key'   => 'locomo_csrf_token',
+		'csrf_expiration'  => 300,
+		'token_salt'       => 'locomo_csrf_token',
+	),
+
 	//identity
 	'identity' => array(
 		'logo' => array(

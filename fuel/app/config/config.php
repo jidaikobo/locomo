@@ -114,9 +114,9 @@ return array(
 	 * Security settings
 	 */
 	'security' => array(
-		 'csrf_autoload'    => false,
-		 'csrf_token_key'   => 'locomo_csrf_token',
-		 'csrf_expiration'  => 300,
+//		 'csrf_autoload'    => false,
+//		 'csrf_token_key'   => 'locomo_csrf_token',
+//		 'csrf_expiration'  => 300,
 
 		/**
 		 * A salt to make sure the generated security tokens are not predictable

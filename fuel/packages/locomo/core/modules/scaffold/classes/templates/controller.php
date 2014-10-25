@@ -3,9 +3,9 @@ namespace XXX;
 class Controller_XXX extends \Locomo\Controller_Crud
 {
 	//trait
-//	use \Option\Controller_Option;
-//	use \Workflow\Controller_Workflow;
-//	use \Revision\Controller_Revision;
+//	use \Option\Traits_Controller_Option;
+//	use \Workflow\Traits_Controller_Workflow;
+//	use \Revision\Traits_Controller_Revision;
 
 	/**
 	 * edit_core()

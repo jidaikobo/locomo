@@ -21,7 +21,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 			'key_through_from' => 'group_id',
 			'table_through' => 'usergroups_r',
 			'key_through_to' => 'user_id',
-			'model_to' => '\Locomo_Module\User\Model_User',
+			'model_to' => '\User\Model_User',
 			'key_to' => 'id',
 			'cascade_save' => false,
 			'cascade_delete' => false,

@@ -16,32 +16,14 @@ LOCOMO_ENV=develop php oil refine migrate:up --modules=acl
 
 //APPPATH.config/development/db.php 
 
-APPPATHのdb.phpに、データベース接続情報を設定します。
-書き方は少々独特です。$retvalsを定義して、そのキーをプロジェクト名として設定します。
-複数のプロジェクト（場合によるとテスト環境）がある場合は、ここに定義します。
+APPPATHのdb.phpを以下のように設定します。
 
 ▼ここから────────────────
-$retvals = array();
-$retvals['proj_a'] = array(
-	'default' => array(
-		'type' => 'mysql',
-		'connection' => array(
-			'hostname' => 'localhost',
-//			'dsn' => 'mysql:host=localhost;dbname=fuel',
-//			'hostname' => '127.0.0.1',
-			'socket'   => '/opt/local/var/run/mysql5/mysqld.sock',
-//			'port' => '3306',
-			'database' => 'proj_a',
-			'username' => 'database_username',
-			'password' => 'database_password',
-//			'charset'      => 'utf8',
-			'enable_cache' => true,
-		),
-		'profiling' => true,
-	),
-);
-return $retvals[PROJECTDIR];
+<?php
+return \Fuel::load(PKGPROJPATH.'config/db.php');
 ────────────────ここまで▲
+
+それぞれのプロジェクトのconfigのdb.phpに、データベース接続情報を設定します。
 
 //oil
 
@@ -55,18 +37,6 @@ php oil refine migrate:up --modules=revision
 //APPPATH.config/config.php
 
 - always_loadに、locomoをたす
-
-- Security settingsのコメントアウトを外して、以下のように設定する
-
-		 'csrf_autoload'    => false,
-		 'csrf_token_key'   => 'locomo_csrf_token',
-		 'csrf_expiration'  => 300,
-
-//APPPATH.config/routes.php
-
-- トップページと404を変更
-	'_root_'  => 'content/home',
-	'_404_'   => 'content/404',
 
 /*
  * モジュール開発
@@ -91,13 +61,7 @@ MODNAME
 
 locomoには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
 
-パッケージコアモジュールのclassをオーバライドする場合は、プロジェクトのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作り、各classは、Locomo_Moduleの名前空間に対して行うことで、パッケージコアモジュールの機能を生かしてextendsできます。
-
-▼ここから────────────────
-namespace User;
-class Controller_User extends \Locomo_Module\User\Controller_User
-────────────────ここまで▲
-
+パッケージコアモジュールのclassをオーバライドする場合は、プロジェクトのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作ってください。
 /*
  * クラスと名前空間について
  */

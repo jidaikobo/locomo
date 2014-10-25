@@ -1,6 +1,6 @@
 <?php
 /*
- *オーバライドがあったら優先してAutoloaderに加える仕様のbootstrap
+ * bootstrap for locomo
  */
 
 //project.iniを確認
@@ -46,23 +46,22 @@ endforeach;
 Autoloader::register();
 Autoloader::add_namespace('Locomo', PKGCOREPATH.'classes'.DS);
 Autoloader::add_core_namespace('Locomo');
-Autoloader::add_core_namespace('Locomo_Module');
 
 //add to core namespace
 Autoloader::add_classes(array(
-	'Locomo\\Actionset'       => PKGCOREPATH.DS.'classes'.DS.'actionset.php',
-	'Locomo\\Actionset_Base'  => PKGCOREPATH.DS.'classes'.DS.'actionset/base.php',
-	'Locomo\\Actionset_Owner' => PKGCOREPATH.DS.'classes'.DS.'actionset/owner.php',
-	'Locomo\\Actionset_Index' => PKGCOREPATH.DS.'classes'.DS.'actionset/index.php',
-	'Locomo\\Util'            => PKGCOREPATH.DS.'classes'.DS.'util.php',
+	'Locomo\\Actionset'       => PKGCOREPATH.'classes'.DS.'actionset.php',
+	'Locomo\\Actionset_Base'  => PKGCOREPATH.'classes'.DS.'actionset/base.php',
+	'Locomo\\Actionset_Owner' => PKGCOREPATH.'classes'.DS.'actionset/owner.php',
+	'Locomo\\Actionset_Index' => PKGCOREPATH.'classes'.DS.'actionset/index.php',
+	'Locomo\\Util'            => PKGCOREPATH.'classes'.DS.'util.php',
 ));
 
 //core override class
 Autoloader::add_classes(array(
-	'Locomo\\Validation' => PKGCOREPATH.DS.'classes'.DS.'validation.php',
-	'Locomo\\Pagination' => PKGCOREPATH.DS.'classes'.DS.'pagination.php',
-	'Locomo\\Fieldset'   => PKGCOREPATH.DS.'classes'.DS.'fieldset.php',
-	'Locomo\\Module'     => PKGCOREPATH.DS.'classes'.DS.'module.php',
+	'Locomo\\Validation'  => PKGCOREPATH.'classes'.DS.'validation.php',
+	'Locomo\\Pagination'  => PKGCOREPATH.'classes'.DS.'pagination.php',
+	'Locomo\\Fieldset'    => PKGCOREPATH.'classes'.DS.'fieldset.php',
+	'Locomo\\Module'      => PKGCOREPATH.'classes'.DS.'module.php',
 ));
 
 //always load module
