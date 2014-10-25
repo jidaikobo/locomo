@@ -4,7 +4,6 @@ class Actionset_Index extends Actionset
 {
 	/**
 	 * index()
-	 * @return  array
 	 */
 	public static function actionset_index($module, $obj, $get_authed_url)
 	{
@@ -27,7 +26,6 @@ class Actionset_Index extends Actionset
 
 	/**
 	 * index_admin()
-	 * @return  array
 	 */
 	public static function actionset_index_admin($module, $obj, $get_authed_url)
 	{
@@ -48,7 +46,6 @@ class Actionset_Index extends Actionset
 
 	/**
 	 * index_deleted()
-	 * @return  array
 	 */
 	public static function actionset_index_deleted($module, $obj, $get_authed_url)
 	{
@@ -69,7 +66,6 @@ class Actionset_Index extends Actionset
 
 	/**
 	 * index_expired()
-	 * @return  array
 	 */
 	public static function actionset_index_expired($module, $obj, $get_authed_url)
 	{
@@ -90,7 +86,6 @@ class Actionset_Index extends Actionset
 
 	/**
 	 * index_yet()
-	 * @return  array
 	 */
 	public static function actionset_index_yet($module, $obj, $get_authed_url)
 	{
@@ -111,7 +106,6 @@ class Actionset_Index extends Actionset
 
 	/**
 	 * index_invisible()
-	 * @return  array
 	 */
 	public static function actionset_index_invisible($module, $obj, $get_authed_url)
 	{
@@ -152,28 +146,4 @@ class Actionset_Index extends Actionset
 		);
 		return $retvals;
 	}
-
-	public static function actionset_index_revision($module, $obj, $get_authed_url)
-	{
-	$url = '';
-/*
-		$url_rev = $url ? "{$module}/options_revisions/postcategories" : '';
-		$url = self::check_auth($module, 'index_revision') ? $url_str : '' ;
-		$urls = array(
-			array('カテゴリ設定', $url),
-			array('カテゴリ設定履歴', $url_rev),
-		);
-*/
-		$retvals = array(
-			'url'          => $url,
-			'action_name'  => 'リビジョン項目一覧',
-			'menu_str'     => 'リビジョン一覧',
-			'explanation'  => 'リビジョン項目一覧の権限です。',
-			'dependencies' => array(
-				'index_revision',
-			)
-		);
-		return $retvals;
-	}
-
 }

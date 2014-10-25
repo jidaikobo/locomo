@@ -91,6 +91,7 @@ trait Traits_Controller_Workflow
 
 			//表示用の名称
 			$modelname = \Util::get_valid_model_name($current_item->controller);
+die('プライマリネームはやめたので、propertiesをみるようにする');
 			$items[$k]['primary_name_field'] = $modelname::get_primary_name();
 		endforeach;
 

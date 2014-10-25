@@ -2,12 +2,6 @@
 namespace Locomo;
 class Model_Base extends \Orm\Model_Soft
 {
-	/**
-	 * _primary_name
-	 * to draw items title
-	 */
-	protected static $_primary_name = '';
-
 	/*
 	 * default field names
 	 */
@@ -73,14 +67,6 @@ class Model_Base extends \Orm\Model_Soft
 	public function get_original_values()
 	{
 		return $this->_original;
-	}
-
-	/**
-	 * get_primary_name()
-	 */
-	public static function get_primary_name()
-	{
-		return static::$_primary_name;
 	}
 
 	/*

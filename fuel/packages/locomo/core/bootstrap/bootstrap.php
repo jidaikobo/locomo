@@ -15,6 +15,7 @@ if( ! (bool) defined('STDIN')):
 		die();
 	endif;
 else:
+	//define cli host for oil command
 	$host = isset($_SERVER['LOCOMO_ENV']) ?
 		$_SERVER['LOCOMO_ENV'] :
 		$projects['hosts']['cli_host'];

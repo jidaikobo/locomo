@@ -3,7 +3,6 @@ namespace ===NAME===;
 class Model_===NAME=== extends \Locomo\Model_Base
 {
 	protected static $_table_name = '===TABLE_NAME===';
-	protected static $_primary_name = '';
 
 	protected static $_properties = array(
 ===FIELD_STR===

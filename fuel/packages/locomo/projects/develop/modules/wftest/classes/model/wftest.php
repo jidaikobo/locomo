@@ -3,7 +3,6 @@ namespace Wftest;
 class Model_Wftest extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'wftests';
-	protected static $_primary_name = '';
 
 	protected static $_properties = array(
 		'id',

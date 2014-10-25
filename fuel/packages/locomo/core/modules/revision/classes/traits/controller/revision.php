@@ -1,6 +1,6 @@
 <?php
 namespace Revision;
-trait Controller_Revision
+trait Traits_Controller_Revision
 {
 	/**
 	 * revision_modify_data()

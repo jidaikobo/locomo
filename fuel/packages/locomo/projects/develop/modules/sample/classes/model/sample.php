@@ -3,7 +3,7 @@ namespace Sample;
 class Model_Sample extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'samples';
-	protected static $_primary_name = '';
+
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,

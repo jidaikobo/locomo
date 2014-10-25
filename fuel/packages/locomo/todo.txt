@@ -18,10 +18,7 @@ $this->request->action
 
 ＊　＊　＊
 
-bootstrapをもう一回見て、observerの読み方を確認し直す。たぶんautoloader式に変更できる
-Controller_Baseにmethodがなかったときの処理を書く
-Userモジュールのオーバライドを試してみる
-
+revisionをobserverに
 
 scaffoldで作ったmigration:downに、acl削除を入れる
 ほかのモジュールでoptionを作ってみる

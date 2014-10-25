@@ -36,7 +36,7 @@ php oil refine migrate:up --modules=revision
 
 //APPPATH.config/config.php
 
-- always_loadに、locomoをたす
+always_loadに、locomoを足してください。
 
 /*
  * モジュール開発
@@ -46,27 +46,9 @@ Locomoパッケージ（以下locomo）はfuelphpのmoduleを基礎にしてい�
 
 locomoを用いて構築する際は、原則PKGPATH.'/projects/PROJECTNAME/modules/'以下に、以下のような構成のファイルをおいてください。locomoのscaffoldを使うと簡単に生成できます。
 
-MODNAME
-- classes
-	- controller
-		- MODNAME.php
-	- model
-		- MODNAME.php
-	- view
-		- MODNAME.php
-- migrations
-- config
-	- MODNAME.php
-- views
-
 locomoには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
 
 パッケージコアモジュールのclassをオーバライドする場合は、プロジェクトのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作ってください。
-/*
- * クラスと名前空間について
- */
-
-プロジェクトごとのクラスは、\Locomoの名前空間のクラスをextendsして、PROJPATH.classに設置してください。コアのclassを拡張する場合も同様です。
 
 /*
  * テンプレートのオーバライド

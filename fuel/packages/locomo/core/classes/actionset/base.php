@@ -13,11 +13,10 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * view()
-	 * @return  array
 	 */
 	public static function actionset_view($module, $obj, $get_authed_url)
 	{
-		if(is_object($obj) && $obj->id):
+		if($get_authed_url):
 			$url_str = isset($obj->id) ? $module."/view/$obj->id" : null ;
 			$url = self::check_auth($module, 'view') ? $url_str : '' ;
 			$url = self::check_owner_auth($module, 'view', $obj) ? $url_str : '' ;
@@ -37,7 +36,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * create()
-	 * @return  array
 	 */
 	public static function actionset_create($module, $obj, $get_authed_url)
 	{
@@ -66,7 +64,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * edit()
-	 * @return  array
 	 */
 	public static function actionset_edit($module, $obj, $get_authed_url)
 	{
@@ -91,7 +88,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * edit_anyway()
-	 * @return  array
 	 */
 	public static function actionset_edit_anyway($module, $obj, $get_authed_url)
 	{
@@ -119,7 +115,6 @@ class Actionset_Base extends Actionset
 		
 	/**
 	 * edit_deleted()
-	 * @return  array
 	 */
 	public static function actionset_edit_deleted($module, $obj, $get_authed_url)
 	{
@@ -145,7 +140,6 @@ class Actionset_Base extends Actionset
 	
 	/**
 	 * delete()
-	 * @return  array
 	 */
 	public static function actionset_delete($module, $obj, $get_authed_url)
 	{
@@ -179,7 +173,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * undelete()
-	 * @return  array
 	 */
 	public static function actionset_undelete($module, $obj, $get_authed_url)
 	{
@@ -211,7 +204,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * delete_deleted()
-	 * @return  array
 	 */
 	public static function actionset_delete_deleted($module, $obj, $get_authed_url)
 	{
@@ -241,7 +233,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * view_deleted()
-	 * @return  array
 	 */
 	public static function actionset_view_deleted($module, $obj, $get_authed_url)
 	{
@@ -265,7 +256,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * view_expired()
-	 * @return  array
 	 */
 	public static function actionset_view_expired($module, $obj, $get_authed_url)
 	{
@@ -289,7 +279,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * view_yet()
-	 * @return  array
 	 */
 	public static function actionset_view_yet($module, $obj, $get_authed_url)
 	{
@@ -314,7 +303,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * view_invisible()
-	 * @return  array
 	 */
 	public static function actionset_view_invisible($module, $obj, $get_authed_url)
 	{
@@ -339,7 +327,6 @@ class Actionset_Base extends Actionset
 
 	/**
 	 * add_testdata()
-	 * @return  array
 	 */
 	public static function _actionset_add_testdata($module, $obj, $get_authed_url)
 	{
