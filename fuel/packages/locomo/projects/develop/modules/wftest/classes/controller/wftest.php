@@ -1,6 +1,6 @@
 <?php
 namespace Wftest;
-class Controller_Wftest extends \Locomo_Core\Controller_Crud
+class Controller_Wftest extends \Locomo\Controller_Crud
 {
 	//trait
 //	use \Option\Controller_Option;

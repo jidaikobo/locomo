@@ -1,5 +1,5 @@
 <?php
-namespace Locomo\Observer;
+namespace Locomo;
 class Password extends \Orm\Observer
 {
 	/**

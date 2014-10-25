@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core;
+namespace Locomo;
 class Controller_Crud extends Controller_Base
 {
 

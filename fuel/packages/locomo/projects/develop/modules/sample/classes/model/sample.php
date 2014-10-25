@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Model_Sample extends \Locomo_Core\Model_Base
+class Model_Sample extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'samples';
 	protected static $_primary_name = '';
@@ -76,7 +76,7 @@ class Model_Sample extends \Locomo_Core\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Observer\Expired' => array(
+		'Locomo\Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),

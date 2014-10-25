@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core;
+namespace Locomo;
 class Actionset_Base extends Actionset
 {
 	/*

@@ -44,25 +44,25 @@ endforeach;
 
 //Autoloader::register()
 Autoloader::register();
-Autoloader::add_namespace('Locomo_Core', PKGCOREPATH.'classes'.DS);
-Autoloader::add_core_namespace('Locomo_Core');
-Autoloader::add_core_namespace('Locomo_Core_Module');
+Autoloader::add_namespace('Locomo', PKGCOREPATH.'classes'.DS);
+Autoloader::add_core_namespace('Locomo');
+Autoloader::add_core_namespace('Locomo_Module');
 
 //add to core namespace
 Autoloader::add_classes(array(
-	'Locomo_Core\\Actionset'       => PKGCOREPATH.DS.'classes'.DS.'actionset.php',
-	'Locomo_Core\\Actionset_Base'  => PKGCOREPATH.DS.'classes'.DS.'actionset/base.php',
-	'Locomo_Core\\Actionset_Owner' => PKGCOREPATH.DS.'classes'.DS.'actionset/owner.php',
-	'Locomo_Core\\Actionset_Index' => PKGCOREPATH.DS.'classes'.DS.'actionset/index.php',
-	'Locomo_Core\\Util'            => PKGCOREPATH.DS.'classes'.DS.'util.php',
+	'Locomo\\Actionset'       => PKGCOREPATH.DS.'classes'.DS.'actionset.php',
+	'Locomo\\Actionset_Base'  => PKGCOREPATH.DS.'classes'.DS.'actionset/base.php',
+	'Locomo\\Actionset_Owner' => PKGCOREPATH.DS.'classes'.DS.'actionset/owner.php',
+	'Locomo\\Actionset_Index' => PKGCOREPATH.DS.'classes'.DS.'actionset/index.php',
+	'Locomo\\Util'            => PKGCOREPATH.DS.'classes'.DS.'util.php',
 ));
 
 //core override class
 Autoloader::add_classes(array(
-	'Locomo_Core\\Validation' => PKGCOREPATH.DS.'classes'.DS.'validation.php',
-	'Locomo_Core\\Pagination' => PKGCOREPATH.DS.'classes'.DS.'pagination.php',
-	'Locomo_Core\\Fieldset'   => PKGCOREPATH.DS.'classes'.DS.'fieldset.php',
-	'Locomo_Core\\Module'     => PKGCOREPATH.DS.'classes'.DS.'module.php',
+	'Locomo\\Validation' => PKGCOREPATH.DS.'classes'.DS.'validation.php',
+	'Locomo\\Pagination' => PKGCOREPATH.DS.'classes'.DS.'pagination.php',
+	'Locomo\\Fieldset'   => PKGCOREPATH.DS.'classes'.DS.'fieldset.php',
+	'Locomo\\Module'     => PKGCOREPATH.DS.'classes'.DS.'module.php',
 ));
 
 //always load module
@@ -72,8 +72,10 @@ Module::load('revision');
 Module::load('workflow');
 Module::load('option');
 
-
 //Autoloader - observer
+
+
+
 $observer_class_names = array();
 foreach (glob(PKGCOREPATH."observers".DS."*") as $filename):
 	//class names and pathes

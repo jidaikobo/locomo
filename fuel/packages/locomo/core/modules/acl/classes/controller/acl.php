@@ -1,6 +1,6 @@
 <?php
 namespace Acl;
-class Controller_Acl extends \Locomo_Core\Controller_Crud
+class Controller_Acl extends \Locomo\Controller_Crud
 {
 	/**
 	 * auth()

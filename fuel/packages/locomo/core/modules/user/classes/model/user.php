@@ -1,6 +1,6 @@
 <?php
 namespace User;
-class Model_User extends \Locomo_Core\Model_Base
+class Model_User extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'users';
 
@@ -50,14 +50,14 @@ class Model_User extends \Locomo_Core\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Observer\Password' => array(
+		'Locomo\Password' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Locomo\Observer\Expired' => array(
+		'Locomo\Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Locomo\Observer\Userids' => array(
+		'Locomo\Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
 	);

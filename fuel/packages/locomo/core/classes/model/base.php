@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core;
+namespace Locomo;
 class Model_Base extends \Orm\Model_Soft
 {
 	/**

@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core;
+namespace Locomo;
 class Module extends \Fuel\Core\Module
 {
 	public static function get_exists()

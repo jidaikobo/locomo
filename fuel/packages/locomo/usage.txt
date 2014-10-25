@@ -91,18 +91,18 @@ MODNAME
 
 locomoには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
 
-パッケージコアモジュールのclassをオーバライドする場合は、プロジェクトのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作り、各classは、Locomo_Core_Moduleの名前空間に対して行うことで、パッケージコアモジュールの機能を生かしてextendsできます。
+パッケージコアモジュールのclassをオーバライドする場合は、プロジェクトのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作り、各classは、Locomo_Moduleの名前空間に対して行うことで、パッケージコアモジュールの機能を生かしてextendsできます。
 
 ▼ここから────────────────
 namespace User;
-class Controller_User extends \Locomo_Core_Module\User\Controller_User
+class Controller_User extends \Locomo_Module\User\Controller_User
 ────────────────ここまで▲
 
 /*
  * クラスと名前空間について
  */
 
-プロジェクトごとのクラスは、\Locomo_Coreの名前空間のクラスをextendsして、PROJPATH.classに設置してください。コアのclassを拡張する場合も同様です。
+プロジェクトごとのクラスは、\Locomoの名前空間のクラスをextendsして、PROJPATH.classに設置してください。コアのclassを拡張する場合も同様です。
 
 /*
  * テンプレートのオーバライド
@@ -274,7 +274,7 @@ postモジュールにpostcategoriesを足す場合です。
 ▼ここから────────────────
 <?php
 namespace Post;
-class Actionset_Post extends \Locomo_Core\Actionset
+class Actionset_Post extends \Locomo\Actionset
 {
 	/**
 	 * actionItems()

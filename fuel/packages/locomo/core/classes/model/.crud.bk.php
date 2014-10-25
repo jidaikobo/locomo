@@ -1,6 +1,6 @@
 <?php
-namespace Locomo_Core;
-class Model_Crud extends \Locomo_Core\Model_Base
+namespace Locomo;
+class Model_Crud extends \Locomo\Model_Base
 {
 	/**
 	 * _primary_name
@@ -74,7 +74,7 @@ class Model_Crud extends \Locomo_Core\Model_Base
 	 */
 	public static function validate($factory, $id = '')
 	{
-		$val = \Locomo_Core\Validation::forge($factory);
+		$val = \Locomo\Validation::forge($factory);
 		return $val;
 	}
 

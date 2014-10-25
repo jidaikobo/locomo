@@ -1,6 +1,6 @@
 <?php
 namespace Scaffold;
-class Controller_Scaffold extends \Locomo_Core\Controller_Crud
+class Controller_Scaffold extends \Locomo\Controller_Crud
 {
 	/**
 	 * action_main()

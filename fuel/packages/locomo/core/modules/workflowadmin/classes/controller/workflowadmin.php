@@ -1,6 +1,6 @@
 <?php
 namespace Workflowadmin;
-class Controller_Workflowadmin extends \Locomo_Core\Controller_Crud
+class Controller_Workflowadmin extends \Locomo\Controller_Crud
 {
 	/**
 	 * action_setup()

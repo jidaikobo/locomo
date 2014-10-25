@@ -1,6 +1,6 @@
 <?php
 namespace User;
-class Controller_User extends \Locomo_Core\Controller_Crud
+class Controller_User extends \Locomo\Controller_Crud
 {
 	//trait
 //	use \Option\Controller_Option;
@@ -66,7 +66,7 @@ class Controller_User extends \Locomo_Core\Controller_Crud
 	/**
 	 * set_userinfo()
 	 * ログイン中のユーザ情報のセット。
-	 * \Locomo_Core\Controller_Base::before()から呼ばれる。
+	 * \Locomo\Controller_Base::before()から呼ばれる。
 	 */
 	public static function set_userinfo()
 	{

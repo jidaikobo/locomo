@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core;
+namespace Locomo;
 class View_Base extends \ViewModel
 {
 	/**
