@@ -17,6 +17,9 @@ class Model_Base extends \Orm\Model_Soft
 	protected static $_default_creator_field_name    = 'creator_id';
 	protected static $_default_workflow_field_name   = 'workflow_status';
 
+	/*
+	 * _depend_modules
+	 */
 	protected static $_depend_modules = array();
 
 	/*
@@ -43,7 +46,7 @@ class Model_Base extends \Orm\Model_Soft
 	{
 		//depend_modules
 		parent::__construct($data, $new, $view, $cache);
-		foreach (self::$_depend_modules as $module) {
+		foreach (static::$_depend_modules as $module) {
 			\Module::load($module);
 		}
 	}
