@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Password extends \Orm\Observer
+class Observer_Password extends \Orm\Observer
 {
 	/**
 	 * @var  string  default setting, md5 or sha1?

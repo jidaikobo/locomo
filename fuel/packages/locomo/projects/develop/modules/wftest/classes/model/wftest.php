@@ -56,11 +56,11 @@ class Model_Wftest extends \Locomo\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Expired' => array(
+		'Locomo\Observer_Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Locomo\Workflow' => array(
+		'Locomo\Observer_Workflow' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('workflow_status'),
 		),

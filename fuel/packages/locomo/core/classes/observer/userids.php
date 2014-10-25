@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Userids extends \Orm\Observer
+class Observer_Userids extends \Orm\Observer
 {
 	/**
 	 * __construct()

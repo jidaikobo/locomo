@@ -49,7 +49,7 @@ class Model_===NAME=== extends \Locomo\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Expired' => array(
+		'Locomo\Observer_Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),

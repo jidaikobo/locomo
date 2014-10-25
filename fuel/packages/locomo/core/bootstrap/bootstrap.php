@@ -72,21 +72,4 @@ Module::load('revision');
 Module::load('workflow');
 Module::load('option');
 
-//Autoloader - observer
-
-
-
-$observer_class_names = array();
-foreach (glob(PKGCOREPATH."observers".DS."*") as $filename):
-	//class names and pathes
-	$class = substr(\Inflector::words_to_upper(basename($filename)), 0, -4);//remove .php
-	$l_class = strtolower($class);
-	$default_path  = PKGCOREPATH."observers/{$l_class}.php";
-	$override_path = PKGPROJPATH."observers/{$l_class}.php";
-
-	//setting
-	$observer_class_names["Locomo\\Observer\\{$class}"] = file_exists($override_path) ? $override_path : $default_path;
-endforeach;
-Autoloader::add_classes($observer_class_names);
-
 /* End of file bootstrap.php */

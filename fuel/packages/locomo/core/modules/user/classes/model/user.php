@@ -50,14 +50,14 @@ class Model_User extends \Locomo\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Password' => array(
+		'Locomo\Observer_Password' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Locomo\Expired' => array(
+		'Locomo\Observer_Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Locomo\Userids' => array(
+		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
 	);

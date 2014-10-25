@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Workflow extends \Orm\Observer
+class Observer_Workflow extends \Orm\Observer
 {
 	public static $properties = array('workflow_status');
 	protected $_properties;

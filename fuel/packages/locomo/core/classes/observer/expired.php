@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Expired extends \Orm\Observer
+class Observer_Expired extends \Orm\Observer
 {
 	/**
 	 * @var  string  default property
