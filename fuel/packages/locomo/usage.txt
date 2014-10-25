@@ -38,6 +38,12 @@ php oil refine migrate:up --modules=revision
 
 always_loadに、locomoを足してください。
 
+security設定をしてください。
+	'security' => array(
+		 'csrf_autoload'    => false,
+		 'csrf_token_key'   => 'locomo_csrf_token',
+		 'csrf_expiration'  => 300,
+
 /*
  * モジュール開発
  */

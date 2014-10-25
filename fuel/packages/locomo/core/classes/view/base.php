@@ -11,7 +11,7 @@ class View_Base extends \ViewModel
 		self::base_assign();
 		self::include_asset();
 		self::get_controllers();
-		self::get_actionset();
+//		self::get_actionset();
 	}
 
 	/**

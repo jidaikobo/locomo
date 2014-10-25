@@ -12,6 +12,11 @@ class Model_Base extends \Orm\Model_Soft
 	protected static $_default_workflow_field_name   = 'workflow_status';
 
 	/*
+	 * default field names
+	 */
+	protected static $_cache_form_definition;
+
+	/*
 	 * _depend_modules
 	 */
 	protected static $_depend_modules = array();
@@ -59,6 +64,17 @@ class Model_Base extends \Orm\Model_Soft
 	public static function get_table_name()
 	{
 		return static::$_table_name;
+	}
+
+	/**
+	 * get_primary_keys()
+	 */
+	public function get_primary_keys($mode = '')
+	{
+		if($mode == 'first'):
+			return reset(static::$_primary_key);
+		endif;
+		return static::$_primary_key;
 	}
 
 	/**

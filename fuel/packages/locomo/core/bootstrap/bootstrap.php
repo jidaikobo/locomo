@@ -50,11 +50,12 @@ Autoloader::add_core_namespace('Locomo');
 
 //add to core namespace
 Autoloader::add_classes(array(
-	'Locomo\\Actionset'       => PKGCOREPATH.'classes'.DS.'actionset.php',
-	'Locomo\\Actionset_Base'  => PKGCOREPATH.'classes'.DS.'actionset/base.php',
-	'Locomo\\Actionset_Owner' => PKGCOREPATH.'classes'.DS.'actionset/owner.php',
-	'Locomo\\Actionset_Index' => PKGCOREPATH.'classes'.DS.'actionset/index.php',
-	'Locomo\\Util'            => PKGCOREPATH.'classes'.DS.'util.php',
+	'Locomo\\Actionset'        => PKGCOREPATH.'classes'.DS.'actionset.php',
+	'Locomo\\Actionset_Base'   => PKGCOREPATH.'classes'.DS.'actionset/base.php',
+	'Locomo\\Actionset_Owner'  => PKGCOREPATH.'classes'.DS.'actionset/owner.php',
+	'Locomo\\Actionset_Option' => PKGCOREPATH.'classes'.DS.'actionset/option.php',
+	'Locomo\\Actionset_Index'  => PKGCOREPATH.'classes'.DS.'actionset/index.php',
+	'Locomo\\Util'             => PKGCOREPATH.'classes'.DS.'util.php',
 ));
 
 //core override class

@@ -101,6 +101,8 @@ class Actionset
 				$actionset_class = self::get_valid_actionset_name($module, $l_realm);
 				if(class_exists($actionset_class)){
 					$actionset_class::set_actionset($module, $each_realm, $obj, $get_authed_url);
+				}else{
+
 				}
 			}
 		endforeach;
@@ -119,7 +121,7 @@ class Actionset
 				//管理者向けのみのアクションセットを除外する
 				if( ! $include_admin_only){
 					if(isset($action['is_admin_only']) && $action['is_admin_only'] == true){
-						unset($retvals[$realm_name]);
+						unset($retvals[$realm_name]->$action_k);
 					}
 				}
 
@@ -191,18 +193,21 @@ class Actionset
 		foreach($actionsets[$realm] as $v):
 			if( ! isset($v['url'])) continue;
 
-			//remove stashes
-			$v['url'] = substr($v['url'], 0, 1) == '/' ? substr($v['url'], 1) : $v['url'];
-			$v['url'] = substr($v['url'], -1) == '/' ? substr($v['url'], 0, -1) : $v['url'];
-
 			//urlはarrayの場合がある（workflowなど）
 			if(is_array($v['url'])):
 				foreach($v['url'] as $vv):
+					//remove stashes
+					$vv[1] = substr($vv[1], 0, 1) == '/' ? substr($vv[1], 1) : $vv[1];
+					$vv[1] = substr($vv[1], -1) == '/' ? substr($vv[1], 0, -1) : $vv[1];
+
 					$v['menu_str'] = $vv[0];//0がmenu_strで、1がurl
 					if(substr($current, 0, strlen($vv[1])) == $vv[1]) continue;//not same url
 					$retvals[$vv[1]] = $v;
 				endforeach;
 			else:
+				//remove stashes
+				$v['url'] = substr($v['url'], 0, 1) == '/' ? substr($v['url'], 1) : $v['url'];
+				$v['url'] = substr($v['url'], -1) == '/' ? substr($v['url'], 0, -1) : $v['url'];
 				if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url at control
 				$retvals[$v['url']] = $v;
 			endif;
@@ -233,13 +238,6 @@ class Actionset
 	}
 
 	/**
-	 * add_actionset()
-	 */
-	public static function add_actionset($module, $realm, $class, $method)
-	{
-	}
-
-	/**
 	 * remove_actionset($realm)
 	 */
 	public static function remove_actionset($module, $realm)
@@ -249,9 +247,14 @@ class Actionset
 
 	/**
 	 * add_actionset_arr()
-	 * \Actionset::add_actionset_arr('options', 'back', array('menu_str'=>'foo','url' => '/'));
+	 * \Actionset::add_actionset('options', 'back', array('menu_str'=>'foo','url' => '/'));
 	 */
-	public static function add_actionset_arr($module,$realm = null, $name = null, $arr = array())
+	public static function add_actionset(
+		$module,
+		$realm = null,
+		$name = null,
+		$arr = array()
+	)
 	{
 		if( ! isset(static::$actions[$module][$realm])):
 			static::$actions[$module][$realm] = (object) array();

@@ -55,17 +55,6 @@ class Model_===NAME=== extends \Locomo\Model_Base
 	);
 */
 
-	/*
-	 * __construct
-	*/
-	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
-	{
-		parent::__construct($data, $new, $view, $cache);
-		foreach (self::$_depend_modules as $module) {
-			\Module::load($module);
-		}
-	}
-
 	/**
 	 * form_definition()
 	 *
@@ -76,6 +65,9 @@ class Model_===NAME=== extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
+		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+
+		//forge
 		$form = \Fieldset::forge('form', \Config::get('form'));
 /*
 		//user_name
@@ -91,6 +83,7 @@ class Model_===NAME=== extends \Locomo\Model_Base
 */
 ===FORM_DEFINITION===
 
+		static::$_cache_form_definition = $form;
 		return $form;
 	}
 }

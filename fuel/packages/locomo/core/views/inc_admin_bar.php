@@ -28,6 +28,43 @@ if($is_user_logged_in):
 			$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
 		endforeach;
 		$html.= '</ul>';
+
+		//context menu2
+		$actions = \Actionset::get_menu(
+			$controller,
+			$realm = 'option',
+			$item,
+			$get_authed_url = true
+		);
+		if($actions):
+			$html.= '<ul>';
+			foreach($actions as $url => $v):
+				if( ! $url) continue;
+				$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
+				$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
+				$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
+			endforeach;
+			$html.= '</ul>';
+		endif;
+
+		//context menu2
+		$actions = \Actionset::get_menu(
+			$controller,
+			$realm = 'ctrl',
+			$item,
+			$get_authed_url = true
+		);
+		if($actions):
+			$html.= '<ul>';
+			foreach($actions as $url => $v):
+				if( ! $url) continue;
+				$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
+				$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
+				$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
+			endforeach;
+			$html.= '</ul>';
+		endif;
+
 		$html.= '</div>';
 	endif;
 

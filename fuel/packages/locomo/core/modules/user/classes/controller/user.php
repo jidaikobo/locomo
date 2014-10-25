@@ -30,41 +30,6 @@ class Controller_User extends \Locomo\Controller_Crud
 	);
 
 	/**
-	 * set_actionset()
-	 */
-	public static function set_actionset($obj = null)
-	{
-		parent::set_actionset($obj);
-		unset( self::$actionset->workflow_actions );
-	}
-
-	/**
-	 * revision_modify_data()
-	 */
-	public function revision_modify_data($obj, $mode = null)
-	{
-		if($mode == 'insert_revision'):
-			$usergroups = is_array(\Input::post('usergroups')) ? \Input::post('usergroups') : array();
-			$obj->usergroups = $usergroups;
-		endif;
-		return $obj;
-	}
-
-	/**
-	 * post_save_hook()
-	 */
-	public function post_save_hook($obj = NULL, $mode = 'edit')
-	{
-		$obj = parent::post_save_hook($obj, $mode);
-
-		//usergroups
-		$model = $this->model_name;
-		$model::update_options_relations('usergroups', $obj->id);
-
-		return $obj;
-	}
-
-	/**
 	 * set_userinfo()
 	 * ログイン中のユーザ情報のセット。
 	 * \Locomo\Controller_Base::before()から呼ばれる。

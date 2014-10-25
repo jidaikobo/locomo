@@ -7,23 +7,16 @@ trait Traits_Actionset_Revision
 	 */
 	public static function actionset_index_revision($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
+		if(
+			in_array(\Request::main()->action, array('edit','view')) &&
+			$get_authed_url
+		):
 			//個票のとき、履歴へのリンクを表示する
+			$pk = $obj->get_primary_keys('first');
+			$url = "{$module}/index_revision/{$obj->$pk}";
+			$url = static::check_auth($module, 'index_revision') ? $url : '' ;
 		endif;
 
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $obj->_primary_keys ) ;
-echo '</textarea>' ;
-
-/*
-		$url_rev = $url ? "{$module}/index_revision/{$obj->id}" : '';
-		$url = self::check_auth($module, 'index_revision') ? $url_str : '' ;
-		$urls = array(
-			array('カテゴリ設定', $url),
-			array('カテゴリ設定履歴', $url_rev),
-		);
-*/
 		$retvals = array(
 			'url'          => @$url ?: '' ,
 			'action_name'  => '編集履歴',

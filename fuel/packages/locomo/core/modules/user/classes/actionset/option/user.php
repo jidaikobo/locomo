@@ -1,6 +1,6 @@
 <?php
 namespace User;
-class Actionset_Option_User extends \Actionset
+class Actionset_Option_User extends \Actionset_Option
 {
 	/**
 	 * actionset_usergroup()

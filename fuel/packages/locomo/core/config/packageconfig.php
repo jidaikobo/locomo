@@ -12,14 +12,6 @@ return array(
 	//base
 	'site_title' => 'locomo package',
 
-	//security
-	'security' => array(
-		'csrf_autoload'    => false,
-		'csrf_token_key'   => 'locomo_csrf_token',
-		'csrf_expiration'  => 300,
-		'token_salt'       => 'locomo_csrf_token',
-	),
-
 	//identity
 	'identity' => array(
 		'logo' => array(
