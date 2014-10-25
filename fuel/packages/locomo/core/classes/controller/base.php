@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core;
+namespace Locomo;
 class Controller_Base extends \Fuel\Core\Controller_Rest
 {
 	/**
@@ -84,6 +84,15 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		if( ! $is_allow):
 			$is_allow = \Acl\Controller_Acl::is_exists_owner_auth($this->request->module, $method);
 		endif;
+
+		//存在しないアクション
+		if(
+			! method_exists(get_called_class(), 'action_'.$method) &&
+			! method_exists(get_called_class(), 'get_'.$method)
+		){
+			$is_allow = false;
+			\Session::set_flash('error','"'.htmlspecialchars($method, ENT_QUOTES).'" is not exist.');
+		}
 
 		if( ! $is_allow):
 			$page = \Request::forge('content/403')->execute();
