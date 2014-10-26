@@ -68,7 +68,7 @@ class Actionset
 	 */
 	public static function get_valid_actionset_name($module = null, $realm = null)
 	{
-		is_null($module) and \Response::redirect(\Uri::base());
+		is_null($module) and die('wrong module name for actionset');
 		$module = ucfirst($module);
 		return "\\$module\Actionset_".ucfirst($realm).'_'.$module;
 	}
@@ -101,8 +101,6 @@ class Actionset
 				$actionset_class = self::get_valid_actionset_name($module, $l_realm);
 				if(class_exists($actionset_class)){
 					$actionset_class::set_actionset($module, $each_realm, $obj, $get_authed_url);
-				}else{
-
 				}
 			}
 		endforeach;
@@ -187,9 +185,9 @@ class Actionset
 			$include_admin_only
 		);
 		$current = \Uri::string();
-
 		if( ! isset($actionsets[$realm])) return false;
 
+		$retvals = array();
 		foreach($actionsets[$realm] as $v):
 			if( ! isset($v['url'])) continue;
 
@@ -208,7 +206,7 @@ class Actionset
 				//remove stashes
 				$v['url'] = substr($v['url'], 0, 1) == '/' ? substr($v['url'], 1) : $v['url'];
 				$v['url'] = substr($v['url'], -1) == '/' ? substr($v['url'], 0, -1) : $v['url'];
-				if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url at control
+//				if(substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url at control
 				$retvals[$v['url']] = $v;
 			endif;
 		endforeach;
@@ -275,6 +273,7 @@ class Actionset
 
 		foreach($methods as $method):
 			$p_method = 'actionset_'.$method;
+			if( ! method_exists(get_called_class(), $p_method)) continue;
 			static::$actions[$module][$realm]->{$method} =
 				static::$p_method($module, $obj, $get_authed_url);
 		endforeach;

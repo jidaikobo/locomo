@@ -11,23 +11,25 @@ if($is_user_logged_in):
 
 //ツールバー下段
 	//context menu
-	$actions = \Actionset::get_menu(
-		$controller,
-		$realm = 'base',
-		$item,
-		$get_authed_url = true
-	);
-	if($actions):
 		$html.='<div id="adminbar_context" class="clearfix">';
 		$html.='<h3>コントローラ名<span class="skip">の操作</span></h3>'; //ツールバーのアンカーにも足す？
-		$html.= '<ul>';
-		foreach($actions as $url => $v):
-			if( ! $url) continue;
-			$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-			$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-			$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-		endforeach;
-		$html.= '</ul>';
+
+		$actions = \Actionset::get_menu(
+			$controller,
+			$realm = 'base',
+			$item,
+			$get_authed_url = true
+		);
+		if($actions):
+			$html.= '<ul>';
+			foreach($actions as $url => $v):
+				if( ! $url) continue;
+				$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
+				$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
+				$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
+			endforeach;
+			$html.= '</ul>';
+		endif;
 
 		//context menu2
 		$actions = \Actionset::get_menu(
@@ -66,7 +68,6 @@ if($is_user_logged_in):
 		endif;
 
 		$html.= '</div>';
-	endif;
 
 //ツールバー上段
 	$html.= '<div class="adminbar_main clearfix borderbox">' ; 
@@ -95,6 +96,7 @@ if($is_user_logged_in):
 		$item,
 		$get_authed_url = true
 	);
+
 	if($actions):
 		$html.= '<div id="adminbar_index">';
 		$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
@@ -152,7 +154,6 @@ if($is_user_logged_in):
 	$html.= '</div><!-- /#adminbar -->';
 
 	echo $html;
-	
 endif;
 //$is_user_logged_in
 ?>

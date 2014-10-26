@@ -37,7 +37,7 @@ class Controller_Acl extends \Locomo\Controller_Crud
 		//$objのcreator_idカラムを確認し、user_idと比較する。
 		$column = isset($obj::$_creator_field_name) ?
 			$obj::$_creator_field_name :
-			$obj::$_default_creator_field_name;
+			$obj::get_default_field_name('creator');
 
 		if(self::is_exists_owner_auth($controller, $action)):
 			return ($obj->{$column} == $userinfo['user_id']);

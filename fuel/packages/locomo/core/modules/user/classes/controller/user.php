@@ -3,7 +3,7 @@ namespace User;
 class Controller_User extends \Locomo\Controller_Crud
 {
 	//trait
-//	use \Option\Controller_Option;
+	use \Option\Traits_Controller_Option;
 	use \Revision\Traits_Controller_Revision;
 
 	/**

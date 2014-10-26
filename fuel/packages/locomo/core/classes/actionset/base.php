@@ -12,29 +12,6 @@ class Actionset_Base extends Actionset
 	*/
 
 	/**
-	 * view()
-	 */
-	public static function actionset_view($module, $obj, $get_authed_url)
-	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/view/$obj->id" : null ;
-			$url = self::check_auth($module, 'view') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'view', $obj) ? $url_str : '' ;
-		endif;
-
-		$retvals = array(
-			'url'          => @$url ?: '' ,
-			'action_name'  => '閲覧（通常項目）',
-			'menu_str'     => '閲覧',
-			'explanation'  => '通常項目の個票の閲覧権限です。',
-			'dependencies' => array(
-				'view',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
 	 * create()
 	 */
 	public static function actionset_create($module, $obj, $get_authed_url)
@@ -63,14 +40,43 @@ class Actionset_Base extends Actionset
 	}
 
 	/**
+	 * view()
+	 */
+	public static function actionset_view($module, $obj, $get_authed_url)
+	{
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
+			$url = self::check_auth($module, 'view') ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'view', $obj) ? $url_str : '' ;
+			}
+		endif;
+
+		$retvals = array(
+			'url'          => @$url ?: '' ,
+			'action_name'  => '閲覧（通常項目）',
+			'menu_str'     => '閲覧',
+			'explanation'  => '通常項目の個票の閲覧権限です。',
+			'dependencies' => array(
+				'view',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
 	 * edit()
 	 */
 	public static function actionset_edit($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/edit/$obj->id" : null ;
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['edit','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/edit/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'edit') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'edit', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'edit', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -91,10 +97,13 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_edit_anyway($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/edit/$obj->id" : null ;
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['edit','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/edit/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'edit_anyway') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'edit_anyway', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'edit_anyway', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -118,10 +127,13 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_edit_deleted($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/edit/$obj->id" : null ;
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['edit','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/edit/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'edit_deleted') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'edit_deleted', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'edit_deleted', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -143,14 +155,16 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_delete($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['create'])):
 			//url
 			$url_str = null ;
 			if(isset($obj->deleted_at) && $obj->deleted_at == null):
 				$url_str = isset($obj->id) ? $module."/delete/$obj->id" : null ;
 			endif;
 			$url = self::check_auth($module, 'delete') ? $url_str :'';
-			$url = self::check_owner_auth($module, 'delete', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'delete', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		//retval
@@ -182,7 +196,9 @@ class Actionset_Base extends Actionset
 				$url_str = isset($obj->id) ? $module."/undelete/$obj->id" : null ;
 			endif;
 			$url = self::check_auth($module, 'undelete') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'undelete', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'undelete', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -213,7 +229,9 @@ class Actionset_Base extends Actionset
 				$url_str = isset($obj->id) ? $module."/delete_deleted/$obj->id" : null ;
 			endif;
 			$url = self::check_auth($module, 'delete_deleted') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'delete_deleted', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'delete_deleted', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -236,10 +254,13 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_deleted($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/view/$obj->id" : null ;
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_deleted') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'view_deleted', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'view_deleted', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -259,10 +280,13 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_expired($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/view/$obj->id" : null ;
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_expired') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'view_expired', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'view_expired', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -282,10 +306,13 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_yet($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/view/$obj->id" : null ;
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_yet') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'view_yet', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'view_yet', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(
@@ -306,10 +333,13 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_invisible($module, $obj, $get_authed_url)
 	{
-		if($get_authed_url):
-			$url_str = isset($obj->id) ? $module."/view/$obj->id" : null ;
+		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
+			$pk_id = $obj->get_primary_keys('first');
+			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_invisible') ? $url_str : '' ;
-			$url = self::check_owner_auth($module, 'view_invisible', $obj) ? $url_str : '' ;
+			if( ! $url){
+				$url = self::check_owner_auth($module, 'view_invisible', $obj) ? $url_str : '' ;
+			}
 		endif;
 
 		$retvals = array(

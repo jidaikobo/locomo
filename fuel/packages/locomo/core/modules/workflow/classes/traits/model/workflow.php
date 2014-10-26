@@ -1,15 +1,27 @@
 <?php
 namespace Workflow;
-class Model_Workflow extends \Locomo\Model_Base
+trait Traits_Model_Workflow
 {
-	protected static $_table_name = 'workflows';
+	protected static $_default_workflow_field_name   = 'workflow_status';
+
+	/**
+	 * get_default_field_name($str)
+	 */
+	public static function get_default_field_name($str = null)
+	{
+		switch($str):
+			case 'workflow':
+				return static::$_default_workflow_field_name;
+		endswitch;
+		return parent::get_default_field_name($str);
+	}
 
 	/**
 	 * get_current_step()
 	*/
 	public static function get_current_step($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
+		if(is_null($controller) || is_null($controller_id)) return false;
 
 		//コントローラとidから最新のworkflow_logs取得
 		$q = \DB::select('id','workflow_id','current_step');
@@ -28,7 +40,7 @@ class Model_Workflow extends \Locomo\Model_Base
 	*/
 	public static function get_current_step_id($workflow_id = null, $step = null)
 	{
-		if(is_null($workflow_id) || is_null($step)) \Response::redirect(\Uri::base());
+		if(is_null($workflow_id) || is_null($step)) return false;
 
 		//workflow_idとstepからstep_idを取得
 		$q = \DB::select('id');
@@ -55,7 +67,7 @@ class Model_Workflow extends \Locomo\Model_Base
 	*/
 	public static function get_route($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
+		if(is_null($controller) || is_null($controller_id)) return false;
 
 		//ワークフローidを得る
 		$q = \DB::select('workflow_id');
@@ -89,7 +101,7 @@ class Model_Workflow extends \Locomo\Model_Base
 	*/
 	public static function get_total_step($workflow_id = null)
 	{
-		if(is_null($workflow_id)) \Response::redirect(\Uri::base());
+		if(is_null($workflow_id)) return false;
 
 		//ワークフローの全体のステップを取得
 		$q = \DB::select(\DB::expr('count(id)'));

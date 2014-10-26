@@ -63,7 +63,8 @@ trait Traits_Controller_Workflow
 	{
 		//model and view
 		$view = \View::forge(\Util::fetch_tpl('/workflow/views/index_workflow.php'));
-		$model = \Workflow\Model_Workflow::forge();
+		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$model = $model_name::forge();
 
 		//ユーザが関わっている項目すべて
 		$current_items   = $model->get_related_current_items();
@@ -111,7 +112,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 		//model and view
 		$view = \View::forge(\Util::fetch_tpl('/workflow/views/route.php'));
-		$model = \Workflow\Model_Workflow::forge();
+		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$model = $model_name::forge();
 
 		//postがあったら経路設定して、表示画面に戻る
 		if (\Input::method() == 'POST'):
@@ -127,7 +129,9 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		endif;
 
 		//設定されている経路をすべて取得
-		$items = $model->find_items();
+		\Module::load('workflowadmin');
+		$model_wfadmin = \Workflowadmin\Model_Workflowadmin::forge();
+		$items = $model_wfadmin->find('all');
 
 		//現在設定されている経路を取得（将来のルート変更用）
 		$route_id = $model::get_route($this->request->module, $id);
@@ -149,7 +153,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		$model = \Workflow\Model_Workflow::forge();
+		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$model = $model_name::forge();
 
 		//postがあったら申請処理をして、編集画面に戻る
 		if (\Input::method() == 'POST'):
@@ -159,7 +164,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 			//項目のworkflow_statusをin_progressにする（編集できないようにする）
 			$target_model = $this->model_name ;
-			$obj = $target_model::find_item_anyway($id);
+			$obj = $target_model::find($id);
 			$obj->workflow_status = 'in_progress';
 			$obj->save();
 
@@ -186,7 +191,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 		//model and view
 		$view = \View::forge(\Util::fetch_tpl('/workflow/views/comment.php'));
-		$model = \Workflow\Model_Workflow::forge();
+		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$model = $model_name::forge();
 
 		//postがあったら承認処理をして、閲覧画面に戻る
 		if (\Input::method() == 'POST'):
@@ -205,7 +211,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 				//最後の承認であれば、項目のステータスを変更する
 				if($mode == 'finish'):
 					$target_model = $this->model_name ;
-					$obj = $target_model::find_item_anyway($id);
+					$obj = $target_model::find($id);
 					$obj->workflow_status = 'finish';
 					$obj->save();
 					\Session::set_flash('success', '最終の承認をしました');
@@ -232,7 +238,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		$model = \Workflow\Model_Workflow::forge();
+		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$model = $model_name::forge();
 
 		//postがあったら差し戻し処理をして、閲覧画面に戻る
 		if (\Input::method() == 'POST'):
@@ -244,7 +251,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 			//差し戻しが最初まで戻った場合、in_progressを解除して編集できるようにする
 			if($target_step == -1):
 				$target_model = $this->model_name ;
-				$obj = $target_model::find_item_anyway($id);
+				$obj = $target_model::find($id);
 				$obj->workflow_status = 'before_progress';
 				$obj->save();
 			endif;
@@ -268,7 +275,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 			$target_step = (int) $log->current_step - 1;
 
 			//複数回の差戻しによって同じステップ数を持つ場合は、keyで上書きする
-			$user_info = \User\Model_User::find_item($log->creator_id);
+			$user_info = \User\Model_User::find($log->creator_id);
 			$target_steps[$target_step] = $user_info->user_name;
 		endforeach;
 
@@ -292,7 +299,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 		//model and view
 		$view = \View::forge(\Util::fetch_tpl('/workflow/views/comment.php'));
-		$model = \Workflow\Model_Workflow::forge();
+		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$model = $model_name::forge();
 
 		//postがあったら経路設定して、編集画面に戻る
 		if (\Input::method() == 'POST'):
@@ -305,7 +313,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 				//項目を削除する（可能であればソフトデリートする）
 				$target_model = $this->model_name ;
-				$obj = $target_model::find_item_anyway($id);
+				$obj = $target_model::find($id);
 				$target_model::delete_item($obj);
 				return \Response::redirect(\Uri::create($this->request->module));
 			endif;

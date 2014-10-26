@@ -87,35 +87,18 @@ expired_at:datetime:null
  * revision（編集履歴）
  */
 
-revisionを適用したいコントローラで、
-▼ここから────────────────
-	use \Revision\Controller_Revision;
-────────────────ここまで▲
-のコメントアウトを外します。
-同じくコントローラで、post_save_hook()をオーバライドし、リビジョン用の処理を加えてください。
-▼ここから────────────────
-	public function post_save_hook($obj = null, $mode = 'edit')
-	{
-		$obj = parent::post_save_hook($obj, $mode);
-		$obj = $this->revision_save_hook($obj, $mode);
-		return $obj;
-	}
-────────────────ここまで▲
+revisionを適用したいコントローラとアクションセットで、Traitのコメントアウトを外します。
 
-同アクションセットで、
-▼ここから────────────────
-	use \Revision\Actionset_Revision;
-────────────────ここまで▲
-のコメントアウトを外します。
-アクションセットでは、
-▼ここから────────────────
-		//revision
-		$actions->view_revision = self::view_revision($controller, $item);
-────────────────ここまで▲
-を追加します。
+	use \Revision\Traits_Controller_Revision;
+	use \Revision\Traits_Actionset_Revision;
 
-これでコントローラでの編集履歴が有効になります。
-編集履歴は、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
+モデルでは、オブザーバを足してください。
+
+		'Locomo\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
+
+これでモジュールでの編集履歴が有効になります。
 
 /*
  * ワークフロー管理

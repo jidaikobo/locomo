@@ -315,7 +315,6 @@ class Controller_Crud extends Controller_Base
 			$obj = $model::forge();
 			$title = sprintf($this->titles['create'], $this->request->module);
 		}
-
 		$form = $model::form_definition('edit', $obj, $id);
 
 		/*

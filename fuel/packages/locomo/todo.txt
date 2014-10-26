@@ -18,9 +18,9 @@ $this->request->action
 
 ＊　＊　＊
 
-revisionをobserverに
+add_testdataをform_definitionでやりたい。
+ほかのモジュールでrevisionを作ってみる。revisionのusageを確認
+workflowへ
 
 scaffoldで作ったmigration:downに、acl削除を入れる
 ほかのモジュールでoptionを作ってみる
-ほかのモジュールでrevisionを作ってみる
-workflowへ

@@ -16,6 +16,40 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 	);
 
 	/**
+	 * form_definition()
+	*/
+	/**
+	 * form_definition()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function form_definition($factory, $obj = null, $id = '')
+	{
+		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+
+		//forge
+		$form = \Fieldset::forge('form', \Config::get('form'));
+
+		//user_name
+		$form->add(
+				'name',
+				'ルート名名',
+				array('type' => 'text', 'size' => 255)
+			)
+			->set_value(@$obj->name)
+			->add_rule('required')
+			->add_rule('max_length', 255)
+			->add_rule('unique', "workflows.name.{$id}");
+
+		static::$_cache_form_definition = $form;
+		return $form;
+	}
+
+
+	/**
 	 * find_workflow_setting()
 	*/
 	public static function find_workflow_setting($id = null)

@@ -9,7 +9,6 @@ class Model_Base extends \Orm\Model_Soft
 	protected static $_default_expired_field_name    = 'expired_at';
 	protected static $_default_visibility_field_name = 'is_visible';
 	protected static $_default_creator_field_name    = 'creator_id';
-	protected static $_default_workflow_field_name   = 'workflow_status';
 
 	/*
 	 * default field names
@@ -48,6 +47,24 @@ class Model_Base extends \Orm\Model_Soft
 		foreach (static::$_depend_modules as $module) {
 			\Module::load($module);
 		}
+	}
+
+	/**
+	 * get_default_field_name($str)
+	 */
+	public static function get_default_field_name($str = null)
+	{
+		switch($str):
+			case 'created':
+				return static::$_default_created_field_name;
+			case 'expired':
+				return static::$_default_expired_field_name;
+			case 'visibility':
+				return static::$_default_visibility_field_name;
+			case 'creator':
+				return static::$_default_creator_field_name;
+		endswitch;
+		return false;
 	}
 
 	/**
@@ -120,7 +137,7 @@ class Model_Base extends \Orm\Model_Soft
 			isset(static::properties()[$column]) &&
 			! \Acl\Controller_Acl::auth($controller.'/view_expired', $userinfo)
 		) {
-			$options['where'][] = array(array($column, '>', date('Y-m-d'))
+			$options['where'][] = array(array($column, '<', date('Y-m-d'))
 				, 'or' => (array($column, 'is', null)));
 		}
 		return $options;
@@ -138,7 +155,7 @@ class Model_Base extends \Orm\Model_Soft
 			isset(static::properties()[$column]) &&
 			! \Acl\Controller_Acl::auth($controller.'/view_yet', $userinfo)
 		) {
-			$options['where'][] = array(array($column, '<', date('Y-m-d'))
+			$options['where'][] = array(array($column, '>', date('Y-m-d'))
 				, 'or' => (array($column, 'is', null)));
 		}
 		return $options;
@@ -207,27 +224,42 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_workflow($controller = null, $userinfo = null, $options = array(), $mode = null)
 	{
+		//workflow_statusカラムがなければ、対象にしない
 		$column = isset(static::$_workflow_field_name) ?
 			static::$_workflow_field_name :
-			static::$_default_workflow_field_name;
+			static::get_default_field_name('workflow');
+		if( ! isset(static::properties()[$column])) return $options;
 
-		//in_progressの項目は編集できない
-		if (isset(static::properties()[$column]) && $mode == 'edit') {
-			$options['where'][] = array(array($column, '<>', 'in_progress'));
+		//編集
+		if ($mode == 'edit') {
+			//作成権限があるユーザだったらin_progress以外を編集できる
+			if(\Acl\Controller_Acl::auth($controller.'/create', $userinfo)):
+				$options['where'][] = array(array($column, '<>', 'in_progress'));
+				return $options;
+			endif;
 		}
 
-		//in_progress、before_progressの項目は、権限のない人には閲覧できない
-		
-/*
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $userinfo ) ;
-echo '</textarea>' ;
-die();
-*/
-		if (isset(static::properties()[$column]) && $mode != 'edit') {
-			$options['where'][] = array(array($column, '<>', 'in_progress'));
-		}
+		//承認のための閲覧
+		if(\Acl\Controller_Acl::auth($controller.'/approve', $userinfo)):
+			//承認ユーザはin_progressとfinishを閲覧できる
+			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
+			return $options;
+		endif;
 
+		//作成ユーザはどんな条件でも閲覧できる
+		if(\Acl\Controller_Acl::auth($controller.'/create', $userinfo)):
+			return $options;
+		endif;
+
+		//閲覧ユーザはfinishを閲覧できる
+		if(\Acl\Controller_Acl::auth($controller.'/view', $userinfo)):
+			$options['where'][] = array(array($column, '=', 'finish'));
+			return $options;
+		endif;
+
+		//一般ユーザは閲覧できない
+		$pk = static::get_primary_keys('first');
+		$options['where'][] = array(array($pk, '=', 'null'));
 		return $options;
 	}
 
