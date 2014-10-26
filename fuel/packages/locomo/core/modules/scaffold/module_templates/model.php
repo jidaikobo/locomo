@@ -2,6 +2,8 @@
 namespace ===NAME===;
 class Model_===NAME=== extends \Locomo\Model_Base
 {
+//	use \Workflow\Traits_Model_Workflow;
+
 	protected static $_table_name = '===TABLE_NAME===';
 
 	protected static $_properties = array(
@@ -52,6 +54,9 @@ class Model_===NAME=== extends \Locomo\Model_Base
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
+//		'Workflow\Observer_Workflow' => array(
+//			'events' => array('before_insert', 'before_save','after_load'),
+//		),
 	);
 */
 
@@ -68,7 +73,7 @@ class Model_===NAME=== extends \Locomo\Model_Base
 		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 
 		//forge
-		$form = \Fieldset::forge('form', \Config::get('form'));
+		$form = \Fieldset::forge($factory, \Config::get('form'));
 /*
 		//user_name
 		$val->add('name', 'サンプル')

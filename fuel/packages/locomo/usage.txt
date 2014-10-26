@@ -87,12 +87,13 @@ expired_at:datetime:null
  * revision（編集履歴）
  */
 
-revisionを適用したいコントローラとアクションセットで、Traitのコメントアウトを外します。
+revisionを適用したいコントローラとアクションセットで、Traitを追加します。
+# scaffoldを使った場合はコメントアウトされています。
 
 	use \Revision\Traits_Controller_Revision;
 	use \Revision\Traits_Actionset_Revision;
 
-モデルでは、オブザーバを足してください。
+モデルでは、observerを足してください。
 
 		'Locomo\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),
@@ -104,52 +105,20 @@ revisionを適用したいコントローラとアクションセットで、Tra
  * ワークフロー管理
  */
 
-▼ここから────────────────
-	use \Workflow\Controller_Workflow;
-────────────────ここまで▲
-のコメントアウトを外します。
-同じくコントローラで、pre_save_hook()、post_save_hook()、edit_core()をオーバライドし、ワークフロー用の処理を加えてください。
-▼ここから────────────────
-	public function pre_save_hook($obj = null, $mode = 'edit')
-	{
-		$obj = parent::post_save_hook($obj, $mode);
-		$obj = $this->pre_workflow_save_hook($obj, $mode);
-		return $obj;
-	}
+ワークフローを適用したいコントローラとモデルとアクションセットで、Traitを追加します。
+# scaffoldを使った場合はコメントアウトされています。
 
-	public function post_save_hook($obj = null, $mode = 'edit')
-	{
-		$obj = parent::post_save_hook($obj, $mode);
-		$obj = $this->workflow_save_hook($obj, $mode);
-		return $obj;
-	}
-
-	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)
-	{
-		return $this->workflow_edit_core($id, $obj, $redirect, $title);
-	}
-────────────────ここまで▲
+	use \Workflow\Traits_Controller_Workflow;
+	use \Workflow\Traits_Model_Workflow;
+	use \Workflow\Traits_Actionset_Base_Workflow;
 
 対象モデルの$_propertiesにworkflow_statusを足します。
+対象モデルにobserverを追加します。
 
-同アクションセットで、
-▼ここから────────────────
-	use \Workflow\Actionset_Workflow;
-────────────────ここまで▲
-のコメントアウトを外します。
-アクションセットでは、
-▼ここから────────────────
-		//workflow
-		$actions->index_workflow   = self::index_workflow($controller, $item);
-		$actions->workflow         = self::workflow($controller, $item);
-		$actions->workflow_process = self::workflow_process($controller, $item);
-		$actions->workflow_actions = self::workflow_actions($controller, $item);
-		if(@$item->workflow_status == 'in_progress') unset($actions->edit);
-────────────────ここまで▲
-を追加します。
+		'Workflow\Observer_Workflow' => array(
+			'events' => array('before_insert', 'before_save','after_load'),
+		),
 
-これでコントローラでのワークフローが有効になります。
-ワークフローは、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
 
 /*
  * オプション（個別にtableを持つ場合のオプション）

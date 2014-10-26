@@ -1,26 +1,10 @@
-//チートシート
-
-php oil refine migrate:current --packages=locomo
-php oil refine migrate:up --packages=locomo
-delete from migration where 1 = 1;
-
-//set_flashとリダイレクト
-\Session::set_flash('error', 'please check token');
-return \Response::redirect(\Uri::create('/scaffold/main/'));
-
-//現在のコントローラ
-'\\'.\Request::main()->controller
-$controller = \Inflector::denamespace(\Request::main()->controller);
-$controller = strtolower(substr($controller, 11));
-
-//現在のアクション
-$this->request->action
+Actionsetのbase,owner,index.option,ctrlを有松さんに説明する
+useridのオブサーバをuserモジュールに移動する
+workflowsテーブルをworkflowadminsテーブルにする
+小長井くんのbulkをusergroupに適用する。うまくいったらoptionモジュールを削除する
+h1のあり方を有松さんに修正してもらう
 
 ＊　＊　＊
 
 add_testdataをform_definitionでやりたい。
-ほかのモジュールでrevisionを作ってみる。revisionのusageを確認
-workflowへ
-
 scaffoldで作ったmigration:downに、acl削除を入れる
-ほかのモジュールでoptionを作ってみる
