@@ -72,6 +72,5 @@ Module::load('acl');
 Module::load('user');
 Module::load('revision');
 Module::load('workflow');
-Module::load('option');
 
 /* End of file bootstrap.php */

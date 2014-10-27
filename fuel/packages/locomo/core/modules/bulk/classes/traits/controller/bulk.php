@@ -2,17 +2,19 @@
 namespace Bulk;
 trait Traits_Controller_Bulk
 {
+	public function action_bulk() {
+		return $this->bulk();
+	}
+
 	/*
 	 *
 	 */
-	public function action_bulk() {//, $deleted = false) {
+	public function bulk($model = null, $options = array()) {//, $deleted = false) {
 
-
-		$model = $this->model_name;
+		if (!$model) $model = $this->model_name;
 		$action = \Request::main()->action;
 
 
-		$options = array();
 		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
 		$view->set_global('title', 'バルク品');
 
@@ -107,7 +109,7 @@ trait Traits_Controller_Bulk
 				$judge = array_filter($ids);
 				if (empty($judge)) {
 					\Session::set_flash('error', '保存対象が 0 件です');
-					$url = \Uri::create($this->request->module . '/bulk', array(), \Input::get());
+					$url = \Uri::create($this->request->module . '/' . $action, array(), \Input::get());
 					return \Response::redirect($url);
 				}
 
@@ -118,7 +120,7 @@ trait Traits_Controller_Bulk
 				);
 
 
-				$url = \Uri::create($this->request->module . '/bulk', array(), array('ids' => $ids));
+				$url = \Uri::create($this->request->module . '/' . $action, array(), array('ids' => $ids));
 				return \Response::redirect($url);
 			} else {
 				\Session::set_flash(

@@ -8,10 +8,12 @@ class Actionset_Option_User extends \Actionset_Option
 	public static function actionset_usergroup($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url):
-			$url = self::check_auth($module, 'usergroup') ? $module."/option/usergroup" : '';
+			$url = self::check_auth($module, 'usergroup') ? "user/usergroup_bulk" : '';
+			$url_new = $url ? "user/usergroup_bulk/?create=1" : '';
 			$url_rev = $url ? $module."/option_revisions/usergroup" : '';
 			$urls = array(
 				array('ユーザグループ設定', $url),
+				array('ユーザグループ新規作成', $url_new),
 				array('ユーザグループ設定履歴', $url_rev),
 			);
 		endif;

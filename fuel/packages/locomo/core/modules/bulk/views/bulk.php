@@ -5,19 +5,19 @@
 <?php
 	echo \Form::open(array('method' => 'get'));
 	echo \Form::input('likes[name]', \Input::get('likes')['name']);
-	echo \Form::submit('submit', '送信');
+	echo \Form::submit('submit', '検索', array('class'=>'button'));
 	echo \Form::close();
 ?>
 
 
 
-<?php echo \Form::open(\Uri::create('sample/bulk', array(), \Input::get())); ?>
+<?php echo \Form::open(\Uri::create('', array(), \Input::get())); ?>
 <div class="form_group">
 
 <?php echo $form; ?>
 
 <p>
-	<?
+	<?php
 	if( ! @$is_revision): 
 		echo \Form::hidden($token_key, $token);
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));

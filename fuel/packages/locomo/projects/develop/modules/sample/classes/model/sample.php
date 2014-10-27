@@ -152,7 +152,7 @@ class Model_Sample extends \Locomo\Model_Base
 	}
 
 
-	public static function bulk_form_definition($factory, $obj = null, $id = '') {
+	public static function bulk_definition($factory, $obj = null, $id = '') {
 
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 

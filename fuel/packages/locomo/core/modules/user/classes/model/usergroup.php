@@ -2,8 +2,6 @@
 namespace User;
 class Model_Usergroup extends \Locomo\Model_Base
 {
-	use \Option\Traits_Model_Option;
-
 	protected static $_table_name = 'usergroups';
 
 	protected static $_properties = array(
@@ -73,9 +71,6 @@ class Model_Usergroup extends \Locomo\Model_Base
 
 		$form = \Fieldset::forge('form', $hoge);
 
-
-
-
 		//user_name
 		$form->add(
 				'name',
@@ -102,7 +97,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 				'表示順',
 				array('type' => 'text', 'size' => 5)
 			)
-			->set_value(@$obj->description)
+			->set_value(@$obj->order)
 			->add_rule('valid_string', array('numeric'));
 
 		//confirm_password
@@ -116,51 +111,54 @@ class Model_Usergroup extends \Locomo\Model_Base
 		return $form;
 	}
 
-	public static function bulk_form_definition($factory, $obj = null, $id = '')
-	{
+	public static function bulk_definition($factory, $obj = null, $id = '') {
+
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 
 		$form->add(
 			'id',
 			'ID',
-			array('type' => 'text', 'disabled' => 'disabled')
+			array('type' => 'text', 'disabled' => 'disabled', 'size' => 2)
 		)
 		->set_value(@$obj->id);
 
+		//user_name
 		$form->add(
-			'name',
-			'samples表題',
-			array('type' => 'text', 'rows' => 7)
-		)
-		//->set_template('<td>{field}{error_msg}</td>')
-		//->add_rule('required')
-		->add_rule('max_length', 15)
-		// ->set_template('<td>{field} {error_msg}')
-		->set_value(@$obj->name);
-
-		//belongsto_id
-		$form->add(
-			'belongsto_id',
-			'BELONGSTO ID',
-			array('type' => 'text', 'size' => 30)
-		)
-		//->set_template( 'and {field}</td>')
-		->set_value(@$obj->belongsto_id);
-
-
-		// manymany checkbox
-		$manymany_option = Model_Manymany::find('all', array('select' => array('name')));
-		$manymany_option = \Arr::assoc_to_keyval($manymany_option, 'id', 'name');
-		$form->add(
-			'manymany',
-			'MM',
-				array('type' => 'checkbox', 'options' => $manymany_option)
+				'name',
+				'ユーザグループ名',
+				array('type' => 'text', 'size' => 20)
 			)
-			->set_value(array_keys($obj->manymany));
+			->set_value(@$obj->name)
+			//->add_rule('required')
+			->add_rule('max_length', 50)
+			->add_rule('unique', "usergroups.name.{$obj->id}");
 
+		//display_name
+		$form->add(
+				'description',
+				'説明',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->description)
+			->add_rule('max_length', 255);
 
+		$form->add(
+				'order',
+				'表示順',
+				array('type' => 'text', 'size' => 5)
+			)
+			->set_value(@$obj->order)
+			->add_rule('valid_string', array('numeric'));
+
+		$form->add(
+				'is_available',
+				'使用中',
+				array('type' => 'select', 'options' => array('1' => '使用中', '0' => '未使用'))
+			)
+			->set_value($obj->is_available, true);
 
 		return $form;
+
 	}
 
 }

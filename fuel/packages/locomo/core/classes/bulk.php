@@ -39,8 +39,8 @@ class Bulk {
 				$key = 'bulk_' . $model[$model::primary_key()[0]];
 			}
 			$this->models[$key] = $model;
-			if (method_exists($model, 'bulk_form_definition')) {
-				$this->forms[$key] = $model->bulk_form_definition($key, $model); // todo id factory nessesity?
+			if (method_exists($model, 'bulk_definition')) {
+				$this->forms[$key] = $model->bulk_definition($key, $model); // todo id factory nessesity?
 			} elseif (method_exists($model, 'form_definition')) {
 				$this->forms[$key] = $model->form_definition($key, $model); // todo id factory nessesity?
 			} else {
@@ -146,32 +146,34 @@ class Bulk {
 					if ($mm_fields) {
 
 						foreach ($mm_fields as $mm_field) {
-							if (isset(\Input::post($key)[$mm_field])) {
+							if ($this->forms[$key]->field($mm_field)) { // form にセットされているか
+								if (isset(\Input::post($key)[$mm_field])) {
 
-								// セットされているフィールドで来ていないもの
-								$setted_unset_objs = \Arr::filter_keys($this->models[$key]->{$mm_field}, \Input::post($key)[$mm_field], true);
-								foreach ($setted_unset_objs as $unset_key => $vv) {
-									unset($this->models[$key]->{$mm_field}[$unset_key]);
-								}
-
-
-								// セットされているもので来ているもの
-								$unseted_ids = array_flip(\Arr::filter_keys(array_flip(\Input::post($key)[$mm_field]), array_keys($this->models[$key]->{$mm_field}), true));
-								if (!empty($unseted_ids)) {
-									foreach ($unseted_ids as $unseted_id) {
-										$mm_model = $model::relations($mm_field)->model_to;
-										$this->models[$key]->{$mm_field}[$unseted_id] = $mm_model::find($unseted_id);
+									// セットされているフィールドで来ていないもの
+									$setted_unset_objs = \Arr::filter_keys($this->models[$key]->{$mm_field}, \Input::post($key)[$mm_field], true);
+									foreach ($setted_unset_objs as $unset_key => $vv) {
+										unset($this->models[$key]->{$mm_field}[$unset_key]);
 									}
+
+
+									// セットされているもので来ているもの
+									$unseted_ids = array_flip(\Arr::filter_keys(array_flip(\Input::post($key)[$mm_field]), array_keys($this->models[$key]->{$mm_field}), true));
+									if (!empty($unseted_ids)) {
+										foreach ($unseted_ids as $unseted_id) {
+											$mm_model = $model::relations($mm_field)->model_to;
+											$this->models[$key]->{$mm_field}[$unseted_id] = $mm_model::find($unseted_id);
+										}
+									}
+
+									// Fieldset_Field なので populate じゃなく set_value
+									$this->forms[$key]->field($mm_field)->set_value(\Input::post($key)[$mm_field]);
+
+								// 何も飛んでこなかったとき、form に存在していれば 全て unset する
+								} else {
+									if ($this->forms[$key]->field($mm_field) instanceof \Fieldset_Field) unset($this->models[$key]->{$mm_field});
+									// Fieldset_Field なので populate じゃなく set_value
+									$this->forms[$key]->field($mm_field)->set_value(array());
 								}
-
-								// Fieldset_Field なので populate じゃなく set_value
-								$this->forms[$key]->field($mm_field)->set_value(\Input::post($key)[$mm_field]);
-
-							// 何も飛んでこなかったとき、form に存在していれば 全て unset する
-							} else {
-								if ($this->forms[$key]->field($mm_field) instanceof \Fieldset_Field) unset($this->models[$key]->{$mm_field});
-								// Fieldset_Field なので populate じゃなく set_value
-								$this->forms[$key]->field($mm_field)->set_value(array());
 							}
 
 
