@@ -1,15 +1,20 @@
 <?php echo render('inc_admin_header'); ?>
 
 <h2>Editing <span class='muted'>Sample</span></h2>
-<?php echo \Form::open(\Uri::create('sample/bulk', array(), \Input::get())); ?>
 
+<?php
+	echo \Form::open(array('method' => 'get'));
+	echo \Form::input('likes[name]', \Input::get('likes')['name']);
+	echo \Form::submit('submit', '送信');
+	echo \Form::close();
+?>
+
+
+
+<?php echo \Form::open(\Uri::create('sample/bulk', array(), \Input::get())); ?>
 <div class="form_group">
-<fieldset>
 
 <?php echo $form; ?>
-
-</fieldset>
-
 
 <p>
 	<?

@@ -33,7 +33,7 @@ return array(
 	'error_template'             => '<span>{error_msg}</span>',
 	'group_label'	             => '<span>{label}</span>',
 	'required_mark'              => '*',
-	'inline_errors'              => false,
+	'inline_errors'              => true,
 	'error_class'                => null,
 	'label_class'                => null,
 
@@ -42,6 +42,6 @@ return array(
 	'tabular_field_template'     => "{field}",
 	'tabular_row_template'       => "<tr>{fields}</tr>\n",
 	'tabular_row_field_template' => "\t\t\t<td>{label}{required}&nbsp;{field} {error_msg}</td>\n",
-	'tabular_delete_label'       => "Delete?",
+	'tabular_delete_label'       => "De?",
 );
 
