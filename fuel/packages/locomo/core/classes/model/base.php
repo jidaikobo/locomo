@@ -29,7 +29,6 @@ class Model_Base extends \Orm\Model_Soft
 		'auth_deleted',
 		'auth_visibility',
 		'auth_owner',
-		'auth_workflow',
 	);
 
 	/*
@@ -47,6 +46,20 @@ class Model_Base extends \Orm\Model_Soft
 		foreach (static::$_depend_modules as $module) {
 			\Module::load($module);
 		}
+
+		//add_authorize_methods
+		static::add_authorize_methods();
+	}
+
+	/**
+	 * add_authorize_methods()
+	 */
+	public static function add_authorize_methods()
+	{
+// see sample at \Workflow\Traits_Model_Workflow
+//		if( ! in_array('auth_sample', static::$_authorize_methods)):
+//			static::$_authorize_methods[] = 'auth_sample';
+//		endif;
 	}
 
 	/**
@@ -118,7 +131,7 @@ class Model_Base extends \Orm\Model_Soft
 		} else {
 			//モデルが持っている判定材料を、適宜$optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method):
-				$options = self::$authorize_method($controller, $userinfo, $options, $mode);
+				$options = static::$authorize_method($controller, $userinfo, $options, $mode);
 			endforeach;
 		}
 
@@ -216,50 +229,6 @@ class Model_Base extends \Orm\Model_Soft
 			$options['where'][] = array($column, '=', $userinfo['user_id']);
 		}
 
-		return $options;
-	}
-
-	/*
-	 * auth_workflow()
-	 */
-	public static function auth_workflow($controller = null, $userinfo = null, $options = array(), $mode = null)
-	{
-		//workflow_statusカラムがなければ、対象にしない
-		$column = isset(static::$_workflow_field_name) ?
-			static::$_workflow_field_name :
-			static::get_default_field_name('workflow');
-		if( ! isset(static::properties()[$column])) return $options;
-
-		//編集
-		if ($mode == 'edit') {
-			//作成権限があるユーザだったらin_progress以外を編集できる
-			if(\Acl\Controller_Acl::auth($controller.'/create', $userinfo)):
-				$options['where'][] = array(array($column, '<>', 'in_progress'));
-				return $options;
-			endif;
-		}
-
-		//承認のための閲覧
-		if(\Acl\Controller_Acl::auth($controller.'/approve', $userinfo)):
-			//承認ユーザはin_progressとfinishを閲覧できる
-			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
-			return $options;
-		endif;
-
-		//作成ユーザはどんな条件でも閲覧できる
-		if(\Acl\Controller_Acl::auth($controller.'/create', $userinfo)):
-			return $options;
-		endif;
-
-		//閲覧ユーザはfinishを閲覧できる
-		if(\Acl\Controller_Acl::auth($controller.'/view', $userinfo)):
-			$options['where'][] = array(array($column, '=', 'finish'));
-			return $options;
-		endif;
-
-		//一般ユーザは閲覧できない
-		$pk = static::get_primary_keys('first');
-		$options['where'][] = array(array($pk, '=', 'null'));
 		return $options;
 	}
 
