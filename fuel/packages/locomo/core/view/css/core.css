@@ -1,5 +1,7 @@
 /*
-*
+CSSハック(valid)
+IE6 : * html 
+IE7 : *+html
 #adminbar .adminbar_main {
 	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #7393c6;
@@ -12,7 +14,6 @@
 }
 他、メニューバーのbasecolorを明暗設定できるようにする
 アイコン類の扱いを考える
-*
 */
 
 
@@ -120,41 +121,67 @@ body.login{
 
 /*=== admin_bar ===*/
 
-#adminbar{
+/* boxsizing */
+#adinbar,
+#adminbar div,
+#adminbar_logo {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+}
+/* inline-block */
+#adminbar div,
+.adminbar_icon 
+/*.adminbar_main,
+.adminbar_sub */
+{
+	display: inline-block;
+}
+
+*+html #adminbar div
+/*
+*+html .adminbar_icon,
+*+html .adminbar_main,
+*+html .adminbar_sub */
+{
+	display: inline;
+	zoom: 1;
+}
+
+#adminbar {
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	z-index: 100;
-	padding: 2.5em 0 0;
+	padding: 2.5em 0 0;/* 上部バーの高さを設けておく */
+	border-top: 1px solid #7393c6;
 	background-color: #fff;
 	font-size: .9em;
-	-webkit-font-smoothing: subpixel-antialiased;
-}
-.adminbar-icon {
-	width: 1.75em;
-	height: 2em;
-	padding: 0 .125em;
-	display: inline-block;
-}
-.adminbar-icon img{
-	width: 1.75em;
-	height: 1.75em;
-	vertical-align: middle;
+	-webkit-font-smoothing: subpixel-antialiased; /* Safariでのテキストのアンチエイリアス処理調整、薄くなるのを防ぐ */
 }
 #adminbar a {
 	text-decoration: none;
+	display: inline-block;
 }
-.adminbar_logo {
-	height: 2.35em;
-	vertical-align: top;
-	background-color: #fff;
-	padding: 0 2px;
-	margin: -.25em -5px;
+.adminbar_icon { /* IE8で画像のサイズをCSSで指定した場合に本来サイズで枠が描画されてしまうのを防ぐためにラッパーを用意 */
+	width: 1.75em;
+	height: 2em;
+	padding: 0 .125em;
 }
-.adminbar_main {
-	border-top: 1px solid #7393c6;
-	border-bottom: 1px solid #7393c6;
+.adminbar_icon img{
+	width: 1.75em;
+	height: 1.75em;
+	padding-bottom: .125em;
+	
+}
+.adminbar_top,
+.adminbar_bottom {
+	display: block;
+	width: 100%;
+	vertical-align: middle;
+}
+.adminbar_top {
 	background-color: #0e3664;
 	background-image: url('../images/parts/adminbar_bg.png');
 	background-position: center top;
@@ -162,23 +189,83 @@ body.login{
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
 	height: 2.5em;
-	box-sizing: border-box;
-	padding: .25em 5px;
-	width: 100%;
-	vertical-align: middle;
 	position: absolute;
 	top: 0;
+	left: 0;
 }
-.adminbar_main a {
+.adminbar_bottom {
+	clear: both;
+	border-top: 1px solid #7393c6;
+	border-bottom: 1px solid #858c91;
+}
+.base_light .adminbar_bottom{
+	background: #fafafa;
+	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -o-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -webkit-gradient(linear, center top, center bottom, from(#fcfcfc), to(#ebebeb));
+	background-image: -webkit-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
+	color: 1px solid #333;
+	text-shadow: 1px 1px 0 #fff;
+}
+#adminbar_logo {
+	height: 2.5em;
+	vertical-align: middle;
+	background-color: #fff;/* adminbarの背景色と合わせる */
+	padding: .25em;
+}
+.adminbar_main,
+.adminbar_sub {
+	padding: .25em 10px;
+}
+.adminbar_sub {
+	float: right;
+}
+.adminbar_top .adminbar_sub{
+	height: 2.5em;
+}
+.adminbar_bottom .adminbar_sub{
+	padding: 0;
+}
+.adminbar_top .adminbar_sub div {
+	float:right;
+	line-height: 2em;
+	vertical-align: middle;
+	padding: 0 5px 0;
+}
+.adminbar_top .adminbar_main,
+.adminbar_top .adminbar_sub {
+	vertical-align: middle;
+}
+
+#render_info {
+	opacity: .65;
+	font-size: .9em;
+	line-height: 2.3em;
+}
+.adminbar_top div > a {
+	display: block;
+	line-height: 2em;
+	vertical-align: middle;
+}
+
+
+.adminbar_top a {
 	color: #fff;
 }
-.adminbar_main a:hover,
-.adminbar_main a:focus {
+.adminbar_top a:hover,
+.adminbar_top a:focus {
 	background-color: rgba(255,255,255,.15);
 	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
 }
-.adminbar_main li a ,
-#adminbar_context a {
+
+
+
+.adminbar_top li a,
+.adminbar_bottom {
 	color: #333;
 	text-shadow: 1px 1px 0 #fff;
 }
@@ -205,21 +292,9 @@ body.login{
 }
 
 .adminbar_main_right > * {
-	float:right;
-	line-height: 2em;
-	vertical-align: middle;
-	padding: 0 5px 0;
+
 }
-#render_info {
-	opacity: .65;
-	font-size: .9em;
-	line-height: 2.3em;
-}
-.adminbar_main div > a {
-	display: block;
-	line-height: 2em;
-	vertical-align: middle;
-}
+
 .adminbar_main .listopen {
 	padding-right: 15px;
 	background-image: url('../images/parts/mark_listopen_wh.png');
@@ -239,21 +314,6 @@ body.login{
 #adminbar ul.modal {
 	display: none;
 }
-#adminbar_context {
-	clear: both;
-	position: relative;
-	border-bottom: 1px solid #858c91;
-	background: #fafafa;
-	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: -o-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: -webkit-gradient(linear, center top, center bottom, from(#fcfcfc), to(#ebebeb));
-	background-image: -webkit-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
-	margin-top: 1px;
-	padding: 2px 10px;
-	text-shadow: 1px 1px 0 #fff;
-}
 #adminbar_context h3,
 #adminbar ul.holizonal_list a {
 	display: inline;
@@ -267,7 +327,6 @@ body.login{
 	display: inline;
 	padding-right: 5px;
 }
-
 #adminbar_context .listopen:hover,
 #adminbar_context .listopen:focus,
 #adminbar_context .holizonal_list a:hover,
@@ -537,4 +596,9 @@ table.datatable .col_scroll{
 .contents > h2 {
 	margin: .25em 0 .5em;
 	font-size: 1.1em;
+}
+
+/*=== modal ===*/
+ul.modal{
+	display: none;
 }

@@ -7,11 +7,10 @@ $("body *").removeClass("hide_if_no_js");
 //管理バーの高さに合わせてパディングを設定したい。リサイズ時の処理をちょっと考える
 //ExResize等プラグインを使う？　jQueryUIになにかある？
 if($('#adminbar')[0]){
-	var barHeight = $('.adminbar_main').height();
-	if($('#adminbar_context')[0]){
-		barHeight += $('#adminbar_context').height();
-	}
-	$('body').css('padding-top', barHeight+17+'px' );
+	var bar = '#adminbar';
+	var barHeight = $(bar).height();
+	var barPaddingTop = parseInt($(bar).css('padding-top'), 10)
+	$('body').css('padding-top', barHeight+barPaddingTop+3+'px' );
 }
 /*
 $('a.listopen').click(function(){
