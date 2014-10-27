@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Scaffold;
+namespace Scaffold;
 class Controller_Scaffold extends \Locomo\Controller_Crud
 {
 	/**
@@ -10,8 +10,10 @@ class Controller_Scaffold extends \Locomo\Controller_Crud
 		//only at development
 //		if(\Fuel::$env != 'development') die();
 
-		//call helper
-		require(dirname(__DIR__).'/helper/scaffold.php');
+		//template path
+		if(! defined('LOCOMO_SCFLD_TPL_PATH')){
+			define('LOCOMO_SCFLD_TPL_PATH', dirname(dirname(__DIR__)).'/module_templates/');
+		}
 
 		//view
 		$view = \View::forge('main');
@@ -35,13 +37,15 @@ class Controller_Scaffold extends \Locomo\Controller_Crud
 			$subjects   = array($table_name, $table_name);
 
 			//molding - logic
-			$migration       = Helper_Scaffold::migration($name, $subjects, $cmds);
-			$controller      = Helper_Scaffold::generate_controller($name);
-			$actionset       = Helper_Scaffold::generate_actionset($name);
-			$actionset_owner = Helper_Scaffold::generate_actionset_owner($name);
-			$model           = Helper_Scaffold::generate_model($name, $cmd_orig);
-			$viewmodel       = Helper_Scaffold::generate_view($name);
-			$config          = Helper_Scaffold::generate_config($cmd_orig);
+			$migration        = Helper_Scaffold::migration($name, $subjects, $cmds);
+			$controller       = Helper_Scaffold::generate_controller($name);
+			$actionset_index  = Helper_Scaffold::generate_actionset_index($name);
+			$actionset_base   = Helper_Scaffold::generate_actionset_base($name);
+			$actionset_owner  = Helper_Scaffold::generate_actionset_owner($name);
+			$actionset_option = Helper_Scaffold::generate_actionset_option($name);
+			$model            = Helper_Scaffold::generate_model($name, $cmd_orig);
+			$viewmodel        = Helper_Scaffold::generate_view($name);
+			$config           = Helper_Scaffold::generate_config($cmd_orig);
 
 			//molding - view
 			$tpl_index  = Helper_Scaffold::generate_views_index($name);
@@ -69,8 +73,14 @@ class Controller_Scaffold extends \Locomo\Controller_Crud
 
 			//actionset
 			if( ! file_exists($scfldpath.'/classes/actionset')) mkdir($scfldpath.'/classes/actionset');
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/'.$name.'.php', $actionset) ;
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/'.$name.'_owner.php', $actionset_owner) ;
+			if( ! file_exists($scfldpath.'/classes/actionset/index')) mkdir($scfldpath.'/classes/actionset/index');
+			if( ! file_exists($scfldpath.'/classes/actionset/base')) mkdir($scfldpath.'/classes/actionset/base');
+			if( ! file_exists($scfldpath.'/classes/actionset/owner')) mkdir($scfldpath.'/classes/actionset/owner');
+			if( ! file_exists($scfldpath.'/classes/actionset/option')) mkdir($scfldpath.'/classes/actionset/option');
+			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/index/'.$name.'.php', $actionset_index) ;
+			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/base/'.$name.'.php', $actionset_base) ;
+			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/owner/'.$name.'.php', $actionset_owner) ;
+			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/option/'.$name.'.php', $actionset_option) ;
 
 			//model
 			if( ! file_exists($scfldpath.'/classes/model')) mkdir($scfldpath.'/classes/model');

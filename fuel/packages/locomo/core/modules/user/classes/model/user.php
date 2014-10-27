@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\User;
+namespace User;
 class Model_User extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'users';
@@ -50,15 +50,18 @@ class Model_User extends \Locomo\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Observer\Password' => array(
+		'Locomo\Observer_Password' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Locomo\Observer\Expired' => array(
+		'Locomo\Observer_Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Locomo\Observer\Userids' => array(
+		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
+		),
+		'Locomo\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
 		),
 	);
 
@@ -72,6 +75,9 @@ class Model_User extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
+		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+
+		//forge
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 
 		//user_name
@@ -166,27 +172,8 @@ class Model_User extends \Locomo\Model_Base
 			)
 			->set_value(@$obj->deleted_at);
 
+		static::$_cache_form_definition = $form;
 		return $form;
-	}
-
-	/**
-	 * find_item()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
-	 */
-	public static function find_item($id = null)
-	{
-		//parent
-		$item = parent::find_item($id);
-
-		if($item):
-			$item->usergroups = \Option\Model_Option::get_selected_options('usergroups', $id);
-		endif;
-
-		return $item;
 	}
 
 	/**
@@ -196,8 +183,6 @@ class Model_User extends \Locomo\Model_Base
 	{
 		return md5($str);
 	}
-
-
 
 	/**
 	 * check_deny()

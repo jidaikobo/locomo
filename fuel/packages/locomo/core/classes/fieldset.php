@@ -9,9 +9,10 @@
  * @link       http://tsukitsume.com
  */
 
-namespace Locomo_Core;
+namespace Locomo;
 
-class Fieldset extends \Fuel\Core\Fieldset {
+class Fieldset extends \Fuel\Core\Fieldset
+{
 
 	/*
 	 * \Fieldset add_model のラッパー
@@ -29,8 +30,6 @@ class Fieldset extends \Fuel\Core\Fieldset {
 			return parent::add_model($class, $instance, $method);
 		}
 	}
-
-
 
 	/*
 	 * tabular_form のテンプレートをフィールド毎に設定する
@@ -190,4 +189,12 @@ class Fieldset extends \Fuel\Core\Fieldset {
 
 
 
+	/*
+	 * get_fields()
+	 * 拡張メソッド。publicに定義された値を取得
+	 */
+	public function get_fields()
+	{
+		return $this->fields;
+	}
 }

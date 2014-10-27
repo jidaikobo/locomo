@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core;
+namespace Locomo;
 class Util
 {
 	/**
@@ -21,16 +21,6 @@ class Util
 		endif;
 	}
 	
-	/**
-	 * get_valid_actionset_name()
-	 */
-	public static function get_valid_actionset_name($module = null)
-	{
-		is_null($module) and \Response::redirect(\Uri::base());
-		$module = ucfirst($module);
-		return "\\$module\Actionset_".$module;
-	}
-
 	/**
 	 * get_valid_controller_name()
 	 */

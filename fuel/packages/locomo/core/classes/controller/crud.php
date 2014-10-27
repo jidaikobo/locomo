@@ -1,6 +1,6 @@
 <?php
-namespace Locomo_Core;
-class Controller_Crud extends \Locomo\Controller_Base
+namespace Locomo;
+class Controller_Crud extends Controller_Base
 {
 
 	// public $template = 'index_admin';
@@ -59,42 +59,6 @@ class Controller_Crud extends \Locomo\Controller_Base
 			'active_end' => '</span>',
 		),
 	);
-
-	/**
-	 * pre_save_hook()
-	 */
-	public function pre_save_hook($obj = null, $mode = 'edit')
-	{
-		if($obj == null) \Response::redirect($this->request->module);
-		return $obj;
-	}
-
-	/**
-	 * post_save_hook()
-	 */
-	public function post_save_hook($obj = null, $mode = 'edit')
-	{
-		if($obj == null) \Response::redirect($this->request->module);
-		return $obj;
-	}
-
-	/**
-	 * pre_delete_hook()
-	 */
-	public function pre_delete_hook($obj = null, $mode = 'edit')
-	{
-		if($obj == null) \Response::redirect($this->request->module);
-		return $obj;
-	}
-
-	/**
-	 * post_delete_hook()
-	 */
-	public function post_delete_hook($obj = null, $mode = 'edit')
-	{
-		if($obj == null) \Response::redirect($this->request->module);
-		return $obj;
-	}
 
 	/**
 	 * index_core()
@@ -347,7 +311,6 @@ class Controller_Crud extends \Locomo\Controller_Base
 			$obj = $model::forge();
 			$title = sprintf($this->titles['create'], $this->request->module);
 		}
-
 		$form = $model::form_definition('edit', $obj, $id);
 
 		/*
@@ -358,16 +321,9 @@ class Controller_Crud extends \Locomo\Controller_Base
 				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
 				 \Security::check_token()
 			):
-/*
-				//pre_save_hook
-				$obj = $this->pre_save_hook($obj, 'edit');
-*/
 				//save
 				if ($obj->save(null, true)):
-/*
-				//post_save_hook
-				$obj = $this->post_save_hook($obj, 'edit');
-*/
+
 				//message
 				\Session::set_flash(
 					'success',

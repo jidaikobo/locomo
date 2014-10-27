@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Scaffold;
+namespace Scaffold;
 class Helper_Scaffold
 {
 	/**
@@ -133,7 +133,7 @@ class Helper_Scaffold
 		$migration_name = strtolower($name);
 
 		//template
-		$val = file_get_contents(dirname(__DIR__).'/templates/migrations.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'migrations.php');
 		$migration = str_replace('===MN===',   $migration_name, $val);
 		$migration = str_replace('===UP===',   $up,             $migration);
 		$migration = str_replace('===DOWN===', $down,           $migration);
@@ -146,17 +146,27 @@ class Helper_Scaffold
 	 */
 	public static function generate_controller($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/controller.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'controller.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
 
 	/**
-	 * generate_actionset()
+	 * generate_actionset_index()
 	 */
-	public static function generate_actionset($name)
+	public static function generate_actionset_index($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/actionset.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'actionset_index.php');
+		$val = self::replaces($name, $val);
+		return $val;
+	}
+
+	/**
+	 * generate_actionset_base()
+	 */
+	public static function generate_actionset_base($name)
+	{
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'actionset_base.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -166,7 +176,17 @@ class Helper_Scaffold
 	 */
 	public static function generate_actionset_owner($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/actionset_owner.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'actionset_owner.php');
+		$val = self::replaces($name, $val);
+		return $val;
+	}
+
+	/**
+	 * generate_actionset_option()
+	 */
+	public static function generate_actionset_option($name)
+	{
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'actionset_option.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -242,7 +262,7 @@ class Helper_Scaffold
 		endforeach;
 
 		//template
-		$str = file_get_contents(dirname(__DIR__).'/templates/model.php');
+		$str = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'model.php');
 		$str = str_replace('===NAME===',       $name,       $str);
 		$str = str_replace('===TABLE_NAME===', $table_name, $str);
 		$str = str_replace('===FIELD_STR===',  $field_str,  $str);
@@ -256,7 +276,7 @@ class Helper_Scaffold
 	 */
 	public static function generate_view($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/viewmodel.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'viewmodel.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -266,7 +286,7 @@ class Helper_Scaffold
 	 */
 	public static function generate_views_index($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/index.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'index.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -291,7 +311,7 @@ class Helper_Scaffold
 		}
 		
 		//mold
-		$val = file_get_contents(dirname(__DIR__).'/templates/view.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'view.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###fields###', $fields , $val) ;
 	
@@ -303,7 +323,7 @@ class Helper_Scaffold
 	 */
 	public static function generate_views_options($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/option_samples.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'option_samples.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -341,7 +361,7 @@ class Helper_Scaffold
 		}
 		
 		//mold
-		$val = file_get_contents(dirname(__DIR__).'/templates/_form.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'_form.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###FIELDS###', $fields , $val) ;
 		$val = str_replace ('###HIDDEN_FIELDS###', $hidden_fields , $val) ;
@@ -354,7 +374,7 @@ class Helper_Scaffold
 	 */
 	public static function generate_views_create($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/create.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'create.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -364,7 +384,7 @@ class Helper_Scaffold
 	 */
 	public static function generate_views_edit($name)
 	{
-		$val = file_get_contents(dirname(__DIR__).'/templates/edit.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'edit.php');
 		$val = self::replaces($name, $val);
 		return $val;
 	}
@@ -380,7 +400,7 @@ class Helper_Scaffold
 		$nicename = self::get_nicename($name);
 
 		//template
-		$val = file_get_contents(dirname(__DIR__).'/templates/config.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'config.php');
 		$val = str_replace ('###nicename###', $nicename , $val) ;
 		return $val;
 	}

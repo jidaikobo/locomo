@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Workflowadmin;
+namespace Workflowadmin;
 class Controller_Workflowadmin extends \Locomo\Controller_Crud
 {
 	/**
@@ -11,7 +11,7 @@ class Controller_Workflowadmin extends \Locomo\Controller_Crud
 		
 		//ワークフロー名取得
 		$model = $this->model_name ;
-		$workflow = $model::find_item($id);
+		$workflow = $model::find($id);
 		if( ! $workflow) \Response::redirect($this->request->module);
 
 		//dbから取得

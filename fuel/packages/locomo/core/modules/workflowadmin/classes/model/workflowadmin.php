@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Workflowadmin;
+namespace Workflowadmin;
 class Model_Workflowadmin extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'workflows';
@@ -14,6 +14,40 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,
 	);
+
+	/**
+	 * form_definition()
+	*/
+	/**
+	 * form_definition()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function form_definition($factory, $obj = null, $id = '')
+	{
+		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+
+		//forge
+		$form = \Fieldset::forge('form', \Config::get('form'));
+
+		//user_name
+		$form->add(
+				'name',
+				'ルート名名',
+				array('type' => 'text', 'size' => 255)
+			)
+			->set_value(@$obj->name)
+			->add_rule('required')
+			->add_rule('max_length', 255)
+			->add_rule('unique', "workflows.name.{$id}");
+
+		static::$_cache_form_definition = $form;
+		return $form;
+	}
+
 
 	/**
 	 * find_workflow_setting()
