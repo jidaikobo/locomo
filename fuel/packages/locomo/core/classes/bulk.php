@@ -181,7 +181,6 @@ class Bulk {
 
 						// mm 以外をセットする
 						$this->models[$key]->set(\Arr::filter_keys(\Input::post($key), $mm_fields, true));
-						$model->save(null, false);
 
 					// mm なし
 					} else {
