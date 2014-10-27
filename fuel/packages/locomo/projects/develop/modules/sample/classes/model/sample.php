@@ -90,9 +90,17 @@ class Model_Sample extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null, $id = '')
+	public static function form_definition($factory, $obj = null)
 	{
-		$form = \Fieldset::forge('sample', \Config::get('form'));
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		$form->add(
+			'id',
+			'ID',
+			array('type' => 'text', 'disabled' => 'disabled')
+		)
+		->set_value(@$obj->id);
+
 /*
 		//user_name
 		$val->add('name', 'サンプル')
@@ -112,7 +120,7 @@ class Model_Sample extends \Locomo\Model_Base
 			array('type' => 'text', 'rows' => 7, 'style' => 'width:100%;')
 		)
 		->add_rule('required')
-		->add_rule('max_length', 50)
+		->add_rule('max_length', 5)
 		->set_value(@$obj->name);
 
 		//belongsto_id
@@ -123,11 +131,11 @@ class Model_Sample extends \Locomo\Model_Base
 		)
 		->set_value(@$obj->belongsto_id);
 
+		/*
 		// hasone フォーム
 		$ho_form = Model_Hasone::form_definition('hasone', $obj->hasone ?: $obj->hasone = Model_Hasone::forge())->populate($obj->hasone);
 		$ho_form->set_input_name_array();
 		$form->add( $ho_form );
-
 		// belongsto フォーム
 		$bt_form = Model_Belongsto::form_definition('belongsto', $obj->belongsto ?: $obj->belongsto = Model_Belongsto::forge())->populate($obj->belongsto);
 		$bt_form->set_input_name_array();
@@ -135,7 +143,7 @@ class Model_Sample extends \Locomo\Model_Base
 
 		// hasmany フォーム
 		$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
-
+		 */
 
 
 		// manymany checkbox
@@ -148,7 +156,73 @@ class Model_Sample extends \Locomo\Model_Base
 			)
 			->set_value(array_keys($obj->manymany));
 
+		return $form;
+	}
+
+
+	/*
+	public static function bulk_definition($factory, $obj = null,  $exceptions = array()) {
+
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		$form->add(
+			'id',
+			'ID',
+			array('type' => 'text', 'disabled' => 'disabled')
+		)
+		->set_value(@$obj->id);
+
+		$form->add(
+			'name',
+			'samples表題',
+			array('type' => 'text', 'rows' => 7)
+		)
+		//->set_template('<td>{field}{error_msg}</td>')
+		//->add_rule('required')
+		->add_rule('max_length', 15)
+		// ->set_template('<td>{field} {error_msg}')
+		->set_value(@$obj->name);
+
+		//belongsto_id
+		$form->add(
+			'belongsto_id',
+			'BELONGSTO ID',
+			array('type' => 'text', 'size' => 30)
+		)
+		//->set_template( 'and {field}</td>')
+		->set_value(@$obj->belongsto_id);
+
+
+		// manymany checkbox
+		$manymany_option = Model_Manymany::find('all', array('select' => array('name')));
+		$manymany_option = \Arr::assoc_to_keyval($manymany_option, 'id', 'name');
+		$form->add(
+			'manymany',
+			'MM',
+				array('type' => 'checkbox', 'options' => $manymany_option)
+			)
+			->set_value(array_keys($obj->manymany));
+
+
+
+		return $form;
+
+	}
+	 */
+
+	public function bulk_ctm($factory, $obj = null) {
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		//belongsto_id
+		$form->add(
+			'belongsto_id',
+			'BELONGSTO ID',
+			array('type' => 'text', 'size' => 30)
+		)
+		//->set_template( 'and {field}</td>')
+		->set_value(@$obj->belongsto_id);
 
 		return $form;
 	}
 }
+

@@ -2,8 +2,6 @@
 namespace User;
 class Model_Usergroup extends \Locomo\Model_Base
 {
-	use \Option\Traits_Model_Option;
-
 	protected static $_table_name = 'usergroups';
 
 	protected static $_properties = array(
@@ -73,9 +71,6 @@ class Model_Usergroup extends \Locomo\Model_Base
 
 		$form = \Fieldset::forge('form', $hoge);
 
-
-
-
 		//user_name
 		$form->add(
 				'name',
@@ -102,7 +97,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 				'表示順',
 				array('type' => 'text', 'size' => 5)
 			)
-			->set_value(@$obj->description)
+			->set_value(@$obj->order)
 			->add_rule('valid_string', array('numeric'));
 
 		//confirm_password
@@ -114,6 +109,56 @@ class Model_Usergroup extends \Locomo\Model_Base
 			->set_value(@$obj->is_available);
 
 		return $form;
+	}
+
+	public static function bulk_definition($factory, $obj = null, $id = '') {
+
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		$form->add(
+			'id',
+			'ID',
+			array('type' => 'text', 'disabled' => 'disabled', 'size' => 2)
+		)
+		->set_value(@$obj->id);
+
+		//user_name
+		$form->add(
+				'name',
+				'ユーザグループ名',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->name)
+			//->add_rule('required')
+			->add_rule('max_length', 50)
+			->add_rule('unique', "usergroups.name.{$obj->id}");
+
+		//display_name
+		$form->add(
+				'description',
+				'説明',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->description)
+			->add_rule('max_length', 255);
+
+		$form->add(
+				'order',
+				'表示順',
+				array('type' => 'text', 'size' => 5)
+			)
+			->set_value(@$obj->order)
+			->add_rule('valid_string', array('numeric'));
+
+		$form->add(
+				'is_available',
+				'使用中',
+				array('type' => 'select', 'options' => array('1' => '使用中', '0' => '未使用'))
+			)
+			->set_value($obj->is_available, true);
+
+		return $form;
+
 	}
 
 }

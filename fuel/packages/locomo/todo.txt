@@ -1,10 +1,13 @@
-Actionsetのbase,owner,index.option,ctrlを有松さんに説明する
-useridのオブサーバをuserモジュールに移動する
-workflowsテーブルをworkflowadminsテーブルにする
 小長井くんのbulkをusergroupに適用する。うまくいったらoptionモジュールを削除する。bulkで柔軟なoptionを設定できるようにしてもらう（ライトハウスの「項目マスタ」対応）。
-h1のあり方を有松さんに修正してもらう
-ヘルプの仕様を考える。やはりユーザが育てていけるのがよいか？ その場合、デフォルトテキストを作っておいて、migrationで入れてしまうか。
+workflowsテーブルをworkflowadminsテーブルにする
 ここらへんまでやったらimporterに本腰を入れよう
+
+＊　＊　＊
+
+ヘルプの仕様を考える。やはりユーザが育てていけるのがよいか？ その場合、デフォルトテキストを作っておいて、migrationで入れてしまうか。
+
+各モジュールはHELPを持つ。
+モジュールのmigrationでHelpsに
 
 ＊　＊　＊
 

@@ -297,10 +297,6 @@ class Controller_Crud extends Controller_Base
 		return $this->action_edit(null);
 	}
 
-	public function modify_cascaded($object = null) {
-		$object;
-	}
-
 	public function action_edit($id = null) {
 		$model = $this->model_name ;
 
@@ -326,31 +322,30 @@ class Controller_Crud extends Controller_Base
 				 \Security::check_token()
 			):
 				//save
-				if ($obj->save()):
-
-				//message
-				\Session::set_flash(
-					'success',
-					sprintf($this->messages['edit_success'], self::$nicename, $obj->id)
-				);
-				\Response::redirect(\Uri::create($this->request->module.'/edit/'.$obj->id));
+				if ($obj->save(null, true)):
+					//success
+					\Session::set_flash(
+						'success',
+						sprintf($this->messages['edit_success'], self::$nicename, $obj->id)
+					);
+					\Response::redirect(\Uri::create($this->request->module.'/edit/'.$obj->id));
+				else:
+					//save failed
+					\Session::set_flash(
+						'error',
+						sprintf($this->messages['edit_error'], self::$nicename, $id)
+					);
+				endif;
 			else:
-				\Session::set_flash(
-					'error',
-					sprintf($this->messages['edit_error'], self::$nicename, $id)
-				);
-			endif;
-
-			//edit view or validation failed of CSRF suspected
-			else:
+				//edit view or validation failed of CSRF suspected
 				if (\Input::method() == 'POST'):
 					\Session::set_flash('error', $form->error());
 				endif;
 			endif;
 		endif;
 
+		//view
 		$view = \View::forge('edit');
-
 		$view->set_global('title', $title);
 		$view->set_global('item', $obj, false);
 		$view->set_global('form', $form, false);

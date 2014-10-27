@@ -64,9 +64,6 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//nicename 人間向けのモジュール名
 		$controllers_from_config = \Config::load($controller);
 		self::$nicename = $controllers_from_config['nicename'];
-
-		//actionset
-		\Actionset::forge($this->request->module);
 	}
 
 	/**

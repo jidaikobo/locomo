@@ -156,48 +156,4 @@ class View_Base extends \ViewModel
 		$view->set_global('get_controllers', $get_controllers);
 	}
 
-	/**
-	* get_actionset()
-	* コンテキストメニュー用にアクションセットを取得するクロージャ
-	*/
-	public function get_actionset()
-	{
-		$view = \View::forge();
-
-		$get_actionset = function($module, $item) {
-
-			//ログインした人向けのメニューなので、ゲストには何も返さない
-			if( ! \User\Controller_User::$is_user_logged_in) return false;
-
-			//現在のURL（base urlをのぞく）
-			$current = \Uri::string();
-			$actionset = \Actionset::get_actionset($module, 'base', $item, $get_authed_url = true);
-			if( ! $actionset) return false;
-
-			//インデクス系のアクションセットを区別する
-			$retvals            = array();
-			$retvals['index']   = array();
-			$retvals['control'] = array();
-			foreach($actionset as $v):
-				if( ! @$v['url']) continue;
-
-				$key = (@$v['is_index']) ? 'index' : 'control';
-
-				//urlはarrayの場合がある（workflowなど）
-				if(is_array($v['url'])):
-					foreach($v['url'] as $vv):
-						$v['menu_str'] = $vv[0];//0がmenu_strで、1がurl
-						if(substr($current, 0, strlen($vv[1])) == $vv[1]) continue;//not same url
-						$retvals[$key][$vv[1]] = $v;
-					endforeach;
-				else:
-					if($key == 'control' && substr($current, 0, strlen($v['url'])) == $v['url']) continue;//not same url at control
-					$retvals[$key][$v['url']] = $v;
-				endif;
-			endforeach;
-
-			return $retvals;
-		};
-		$view->set_global('get_actionset', $get_actionset);
-	}
 }
