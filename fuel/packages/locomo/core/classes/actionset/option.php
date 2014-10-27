@@ -19,6 +19,7 @@ class Actionset_Option extends Actionset
 		$url = (substr(\Uri::string(), -12) == '/index_admin') ? $url : '';
 
 		$retvals = array(
+			'is_admin_only' => true,
 			'url'           => $url,
 			'confirm'       => true,
 			'action_name'   => 'テストデータの追加',

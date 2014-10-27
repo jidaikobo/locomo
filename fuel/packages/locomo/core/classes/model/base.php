@@ -137,7 +137,7 @@ class Model_Base extends \Orm\Model_Soft
 			isset(static::properties()[$column]) &&
 			! \Acl\Controller_Acl::auth($controller.'/view_expired', $userinfo)
 		) {
-			$options['where'][] = array(array($column, '<', date('Y-m-d'))
+			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
 		}
 		return $options;
@@ -155,7 +155,7 @@ class Model_Base extends \Orm\Model_Soft
 			isset(static::properties()[$column]) &&
 			! \Acl\Controller_Acl::auth($controller.'/view_yet', $userinfo)
 		) {
-			$options['where'][] = array(array($column, '>', date('Y-m-d'))
+			$options['where'][] = array(array($column, '<', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
 		}
 		return $options;

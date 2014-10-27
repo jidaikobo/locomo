@@ -29,7 +29,7 @@ foreach($actionsets as $realm => $each_actionsets):
 			echo '<label>'.\Form::checkbox("acls[{$realm}][{$action}]", 1, array($checked)).' '.$actionset['action_name'].'</label><br />';
 			?>
 		</th>
-		<td><?php echo $actionset['explanation'] ?></td>
+		<td><?php echo @$actionset['explanation'] ?></td>
 	</tr>
 <?php endforeach; ?>
 </table>
