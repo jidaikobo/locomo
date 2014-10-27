@@ -1,9 +1,11 @@
 <?php
 namespace Sample;
+\Module::load('bulk');
+
 class Controller_Sample extends \Locomo\Controller_Crud
 {
 	//trait
-	use \Bulk\Controller_Bulk;
+	use \Bulk\Traits_Controller_Bulk;
 //	use \Workflow\Controller_Workflow;
 //	use \Revision\Controller_Revision;
 

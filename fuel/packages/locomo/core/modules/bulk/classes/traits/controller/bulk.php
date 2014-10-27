@@ -1,6 +1,6 @@
 <?php
 namespace Bulk;
-trait Controller_Bulk
+trait Traits_Controller_Bulk
 {
 
 	/*
@@ -88,7 +88,7 @@ trait Controller_Bulk
 		}
 
 
-		$bulk = \Bulk::forge();
+		$bulk = \Locomo\Bulk::forge();
 
 		$bulk->add_model($objects);
 
