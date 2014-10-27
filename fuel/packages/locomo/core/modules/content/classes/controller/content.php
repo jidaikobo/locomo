@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Content;
+namespace Content;
 class Controller_Content extends \Locomo\Controller_Crud
 {
 	/**

@@ -1,10 +1,9 @@
 <?php echo render('inc_header'); ?>
 
 <h2>ルート設定</h2>
-
 <?php echo \Form::open(); ?>
 <ul class="nlm">
-<?php foreach($items->results as $item): ?>
+<?php foreach($items as $item): ?>
 	<li>
 	<label>
 	<?php

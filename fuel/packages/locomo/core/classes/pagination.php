@@ -9,7 +9,7 @@
  * @link       http://tsukitsume.com
  */
 
-namespace Locomo_Core;
+namespace Locomo;
 
 class Pagination extends \Fuel\Core\Pagination {
 

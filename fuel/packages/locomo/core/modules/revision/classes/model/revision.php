@@ -1,5 +1,5 @@
 <?php
-namespace Locomo_Core_Module\Revision;
+namespace Revision;
 class Model_Revision extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'revisions';
@@ -16,15 +16,15 @@ class Model_Revision extends \Locomo\Model_Base
 	/**
 	 * find_revisions()
 	*/
-	public static function find_revisions($controller = null, $controller_id = null)
+	public static function find_revisions($model = null, $pk_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect($this->request->module);
+		if(is_null($model) || is_null($pk_id)) \Response::redirect($this->request->module);
 
 		//リビジョンの一覧を取得
 		$q = \DB::select('*');
 		$q->from('revisions');
-		$q->where('model', $controller);
-		$q->where('pk_id', $controller_id);
+		$q->where('model', $model);
+		$q->where('pk_id', $pk_id);
 		return $q->as_object()->execute()->as_array();
 	}
 

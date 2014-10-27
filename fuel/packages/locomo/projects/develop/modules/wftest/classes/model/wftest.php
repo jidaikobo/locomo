@@ -2,8 +2,9 @@
 namespace Wftest;
 class Model_Wftest extends \Locomo\Model_Base
 {
+	use \Workflow\Traits_Model_Workflow;
+
 	protected static $_table_name = 'wftests';
-	protected static $_primary_name = '';
 
 	protected static $_properties = array(
 		'id',
@@ -56,13 +57,12 @@ class Model_Wftest extends \Locomo\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Observer\Expired' => array(
+		'Locomo\Observer_Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Locomo\Observer\Workflow' => array(
-			'events' => array('before_insert', 'before_save'),
-			'properties' => array('workflow_status'),
+		'Workflow\Observer_Workflow' => array(
+			'events' => array('before_insert', 'before_save','after_load'),
 		),
 	);
 

@@ -34,14 +34,14 @@ $(document).click(function(event){
 $(document).click(function(event){
 	var t = event.target;
 //リストの開け閉め もっといろいろかんがえたい
-//全てのカレントメニューを消してよいのか、排他的？な表示対象にそんな感じの名前を付けるか。
-	if( $(t).closest('.listopen').length != 0 && !$(t).closest('.listopen').next().hasClass('currentmenu')){
+
+	if( $(t).closest('a.modal').length != 0 && !$(t).closest('a.modal').next('ul.modal').hasClass('currentitem')){
 	//対象のnextにcurrentmenuがなければ付与
-		$('.currentmenu').removeClass('currentmenu')
-		$(t).closest('.listopen').next().addClass('currentmenu')
-	}else if($('.currentmenu')[0] && $(t).closest('.currentmenu').length == 0){
+		$('.currentitem').removeClass('currentitem')
+		$(t).closest('a.modal').next('ul.modal').addClass('currentitem')
+	}else if($('.currentitem')[0] && $(t).closest('.currentitem').length == 0){
 	//開いたメニューの外であればとにかくcurrentmenuを外しちゃう。
-		$('.currentmenu').removeClass('currentmenu');
+		$('.currentitem').removeClass('currentitem');
 	}
 } );
 

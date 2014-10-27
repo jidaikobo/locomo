@@ -1,8 +1,8 @@
 <?php
-namespace Locomo_Core_Module\User;
+namespace User;
 class Model_Usergroup extends \Locomo\Model_Base
 {
-	use \Option\Model_Option;
+	use \Option\Traits_Model_Option;
 
 	protected static $_table_name = 'usergroups';
 
@@ -21,7 +21,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 			'key_through_from' => 'group_id',
 			'table_through' => 'usergroups_r',
 			'key_through_to' => 'user_id',
-			'model_to' => '\Locomo_Core_Module\User\Model_User',
+			'model_to' => '\User\Model_User',
 			'key_to' => 'id',
 			'cascade_save' => false,
 			'cascade_delete' => false,

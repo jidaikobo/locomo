@@ -2,6 +2,7 @@
 CSSハック(valid)
 IE6 : * html 
 IE7 : *+html
+IE8,MacIE5,Opera9以下 html:first-child
 #adminbar .adminbar_main {
 	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #7393c6;
@@ -121,7 +122,7 @@ body.login{
 
 /*=== admin_bar ===*/
 
-/* boxsizing */
+/*=== boxsizing ===*/
 #adinbar,
 #adminbar div,
 #adminbar_logo {
@@ -129,26 +130,23 @@ body.login{
 	-moz-box-sizing : border-box ;
 	box-sizing : border-box ;
 }
-/* inline-block */
+/*=== inline-block ===*/
 #adminbar div,
-.adminbar_icon 
-/*.adminbar_main,
-.adminbar_sub */
-{
+.adminbar_icon,
+.holizonal_list ul,
+.holizonal_list li {
 	display: inline-block;
 }
-
-*+html #adminbar div
-/*
-*+html .adminbar_icon,
-*+html .adminbar_main,
-*+html .adminbar_sub */
-{
+*+html #adminbar div,
+*+html .holizonal_list ul,
+*+html .holizonal_list li {
 	display: inline;
 	zoom: 1;
 }
 
 #adminbar {
+	width: 100%;
+	min-width: 320px;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -169,17 +167,24 @@ body.login{
 	height: 2em;
 	padding: 0 .125em;
 }
-.adminbar_icon img{
+.adminbar_bottom .adminbar_icon{
+	width: 1.5em;
+}
+.adminbar_top .adminbar_icon img{
 	width: 1.75em;
 	height: 1.75em;
-	padding-bottom: .125em;
+	padding: .125em 0;
 	
+}
+.adminbar_bottom .adminbar_icon img{
+	width: 1.5em;
+	height: 1.5em;
+	padding: .25em 0;
 }
 .adminbar_top,
 .adminbar_bottom {
 	display: block;
 	width: 100%;
-	vertical-align: middle;
 }
 .adminbar_top {
 	background-color: #0e3664;
@@ -188,17 +193,17 @@ body.login{
 	background-repeat: no-repeat;
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
-	height: 2.5em;
+	height: 2.5em;	
 	position: absolute;
 	top: 0;
 	left: 0;
+	vertical-align: middle;
 }
 .adminbar_bottom {
 	clear: both;
 	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #858c91;
-}
-.base_light .adminbar_bottom{
+	position: relative;
 	background: #fafafa;
 	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
 	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
@@ -206,39 +211,50 @@ body.login{
 	background-image: -webkit-gradient(linear, center top, center bottom, from(#fcfcfc), to(#ebebeb));
 	background-image: -webkit-linear-gradient(top, #fcfcfc, #ebebeb);
 	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
-	color: 1px solid #333;
+	color: #333;
 	text-shadow: 1px 1px 0 #fff;
+
 }
 #adminbar_logo {
 	height: 2.5em;
 	vertical-align: middle;
 	background-color: #fff;/* adminbarの背景色と合わせる */
-	padding: .25em;
+	padding: 0 .25em;
 }
 .adminbar_main,
 .adminbar_sub {
 	padding: .25em 10px;
 }
-.adminbar_sub {
-	float: right;
-}
-.adminbar_top .adminbar_sub{
-	height: 2.5em;
-}
-.adminbar_bottom .adminbar_sub{
-	padding: 0;
-}
-.adminbar_top .adminbar_sub div {
-	float:right;
-	line-height: 2em;
+.adminbar_main div,
+.adminbar_sub div {
+	position: relative;
 	vertical-align: middle;
-	padding: 0 5px 0;
 }
 .adminbar_top .adminbar_main,
 .adminbar_top .adminbar_sub {
 	vertical-align: middle;
 }
-
+.adminbar_top .adminbar_sub {
+	height: 2.5em;
+}
+.adminbar_bottom .adminbar_sub {
+	padding-top: 0;
+	padding-bottom: 0;
+	line-height: 2em;
+}
+.adminbar_top .adminbar_sub div {
+	float:right;
+	line-height: 2em;
+	vertical-align: middle;
+	padding-left: 5px;
+}
+.adminbar_sub {
+	float: right;
+}
+.adminbar_sub ul.currentitem {
+	right: 0;
+	left: auto !important;
+}
 #render_info {
 	opacity: .65;
 	font-size: .9em;
@@ -248,99 +264,70 @@ body.login{
 	display: block;
 	line-height: 2em;
 	vertical-align: middle;
+	color: #fff !important;
 }
-
-
-.adminbar_top a {
-	color: #fff;
-}
-.adminbar_top a:hover,
-.adminbar_top a:focus {
-	background-color: rgba(255,255,255,.15);
+.adminbar_top a,
+.adminbar_bottom a{
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 }
-
-
-
-.adminbar_top li a,
-.adminbar_bottom {
+.adminbar_top div > a:hover,
+.adminbar_top div > a:focus {
+	background-color: rgba(255,255,255,.15);
+}
+.adminbar_top li a:link,
+.adminbar_top li a:visited,
+.adminbar_top li a:hover,
+.adminbar_top li a:active,
+.adminbar_bottom,
+.adminbar_bottom a:link,
+.adminbar_bottom a:visited,
+.adminbar_bottom a:hover,
+.adminbar_bottom a:active {
 	color: #333;
 	text-shadow: 1px 1px 0 #fff;
 }
-#adminbar .currentmenu a:hover,
-#adminbar .currentmenu a:focus {
-	background-color: #d8ebfc;
-	text-shadow: none;
-}
-
-.adminbar_main div,
-#adminbar_index {
-	position: relative;
-	vertical-align: middle;
-	display: inline-block;
-	*display: inline;
-	*zoom: 1;
-}
-.adminbar_main_left div {
-	margin-left: 10px;
-	padding-left: 5px;
-}
-.adminbar_main_right {
-	float: right;
-}
-
-.adminbar_main_right > * {
-
-}
-
-.adminbar_main .listopen {
-	padding-right: 15px;
-	background-image: url('../images/parts/mark_listopen_wh.png');
-	background-position: right center;
-	background-repeat: no-repeat;
-}
-#adminbar_context .listopen {
+.adminbar_bottom a.dropdown_list.trigger {
 	padding-right: 15px;
 	background-image: url('../images/parts/mark_listopen_bk.png');
 	background-position: right center;
 	background-repeat: no-repeat;
 }
-#adminbar .listopen.icononly{
-	padding-right: 8px;
+.adminbar_top a.dropdown_list.trigger {
+	padding-right: 15px;
+	background-image: url('../images/parts/mark_listopen_wh.png');
+	background-position: right center;
+	background-repeat: no-repeat;
 }
-
-#adminbar ul.modal {
-	display: none;
+#adminbar .icononly{
+	margin-right: -8px;
 }
-#adminbar_context h3,
-#adminbar ul.holizonal_list a {
-	display: inline;
-	padding: .15em .25em;
-}
-#adminbar ul.holizonal_list {
-	display: inline;
-	padding: 10px;
-}
-#adminbar .holizonal_list li {
-	display: inline;
-	padding-right: 5px;
-}
-#adminbar_context .listopen:hover,
-#adminbar_context .listopen:focus,
-#adminbar_context .holizonal_list a:hover,
-#adminbar_context .holizonal_list a:focus {
-	background-color: rgba(15,15,15,.06);
-	border-radius: 3px;
+.adminbar_bottom div a:hover,
+.adminbar_bottom div a:focus {
+	background-color: rgba(0,0,0,.06);
 	text-shadow: none;
 }
-.context_info {
-	float: right;
-	font-style: italic;
+#adminbar .currentitem a:hover,
+#adminbar .currentitem a:focus {
+	background-color: #d8ebfc;
+	text-shadow: none;
+	border-radius: 0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
 }
-
-#adminbar ul.currentmenu {
+ul.holizonal_list {
+	padding-left: 0;
+}
+.holizonal_list li {
+	padding-right: 5px;
+}
+#adminbar ul.holizonal_list a {
+	display: inline;
+	padding: .25em;
+}
+.adminbar_main ul.currentitem,
+.adminbar_sub ul.currentitem {
 	position: absolute;
 	left: 0;
 	z-index: 100;
@@ -351,29 +338,20 @@ body.login{
 	background: rgb(250, 250, 250);
 	background: rgba(250, 250, 250, .95);
 }
-.adminbar_main ul.currentmenu{
-	top: 2.3em;
-}
-#adminbar_context ul.currentmenu{
-	top: 1.6em;
-}
-#adminbar .currentmenu li {
+#adminbar .currentitem li {
 	display: block;
 }
-#adminbar .currentmenu li a {
+#adminbar .currentitem li a {
 	display: block;
 	padding: 1px 20px;
 }
-.adminbar_main_right ul {
-	right: 0;
-	left: auto !important;
-}
-
 #adminbar .show_if_focus {
 	left:4px;
 	top: 4px;
 }
-
+.admin_controller{
+	margin-right: 10px;
+}
 /* button */
 .btn,
 .button {
@@ -601,4 +579,59 @@ table.datatable .col_scroll{
 /*=== modal ===*/
 ul.modal{
 	display: none;
+}
+
+/*=== media_query ===*/
+li.show_if_smalldisplay{
+	display: none !important;
+}
+
+
+@media screen and (max-width: 640px) {
+
+body{
+	padding-bottom: 10px;
+}
+.container{
+	margin: 0 10px;
+	min-width: 300px;
+}
+
+}
+
+@media screen and (max-width: 520px) {
+.adminbar_bottom .adminbar_main{
+	padding-right: 3.5em;
+}
+.adminbar_bottom .adminbar_sub{
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#adminbar a.trigger .adminbar_icon{
+	margin-right: -8px;
+}
+#adminbar .adminbar_bottom .holizonal_list li {
+	margin-left: -.25em;
+}
+#adminbar .hide_if_smalldisplay{
+	position: absolute !important;
+	left: auto;
+	height: 0;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
+}
+#adminbar li.show_if_smalldisplay{
+	display: list-item !important;
+}
+#adminbar li.show_if_smalldisplay .label{
+	position: relative !important;
+	height: auto;
+	color: #333 !important;
+	text-shadow: none;
+	font-weight: bold;
+	padding:0 20px;
+	white-space: normal;
+}
+
 }

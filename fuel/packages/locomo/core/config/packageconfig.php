@@ -11,7 +11,19 @@ defined('ADMN_USER_PASS') or define('ADMN_USER_PASS','121212');
 return array(
 	//base
 	'site_title' => 'locomo package',
-	
+
+	//identity
+	'identity' => array(
+		'logo' => array(
+			'svg'   => '', //ex) logo.svg
+			'image' => 'logo.png', //ex) logo.png
+		),
+		'color' => array(
+			'background' => '9,73,153', //ex)  lighthouseのロゴカラーは#094999
+			'figure' => '',     //ex) #fff
+		),
+	),
+
 	//locale settings
 	'language'          => 'ja',
 	'language_fallback' => 'en',

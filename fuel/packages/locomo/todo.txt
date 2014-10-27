@@ -1,23 +1,14 @@
-//チートシート
-
-php oil refine migrate:current --packages=locomo
-php oil refine migrate:up --packages=locomo
-delete from migration where 1 = 1;
-
-//set_flashとリダイレクト
-\Session::set_flash('error', 'please check token');
-return \Response::redirect(\Uri::create('/scaffold/main/'));
-
-//現在のコントローラ
-'\\'.\Request::main()->controller
-$controller = \Inflector::denamespace(\Request::main()->controller);
-$controller = strtolower(substr($controller, 11));
-
-//現在のアクション
-$this->request->action
+Actionsetのbase,owner,index.option,ctrlを有松さんに説明する
+useridのオブサーバをuserモジュールに移動する
+workflowsテーブルをworkflowadminsテーブルにする
+小長井くんのbulkをusergroupに適用する。うまくいったらoptionモジュールを削除する。bulkで柔軟なoptionを設定できるようにしてもらう（ライトハウスの「項目マスタ」対応）。
+h1のあり方を有松さんに修正してもらう
+ヘルプの仕様を考える。やはりユーザが育てていけるのがよいか？ その場合、デフォルトテキストを作っておいて、migrationで入れてしまうか。
+ここらへんまでやったらimporterに本腰を入れよう
 
 ＊　＊　＊
 
-scaffoldで作ったmigration:downに、acl削除を入れる
-なぜかACLを二度読みするので要確認。
-
+add_testdataをform_definitionでやりたい。
+scaffoldで作ったmigration:downに、削除対象モジュールのacl削除を入れる
+moduleと呼ぶべき変数をcontrollerとしている箇所が多いので、あとできれいにする
+でべちゃんにlocomoのロゴ＋アイコンをねだる。

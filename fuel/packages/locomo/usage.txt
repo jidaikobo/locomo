@@ -8,39 +8,26 @@ projects.tplディレクトリを参考に、projectsディレクトリ内に同
 ディレクトリ名称は任意ですが、projects.iniに、HTTP_HOSTの値とペアになるディレクトリ（およびviewディレクトリ）のセットを書き定義してください。
 
 projects.iniのcli_hostの値は、oilコマンドがコマンドラインから実行する際のHTTP_HOSTの値です。
+なおここで設定したcli_hostと違う値でoilコマンドを実行したい場合は、
+
+LOCOMO_ENV=develop php oil refine migrate:up --modules=acl
+
+というように、LOCOMO_ENVの値で環境変数を送信すれば、任意のcli_hostで実行できます。
 
 //APPPATH.config/development/db.php 
 
-APPPATHのdb.phpに、データベース接続情報を設定します。
-書き方は少々独特です。$retvalsを定義して、そのキーをプロジェクト名として設定します。
-複数のプロジェクト（場合によるとテスト環境）がある場合は、ここに定義します。
+APPPATHのdb.phpを以下のように設定します。
 
 ▼ここから────────────────
-$retvals = array();
-$retvals['proj_a'] = array(
-	'default' => array(
-		'type' => 'mysql',
-		'connection' => array(
-			'hostname' => 'localhost',
-//			'dsn' => 'mysql:host=localhost;dbname=fuel',
-//			'hostname' => '127.0.0.1',
-			'socket'   => '/opt/local/var/run/mysql5/mysqld.sock',
-//			'port' => '3306',
-			'database' => 'proj_a',
-			'username' => 'database_username',
-			'password' => 'database_password',
-//			'charset'      => 'utf8',
-			'enable_cache' => true,
-		),
-		'profiling' => true,
-	),
-);
-return $retvals[PROJECTDIR];
+<?php
+return \Fuel::load(PKGPROJPATH.'config/db.php');
 ────────────────ここまで▲
+
+それぞれのプロジェクトのconfigのdb.phpに、データベース接続情報を設定します。
 
 //oil
 
-oilコマンドで基礎モジュールのmigrationを実行してください（ACLからrefineしてください）。
+oilコマンドで基礎モジュールのmigrationを実行してください（ACLを最初にrefineしてください）。
 
 php oil refine migrate:up --modules=acl
 php oil refine migrate:up --modules=user
@@ -49,19 +36,13 @@ php oil refine migrate:up --modules=revision
 
 //APPPATH.config/config.php
 
-- always_loadに、locomoをたす
+always_loadに、locomoを足してください。
 
-- Security settingsのコメントアウトを外して、以下のように設定する
-
+security設定をしてください。
+	'security' => array(
 		 'csrf_autoload'    => false,
 		 'csrf_token_key'   => 'locomo_csrf_token',
 		 'csrf_expiration'  => 300,
-
-//APPPATH.config/routes.php
-
-- トップページと404を変更
-	'_root_'  => 'content/home',
-	'_404_'   => 'content/404',
 
 /*
  * モジュール開発
@@ -71,39 +52,15 @@ Locomoパッケージ（以下locomo）はfuelphpのmoduleを基礎にしてい�
 
 locomoを用いて構築する際は、原則PKGPATH.'/projects/PROJECTNAME/modules/'以下に、以下のような構成のファイルをおいてください。locomoのscaffoldを使うと簡単に生成できます。
 
-MODNAME
-- classes
-	- controller
-		- MODNAME.php
-	- model
-		- MODNAME.php
-	- view
-		- MODNAME.php
-- migrations
-- config
-	- MODNAME.php
-- views
-
 locomoには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
 
-パッケージコアモジュールのclassをオーバライドする場合は、パッケージのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作り、各classは、Locomo_Core_Moduleの名前空間に対して行うことで、パッケージコアモジュールの機能を生かしてextendsできます。
-
-▼ここから────────────────
-namespace User;
-class Controller_User extends \Locomo_Core_Module\User\Controller_User
-────────────────ここまで▲
-
-/*
- * クラスと名前空間について
- */
-
-プロジェクトごとのクラスは、\Locomo_Coreの名前空間のクラスをextendsして、PROJPATH.classに設置すること。コアのclassを拡張する場合も同様です。
+パッケージコアモジュールのclassをオーバライドする場合は、プロジェクトのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作ってください。
 
 /*
  * テンプレートのオーバライド
  */
 
-モジュールのテンプレートだけオーバライドする場合は、PROJPATH.views/MODNAME/views/に同じ名前のファイルで設置すること。inc_header等のオーバライドに関しては、PROJPATH.views/に設置できます。
+モジュールのテンプレートだけオーバライドする場合は、PROJPATH.views/MODNAME/views/に同じ名前のファイルで設置してください。inc_header等のオーバライドに関しては、PROJPATH.views/に設置できます。
 
 /*
  * 特別な名前のカラム
@@ -111,8 +68,11 @@ class Controller_User extends \Locomo_Core_Module\User\Controller_User
 
 tableを作るとき、以下のカラム名は特別な仕事をします。
 
-status:varchar[20]:null
-項目の状態を示すカラムです
+//status:varchar[20]:null
+//項目の状態を示すカラムです
+
+is_visible:int:null
+可視属性フラグです。
 
 deleted_at:datetime:null
 削除フラグです。nullのときは表示され、dateが入っているときには削除されたことになります。
@@ -127,86 +87,38 @@ expired_at:datetime:null
  * revision（編集履歴）
  */
 
-revisionを適用したいコントローラで、
-▼ここから────────────────
-	use \Revision\Controller_Revision;
-────────────────ここまで▲
-のコメントアウトを外します。
-同じくコントローラで、post_save_hook()をオーバライドし、リビジョン用の処理を加えてください。
-▼ここから────────────────
-	public function post_save_hook($obj = null, $mode = 'edit')
-	{
-		$obj = parent::post_save_hook($obj, $mode);
-		$obj = $this->revision_save_hook($obj, $mode);
-		return $obj;
-	}
-────────────────ここまで▲
+revisionを適用したいコントローラとアクションセットで、Traitを追加します。
+# scaffoldを使った場合はコメントアウトされています。
 
-同アクションセットで、
-▼ここから────────────────
-	use \Revision\Actionset_Revision;
-────────────────ここまで▲
-のコメントアウトを外します。
-アクションセットでは、
-▼ここから────────────────
-		//revision
-		$actions->view_revision = self::view_revision($controller, $item);
-────────────────ここまで▲
-を追加します。
+	use \Revision\Traits_Controller_Revision;
+	use \Revision\Traits_Actionset_Revision;
 
-これでコントローラでの編集履歴が有効になります。
-編集履歴は、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
+モデルでは、observerを足してください。
+
+		'Locomo\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
+
+これでモジュールでの編集履歴が有効になります。
 
 /*
  * ワークフロー管理
  */
 
-▼ここから────────────────
-	use \Workflow\Controller_Workflow;
-────────────────ここまで▲
-のコメントアウトを外します。
-同じくコントローラで、pre_save_hook()、post_save_hook()、edit_core()をオーバライドし、ワークフロー用の処理を加えてください。
-▼ここから────────────────
-	public function pre_save_hook($obj = null, $mode = 'edit')
-	{
-		$obj = parent::post_save_hook($obj, $mode);
-		$obj = $this->pre_workflow_save_hook($obj, $mode);
-		return $obj;
-	}
+ワークフローを適用したいコントローラとモデルとアクションセットで、Traitを追加します。
+# scaffoldを使った場合はコメントアウトされています。
 
-	public function post_save_hook($obj = null, $mode = 'edit')
-	{
-		$obj = parent::post_save_hook($obj, $mode);
-		$obj = $this->workflow_save_hook($obj, $mode);
-		return $obj;
-	}
-
-	public function edit_core($id = null, $obj = null, $redirect = null, $title = null)
-	{
-		return $this->workflow_edit_core($id, $obj, $redirect, $title);
-	}
-────────────────ここまで▲
+	use \Workflow\Traits_Controller_Workflow;
+	use \Workflow\Traits_Model_Workflow;
+	use \Workflow\Traits_Actionset_Base_Workflow;
 
 対象モデルの$_propertiesにworkflow_statusを足します。
+対象モデルにobserverを追加します。
 
-同アクションセットで、
-▼ここから────────────────
-	use \Workflow\Actionset_Workflow;
-────────────────ここまで▲
-のコメントアウトを外します。
-アクションセットでは、
-▼ここから────────────────
-		//workflow
-		$actions->index_workflow   = self::index_workflow($controller, $item);
-		$actions->workflow         = self::workflow($controller, $item);
-		$actions->workflow_process = self::workflow_process($controller, $item);
-		$actions->workflow_actions = self::workflow_actions($controller, $item);
-		if(@$item->workflow_status == 'in_progress') unset($actions->edit);
-────────────────ここまで▲
-を追加します。
+		'Workflow\Observer_Workflow' => array(
+			'events' => array('before_insert', 'before_save','after_load'),
+		),
 
-これでコントローラでのワークフローが有効になります。
-ワークフローは、action_edit()と依存関係にあるので、action_edit()以外の編集方法を用いている場合は、うまく動作しません。
 
 /*
  * オプション（個別にtableを持つ場合のオプション）
