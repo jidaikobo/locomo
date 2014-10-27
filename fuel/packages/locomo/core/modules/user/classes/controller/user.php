@@ -1,10 +1,13 @@
 <?php
 namespace User;
+\Module::load('bulk');
+
 class Controller_User extends \Locomo\Controller_Crud
 {
 	//trait
 	use \Option\Traits_Controller_Option;
 	use \Revision\Traits_Controller_Revision;
+	use \Bulk\Traits_Controller_Bulk;
 
 	/**
 	* @var user information
@@ -178,5 +181,10 @@ class Controller_User extends \Locomo\Controller_Crud
 		$session->delete('user');
 		\Session::set_flash( 'success', 'ログアウトしました');
 		\Response::redirect('user/login/');
+	}
+
+
+	public function action_usergroup_bulk() {
+		return $this->bulk('\User\Model_Usergroup', array());
 	}
 }

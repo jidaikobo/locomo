@@ -11,7 +11,7 @@
 
 
 
-<?php echo \Form::open(\Uri::create('sample/bulk', array(), \Input::get())); ?>
+<?php echo \Form::open(\Uri::create('', array(), \Input::get())); ?>
 <div class="form_group">
 
 <?php echo $form; ?>
