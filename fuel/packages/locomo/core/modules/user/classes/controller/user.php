@@ -186,7 +186,7 @@ class Controller_User extends \Locomo\Controller_Crud
 	public function action_usergroup_bulk()
 	{
 		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
-		$form = $this->bulk('\User\Model_Usergroup', $view, array());
+		$form = $this->bulk($view, '\User\Model_Usergroup');
 
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);

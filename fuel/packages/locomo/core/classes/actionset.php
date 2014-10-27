@@ -189,7 +189,7 @@ class Actionset
 
 		$retvals = array();
 		foreach($actionsets[$realm] as $v):
-			if( ! isset($v['url'])) continue;
+			if( ! isset($v['url'])  || empty($v['url'])) continue;
 
 			//urlはarrayの場合がある（workflowなど）
 			if(is_array($v['url'])):

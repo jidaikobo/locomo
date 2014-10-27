@@ -1,3 +1,23 @@
+/*
+CSSハック(valid)
+IE6 : * html 
+IE7 : *+html
+IE8,MacIE5,Opera9以下 html:first-child
+#adminbar .adminbar_main {
+	border-top: 1px solid #7393c6;
+	border-bottom: 1px solid #7393c6;
+	background-color: #0e3664;
+	background-image: url('../images/parts/adminbar_bg.png');
+}
+.adminbar_main li a:hover,
+.adminbar_main li a:focus {
+	background-color: #d8ebfc; 216,235,252
+}
+他、メニューバーのbasecolorを明暗設定できるようにする
+アイコン類の扱いを考える
+*/
+
+
 body{
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
@@ -102,118 +122,88 @@ body.login{
 
 /*=== admin_bar ===*/
 
-#adminbar{
+/*=== boxsizing ===*/
+#adinbar,
+#adminbar div,
+#adminbar_logo {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+}
+/*=== inline-block ===*/
+#adminbar div,
+.adminbar_icon,
+.holizonal_list ul,
+.holizonal_list li {
+	display: inline-block;
+}
+*+html #adminbar div,
+*+html .holizonal_list ul,
+*+html .holizonal_list li {
+	display: inline;
+	zoom: 1;
+}
+
+#adminbar {
+	width: 100%;
+	min-width: 320px;
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	z-index: 100;
-	padding: 2.5em 0 0;
+	padding: 2.5em 0 0;/* 上部バーの高さを設けておく */
+	border-top: 1px solid #7393c6;
 	background-color: #fff;
 	font-size: .9em;
-	-webkit-font-smoothing: subpixel-antialiased;
-}
-.adminbar-icon {
-	width: 1.75em;
-	height: 2.5em;
-	padding: 0 .125em;
-	display: inline-block;
-}
-.adminbar-icon img{
-	width: 1.75em;
-	height: 1.75em;
-	vertical-align: middle;
+	-webkit-font-smoothing: subpixel-antialiased; /* Safariでのテキストのアンチエイリアス処理調整、薄くなるのを防ぐ */
 }
 #adminbar a {
 	text-decoration: none;
+	display: inline-block;
 }
-.adminbar_logo {
-	height: 100%;
-	vertical-align: top;
-	background-color: #fff;
-	padding: 0 2px;
+.adminbar_icon { /* IE8で画像のサイズをCSSで指定した場合に本来サイズで枠が描画されてしまうのを防ぐためにラッパーを用意 */
+	width: 1.75em;
+	height: 2em;
+	padding: 0 .125em;
 }
-.adminbar_main {
-	border-top: 1px solid #7393c6;
-	border-bottom: 1px solid #7393c6;
+.adminbar_bottom .adminbar_icon{
+	width: 1.5em;
+}
+.adminbar_top .adminbar_icon img{
+	width: 1.75em;
+	height: 1.75em;
+	padding: .125em 0;
+	
+}
+.adminbar_bottom .adminbar_icon img{
+	width: 1.5em;
+	height: 1.5em;
+	padding: .25em 0;
+}
+.adminbar_top,
+.adminbar_bottom {
+	display: block;
+	width: 100%;
+}
+.adminbar_top {
 	background-color: #0e3664;
 	background-image: url('../images/parts/adminbar_bg.png');
 	background-position: center top;
 	background-repeat: no-repeat;
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
-	height: 2.5em;
-	width: 100%;
-	vertical-align: middle;
+	height: 2.5em;	
 	position: absolute;
 	top: 0;
-}
-.adminbar_main a {
-	color: #fff;
-}
-.adminbar_main a:hover,
-.adminbar_main a:focus {
-	background-color: rgba(255,255,255,.15);
-	border-radius: 3px;
-}
-.adminbar_main li a {
-	color: #333;
-	text-shadow: none;
-}
-.adminbar_main li a:hover,
-.adminbar_main li a:focus {
-	background-color: #d8ebfc;
-}
-
-.adminbar_main div {
-	position: relative;
-	vertical-align: middle;
-	display: inline-block;
-	*display: inline;
-	*zoom: 1;
-}
-.adminbar_main_left div {
-	margin-left: 10px;
-	padding-left: 5px;
-}
-.adminbar_main_right {
-	float: right;
-	padding-right: 5px;
-}
-
-.adminbar_main_right > * {
-	float:right;
-	line-height: 2.5em;
-	vertical-align: middle;
-	padding: 0 5px 0;
-}
-#render_info {
-	opacity: .65;
-	font-size: .9em;
-	line-height: 3em;
-}
-.adminbar_main div > a {
-	display: block;
-	line-height: 2.5em;
+	left: 0;
 	vertical-align: middle;
 }
-.adminbar_main .listopen {
-	padding-right: 15px;
-	background-image: url('../images/parts/mark_listopen.png');
-	background-position: right center;
-	background-repeat: no-repeat;
-}
-.adminbar_main .listopen.icononly{
-	padding-right: 8px;
-}
-
-.adminbar_main ul {
-	display: none;
-}
-#adminbar_context {
+.adminbar_bottom {
 	clear: both;
-	position: relative;
+	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #858c91;
+	position: relative;
 	background: #fafafa;
 	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
 	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
@@ -221,32 +211,125 @@ body.login{
 	background-image: -webkit-gradient(linear, center top, center bottom, from(#fcfcfc), to(#ebebeb));
 	background-image: -webkit-linear-gradient(top, #fcfcfc, #ebebeb);
 	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
-	margin-top: 1px;
-	padding: 2px 10px;
+	color: #333;
+	text-shadow: 1px 1px 0 #fff;
+
+}
+#adminbar_logo {
+	height: 2.5em;
+	vertical-align: middle;
+	background-color: #fff;/* adminbarの背景色と合わせる */
+	padding: 0 .25em;
+}
+.adminbar_main,
+.adminbar_sub {
+	padding: .25em 10px;
+}
+.adminbar_main div,
+.adminbar_sub div {
+	position: relative;
+	vertical-align: middle;
+}
+.adminbar_top .adminbar_main,
+.adminbar_top .adminbar_sub {
+	vertical-align: middle;
+}
+.adminbar_top .adminbar_sub {
+	height: 2.5em;
+}
+.adminbar_bottom .adminbar_sub {
+	padding-top: 0;
+	padding-bottom: 0;
+	line-height: 2em;
+}
+.adminbar_top .adminbar_sub div {
+	float:right;
+	line-height: 2em;
+	vertical-align: middle;
+	padding-left: 5px;
+}
+.adminbar_sub {
+	float: right;
+}
+.adminbar_sub ul.currentitem {
+	right: 0;
+	left: auto !important;
+}
+#render_info {
+	opacity: .65;
+	font-size: .9em;
+	line-height: 2.3em;
+}
+.adminbar_top div > a {
+	display: block;
+	line-height: 2em;
+	vertical-align: middle;
+	color: #fff !important;
+}
+.adminbar_top a,
+.adminbar_bottom a{
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+.adminbar_top div > a:hover,
+.adminbar_top div > a:focus {
+	background-color: rgba(255,255,255,.15);
+}
+.adminbar_top li a:link,
+.adminbar_top li a:visited,
+.adminbar_top li a:hover,
+.adminbar_top li a:active,
+.adminbar_bottom,
+.adminbar_bottom a:link,
+.adminbar_bottom a:visited,
+.adminbar_bottom a:hover,
+.adminbar_bottom a:active {
+	color: #333;
 	text-shadow: 1px 1px 0 #fff;
 }
-#adminbar_context h3 {
+.adminbar_bottom a.dropdown_list.trigger {
+	padding-right: 15px;
+	background-image: url('../images/parts/mark_listopen_bk.png');
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+.adminbar_top a.dropdown_list.trigger {
+	padding-right: 15px;
+	background-image: url('../images/parts/mark_listopen_wh.png');
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+#adminbar .icononly{
+	margin-right: -8px;
+}
+.adminbar_bottom div a:hover,
+.adminbar_bottom div a:focus {
+	background-color: rgba(0,0,0,.06);
+	text-shadow: none;
+}
+#adminbar .currentitem a:hover,
+#adminbar .currentitem a:focus {
+	background-color: #d8ebfc;
+	text-shadow: none;
+	border-radius: 0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+}
+ul.holizonal_list {
+	padding-left: 0;
+}
+.holizonal_list li {
+	padding-right: 5px;
+}
+#adminbar ul.holizonal_list a {
 	display: inline;
+	padding: .25em;
 }
-#adminbar_context ul {
-	display: inline;
-}
-div#adminbar_context li {
-	display: inline;
-	padding-right: 20px;
-}
-#adminbar_context ul a {
-	color: #333 !important;
-}
-.context_info {
-	float: right;
-	font-style: italic;
-}
-
-.adminbar_main .currentmenu {
+.adminbar_main ul.currentitem,
+.adminbar_sub ul.currentitem {
 	position: absolute;
 	left: 0;
-	top: 2.3em;
 	z-index: 100;
 	display: block;
 	white-space: nowrap;
@@ -255,23 +338,20 @@ div#adminbar_context li {
 	background: rgb(250, 250, 250);
 	background: rgba(250, 250, 250, .95);
 }
-.adminbar_main .currentmenu li {
+#adminbar .currentitem li {
 	display: block;
 }
-.adminbar_main .currentmenu li a {
+#adminbar .currentitem li a {
 	display: block;
 	padding: 1px 20px;
 }
-.adminbar_main_right ul {
-	right: 0;
-	left: auto !important;
-}
-
 #adminbar .show_if_focus {
 	left:4px;
 	top: 4px;
 }
-
+.admin_controller{
+	margin-right: 10px;
+}
 /* button */
 .btn,
 .button {
@@ -462,6 +542,7 @@ a.delete{
 /* tbl datatable */
 table.datatable{
 	font-size: .9em;
+	border-bottom:1px solid #bbb;
 }
 table.datatable th,
 table.datatable td{
@@ -472,7 +553,7 @@ table.datatable td{
 }
 
 table.datatable tr:nth-child(even) {
-	background: #f6f6f6;
+	background: #f9f9f9;
 }
 table.datatable .col_scroll{
 	display: block;
@@ -490,8 +571,67 @@ table.datatable .col_scroll{
 	margin: 0.25em 0;
 	font-size: 1.5em;
 }
-.contents h2 {
+.contents > h2 {
 	margin: .25em 0 .5em;
 	font-size: 1.1em;
-	font-weight: normal;
+}
+
+/*=== modal ===*/
+ul.modal{
+	display: none;
+}
+
+/*=== media_query ===*/
+li.show_if_smalldisplay{
+	display: none !important;
+}
+
+
+@media screen and (max-width: 640px) {
+
+body{
+	padding-bottom: 10px;
+}
+.container{
+	margin: 0 10px;
+	min-width: 300px;
+}
+
+}
+
+@media screen and (max-width: 520px) {
+.adminbar_bottom .adminbar_main{
+	padding-right: 3.5em;
+}
+.adminbar_bottom .adminbar_sub{
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#adminbar a.trigger .adminbar_icon{
+	margin-right: -8px;
+}
+#adminbar .adminbar_bottom .holizonal_list li {
+	margin-left: -.25em;
+}
+#adminbar .hide_if_smalldisplay{
+	position: absolute !important;
+	left: auto;
+	height: 0;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
+}
+#adminbar li.show_if_smalldisplay{
+	display: list-item !important;
+}
+#adminbar li.show_if_smalldisplay .label{
+	position: relative !important;
+	height: auto;
+	color: #333 !important;
+	text-shadow: none;
+	font-weight: bold;
+	padding:0 20px;
+	white-space: normal;
+}
+
 }

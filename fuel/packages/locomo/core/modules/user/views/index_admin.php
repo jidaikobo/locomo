@@ -17,12 +17,12 @@
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
-		<tr>
+		<tr tabindex="-1">
 			<td><?php echo $item->id; ?></td>
-			<td><span class="col_scroll" style="min-width: 5em;" tabindex="-1"><?php 
+			<td style="min-width: 6em;" ><span class="col_scroll" tabindex="-1"><?php 
 					echo Html::anchor('user/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></span></td>
-			<td><div class="col_scroll" style="min-width: 10em;"  tabindex="-1"><?php echo $item->email; ?></div></td>
-			<td><div class="col_scroll" tabindex="-1"><?php echo $item->last_login_at; ?></div></td>
+			<td style="min-width: 12em;"><div class="col_scroll"  tabindex="-1"><?php echo $item->email; ?></div></td>
+			<td><?php echo $item->last_login_at; ?></td>
 			<td><?php echo $item->deleted_at; ?></td>
 			<td><?php echo $item->status; ?></td>
 			<td>

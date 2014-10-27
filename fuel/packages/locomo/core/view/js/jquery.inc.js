@@ -7,11 +7,10 @@ $("body *").removeClass("hide_if_no_js");
 //管理バーの高さに合わせてパディングを設定したい。リサイズ時の処理をちょっと考える
 //ExResize等プラグインを使う？　jQueryUIになにかある？
 if($('#adminbar')[0]){
-	var barHeight = $('.adminbar_main').height();
-	if($('#adminbar_context')[0]){
-		barHeight += $('#adminbar_context').height();
-	}
-	$('body').css('padding-top', barHeight+5+5+'px' );
+	var bar = '#adminbar';
+	var barHeight = $(bar).height();
+	var barPaddingTop = parseInt($(bar).css('padding-top'), 10)
+	$('body').css('padding-top', barHeight+barPaddingTop+3+'px' );
 }
 /*
 $('a.listopen').click(function(){
@@ -35,14 +34,14 @@ $(document).click(function(event){
 $(document).click(function(event){
 	var t = event.target;
 //リストの開け閉め もっといろいろかんがえたい
-//全てのカレントメニューを消してよいのか、排他的？な表示対象にそんな感じの名前を付けるか。
-	if( $(t).closest('.listopen').length != 0 && !$(t).closest('.listopen').next().hasClass('currentmenu')){
+
+	if( $(t).closest('a.modal').length != 0 && !$(t).closest('a.modal').next('ul.modal').hasClass('currentitem')){
 	//対象のnextにcurrentmenuがなければ付与
-		$('.currentmenu').removeClass('currentmenu')
-		$(t).closest('.listopen').next().addClass('currentmenu')
-	}else if($('.currentmenu')[0] && $(t).closest('.currentmenu').length == 0){
+		$('.currentitem').removeClass('currentitem')
+		$(t).closest('a.modal').next('ul.modal').addClass('currentitem')
+	}else if($('.currentitem')[0] && $(t).closest('.currentitem').length == 0){
 	//開いたメニューの外であればとにかくcurrentmenuを外しちゃう。
-		$('.currentmenu').removeClass('currentmenu');
+		$('.currentitem').removeClass('currentitem');
 	}
 } );
 
