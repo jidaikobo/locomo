@@ -9,14 +9,11 @@ trait Traits_Controller_Bulk
 	/*
 	 *
 	 */
-	public function bulk($model = null, $options = array()) {//, $deleted = false) {
+	public function bulk($model = null, $view = null, $options = array()) {
 
+		is_null($view) and die('view is required');
 		if (!$model) $model = $this->model_name;
 		$action = \Request::main()->action;
-
-
-		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
-		$view->set_global('title', 'バルク品');
 
 		if (\Input::get()) {
 			if (\Input::get('orders')) {
@@ -39,7 +36,6 @@ trait Traits_Controller_Bulk
 			}
 		}
 
-
 		// save から戻ってきた時の処理
 		//if (\Input::get('ids')) var_dump( \Input::get('ids')); die();
 		if (\Input::get('ids')) $options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
@@ -58,18 +54,6 @@ trait Traits_Controller_Bulk
 		$options['limit'] = \Input::get('limit') ?: $pagination_config['per_page'];
 		$view->set_safe('pagination', \Pagination::create_links());
 
-		/*
-		if ($deleted === 'disabled') {
-			$model::disable_filter();
-			$objects = $model::find('all', $options);
-			$deleted = false;
-		} elseif($deleted) {
-			$objects = $model::find_deleted('all', $options);
-		} else {
-			$objects = $model::find('all', $options);
-		}
-		 */
-
 		// edit create 分岐
 		$create_field = intval(\Input::get('create'));
 		if (!$create_field) {
@@ -83,11 +67,9 @@ trait Traits_Controller_Bulk
 		//var_dump($objects);
 
 		if (!$objects) {
-			$view->set_global('title', 'バルク品');
-			$view->set_global('form', '該当が 0 件でした', false);
-			return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+			\Session::set_flash('error', '該当が 0 件でした');
+			return false;
 		}
-
 
 		$bulk = \Locomo\Bulk::forge();
 
@@ -132,13 +114,7 @@ trait Traits_Controller_Bulk
 
 		$form = $bulk->build();
 
-
-		//$view->set_global('item', $objects[1], false);
-		$view->set_global('form', $form, false);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-
-
+		return $form;
 	}
 
 }

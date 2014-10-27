@@ -11,6 +11,7 @@
 
 
 
+<?php if($form): ?>
 <?php echo \Form::open(\Uri::create('', array(), \Input::get())); ?>
 <div class="form_group">
 
@@ -26,13 +27,9 @@
 </p>
 
 </div>
+<?php endif; ?>
 
 <?php echo \Form::close(); ?>
-<p>
-	<?php
-		echo Html::anchor('sample', '一覧に戻る',array('class'=>'button'));
-	?>
-</p>
 
 <?php echo $pagination; ?>
 

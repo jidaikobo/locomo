@@ -183,7 +183,24 @@ class Controller_User extends \Locomo\Controller_Crud
 	}
 
 
-	public function action_usergroup_bulk() {
-		return $this->bulk('\User\Model_Usergroup', array());
+	public function action_usergroup_bulk()
+	{
+		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
+		$form = $this->bulk('\User\Model_Usergroup', $view, array());
+
+		$view->set_global('title', 'ユーザグループ設定');
+		$view->set_global('form', $form, false);
+
+
+		//add_actionset
+		$action = array(
+			'url' => 'user/',
+			'menu_str' => '編集画面に戻る',
+		);
+//		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
+//		$array = ['menu_str'=>'戻る', 'url' =>'user/'];
+		\Actionset::set_actionset('user', 'ctrl', 'back', $action);
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 }
