@@ -297,10 +297,6 @@ class Controller_Crud extends Controller_Base
 		return $this->action_edit(null);
 	}
 
-	public function modify_cascaded($object = null) {
-		$object;
-	}
-
 	public function action_edit($id = null) {
 		$model = $this->model_name ;
 
@@ -326,7 +322,7 @@ class Controller_Crud extends Controller_Base
 				 \Security::check_token()
 			):
 				//save
-				if ($obj->save()):
+				if ($obj->save(null, true)):
 					//success
 					\Session::set_flash(
 						'success',

@@ -78,7 +78,7 @@ class Model_User extends \Locomo\Model_Base
 		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 
 		//forge
-		$form = \Fieldset::forge('form', \Config::get('form'));
+		$form = \Fieldset::forge($factory, \Config::get('form'));
 
 		//user_name
 		$form->add(
