@@ -90,9 +90,17 @@ class Model_Sample extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null, $id = '')
+	public static function form_definition($factory, $obj = null)
 	{
 		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		$form->add(
+			'id',
+			'ID',
+			array('type' => 'text', 'disabled' => 'disabled')
+		)
+		->set_value(@$obj->id);
+
 /*
 		//user_name
 		$val->add('name', 'サンプル')
@@ -123,6 +131,7 @@ class Model_Sample extends \Locomo\Model_Base
 		)
 		->set_value(@$obj->belongsto_id);
 
+		/*
 		// hasone フォーム
 		$ho_form = Model_Hasone::form_definition('hasone', $obj->hasone ?: $obj->hasone = Model_Hasone::forge())->populate($obj->hasone);
 		$ho_form->set_input_name_array();
@@ -134,7 +143,7 @@ class Model_Sample extends \Locomo\Model_Base
 
 		// hasmany フォーム
 		$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
-
+		 */
 
 
 		// manymany checkbox
@@ -147,12 +156,12 @@ class Model_Sample extends \Locomo\Model_Base
 			)
 			->set_value(array_keys($obj->manymany));
 
-
 		return $form;
 	}
 
 
-	public static function bulk_definition($factory, $obj = null, $id = '') {
+	/*
+	public static function bulk_definition($factory, $obj = null,  $exceptions = array()) {
 
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 
@@ -198,6 +207,22 @@ class Model_Sample extends \Locomo\Model_Base
 
 		return $form;
 
+	}
+	 */
+
+	public function bulk_ctm($factory, $obj = null) {
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		//belongsto_id
+		$form->add(
+			'belongsto_id',
+			'BELONGSTO ID',
+			array('type' => 'text', 'size' => 30)
+		)
+		//->set_template( 'and {field}</td>')
+		->set_value(@$obj->belongsto_id);
+
+		return $form;
 	}
 }
 

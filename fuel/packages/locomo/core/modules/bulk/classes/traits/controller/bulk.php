@@ -3,13 +3,32 @@ namespace Bulk;
 trait Traits_Controller_Bulk
 {
 	public function action_bulk() {
-		return $this->bulk();
+
+
+		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
+		$form = $this->bulk($view, null, array());
+
+		$view->set_global('title', 'バルク品');
+		$view->set_global('form', $form, false);
+
+
+		//add_actionset
+		$action = array(
+			'url' => 'user/',
+			'menu_str' => '編集画面に戻る',
+		);
+//		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
+//		$array = ['menu_str'=>'戻る', 'url' =>'user/'];
+		\Actionset::set_actionset('user', 'ctrl', 'back', $action);
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+
 	}
 
 	/*
 	 *
 	 */
-	public function bulk($model = null, $view = null, $options = array()) {
+	public function bulk($view = null, $model = null, $options = array(), $define_function = null) {
 
 		is_null($view) and die('view is required');
 		if (!$model) $model = $this->model_name;
@@ -73,7 +92,7 @@ trait Traits_Controller_Bulk
 
 		$bulk = \Locomo\Bulk::forge();
 
-		$bulk->add_model($objects);
+		$bulk->add_model($objects, $define_function);
 
 		$form = $bulk->build();
 

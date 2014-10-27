@@ -3,8 +3,6 @@ namespace Locomo;
 
 class Bulk {
 
-	protected $name = 'bulk';
-
 	protected $forms = array();
 
 	protected $models = array();
@@ -17,19 +15,11 @@ class Bulk {
 		return new static($name);
 	}
 
-
-	public function name() {
-		return $this->name;
-	}
-
-
-
-	public function add_model($model) {
-
+	public function add_model($model, $define_function = null) {
 
 		if(is_array($model)) {
 			foreach ($model as $model_obj) {
-				$this->add_model($model_obj);
+				$this->add_model($model_obj, $define_function);
 			}
 
 		} else {
@@ -39,10 +29,12 @@ class Bulk {
 				$key = 'bulk_' . $model[$model::primary_key()[0]];
 			}
 			$this->models[$key] = $model;
-			if (method_exists($model, 'bulk_definition')) {
-				$this->forms[$key] = $model->bulk_definition($key, $model); // todo id factory nessesity?
+			if (method_exists($model, $define_function)) {
+				$this->forms[$key] = $model->{$define_function}($key, $model); // todo id factory nessesity?
+			} elseif (method_exists($model, 'bulk_definition')) {
+				$this->forms[$key] = $model::bulk_definition($key, $model); // todo id factory nessesity?
 			} elseif (method_exists($model, 'form_definition')) {
-				$this->forms[$key] = $model->form_definition($key, $model); // todo id factory nessesity?
+				$this->forms[$key] = $model::form_definition($key, $model); // todo id factory nessesity?
 			} else {
 				$this->forms[$key] = \Fieldset::forge($key)->add_model($model)->populate($model);
 			}
@@ -194,52 +186,7 @@ class Bulk {
 						if ($validation) $validated[] = false;
 					}
 
-				} // endif savw
-
-
-/*
-
-
-						if (isset(\Input::post($key)[$rel->name])) {
-							$mm_model = $rel->model_to;
-
-							// セットされているフィールドで来ていないもの
-							$setted_unset_objs = \Arr::filter_keys($this->models[$key]->{$rel->name}, \Input::post($key)[$rel->name], true);
-							foreach ($setted_unset_objs as $unset_key => $vv) {
-								unset($this->models[$key]->{$unset_key});
-							}
-
-							// セットされているもので来ているもの
-							$unseted_ids = array_flip(\Arr::filter_keys(array_flip(\Input::post($key)[$rel->name]), array_keys($this->models[$key]->{$rel->name}), true));
-							if (!empty($unseted_ids)) {
-								foreach ($unseted_ids as $unseted_id) {
-									// var_dump($mm_model::find($unseted_id));
-									$this->models[$key]->{$unseted_id} = $mm_model::find($unseted_id);
-								}
-							}
-
-							// Fieldset_Field なので populate じゃなく set_value
-							$this->forms[$key]->field($rel->name)->set_value($rel);
-
-						// 何も飛んでこなかったとき、form に存在していれば 全て unset する
-						} else {
-							if ($this->forms[$key]->field($rel->name) instanceof \Fieldset_Field) unset($this->models[$key]->{$rel->name});
-						}
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
+				}
 			}
 		} // -> try
 
@@ -259,18 +206,6 @@ class Bulk {
 			$use_transaction and $db->rollback_transaction();
 			return false;
 		}
-	}
-
-	public static function connection($writeable = false)
-	{
-		$class = get_called_class();
-
-		if ($writeable and property_exists($class, '_write_connection'))
-		{
-			return static::$_write_connection;
-		}
-
-		return property_exists($class, '_connection') ? static::$_connection : null;
 	}
 
 }
