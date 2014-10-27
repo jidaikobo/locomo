@@ -116,4 +116,51 @@ class Model_Usergroup extends \Locomo\Model_Base
 		return $form;
 	}
 
+	public static function bulk_form_definition($factory, $obj = null, $id = '')
+	{
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		$form->add(
+			'id',
+			'ID',
+			array('type' => 'text', 'disabled' => 'disabled')
+		)
+		->set_value(@$obj->id);
+
+		$form->add(
+			'name',
+			'samples表題',
+			array('type' => 'text', 'rows' => 7)
+		)
+		//->set_template('<td>{field}{error_msg}</td>')
+		//->add_rule('required')
+		->add_rule('max_length', 15)
+		// ->set_template('<td>{field} {error_msg}')
+		->set_value(@$obj->name);
+
+		//belongsto_id
+		$form->add(
+			'belongsto_id',
+			'BELONGSTO ID',
+			array('type' => 'text', 'size' => 30)
+		)
+		//->set_template( 'and {field}</td>')
+		->set_value(@$obj->belongsto_id);
+
+
+		// manymany checkbox
+		$manymany_option = Model_Manymany::find('all', array('select' => array('name')));
+		$manymany_option = \Arr::assoc_to_keyval($manymany_option, 'id', 'name');
+		$form->add(
+			'manymany',
+			'MM',
+				array('type' => 'checkbox', 'options' => $manymany_option)
+			)
+			->set_value(array_keys($obj->manymany));
+
+
+
+		return $form;
+	}
+
 }

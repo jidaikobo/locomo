@@ -2,7 +2,6 @@
 namespace Bulk;
 trait Traits_Controller_Bulk
 {
-
 	/*
 	 *
 	 */
