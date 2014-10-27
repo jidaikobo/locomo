@@ -88,7 +88,7 @@ expired_at:datetime:null
  */
 
 revisionを適用したいコントローラとアクションセットで、Traitを追加します。
-# scaffoldを使った場合はコメントアウトされています。
+scaffoldを使った場合はコメントアウトされています。
 
 	use \Revision\Traits_Controller_Revision;
 	use \Revision\Traits_Actionset_Revision;
@@ -106,7 +106,7 @@ revisionを適用したいコントローラとアクションセットで、Tra
  */
 
 ワークフローを適用したいコントローラとモデルとアクションセットで、Traitを追加します。
-# scaffoldを使った場合はコメントアウトされています。
+scaffoldを使った場合はコメントアウトされています。
 
 	use \Workflow\Traits_Controller_Workflow;
 	use \Workflow\Traits_Model_Workflow;
@@ -118,7 +118,6 @@ revisionを適用したいコントローラとアクションセットで、Tra
 		'Workflow\Observer_Workflow' => array(
 			'events' => array('before_insert', 'before_save','after_load'),
 		),
-
 
 /*
  * オプション（個別にtableを持つ場合のオプション）

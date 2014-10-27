@@ -56,7 +56,6 @@ if($is_user_logged_in):
 			$item,
 			$get_authed_url = true
 		);
-
 		if($actions):
 			$html.= '<ul>';
 			foreach($actions as $url => $v):

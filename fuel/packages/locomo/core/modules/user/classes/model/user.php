@@ -60,7 +60,7 @@ class Model_User extends \Locomo\Model_Base
 		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Locomo\Observer_Revision' => array(
+		'Revision\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),
 		),
 	);

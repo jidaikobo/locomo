@@ -33,7 +33,6 @@
 
 <?php echo $pagination; ?>
 
-
 <?php echo render('inc_admin_footer'); ?>
 
 

@@ -1,5 +1,5 @@
 <?php
-namespace Locomo;
+namespace Revision;
 class Observer_Revision extends \Orm\Observer
 {
 	/**

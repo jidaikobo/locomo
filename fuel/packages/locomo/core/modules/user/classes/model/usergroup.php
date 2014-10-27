@@ -52,6 +52,12 @@ class Model_Usergroup extends \Locomo\Model_Base
 			)
 	);
 
+	protected static $_observers = array(
+		'Revision\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
+	);
+
 	/**
 	 * form_definition()
 	 *

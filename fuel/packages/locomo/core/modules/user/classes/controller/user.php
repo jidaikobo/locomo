@@ -191,15 +191,12 @@ class Controller_User extends \Locomo\Controller_Crud
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);
 
-
 		//add_actionset
 		$action = array(
 			'url' => 'user/',
 			'menu_str' => '編集画面に戻る',
 		);
-//		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
-//		$array = ['menu_str'=>'戻る', 'url' =>'user/'];
-		\Actionset::set_actionset('user', 'ctrl', 'back', $action);
+		\Actionset::add_actionset('user', 'ctrl', 'back', $action);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}

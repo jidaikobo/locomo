@@ -7,7 +7,7 @@ workflowsテーブルをworkflowadminsテーブルにする
 ヘルプの仕様を考える。やはりユーザが育てていけるのがよいか？ その場合、デフォルトテキストを作っておいて、migrationで入れてしまうか。
 
 各モジュールはHELPを持つ。
-モジュールのmigrationでHelpsに
+モジュールのmigrationでContentに突っ込む
 
 ＊　＊　＊
 

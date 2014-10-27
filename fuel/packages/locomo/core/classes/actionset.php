@@ -148,7 +148,7 @@ class Actionset
 		is_null($module) and $module = static::$modules;
 		is_null($realm) and $realm = 'all';
 
-		$modules = ! is_array($module) ? array($module) : $module ;
+		$modules = ! is_array($module) ? array($module => '') : $module ;
 
 		$retvals = array();
 		foreach($modules as $each_module => $path):
