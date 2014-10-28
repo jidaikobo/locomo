@@ -2,6 +2,8 @@
 namespace Revision;
 class Observer_Revision extends \Orm\Observer
 {
+	static $delete = false;
+
 	/**
 	 * __construct
 	 */
@@ -14,7 +16,7 @@ class Observer_Revision extends \Orm\Observer
 	 */
 	public function after_insert(\Orm\Model $obj)
 	{
-		$this->after_save($obj);
+		$args = $this->insert_revision($obj, 'create');
 	}
 
 	/**
@@ -22,17 +24,75 @@ class Observer_Revision extends \Orm\Observer
 	 */
 	public function after_save(\Orm\Model $obj)
 	{
-		//$objしたものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
-		$tmps = $this->convert_model_to_simple_obj($obj);
+		//deleteの際は、saveが走るので、その抑止
+		if(static::$delete) return;
 
-		//prepare args
+		$operation = 'update';
+
+		/*
+		//復活 - after_save()で復活は捕まえられない。model_softにobserver追加を希望するか？
+		//あるいはrevisionテーブルをみて、直前のoperationと比較するか
+		if(isset($obj->deleted_at) && is_null($obj->deleted_at)):
+			$originals = $obj->get_original_values();
+			if( ! is_null($originals['deleted_at'])):
+				$operation = 'undelete';
+			endif;
+		endif;
+
+		//直近のoperationを取得
+		$option = array(
+		'select' => array('operation'),
+		'where' => array(
+			array('pk_id', $obj->id),
+		),
+		'order_by' => 'created_at',
+		);
+		$last = \Revision\Model_Revision::find('last',$option);
+
+だが、削除->編集の流れの後復活したらこれもとれないのでNG
+		*/
+
+		$args = $this->insert_revision($obj, $operation);
+	}
+
+	/**
+	 * before_delete()
+	 */
+	public function before_delete(\Orm\Model $obj)
+	{
+		//本当はafter_deleteをとりたいが、after_deleteではprimary keyが消えているので、loggingできない
+		$operation = 'delete';
+		if(isset($obj->deleted_at) && ! is_null($obj->deleted_at)):
+			$operation = 'purge';
+		endif;
+		$args = $this->insert_revision($obj, $operation);
+		static::$delete = true;
+	}
+
+	/**
+	 * insert_revision($obj, $operation = '')
+	 */
+	public function insert_revision($obj, $operation = '')
+	{
+		$tmp = (object) array();
+
+		//$objしたものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
 		$primary_key = $obj->get_primary_keys('first');
+		$model_name = get_class($obj);
+		$form = $model_name::form_definition('revision');
+		foreach($form->get_fields() as $property => $v):
+			if( ! isset($obj->{$property})) continue;
+			$tmp->{$property} = $obj->{$property};
+		endforeach;
+
+		//args
 		$args = array();
 		$args['model']       = get_class($obj);
 		$args['pk_id']       = $obj->$primary_key;
-		$args['data']        =  serialize($tmps);
+		$args['data']        = serialize($tmp);
 		$args['comment']     = \Input::post('revision_comment') ?: '';
 		$args['created_at']  = date('Y-m-d H:i:s');
+		$args['operation']   = $operation;
 		$args['modifier_id'] = isset($obj->modifier_id) ? $obj->modifier_id : 0;
 
 		//save revision
@@ -40,23 +100,4 @@ class Observer_Revision extends \Orm\Observer
 		$model->insert_revision();
 	}
 
-	/**
-	 * convert_model_to_simple_obj($obj)
-	 */
-	public function convert_model_to_simple_obj($obj)
-	{
-		$tmp = (object) array();
-		if(is_array($obj)){
-//			$tmps[] = $this->convert_model_to_simple_obj($obj);
-		}
-
-		//ORMを参照する - thx tuskitsume
-		$model_name = get_class($obj);
-		$form = $model_name::form_definition('revision');
-		foreach($form->get_fields() as $property => $v):
-			$tmp->{$property} = $obj->{$property};
-		endforeach;
-
-		return $tmp;
-	}
 }

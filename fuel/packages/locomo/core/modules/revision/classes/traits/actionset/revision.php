@@ -8,6 +8,7 @@ trait Traits_Actionset_Revision
 	public static function actionset_index_revision($module, $obj, $get_authed_url)
 	{
 		if(
+			$obj &&
 			in_array(\Request::main()->action, array('edit','view')) &&
 			$get_authed_url
 		):
