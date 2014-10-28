@@ -6,7 +6,7 @@ if($is_user_logged_in):
 	
 	$html = '';
 
-	$html.= '<div id="adminbar" class="clearfix">';
+	$html.= '<nav id="adminbar" class="clearfix">';
 		$html.= '<a href="#anchor_adminbar" class="skip show_if_focus" tabindex="1">ツールバーに移動</a>';
 		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="-1">ツールバー</a></h2>';
 
@@ -170,7 +170,7 @@ if($is_user_logged_in):
 		$html.= '</div><!-- /.adminbar_top -->';
 
 	
-	$html.= '</div><!-- /#adminbar -->';
+	$html.= '</nav><!-- /#adminbar -->';
 
 	echo $html;
 endif;

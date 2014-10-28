@@ -317,15 +317,25 @@ body.login{
 	-moz-border-radius: 0;
 }
 ul.holizonal_list {
+	line-height: 1.25;
 	padding-left: 0;
 }
 .holizonal_list li {
-	padding-right: 5px;
+	padding: 0 6px 0 0;
 }
 #adminbar ul.holizonal_list a {
 	display: inline;
 	padding: .25em;
 }
+.container .holizonal_list {
+	overflow: hidden;
+}
+.container .holizonal_list li {
+	border-left: 1px solid #aaa;
+	padding: 0 6px;
+	margin: .25em 0 .25em -1px;
+}
+
 .adminbar_main ul.currentitem,
 .adminbar_sub ul.currentitem {
 	position: absolute;
@@ -477,6 +487,18 @@ fieldset[disabled] a.button {
 	filter: alpha(opacity=65);
 	-webkit-box-shadow: none;
 }
+.btn_group{
+	white-space: nowrap;
+}
+.btn_group a{
+	margin-left: .5em;
+}
+.btn_group a:first-child{
+	margin-left: 0;
+}
+a.delete{
+	color: #a20;
+}
 
 /* alert */
 div.alert {
@@ -513,34 +535,34 @@ div.alert_error {
 	background-color: #eee;
 }
 
-/*  form  */
+/*===  form  ===*/
+form tbody th{
+	text-align: right;
+	padding-right: 5px;
+}
+form .submit_field{
+	display: table;
+	width: 100%;
+}
+form .submit_field .submit_button{
+	display: table-header-group;
+}
+form .submit_field .revision_comment{
+	display: table-row;
+}
 
-/*  table  */
-.tbl{
+/*===  table  ===*/
+.datatable{
 	background-color: #fefefe;
 }
-*>table.tbl thead th,
-*>table.tbl thead th,
-*>table.tbl thead td,
-*>table.tbl td,
-.tbl td{
+/* tbl datatable */
+*>table.datatable thead th,
+*>table.datatable thead td,
+*>table.datatable td,
+.datatable td{
 	padding:.25em .5em;
 }
-.btn_group{
-	white-space: nowrap;
-}
-.btn_group a{
-	margin-left: .5em;
-}
-.btn_group a:first-child{
-	margin-left: 0;
-}
-a.delete{
-	color: #a20;
-}
-
-/* tbl datatable */
-table.datatable{
+.datatable{
 	font-size: .9em;
 	border-bottom:1px solid #bbb;
 }
@@ -548,19 +570,22 @@ table.datatable th,
 table.datatable td{
 	border-bottom: 1px solid #eee;
 }
-table.datatable td{
+.datatable td{
 	white-space: nowrap;
 }
-
-table.datatable tr:nth-child(even) {
+.datatable tr:nth-child(odd) {
+	background: #fefefe;
+}
+.datatable tr:nth-child(even) {
 	background: #f9f9f9;
 }
-table.datatable .col_scroll{
+.col_scrollable{
 	display: block;
 	white-space: normal;
 	overflow-y: auto;
+	overflow-x: hidden;
 	height: 1.5em;
-	margin: -.25em -.5em -.25em;
+	margin: -.25em -.45em -.25em;
 	padding: 0 .5em;
 }
 
@@ -575,11 +600,16 @@ table.datatable .col_scroll{
 	margin: .25em 0 .5em;
 	font-size: 1.1em;
 }
-
+.contents > h2:first-of-type{
+	margin-bottom: 1em;
+}
 /*=== modal ===*/
 ul.modal{
 	display: none;
 }
+
+
+
 
 /*=== media_query ===*/
 li.show_if_smalldisplay{
