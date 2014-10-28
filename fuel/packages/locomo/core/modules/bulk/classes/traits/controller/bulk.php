@@ -31,8 +31,7 @@ trait Traits_Controller_Bulk
 	/*
 	 * @return Fieldset object
 	 */
-	//public function bulk($view = null,       $model = null, $options = array(), $define_function = null) {
-	public function bulk($options = array(), $model = null, $deleted = false, $use_get_query = true, $pagination_config = null, $define_function = null) {
+	public function bulk($options = array(), $model = null, $deleted = 'disabled', $use_get_query = true, $pagination_config = null, $define_function = null) {
 
 		if (!$model) $model = $this->model_name;
 		$action = \Request::main()->action;
@@ -40,7 +39,8 @@ trait Traits_Controller_Bulk
 		// save から戻ってきた時の処理
 		if (\Input::get('ids')) {
 			$options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
-			$objects = $this->paginated_find($options, $model, 'disabled', false, array());
+			$pagination_config['per_page'] = count(\Input::get('ids')) * 2;
+			$objects = $this->paginated_find($options, $model, 'disabled', false, $pagination_config);
 		// edit create 分岐
 		} elseif ($create_field = intval(\Input::get('create'))) { // create
 			for ($i = 0; $i < $create_field; $i++) {
@@ -75,7 +75,7 @@ trait Traits_Controller_Bulk
 				// saveした object の保持
 				// $ids = array();
 				foreach ($objects as $object) {
-					$ids[] = $object->{$object::primary_key()[0]};
+					!is_null($object->{$object::primary_key()[0]}) and $ids[] = $object->{$object::primary_key()[0]};
 				}
 
 				$ids = array_unique($ids);
@@ -87,7 +87,8 @@ trait Traits_Controller_Bulk
 					return \Response::redirect($url);
 				}
 
-				\Session::set_flash('success', self::$nicename . 'を' .  count($ids) . '件保存しました');
+
+				\Session::set_flash('success', self::$nicename . 'への変更を' .  count($ids) . '件保存しました');
 
 
 				$url = \Uri::create($this->request->module . '/' . $action, array(), array('ids' => $ids));

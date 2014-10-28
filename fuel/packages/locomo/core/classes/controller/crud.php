@@ -12,7 +12,7 @@ class Controller_Crud extends Controller_Base
 	protected $pagination_config = array(
 		'uri_segment' => 3,
 		'num_links' => 5,
-		'per_page' => 10,
+		'per_page' => 20,
 		'template' => array(
 			'wrapper_start' => '<div class="pagination">',
 			'wrapper_end' => '</div>',
@@ -105,18 +105,15 @@ class Controller_Crud extends Controller_Base
 			$count = $model::count($options);
 		}
 
-
-		is_null($pagination_config) and $pagination_config = $this->pagination_config;
-
+		!is_null($pagination_config) and $pagination_config = array_merge($this->pagination_config, $pagination_config);
 
 		$pagination_config['total_items'] = $count;
 		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $input_get);
+
+		if (isset($pagination_config['per_page'])) $options['limit'] = $pagination_config['per_page'];
 		\Pagination::set_config($pagination_config);
-
-		if (!$pagination_config) $pagination_config = $this->pagination_config;
-
-		$options['offset'] = \Input::get('offset') ?: \Pagination::get('offset');
-		$options['limit'] = \Input::get('limit') ?: $this->pagination_config['per_page'];
+		if (!isset($pagination_config['per_page'])) $options['limit'] = \Pagination::get('per_page');
+		$options['offset'] = \Pagination::get('offset');
 
 		if ($deleted === 'disabled') {
 			$model::disable_filter();

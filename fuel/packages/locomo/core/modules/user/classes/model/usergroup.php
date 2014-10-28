@@ -160,7 +160,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 		$form->add(
 				'is_available',
 				'使用中',
-				array('type' => 'select', 'options' => array('1' => '使用中', '0' => '未使用'))
+				array('type' => 'select', 'options' => array('0' => '未使用', '1' => '使用中'), 'default' => 0)
 			)
 			->set_value($obj->is_available, true);
 
