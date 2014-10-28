@@ -30,11 +30,11 @@ class Bulk {
 			}
 			$this->models[$key] = $model;
 			if (method_exists($model, $define_function)) {
-				$this->forms[$key] = $model->{$define_function}($key, $model); // todo id factory nessesity?
+				$this->forms[$key] = $model->{$define_function}($key, $model);
 			} elseif (method_exists($model, 'bulk_definition')) {
-				$this->forms[$key] = $model::bulk_definition($key, $model); // todo id factory nessesity?
+				$this->forms[$key] = $model::bulk_definition($key, $model);
 			} elseif (method_exists($model, 'form_definition')) {
-				$this->forms[$key] = $model::form_definition($key, $model); // todo id factory nessesity?
+				$this->forms[$key] = $model::form_definition($key, $model);
 			} else {
 				$this->forms[$key] = \Fieldset::forge($key)->add_model($model)->populate($model);
 			}
@@ -178,6 +178,7 @@ class Bulk {
 					} else {
 						$model->set(\Input::post($key));
 					}
+
 
 
 					if ($this->forms[$key]->populate(\Input::post())->validation()->run(\Input::post())) {

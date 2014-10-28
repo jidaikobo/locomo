@@ -75,7 +75,8 @@ class Model_Usergroup extends \Locomo\Model_Base
 		$form_cg_path = $finder->locate('config/form', 'usergroup');
 		$hoge = \Config::load($form_cg_path, 'from', true);
 
-		$form = \Fieldset::forge('form', $hoge);
+		$form = \Fieldset::forge($factory, $hoge);
+
 
 		//user_name
 		$form->add(
