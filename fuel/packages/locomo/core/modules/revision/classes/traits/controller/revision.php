@@ -28,9 +28,9 @@ trait Traits_Controller_Revision
 
 		//assign
 		if($opt):
-			$view->set_global('title', $opt['nicename'].'履歴');
+			$view->set_global('title', $opt['nicename'].'履歴一覧');
 		else:
-			$view->set_global('title', '履歴');
+			$view->set_global('title', '履歴一覧');
 		endif;
 		$view->set_global('controller', 'user');
 		$view->set_global('subject', $model::get_default_field_name('subject'));
@@ -75,7 +75,7 @@ trait Traits_Controller_Revision
 		$view = \View::forge(\Util::fetch_tpl('/revision/views/each_index_revision.php'));
 		$view->set_global('items', $revisions);
 		$view->set_global('controller', $this->request->module);
-		$view->set_global('title', '履歴一覧');
+		$view->set_global('title', '履歴');
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->set_global('model_simple_name', $model_simple_name);
 		$view->set_global('opt', $opt_arg);
@@ -135,10 +135,9 @@ trait Traits_Controller_Revision
 		$view = \View::forge($template);
 		$view->set_global('form', $form, false);
 		$view->set_global('item', $data);
-		$view->set_global('title', '履歴');
+		$view->set_global('title', '履歴個票');
 		$view->set_global('is_revision', true);
 
-		
 		//add_actionset
 		$action = array(
 			'url' => $this->request->module.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg,
