@@ -77,7 +77,7 @@ class Observer_Revision extends \Orm\Observer
 		$tmp = (object) array();
 
 		//$objしたものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
-		$primary_key = $obj->get_primary_keys('first');
+		$primary_key = $obj::get_primary_keys('first');
 		$model_name = get_class($obj);
 		$form = $model_name::form_definition('revision');
 		foreach($form->get_fields() as $property => $v):

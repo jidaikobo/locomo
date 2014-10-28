@@ -104,7 +104,6 @@ class Controller_Crud extends Controller_Base
 		// pagination
 		$pagination_config = $this->pagination_config;
 
-
 		$pagination_config['total_items'] = $count;
 		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), \Input::get());
 		\Pagination::set_config($pagination_config);
@@ -311,7 +310,7 @@ class Controller_Crud extends Controller_Base
 			$obj = $model::forge();
 			$title = sprintf($this->titles['create'], $this->request->module);
 		}
-		$form = $model::form_definition('edit', $obj, $id);
+		$form = $model::form_definition('edit', $obj);
 
 		/*
 		 * save
@@ -363,13 +362,7 @@ class Controller_Crud extends Controller_Base
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		if ($obj = $model::find($id)):
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
-
 			$obj->delete();
-
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
 
 			\Session::set_flash(
 				'success',
@@ -454,14 +447,8 @@ class Controller_Crud extends Controller_Base
 
 		if ($obj = $model::find_deleted($id)):
 
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
-
 			// 現状 Cascading deleteの恩恵を受けられない？ 要確認
 			$obj->purge();
-
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
 
 			\Session::set_flash(
 				'success',

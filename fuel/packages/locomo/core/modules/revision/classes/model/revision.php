@@ -30,22 +30,17 @@ class Model_Revision extends \Locomo\Model_Base
 	/**
 	 * find_all_revisions()
 	*/
-	public static function find_all_revisions($offset, $view, $model)
+	public static function find_all_revisions($view, $model)
 	{
 		//vals
 		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
+		$likes  = \Input::get('likes')  ?: null ;
 
 		//model information
 		$table = \Inflector::tableize($model);
 		$subject = $model::get_default_field_name('subject');
 		$subject = $table.'.'.$subject;
 		$pk = $table.'.'.$model::get_primary_keys('first');
-
-		//vals
-		$pagination_config = self::$pagination_config;
-		$offset = $offset ?: \Pagination::get('offset');
-		$limit  = \Input::get('limit')  ?: $pagination_config['per_page'];
-		$likes  = \Input::get('likes')  ?: null ;
 
 		//リビジョンの一覧を取得
 		$q = \DB::select(
@@ -79,6 +74,14 @@ class Model_Revision extends \Locomo\Model_Base
 		//count
 		$count = $q->execute()->count();
 
+		//pagination
+		$pagination_config = self::$pagination_config;
+		$pagination_config['total_items'] = $count;
+		$pagination_config['pagination_url'] = \Uri::create('/'.\Request::main()->module.'/index_revision/'.\Inflector::singularize($table).'/', array(), \Input::get());
+		\Pagination::set_config($pagination_config);
+		$offset = \Pagination::get('offset');
+		$limit  = \Input::get('limit')  ?: $pagination_config['per_page'];
+
 		//num
 		if( $limit ) $q->limit($limit);
 		if( $offset ) $q->offset($offset);
@@ -86,10 +89,11 @@ class Model_Revision extends \Locomo\Model_Base
 		//retval
 		$items = $q->as_object($model)->execute()->as_array() ;
 
-		//pagination
-		$pagination_config['total_items'] = $count;
-		$pagination_config['pagination_url'] = \Uri::create('/'.\Request::main()->module.'/index_revision/'.\Inflector::singularize($table).'/', array(), \Input::get());
-		\Pagination::set_config($pagination_config);
+		//items
+		foreach($items as $k => $item):
+			$modifier_name = $item->modifier_id <= 0 ? '管理者' :\Users\User_Model::find($item->modifier_id, array('select'=>arra('display_name')));
+			$items[$k]->modifier_name = $modifier_name;
+		endforeach;
 
 		//assign
 		$view->set_safe('pagination', \Pagination::create_links());

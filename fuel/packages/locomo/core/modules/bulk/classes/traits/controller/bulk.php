@@ -2,33 +2,11 @@
 namespace Bulk;
 trait Traits_Controller_Bulk
 {
-	public function action_bulk() {
-
-
-		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
-		$form = $this->bulk($view, null, array());
-
-		$view->set_global('title', 'バルク品');
-		$view->set_global('form', $form, false);
-
-
-		//add_actionset
-		$action = array(
-			'url' => 'user/',
-			'menu_str' => '編集画面に戻る',
-		);
-//		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
-//		$array = ['menu_str'=>'戻る', 'url' =>'user/'];
-		\Actionset::set_actionset('user', 'ctrl', 'back', $action);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-
-	}
-
 	/*
-	 *
+	 * bulk()
 	 */
-	public function bulk($view = null, $model = null, $options = array(), $define_function = null) {
+	public function bulk($view = null, $model = null, $options = array(), $define_function = null)
+	{
 
 		is_null($view) and die('view is required');
 		if (!$model) $model = $this->model_name;
@@ -114,12 +92,10 @@ trait Traits_Controller_Bulk
 					return \Response::redirect($url);
 				}
 
-
 				\Session::set_flash(
 					'success',
 					sprintf($this->messages['edit_success'], self::$nicename, count($ids) . '件')
 				);
-
 
 				$url = \Uri::create($this->request->module . '/' . $action, array(), array('ids' => $ids));
 				return \Response::redirect($url);
@@ -135,5 +111,7 @@ trait Traits_Controller_Bulk
 
 		return $form;
 	}
+
+	
 
 }

@@ -12,7 +12,7 @@ trait Traits_Controller_Revision
 
 		//view
 		$view = \View::forge(PKGCOREPATH.'modules/revision/views/index_revision.php');
-		$view = \Revision\Model_Revision::find_all_revisions($offset, $view, $model);
+		$view = \Revision\Model_Revision::find_all_revisions($view, $model);
 
 		//assign
 		$view->set_global('title', '履歴');

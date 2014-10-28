@@ -25,11 +25,11 @@ echo \Form::close();
 <?php foreach ($items as $item): ?>
 		<tr>
 			<th style="text-align:center;"><?php echo $item->pk_id ?></th>
-			<th><div class="col_scroll"><a href="<?php echo \Uri::base().$controller.'/each_index_revision/'.$item->pk_id ?>"><?php echo $item->$subject; ?></a></div></th>
+			<th><div class="col_scrollable"><a href="<?php echo \Uri::base().$controller.'/each_index_revision/'.$item->pk_id ?>"><?php echo $item->$subject; ?></a></div></th>
 			<td><?php echo $item->operation; ?></td>
-			<td><?php echo $item->modifier_id; ?></td>
+			<td><?php echo $item->modifier_name; ?></td>
 			<td><?php echo $item->created_at; ?></td>
-			<td><div class="col_scroll"><?php echo $item->comment; ?></div></td>
+			<td><div class="col_scrollable"><?php echo $item->comment; ?></div></td>
 		</tr>
 <?php endforeach; ?>
 	</tbody>

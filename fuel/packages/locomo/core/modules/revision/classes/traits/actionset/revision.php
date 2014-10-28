@@ -13,7 +13,7 @@ trait Traits_Actionset_Revision
 			$get_authed_url
 		):
 			//個票のとき、履歴へのリンクを表示する
-			$pk = $obj->get_primary_keys('first');
+			$pk = $obj::get_primary_keys('first');
 			$url = "{$module}/index_revision/{$obj->$pk}";
 			$url = static::check_auth($module, 'index_revision') ? $url : '' ;
 		endif;
