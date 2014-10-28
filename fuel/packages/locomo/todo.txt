@@ -1,3 +1,5 @@
+observerがきちんとmodifier_idを保存しているか確認。うまくいっていたら履歴で更新担当者を確認できるはず
+_option_optionsがあまりにもあまりなので、別ファイルにする？
 is_visibleをuserに実装
 workflowsテーブルをworkflowadminsテーブルにする
 ここらへんまでやったらimporterに本腰を入れよう
