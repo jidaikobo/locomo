@@ -30,19 +30,34 @@ class Bulk {
 			}
 			$this->models[$key] = $model;
 			if (method_exists($model, $define_function)) {
-				$this->forms[$key] = $model->{$define_function}($key, $model); // todo id factory nessesity?
+				$this->forms[$key] = $model->{$define_function}($key, $model);
 			} elseif (method_exists($model, 'bulk_definition')) {
-				$this->forms[$key] = $model::bulk_definition($key, $model); // todo id factory nessesity?
+				$this->forms[$key] = $model::bulk_definition($key, $model);
 			} elseif (method_exists($model, 'form_definition')) {
-				$this->forms[$key] = $model::form_definition($key, $model); // todo id factory nessesity?
+				$this->forms[$key] = $model::form_definition($key, $model);
 			} else {
 				$this->forms[$key] = \Fieldset::forge($key)->add_model($model)->populate($model);
 			}
 			
 			if ($model->is_new()) {
-				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
+				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
+				$this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
 			} else {
-				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
+				if (is_null($model->{$model::soft_delete_property('deleted_field')})) { // 削除済みでない
+					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
+					$this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+				} else { // 削除済み
+					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true,))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
+					$this->forms[$key]->add('_restore', '復活・完全削除', array(
+						'type' => 'select',
+						'options' => array(
+							0 => '= 選択 =',
+							1 => '復活させる',
+							2 => '完全に削除する',
+						),
+					));
+
+				}
 			}
 
 			$this->forms[$key]->set_input_name_array($key);
@@ -121,6 +136,16 @@ class Bulk {
 					$model->delete();
 					$this->forms[$key]->field('_deleted')->set_value(1, true);
 
+				} elseif (isset(\Input::post($key)['_restore']) and \Input::post($key)['_restore'] != 0 and !$model->is_new()) {
+
+					if (\Input::post($key)['_restore'] == 1) {
+						$model->restore();
+					} elseif (\Input::post($key)['_restore'] == 2) {
+						$model->purge();
+					}
+
+					$this->forms[$key]->field('_restore')->set_value(1, true);
+
 				// save
 				} else {
 
@@ -178,6 +203,7 @@ class Bulk {
 					} else {
 						$model->set(\Input::post($key));
 					}
+
 
 
 					if ($this->forms[$key]->populate(\Input::post())->validation()->run(\Input::post())) {
