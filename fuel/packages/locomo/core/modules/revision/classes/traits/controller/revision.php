@@ -8,7 +8,7 @@ trait Traits_Controller_Revision
 	public function action_index_revision($model_simple_name, $offset = 1)
 	{
 		//model
-		$model = '\\'.ucfirst($model_simple_name).'\\Model_'.ucfirst($model_simple_name);
+		$model = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($model_simple_name);
 
 		//view
 		$view = \View::forge(PKGCOREPATH.'modules/revision/views/index_revision.php');
