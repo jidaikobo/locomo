@@ -462,15 +462,20 @@ blockquote.blockquote {
 }
 
 /* === form - wrapper === */
-div.form_group {
+/*div.form_group {
 	padding: 20px 10px;
 	border: 1px solid #aaa;
 	margin: 20px 0;
 }
+*/
 /*.form_group fieldset,*/
-.form_group fieldset {
-	border-color: #eee;
-	margin-bottom: 20px;
+fieldset {
+	border: 1px solid #aaa;
+	margin: 10px 0;
+}
+.button + fieldset,
+.btn + fieldset {
+	margin-top: 20px;
 }
 
 /* === forms - buttons === */
@@ -756,7 +761,11 @@ table.tbl2 thead th {
 }
 table.tbl2 tr:nth-child(even),
 table.tbl2.even tr:nth-child(even) {
-	background: #f4f4ea;
+	background: #f6f6f6;
+}
+table.datatable th,
+table.datatable td{
+	border-bottom: 1px solid #f3f3f3;
 }
 table.tbl2 tr:nth-child(odd),
 table.tbl2.even tr:nth-child(odd) {
@@ -793,19 +802,19 @@ table.tbl3 td {
 }
 table.tbl3 thead th {
 	color: #111;
-	background-color: #e8e8e0;
+	background-color: #eee;
 	text-align: center;
 }
 table.tbl3 th {
 	color: #111;
-	background-color: #e8e8e0;
+	background-color: #eee;
 }
 table.tbl3 td {
 	color: #111;
 	background-color: #fff;
 }
 table.tbl3 td:nth-child(odd) {
-	background: #f4f4ea;
+	background: #f6f6f6;
 }
 
 /* === tabl.tbl4 === */

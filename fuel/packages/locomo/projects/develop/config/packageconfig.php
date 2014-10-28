@@ -10,7 +10,7 @@ defined('ADMN_USER_PASS') or define('ADMN_USER_PASS','121212');
 //fuel config
 return array(
 	//base
-	'site_title' => 'Light Staff',
+	'site_title' => 'Lightstaff',
 
 	//identity
 	'identity' => array(
