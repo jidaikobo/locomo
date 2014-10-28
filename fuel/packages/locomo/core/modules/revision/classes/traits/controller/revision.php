@@ -40,7 +40,8 @@ trait Traits_Controller_Revision
 		if ( ! $revisions = $model::find_revisions($model_class, $id)):
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['revision_error'], self::$nicename, $id)
+				'履歴を取得できませんでした'
+//				sprintf($this->messages['revision_error'], self::$nicename, $id)
 			);
 			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
 		endif;
@@ -56,7 +57,7 @@ trait Traits_Controller_Revision
 		$view = \View::forge(\Util::fetch_tpl('/revision/views/each_index_revision.php'));
 		$view->set_global('items', $revisions);
 		$view->set_global('controller', $this->request->module);
-		$view->set_global('title', sprintf($this->titles['revision'], self::$nicename));
+		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $original_model::get_default_field_name('subject'));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
@@ -73,7 +74,8 @@ trait Traits_Controller_Revision
 		if ( ! $revisions = $model::find_revision($id)):
 			\Session::set_flash(
 				'error',
-				sprintf($this->messages['revision_error'], self::$nicename, $id)
+				'履歴を取得できませんでした'
+//				sprintf($this->messages['revision_error'], self::$nicename, $id)
 			);
 			return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 		endif;
