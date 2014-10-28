@@ -74,12 +74,14 @@ class Observer_Revision extends \Orm\Observer
 	 */
 	public function insert_revision($obj, $operation = '')
 	{
+		static $counter = 0;
+
 		$tmp = (object) array();
 
 		//$objしたものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
 		$primary_key = $obj::get_primary_keys('first');
 		$model_name = get_class($obj);
-		$form = $model_name::form_definition('revision');
+		$form = $model_name::form_definition('revision_'.$counter);
 		foreach($form->get_fields() as $property => $v):
 			if( ! isset($obj->{$property})) continue;
 			$tmp->{$property} = $obj->{$property};
@@ -98,6 +100,7 @@ class Observer_Revision extends \Orm\Observer
 		//save revision
 		$model = \Revision\Model_Revision::forge($args);
 		$model->insert_revision();
+		$counter++;
 	}
 
 }
