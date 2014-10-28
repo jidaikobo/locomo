@@ -4,6 +4,7 @@ class Model_User extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'users';
 
+	public static $_created_subject_name = 'user_name';
 	public static $_creator_field_name = 'id';
 
 	protected static $_properties = array(
@@ -61,7 +62,7 @@ class Model_User extends \Locomo\Model_Base
 			'events' => array('before_insert', 'before_save'),
 		),
 		'Revision\Observer_Revision' => array(
-			'events' => array('after_insert', 'after_save'),
+			'events' => array('after_insert', 'after_save', 'before_delete'),
 		),
 	);
 
@@ -73,9 +74,10 @@ class Model_User extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null, $id = '')
+	public static function form_definition($factory, $obj = null)
 	{
 		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+		$id = isset($obj->id) ? $obj->id : '';
 
 		//forge
 		$form = \Fieldset::forge($factory, \Config::get('form'));

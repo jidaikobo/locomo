@@ -3,17 +3,29 @@ namespace Revision;
 trait Traits_Controller_Revision
 {
 	/**
-	 * revision_modify_data()
+	 * action_index_revision()
 	 */
-	public function revision_modify_data($obj, $mode = null)
+	public function action_index_revision($model_simple_name, $offset = 1)
 	{
-		return $obj;
+		//model
+		$model = '\\'.ucfirst($model_simple_name).'\\Model_'.ucfirst($model_simple_name);
+
+		//view
+		$view = \View::forge(PKGCOREPATH.'modules/revision/views/index_revision.php');
+		$view = \Revision\Model_Revision::find_all_revisions($view, $model);
+
+		//assign
+		$view->set_global('title', '履歴');
+		$view->set_global('controller', 'user');
+		$view->set_global('subject', $model::get_default_field_name('subject'));
+
+		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**
-	 * action_index_revision()
+	 * action_each_index_revision()
 	 */
-	public function action_index_revision($id = null)
+	public function action_each_index_revision($id = null)
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 
@@ -41,10 +53,11 @@ trait Traits_Controller_Revision
 		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
 
 		//view
-		$view = \View::forge(\Util::fetch_tpl('/revision/views/index.php'));
+		$view = \View::forge(\Util::fetch_tpl('/revision/views/each_index_revision.php'));
 		$view->set_global('items', $revisions);
 		$view->set_global('controller', $this->request->module);
 		$view->set_global('title', sprintf($this->titles['revision'], self::$nicename));
+		$view->set_global('subject', $original_model::get_default_field_name('subject'));
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}

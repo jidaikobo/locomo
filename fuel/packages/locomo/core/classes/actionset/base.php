@@ -45,7 +45,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_view($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view') ? $url_str : '' ;
 			if( ! $url){
@@ -71,7 +71,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_edit($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['edit','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/edit/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'edit') ? $url_str : '' ;
 			if( ! $url){
@@ -98,7 +98,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_edit_anyway($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['edit','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/edit/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'edit_anyway') ? $url_str : '' ;
 			if( ! $url){
@@ -128,7 +128,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_edit_deleted($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['edit','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/edit/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'edit_deleted') ? $url_str : '' ;
 			if( ! $url){
@@ -255,7 +255,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_view_deleted($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_deleted') ? $url_str : '' ;
 			if( ! $url){
@@ -281,7 +281,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_view_expired($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_expired') ? $url_str : '' ;
 			if( ! $url){
@@ -307,7 +307,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_view_yet($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_yet') ? $url_str : '' ;
 			if( ! $url){
@@ -334,7 +334,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_view_invisible($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url && $obj && ! in_array(\Request::main()->action, ['view','create'])):
-			$pk_id = $obj->get_primary_keys('first');
+			$pk_id = $obj::get_primary_keys('first');
 			$url_str = isset($obj->$pk_id) ? $module."/view/".$obj->$pk_id : null ;
 			$url = self::check_auth($module, 'view_invisible') ? $url_str : '' ;
 			if( ! $url){

@@ -10,8 +10,98 @@ class Model_Revision extends \Locomo\Model_Base
 		'pk_id',
 		'data',
 		'comment',
+		'operation',
 		'created_at',
+		'deleted_at',
 	);
+
+	protected static $pagination_config = array(
+		'uri_segment' => 4,
+		'num_links' => 5,
+		'per_page' => 10,
+		'template' => array(
+			'wrapper_start' => '<div class="pagination">',
+			'wrapper_end' => '</div>',
+			'active_start' => '<span class="current">',
+			'active_end' => '</span>',
+		),
+	);
+
+	/**
+	 * find_all_revisions()
+	*/
+	public static function find_all_revisions($view, $model)
+	{
+		//vals
+		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
+		$likes  = \Input::get('likes')  ?: null ;
+
+		//model information
+		$table = \Inflector::tableize($model);
+		$subject = $model::get_default_field_name('subject');
+		$subject = $table.'.'.$subject;
+		$pk = $table.'.'.$model::get_primary_keys('first');
+
+		//リビジョンの一覧を取得
+		$q = \DB::select(
+			'revisions.model',
+			'revisions.pk_id',
+			$subject,
+			'revisions.comment',
+			'revisions.operation',
+			'revisions.created_at',
+			'revisions.modifier_id'
+		);
+		$q->from('revisions');
+		$q->where('model', $model_str);
+
+		//like
+		if($likes):
+			$columns = \DB::list_columns('revisions');
+			$q->and_where_open();
+			foreach($columns as $field => $v):
+				$q->or_where('revisions.'.$field, 'like', '%'.$likes['all'].'%');
+			endforeach;
+			$q->and_where_close();
+		endif;
+
+		//group by
+		$q->group_by('pk_id');
+		$q->order_by('pk_id', 'ASC');
+		$q->join($table);
+		$q->on($pk, '=', 'revisions.pk_id');
+
+		//count
+		$count = $q->execute()->count();
+
+		//pagination
+		$pagination_config = self::$pagination_config;
+		$pagination_config['total_items'] = $count;
+		$pagination_config['pagination_url'] = \Uri::create('/'.\Request::main()->module.'/index_revision/'.\Inflector::singularize($table).'/', array(), \Input::get());
+		\Pagination::set_config($pagination_config);
+		$offset = \Pagination::get('offset');
+		$limit  = \Input::get('limit')  ?: $pagination_config['per_page'];
+
+		//num
+		if( $limit ) $q->limit($limit);
+		if( $offset ) $q->offset($offset);
+
+		//retval
+		$items = $q->as_object($model)->execute()->as_array() ;
+
+		//items
+		foreach($items as $k => $item):
+			$modifier_name = $item->modifier_id <= 0 ? '管理者' :\Users\User_Model::find($item->modifier_id, array('select'=>arra('display_name')));
+			$items[$k]->modifier_name = $modifier_name;
+		endforeach;
+
+		//assign
+		$view->set_safe('pagination', \Pagination::create_links());
+		$view->set('hit', $count);
+		$view->set('items', $items);
+
+		return $view;
+	}
 
 	/**
 	 * find_revisions()
@@ -25,7 +115,14 @@ class Model_Revision extends \Locomo\Model_Base
 		$q->from('revisions');
 		$q->where('model', $model);
 		$q->where('pk_id', $pk_id);
-		return $q->as_object()->execute()->as_array();
+		$items = $q->as_object()->execute()->as_array();
+
+		//dataをunserialize（一覧表にsubjectの変遷を出すため）
+		foreach($items as $k => $item):
+			$items[$k]->data = unserialize($item->data);
+		endforeach;
+
+		return $items;
 	}
 
 	/**
@@ -78,21 +175,26 @@ class Model_Revision extends \Locomo\Model_Base
 	public function insert_revision()
 	{
 		//当該コンテンツの最新データを取得
-		$q = \DB::select('created_at');
+		$q = \DB::select('created_at','operation');
 		$q->from('revisions');
 		$q->where('model', $this->model);
 		$q->where('pk_id', $this->pk_id);
 		$q->order_by('created_at', 'DESC');
 		$result = $q->execute()->current();
 		$created_at = $result['created_at'];
+		$operation = $result['operation'];
 
 		//configからrevision間隔を取得
 		$config_path = PKGCOREPATH.'modules/revision/config/revision.php';
 		$config_path_default = PKGPROJPATH.'modules/revision/config/revision.php';
 		$config = file_exists($config_path) ? \Config::load($config_path) : \Config::load($config_path_default);
 
+		//operationが異なる場合は、絶対に保存する
+		$force_save = $this->operation != $operation ? true : false;
+
 		//最新データと規定時間との比較 - $created_at がゼロのときは初めて
 		if(
+			! $force_save &&
 			$created_at && strtotime($created_at) >= time() - intval($config['revision_interval']) &&
 			empty($this->comment)
 		):

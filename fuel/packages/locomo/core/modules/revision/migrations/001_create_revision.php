@@ -10,7 +10,9 @@ class Create_revision
 			'pk_id'       => array('constraint' => 11, 'type' => 'int'),
 			'data'        => array('type' => 'longtext'),
 			'comment'     => array('type' => 'text'),
-			'created_at'  => array('type' => 'datetime'),
+			'operation'   => array('type' => 'text'),
+			'created_at'  => array('type' => 'datetime', 'null' => true),
+			'deleted_at'  => array('type' => 'datetime', 'null' => true),
 			'modifier_id' => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 	}

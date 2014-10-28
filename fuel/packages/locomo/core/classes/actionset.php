@@ -199,7 +199,7 @@ class Actionset
 					$vv[1] = substr($vv[1], -1) == '/' ? substr($vv[1], 0, -1) : $vv[1];
 
 					$v['menu_str'] = $vv[0];//0がmenu_strで、1がurl
-					if(substr($current, 0, strlen($vv[1])) == $vv[1]) continue;//not same url
+//					if(substr($current, 0, strlen($vv[1])) == $vv[1]) continue;//not same url
 					$retvals[$vv[1]] = $v;
 				endforeach;
 			else:

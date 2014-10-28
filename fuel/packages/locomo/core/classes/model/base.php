@@ -5,6 +5,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * default field names
 	 */
+	protected static $_default_subject_field_name    = 'subject';
 	protected static $_default_created_field_name    = 'created_at';
 	protected static $_default_expired_field_name    = 'expired_at';
 	protected static $_default_visibility_field_name = 'is_visible';
@@ -68,14 +69,26 @@ class Model_Base extends \Orm\Model_Soft
 	public static function get_default_field_name($str = null)
 	{
 		switch($str):
+			case 'subject':
+				return isset(static::$_created_subject_name) ?
+					static::$_created_subject_name :
+					static::$_default_subject_field_name;
 			case 'created':
-				return static::$_default_created_field_name;
+				return isset(static::$_created_field_name) ?
+					static::$_created_field_name :
+					static::$_default_created_field_name;
 			case 'expired':
-				return static::$_default_expired_field_name;
+				return isset(static::$_expired_field_name) ?
+					static::$_expired_field_name :
+					static::$_default_expired_field_name;
 			case 'visibility':
-				return static::$_default_visibility_field_name;
+				return isset(static::$_visibility_field_name) ?
+					static::$_visibility_field_name :
+					static::$_default_visibility_field_name;
 			case 'creator':
-				return static::$_default_creator_field_name;
+				return isset(static::$_creator_field_name) ?
+					static::$_creator_field_name :
+					static::$_default_creator_field_name;
 		endswitch;
 		return false;
 	}
@@ -99,7 +112,7 @@ class Model_Base extends \Orm\Model_Soft
 	/**
 	 * get_primary_keys()
 	 */
-	public function get_primary_keys($mode = '')
+	public static function get_primary_keys($mode = '')
 	{
 		if($mode == 'first'):
 			return reset(static::$_primary_key);

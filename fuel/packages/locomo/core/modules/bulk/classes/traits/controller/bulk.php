@@ -2,32 +2,6 @@
 namespace Bulk;
 trait Traits_Controller_Bulk
 {
-	public function action_bulk() {
-
-
-		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
-
-		$form = $this->bulk(array(), null, 'dasabled');
-
-		$view->set_global('title', 'バルク品');
-		$view->set_global('form', $form, false);
-
-
-		//add_actionset
-		$action = array(
-			'url' => 'user/',
-			'menu_str' => '編集画面に戻る',
-		);
-		\Actionset::set_actionset('user', 'ctrl', 'back', $action);
-		$view->set_safe('pagination', \Pagination::create_links());
-
-		$view->set('hit', \Pagination::get('total_items')); ///
-
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-
-	}
-
 	/*
 	 * @return Fieldset object
 	 */
@@ -90,7 +64,6 @@ trait Traits_Controller_Bulk
 
 				\Session::set_flash('success', self::$nicename . 'への変更を' .  count($ids) . '件保存しました');
 
-
 				$url = \Uri::create($this->request->module . '/' . $action, array(), array('ids' => $ids));
 				return \Response::redirect($url);
 			} else {
@@ -102,5 +75,7 @@ trait Traits_Controller_Bulk
 
 		return $form;
 	}
+
+	
 
 }

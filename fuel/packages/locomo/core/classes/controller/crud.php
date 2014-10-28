@@ -371,7 +371,7 @@ class Controller_Crud extends Controller_Base
 			$obj = $model::forge();
 			$title = self::$nicename . '新規作成';
 		}
-		$form = $model::form_definition('edit', $obj, $id);
+		$form = $model::form_definition('edit', $obj);
 
 		/*
 		 * save
@@ -509,14 +509,8 @@ class Controller_Crud extends Controller_Base
 
 		if ($obj = $model::find_deleted($id)):
 
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
-
 			// 現状 Cascading deleteの恩恵を受けられない？ 要確認
 			$obj->purge();
-
-			//pre_delete_hook
-			$obj = $this->pre_delete_hook($obj, 'delete');
 
 			\Session::set_flash(
 				'success',
