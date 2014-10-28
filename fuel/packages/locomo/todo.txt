@@ -1,4 +1,4 @@
-小長井くんのbulkをusergroupに適用する。うまくいったらoptionモジュールを削除する。bulkで柔軟なoptionを設定できるようにしてもらう（ライトハウスの「項目マスタ」対応）。
+is_visibleをuserに実装
 workflowsテーブルをworkflowadminsテーブルにする
 ここらへんまでやったらimporterに本腰を入れよう
 

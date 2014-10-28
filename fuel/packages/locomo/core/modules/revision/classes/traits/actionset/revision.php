@@ -14,7 +14,7 @@ trait Traits_Actionset_Revision
 		):
 			//個票のとき、履歴へのリンクを表示する
 			$pk = $obj::get_primary_keys('first');
-			$url = "{$module}/index_revision/{$obj->$pk}";
+			$url = "{$module}/each_index_revision/{$module}/{$obj->$pk}";
 			$url = static::check_auth($module, 'index_revision') ? $url : '' ;
 		endif;
 
@@ -36,7 +36,7 @@ trait Traits_Actionset_Revision
 	public static function actionset_view_revision($module, $obj, $get_authed_url)
 	{
 		if($get_authed_url):
-			$url = isset($item->id) ? "$module/index_revision/$obj->id" : null ;
+			$url = isset($item->id) ? "$module/each_index_revision/$obj->id" : null ;
 			$url = self::check_auth($module, 'index_revision') ? $url : '';
 		endif;
 

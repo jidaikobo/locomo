@@ -30,11 +30,14 @@ class Model_Revision extends \Locomo\Model_Base
 	/**
 	 * find_all_revisions()
 	*/
-	public static function find_all_revisions($view, $model)
+	public static function find_all_revisions($view, $model, $opt)
 	{
 		//vals
+		if( ! class_exists($model)) return false;
 		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
-		$likes  = \Input::get('likes')  ?: null ;
+		$likes = \Input::get('likes')  ?: null ;
+		$range = isset($opt['range']['where']) ? $opt['range']['where'] : null ;
+		$order = isset($opt['range']['order_by']) ? $opt['range']['order_by'] : null ;
 
 		//model information
 		$table = \Inflector::tableize($model);
@@ -53,7 +56,8 @@ class Model_Revision extends \Locomo\Model_Base
 			'revisions.modifier_id'
 		);
 		$q->from('revisions');
-		$q->where('model', $model_str);
+		$q->from($table);
+		$q->where('revisions.model', $model_str);
 
 		//like
 		if($likes):
@@ -66,10 +70,33 @@ class Model_Revision extends \Locomo\Model_Base
 		endif;
 
 		//group by
-		$q->group_by('pk_id');
-		$q->order_by('pk_id', 'ASC');
-		$q->join($table);
-		$q->on($pk, '=', 'revisions.pk_id');
+		$q->group_by('revisions.pk_id');
+
+		//join
+		$q->where($pk, '=', \DB::Expr('`revisions`.pk_id'));
+
+		//opt
+		if($range){
+			//where句を確認
+			foreach($range as $r):
+				list($field, $op, $val) = $r == 2 ?
+					array($table.'.'.$r[0], '=', $r[1]) :
+					array($table.'.'.$r[0], $r[1], $r[2]);
+				$q->where($field, $op, $val);
+			endforeach;
+		}
+
+		//order
+		if($order){
+			foreach($order as $r):
+				list($order_by, $order) = $r == 1 ?
+					array($table.'.'.$r[0], 'ASC') :
+					array($table.'.'.$r[0], $r[1]);
+				$q->order_by($order_by, $order);
+			endforeach;
+		}else{
+			$q->order_by('revisions.pk_id', 'ASC');
+		}
 
 		//count
 		$count = $q->execute()->count();
@@ -108,18 +135,23 @@ class Model_Revision extends \Locomo\Model_Base
 	*/
 	public static function find_revisions($model = null, $pk_id = null)
 	{
-		if(is_null($model) || is_null($pk_id)) \Response::redirect($this->request->module);
+		if(is_null($model) || is_null($pk_id)) die('find_revisions()');
+		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
+		$likes = \Input::get('likes')  ?: null ;
 
 		//リビジョンの一覧を取得
 		$q = \DB::select('*');
 		$q->from('revisions');
-		$q->where('model', $model);
+		$q->where('model', $model_str);
 		$q->where('pk_id', $pk_id);
 		$items = $q->as_object()->execute()->as_array();
 
-		//dataをunserialize（一覧表にsubjectの変遷を出すため）
+		//dataをunserialize（一覧表に編集者とsubjectの変遷を出すため）
 		foreach($items as $k => $item):
 			$items[$k]->data = unserialize($item->data);
+
+			$modifier_name = $item->modifier_id <= 0 ? '管理者' :\Users\User_Model::find($item->modifier_id, array('select'=>arra('display_name')));
+			$items[$k]->modifier_name = $modifier_name;
 		endforeach;
 
 		return $items;
@@ -136,36 +168,6 @@ class Model_Revision extends \Locomo\Model_Base
 		$q = \DB::select('*');
 		$q->from('revisions');
 		$q->where('id', $id);
-		return $q->as_object()->execute()->current();
-	}
-
-	/**
-	 * find_options_revisions()
-	*/
-	public static function find_options_revisions($optname = null)
-	{
-		if(is_null($optname)) \Response::redirect(\Uri::base());
-
-		//リビジョンの一覧を取得
-		$q = \DB::select('*');
-		$q->from('revisions');
-		$q->where('model', $optname);
-		return $q->as_object()->execute()->as_array();
-	}
-
-	/**
-	 * find_options_revision()
-	*/
-	public static function find_options_revision($optname = null, $datetime = null)
-	{
-		if(is_null($optname) || is_null($datetime)) \Response::redirect(\Uri::base());
-		$datetime = date('Y-m-d H:i:s', $datetime);
-
-		//リビジョンを取得
-		$q = \DB::select('*');
-		$q->from('revisions');
-		$q->where('model', $optname);
-		$q->where('created_at', $datetime);
 		return $q->as_object()->execute()->current();
 	}
 

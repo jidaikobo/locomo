@@ -10,7 +10,7 @@ class Actionset_Option_User extends \Actionset_Option
 		if($get_authed_url):
 			$url = self::check_auth($module, 'usergroup_bulk') ? "user/usergroup_bulk" : '';
 			$url_new = $url ? "user/usergroup_bulk/?create=1" : '';
-			$url_rev = $url ? "user/option_revisions/usergroup" : '';
+			$url_rev = $url ? "user/index_revision/usergroup?opt=usergroup" : '';
 			$urls = array(
 				array('ユーザグループ設定', $url),
 				array('ユーザグループ新規作成', $url_new),

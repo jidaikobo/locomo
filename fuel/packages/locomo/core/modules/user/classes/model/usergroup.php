@@ -3,7 +3,7 @@ namespace User;
 class Model_Usergroup extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'usergroups';
-	public static $_created_subject_name = 'name';
+	public static $_subject_field_name = 'name';
 
 	protected static $_properties = array(
 		'id',
@@ -35,22 +35,32 @@ class Model_Usergroup extends \Locomo\Model_Base
 	/*
 	 * option setting
 	 */
-	protected static $_option_options = array(
+	public static $_option_options = array(
 		'usergroup' => array(
-			'nicename' => 'ユーザグループ',
-			'label'    => 'name',
-			'order_field' => 'order',
-			'option'   => 
-				array(
-					'select' => array('name'),
-					'where'  => array(
-						array('is_available', '1'),
-					),
-					'order_by'  => array(
-						array('order', 'ASC'),
-					)
+			'nicename'        => 'ユーザグループ',
+			'label'           => 'name',
+			'order_field'     => 'order',
+			'template'        => '',//use bulk
+			'form_definition' => 'bulk_definition',
+			'option' => array(
+				'select' => array('name'),
+				'where'  => array(
+					array('is_available', '1'),
+				),
+				'order_by'  => array(
+					array('order', 'ASC'),
+				)
+			),
+			'range' => array(
+				'select' => array('name'),
+				'where'  => array(
+					array('id', '>', '0'),
+				),
+				'order_by'  => array(
+					array('order', 'ASC'),
 				)
 			)
+		)
 	);
 
 	protected static $_observers = array(
@@ -69,17 +79,9 @@ class Model_Usergroup extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		$modulename = \Util::get_module_name_from_class(get_called_class());
-		$module_path = "modules/{$modulename}";
-		$paths = array(PKGCOREPATH.$module_path, PKGPROJPATH.$module_path, PKGCOREPATH);
-		$finder = \Finder::forge($paths);
-		$form_cg_path = $finder->locate('config/form', 'usergroup');
-		$hoge = \Config::load($form_cg_path, 'from', true);
+		$form = \Fieldset::forge($factory, \Config::get('form'));
 
-		$form = \Fieldset::forge($factory, $hoge);
-
-
-		//user_name
+		//name
 		$form->add(
 				'name',
 				'ユーザグループ名',
@@ -90,7 +92,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 			->add_rule('max_length', 50)
 			->add_rule('unique', "usergroups.name.{$id}");
 
-		//display_name
+		//description
 		$form->add(
 				'description',
 				'説明',
@@ -99,7 +101,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 			->set_value(@$obj->description)
 			->add_rule('max_length', 255);
 
-		//password
+		//order
 		$form->add(
 				'order',
 				'表示順',
@@ -108,7 +110,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 			->set_value(@$obj->order)
 			->add_rule('valid_string', array('numeric'));
 
-		//confirm_password
+		//is_available
 		$form->add(
 				'is_available',
 				'使用中',
@@ -119,10 +121,11 @@ class Model_Usergroup extends \Locomo\Model_Base
 		return $form;
 	}
 
-	public static function bulk_definition($factory, $obj = null, $id = '') {
-
+	public static function bulk_definition($factory, $obj = null, $id = '')
+	{
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 
+		//id
 		$form->add(
 			'id',
 			'ID',

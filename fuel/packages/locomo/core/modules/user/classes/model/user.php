@@ -4,7 +4,7 @@ class Model_User extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'users';
 
-	public static $_created_subject_name = 'user_name';
+	public static $_subject_field_name = 'user_name';
 	public static $_creator_field_name = 'id';
 
 	protected static $_properties = array(
