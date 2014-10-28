@@ -182,7 +182,9 @@ class Controller_User extends \Locomo\Controller_Crud
 		\Response::redirect('user/login/');
 	}
 
-
+	/**
+	 * action_usergroup_bulk()
+	 */
 	public function action_usergroup_bulk()
 	{
 		$view = \View::forge(PKGCOREPATH.'modules/bulk/views/bulk.php');

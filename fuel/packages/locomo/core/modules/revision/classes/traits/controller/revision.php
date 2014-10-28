@@ -57,9 +57,17 @@ trait Traits_Controller_Revision
 		endif;
 
 		//add_actionset
+		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
+		if($opt_arg):
+			$action = array(
+				'url' => $this->request->module.'/edit/'.$id,
+				'menu_str' => '編集画面へ',
+			);
+			\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
+		endif;
 		$action = array(
-			'url' => $this->request->module.'/edit/'.$id,
-			'menu_str' => '編集画面に戻る',
+			'url' => $this->request->module.'/index_revision/'.$model_simple_name.DS.$opt_arg,
+			'menu_str' => '履歴一覧へ',
 		);
 		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
 
@@ -70,7 +78,7 @@ trait Traits_Controller_Revision
 		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->set_global('model_simple_name', $model_simple_name);
-		$view->set_global('opt', \Input::get('opt') ? '?opt='.\Input::get('opt') : '');
+		$view->set_global('opt', $opt_arg);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -88,18 +96,6 @@ trait Traits_Controller_Revision
 			return \Response::redirect(\Uri::base());
 		endif;
 
-		//add_actionset
-		$action = array(
-			'url' => $this->request->module.'/each_index_revision/'.$revisions->pk_id,
-			'menu_str' => '履歴一覧に戻る',
-		);
-		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
-		$action = array(
-			'url' => $this->request->module.'/edit/'.$revisions->pk_id,
-			'menu_str' => '編集画面に戻る',
-		);
-		\Actionset::add_actionset($this->request->module, 'ctrl', 'back2', $action);
-
 		//unserialize
 		$data          = unserialize($revisions->data);
 
@@ -109,11 +105,12 @@ trait Traits_Controller_Revision
 
 		//option - ise \Module\Model_Module::$_option_options['range']
 		$opt = false;
+		$opt_arg = '';
 		if(\Input::get('opt')):
 			if( ! isset($original_model::$_option_options[\Input::get('opt')])) die('missing $_option_options.');
 			$opt = $original_model::$_option_options[\Input::get('opt')] ;
+			$opt_arg = '?opt='.\Input::get('opt');
 		endif;
-
 
 		//form definition
 		$data->$pk   = $revisions->pk_id;
@@ -140,6 +137,21 @@ trait Traits_Controller_Revision
 		$view->set_global('item', $data);
 		$view->set_global('title', '履歴');
 		$view->set_global('is_revision', true);
+
+		
+		//add_actionset
+		$action = array(
+			'url' => $this->request->module.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg,
+			'menu_str' => '履歴一覧へ',
+		);
+		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
+		if( ! $opt_arg):
+			$action = array(
+				'url' => $this->request->module.'/edit/'.$revisions->pk_id,
+				'menu_str' => '編集画面へ',
+			);
+			\Actionset::add_actionset($this->request->module, 'ctrl', 'back2', $action);
+		endif;
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
