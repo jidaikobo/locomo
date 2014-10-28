@@ -120,7 +120,7 @@ class Model_Sample extends \Locomo\Model_Base
 			array('type' => 'text', 'rows' => 7, 'style' => 'width:100%;')
 		)
 		->add_rule('required')
-		->add_rule('max_length', 5)
+		->add_rule('max_length', 50)
 		->set_value(@$obj->name);
 
 		//belongsto_id

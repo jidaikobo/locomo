@@ -7,7 +7,7 @@ trait Traits_Controller_Bulk
 
 		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
 
-		$form = $this->bulk(array(), null);
+		$form = $this->bulk(array(), null, 'dasabled');
 
 		$view->set_global('title', 'バルク品');
 		$view->set_global('form', $form, false);
@@ -61,15 +61,24 @@ trait Traits_Controller_Bulk
 
 		$form = $bulk->build();
 
+		/* deletedも保持 */
+		$ids = array();
+		foreach ($objects as $object) {
+			$ids[] = $object->{$object::primary_key()[0]};
+		}
+
+
+
 		if (\Input::post() && \Security::check_token()) {
 			if ($bulk->save()) {
 
 				// saveした object の保持
-				$ids = array();
+				// $ids = array();
 				foreach ($objects as $object) {
 					$ids[] = $object->{$object::primary_key()[0]};
 				}
 
+				$ids = array_unique($ids);
 				// 新規を全て空で保存した時の処理
 				$judge = array_filter($ids);
 				if (empty($judge)) {

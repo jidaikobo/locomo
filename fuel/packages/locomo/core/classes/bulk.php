@@ -40,9 +40,24 @@ class Bulk {
 			}
 			
 			if ($model->is_new()) {
-				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
+				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
+				$this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
 			} else {
-				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
+				if (is_null($model->{$model::soft_delete_property('deleted_field')})) { // 削除済みでない
+					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
+					$this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+				} else { // 削除済み
+					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true,))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
+					$this->forms[$key]->add('_restore', '復活・完全削除', array(
+						'type' => 'select',
+						'options' => array(
+							0 => '= 選択 =',
+							1 => '復活させる',
+							2 => '完全に削除する',
+						),
+					));
+
+				}
 			}
 
 			$this->forms[$key]->set_input_name_array($key);
@@ -120,6 +135,16 @@ class Bulk {
 				if (isset(\Input::post($key)['_deleted']) and !$model->is_new()) {
 					$model->delete();
 					$this->forms[$key]->field('_deleted')->set_value(1, true);
+
+				} elseif (isset(\Input::post($key)['_restore']) and \Input::post($key)['_restore'] != 0 and !$model->is_new()) {
+
+					if (\Input::post($key)['_restore'] == 1) {
+						$model->restore();
+					} elseif (\Input::post($key)['_restore'] == 2) {
+						$model->purge();
+					}
+
+					$this->forms[$key]->field('_restore')->set_value(1, true);
 
 				// save
 				} else {
