@@ -64,11 +64,16 @@ class Controller_Crud extends Controller_Base
 	 *
 	 * @return Model finded
 	 */
-	public function paginated_find($options = array(), $model= null, $deleted = false, $use_get_query = true, $pagination_config = null) {
+	public function paginated_find($options = array(), $model = null, $deleted = false, $use_get_query = true, $pagination_config = null) {
 
 		is_null($model) and $model = $this->model_name;
 		$action = \Request::main()->action;
 
+		if ($use_get_query) {
+			$input_get = \Input::get();
+		} else {
+			$input_get = array();
+		}
 		if ($use_get_query and \Input::get()) {
 			if (\Input::get('orders')) {
 				$orders = array();
@@ -105,15 +110,13 @@ class Controller_Crud extends Controller_Base
 
 
 		$pagination_config['total_items'] = $count;
-		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), \Input::get());
+		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $input_get);
 		\Pagination::set_config($pagination_config);
 
 		if (!$pagination_config) $pagination_config = $this->pagination_config;
 
 		$options['offset'] = \Input::get('offset') ?: \Pagination::get('offset');
 		$options['limit'] = \Input::get('limit') ?: $this->pagination_config['per_page'];
-
-		var_dump($count);
 
 		if ($deleted === 'disabled') {
 			$model::disable_filter();
