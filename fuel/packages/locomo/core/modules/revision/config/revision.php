@@ -6,5 +6,5 @@ return array(
 	'order_in_menu' => 100,           //ログイン後のメニューの表示順。小さいほど上
 	'adminmodule'   => true,
 
-	'revision_interval' => 300, //リビジョンの間隔（秒）
+	'revision_interval' => 3600, //リビジョンの間隔（秒）
 );

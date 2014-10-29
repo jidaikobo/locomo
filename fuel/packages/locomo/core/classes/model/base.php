@@ -70,8 +70,8 @@ class Model_Base extends \Orm\Model_Soft
 	{
 		switch($str):
 			case 'subject':
-				return isset(static::$_created_subject_name) ?
-					static::$_created_subject_name :
+				return isset(static::$_subject_field_name) ?
+					static::$_subject_field_name :
 					static::$_default_subject_field_name;
 			case 'created':
 				return isset(static::$_created_field_name) ?

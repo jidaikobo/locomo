@@ -5,14 +5,19 @@ class Model_===NAME=== extends \Locomo\Model_Base
 //	use \Workflow\Traits_Model_Workflow;
 
 	protected static $_table_name = '===TABLE_NAME===';
+	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
 
 	protected static $_properties = array(
 ===FIELD_STR===
 // 'workflow_status',
 	);
 
-	protected static $_depend_modules = array(
-	);
+	protected static $_depend_modules = array();
+
+	/**
+	 * $_option_options - see sample at \User\Model_Usergroup
+	 */
+	public static $_option_options = array();
 
 /*
 	protected static $_has_many = array(

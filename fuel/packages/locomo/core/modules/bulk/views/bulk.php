@@ -1,7 +1,6 @@
 <?php echo render('inc_admin_header'); ?>
-
 <?php
-if( ! \Input::get('create')):
+if( ! \Input::get('create') && ! @$is_revision):
 	echo \Form::open(array('method' => 'get'));
 	echo \Form::input('likes[name]', \Input::get('likes')['name']);
 	echo \Form::submit('submit', '検索', array('class'=>'button'));
@@ -27,6 +26,6 @@ endif;
 </div>
 <?php endif; ?>
 <?php echo \Form::close(); ?>
-<?php echo $pagination; ?>
+<?php if( ! @$is_revision) echo $pagination; ?>
 
 <?php echo render('inc_admin_footer'); ?>
