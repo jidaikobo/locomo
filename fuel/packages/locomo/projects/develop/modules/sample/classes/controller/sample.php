@@ -59,7 +59,7 @@ class Controller_Sample extends \Locomo\Controller_Crud
 	public function action_sample_bulk()
 	{
 		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
-		$form = $this->bulk($view, null, array(), 'bulk_ctm');
+		$form = $this->bulk(array(), null, 'disabled', true, null, 'bulk_ctm');
 
 		$view->set_global('title', 'サンプルバルク');
 		$view->set_global('form', $form, false);
