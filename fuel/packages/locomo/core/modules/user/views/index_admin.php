@@ -41,8 +41,8 @@
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1">
 			<td><?php echo $item->id; ?></td>
-			<th style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1"><?php 
-					echo Html::anchor('user/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div></th>
+			<td style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1"><?php 
+					echo Html::anchor('user/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div></td>
 			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
 			<td><?php echo $item->last_login_at; ?></td>
 			<td><?php echo $item->deleted_at; ?></td>

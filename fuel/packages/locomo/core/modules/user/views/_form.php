@@ -14,7 +14,7 @@
 		</tr>
 		<tr>
 			<th><?php echo $form->field('usergroup')->set_template('{label}{required}'); ?></th>
-			<td><?php echo $form->field('usergroup')->set_template('{fields} {field} {label}<br /> {fields}'); ?></td>
+			<td><?php echo $form->field('usergroup')->set_template('{fields} {field} {label}{fields}'); ?></td>
 		</tr>
 		<tr>
 			<th><?php echo $form->field('password')->set_template('{label}{required}'); ?></th>

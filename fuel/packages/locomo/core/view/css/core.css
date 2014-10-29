@@ -81,14 +81,15 @@ body.login{
 	clip: rect(1px 1px 1px 1px);
 	clip: rect(1px, 1px, 1px, 1px);
 }
-.login h2{
+.login .contents h2{
 	font-size: 2em !important;
 	color: #004896;
 	font-weight: normal;
-	margin-bottom: .5em;
 	font-family: Verdana;
+	border: none;
+	margin: 0 0 .5em !important;
 }
-.login h2 img{
+.login .contents h2 img{
 	display: block;
 	margin: .5em auto 0;
 	width: 1.5em;
@@ -486,6 +487,13 @@ fieldset[disabled] a.button {
 	opacity: .65;
 	filter: alpha(opacity=65);
 	-webkit-box-shadow: none;
+}
+
+input[disabled],
+select[disabled],
+textarea[disabled] {
+	background-color: #eee;
+	box-shadow:none;
 }
 .btn_group{
 	white-space: nowrap;

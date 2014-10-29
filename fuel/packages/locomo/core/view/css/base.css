@@ -501,12 +501,15 @@ textarea {
 	-ms-box-sizing: border-box;
 	box-sizing: border-box;
 }
-
+label+input[type="checkbox"],
+label+input[type="radio"] {
+	margin-right: .5em;
+}
 .btn,
 .button {
 	vertical-align: bottom;
 	padding: 5px 15px ;
-	margin: 0;
+	margin: 0 5px;
 	line-height: 1.5em;
 	font-size: 90%;
 	border-radius: 4px;
@@ -759,22 +762,31 @@ table.tbl2 thead th {
 	border-top: 1px #ccc solid;
 	border-bottom: 1px #ccc solid;
 }
-table.tbl2 tr:nth-child(even),
-table.tbl2.even tr:nth-child(even) {
+table.tbl2 tbody tr:nth-child(even),
+table.tbl2 tbody tr:nth-child(even) th,
+table.tbl2.even tbody tr:nth-child(even) td {
 	background: #f6f6f6;
 }
 table.datatable th,
 table.datatable td{
 	border-bottom: 1px solid #f3f3f3;
 }
-table.tbl2 tr:nth-child(odd),
-table.tbl2.even tr:nth-child(odd) {
+table.tbl2 tbody tr:nth-child(odd),
+table.tbl2 tbody tr:nth-child(odd) th,
+table.tbl2 tbody tr:nth-child(odd) td,
+table.tbl2.even tbody tr:nth-child(odd),
+table.tbl2.even tbody tr:nth-child(odd) th,
+table.tbl2.even tbody tr:nth-child(odd) td {
 	background: #fff;
 }
-table.tbl2.odd tr:nth-child(odd) {
+table.tbl2.odd tbody tr:nth-child(odd),
+table.tbl2.odd tbody tr:nth-child(odd) th,
+table.tbl2.odd tbody tr:nth-child(odd)td {
 	background: #fff;
 }
-table.tbl2.odd tr:nth-child(even) {
+table.tbl2.odd tbody tr:nth-child(even),
+table.tbl2.odd tbody tr:nth-child(even) th,
+table.tbl2.odd tbody tr:nth-child(even) td {
 	background: #f3f3f3;
 }
 table.tbl2 th {
@@ -813,7 +825,7 @@ table.tbl3 td {
 	color: #111;
 	background-color: #fff;
 }
-table.tbl3 td:nth-child(odd) {
+table.tbl3 tbody td:nth-child(odd) {
 	background: #f6f6f6;
 }
 
