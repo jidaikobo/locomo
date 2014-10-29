@@ -84,7 +84,7 @@ class Observer_Revision extends \Orm\Observer
 		$primary_key = $obj::get_primary_keys('first');
 		$model_name = get_class($obj);
 		$form = $model_name::form_definition('revision_'.$counter);
-		foreach($form->get_fields() as $property => $v):
+		foreach($form->field() as $property => $v):
 			if( ! isset($obj->{$property})) continue;
 			$tmp->{$property} = $obj->{$property};
 		endforeach;

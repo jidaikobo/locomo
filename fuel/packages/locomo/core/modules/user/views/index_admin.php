@@ -1,4 +1,4 @@
-<?php echo render('inc_header'); ?>
+<?php echo render('inc_admin_header'); ?>
 <h2>項目一覧<?php echo ($hit != 0) ? '（全'.$hit.'件）' : ''; ?></h2>
 <p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <?php 
@@ -62,4 +62,4 @@
 
 <?php endif; ?>
 
-<?php echo render('inc_footer'); ?>
+<?php echo render('inc_admin_footer'); ?>

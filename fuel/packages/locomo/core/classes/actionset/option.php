@@ -21,9 +21,9 @@ class Actionset_Option extends Actionset
 		$retvals = array(
 			'is_admin_only' => true,
 			'url'           => $url,
+			'menu_str'      => 'テストデータ追加',
 			'confirm'       => true,
 			'action_name'   => 'テストデータの追加',
-			'menu_str'      => 'テストデータ追加',
 			'dependencies'  => array(
 				'add_testdata',
 			)

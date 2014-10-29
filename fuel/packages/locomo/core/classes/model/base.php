@@ -142,6 +142,8 @@ class Model_Base extends \Orm\Model_Soft
 		if (\Acl\Controller_Acl::auth($controller.'/view_anyway', $userinfo)) {
 			static::disable_filter();
 		} else {
+
+
 			//モデルが持っている判定材料を、適宜$optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method):
 				$options = static::$authorize_method($controller, $userinfo, $options, $mode);
@@ -216,7 +218,7 @@ class Model_Base extends \Orm\Model_Soft
 			isset(static::properties()[$column]) &&
 			! \Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo)
 		) {
-			$options['where'][] = array($column, '=', 'false');
+			$options['where'][] = array($column, '=', true);
 		}
 		return $options;
 	}

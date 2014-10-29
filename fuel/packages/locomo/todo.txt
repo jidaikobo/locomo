@@ -1,7 +1,4 @@
-
-is_visibleをuserに実装
-workflowsテーブルをworkflowadminsテーブルにする
-ここらへんまでやったらimporterに本腰を入れよう
+aclの対象にしないが、urlは表示するactionsetを設定する（add_testdata）
 
 ＊　＊　＊
 
@@ -12,7 +9,7 @@ workflowsテーブルをworkflowadminsテーブルにする
 
 ＊　＊　＊
 
-add_testdataをform_definitionでやりたい。
 scaffoldで作ったmigration:downに、削除対象モジュールのacl削除を入れる
 moduleと呼ぶべき変数をcontrollerとしている箇所が多いので、あとできれいにする
 でべちゃんにlocomoのロゴ＋アイコンをねだる。
+

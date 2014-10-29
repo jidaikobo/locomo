@@ -3,6 +3,15 @@ namespace Locomo;
 class Util
 {
 	/**
+	 * get()
+	 */
+	public static function get($variable)
+	{
+		if( ! isset($variable)) return false;
+		return $variable;
+	}
+
+	/**
 	 * fetch_tpl()
 	 */
 	public static function fetch_tpl($path = null)
