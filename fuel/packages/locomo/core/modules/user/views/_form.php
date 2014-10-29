@@ -32,6 +32,12 @@
 			<th><?php echo $form->field('created_at')->set_template('{label}{required}'); ?></th>
 			<td><?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?></td>
 		</tr>
+		<?php if($is_admin): ?>
+		<tr>
+			<th><?php echo $form->field('is_visible')->set_template('{label}{required}'); ?></th>
+			<td><?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?></td>
+		</tr>
+		<?php endif; ?>
 		</table>
 	</fieldset>
 	<div class="submit_field">
@@ -43,7 +49,10 @@
 		</div>
 		<div class="submit_button">
 			<?php
-			echo $form->field('status')->set_template('{field}');
+			if( ! $is_admin):
+				echo $form->field('is_visible')->set_template('{field}');
+			endif;
+
 			if(!@$is_revision):
 				echo \Form::hidden($token_key, $token);
 				echo \Form::submit('submit', '保存', array('class' => 'button primary'));

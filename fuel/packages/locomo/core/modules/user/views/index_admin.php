@@ -33,7 +33,6 @@
 			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
 			<th><?php echo \Pagination::sort('last_login_at', 'Last login'); ?></th>
 			<th>Delete date</th>
-			<th>Status</th>
 			<th>&nbsp;</th>
 		</tr>
 	</thead>
@@ -46,7 +45,6 @@
 			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
 			<td><?php echo $item->last_login_at; ?></td>
 			<td><?php echo $item->deleted_at; ?></td>
-			<td><?php echo $item->status; ?></td>
 			<td>
 				<div class="btn_group">
 					<?php
