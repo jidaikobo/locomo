@@ -19,19 +19,6 @@ class Controller_User extends \Locomo\Controller_Crud
 	public static $is_user_logged_in = false;
 
 	/**
-	 * test datas
-	 */
-	protected $test_datas = array(
-		'user_name'    => 'text',
-		'display_name' => 'text',
-		'password'     => 'text:test',
-		'email'        => 'email',
-		'status'       => 'text:public',
-		'creator_id'   => 'int',
-		'modifier_id'  => 'int',
-	);
-
-	/**
 	 * set_userinfo()
 	 * ログイン中のユーザ情報のセット。
 	 * \Locomo\Controller_Base::before()から呼ばれる。
@@ -151,6 +138,12 @@ class Controller_User extends \Locomo\Controller_Crud
 				$session = \Session::instance();
 				$session->set('user', $user);
 				$user_model::add_user_log($account, $password, true);
+
+				//update last login
+				if(isset($user_obj)):
+					$user_obj->last_login_at = date('Y-m-d H:i:s');
+					$user_obj->save();
+				endif;
 
 				//redirect
 				\Session::set_flash( 'success', 'ログインしました。');

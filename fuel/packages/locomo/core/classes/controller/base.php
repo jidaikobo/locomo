@@ -120,17 +120,18 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	{
 		//only at development
 		if(\Fuel::$env != 'development') die();
+		if(\User\Controller_User::$userinfo['user_id'] !== -2) die('forbidden');
+
+		$model = $this->model_name ;
 
 		//$test_datas
-		if(empty($this->test_datas)):
+		if(empty($model::$test_datas)):
 			\Session::set_flash('error', 'need to prepare test_data proparty.');
 			\Response::redirect($this->request->module);
 		endif;
 
-		$model = $this->model_name ;
-
 		for($n = 1; $n <= $num; $n++):
-			foreach($this->test_datas as $k => $v):
+			foreach($model::$test_datas as $k => $v):
 				$type = $v;
 				$default = null;
 				//test_datasにコロンがあったらデフォルト文字列と見なす

@@ -13,7 +13,7 @@ class Create_users
 			'email'          => array('constraint' => 255, 'type' => 'varchar'),
 			'activation_key' => array('constraint' => 50, 'type' => 'varchar', 'null' => true),
 			'last_login_at'  => array('type' => 'datetime', 'null' => true),
-			'status'         => array('constraint' => 20, 'type' => 'varchar'),
+			'is_visible'     => array('constraint' => 1, 'type' => 'int'),
 			'deleted_at'     => array('type' => 'datetime', 'null' => true),
 			'created_at'     => array('type' => 'datetime', 'null' => true),
 			'expired_at'     => array('type' => 'datetime', 'null' => true),
@@ -49,5 +49,6 @@ class Create_users
 	{
 		\DBUtil::drop_table('users');
 		\DBUtil::drop_table('loginlog');
+		if(\DBUtil::table_exists('usergroups_r')) \DBUtil::truncate_table('usergroups_r');
 	}
 }

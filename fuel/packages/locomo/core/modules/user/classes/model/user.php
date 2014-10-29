@@ -2,11 +2,16 @@
 namespace User;
 class Model_User extends \Locomo\Model_Base
 {
+	/**
+	 * vals
+	 */
 	protected static $_table_name = 'users';
-
 	public static $_subject_field_name = 'user_name';
 	public static $_creator_field_name = 'id';
 
+	/**
+	 * $_properties
+	 */
 	protected static $_properties = array(
 		'id',
 		'user_name',
@@ -14,7 +19,7 @@ class Model_User extends \Locomo\Model_Base
 		'password',
 		'email',
 		'activation_key',
-		'status',
+		'is_visible',
 		'last_login_at',
 		'deleted_at',
 		'created_at',
@@ -24,6 +29,22 @@ class Model_User extends \Locomo\Model_Base
 		'modifier_id',
 	);
 
+	/**
+	 * test datas
+	 */
+	public static $test_datas = array(
+		'user_name'    => 'text',
+		'display_name' => 'text',
+		'password'     => 'text:test',
+		'email'        => 'email',
+		'is_visible'   => 'text:1',
+		'creator_id'   => 'int',
+		'modifier_id'  => 'int',
+	);
+
+	/**
+	 * $_many_many
+	 */
 	protected static $_many_many = array(
 		'usergroup' => array(
 			'key_from' => 'id',
@@ -37,11 +58,17 @@ class Model_User extends \Locomo\Model_Base
 		)
 	);
 
+	/**
+	 * $_soft_delete
+	 */
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,
 	);
 
+	/**
+	 * $_observers
+	 */
 	protected static $_observers = array(
 		'Orm\Observer_CreatedAt' => array(
 			'events' => array('before_insert'),
@@ -149,14 +176,6 @@ class Model_User extends \Locomo\Model_Base
 			->add_rule('max_length', 255)
 			->add_rule('unique', "users.email.{$id}");
 
-		//status
-		$form->add(
-				'status',
-				'status',
-				array('type' => 'hidden')
-			)
-			->set_value(@$obj->status);
-
 		//created_at
 		$form->add(
 				'created_at',
@@ -166,13 +185,30 @@ class Model_User extends \Locomo\Model_Base
 			->set_value(@$obj->created_at);
 //未来の日付を入れると、予約項目になります。
 
-		//email
+		//deleted_at
 		$form->add(
 				'deleted_at',
 				'削除日',
 				array('type' => 'text', 'size' => 20)
 			)
 			->set_value(@$obj->deleted_at);
+
+		//is_available
+		if(\User\Controller_User::$userinfo['user_id'] > 0):
+			$form->add(
+					'is_visible',
+					'可視属性',
+					array('type' => 'hidden', 'default' => 1)
+				)
+				->set_value(@$obj->is_visible);
+		else:
+			$form->add(
+					'is_visible',
+					'可視属性',
+					array('type' => 'select', 'options' => array('0' => '不可視', '1' => '可視'), 'default' => 1)
+				)
+				->set_value(@$obj->is_visible);
+		endif;
 
 		static::$_cache_form_definition = $form;
 		return $form;

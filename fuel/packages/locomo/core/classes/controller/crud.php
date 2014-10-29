@@ -3,8 +3,7 @@ namespace Locomo;
 class Controller_Crud extends Controller_Base
 {
 
-	// public $template = 'index_admin';
-	public $template = 'index';
+	public $template = 'index_admin';
 
 	/**
 	 * @var array default setting of pagination
@@ -36,7 +35,6 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_admin()
 	{
-		$this->template = 'index_admin';
 		$view = \View::forge($this->template);
 
 		// find & set pagination_config
@@ -49,13 +47,13 @@ class Controller_Crud extends Controller_Base
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
-
 
 	/**
 	 * action_index()
 	 */
 	public function action_index()
 	{
+		$this->template = 'index';
 		$view = \View::forge($this->template);
 
 		// find & set pagination_config
@@ -68,7 +66,6 @@ class Controller_Crud extends Controller_Base
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
-
 
 	/**
 	 * action_index_yet()
@@ -129,9 +126,9 @@ class Controller_Crud extends Controller_Base
 	{
 		$model = $this->model_name;
 
-		if (!isset($model::properties()['status'])) throw new \HttpNotFoundException;
+		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
 
-		$options['where'][] = array('status', '=', 'invisible');
+		$options['where'][] = array('is_visible', '=', 0);
 
 		$view = \View::forge($this->template);
 
@@ -173,7 +170,6 @@ class Controller_Crud extends Controller_Base
 	public function action_index_all() {
 		$model = $this->model_name ;
 
-		$this->template = 'index_admin';
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
 		$view = \View::forge($this->template);
@@ -398,7 +394,6 @@ class Controller_Crud extends Controller_Base
 
 		return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 	}
-
 
 	/**
 	 * action_delete_deleted()
