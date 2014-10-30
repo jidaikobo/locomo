@@ -2,6 +2,8 @@
 namespace User;
 class Actionset_Option_User extends \Actionset_Option
 {
+	use \Locomo\Actionset_Traits_Testdata;
+
 	/**
 	 * actionset_usergroup()
 	 */

@@ -1,4 +1,4 @@
-aclの対象にしないが、urlは表示するactionsetを設定する（add_testdata）
+add_testdataを分離
 
 ＊　＊　＊
 

@@ -1,10 +1,9 @@
 <?php
 namespace User;
-\Module::load('bulk');
-
 class Controller_User extends \Locomo\Controller_Crud
 {
 	//trait
+	use \Locomo\Controller_Traits_Testdata;
 	use \Revision\Traits_Controller_Revision;
 	use \Bulk\Traits_Controller_Bulk;
 
