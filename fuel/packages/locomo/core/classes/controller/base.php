@@ -34,6 +34,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	protected $test_datas = array();
 
+	protected static $views_path_module = '';
+
 	/**
 	* before()
 	*/
@@ -44,7 +46,11 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		//テンプレートの検索パスを追加
 		$request = \Request::active();
-		$request->add_path(PKGPROJPATH.'views'.DS.$this->request->module.DS,true);
+
+		$views_path_module = static::$views_path_module ?: $this->request->module;
+
+		$request->add_path(PKGPROJPATH.'views'.DS.$views_path_module.DS,true);
+		$request->add_path(PKGPROJPATH.'modules'.DS.$views_path_module.DS,true);
 
 		//ユーザ情報のセット
 		\User\Controller_User::set_userinfo();
