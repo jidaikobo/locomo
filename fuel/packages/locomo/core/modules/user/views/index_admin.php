@@ -2,28 +2,10 @@
 <h2>項目一覧<?php echo ($hit != 0) ? '（全'.$hit.'件）' : ''; ?></h2>
 <p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <?php 
-	//item
-	$item = isset($item) ? $item : null;
 	//index menu
-	$actions = \Actionset::get_menu(
-		$controller,
-		$realm = 'index',
-		$item,
-		$get_authed_url = true
-	);
-	$html = '';
-	if($actions):
-		$html.= '<ul class="holizonal_list">';
-		foreach($actions as $url => $v):
-			if( ! $url) continue;
-			$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-			$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-			$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-		endforeach;
-		$html.= '</ul>';
-	endif;
-	echo $html;
- ?>
+	$actions = \Actionset::get_menu($controller, 'index', null, $get_authed_url = true);
+	echo \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
+?>
 <?php if ($items): ?>
 <table class="tbl datatable">
 	<thead>

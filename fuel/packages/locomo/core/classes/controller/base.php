@@ -18,6 +18,11 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	protected $current_action = '';
 
 	/**
+	 * @var config
+	 */
+	protected $config = array();
+
+	/**
 	* @var string current_id
 	*/
 	public static $current_id = '';
@@ -68,8 +73,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$this->model_name = '\\'.$controller.'\\Model_'.$controller;
 
 		//nicename 人間向けのモジュール名
-		$controllers_from_config = \Config::load($controller);
-		self::$nicename = $controllers_from_config['nicename'];
+		$this->config = \Config::load($controller);
+		self::$nicename = $this->config['nicename'];
 
 		//actionset
 		\Actionset::forge($this->request->module);

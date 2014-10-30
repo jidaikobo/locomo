@@ -59,15 +59,14 @@ class Controller_User extends \Locomo\Controller_Crud
 	/**
 	 * action_login()
 	 */
-	public function action_login($redirect = NULL)
+	public function action_login()
 	{
-		//redirect
-		$redirect_decode = $redirect ? base64_decode($redirect) : \URI::base() ;
+		$ret = \Input::param('ret', @$_SERVER['HTTP_REFERER']);
 
 		//ログイン済みのユーザだったらログイン画面を表示しない
 		if(self::$is_user_logged_in):
-			\Session::set_flash( 'error', 'あなたは既にログインしています');
-			\Response::redirect($redirect_decode);
+			\Session::set_flash('error', 'あなたは既にログインしています');
+			\Response::redirect($ret);
 		endif;
 
 		//ログイン処理
@@ -146,7 +145,7 @@ class Controller_User extends \Locomo\Controller_Crud
 
 				//redirect
 				\Session::set_flash( 'success', 'ログインしました。');
-				\Response::redirect($redirect_decode);
+				\Response::redirect($ret);
 			//ログイン失敗
 			else:
 				$user_model::add_user_log($account, $password, false);
@@ -157,7 +156,7 @@ class Controller_User extends \Locomo\Controller_Crud
 
 		//view
 		$view = \View::forge('login');
-		$view->set('ret', $redirect);
+		$view->set('ret', $ret);
 		$view->set_global('title', 'ログイン');
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -171,7 +170,7 @@ class Controller_User extends \Locomo\Controller_Crud
 		$session = \Session::instance();
 		$session->delete('user');
 		\Session::set_flash( 'success', 'ログアウトしました');
-		\Response::redirect('user/login/');
+		\Response::redirect('user/login/?ret=/');
 	}
 
 	/**
