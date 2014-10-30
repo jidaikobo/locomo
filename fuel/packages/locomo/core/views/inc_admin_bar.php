@@ -26,14 +26,7 @@ if($is_user_logged_in):
 				);
 				if($actions):
 					$html.= '<div class="admin_context">';
-						$html.= '<ul class="holizonal_list">';
-						foreach($actions as $url => $v):
-							if( ! $url) continue;
-							$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-							$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-							$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-						endforeach;
-						$html.= '</ul>';
+					$html.= \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 			$html.= '</div><!-- .adminbar_main -->';
@@ -49,14 +42,7 @@ if($is_user_logged_in):
 			);
 			if($actions):
 				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-					$html.= '<ul class="holizonal_list">';
-					foreach($actions as $url => $v):
-						if( ! $url) continue;
-						$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-						$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-						$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-					endforeach;
-					$html.= '</ul>';
+				$html.= \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
 				$html.='</div><!-- /.admin_ctrl -->';
 			endif;
 			
@@ -65,19 +51,14 @@ if($is_user_logged_in):
 				$controller,
 				$realm = 'option',
 				$item,
-				$get_authed_url = true
+				$get_authed_url = true,
+				$exceptions = array(),
+				$include_admin_only = true
 			);
 				if($actions):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"{$controller_name}の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"{$controller_name}の設定\"></span></a>";
-						$html.= '<ul class="modal dropdown_list boxshadow">';
-						foreach($actions as $url => $v):
-							if( ! $url) continue;
-							$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-							$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-							$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-						endforeach;
-						$html.= '</ul>';
+					$html.= \Actionset::generate_menu_html($actions, array('class'=>'modal dropdown_list boxshadow'));
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
 
@@ -115,14 +96,7 @@ if($is_user_logged_in):
 			if($actions):
 				$html.= '<div id="adminbar_index">';
 				$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
-				$html.= '<ul class="boxshadow">';
-				foreach($actions as $url => $v):
-					if( ! $url) continue;
-					$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-					$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-					$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-				endforeach;
-				$html.= '</ul>';
+				$html.= \Actionset::generate_menu_html($actions, array('class'=>'boxshadow'));
 				$html.= '</div>';
 			endif;
 		*/
