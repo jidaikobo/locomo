@@ -501,7 +501,7 @@ class Controller_Crud extends Controller_Base
 			$count = $model::count($options);
 		}
 
-		!is_null($pagination_config) and $pagination_config = array_merge($this->pagination_config, $pagination_config);
+		$pagination_config = $pagination_config ? array_merge($this->pagination_config, $pagination_config) : $this->pagination_config;
 
 		$pagination_config['total_items'] = $count;
 		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $input_get);
