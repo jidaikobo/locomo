@@ -30,19 +30,6 @@ class Model_User extends \Locomo\Model_Base
 	);
 
 	/**
-	 * test datas
-	 */
-	public static $test_datas = array(
-		'user_name'    => 'text',
-		'display_name' => 'text',
-		'password'     => 'text:test',
-		'email'        => 'email',
-		'is_visible'   => 'text:1',
-		'creator_id'   => 'int',
-		'modifier_id'  => 'int',
-	);
-
-	/**
 	 * $_many_many
 	 */
 	protected static $_many_many = array(
@@ -193,13 +180,14 @@ class Model_User extends \Locomo\Model_Base
 			)
 			->set_value(@$obj->deleted_at);
 
-		//is_available
+		//is_visible
 		if(\User\Controller_User::$userinfo['user_id'] > 0):
 			$form->add(
 					'is_visible',
 					'可視属性',
 					array('type' => 'hidden', 'default' => 1)
 				)
+				->add_rule('required')
 				->set_value(@$obj->is_visible);
 		else:
 			$form->add(
@@ -207,6 +195,7 @@ class Model_User extends \Locomo\Model_Base
 					'可視属性',
 					array('type' => 'select', 'options' => array('0' => '不可視', '1' => '可視'), 'default' => 1)
 				)
+				->add_rule('required')
 				->set_value(@$obj->is_visible);
 		endif;
 

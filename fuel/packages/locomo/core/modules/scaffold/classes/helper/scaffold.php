@@ -134,9 +134,9 @@ class Helper_Scaffold
 
 		//template
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'migrations.php');
-		$migration = str_replace('===MN===',   $migration_name, $val);
-		$migration = str_replace('===UP===',   $up,             $migration);
-		$migration = str_replace('===DOWN===', $down,           $migration);
+		$migration = str_replace('###MN###',   $migration_name, $val);
+		$migration = str_replace('###UP###',   $up,             $migration);
+		$migration = str_replace('###DOWN###', $down,           $migration);
 
 		return $migration;
 	}
@@ -197,22 +197,40 @@ class Helper_Scaffold
 	public static function generate_model($name, $cmd_orig)
 	{
 		//vals
+		$cmd_mods = array();
 		$cmds = explode(' ', $cmd_orig);
 		array_shift($cmds);//remove name
 		$name = ucfirst($name);
 		$table_name = \Inflector::tableize($name);
+		$admins  = array('is_visible');
+		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'modifier_id');
 
 		//fieldset
 		$field_str = '';
 		$form_definition_str = '';
 		$field_str.= "\t\t'id',\n";//fuel's spec
 		foreach($cmds as $field):
+			$is_required = strpos($field, 'null') !== false ? false : true ;
 			list($field, $attr) = explode(':', $field);
 			$nicename = self::get_nicename($field);
 			$field    = self::remove_nicename($field);
-			
+			$class    = ", 'class' => '".self::remove_length($attr)."'";
+			$cmd_mods[] = $field;
+
 			//field_str
 			$field_str.= "\t\t'{$field}',\n";
+
+			//banned
+			if(in_array($field, $banned)) continue;
+
+			//title
+			$form_definition_str.= "\t\t//{$field} - {$nicename}\n";
+
+			//adminsだけは特別扱い
+			if(in_array($field, $admins)):
+				$form_definition_str.= "\t\tif(\User\Controller_User::\$userinfo['user_id'] >= 0):\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'hidden', 'value' => 1)\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\telse:\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'select', 'options' => array('0' => 'no', '1' => 'yes'), 'default' => 1{$class})\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\tendif;\n\n";
+				continue;
+			endif;
 
 			//attribute
 			$max  = preg_match('/\[(.*?)\]/', $attr, $m) ? intval($m[1]) : 0 ;
@@ -220,32 +238,31 @@ class Helper_Scaffold
 			$size = $max == 0  ? 30 : $max ;
 
 			//form_definition
-			$form_definition_str.= "\t\t//{$field}\n";
 			$form_definition_str.= "\t\t\$form->add(\n";
 			$form_definition_str.= "\t\t\t'{$field}',\n";
 			$form_definition_str.= $nicename ? "\t\t\t'{$nicename}',\n" : "\t\t\t'{$field}',\n";
+
 			//field
-			if(in_array($field, array('name', 'title', 'subject', 'text', 'memo', 'body', 'content', 'etc', 'message'))):
+			if(in_array($field, array('text', 'memo', 'body', 'content', 'etc', 'message'))):
 				//textarea
-				$form_definition_str.= "\t\t\tarray('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;')\n";
-			elseif(in_array($field, array('status'))):
-				//status - temporary
-				$form_definition_str.= "\t\t\tarray('type' => 'hidden')\n";
+				$form_definition_str.= "\t\t\tarray('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;'{$class})\n";
 			elseif(substr($field,0,3)=='is_'):
 				//bool
-				$form_definition_str.= "\t\t\tarray('type' => 'checkbox', 'options' => array(0, 1))\n";
+				$form_definition_str.= "\t\t\tarray('type' => 'select', 'options' => array(0, 1){$class})\n";
 			elseif(substr($field,-3)=='_at'):
 				//date
-				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => 20, 'class' => 'calendar', 'placeholder' => date('Y-m-d H:i:s'))\n";
+				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => 20, 'placeholder' => date('Y-m-d H:i:s'){$class})\n";
 			else:
 				//text
-				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => {$size})\n";
+				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => {$size}{$class})\n";
 			endif;
 			$form_definition_str.= "\t\t)\n";
+
 			//require
-			if(in_array($field, array('name', 'title', 'subject'))):
+			if(in_array($field, array('name', 'title', 'subject')) || $is_required):
 				$form_definition_str.= "\t\t->add_rule('required')\n";
 			endif;
+
 			//require
 			if($max):
 				$form_definition_str.= "\t\t->add_rule('max_length', {$max})\n";
@@ -261,12 +278,37 @@ class Helper_Scaffold
 			endif;
 		endforeach;
 
+		//soft_delete
+		$dlt_fld = '';
+		if(in_array('deleted_at', $cmd_mods)):
+			$dlt_fld = "\tprotected static \$_soft_delete = array(\n\t\t'deleted_field'   => 'deleted_at',\n\t\t'mysql_timestamp' => true,\n\t);\n";
+		endif;
+
+		//observers
+		$observers = '';
+		if(in_array('created_at', $cmd_mods)):
+			$observers.= "\t\t'Orm\Observer_CreatedAt' => array(\n\t\t\t'events' => array('before_insert'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
+		endif;
+		if(in_array('updated_at', $cmd_mods)):
+			$observers.= "\t\t'Orm\Observer_UpdatedAt' => array(\n\t\t\t\t'events' => array('before_save'),\n\t\t\t\t'mysql_timestamp' => true,\n\t\t\t),\n";
+		endif;
+		if(in_array('expired_at', $cmd_mods)):
+			$observers.= "\t\t'Locomo\Observer_Expired' => array(\n\t\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t\t'properties' => array('expired_at'),\n\t\t\t),\n";
+		endif;
+		if(in_array('creator_id', $cmd_mods) || in_array('modifier_id', $cmd_mods)):
+			$observers.= "\t\t'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
+		endif;
+		$observers.= "//\t\t'Workflow\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
+		$observers.= "//\t\t'Revision\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
+
 		//template
 		$str = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'model.php');
-		$str = str_replace('===NAME===',       $name,       $str);
-		$str = str_replace('===TABLE_NAME===', $table_name, $str);
-		$str = str_replace('===FIELD_STR===',  $field_str,  $str);
-		$str = str_replace('===FORM_DEFINITION===',  $form_definition_str,  $str);
+		$str = str_replace('###DLT_FLD###',    $dlt_fld,    $str);
+		$str = str_replace('###OBSRVR###',     $observers,  $str);
+		$str = str_replace('###NAME###',       $name,       $str);
+		$str = str_replace('###TABLE_NAME###', $table_name, $str);
+		$str = str_replace('###FIELD_STR###',  $field_str,  $str);
+		$str = str_replace('###FORM_DEFINITION###',  $form_definition_str,  $str);
 
 		return $str;
 	}
@@ -284,30 +326,78 @@ class Helper_Scaffold
 	/**
 	 * generate_views_index()
 	 */
-	public static function generate_views_index($name)
+	public static function generate_views_index($name, $cmd_orig, $is_admin = false)
 	{
-		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'index.php');
+		$cmds = explode(' ', $cmd_orig);
+		array_shift($cmds);//remove name
+
+		$thead = "\t\t\t<th><?php echo \Pagination::sort('id', 'ID', false);?></th>\n";
+		$tbody = "\t<td><?php echo \$item->id; ?></td>\n" ;
+
+		foreach($cmds as $field){
+			list($field, $attr) = explode(':', $field);
+			$nicename = self::get_nicename($field);
+			$field    = self::remove_nicename($field);
+			if(empty($nicename)) continue;
+
+			//th
+			if($is_admin):
+				$thead.= "\t\t\t<th><?php echo \Pagination::sort('{$field}', '{$nicename}', false);?></th>\n";
+			else:
+				$thead.= "\t\t\t<th>".$nicename."</th>\n";
+			endif;
+
+			//td
+			if(substr($field,0,3)=='is_'):
+				$tdv = "<?php echo \$item->{$field} ? 'Yes' : 'No' ; ?>";
+			else:
+				$tdv = "<?php echo \$item->{$field}; ?>";
+			endif;
+
+			if($is_admin):
+				$tbody.= "\t<td><div class=\"col_scrollable\" tabindex=\"-1\">{$tdv}</div></td>\n";
+			else:
+				$tbody.= "\t<td>{$tdv}</td>\n";
+			endif;
+		}
+		
+		//mold
+		$tpl = $is_admin ? 'index_admin.php' : 'index.php' ;
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.$tpl);
 		$val = self::replaces($name, $val);
+		$val = str_replace ('###THEAD###', $thead , $val) ;
+		$val = str_replace ('###TBODY###', $tbody , $val) ;
+
 		return $val;
 	}
 
 	/**
 	 * generate_views_view()
 	 */
-	public static function generate_views_view($name, $cmds)
+	public static function generate_views_view($name, $cmd_orig)
 	{
+		$cmds = explode(' ', $cmd_orig);
+		array_shift($cmds);//remove name
+		$banned = array('workflow_status', 'creator_id', 'modifier_id', 'is_visible');
+
 		$fields = '' ;
 
 		foreach($cmds as $field){
 			list($field, $attr) = explode(':', $field);
+			$nicename = self::get_nicename($field);
+			$field    = self::remove_nicename($field);
+			if(in_array($field, $banned)) continue;
+
+			$fields.= "<?php if(\$item->{$field}): ?>\n" ;
 			$fields.= '<tr>'."\n" ;
-			$fields.= "\t<th>".$field."</th>\n" ;
+			$fields.= "\t<th>".$nicename."</th>\n" ;
 			if(substr($field,0,3)=='is_'):
 				$fields.= "\t<td><?php echo \$item->{$field} ? 'Yes' : 'No' ; ?></td>\n";
 			else:
 				$fields.= "\t<td><?php echo \$item->{$field}; ?></td>\n";
 			endif;
 			$fields.= '</tr>'."\n\n" ;
+			$fields.= '<?php endif; ?>'."\n" ;
 		}
 		
 		//mold
@@ -319,24 +409,17 @@ class Helper_Scaffold
 	}
 
 	/**
-	 * generate_views_options()
+	 * generate_views_edit()
 	 */
-	public static function generate_views_options($name)
-	{
-		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'option_samples.php');
-		$val = self::replaces($name, $val);
-		return $val;
-	}
-
-	/**
-	 * generate_views_form()
-	 */
-	public static function generate_views_form($name, $cmds)
+	public static function generate_views_edit($name, $cmds)
 	{
 		$hiddens = array('status');
-		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status');
+		$admins  = array('is_visible');
+		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'modifier_id');
 
 		$fields = '' ;
+		$admin_fields = '' ;
+		$admin_hidden_fields = '' ;
 		$hidden_fields = '' ;
 		foreach($cmds as $field){
 			list($field, $attr) = explode(':', $field);
@@ -346,46 +429,40 @@ class Helper_Scaffold
 			if(in_array($field, $hiddens)):
 				$hidden_fields.= "\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n" ;
 			else:
+				//admin
+				if(in_array($field, $admins)):
+					$admin_hidden_fields.= "\t\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n" ;
+					$fields.= '<?php if($is_admin): ?>'."\n" ;
+				endif;
+
 				$fields.= '<tr>'."\n" ;
 				//label
 				$fields.= "\t<th><?php echo \$form->field('{$field}')->set_template('{label}{required}'); ?></th>\n" ;
 				
 				//field
 				if(substr($field,0,3)=='is_'){//checkbox
-					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{fields} {field} {label}<br /> {fields}'); ?></td>\n" ;
+					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{error_msg}{field}'); ?></td>\n" ;
 				}else{//input
 					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{error_msg}{field}'); ?></td>\n" ;
 				}
 				$fields.= '</tr>'."\n\n" ;
+				if(in_array($field, $admins)):
+					$fields.= '<?php endif; ?>'."\n" ;
+				endif;
 			endif;
 		}
 		
+		if($admin_hidden_fields):
+			$hidden_fields.= 'if( ! $is_admin):'."\n{$admin_hidden_fields}\n" ;
+			$hidden_fields.= 'endif;'."\n" ;
+		endif;
+
 		//mold
-		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'_form.php');
+		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'edit.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###FIELDS###', $fields , $val) ;
 		$val = str_replace ('###HIDDEN_FIELDS###', $hidden_fields , $val) ;
 
-		return $val;
-	}
-
-	/**
-	 * generate_views_create()
-	 */
-	public static function generate_views_create($name)
-	{
-		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'create.php');
-		$val = self::replaces($name, $val);
-		return $val;
-	}
-
-	/**
-	 * generate_views_edit()
-	 */
-	public static function generate_views_edit($name)
-	{
-		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'edit.php');
-		$val = self::replaces($name, $val);
 		return $val;
 	}
 
@@ -445,5 +522,17 @@ class Helper_Scaffold
 	public static function remove_nicename($str)
 	{
 		return preg_replace('/\(.*?\)/', '', $str);
+	}
+
+	/**
+	 * remove_length()
+	 */
+	public static function remove_length($str)
+	{
+		if(preg_match('/(.*?)\[.\d+\]/', $str, $m)){
+			return @$m[1];
+		}else{
+			return $str;
+		}
 	}
 }

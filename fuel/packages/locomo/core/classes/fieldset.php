@@ -186,15 +186,4 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 		return $this;
 	}
-
-
-
-	/*
-	 * get_fields()
-	 * 拡張メソッド。publicに定義された値を取得
-	 */
-	public function get_fields()
-	{
-		return $this->fields;
-	}
 }
