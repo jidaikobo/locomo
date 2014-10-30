@@ -153,45 +153,45 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 				$rules = \Arr::assoc_to_keyval($v->rules, 0, 1);
 	
 				//exact_length
-				if($each_rule = \Util::get(@$rules['exact_length'])){
+				if($each_rule = @$rules['exact_length']){
 					$str = substr($str, 0, intval($exact_length[0]));
 				}
 	
 				//max_length
-				if($each_rule = \Util::get(@$rules['max_length'])){
+				if($each_rule = @$rules['max_length']){
 					$str = substr($str, 0, intval($each_rule[0]));
 				}
 	
 				//valid_email
-				$each_rule = \Util::get(@$rules['valid_email']);
+				$each_rule = @$rules['valid_email'];
 				$str.= $each_rule !== false ? '@example.com' : '' ;
 	
 				//valid_emails
-				$each_rule = \Util::get(@$rules['valid_emails']);
+				$each_rule = @$rules['valid_emails'];
 				$str.= $each_rule !== false ? '@example.com' : '' ;
 	
 				//valid_date
-				$each_rule = \Util::get(@$rules['valid_date']);
+				$each_rule = @$rules['valid_date'];
 				$str = $each_rule !== false ? date('Y-m-d H:i:s') : $str ;
 	
 				//valid_url
-				$each_rule = \Util::get(@$rules['valid_url']);
+				$each_rule = @$rules['valid_url'];
 				$str = $each_rule !== false ? 'http://example.com' : $str ;
 	
 				//valid_ip
-				$each_rule = \Util::get(@$rules['valid_ip']);
+				$each_rule = @$rules['valid_ip'];
 				$str = $each_rule !== false ? '1.1.1.1' : $str ;
 	
 				//numeric_min
-				$each_rule = \Util::get(@$rules['numeric_min']);
+				$each_rule = @$rules['numeric_min'];
 				$str = $each_rule !== false ? intval($each_rule[0]) : $str ;
 	
 				//numeric_max
-				$each_rule = \Util::get(@$rules['numeric_max']);
+				$each_rule = @$rules['numeric_max'];
 				$str = $each_rule !== false ? intval($each_rule[0]) : $str ;
 	
 				//numeric_between
-				$each_rule = \Util::get(@$rules['numeric_between']);
+				$each_rule = @$rules['numeric_between'];
 				$str = $each_rule !== false ? intval($each_rule[0]) : $str ;
 	
 				$args[$property] = $str;
