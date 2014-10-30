@@ -109,9 +109,9 @@ if($is_user_logged_in):
 		
 			//user menu
 			$html.= '<div class="adminbar_user">';
-				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています"><span class="adminbar_icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\User\Controller_User::$userinfo["display_name"].'</span></a>';
+				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="ユーザメニューを開く:'.\Auth::get_userinfo('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get_userinfo('display_name').'</span></a>';
 				$html.= '<ul class="modal dropdown_list boxshadow">';
-				$html.= '<li class="show_if_smalldisplay"><span class="label">'.\User\Controller_User::$userinfo["display_name"].'</span></li>';
+				$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get_userinfo('display_name').'</span></li>';
 				if( ! $is_admin):
 					$html.= "<li><a href=\"{$home_uri}user/view/{$userinfo["user_id"]}\">ユーザ情報</a></li>";
 				endif;

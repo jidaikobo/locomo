@@ -60,11 +60,12 @@ Autoloader::add_classes(array(
 
 //core override class
 Autoloader::add_classes(array(
-	'Locomo\\Validation'  => PKGCOREPATH.'classes'.DS.'validation.php',
-	'Locomo\\Pagination'  => PKGCOREPATH.'classes'.DS.'pagination.php',
-	'Locomo\\Fieldset'    => PKGCOREPATH.'classes'.DS.'fieldset.php',
-	'Locomo\\Fieldset_Field'    => PKGCOREPATH.'classes'.DS.'fieldset/field.php',
-	'Locomo\\Module'      => PKGCOREPATH.'classes'.DS.'module.php',
+	'Locomo\\Auth'           => PKGCOREPATH.'classes'.DS.'auth.php',
+	'Locomo\\Validation'     => PKGCOREPATH.'classes'.DS.'validation.php',
+	'Locomo\\Pagination'     => PKGCOREPATH.'classes'.DS.'pagination.php',
+	'Locomo\\Fieldset'       => PKGCOREPATH.'classes'.DS.'fieldset.php',
+	'Locomo\\Fieldset_Field' => PKGCOREPATH.'classes'.DS.'fieldset/field.php',
+	'Locomo\\Module'         => PKGCOREPATH.'classes'.DS.'module.php',
 ));
 
 //always load module

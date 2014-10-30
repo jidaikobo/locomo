@@ -9,7 +9,7 @@ trait Controller_Traits_Testdata
 	{
 		//only at development
 		if(\Fuel::$env != 'development') die();
-		if(\User\Controller_User::$userinfo['user_id'] !== -2) die('forbidden');
+		if(\Auth::get_user_id() !== -2) die('forbidden');
 
 		//$test_datas
 		$model = $this->model_name;

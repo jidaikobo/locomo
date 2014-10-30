@@ -149,7 +149,7 @@ class Model_Test extends \Locomo\Model_Base
 		->set_value(@$obj->expired_at);
 
 		//is_visible - 可視属性
-		if(\User\Controller_User::$userinfo['user_id'] >= 0):
+		if(\Auth::get_user_id() >= 0):
 			$form->add(
 					'is_visible',
 					'可視属性',

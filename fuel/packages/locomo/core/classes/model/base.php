@@ -135,7 +135,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function authorized_option($options = array(), $mode = null)
 	{
-		$userinfo = \User\Controller_User::$userinfo;
+		$userinfo = \Auth::get_userinfo();
 		$controller = \Inflector::denamespace(\Request::main()->controller);
 		$controller = strtolower(substr($controller, 11));
 
@@ -143,8 +143,6 @@ class Model_Base extends \Orm\Model_Soft
 		if (\Acl\Controller_Acl::auth($controller.'/view_anyway', $userinfo)) {
 			static::disable_filter();
 		} else {
-
-
 			//モデルが持っている判定材料を、適宜$optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method):
 				$options = static::$authorize_method($controller, $userinfo, $options, $mode);

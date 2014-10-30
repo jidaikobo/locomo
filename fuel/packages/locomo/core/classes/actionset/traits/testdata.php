@@ -8,7 +8,7 @@ trait Actionset_Traits_Testdata
 	public static function actionset_add_testdata($module, $obj, $get_authed_url)
 	{
 		$url = '';
-		$usergroup_ids = \User\Controller_User::$userinfo['usergroup_ids'];
+		$usergroup_ids = \Auth::get_usergroups();
 
 		//ルート管理者のみ
 		if(in_array(-2, $usergroup_ids)):

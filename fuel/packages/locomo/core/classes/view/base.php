@@ -25,19 +25,19 @@ class View_Base extends \ViewModel
 		$view->set_global('site_title', \Config::get('site_title'));
 
 		//ユーザ情報
-		$view->set_global('userinfo', \User\Controller_User::$userinfo);
-		$view->set_global('is_user_logged_in', \User\Controller_User::$is_user_logged_in);
+		$view->set_global('userinfo', \Auth::get_user());
+		$view->set_global('is_user_logged_in', \Auth::is_user_logged_in());
 		$view->set_global('is_admin', false);
 		$view->set_global('is_root',  false);
 		$view->set_global('is_guest', false);
-		if(\User\Controller_User::$userinfo['user_id'] == -1):
+		if(\Auth::get_user_id() == -1):
 			$view->set_global('is_admin', true);
 		endif;
-		if(\User\Controller_User::$userinfo['user_id'] == -2):
+		if(\Auth::get_user_id() == -2):
 			$view->set_global('is_root',  true);
 			$view->set_global('is_admin', true);
 		endif;
-		if(\User\Controller_User::$userinfo['user_id'] == 0):
+		if(\Auth::get_user_id() == 0):
 			$view->set_global('is_guest', true);
 			$view->set_global('display_name', '');
 		endif;
@@ -68,7 +68,7 @@ class View_Base extends \ViewModel
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
 		if( \Request::main()->route->action == 'login' && \Config::get('use_login_as_top') ) $class_arr[] = 'home';
-		if(\User\Controller_User::$is_user_logged_in) $class_arr[] = 'loggedin';
+		if(\Auth::is_user_logged_in()) $class_arr[] = 'loggedin';
 		$view->set_global('body_class', implode($class_arr,' '));
 	}
 
@@ -99,11 +99,11 @@ class View_Base extends \ViewModel
 
 		$get_controllers = function($is_admin = false) {
 			//ログインした人向けのメニューなので、ゲストには何も返さない
-			if( ! \User\Controller_User::$is_user_logged_in) return false;
+			if( ! \Auth::is_user_logged_in()) return false;
 
 			//対象モジュールを取得する
 			$controllers = array();
-			$userinfo = \User\Controller_User::$userinfo;
+			$userinfo = \Auth::get_userinfo();
 			$n = 0 ;
 			foreach(\Config::get('module_paths') as $path):
 				foreach (glob($path.'*') as $dirname):
@@ -131,7 +131,7 @@ class View_Base extends \ViewModel
 					$links['order']    = $config['order_in_menu'];
 
 					//管理者はすべてのコントローラへのリンクを得る
-					if($userinfo['user_id'] <= -1):
+					if(\Auth::get_user_id() <= -1):
 						$controllers[$n] = $links;
 					else:
 						//管理者向けコントローラは表示しない

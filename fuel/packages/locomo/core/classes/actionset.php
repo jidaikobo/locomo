@@ -286,7 +286,7 @@ class Actionset
 	 */
 	public static function check_auth($module, $action)
 	{
-		return \Acl\Controller_Acl::auth($module.'/'.$action, \User\Controller_User::$userinfo);
+		return \Acl\Controller_Acl::auth($module.'/'.$action, \Auth::get_userinfo());
 	}
 
 	/**
@@ -295,6 +295,6 @@ class Actionset
 	 */
 	public static function check_owner_auth($module, $action, $obj)
 	{
-		return \Acl\Controller_Acl::owner_auth($module, $action, $obj, \User\Controller_User::$userinfo) ;
+		return \Acl\Controller_Acl::owner_auth($module, $action, $obj, \Auth::get_userinfo()) ;
 	}
 }

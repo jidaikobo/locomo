@@ -228,7 +228,7 @@ class Helper_Scaffold
 
 			//adminsだけは特別扱い
 			if(in_array($field, $admins)):
-				$form_definition_str.= "\t\tif(\User\Controller_User::\$userinfo['user_id'] >= 0):\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'hidden', 'value' => 1)\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\telse:\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'select', 'options' => array('0' => 'no', '1' => 'yes'), 'default' => 1{$class})\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\tendif;\n\n";
+				$form_definition_str.= "\t\tif(\Auth::get_user_id() >= 0):\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'hidden', 'value' => 1)\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\telse:\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'select', 'options' => array('0' => 'no', '1' => 'yes'), 'default' => 1{$class})\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\tendif;\n\n";
 				continue;
 			endif;
 

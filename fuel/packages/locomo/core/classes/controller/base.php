@@ -58,10 +58,10 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$request->add_path(PKGPROJPATH.'modules'.DS.$views_path_module.DS,true);
 
 		//ユーザ情報のセット
-		\User\Controller_User::set_userinfo();
+		\Auth::set_userinfo();
 
 		//profile表示はrootだけ（当然ながらConfigでtrueだったら計測はされる）
-		if(\User\Controller_User::$userinfo['user_id'] >= -1)
+		if(\Auth::get_user_id() >= -1)
 			\Fuel::$profiling = false;
 
 		//current_actionのセット
@@ -85,7 +85,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
-		$userinfo = \User\Controller_User::$userinfo;
+		$userinfo = \Auth::get_userinfo();
 
 		//ユーザ／ユーザグループ単位のACLを確認する。
 		$is_allow = \Acl\Controller_Acl::auth($this->current_action, $userinfo);
@@ -114,7 +114,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$use_login_as_top = \Config::get('use_login_as_top');
 		if(
 			$use_login_as_top && //configで設定
-			$userinfo['user_id'] == 0 && //ログイン画面はゲスト用
+			\Auth::get_user_id() == 0 && //ログイン画面はゲスト用
 			$this->request->module.DS.$method == 'content/home' //トップページを求められているとき
 		):
 			return \Response::redirect(\Uri::create('user/login'));
