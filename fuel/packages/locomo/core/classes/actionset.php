@@ -224,11 +224,12 @@ class Actionset
 		$arr = array();
 		foreach($obj as $url => $v):
 			if( ! $url || ! $v['menu_str']) continue;
+			$anchor_attr_loop = $anchor_attr;
 			$confirm_str = "return confirm('{$v['menu_str']}をしてよろしいですか？')";
-			$anchor_attr = @$v['confirm'] ?
-				$anchor_attr + array('onclick' => $confirm_str, 'onkeypress' => $confirm_str,) :
-				$anchor_attr;
-			$arr[] = \Html::anchor(\Uri::base().$url, $v['menu_str'], $anchor_attr);
+			$anchor_attr_loop = @$v['confirm'] ?
+				$anchor_attr_loop + array('onclick' => $confirm_str) :
+				$anchor_attr_loop;
+			$arr[] = \Html::anchor(\Uri::base().$url, $v['menu_str'], $anchor_attr_loop);
 		endforeach;
 
 		if( ! $arr) return false;

@@ -21,9 +21,6 @@ class Actionset_Base extends Actionset
 			$url = self::check_auth($module, 'create') ? $url_str : '' ;
 		endif;
 
-		//edit画面では出さない
-//		$url = (strpos( \Uri::string(), 'edit' ) !== false) ? '' : $url;
-
 		$retvals = array(
 			'url'          => @$url ?: '' ,
 			'action_name'  => '新規作成',
