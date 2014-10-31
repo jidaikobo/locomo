@@ -1,163 +1,38 @@
 <?php
 namespace User;
-\Module::load('bulk');
-
 class Controller_User extends \Locomo\Controller_Crud
 {
 	//trait
+	use \Locomo\Controller_Traits_Testdata;
 	use \Revision\Traits_Controller_Revision;
 	use \Bulk\Traits_Controller_Bulk;
 
 	/**
-	* @var user information
-	*/
-	public static $userinfo = array();
-
-	/**
-	* @var bool is_user_logged_in
-	*/
-	public static $is_user_logged_in = false;
-
-	/**
-	 * test datas
-	 */
-	protected $test_datas = array(
-		'user_name'    => 'text',
-		'display_name' => 'text',
-		'password'     => 'text:test',
-		'email'        => 'email',
-		'status'       => 'text:public',
-		'creator_id'   => 'int',
-		'modifier_id'  => 'int',
-	);
-
-	/**
-	 * set_userinfo()
-	 * ログイン中のユーザ情報のセット。
-	 * \Locomo\Controller_Base::before()から呼ばれる。
-	 */
-	public static function set_userinfo()
-	{
-		//set userinfo
-		$session = \Session::instance();
-		self::$userinfo = $session->get('user');
-
-		//is_user_logged_in
-		self::$is_user_logged_in = (self::$userinfo) ? true : false;
-
-		//guest
-		if( ! self::$userinfo['user_id']):
-			self::$userinfo['user_id'] = 0;
-		endif;
-		self::$userinfo['usergroup_ids'][] = 0;
-
-		//acl
-		$acls = \Config::get('always_allowed');
-
-		//管理者はACLは原則全許可なので確認しない
-		if(self::$userinfo['user_id'] >= 0):
-			$acl_tmp = \Acl\Model_Acl::find('all',
-				array(
-					'where' => array(array('usergroup_id', 'IN' , self::$userinfo['usergroup_ids']))
-				)
-			);
-	
-			foreach($acl_tmp as $v):
-				$acls[] = $v->controller .'/'.$v->action;
-			endforeach;
-		endif;
-
-		self::$userinfo['acls'] = array_unique($acls);
-	}
-
-	/**
 	 * action_login()
 	 */
-	public function action_login($redirect = NULL)
+	public function action_login()
 	{
-		//redirect
-		$redirect_decode = $redirect ? base64_decode($redirect) : \URI::base() ;
+		$ret = \Input::param('ret', @$_SERVER['HTTP_REFERER']);
+		$ret = $ret == null ? '/' : $ret ;
 
 		//ログイン済みのユーザだったらログイン画面を表示しない
-		if(self::$is_user_logged_in):
-			\Session::set_flash( 'error', 'あなたは既にログインしています');
-			\Response::redirect($redirect_decode);
+		if(\Auth::is_user_logged_in()):
+			\Session::set_flash('error', 'あなたは既にログインしています');
+			\Response::redirect($ret);
 		endif;
 
 		//ログイン処理
 		if(\Input::method() == 'POST'):
-			//Banされたユーザだったら追い返す
-			$user_model = \User\Model_User::forge();
-			if( ! $user_model::check_deny(\Input::post("account"))):
-				$user_ban_setting = \Config::get('user_ban_setting');
-				$limit_count = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
-				$limit_time  = $user_ban_setting ? $user_ban_setting['limit_time'] : 300 ;
-				\Session::set_flash( 'error', "{$limit_count}回のログインに失敗したので、{$limit_time}秒間ログインはできません。");
-				\Response::redirect('/');
-			endif;
-
 			$account = \Input::post('account');
 			$password = \Input::post('password');
-			if($account == null || $password == null):
-				\Session::set_flash( 'error', 'ユーザ名とパスワードの両方を入力してください');
-				\Response::redirect('user/login/');
-			endif;
-			//flag and value
-			$user = array();
-
-			//rootユーザ
-			if($account == ROOT_USER_NAME && $password == ROOT_USER_PASS):
-				$user['user_id']       = -2;
-				$user['user_name']     = 'root';
-				$user['display_name']  = 'root権限管理者';
-				$user['usergroup_ids'] = array(-2);
-			endif;
-
-			//adminユーザ
-			if($account == ADMN_USER_NAME && $password == ADMN_USER_PASS):
-				$user['user_id']       = -1;
-				$user['user_name']     = 'admin';
-				$user['display_name']  = '管理者';
-				$user['usergroup_ids'] = array(-1);
-			endif;
-
-			//データベースで確認
-			if( ! $user || ! @is_numeric($user['user_id'])):
-				$user_obj = Model_User::find('first', array(
-					'where' => array(
-						array('password', '=', Model_User::hash($password)),
-						array('created_at', '<=', date('Y-m-d H:i:s')),
-						array(
-							array('expired_at', '>=', date('Y-m-d H:i:s')),
-							'or' => array('expired_at', 'is', null),
-						),
-						array(
-							array('user_name', '=', $account),
-							'or' => array('email', '=', $account),
-						)),
-					)
-				);
-			if ($user_obj) {
-				$user['user_id']       = $user_obj->id;
-				$user['user_name']     = $user_obj->user_name;
-				$user['display_name']  = $user_obj->display_name;
-				$user['usergroup_ids'] = array_keys($user_obj->usergroup);
-			}
-			endif;
 
 			//ログイン成功
-			if($user):
-				//session
-				$session = \Session::instance();
-				$session->set('user', $user);
-				$user_model::add_user_log($account, $password, true);
-
-				//redirect
+			if(\Auth::login($account, $password)):
 				\Session::set_flash( 'success', 'ログインしました。');
-				\Response::redirect($redirect_decode);
-			//ログイン失敗
+				\Response::redirect($ret);
 			else:
-				$user_model::add_user_log($account, $password, false);
+				//ログイン失敗
+				\Auth::add_user_log($account, $password, false);
 				\Session::set_flash( 'error', 'ログインに失敗しました。入力内容に誤りがあります。');
 				\Response::redirect('user/login/');
 			endif;
@@ -165,7 +40,7 @@ class Controller_User extends \Locomo\Controller_Crud
 
 		//view
 		$view = \View::forge('login');
-		$view->set('ret', $redirect);
+		$view->set('ret', $ret);
 		$view->set_global('title', 'ログイン');
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -175,11 +50,7 @@ class Controller_User extends \Locomo\Controller_Crud
 	 */
 	public function action_logout()
 	{
-		//session
-		$session = \Session::instance();
-		$session->delete('user');
-		\Session::set_flash( 'success', 'ログアウトしました');
-		\Response::redirect('user/login/');
+		\Auth::logout();
 	}
 
 	/**

@@ -2,11 +2,16 @@
 namespace User;
 class Model_User extends \Locomo\Model_Base
 {
+	/**
+	 * vals
+	 */
 	protected static $_table_name = 'users';
-
 	public static $_subject_field_name = 'user_name';
 	public static $_creator_field_name = 'id';
 
+	/**
+	 * $_properties
+	 */
 	protected static $_properties = array(
 		'id',
 		'user_name',
@@ -14,7 +19,7 @@ class Model_User extends \Locomo\Model_Base
 		'password',
 		'email',
 		'activation_key',
-		'status',
+		'is_visible',
 		'last_login_at',
 		'deleted_at',
 		'created_at',
@@ -24,6 +29,9 @@ class Model_User extends \Locomo\Model_Base
 		'modifier_id',
 	);
 
+	/**
+	 * $_many_many
+	 */
 	protected static $_many_many = array(
 		'usergroup' => array(
 			'key_from' => 'id',
@@ -37,11 +45,17 @@ class Model_User extends \Locomo\Model_Base
 		)
 	);
 
+	/**
+	 * $_soft_delete
+	 */
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,
 	);
 
+	/**
+	 * $_observers
+	 */
 	protected static $_observers = array(
 		'Orm\Observer_CreatedAt' => array(
 			'events' => array('before_insert'),
@@ -149,14 +163,6 @@ class Model_User extends \Locomo\Model_Base
 			->add_rule('max_length', 255)
 			->add_rule('unique', "users.email.{$id}");
 
-		//status
-		$form->add(
-				'status',
-				'status',
-				array('type' => 'hidden')
-			)
-			->set_value(@$obj->status);
-
 		//created_at
 		$form->add(
 				'created_at',
@@ -166,7 +172,7 @@ class Model_User extends \Locomo\Model_Base
 			->set_value(@$obj->created_at);
 //未来の日付を入れると、予約項目になります。
 
-		//email
+		//deleted_at
 		$form->add(
 				'deleted_at',
 				'削除日',
@@ -174,97 +180,26 @@ class Model_User extends \Locomo\Model_Base
 			)
 			->set_value(@$obj->deleted_at);
 
+		//is_visible
+		if(\Auth::get_user_id() > 0):
+			$form->add(
+					'is_visible',
+					'可視属性',
+					array('type' => 'hidden', 'default' => 1)
+				)
+				->add_rule('required')
+				->set_value(@$obj->is_visible);
+		else:
+			$form->add(
+					'is_visible',
+					'可視属性',
+					array('type' => 'select', 'options' => array('0' => '不可視', '1' => '可視'), 'default' => 1)
+				)
+				->add_rule('required')
+				->set_value(@$obj->is_visible);
+		endif;
+
 		static::$_cache_form_definition = $form;
 		return $form;
-	}
-
-	/**
-	 * hash()
-	 */
-	public static function hash($str)
-	{
-		return md5($str);
-	}
-
-	/**
-	 * check_deny()
-	 * 
-	 * @param type $account
-	 * @return boolean
-	 * by shimizu@hinodeya at bems
-	 */
-	public static function check_deny($account = null)
-	{
-		if($account == null) return false;
-		$user_ban_setting = \Config::get('user_ban_setting');
-		$limit_deny_time  = $user_ban_setting ? $user_ban_setting['limit_deny_time'] : 10 ;
-		$limit_count      = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
-
-		$list = \DB::select()->from("loginlog")
-						->where("login_id", $account)
-						->where("ipaddress", $_SERVER["REMOTE_ADDR"])
-						->where("add_at", ">=", \DB::expr("NOW() - INTERVAL " . $limit_deny_time . " MINUTE"))
-						->where("count", ">=", $limit_count)
-						->execute()->as_array();
-
-		return (count($list) ? false : true);
-	}
-
-	/**
-	 * add_user_log()
-	 * ログを追加
-	 * @param type $account
-	 * @param type $password
-	 * @param type $status
-	 * @return boolean
-	 * by shimizu@hinodeya at bems
-	 */
-	public static function add_user_log($account = null, $password = null, $status = false)
-	{
-		if($account == null || $password == null) return false;
-		$password = self::hash($password);
-
-		//設定値
-		$user_ban_setting = \Config::get('user_ban_setting');
-		$limit_time  = 10 ;
-		$limit_count = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
-
-		// 既にデータがあるかどうか
-		$list = \DB::select()->from("loginlog")
-						//->where("login_id", $account)
-						->where("status", 0)
-						->where("ipaddress", $_SERVER["REMOTE_ADDR"])
-						->where("add_at", ">=", \DB::expr("NOW() - INTERVAL ".$limit_time." SECOND"))
-						->limit(1)
-						->order_by("add_at", "DESC")
-						->execute()->as_array();
-
-		// データがあればカウントアップ
-		if (count($list) && ! $status) {
-			\DB::update("loginlog")->value("count", $list[0]['count'] + 1)
-					->where("loginlog_id", $list[0]['loginlog_id'])
-					->execute();
-
-			// 回数が一定以上あればfalseを返却
-			if ($limit_count <= $list[0]['count'] + 1) {
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			// 成功時データを追加
-			\DB::insert("loginlog")
-					->set(array(
-						"login_id"   => $account,
-						"login_pass" => $password,
-						"status"     => $status,
-						"ipaddress"  => $_SERVER['REMOTE_ADDR'],
-						"add_at"     => \DB::expr("NOW()"),
-						"count"      => 1
-					))->execute();
-
-			return true;
-		}
-		return;
 	}
 }

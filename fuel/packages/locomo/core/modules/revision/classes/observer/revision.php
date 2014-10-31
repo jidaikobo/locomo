@@ -3,6 +3,7 @@ namespace Revision;
 class Observer_Revision extends \Orm\Observer
 {
 	static $delete = false;
+	static $create = false;
 
 	/**
 	 * __construct
@@ -17,6 +18,7 @@ class Observer_Revision extends \Orm\Observer
 	public function after_insert(\Orm\Model $obj)
 	{
 		$args = $this->insert_revision($obj, 'create');
+		static::$create = true;
 	}
 
 	/**
@@ -24,8 +26,8 @@ class Observer_Revision extends \Orm\Observer
 	 */
 	public function after_save(\Orm\Model $obj)
 	{
-		//deleteの際は、saveが走るので、その抑止
-		if(static::$delete) return;
+		//delete、createの際は、saveが走るので、その抑止
+		if(static::$delete || static::$create) return;
 
 		$operation = 'update';
 
@@ -82,7 +84,7 @@ class Observer_Revision extends \Orm\Observer
 		$primary_key = $obj::get_primary_keys('first');
 		$model_name = get_class($obj);
 		$form = $model_name::form_definition('revision_'.$counter);
-		foreach($form->get_fields() as $property => $v):
+		foreach($form->field() as $property => $v):
 			if( ! isset($obj->{$property})) continue;
 			$tmp->{$property} = $obj->{$property};
 		endforeach;
@@ -95,7 +97,7 @@ class Observer_Revision extends \Orm\Observer
 		$args['comment']     = \Input::post('revision_comment') ?: '';
 		$args['created_at']  = date('Y-m-d H:i:s');
 		$args['operation']   = $operation;
-		$args['modifier_id'] = isset($obj->modifier_id) ? $obj->modifier_id : 0;
+		$args['modifier_id'] = \Auth::get_user_id();
 
 		//save revision
 		$model = \Revision\Model_Revision::forge($args);

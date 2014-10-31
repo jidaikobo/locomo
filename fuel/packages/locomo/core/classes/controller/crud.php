@@ -3,8 +3,7 @@ namespace Locomo;
 class Controller_Crud extends Controller_Base
 {
 
-	// public $template = 'index_admin';
-	public $template = 'index';
+	public $template = 'index_admin';
 
 	/**
 	 * @var array default setting of pagination
@@ -29,104 +28,6 @@ class Controller_Crud extends Controller_Base
 		'all'       => '(削除を含む全項目)',
 	);
 
-	/*
-	 * action_index_sample()
-	 */
-	public function action_new_index() {
-
-		$model = $this->model_name ;
-
-		$view = \View::forge($this->template);
-
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find(array(), null));
-
-		$view->set_safe('pagination', \Pagination::create_links());
-
-		//var_dump(\Pagination::get('total_items'));
-		$view->set('hit', \Pagination::get('total_items')); ///
-
-		//view
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', sprintf('新デックス'));
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
-
-
-	}
-
-	/*
-	 * @param array    $options conditions for find
-	 * @param str      $model model class name
-	 * @param bool|str $deleted
-	 * @param bool     $use_get_query use get query paramaters
-	 * @param array    $pagination_config overwrite $this->pagination_config
-	 *
-	 * @return Model finded
-	 */
-	public function paginated_find($options = array(), $model = null, $deleted = false, $use_get_query = true, $pagination_config = null) {
-
-		is_null($model) and $model = $this->model_name;
-		$action = \Request::main()->action;
-
-		if ($use_get_query) {
-			$input_get = \Input::get();
-		} else {
-			$input_get = array();
-		}
-		if ($use_get_query and \Input::get()) {
-			if (\Input::get('orders')) {
-				$orders = array();
-				foreach (\Input::get('orders') as $k => $v) {
-					$orders[$k] = $v;
-				}
-				$options['order_by'] = $orders;
-			}
-			if (\Input::get('searches')) {
-				foreach (\Input::get('searches') as $k => $v) {
-					$options['where'][] = array($k, '=', $v);
-				}
-			}
-			if (\Input::get('likes')) {
-				$likes = array();
-				foreach (\Input::get('likes') as $k => $v) {
-					$options['where'][] = array($k, 'LIKE', '%' . $v . '%');
-				}
-			}
-		}
-
-		if ($deleted === 'disabled') {
-			$model::disable_filter();
-			$count = count($model::find('all', $options));
-			$deleted = false;
-		} elseif($deleted) {
-			$count = count($model::find_deleted('all', $options));
-		} else {
-			$count = $model::count($options);
-		}
-
-		!is_null($pagination_config) and $pagination_config = array_merge($this->pagination_config, $pagination_config);
-
-		$pagination_config['total_items'] = $count;
-		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $input_get);
-
-		if (isset($pagination_config['per_page'])) $options['limit'] = $pagination_config['per_page'];
-		\Pagination::set_config($pagination_config);
-		if (!isset($pagination_config['per_page'])) $options['limit'] = \Pagination::get('per_page');
-		$options['offset'] = \Pagination::get('offset');
-
-		if ($deleted === 'disabled') {
-			$model::disable_filter();
-			return $model::find('all', $options);
-			$deleted = false;
-		} elseif($deleted) {
-			return $model::find_deleted('all', $options);
-		} else {
-			return $model::find('all', $options);
-		}
-
-	}
-
 
 	/**
 	 * action_index_admin()
@@ -134,7 +35,6 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_admin()
 	{
-		$this->template = 'index_admin';
 		$view = \View::forge($this->template);
 
 		// find & set pagination_config
@@ -147,13 +47,13 @@ class Controller_Crud extends Controller_Base
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
-
 
 	/**
 	 * action_index()
 	 */
 	public function action_index()
 	{
+		$this->template = 'index';
 		$view = \View::forge($this->template);
 
 		// find & set pagination_config
@@ -166,7 +66,6 @@ class Controller_Crud extends Controller_Base
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
-
 
 	/**
 	 * action_index_yet()
@@ -227,9 +126,9 @@ class Controller_Crud extends Controller_Base
 	{
 		$model = $this->model_name;
 
-		if (!isset($model::properties()['status'])) throw new \HttpNotFoundException;
+		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
 
-		$options['where'][] = array('status', '=', 'invisible');
+		$options['where'][] = array('is_visible', '=', 0);
 
 		$view = \View::forge($this->template);
 
@@ -271,7 +170,6 @@ class Controller_Crud extends Controller_Base
 	public function action_index_all() {
 		$model = $this->model_name ;
 
-		$this->template = 'index_admin';
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
 		$view = \View::forge($this->template);
@@ -497,7 +395,6 @@ class Controller_Crud extends Controller_Base
 		return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
 	}
 
-
 	/**
 	 * action_delete_deleted()
 	 */
@@ -550,4 +447,81 @@ class Controller_Crud extends Controller_Base
 		$model = $this->model_name ;
 		$this->response($model::find_item($id));
 	}
+
+
+	/*
+	 * @param array    $options conditions for find
+	 * @param str      $model model class name
+	 * @param bool|str $deleted
+	 * @param bool     $use_get_query use get query paramaters
+	 * @param array    $pagination_config overwrite $this->pagination_config
+	 *
+	 * @return Model finded
+	 */
+	public function paginated_find($options = array(), $model = null, $deleted = false, $use_get_query = true, $pagination_config = null) {
+
+		is_null($model) and $model = $this->model_name;
+		$action = \Request::main()->action;
+
+		if ($use_get_query) {
+			$input_get = \Input::get();
+		} else {
+			$input_get = array();
+		}
+		if ($use_get_query and \Input::get()) {
+			if (\Input::get('orders')) {
+				$orders = array();
+				foreach (\Input::get('orders') as $k => $v) {
+					$orders[$k] = $v;
+				}
+				$options['order_by'] = $orders;
+			}
+			if (\Input::get('searches')) {
+				foreach (\Input::get('searches') as $k => $v) {
+					if ($v == false) continue;
+					$options['where'][] = array($k, '=', $v);
+				}
+			}
+			if (\Input::get('likes')) {
+				$likes = array();
+				foreach (\Input::get('likes') as $k => $v) {
+					if ($v == false) continue;
+					$options['where'][] = array($k, 'LIKE', '%' . $v . '%');
+				}
+			}
+		}
+
+		if ($deleted === 'disabled') {
+			$model::disable_filter();
+			$count = count($model::find('all', $options));
+			$deleted = false;
+		} elseif($deleted) {
+			$count = count($model::find_deleted('all', $options));
+		} else {
+			$count = $model::count($options);
+		}
+
+		$pagination_config = $pagination_config ? array_merge($this->pagination_config, $pagination_config) : $this->pagination_config;
+
+		$pagination_config['total_items'] = $count;
+		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $input_get);
+
+		if (isset($pagination_config['per_page'])) $options['limit'] = $pagination_config['per_page'];
+		\Pagination::set_config($pagination_config);
+		if (!isset($pagination_config['per_page'])) $options['limit'] = \Pagination::get('per_page');
+		$options['offset'] = \Pagination::get('offset');
+
+		if ($deleted === 'disabled') {
+			$model::disable_filter();
+			return $model::find('all', $options);
+			$deleted = false;
+		} elseif($deleted) {
+			return $model::find_deleted('all', $options);
+		} else {
+			return $model::find('all', $options);
+		}
+
+	}
+
+
 }

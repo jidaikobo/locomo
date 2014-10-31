@@ -45,6 +45,7 @@ class Model_Base extends \Orm\Model_Soft
 		//depend_modules
 		parent::__construct($data, $new, $view, $cache);
 		foreach (static::$_depend_modules as $module) {
+			var_dump($module);
 			\Module::load($module);
 		}
 
@@ -134,7 +135,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function authorized_option($options = array(), $mode = null)
 	{
-		$userinfo = \User\Controller_User::$userinfo;
+		$userinfo = \Auth::get_userinfo();
 		$controller = \Inflector::denamespace(\Request::main()->controller);
 		$controller = strtolower(substr($controller, 11));
 
@@ -216,7 +217,7 @@ class Model_Base extends \Orm\Model_Soft
 			isset(static::properties()[$column]) &&
 			! \Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo)
 		) {
-			$options['where'][] = array($column, '=', 'false');
+			$options['where'][] = array($column, '=', true);
 		}
 		return $options;
 	}

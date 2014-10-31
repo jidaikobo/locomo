@@ -1,14 +1,14 @@
 <?php
 namespace Fuel\Migrations;
-class Create_===MN===
+class Create_###MN###
 {
 	public function up()
 	{
-===UP===
+###UP###
 	}
 
 	public function down()
 	{
-===DOWN===
+###DOWN###
 	}
 }

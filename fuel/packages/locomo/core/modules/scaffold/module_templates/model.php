@@ -1,22 +1,18 @@
 <?php
-namespace ===NAME===;
-class Model_===NAME=== extends \Locomo\Model_Base
+namespace ###NAME###;
+class Model_###NAME### extends \Locomo\Model_Base
 {
 //	use \Workflow\Traits_Model_Workflow;
 
-	protected static $_table_name = '===TABLE_NAME===';
+	protected static $_table_name = '###TABLE_NAME###';
 	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
 
 	protected static $_properties = array(
-===FIELD_STR===
-// 'workflow_status',
-	);
+###FIELD_STR###	);
 
 	protected static $_depend_modules = array();
 
-	/**
-	 * $_option_options - see sample at \User\Model_Usergroup
-	 */
+	//$_option_options - see sample at \User\Model_Usergroup
 	public static $_option_options = array();
 
 /*
@@ -40,30 +36,11 @@ class Model_===NAME=== extends \Locomo\Model_Base
 	);
 */
 
-/*
 	//observers
-	protected static $_soft_delete = array(
-		'deleted_field'   => 'deleted_at',
-		'mysql_timestamp' => true,
-	);
+###DLT_FLD###
 	protected static $_observers = array(
-		'Orm\Observer_CreatedAt' => array(
-			'events' => array('before_insert'),
-			'mysql_timestamp' => true,
-		),
-		'Orm\Observer_UpdatedAt' => array(
-			'events' => array('before_save'),
-			'mysql_timestamp' => true,
-		),
-		'Locomo\Observer_Expired' => array(
-			'events' => array('before_insert', 'before_save'),
-			'properties' => array('expired_at'),
-		),
-//		'Workflow\Observer_Workflow' => array(
-//			'events' => array('before_insert', 'before_save','after_load'),
-//		),
+###OBSRVR###
 	);
-*/
 
 	/**
 	 * form_definition()
@@ -73,7 +50,7 @@ class Model_===NAME=== extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null, $id = '')
+	public static function form_definition($factory, $obj = null)
 	{
 		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 
@@ -85,13 +62,13 @@ class Model_===NAME=== extends \Locomo\Model_Base
 			->add_rule('required')
 			->add_rule('max_length', 50)
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
-			->add_rule('unique', "users.user_name.{$id}");
+			->add_rule('unique', "users.user_name.".@$obj->id);
 			->add_rule('required')
 			->add_rule('valid_email')
 			->add_rule('max_length', 255)
-			->add_rule('unique', "users.email.{$id}");
+			->add_rule('unique', "users.email.".@$obj->id);
 */
-===FORM_DEFINITION===
+###FORM_DEFINITION###
 
 		static::$_cache_form_definition = $form;
 		return $form;

@@ -72,7 +72,7 @@ trait Traits_Controller_Option
 			$args['data']        = serialize($tmps);
 			$args['comment']     = \Input::post('revision_comment') ?: '';
 			$args['created_at']  = date('Y-m-d H:i:s');
-			$args['modifier_id'] = \User\Controller_User::$userinfo['user_id'];
+			$args['modifier_id'] = \Auth::get_user_id();
 			$rev_model = \Revision\Model_Revision::forge($args);
 			$rev_model->insert_revision();
 

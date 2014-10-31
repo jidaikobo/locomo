@@ -215,24 +215,25 @@ class Actionset
 	}
 
 	/**
-	 * get_menu_html()
-	 * in progress
+	 * generate_menu_html()
 	 */
-	public static function get_menu_html($module = null, $realm = null, $ul_attr = array(), $anchor_attr = array(), $obj = null)
+	public static function generate_menu_html($obj, $ul_attr = array(), $anchor_attr = array())
 	{
-		$items = static::get_menu($realm, $obj);
-		if( ! $items) return false;
+		if( ! $obj) return false;
 
 		$arr = array();
-		foreach($items as $item):
-			$arr[] = \Html::anchor(
-				$item['url'],
-				isset($item['menu_str']) ? $item['menu_str'] : '',
-				$anchor_attr
-			);
+		foreach($obj as $url => $v):
+			if( ! $url || ! $v['menu_str']) continue;
+			$confirm_str = "return confirm('{$v['menu_str']}をしてよろしいですか？')";
+			$anchor_attr = @$v['confirm'] ?
+				$anchor_attr + array('onclick' => $confirm_str, 'onkeypress' => $confirm_str,) :
+				$anchor_attr;
+			$arr[] = \Html::anchor(\Uri::base().$url, $v['menu_str'], $anchor_attr);
 		endforeach;
 
-		return \Html::ul($items, $attr);
+		if( ! $arr) return false;
+
+		return \Html::ul($arr, $ul_attr);
 	}
 
 	/**
@@ -285,7 +286,7 @@ class Actionset
 	 */
 	public static function check_auth($module, $action)
 	{
-		return \Acl\Controller_Acl::auth($module.'/'.$action, \User\Controller_User::$userinfo);
+		return \Acl\Controller_Acl::auth($module.'/'.$action, \Auth::get_userinfo());
 	}
 
 	/**
@@ -294,6 +295,6 @@ class Actionset
 	 */
 	public static function check_owner_auth($module, $action, $obj)
 	{
-		return \Acl\Controller_Acl::owner_auth($module, $action, $obj, \User\Controller_User::$userinfo) ;
+		return \Acl\Controller_Acl::owner_auth($module, $action, $obj, \Auth::get_userinfo()) ;
 	}
 }

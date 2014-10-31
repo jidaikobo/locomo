@@ -117,7 +117,7 @@ class Model_Sample extends \Locomo\Model_Base
 		$form->add(
 			'name',
 			'samples表題',
-			array('type' => 'text', 'rows' => 7, 'style' => 'width:100%;')
+			array('type' => 'text', 'rows' => 7, 'style' => 'width:100%;', 'aria-label' => 'test_id')
 		)
 		->add_rule('required')
 		->add_rule('max_length', 50)
@@ -131,7 +131,6 @@ class Model_Sample extends \Locomo\Model_Base
 		)
 		->set_value(@$obj->belongsto_id);
 
-		/*
 		// hasone フォーム
 		$ho_form = Model_Hasone::form_definition('hasone', $obj->hasone ?: $obj->hasone = Model_Hasone::forge())->populate($obj->hasone);
 		$ho_form->set_input_name_array();
@@ -143,7 +142,6 @@ class Model_Sample extends \Locomo\Model_Base
 
 		// hasmany フォーム
 		$form->add(\Fieldset::forge('hasmany')->set_tabular_form('Sample\Model_Hasmany', 'hasmany', $obj, 3));
-		 */
 
 
 		// manymany checkbox

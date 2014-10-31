@@ -63,10 +63,17 @@ class Model_Acl extends \Orm\Model
 	public static function get_users()
 	{
 		$options['select'][] = 'user_name';
-		$options['where'][] = array('created_at', '<=', date('Y-m-d'));
-		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
+//		$options['where'][] = array('is_visible', true);
+		$options['where'][] = array('created_at', '<', date('Y-m-d H:i:s'));
+		$options['where'][] = array(
+			array('expired_at', '>', date('Y-m-d H:i:s')),
+			'or' => array(
+				array('expired_at', 'is', null),
+			)
+		);
 		$users = array('none' => '選択してください');
 		$users += \User\Model_User::get_options($options, $label = 'user_name');
+
 		return $users;
 	}
 
@@ -81,6 +88,7 @@ class Model_Acl extends \Orm\Model
 		$controllers = array();
 		foreach($modules as $module):
 			$config = \Config::load(\Actionset::get_modules()[$module].DS.'config'.DS.$module.'.php', $module);
+			if(@$config['is_admin_only']) continue;
 			$controllers[$module] = $config['nicename'];
 		endforeach;
 		return array('none' => '選択してください') + $controllers;

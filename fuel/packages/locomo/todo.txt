@@ -1,8 +1,4 @@
-observerがきちんとmodifier_idを保存しているか確認。うまくいっていたら履歴で更新担当者を確認できるはず
-_option_optionsがあまりにもあまりなので、別ファイルにする？
-is_visibleをuserに実装
-workflowsテーブルをworkflowadminsテーブルにする
-ここらへんまでやったらimporterに本腰を入れよう
+add_testdataを分離
 
 ＊　＊　＊
 
@@ -13,7 +9,7 @@ workflowsテーブルをworkflowadminsテーブルにする
 
 ＊　＊　＊
 
-add_testdataをform_definitionでやりたい。
 scaffoldで作ったmigration:downに、削除対象モジュールのacl削除を入れる
 moduleと呼ぶべき変数をcontrollerとしている箇所が多いので、あとできれいにする
 でべちゃんにlocomoのロゴ＋アイコンをねだる。
+

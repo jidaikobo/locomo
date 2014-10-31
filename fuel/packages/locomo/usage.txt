@@ -68,9 +68,6 @@ locomoには、基本的なcrudを実装した基礎classがあります。こ�
 
 tableを作るとき、以下のカラム名は特別な仕事をします。
 
-//status:varchar[20]:null
-//項目の状態を示すカラムです
-
 is_visible:int:null
 可視属性フラグです。
 
@@ -80,8 +77,18 @@ deleted_at:datetime:null
 created_at:datetime:null
 作成日です。未来の日付が入っていると予約項目になります。
 
+updated_at:datetime:null
+更新日です。
+
 expired_at:datetime:null
 表示期日です。過去の日付が入っていると表示終了になります。
+
+creator_id:int[5]
+modifier_id:int[5]
+作成者idと編集者idが格納されます。
+
+workflow_status:varchar[50]
+ワークフローを適用するコントローラでは必要です。
 
 /*
  * revision（編集履歴）
@@ -125,3 +132,4 @@ scaffoldを使った場合はコメントアウトされています。
 /*
  * バルク編集
  */
+

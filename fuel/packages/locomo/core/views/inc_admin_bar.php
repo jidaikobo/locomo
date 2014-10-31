@@ -26,14 +26,7 @@ if($is_user_logged_in):
 				);
 				if($actions):
 					$html.= '<div class="admin_context">';
-						$html.= '<ul class="holizonal_list">';
-						foreach($actions as $url => $v):
-							if( ! $url) continue;
-							$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-							$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-							$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-						endforeach;
-						$html.= '</ul>';
+					$html.= \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 			$html.= '</div><!-- .adminbar_main -->';
@@ -49,14 +42,7 @@ if($is_user_logged_in):
 			);
 			if($actions):
 				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-					$html.= '<ul class="holizonal_list">';
-					foreach($actions as $url => $v):
-						if( ! $url) continue;
-						$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-						$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-						$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-					endforeach;
-					$html.= '</ul>';
+				$html.= \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
 				$html.='</div><!-- /.admin_ctrl -->';
 			endif;
 			
@@ -65,19 +51,14 @@ if($is_user_logged_in):
 				$controller,
 				$realm = 'option',
 				$item,
-				$get_authed_url = true
+				$get_authed_url = true,
+				$exceptions = array(),
+				$include_admin_only = true
 			);
 				if($actions):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"{$controller_name}の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"{$controller_name}の設定\"></span></a>";
-						$html.= '<ul class="modal dropdown_list boxshadow">';
-						foreach($actions as $url => $v):
-							if( ! $url) continue;
-							$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-							$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-							$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-						endforeach;
-						$html.= '</ul>';
+					$html.= \Actionset::generate_menu_html($actions, array('class'=>'modal dropdown_list boxshadow'));
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
 
@@ -115,14 +96,7 @@ if($is_user_logged_in):
 			if($actions):
 				$html.= '<div id="adminbar_index">';
 				$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
-				$html.= '<ul class="boxshadow">';
-				foreach($actions as $url => $v):
-					if( ! $url) continue;
-					$confirm_str = "'{$v['menu_str']}をしてよろしいですか？'";
-					$script = @$v['confirm'] ? ' onclick="return confirm('.$confirm_str.')" onkeypress="return confirm('.$confirm_str.')"' : '';
-					$html.= "<li><a href=\"{$home_uri}{$url}\"{$script}>{$v['menu_str']}</a></li>";
-				endforeach;
-				$html.= '</ul>';
+				$html.= \Actionset::generate_menu_html($actions, array('class'=>'boxshadow'));
 				$html.= '</div>';
 			endif;
 		*/
@@ -135,9 +109,9 @@ if($is_user_logged_in):
 		
 			//user menu
 			$html.= '<div class="adminbar_user">';
-				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています"><span class="adminbar_icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\User\Controller_User::$userinfo["display_name"].'</span></a>';
+				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="ユーザメニューを開く:'.\Auth::get_userinfo('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get_userinfo('display_name').'</span></a>';
 				$html.= '<ul class="modal dropdown_list boxshadow">';
-				$html.= '<li class="show_if_smalldisplay"><span class="label">'.\User\Controller_User::$userinfo["display_name"].'</span></li>';
+				$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get_userinfo('display_name').'</span></li>';
 				if( ! $is_admin):
 					$html.= "<li><a href=\"{$home_uri}user/view/{$userinfo["user_id"]}\">ユーザ情報</a></li>";
 				endif;

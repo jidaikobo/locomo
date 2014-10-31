@@ -1,6 +1,6 @@
 <?php
 namespace Scaffold;
-class Controller_Scaffold extends \Locomo\Controller_Crud
+class Controller_Scaffold extends \Locomo\Controller_Base
 {
 	/**
 	 * action_main()
@@ -23,7 +23,7 @@ class Controller_Scaffold extends \Locomo\Controller_Crud
 
 			if( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
-				return \Response::redirect(\Uri::create('/scaffold/main/'));
+//				return \Response::redirect(\Uri::create('/scaffold/main/'));
 			endif;
 
 			//vals
@@ -48,12 +48,10 @@ class Controller_Scaffold extends \Locomo\Controller_Crud
 			$config           = Helper_Scaffold::generate_config($cmd_orig);
 
 			//molding - view
-			$tpl_index  = Helper_Scaffold::generate_views_index($name);
-			$tpl_view   = Helper_Scaffold::generate_views_view($name, $cmds);
-			$tpl_form   = Helper_Scaffold::generate_views_form($name, $cmds);
-			$tpl_create = Helper_Scaffold::generate_views_create($name);
-			$tpl_edit   = Helper_Scaffold::generate_views_edit($name);
-			$tpl_option = Helper_Scaffold::generate_views_options($name);
+			$tpl_index        = Helper_Scaffold::generate_views_index($name, $cmd_orig);
+			$tpl_index_admin  = Helper_Scaffold::generate_views_index($name, $cmd_orig, true);
+			$tpl_view         = Helper_Scaffold::generate_views_view($name, $cmd_orig);
+			$tpl_edit         = Helper_Scaffold::generate_views_edit($name, $cmds);
 
 			//mkdir
 			$scfldpath = PKGPROJPATH.'modules/'.$name;
@@ -97,12 +95,9 @@ class Controller_Scaffold extends \Locomo\Controller_Crud
 			//views
 			if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');
 			Helper_Scaffold::putfiles($scfldpath.'/views/index.php', $tpl_index) ;
-			Helper_Scaffold::putfiles($scfldpath.'/views/index_admin.php', $tpl_index) ;
+			Helper_Scaffold::putfiles($scfldpath.'/views/index_admin.php', $tpl_index_admin) ;
 			Helper_Scaffold::putfiles($scfldpath.'/views/view.php', $tpl_view) ;
-			Helper_Scaffold::putfiles($scfldpath.'/views/_form.php', $tpl_form) ;
-			Helper_Scaffold::putfiles($scfldpath.'/views/create.php', $tpl_create) ;
 			Helper_Scaffold::putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
-			Helper_Scaffold::putfiles($scfldpath.'/views/option_samples.php', $tpl_option) ;
 
 			//messages
 			$messages   = array();

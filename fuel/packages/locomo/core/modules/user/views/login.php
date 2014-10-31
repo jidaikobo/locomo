@@ -19,7 +19,7 @@ locomo_attempt_focus();
 
 <h2><img src="/content/fetch_view/images/parts/logo.png" alt=""><?php echo $site_title ;?></h2>
 
-<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/'.$ret,'class' => 'login')); ?>
+<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/','class' => 'login')); ?>
 
 <!--ユーザ名かメールアドレス-->
 <div class="form_group">
@@ -35,6 +35,7 @@ locomo_attempt_focus();
 
 <?php
 //buttons
+echo \Form::hidden('ret', $ret);
 echo \Form::submit('submit', 'ログイン', array('class' => 'button primary button_block'));
 ?>
 

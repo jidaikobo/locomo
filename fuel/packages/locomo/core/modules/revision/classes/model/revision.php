@@ -3,6 +3,11 @@ namespace Revision;
 class Model_Revision extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'revisions';
+	protected static $_modifiers = array(
+		'-2' => 'ルート管理者',
+		'-1' => '管理者',
+		'0'  => 'ゲスト',
+	);
 
 	protected static $_properties = array(
 		'id',
@@ -13,12 +18,13 @@ class Model_Revision extends \Locomo\Model_Base
 		'operation',
 		'created_at',
 		'deleted_at',
+		'modifier_id',
 	);
 
 	protected static $pagination_config = array(
 		'uri_segment' => 4,
 		'num_links' => 5,
-		'per_page' => 10,
+		'per_page' => 20,
 		'template' => array(
 			'wrapper_start' => '<div class="pagination">',
 			'wrapper_end' => '</div>',
@@ -118,7 +124,9 @@ class Model_Revision extends \Locomo\Model_Base
 
 		//items
 		foreach($items as $k => $item):
-			$modifier_name = $item->modifier_id <= 0 ? '管理者' :\Users\User_Model::find($item->modifier_id, array('select'=>arra('display_name')));
+			$modifier_name = \User\Model_User::find($item->modifier_id, array('select'=>array('display_name')));
+			$modifier_name = $modifier_name ? $modifier_name : static::$_modifiers[$item->modifier_id];
+
 			$items[$k]->modifier_name = $modifier_name;
 		endforeach;
 
@@ -149,8 +157,8 @@ class Model_Revision extends \Locomo\Model_Base
 		//dataをunserialize（一覧表に編集者とsubjectの変遷を出すため）
 		foreach($items as $k => $item):
 			$items[$k]->data = unserialize($item->data);
-
-			$modifier_name = $item->modifier_id <= 0 ? '管理者' :\Users\User_Model::find($item->modifier_id, array('select'=>arra('display_name')));
+			$modifier_name = \User\Model_User::find($item->modifier_id, array('select'=>array('display_name')));
+			$modifier_name = $modifier_name ? static::$_modifiers[$item->modifier_id] : $modifier_name;
 			$items[$k]->modifier_name = $modifier_name;
 		endforeach;
 
@@ -195,6 +203,7 @@ class Model_Revision extends \Locomo\Model_Base
 		$force_save = $this->operation != $operation ? true : false;
 
 		//最新データと規定時間との比較 - $created_at がゼロのときは初めて
+		//コメントがあるときにも保存する
 		if(
 			! $force_save &&
 			$created_at && strtotime($created_at) >= time() - intval($config['revision_interval']) &&
@@ -203,7 +212,7 @@ class Model_Revision extends \Locomo\Model_Base
 			return;
 		endif;
 
-		//保存
+	//保存
 		$this->save();
 
 		return;

@@ -90,7 +90,7 @@ trait Traits_Actionset_Base_Workflow
 		$route_id        = $model::get_route($module, $obj->id);
 		$current_step_id = $model::get_current_step_id($route_id, $current_step);
 		$total_step      = $route_id ? $model::get_total_step($route_id) : -2;
-		$user_id         = \User\Controller_User::$userinfo['user_id'];
+		$user_id         = \Auth::get_user_id();
 		$url             = '';
 		$menu_str        = '';
 
