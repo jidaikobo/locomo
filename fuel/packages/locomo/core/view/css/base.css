@@ -501,10 +501,6 @@ textarea {
 	-ms-box-sizing: border-box;
 	box-sizing: border-box;
 }
-label+input[type="checkbox"],
-label+input[type="radio"] {
-	margin-right: .5em;
-}
 .btn,
 .button {
 	vertical-align: bottom;
