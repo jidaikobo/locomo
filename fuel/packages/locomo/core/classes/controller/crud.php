@@ -2,8 +2,13 @@
 namespace Locomo;
 class Controller_Crud extends Controller_Base
 {
+	public $_index_template = 'index_admin';
 
-	public $template = 'index_admin';
+	/**
+	 * Presenterに渡り、ACLを確認するときに使う
+	 * 個票を返すようなとき、その値を$_single_itemに渡すこと
+	 */
+	public $_single_item ;
 
 	/**
 	 * @var array default setting of pagination
@@ -35,7 +40,7 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_admin()
 	{
-		$view = \View::forge($this->template);
+		$view = \View::forge($this->_index_template);
 
 		// find & set pagination_config
 		$view->set('items',  $this->paginated_find());
@@ -53,8 +58,7 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index()
 	{
-		$this->template = 'index';
-		$view = \View::forge($this->template);
+		$view = \View::forge('index');
 
 		// find & set pagination_config
 		$view->set('items',  $this->paginated_find());
@@ -81,7 +85,7 @@ class Controller_Crud extends Controller_Base
 		$options['where'][] = array('created_at', '>=', date('Y-m-d'));
 		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
 
-		$view = \View::forge($this->template);
+		$view = \View::forge($this->_index_template);
 
 		// find & set pagination_config
 		$view->set('items',  $this->paginated_find($options, $model));
@@ -106,7 +110,7 @@ class Controller_Crud extends Controller_Base
 		$options['where'][] = array('created_at', '<=', date('Y-m-d'));
 		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
 
-		$view = \View::forge($this->template);
+		$view = \View::forge($this->_index_template);
 
 		// find & set pagination_config
 		$view->set('items',  $this->paginated_find($options, $model));
@@ -130,7 +134,7 @@ class Controller_Crud extends Controller_Base
 
 		$options['where'][] = array('is_visible', '=', 0);
 
-		$view = \View::forge($this->template);
+		$view = \View::forge($this->_index_template);
 
 		// find & set pagination_config
 		$view->set('items',  $this->paginated_find($options, $model));
@@ -151,7 +155,7 @@ class Controller_Crud extends Controller_Base
 		$model = $this->model_name ;
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
-		$view = \View::forge($this->template);
+		$view = \View::forge($this->_index_template);
 
 		// find & set pagination_config
 		$view->set('items',  $this->paginated_find(array(), null, true));
@@ -172,7 +176,7 @@ class Controller_Crud extends Controller_Base
 
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
-		$view = \View::forge($this->template);
+		$view = \View::forge($this->_index_template);
 
 		// find & set pagination_config
 		$view->set('items',  $this->paginated_find(array(), null, 'disabled'));
@@ -242,9 +246,12 @@ class Controller_Crud extends Controller_Base
 			\Response::redirect($this->request->module);
 		endif;
 
+		//$_single_item
+		$this->_single_item = $data['item'];
+
 		//view
 		$view = \View::forge('view');
-		$view->set_global('item', $data['item']);
+		$view->set_global('item', $this->_single_item);
 		$view->set_global('title', self::$nicename . '閲覧');
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
@@ -302,10 +309,13 @@ class Controller_Crud extends Controller_Base
 			endif;
 		endif;
 
+		//set _single_item
+		$this->_single_item = $obj;
+
 		//view
 		$view = \View::forge('edit');
 		$view->set_global('title', $title);
-		$view->set_global('item', $obj, false);
+		$view->set_global('item', $this->_single_item, false);
 		$view->set_global('form', $form, false);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
