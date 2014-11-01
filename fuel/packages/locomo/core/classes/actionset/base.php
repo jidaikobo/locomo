@@ -5,6 +5,7 @@ class Actionset_Base extends Actionset
 	/*
 	(str)  menu_str      メニューで用いる
 	(str)  url           メニューに表示するリンク先
+	(int)  order         表示順
 	(bool) is_admin_only 管理者のみに許された行為。ACL設定画面に表示されなくなる
 	(str)  action_name   ACL設定画面で用いる
 	(str)  explanation   ACL設定画面で用いる説明文
@@ -26,6 +27,7 @@ class Actionset_Base extends Actionset
 			'action_name'  => '新規作成',
 			'menu_str'     => '新規作成',
 			'explanation'  => '新規作成権限',
+			'order'        => 10,
 			'dependencies' => array(
 				'index',
 				'view',
@@ -57,6 +59,7 @@ class Actionset_Base extends Actionset
 			'action_name'  => '閲覧（通常項目）',
 			'menu_str'     => '閲覧',
 			'explanation'  => '通常項目の個票の閲覧権限です。',
+			'order'        => 5,
 			'dependencies' => array(
 				'view',
 			)

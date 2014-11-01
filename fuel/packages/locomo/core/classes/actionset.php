@@ -74,9 +74,10 @@ class Actionset
 	}
 
 	/**
-	 * get_all_actionset_single()
+	 * get_module_actionset()
+	 * 継承してもよいが、内部からしか使わないこと
 	 */
-	public static function get_all_actionset_single(
+	protected static function get_module_actionset(
 		$module = null,             //required
 		$realm = null,              //strings or array, null means all realms
 		$obj = null,                //to check auth
@@ -110,7 +111,7 @@ class Actionset
 		//整形
 		$retvals = static::$actions[$module];
 		foreach($retvals as $realm_name => $actions):
-			//除外
+			//exceptionsによる除外
 			if(in_array($realm_name, $exceptions)){
 				unset($retvals[$realm_name]);
 			}
@@ -119,7 +120,7 @@ class Actionset
 				//管理者向けのみのアクションセットを除外する
 				if( ! $include_admin_only){
 					if(isset($action['is_admin_only']) && $action['is_admin_only'] == true){
-						unset($retvals[$realm_name]->$action_k);
+						unset($retvals[$realm_name][$action_k]);
 					}
 				}
 
@@ -127,7 +128,15 @@ class Actionset
 				if($realm && $realm != 'all' && $realm_name != $realm){
 						unset($retvals[$realm_name]);
 				}
+
+				//orderを足しておく
+				$retvals[$realm_name][$action_k]['order'] = isset($retvals[$realm_name][$action_k]['order']) ? $retvals[$realm_name][$action_k]['order'] : 1000 ;
 			endforeach;
+
+			//orderを修正
+			$retvals[$realm_name] = \Arr::multisort($retvals[$realm_name], array(
+			'order' => SORT_ASC,
+			));
 		endforeach;
 
 		return $retvals ? $retvals : false;
@@ -153,13 +162,18 @@ class Actionset
 		$retvals = array();
 		foreach($modules as $each_module => $path):
 			if(
-				$retval = self::get_all_actionset_single(
+				$retval = self::get_module_actionset(
 					$each_module, $realm, $obj, $get_authed_url, $exceptions, $include_admin_only
 				)
 			){
 				$retvals[$each_module] = $retval;
 			}
 		endforeach;
+
+		//任意のrealmが存在しない場合
+		if( ! isset($retvals[$each_module][$realm])){
+			$retvals[$each_module][$realm] = array();
+		}
 
 		return $retvals ? $retvals : false ;
 	}
@@ -168,7 +182,7 @@ class Actionset
 	 * get_menu()
 	 */
 	public static function get_menu(
-		$module = null,             //required
+		$module = null,             //strings or array, null means all modules
 		$realm = null,              //strings or array, null means all realms
 		$obj = null,                //to check auth
 		$get_authed_url = false,    //to check auth
@@ -176,7 +190,7 @@ class Actionset
 		$include_admin_only = false //without set this switch, admin only will not be searched.
 	)
 	{
-		$actionsets = static::get_all_actionset_single(
+		$actionsets = static::get_actionset(
 			$module,
 			$realm,
 			$obj,
@@ -184,11 +198,32 @@ class Actionset
 			$exceptions,
 			$include_admin_only
 		);
-		$current = \Uri::string();
-		if( ! isset($actionsets[$realm])) return false;
+		if(! $actionsets) return false;
 
+		//generate_realm_array()
 		$retvals = array();
-		foreach($actionsets[$realm] as $v):
+		foreach($actionsets as $module => $each_actionsets):
+			foreach($each_actionsets as $each_realm => $actionset):
+				$retvals[$module][$each_realm] = static::generate_realm_array($actionset);
+			endforeach;
+		endforeach;
+
+		//指定されたものを返す
+		if($module == null && $realm == 'all') return $retvals;
+		if($module && $realm == 'all') return $retvals[$module];
+		if($module && $realm) return $retvals[$module][$realm];
+		if( ! $module) return $retvals[$module];
+		return $retvals;
+	}
+
+	/**
+	 * generate_realm_array()
+	 */
+	public static function generate_realm_array($actionsets)
+	{
+		$current = \Uri::string();
+		$retvals = array();
+		foreach($actionsets as $v):
 			if( ! isset($v['url'])  || empty($v['url'])) continue;
 
 			//urlはarrayの場合がある（workflowなど）
@@ -210,7 +245,6 @@ class Actionset
 				$retvals[$v['url']] = $v;
 			endif;
 		endforeach;
-
 		return $retvals;
 	}
 
@@ -264,6 +298,7 @@ class Actionset
 
 	/**
 	 * set_actionset()
+	 * static::$actionsを育てるmethod
 	 */
 	public static function set_actionset($module, $realm = null, $obj = null, $get_authed_url = false)
 	{
@@ -271,12 +306,12 @@ class Actionset
 		$methods = \Arr::filter_prefixed($methods, 'actionset_');
 		$methods = array_flip($methods);
 
-		static::$actions[$module][$realm] = (object) array();
+		static::$actions[$module][$realm] = array();
 
 		foreach($methods as $method):
 			$p_method = 'actionset_'.$method;
 			if( ! method_exists(get_called_class(), $p_method)) continue;
-			static::$actions[$module][$realm]->{$method} =
+			static::$actions[$module][$realm][$method] =
 				static::$p_method($module, $obj, $get_authed_url);
 		endforeach;
 	}
