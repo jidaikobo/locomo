@@ -18,9 +18,9 @@ if($is_user_logged_in):
 					$action_name = $title ? '：'.$title : '';
 					$html.="<h3>{$controller_name}{$action_name}</h3>"; //ツールバーのアンカーにも足す？
 				$html.= '</div><!-- /.admin_controller -->';
-				if(@$actions['base']):
+				if(@$actions[$controller]['base']):
 					$html.= '<div class="admin_context">';
-					$html.= \Actionset::generate_menu_html($actions['base'], array('class'=>'holizonal_list'));
+					$html.= \Actionset::generate_menu_html($actions[$controller]['base'], array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 			$html.= '</div><!-- .adminbar_main -->';
@@ -28,17 +28,17 @@ if($is_user_logged_in):
 	
 			//context menu2
 			$html.= '<div class="adminbar_sub">';			
-			if(@$actions['ctrl']):
+			if(@$actions[$controller]['ctrl']):
 				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-				$html.= \Actionset::generate_menu_html($actions['ctrl'], array('class'=>'holizonal_list'));
+				$html.= \Actionset::generate_menu_html($actions[$controller]['ctrl'], array('class'=>'holizonal_list'));
 				$html.='</div><!-- /.admin_ctrl -->';
 			endif;
 			
 				//option menu
-				if(@$actions['option']):
+				if(@$actions[$controller]['option']):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"{$controller_name}の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"{$controller_name}の設定\"></span></a>";
-					$html.= \Actionset::generate_menu_html($actions['option'], array('class'=>'modal dropdown_list boxshadow'));
+					$html.= \Actionset::generate_menu_html($actions[$controller]['option'], array('class'=>'modal dropdown_list boxshadow'));
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
 

@@ -56,11 +56,11 @@ Autoloader::add_classes(array(
 	'Locomo\\Actionset_Option' => PKGCOREPATH.'classes'.DS.'actionset/option.php',
 	'Locomo\\Actionset_Index'  => PKGCOREPATH.'classes'.DS.'actionset/index.php',
 	'Locomo\\Util'             => PKGCOREPATH.'classes'.DS.'util.php',
+	'Locomo\\Auth'             => PKGCOREPATH.'classes'.DS.'auth.php',
 ));
 
 //core override class
 Autoloader::add_classes(array(
-	'Locomo\\Auth'           => PKGCOREPATH.'classes'.DS.'auth.php',
 	'Locomo\\Validation'     => PKGCOREPATH.'classes'.DS.'validation.php',
 	'Locomo\\Pagination'     => PKGCOREPATH.'classes'.DS.'pagination.php',
 	'Locomo\\Fieldset'       => PKGCOREPATH.'classes'.DS.'fieldset.php',

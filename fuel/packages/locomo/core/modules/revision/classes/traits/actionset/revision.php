@@ -5,24 +5,18 @@ trait Traits_Actionset_Revision
 	/**
 	 * actionset_index_revision()
 	 */
-	public static function actionset_index_revision($module, $obj, $get_authed_url)
+	public static function actionset_index_revision($module, $obj, $id, $urls = array())
 	{
-		if(
-			$obj &&
-			in_array(\Request::main()->action, array('edit','view')) &&
-			$get_authed_url
-		):
-			//個票のとき、履歴へのリンクを表示する
-			$pk = $obj::get_primary_keys('first');
-			$url = "{$module}/each_index_revision/{$module}/{$obj->$pk}";
-			$url = static::check_auth($module, 'index_revision') ? $url : '' ;
+		if($id && in_array(\Request::main()->action, array('edit','view'))):
+			$actions = array(array("{$module}/each_index_revision/{$module}/".$id, '編集履歴'));
+			$urls = static::generate_anchors($module, 'index_revision', $actions, $obj);
 		endif;
 
 		$retvals = array(
-			'url'          => @$url ?: '' ,
+			'urls'          => $urls ,
 			'action_name'  => '編集履歴',
-			'menu_str'     => '編集履歴',
 			'explanation'  => '編集項目の権限です。',
+			'order'        => 10,
 			'dependencies' => array(
 				'index_revision',
 			)
@@ -33,18 +27,18 @@ trait Traits_Actionset_Revision
 	/**
 	 * actionset_view_revision()
 	 */
-	public static function actionset_view_revision($module, $obj, $get_authed_url)
+	public static function actionset_view_revision($module, $obj, $id, $urls = array())
 	{
-		if($get_authed_url):
-			$url = isset($item->id) ? "$module/each_index_revision/$module/$obj->id" : null ;
-			$url = self::check_auth($module, 'index_revision') ? $url : '';
+		if($id):
+			$actions = array(array("{$module}/each_index_revision/{$module}/".$id, '編集履歴'));
+			$urls = static::generate_anchors($module, 'index_revision', $actions, $obj);
 		endif;
 
 		$retvals = array(
-			'url'          => @$url ?: '' ,
-			'menu_str'     => '編集履歴',
+			'urls'          => $urls ,
 			'action_name'  => '閲覧（リビジョン）',
 			'explanation'  => '編集履歴の閲覧権限です。この権限を許可すると、元の項目が不可視、予約、期限切れ、削除済み等の状態であっても、履歴は閲覧することができるようになります。また、通常項目の編集権限も許可されます。',
+			'order'        => 10,
 			'dependencies' => array(
 				'view',
 				'edit',

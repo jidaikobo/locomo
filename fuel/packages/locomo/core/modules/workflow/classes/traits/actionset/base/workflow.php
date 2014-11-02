@@ -5,16 +5,16 @@ trait Traits_Actionset_Base_Workflow
 	/**
 	 * actionset_index_workflow()
 	 */
-	public static function actionset_index_workflow($module, $obj, $get_authed_url)
+	public static function actionset_index_workflow($module, $obj, $id, $urls = array())
 	{
-		$url = parent::check_auth($module, 'index_workflow') ? "{$module}/index_workflow" : '';
+		$url_str = $module."/index_workflow" ;
+		$urls = \Auth::auth($url_str) ? $url_str : '' ;
 
 		$retvals = array(
-			'is_index'     => true,
-			'url'          => $url,
+			'urls'         => $urls,
 			'action_name'  => 'ワークフロー承認項目一覧',
-			'menu_str'     => '承認項目一覧',
 			'explanation'  => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
+			'order'        => 10,
 			'dependencies' => array(
 				'index_workflow',
 			)
@@ -25,13 +25,12 @@ trait Traits_Actionset_Base_Workflow
 	/**
 	 * workflow()
 	 */
-	public static function actionset_workflow($module, $obj, $get_authed_url)
+	public static function actionset_workflow($module, $obj, $id, $urls = array())
 	{
 		$retvals = array(
-			'url'          => '',
 			'action_name'  => 'ワークフロー作業',
-			'menu_str'     => '',
 			'explanation'  => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。不可視項目の閲覧権限などに依存します。',
+			'order'        => 10,
 			'dependencies' => array(
 				'view',
 				'edit',
@@ -51,13 +50,13 @@ trait Traits_Actionset_Base_Workflow
 	/**
 	 * workflow_process()
 	 */
-	public static function actionset_workflow_process($module, $obj, $get_authed_url)
+	public static function actionset_workflow_process($module, $obj, $id, $urls = array())
 	{
 		$retvals = array(
 			'url'          => '',
 			'action_name'  => 'ワークフロー承認',
-			'menu_str'     => '',
 			'explanation'  => 'ワークフロー管理下コントローラにおける承認権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。',
+			'order'        => 10,
 			'dependencies' => array(
 				'index',
 				'index_admin',
@@ -77,7 +76,7 @@ trait Traits_Actionset_Base_Workflow
 	 * workflow_actions()
 	 * 重たい処理。ワークフローが不要なコントローラでは読まないように注意。
 	 */
-	public static function actionset_workflow_actions($module, $obj, $get_authed_url)
+	public static function actionset_workflow_actions($module, $obj, $id, $urls = array())
 	{
 		$retval = array('dependencies'=>array());
 		if(is_null($module) || empty($obj) || ! isset($obj->id)) return $retval;
@@ -96,7 +95,7 @@ trait Traits_Actionset_Base_Workflow
 
 		//-1の場合は、承認申請
 		if($current_step == -1):
-			if(parent::check_auth($module, 'apply')):
+			if(\Auth::auth($module.'/apply')):
 				$url = "{$module}/apply/{$obj->id}" ;
 				$menu_str = '承認申請';
 			endif;
@@ -120,7 +119,7 @@ trait Traits_Actionset_Base_Workflow
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
 		if(
 			$model::get_current_step($module, $obj->id) == -2 &&
-			parent::check_auth($module, 'route')
+			\Auth::auth($module.'/route')
 		):
 			$url = "{$module}/route/{$obj->id}" ;
 			$menu_str = '経路設定';
@@ -131,6 +130,7 @@ trait Traits_Actionset_Base_Workflow
 			'action_name'  => 'ワークフロー作業（承認申請）',
 			'menu_str'     => $menu_str,
 			'explanation'  => 'ワークフロー管理下コントローラにおける承認申請です。「ワークフロー作業」を有効にすると自動的に有効になります。',
+			'order'        => 10,
 			'dependencies' => array()
 		);
 		return $retvals;

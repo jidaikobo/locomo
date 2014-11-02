@@ -6,16 +6,13 @@ class Actionset_Base_Workflowadmin extends \Actionset
 	 * index_admin()
 	 * @return  array
 	 */
-	public static function actionset_index_admin($module, $obj, $get_authed_url)
+	public static function actionset_index_admin($module, $obj, $id, $urls = array())
 	{
 		$retvals = array(
-			'url'          => 'workflowadmin/index_admin',
 			'action_name'  => 'ワークフロー管理',
-			'menu_str'     => 'ワークフロー管理',
 			'explanation'  => 'ワークフロー管理。管理者のみアクセス可能。',
-			'dependencies' => array(
-				'index_admin',
-			)
+			'order'        => 10,
+			'dependencies' => array()
 		);
 		return $retvals;
 	}
@@ -24,16 +21,19 @@ class Actionset_Base_Workflowadmin extends \Actionset
 	 * view()
 	 * @return  array
 	 */
-	public static function actionset_view($module, $obj, $get_authed_url)
+	public static function actionset_view($module, $obj, $id, $urls = array())
 	{
-		$url = isset($item->id) ? "$controller/view/$item->id" : null ;
+		if($id):
+			$actions = array(array("workflowadmin/view/".$id, '閲覧'));
+			$urls = static::generate_anchors('workflowadmin', 'view', $actions, $obj, ['view','create']);
+		endif;
 
 		$retvals = array(
-			'url'           => $url,
-			'action_name'   => 'ワークフロー閲覧',
-			'menu_str'      => 'ワークフロー閲覧',
-			'explanation'   => 'ワークフローの閲覧権限です。',
-			'dependencies'  => array(
+			'urls'         => $urls ,
+			'action_name'  => 'ワークフロー閲覧',
+			'explanation'  => 'ワークフローの閲覧権限です。',
+			'order'        => 10,
+			'dependencies' => array(
 				'view',
 			)
 		);
@@ -44,16 +44,19 @@ class Actionset_Base_Workflowadmin extends \Actionset
 	 * edit()
 	 * @return  array
 	 */
-	public static function actionset_edit($module, $obj, $get_authed_url)
+	public static function actionset_edit($module, $obj, $id, $urls = array())
 	{
-		$url = isset($item->id) ? "$controller/edit/$item->id" : null ;
+		if($id):
+			$actions = array(array("workflowadmin/edit/".$id, '閲覧'));
+			$urls = static::generate_anchors('workflowadmin', 'view', $actions, $obj, ['edit','create']);
+		endif;
 
 		$retvals = array(
-			'url'           => $url,
-			'action_name'   => 'ワークフロー名称の編集',
-			'menu_str'      => 'ワークフロー名称の編集',
-			'explanation'   => 'ワークフロー名称の編集権限',
-			'dependencies'  => array(
+			'urls'         => $urls ,
+			'action_name'  => 'ワークフロー名称の編集',
+			'explanation'  => 'ワークフロー名称の編集権限',
+			'order'        => 10,
+			'dependencies' => array(
 				'view',
 				'edit',
 			)
@@ -65,15 +68,17 @@ class Actionset_Base_Workflowadmin extends \Actionset
 	 * create()
 	 * @return  array
 	 */
-	public static function actionset_create($module, $obj, $get_authed_url)
+	public static function actionset_create($module, $obj, $id, $urls = array())
 	{
+		$actions = array(array("workflowadmin/create", '新規作成'));
+		$urls = static::generate_anchors('workflowadmin', 'create', $actions, $obj, ['create']);
+
 		$retvals = array(
-			'is_admin_only' => true,
-			'url'           => 'workflowadmin/create',
-			'action_name'   => '新規ワークフロー',
-			'menu_str'      => '新規ワークフロー',
-			'explanation'   => '新規ワークフロー作成フォーム。管理者のみアクセス可能。',
-			'dependencies'  => array(
+			'urls'         => $urls ,
+			'action_name'  => '新規ワークフロー',
+			'explanation'  => '新規ワークフロー作成フォーム。管理者のみアクセス可能。',
+			'order'        => 10,
+			'dependencies' => array(
 				'view',
 				'create',
 			)
@@ -86,18 +91,19 @@ class Actionset_Base_Workflowadmin extends \Actionset
 	 * setup()
 	 * @return  array
 	 */
-	public static function actionset_setup($module, $obj, $get_authed_url)
+	public static function actionset_setup($module, $obj, $id, $urls = array())
 	{
-		$url = isset($item->id) ? "workflowadmin/setup/{$item->id}" : null ;
+		if($id):
+			$actions = array(array("workflowadmin/setup/".$id, '閲覧'));
+			$urls = static::generate_anchors('workflowadmin', 'setup', $actions, $obj);
+		endif;
+
 		$retvals = array(
-			'is_admin_only' => true,
-			'url'           => $url,
-			'action_name'   => 'ワークフローの設定',
-			'menu_str'      => 'ワークフローの設定',
-			'explanation'   => 'ワークフローの設定。管理者のみアクセス可能。',
-			'dependencies'  => array(
-				'setup',
-			)
+			'urls'         => $urls ,
+			'action_name'  => 'ワークフローの設定',
+			'explanation'  => 'ワークフローの設定。管理者のみアクセス可能。',
+			'order'        => 10,
+			'dependencies' => array()
 		);
 
 		return $retvals;

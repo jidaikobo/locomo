@@ -58,7 +58,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function add_authorize_methods()
 	{
-// see sample at \Workflow\Traits_Model_Workflow
+// see sample at \Workflow\Traits_Model_Workflow -マージでもいいか？
 //		if( ! in_array('auth_sample', static::$_authorize_methods)):
 //			static::$_authorize_methods[] = 'auth_sample';
 //		endif;
@@ -122,6 +122,15 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
+	 * get_pk()
+	 */
+	public function get_pk()
+	{
+		$pk = reset(static::$_primary_key);
+		return $this->$pk ?: false;
+	}
+
+	/**
 	 * get_original_values()
 	 */
 	public function get_original_values()
@@ -140,7 +149,7 @@ class Model_Base extends \Orm\Model_Soft
 		$controller = strtolower(substr($controller, 11));
 
 		//view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (\Acl\Controller_Acl::auth($controller.'/view_anyway', $userinfo)) {
+		if (\Auth::auth($controller.'/view_anyway', $userinfo)) {
 			static::disable_filter();
 		} else {
 			//モデルが持っている判定材料を、適宜$optionsに足す。
@@ -162,7 +171,7 @@ class Model_Base extends \Orm\Model_Soft
 			static::$_default_expired_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Acl\Controller_Acl::auth($controller.'/view_expired', $userinfo)
+			! \Auth::auth($controller.'/view_expired', $userinfo)
 		) {
 			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
@@ -180,7 +189,7 @@ class Model_Base extends \Orm\Model_Soft
 			static::$_default_created_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Acl\Controller_Acl::auth($controller.'/view_yet', $userinfo)
+			! \Auth::auth($controller.'/view_yet', $userinfo)
 		) {
 			$options['where'][] = array(array($column, '<', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
@@ -195,7 +204,7 @@ class Model_Base extends \Orm\Model_Soft
 	{
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			! \Acl\Controller_Acl::auth($controller.'/view_deleted', $userinfo)
+			! \Auth::auth($controller.'/view_deleted', $userinfo)
 		) {
 			static::enable_filter();
 		} else {
@@ -215,7 +224,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Acl\Controller_Acl::auth($controller.'/view_invisible', $userinfo)
+			! \Auth::auth($controller.'/view_invisible', $userinfo)
 		) {
 			$options['where'][] = array($column, '=', true);
 		}
@@ -228,7 +237,7 @@ class Model_Base extends \Orm\Model_Soft
 	public static function auth_owner($controller = null, $userinfo = null, $options = array(), $mode = null)
 	{
 		//グループに許されている場合はオーナ権限は判定する必要がない（管理者もこれで貫通する）
-		if(\Acl\Controller_Acl::auth($controller.DS.\Request::main()->action, $userinfo))
+		if(\Auth::auth($controller.DS.\Request::main()->action, $userinfo))
 			return $options;
 
 		//グループに許されていない場合
@@ -238,7 +247,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			\Acl\Controller_Acl::is_exists_owner_auth($controller, 'view')
+			\Auth::is_exists_owner_auth($controller, 'view')
 		) {
 			$options['where'][] = array($column, '=', $userinfo['user_id']);
 		}

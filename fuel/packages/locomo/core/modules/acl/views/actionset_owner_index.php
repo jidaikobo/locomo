@@ -5,10 +5,10 @@
 <?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_owner_acl/')); ?>
 <fieldset>
 <legend><?php echo $controller ?>設定（オーナ向け）</legend>
-<table>
+<table class="tbl2">
 <?php foreach($actionsets as $action => $actionset): ?>
 <tr>
-	<th style="white-space: nowrap;">
+	<th style="width:25%;;">
 		<?php
 		$checked = in_array($action, $aprvd_actionset) ? ' checked="checked"' : null ;
 		echo '<label>'.\Form::checkbox("acls[{$action}]", 1, array($checked)).' '.$actionset['action_name'].'</label><br />';

@@ -73,15 +73,9 @@ class View_Base extends \ViewModel
 			$this->_active_request->controller_instance->_single_item : 
 			null ;
 
-		$actions = \Actionset::get_menu(
-			$controller,
-			$realm = 'all',
-			$item,
-			$get_authed_url = true,
-			$exceptions = array(),
-			$include_admin_only = true
-		);
-		$this->get_view()->set_global('actions', $actions);
+//		$actions = \Actionset::get_menu(
+		$actions = \Actionset::get_actionset($controller, $item);
+		$this->get_view()->set_global('actions', $actions, false);
 	}
 
 	/**

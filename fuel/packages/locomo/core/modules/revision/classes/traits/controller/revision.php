@@ -7,8 +7,9 @@ trait Traits_Controller_Revision
 	 */
 	public function action_index_revision($model_simple_name, $page = 1)
 	{
-		//model
-		$model = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($model_simple_name);
+		//vals
+		$module = $this->request->module;
+		$model = '\\'.ucfirst($module).'\\Model_'.ucfirst($model_simple_name);
 
 		//option - ise \Module\Model_Module::$_option_options['range']
 		$opt = false;
@@ -37,7 +38,7 @@ trait Traits_Controller_Revision
 		$view->set_global('model_simple_name', $model_simple_name);
 		$view->set_global('opt', \Input::get('opt') ? '?opt='.\Input::get('opt') : '');
 
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
 	}
 
 	/**
@@ -47,40 +48,34 @@ trait Traits_Controller_Revision
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		//model
-		$model = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($model_simple_name);
+		//vals
+		$module = $this->request->module;
+		$model = '\\'.ucfirst($module).'\\Model_'.ucfirst($model_simple_name);
 
 		//履歴を取得
 		if ( ! $revisions = \Revision\Model_Revision::find_revisions($model, $id)):
 			\Session::set_flash('error', '履歴を取得できませんでした');
-			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
+			return \Response::redirect(\Uri::create($module.'/view/'.$id));
 		endif;
 
 		//add_actionset
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
 		if($opt_arg):
-			$action = array(
-				'url' => $this->request->module.'/edit/'.$id,
-				'menu_str' => '編集画面へ',
-			);
-			\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
+			$action['urls'][] = \Html::anchor($module.'/edit/'.$id,'編集画面へ');
 		endif;
-		$action = array(
-			'url' => $this->request->module.'/index_revision/'.$model_simple_name.DS.$opt_arg,
-			'menu_str' => '履歴一覧へ',
-		);
-		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
+		$action['urls'][] = \Html::anchor($module.'/index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
+		\Actionset::add_actionset($module, 'ctrl', 'back', $action);
 
 		//view
 		$view = \View::forge(\Util::fetch_tpl('/revision/views/each_index_revision.php'));
 		$view->set_global('items', $revisions);
-		$view->set_global('controller', $this->request->module);
+		$view->set_global('controller', $module);
 		$view->set_global('title', '履歴');
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->set_global('model_simple_name', $model_simple_name);
 		$view->set_global('opt', $opt_arg);
 
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
 	}
 
 	/**
@@ -90,6 +85,7 @@ trait Traits_Controller_Revision
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 		$model = \Revision\Model_Revision::forge();
+		$module = $this->request->module;
 
 		if ( ! $revisions = $model::find_revision($id)):
 			\Session::set_flash('error', '履歴を取得できませんでした');
@@ -97,10 +93,10 @@ trait Traits_Controller_Revision
 		endif;
 
 		//unserialize
-		$data          = unserialize($revisions->data);
+		$data = unserialize($revisions->data);
 
 		//model
-		$original_model = '\\'.ucfirst($this->request->module).'\\Model_'.ucfirst($model_simple_name);
+		$original_model = '\\'.ucfirst($module).'\\Model_'.ucfirst($model_simple_name);
 		$pk = $original_model::get_primary_keys('first');
 
 		//option - ise \Module\Model_Module::$_option_options['range']
@@ -139,20 +135,14 @@ trait Traits_Controller_Revision
 		$view->set_global('is_revision', true);
 
 		//add_actionset
-		$action = array(
-			'url' => $this->request->module.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg,
-			'menu_str' => '履歴一覧へ',
-		);
-		\Actionset::add_actionset($this->request->module, 'ctrl', 'back', $action);
-		if( ! $opt_arg):
-			$action = array(
-				'url' => $this->request->module.'/edit/'.$revisions->pk_id,
-				'menu_str' => '編集画面へ',
-			);
-			\Actionset::add_actionset($this->request->module, 'ctrl', 'back2', $action);
+		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
+		$action['urls'][] = \Html::anchor($module.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg, '履歴一覧へ');
+		if($opt_arg):
+			$action['urls'][] = \Html::anchor($module.'/edit/'.$revisions->pk_id, '編集画面へ');
 		endif;
+		\Actionset::add_actionset($module, 'ctrl', 'back', $action);
 
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
 	}
 
 }
