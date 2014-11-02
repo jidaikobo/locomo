@@ -19,9 +19,6 @@
 <p>
 	<strong>Activation key:</strong>
 	<?php echo $item->activation_key; ?></p>
-<p>
-	<strong>Status:</strong>
-	<?php echo $item->status; ?></p>
 
 <?php
 $ctrl_sfx = isset($is_deleted) ? '_deleted' : '' ;

@@ -5,7 +5,8 @@ trait Traits_Controller_Bulk
 	/*
 	 * @return Fieldset object
 	 */
-	public function bulk($options = array(), $model = null, $deleted = 'disabled', $use_get_query = true, $pagination_config = null, $define_function = null) {
+	public function bulk($options = array(), $model = null, $deleted = 'disabled', $use_get_query = true, $pagination_config = null, $define_function = null)
+	{
 
 		if (!$model) $model = $this->model_name;
 		$action = \Request::main()->action;
@@ -41,8 +42,6 @@ trait Traits_Controller_Bulk
 			$ids[] = $object->{$object::primary_key()[0]};
 		}
 
-
-
 		if (\Input::post() && \Security::check_token()) {
 			if ($bulk->save()) {
 
@@ -60,7 +59,6 @@ trait Traits_Controller_Bulk
 					$url = \Uri::create($this->request->module . '/' . $action, array(), \Input::get());
 					return \Response::redirect($url);
 				}
-
 
 				\Session::set_flash('success', self::$nicename . 'への変更を' .  count($ids) . '件保存しました');
 

@@ -18,6 +18,11 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	protected $current_action = '';
 
 	/**
+	 * @var config
+	 */
+	protected $config = array();
+
+	/**
 	* @var string current_id
 	*/
 	public static $current_id = '';
@@ -53,10 +58,10 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$request->add_path(PKGPROJPATH.'modules'.DS.$views_path_module.DS,true);
 
 		//ユーザ情報のセット
-		\User\Controller_User::set_userinfo();
+		\Auth::set_userinfo();
 
 		//profile表示はrootだけ（当然ながらConfigでtrueだったら計測はされる）
-		if(\User\Controller_User::$userinfo['user_id'] >= -1)
+		if(\Auth::get_user_id() >= -1)
 			\Fuel::$profiling = false;
 
 		//current_actionのセット
@@ -68,8 +73,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$this->model_name = '\\'.$controller.'\\Model_'.$controller;
 
 		//nicename 人間向けのモジュール名
-		$controllers_from_config = \Config::load($controller);
-		self::$nicename = $controllers_from_config['nicename'];
+		$this->config = \Config::load($controller);
+		self::$nicename = $this->config['nicename'];
 
 		//actionset
 		\Actionset::forge($this->request->module);
@@ -80,7 +85,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
-		$userinfo = \User\Controller_User::$userinfo;
+		$userinfo = \Auth::get_userinfo();
 
 		//ユーザ／ユーザグループ単位のACLを確認する。
 		$is_allow = \Acl\Controller_Acl::auth($this->current_action, $userinfo);
@@ -109,7 +114,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$use_login_as_top = \Config::get('use_login_as_top');
 		if(
 			$use_login_as_top && //configで設定
-			$userinfo['user_id'] == 0 && //ログイン画面はゲスト用
+			\Auth::get_user_id() == 0 && //ログイン画面はゲスト用
 			$this->request->module.DS.$method == 'content/home' //トップページを求められているとき
 		):
 			return \Response::redirect(\Uri::create('user/login'));
@@ -119,100 +124,4 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		return parent::router($method, $params);
 	}
 
-	/**
-	 * action_add_testdata()
-	 */
-	public function action_add_testdata($num = 10)
-	{
-		//only at development
-		if(\Fuel::$env != 'development') die();
-		if(\User\Controller_User::$userinfo['user_id'] !== -2) die('forbidden');
-
-		//$test_datas
-		$model = $this->model_name;
-		$form = $model::form_definition('add_testdata');
-		if(!$form):
-			\Session::set_flash('error', 'form_definition failed.');
-			\Response::redirect($this->request->module);
-		endif;
-
-		//save
-		$args = array();
-		for($n = 1; $n <= $num; $n++):
-			foreach($form->field() as $property => $v):
-				if(
-					\Arr::search($v->rules, 'required', null, true) != true &&
-					\Arr::search($v->rules, 'require_once', null, true) != true //original
-				){
-					continue;
-				}
-
-				$str = md5(microtime());
-				/*
-				//do nothing
-				match_value
-				match_pattern
-				match_field
-				valid_string
-				min_length
-				*/
-				$rules = \Arr::assoc_to_keyval($v->rules, 0, 1);
-	
-				//exact_length
-				if($each_rule = @$rules['exact_length']){
-					$str = substr($str, 0, intval($exact_length[0]));
-				}
-	
-				//max_length
-				if($each_rule = @$rules['max_length']){
-					$str = substr($str, 0, intval($each_rule[0]));
-				}
-	
-				//valid_email
-				$each_rule = @$rules['valid_email'];
-				$str.= $each_rule !== false ? '@example.com' : '' ;
-	
-				//valid_emails
-				$each_rule = @$rules['valid_emails'];
-				$str.= $each_rule !== false ? '@example.com' : '' ;
-	
-				//valid_date
-				$each_rule = @$rules['valid_date'];
-				$str = $each_rule !== false ? date('Y-m-d H:i:s') : $str ;
-	
-				//valid_url
-				$each_rule = @$rules['valid_url'];
-				$str = $each_rule !== false ? 'http://example.com' : $str ;
-	
-				//valid_ip
-				$each_rule = @$rules['valid_ip'];
-				$str = $each_rule !== false ? '1.1.1.1' : $str ;
-	
-				//numeric_min
-				$each_rule = @$rules['numeric_min'];
-				$str = $each_rule !== false ? intval($each_rule[0]) : $str ;
-	
-				//numeric_max
-				$each_rule = @$rules['numeric_max'];
-				$str = $each_rule !== false ? intval($each_rule[0]) : $str ;
-	
-				//numeric_between
-				$each_rule = @$rules['numeric_between'];
-				$str = $each_rule !== false ? intval($each_rule[0]) : $str ;
-	
-				$args[$property] = $str;
-	
-			endforeach;
-			if(! $args) continue;
-			$obj = $model::forge($args);
-			$obj->save();
-		endfor;
-
-		if(! $args):
-			\Session::set_flash('error', 'couldn not add datas');
-		else:
-			\Session::set_flash('success', 'added '.$num.' datas.');
-		endif;
-		return \Response::redirect($this->request->module.DS.'index_admin');
-	}
 }

@@ -97,7 +97,7 @@ class Observer_Revision extends \Orm\Observer
 		$args['comment']     = \Input::post('revision_comment') ?: '';
 		$args['created_at']  = date('Y-m-d H:i:s');
 		$args['operation']   = $operation;
-		$args['modifier_id'] = \User\Controller_User::$userinfo['user_id'];
+		$args['modifier_id'] = \Auth::get_user_id();
 
 		//save revision
 		$model = \Revision\Model_Revision::forge($args);

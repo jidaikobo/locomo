@@ -183,7 +183,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_related_current_available_items($controller = null, $userinfo = null)
 	{
-		$userinfo = $userinfo ? $userinfo : \User\Controller_User::$userinfo;
+		$userinfo = $userinfo ? $userinfo : \Auth::get_userinfo();
 
 		//ユーザがいまアクションできる項目のコントローラとidを得る
 		$q = \DB::select('*');
@@ -201,7 +201,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_related_current_items($controller = null, $userinfo = null)
 	{
-		$userinfo = $userinfo ? $userinfo : \User\Controller_User::$userinfo;
+		$userinfo = $userinfo ? $userinfo : \Auth::get_userinfo();
 
 		//ユーザidからworkflow_idを取得
 		$q = \DB::select('workflow_steps.workflow_id');
@@ -265,7 +265,7 @@ trait Traits_Model_Workflow
 			'status'        => $status,
 			'comment'       => $comment,
 			'created_at'    => date('Y-m-d H:i:s'),
-			'did_user_id'   => \User\Controller_User::$userinfo['user_id'],
+			'did_user_id'   => \Auth::get_user_id(),
 		);
 
 		//ログのアップデート

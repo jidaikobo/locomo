@@ -3,73 +3,85 @@ namespace Locomo;
 class View_Base extends \ViewModel
 {
 	/**
-	* view()
+	* before()
 	*/
-	public function view()
+	public function before()
 	{
 		//base_assign
-		self::base_assign();
-		self::include_asset();
-		self::get_controllers();
-//		self::get_actionset();
+		$this->base_assign();
+		$this->include_asset();
+		$this->get_controllers();
 	}
 
 	/**
 	* base_assign()
 	*/
-	public static function base_assign()
+	public function base_assign()
 	{
-		$view = \View::forge();
-
 		//site_title
-		$view->set_global('site_title', \Config::get('site_title'));
+		$this->get_view()->set_global('site_title', \Config::get('site_title'));
 
 		//ユーザ情報
-		$view->set_global('userinfo', \User\Controller_User::$userinfo);
-		$view->set_global('is_user_logged_in', \User\Controller_User::$is_user_logged_in);
-		$view->set_global('is_admin', false);
-		$view->set_global('is_root',  false);
-		$view->set_global('is_guest', false);
-		if(\User\Controller_User::$userinfo['user_id'] == -1):
-			$view->set_global('is_admin', true);
+		$this->get_view()->set_global('userinfo', \Auth::get_user());
+		$this->get_view()->set_global('is_user_logged_in', \Auth::is_user_logged_in());
+		$this->get_view()->set_global('is_admin', false);
+		$this->get_view()->set_global('is_root',  false);
+		$this->get_view()->set_global('is_guest', false);
+		if(\Auth::get_user_id() == -1):
+			$this->get_view()->set_global('is_admin', true);
 		endif;
-		if(\User\Controller_User::$userinfo['user_id'] == -2):
-			$view->set_global('is_root',  true);
-			$view->set_global('is_admin', true);
+		if(\Auth::get_user_id() == -2):
+			$this->get_view()->set_global('is_root',  true);
+			$this->get_view()->set_global('is_admin', true);
 		endif;
-		if(\User\Controller_User::$userinfo['user_id'] == 0):
-			$view->set_global('is_guest', true);
-			$view->set_global('display_name', '');
+		if(\Auth::get_user_id() == 0):
+			$this->get_view()->set_global('is_guest', true);
+			$this->get_view()->set_global('display_name', '');
 		endif;
 		
 		//anti CSRF
-		$view->set_global('token_key', \Config::get('security.csrf_token_key'));
-		$view->set_global('token', \Security::fetch_token());
+		$this->get_view()->set_global('token_key', \Config::get('security.csrf_token_key'));
+		$this->get_view()->set_global('token', \Security::fetch_token());
 
-		//controller and action
+		//module and action
 		$controller_class = \Request::main()->controller;
 		$controller = \Inflector::denamespace($controller_class);		
 		$controller = strtolower(substr($controller, 11));
 		$action     = \Request::active()->action;
 
 		//url
-		$view->set_global('controller', $controller);
-		$view->set_global('action', $action);
-//		$view->set_global('query_string', \Uri::create(\input::get()));
-//		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/'));
-		$view->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
-		$view->set_global('home_uri', \Uri::base());
-		$view->set_global('home_url', \Uri::base());
+		$this->get_view()->set_global('controller', $controller);
+		$this->get_view()->set_global('action', $action);
+//		$this->get_view()->set_global('query_string', \Uri::create(\input::get()));
+//		$this->get_view()->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/'));
+		$this->get_view()->set_global('current_uri', \Uri::create('/'.$controller.'/'.$action.'/', array(), \input::get()));
+		$this->get_view()->set_global('home_uri', \Uri::base());
+		$this->get_view()->set_global('home_url', \Uri::base());
 		
 		//controller_name
 		$controller_name = $controller_class::$nicename;
-		$view->set_global('controller_name', $controller_name);
+		$this->get_view()->set_global('controller_name', $controller_name);
 		
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
 		if( \Request::main()->route->action == 'login' && \Config::get('use_login_as_top') ) $class_arr[] = 'home';
-		if(\User\Controller_User::$is_user_logged_in) $class_arr[] = 'loggedin';
-		$view->set_global('body_class', implode($class_arr,' '));
+		if(\Auth::is_user_logged_in()) $class_arr[] = 'loggedin';
+		$this->get_view()->set_global('body_class', implode($class_arr,' '));
+
+		//actionset
+		$item = isset($this->_active_request->controller_instance->_single_item) ?
+			$this->_active_request->controller_instance->_single_item : 
+			null ;
+
+		$actions = \Actionset::get_menu(
+			$controller,
+			$realm = 'all',
+			$item,
+			$get_authed_url = true,
+			$exceptions = array(),
+			$include_admin_only = true
+		);
+		$this->get_view()->set_global('actions', $actions);
 	}
 
 	/**
@@ -78,15 +90,13 @@ class View_Base extends \ViewModel
 	*/
 	public function include_asset()
 	{
-		$view = \View::forge();
-
 		$include_asset = function($file) {
 			$override_file = \Uri::base().PROJECTVIEWDIR.'/'.$file;
 			$default_file  = \Uri::base().'content/fetch_view/'.$file;
 			$ret_file = file_exists(DOCROOT.'view/'.$file) ? $override_file : $default_file;
 			return $ret_file;
 		};
-		$view->set_global('include_asset', $include_asset);
+		$this->get_view()->set_global('include_asset', $include_asset);
 	}
 
 	/**
@@ -95,15 +105,13 @@ class View_Base extends \ViewModel
 	*/
 	public function get_controllers()
 	{
-		$view = \View::forge();
-
 		$get_controllers = function($is_admin = false) {
 			//ログインした人向けのメニューなので、ゲストには何も返さない
-			if( ! \User\Controller_User::$is_user_logged_in) return false;
+			if( ! \Auth::is_user_logged_in()) return false;
 
 			//対象モジュールを取得する
 			$controllers = array();
-			$userinfo = \User\Controller_User::$userinfo;
+			$userinfo = \Auth::get_userinfo();
 			$n = 0 ;
 			foreach(\Config::get('module_paths') as $path):
 				foreach (glob($path.'*') as $dirname):
@@ -131,7 +139,7 @@ class View_Base extends \ViewModel
 					$links['order']    = $config['order_in_menu'];
 
 					//管理者はすべてのコントローラへのリンクを得る
-					if($userinfo['user_id'] <= -1):
+					if(\Auth::get_user_id() <= -1):
 						$controllers[$n] = $links;
 					else:
 						//管理者向けコントローラは表示しない
@@ -153,7 +161,7 @@ class View_Base extends \ViewModel
 
 			return $controllers;
 		};
-		$view->set_global('get_controllers', $get_controllers);
+		$this->get_view()->set_global('get_controllers', $get_controllers);
 	}
 
 }

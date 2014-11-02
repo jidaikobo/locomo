@@ -29,8 +29,10 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_admin($module, $obj, $get_authed_url)
 	{
-		$url_str = $module."/index_admin" ;
-		$url = self::check_auth($module, 'index_admin') ? $url_str : '' ;
+		if($get_authed_url):
+			$url_str = $module."/index_admin" ;
+			$url = self::check_auth($module, 'index_admin') ? $url_str : '' ;
+		endif;
 
 		$retvals = array(
 			'url'          => $url,
@@ -49,8 +51,10 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_deleted($module, $obj, $get_authed_url)
 	{
-		$url_str = $module."/index_deleted" ;
-		$url = self::check_auth($module, 'index_deleted') ? $url_str : '' ;
+		if($get_authed_url):
+			$url_str = $module."/index_deleted" ;
+			$url = self::check_auth($module, 'index_deleted') ? $url_str : '' ;
+		endif;
 
 		$retvals = array(
 			'url'          => $url,
@@ -69,8 +73,10 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_expired($module, $obj, $get_authed_url)
 	{
-		$url_str = $module."/index_expired" ;
-		$url = self::check_auth($module, 'index_expired') ? $url_str : '' ;
+		if($get_authed_url):
+			$url_str = $module."/index_expired" ;
+			$url = self::check_auth($module, 'index_expired') ? $url_str : '' ;
+		endif;
 
 		$retvals = array(
 			'url'          => $url,
@@ -89,8 +95,10 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_yet($module, $obj, $get_authed_url)
 	{
-		$url = $module."/index_yet" ;
-		$url = self::check_auth($module, 'index_yet') ? $url : '' ;
+		if($get_authed_url):
+			$url = $module."/index_yet" ;
+			$url = self::check_auth($module, 'index_yet') ? $url : '' ;
+		endif;
 
 		$retvals = array(
 			'url'          => $url,
@@ -109,8 +117,10 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_invisible($module, $obj, $get_authed_url)
 	{
-		$url = $module."/index_invisible" ;
-		$url = self::check_auth($module, 'index_invisible') ? $url: '';
+		if($get_authed_url):
+			$url = $module."/index_invisible" ;
+			$url = self::check_auth($module, 'index_invisible') ? $url: '';
+		endif;
 
 		$retvals = array(
 			'url'          => $url,
@@ -126,8 +136,10 @@ class Actionset_Index extends Actionset
 
 	public static function actionset_index_all($module, $obj, $get_authed_url)
 	{
-		$url_str = isset($obj->id) ? $module."/index_all" : null ;
-		$url = self::check_auth($module, 'index_all') ? $url_str : '' ;
+		if($get_authed_url):
+			$url_str = isset($obj->id) ? $module."/index_all" : null ;
+			$url = self::check_auth($module, 'index_all') ? $url_str : '' ;
+		endif;
 
 		$retvals = array(
 			'url'          => $url,

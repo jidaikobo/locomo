@@ -18,15 +18,9 @@ if($is_user_logged_in):
 					$action_name = $title ? '：'.$title : '';
 					$html.="<h3>{$controller_name}{$action_name}</h3>"; //ツールバーのアンカーにも足す？
 				$html.= '</div><!-- /.admin_controller -->';
-				$actions = \Actionset::get_menu(
-					$controller,
-					$realm = 'base',
-					$item,
-					$get_authed_url = true
-				);
-				if($actions):
+				if(@$actions['base']):
 					$html.= '<div class="admin_context">';
-					$html.= \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
+					$html.= \Actionset::generate_menu_html($actions['base'], array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 			$html.= '</div><!-- .adminbar_main -->';
@@ -34,31 +28,17 @@ if($is_user_logged_in):
 	
 			//context menu2
 			$html.= '<div class="adminbar_sub">';			
-			$actions = \Actionset::get_menu(
-				$controller,
-				$realm = 'ctrl',
-				$item,
-				$get_authed_url = true
-			);
-			if($actions):
+			if(@$actions['ctrl']):
 				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-				$html.= \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
+				$html.= \Actionset::generate_menu_html($actions['ctrl'], array('class'=>'holizonal_list'));
 				$html.='</div><!-- /.admin_ctrl -->';
 			endif;
 			
-						//context menu2	
-			$actions = \Actionset::get_menu(
-				$controller,
-				$realm = 'option',
-				$item,
-				$get_authed_url = true,
-				$exceptions = array(),
-				$include_admin_only = true
-			);
-				if($actions):
+				//option menu
+				if(@$actions['option']):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"{$controller_name}の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"{$controller_name}の設定\"></span></a>";
-					$html.= \Actionset::generate_menu_html($actions, array('class'=>'modal dropdown_list boxshadow'));
+					$html.= \Actionset::generate_menu_html($actions['option'], array('class'=>'modal dropdown_list boxshadow'));
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
 
@@ -86,17 +66,10 @@ if($is_user_logged_in):
 			endif;
 		/*
 			//index menu
-			$actions = \Actionset::get_menu(
-				$controller,
-				$realm = 'index',
-				$item,
-				$get_authed_url = true
-			);
-		
-			if($actions):
+			if(@$actions['index']):
 				$html.= '<div id="adminbar_index">';
 				$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
-				$html.= \Actionset::generate_menu_html($actions, array('class'=>'boxshadow'));
+				$html.= \Actionset::generate_menu_html($actions['index'], array('class'=>'boxshadow'));
 				$html.= '</div>';
 			endif;
 		*/
@@ -109,9 +82,9 @@ if($is_user_logged_in):
 		
 			//user menu
 			$html.= '<div class="adminbar_user">';
-				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="ユーザメニューを開く:'.\User\Controller_User::$userinfo["display_name"].'でログインしています"><span class="adminbar_icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\User\Controller_User::$userinfo["display_name"].'</span></a>';
+				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="ユーザメニューを開く:'.\Auth::get_userinfo('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"{$home_uri}content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get_userinfo('display_name').'</span></a>';
 				$html.= '<ul class="modal dropdown_list boxshadow">';
-				$html.= '<li class="show_if_smalldisplay"><span class="label">'.\User\Controller_User::$userinfo["display_name"].'</span></li>';
+				$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get_userinfo('display_name').'</span></li>';
 				if( ! $is_admin):
 					$html.= "<li><a href=\"{$home_uri}user/view/{$userinfo["user_id"]}\">ユーザ情報</a></li>";
 				endif;

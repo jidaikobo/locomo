@@ -1,6 +1,6 @@
 <?php
 namespace Content;
-class Controller_Content extends \Locomo\Controller_Crud
+class Controller_Content extends \Locomo\Controller_Base
 {
 	/**
 	* acl()
