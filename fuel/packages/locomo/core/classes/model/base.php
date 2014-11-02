@@ -45,7 +45,6 @@ class Model_Base extends \Orm\Model_Soft
 		//depend_modules
 		parent::__construct($data, $new, $view, $cache);
 		foreach (static::$_depend_modules as $module) {
-			var_dump($module);
 			\Module::load($module);
 		}
 
