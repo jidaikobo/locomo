@@ -71,7 +71,6 @@ class Controller_Acl extends \Locomo\Controller_Base
 		$view->set('hidden_user',       $user_id);
 		$view->set('actionsets',        $actionsets);
 		$view->set('aprvd_actionset',   $aprvd_actionset);
-
 		$view->base_assign();
 		$this->template->content = $view;
 	}

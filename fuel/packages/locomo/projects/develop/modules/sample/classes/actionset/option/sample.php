@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Actionset_Option_Sample extends \Locomo\Actionset_Owner
+class Actionset_Option_Sample extends \Locomo\Actionset_Option
 {
 	use \Locomo\Actionset_Traits_Testdata;
 
@@ -10,7 +10,7 @@ class Actionset_Option_Sample extends \Locomo\Actionset_Owner
 	public static function actionset_sample($module, $obj, $id, $urls = array())
 	{
 		//urls
-		$actions = array(array("/user/sample/", 'ユーザグループ'));
+		$actions = array(array("/user/sample/", 'オプション'));
 		$urls = static::generate_anchors('user', 'sample', $actions, $obj);
 
 		//overrides
@@ -18,7 +18,7 @@ class Actionset_Option_Sample extends \Locomo\Actionset_Owner
 			$module      = 'sample',
 			$model       = 'sample',
 			$opt         = 'sample',
-			$nicename    = 'ユーザグループ',
+			$nicename    = 'オプション',
 			$is_override = $urls
 		);
 

@@ -54,6 +54,7 @@ class Controller_Crud extends Controller_Base
 	public function action_index()
 	{
 		$this->_index_template = 'index';
+		$this->template = 'default';
 		return static::action_index_admin();//$options, $model, $deleted);
 	}
 
@@ -127,14 +128,12 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_all()
 	{
-
 		$model = $this->model_name;
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
 		$model::disable_filter();
 		\View::set_global('title', static::$nicename . 'の削除を含む全項目');
 		return $this->action_index_admin(array(), null, 'disabled');
-
 	}
 
 	/*

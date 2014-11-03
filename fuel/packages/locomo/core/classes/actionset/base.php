@@ -153,7 +153,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_undelete($module, $obj, $id, $urls = array())
 	{
 		if(isset($obj->deleted_at) && $obj->deleted_at && $id):
-			$actions = array(array($module."/undelete/".$id, '復活'));
+			$actions = array(array($module."/undelete/".$id, '復活', array('class' => 'confirm', 'data-text' => '項目を復活してよいですか？')));
 			$urls = static::generate_anchors($module, 'undelete', $actions, $obj, ['create']);
 		endif;
 
@@ -180,7 +180,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_delete_deleted($module, $obj, $id, $urls = array())
 	{
 		if(isset($obj->deleted_at) && $obj->deleted_at && $id):
-			$actions = array(array($module."/delete_deleted/".$id, '完全削除'));
+			$actions = array(array($module."/delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-text' => '完全に削除してよいですか？')));
 			$urls = static::generate_anchors($module, 'delete_deleted', $actions, $obj, ['create']);
 		endif;
 
