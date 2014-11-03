@@ -58,11 +58,8 @@ trait Traits_Controller_Revision
 		$options['where'][] = array('pk_id', '=', $id);
 		$options['order_by'][] = array('created_at', 'DESC');
 
-		//pagination_config
-		$pagination_config = array('uri_segment' => 5,);
-
 		//find pagination_config
-		$items = $this->paginated_find($options, '\\Revision\\Model_Revision', false, true, $pagination_config);
+		$items = \Revision\Model_Revision::paginated_find($options, array('uri_segment' => 5,));
 
 		//失敗
 		if ( ! $items):
