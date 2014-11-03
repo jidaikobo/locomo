@@ -1188,7 +1188,7 @@ a.edit_link span span {
 }
 .boxshadow {
 	box-shadow: 0 0 6px #aaa;
-	-moz-box-shadow: 0 0 6px #;
+	-moz-box-shadow: 0 0 6px #aaa;
 	-o-box-shadow: 0 0 6px #aaa;
 	-ms-box-shadow: 0 0 6px #aaa;
 /*

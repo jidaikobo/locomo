@@ -12,6 +12,7 @@
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="<?php echo $include_asset('js/jquery.inc.js'); ?>" type="text/javascript"></script>
+	<script src="<?php echo $include_asset('js/jquery.exresize.0.1.0.js'); ?>" type="text/javascript"></script>
 </head>
 <body class="<?php echo $body_class ;?>">
 	<div class="container">
@@ -23,8 +24,7 @@
 				<p>
 				<?php echo implode('</p><p>', e((array) Session::get_flash('success'))); ?>
 				</p>
-<!--				<a href="javascript:void(0);" class="jsclose"><img src="/content/fetch_view/images/led-icons/cancel.png" alt="閉じる"></a>
--->			</div>
+			</div>
 <?php endif; ?>
 <?php if (Session::get_flash('error')): ?>
 			<div id="alert_error" class="flash_alert alert_error" tabindex="1">
@@ -32,6 +32,5 @@
 				<p>
 				<?php echo implode('</p><p>', e((array) Session::get_flash('error'))); ?>
 				</p>
-<!--				<a href="javascript:void(0);" class="jsclose"><img src="/content/fetch_view/images/led-icons/cancel.png" alt="閉じる"></a>
--->			</div>
+			</div>
 <?php endif; ?>

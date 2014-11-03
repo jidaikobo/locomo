@@ -13,6 +13,8 @@
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<?php echo \Asset::js('jquery.inc.js'); ?>
+	<?php echo \Asset::js('jquery.exresize.0.1.0.js'); ?>
+	
 </head>
 <body class="<?php echo $body_class ;?>">
 	<div class="container">

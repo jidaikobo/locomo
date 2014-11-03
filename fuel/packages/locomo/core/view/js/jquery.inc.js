@@ -1,16 +1,5 @@
-//なにかしら閉じちゃうイベント
-
-
 $(function(){
-
-function jsclose(event){
-	var t = event.target;
-	$(t).closest('div').hide();
-	return false;
-}
-$('a.jsclose').click(jsclose);
-
-//JavaScript有効時に表示する、無効時には非表示にする（CSS）
+//JavaScript有効時に表示、無効時にはCSSで非表示
 $("body *").removeClass("hide_if_no_js");
 
 //ページ読み込み直後のフォーカス制御
@@ -26,102 +15,64 @@ if(firstFocus){
 	}
 }
 
-
-//管理バーの高さ+αのパディングを設定。リサイズ時の処理をちょっと考える
-//ExResize等プラグインを使う？　jQueryUIになにかある？
+//管理バーの高さ+αのパディングを設定。
+function add_body_padding(barHeight){
+	paddingTop = parseInt($(bar).css('padding-top'), 10); //padding+heightがadminbarの高さ
+//	barHeight = Math.round(barHeight);
+	$('body').css('padding-top', barHeight+paddingTop+4+'px' );
+}
 if($('#adminbar')[0]){
 	var bar = '#adminbar';
 	var barHeight = $(bar).height();
-	var barPaddingTop = parseInt($(bar).css('padding-top'), 10)
-	$('body').css('padding-top', barHeight+barPaddingTop+3+'px' );
+	add_body_padding(barHeight);
+
+	$(bar).exResize(function(api){
+		var size = api.getSize();
+		barHeight = size.height;
+		add_body_padding(barHeight);
+	});	
 }
 
 //クリックイベント
+
+//モーダル
+var isModalOpen = false; //なくてもよいのかも
+var closeModal = function(){
+	$('.modal.currentitem').removeClass('currentitem');
+	isModalOpen = false;
+}
+$('a.modal').click(function(event){
+	var t = event.target;
+	if($(this).next('ul.modal').is(':hidden')){
+		closeModal();
+		$(this).next('ul.modal').addClass('currentitem');
+		 isModalOpen = true;
+	}else{
+		closeModal();
+	}
+//	event.stopPropagation();
+	return false;
+});
+
 $(document).click(function(event){
 	var t = event.target;
+	
 //リストの開け閉め もっといろいろかんがえたい
-
-	if( $(t).closest('a.modal').length != 0 && !$(t).closest('a.modal').next('ul.modal').hasClass('currentitem')){
-	//対象のnextにcurrentmenuがなければ付与
-		$('.currentitem').removeClass('currentitem')
-		$(t).closest('a.modal').next('ul.modal').addClass('currentitem')
-	}else if($('.currentitem')[0] && $(t).closest('.currentitem').length == 0){
-	//開いたメニューの外であればとにかくcurrentmenuを外しちゃう。
-		$('.currentitem').removeClass('currentitem');
+	if(isModalOpen && $(t).closest('.modal.currentitem').length == 0){
+		closeModal();
 	}
 } );
 
-/*
-$('a.listopen').click(function(){
-	$('#adminbar .currentmenu').removeClass('currentmenu');
-	if(! $(this).parent().next('ul').hasClass('currentmenu') ){
-		$(this).parent().next('ul').addClass('currentmenu');
-//console.log('a');
-	}
-} );
-$(document).click(function(event){
-//console.log('document');
-//	if($('.listopen')[0]&&($.contains($('.listopen')[0], event.target))){
-	if($('.modal')[0] && $(event.target).hasClass('modal')){
-		console.log(event.target);
-	}else if($('.currentmenu')[0]&&(!$.contains($('.currentmenu')[0], event.target))){
-		$('#adminbar .currentmenu').removeClass('currentmenu');
-	}
-} );
-*/
-/*
-//クリックイベント
-$(document).click(function(event){
-	var t = event.target;
-//リストの開け閉め 整理したい。
-		console.log();
-if($('.listopen')[0]){
-	if($(t).closest('.listopen').length){
-	//ターゲットもしくは祖先要素に.listopenがあるか。
-		console.log(t);
-	}
-
-	if($(t).parent().next('ul').hasClass('currentmenu') ){
-		$('#adminbar .currentmenu').removeClass('currentmenu');
-	}else if($(t).hasClass('listopen')){
-		$('#adminbar .currentmenu').removeClass('currentmenu');
-		$(t).parent().next('ul').addClass('currentmenu');
-	}else if($('.currentmenu')[0] && (!$.contains($('.currentmenu')[0], t))){
-		$('#adminbar .currentmenu').removeClass('currentmenu');
-	}
-}
-
-} );
-*/
-/*	
-var tabbed = false;
-$("body").keydown(function(event){
-  // 入力されたキーのコード
-  var keyCode = event.keyCode;
-	console.log(keyCode);
-	if( keyCode == 9 && tabbed == false ){
-		$('[tabindex=1]').focus();
-		tabbed=true;
-		alert('tabutta!');
+//確認ウィンドウ
+$('.confirm').click(function(){
+	var msg = $(this).data('jslcmMsg');
+		msg = msg.replace(/\\n/g, "\n");
+	if (!confirm(msg)){
 		return false;
 	}
 });
-*/
 
-/*
-function locomo_attempt_focus(){
-	setTimeout(
-		function(){
-			try{
-				account = document.getElementById('account');
-				account.focus();
-				account.select();
-			} catch(e){}
-		}, 200
-	);
-}
-locomo_attempt_focus();
-*/
+
 //=== rollover ===
 $('.bt a:has(img)').hover(function(){
 	var imgsrc = $(this).find('img').attr('src');
