@@ -37,13 +37,13 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_admin()
 	{
-		$options = @func_get_arg(0) ?: array();
-		$model = @func_get_arg(1) ?: null;
-		$deleted = @func_get_arg(2) ?: false;
-
+		$model = $this->model_name;
 		$view = \View::forge($this->_index_template);
+
+		//$model::paginated_find_use_get_query(false);
+		$view->set('items',  $model::paginated_find(array(), $this->pagination_config));
+
 		$view->base_assign();
-		$view->set('items',  $this->paginated_find($options, $model));
 		$view->set_global('title', static::$nicename);
 		$this->template->content = $view;
 	}
@@ -79,7 +79,7 @@ class Controller_Crud extends Controller_Base
 	/**
 	 * action_index_expired()
 	 */
-	public function action_index_expired($pagenum = 1)
+	public function action_index_expired()
 	{
 		$model = $this->model_name;
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
@@ -94,7 +94,7 @@ class Controller_Crud extends Controller_Base
 	/**
 	 * action_index_invisible()
 	 */
-	public function action_index_invisible($pagenum = 1)
+	public function action_index_invisible()
 	{
 		$model = $this->model_name;
 		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
@@ -133,7 +133,7 @@ class Controller_Crud extends Controller_Base
 
 		$model::disable_filter();
 		\View::set_global('title', static::$nicename . 'の削除を含む全項目');
-		return $this->action_index_admin(array(), null, 'disabled');
+		return $this->action_index_admin();
 	}
 
 	/*
@@ -367,64 +367,6 @@ class Controller_Crud extends Controller_Base
 	}
 
 
-	/*
-	 * @param array    $options conditions for find
-	 * @param str      $model model class name
-	 * @param bool     $use_get_query use get query paramaters
-	 * @param array    $pagination_config overwrite $this->pagination_config
-	 *
-	 * @return Model finded
-	 */
-	public function paginated_find($options = array(), $model = null, $use_get_query = true, $pagination_config = null) {
-
-		is_null($model) and $model = $this->model_name;
-//		$action = \Request::main()->action;
-
-		if ($use_get_query) {
-			$input_get = \Input::get();
-		} else {
-			$input_get = array();
-		}
-		if ($use_get_query and \Input::get()) {
-			if (\Input::get('orders')) {
-				$orders = array();
-				foreach (\Input::get('orders') as $k => $v) {
-					$orders[$k] = $v;
-				}
-				$options['order_by'] = $orders;
-			}
-			if (\Input::get('searches')) {
-				foreach (\Input::get('searches') as $k => $v) {
-					if ($v == false) continue;
-					$options['where'][] = array($k, '=', $v);
-				}
-			}
-			if (\Input::get('likes')) {
-				$likes = array();
-				foreach (\Input::get('likes') as $k => $v) {
-					if ($v == false) continue;
-					$options['where'][] = array($k, 'LIKE', '%' . $v . '%');
-				}
-			}
-		}
-
-		$count = $model::count($options);
-
-		$pagination_config = $pagination_config ? array_merge($this->pagination_config, $pagination_config) : $this->pagination_config;
-		$pagination_config['total_items'] = $count;
-
-		$segment = $pagination_config['uri_segment'] - 1;
-		$uri = '/'.join('/', array_slice(\Uri::segments(), 0, $segment)).'/';
-		$pagination_config['pagination_url'] = \Uri::create($uri, array(), $input_get);
-
-		if (isset($pagination_config['per_page'])) $options['limit'] = $pagination_config['per_page'];
-		\Pagination::set_config($pagination_config);
-		if (!isset($pagination_config['per_page'])) $options['limit'] = \Pagination::get('per_page');
-		$options['offset'] = \Pagination::get('offset');
-
-		return $model::find('all', $options);
-
-	}
 
 
 }

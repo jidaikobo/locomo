@@ -5,7 +5,7 @@ trait Traits_Controller_Bulk
 	/*
 	 * @return Fieldset object
 	 */
-	public function bulk($options = array(), $model = null, $deleted = 'disabled', $use_get_query = true, $pagination_config = null, $define_function = null)
+	public function bulk($options = array(), $pagination_config = array(), $model = null)
 	{
 
 		if (!$model) $model = $this->model_name;
@@ -15,14 +15,16 @@ trait Traits_Controller_Bulk
 		if (\Input::get('ids')) {
 			$options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
 			$pagination_config['per_page'] = count(\Input::get('ids')) * 2;
-			$objects = $this->paginated_find($options, $model, 'disabled', false, $pagination_config);
+			$model::paginated_find_use_get_query(false);
+			$model::disable_filter();
+			$objects = $model::paginated_find($options, $pagination_config);
 		// edit create 分岐
 		} elseif ($create_field = intval(\Input::get('create'))) { // create
 			for ($i = 0; $i < $create_field; $i++) {
 				$objects[] = $model::forge();
 			}
-		} else { //edit 
-			$objects = $this->paginated_find($options, $model, $deleted, $use_get_query, $pagination_config);
+		} else { //edit
+			$objects = $model::paginated_find($options, $pagination_config);
 		}
 
 		if (!$objects) {
@@ -32,7 +34,7 @@ trait Traits_Controller_Bulk
 
 		$bulk = \Locomo\Bulk::forge();
 
-		$bulk->add_model($objects, $define_function);
+		$bulk->add_model($objects);
 
 		$form = $bulk->build();
 
