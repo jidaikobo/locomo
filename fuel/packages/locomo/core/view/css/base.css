@@ -244,6 +244,9 @@ dfn {
 	left: auto;
 	clip: rect(1px 1px 1px 1px);
 	clip: rect(1px, 1px, 1px, 1px);
+	height: 0;
+	width: 0;
+	overflow: hidden;
 }
 
 .hl.show_if_focus:focus,
@@ -258,6 +261,8 @@ dfn {
 	padding:5px 10px;
 	background-color: #fff;
 	z-index: 1000;
+	height: auto;
+	width: auto;
 }
 
 .div,
