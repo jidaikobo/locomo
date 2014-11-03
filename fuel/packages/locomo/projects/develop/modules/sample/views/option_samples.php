@@ -1,4 +1,3 @@
-<?php echo render('inc_admin_header'); ?>
 
 <?php echo \Form::open(); ?>
 <?php if( ! @$is_revision): ?>
@@ -13,7 +12,7 @@
 
 	<div class="button_group">
 		<?php
-			echo \Form::hidden($token_key, $token);
+			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 			echo \Form::hidden('mode', 'add');
 			echo \Form::submit('submit', '新規追加', array('class' => 'button primary'));
 		?>
@@ -78,7 +77,7 @@ if( ! empty($flag)):
 			echo \Html::anchor($controller.'/options_revisions/'.$optname, '履歴一覧に戻る',array('class'=>'button'));
 			echo \Html::anchor($controller.'/options/'.$optname, '編集画面に戻る',array('class'=>'button'));
 		else:
-			echo \Form::hidden($token_key, $token);
+			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 			echo \Form::hidden('mode', 'edit');
 			echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 		endif;
@@ -89,4 +88,3 @@ if( ! empty($flag)):
 
 <?php endif; ?>
 
-<?php echo render('inc_admin_footer'); ?>

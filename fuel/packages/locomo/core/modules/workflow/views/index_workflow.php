@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <h2>ルート設定</h2>
 
@@ -19,4 +18,3 @@
 <?php endforeach; ?>
 </table>
 
-<?php echo render('inc_footer'); ?>

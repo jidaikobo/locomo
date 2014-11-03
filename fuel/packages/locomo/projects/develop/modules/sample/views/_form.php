@@ -16,7 +16,7 @@
 	<?php
 
 	if( ! @$is_revision): 
-		echo \Form::hidden($token_key, $token);
+		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 	endif;
 	?>

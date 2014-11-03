@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <?php echo \Form::open(); ?>
 
@@ -31,4 +30,3 @@
 
 <?php echo \Form::close(); ?>
 
-<?php echo render('inc_footer'); ?>

@@ -57,10 +57,12 @@ Autoloader::add_classes(array(
 	'Locomo\\Actionset_Index'  => PKGCOREPATH.'classes'.DS.'actionset/index.php',
 	'Locomo\\Util'             => PKGCOREPATH.'classes'.DS.'util.php',
 	'Locomo\\Auth'             => PKGCOREPATH.'classes'.DS.'auth.php',
+	'Locomo\\View'             => PKGCOREPATH.'classes'.DS.'view.php',
 ));
 
 //core override class
 Autoloader::add_classes(array(
+	'Locomo\\Asset_Instance' => PKGCOREPATH.'classes'.DS.'asset/instance.php',
 	'Locomo\\Validation'     => PKGCOREPATH.'classes'.DS.'validation.php',
 	'Locomo\\Pagination'     => PKGCOREPATH.'classes'.DS.'pagination.php',
 	'Locomo\\Fieldset'       => PKGCOREPATH.'classes'.DS.'fieldset.php',
@@ -69,10 +71,14 @@ Autoloader::add_classes(array(
 ));
 
 //always load module
-Module::load('acl');
-Module::load('user');
-Module::load('revision');
-Module::load('workflow');
+\Module::load('acl');
+\Module::load('user');
+\Module::load('revision');
+\Module::load('workflow');
 \Module::load('bulk');
+
+//add asset path
+\Asset::add_path(PKGCOREPATH.'view/');
+\Asset::add_path(DOCROOT.'view/');
 
 /* End of file bootstrap.php */

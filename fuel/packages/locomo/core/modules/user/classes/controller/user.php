@@ -42,7 +42,8 @@ class Controller_User extends \Locomo\Controller_Crud
 		$view = \View::forge('login');
 		$view->set('ret', $ret);
 		$view->set_global('title', 'ログイン');
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -70,7 +71,7 @@ class Controller_User extends \Locomo\Controller_Crud
 
 		$view->set_safe('pagination', \Pagination::create_links());
 		$view->set('hit', \Pagination::get('total_items')); ///
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 }

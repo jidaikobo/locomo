@@ -18,17 +18,20 @@
 		<div class="contents">
 			<h1 class="page_title skip"><?php echo $title; ?></h1>
 <?php if (Session::get_flash('success')): ?>
-			<div class="alert alert_success">
+			<div id="alert_success" class="flash_alert alert_success" tabindex="1">
+				<a class="skip" tabindex="1" id="alert_success">インフォメーション メッセージが次の行にあります</a>
 				<p>
 				<?php echo implode('</p><p>', e((array) Session::get_flash('success'))); ?>
 				</p>
-			</div>
+<!--				<a href="javascript:void(0);" class="jsclose"><img src="/content/fetch_view/images/led-icons/cancel.png" alt="閉じる"></a>
+-->			</div>
 <?php endif; ?>
 <?php if (Session::get_flash('error')): ?>
-			<div class="alert alert_error">
-				<strong class="skip">エラー</strong>
+			<div id="alert_error" class="flash_alert alert_error" tabindex="1">
+				<a class="skip" tabindex="1" href="alert_error">エラー メッセージが次の行にあります</a>
 				<p>
 				<?php echo implode('</p><p>', e((array) Session::get_flash('error'))); ?>
 				</p>
-			</div>
+<!--				<a href="javascript:void(0);" class="jsclose"><img src="/content/fetch_view/images/led-icons/cancel.png" alt="閉じる"></a>
+-->			</div>
 <?php endif; ?>

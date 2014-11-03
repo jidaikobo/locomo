@@ -13,7 +13,6 @@ IE8,MacIE5,Opera9以下 html:first-child
 .adminbar_main li a:focus {
 	background-color: #d8ebfc; 216,235,252
 }
-他、メニューバーのbasecolorを明暗設定できるようにする
 アイコン類の扱いを考える
 */
 
@@ -111,7 +110,7 @@ body.login{
 	display: block;
 	font-size: .9em;
 }
-.login .alert {
+.login .flash_alert {
 	position: absolute;
 	top: -5em;
 	left: 0;
@@ -509,17 +508,18 @@ a.delete{
 }
 
 /* alert */
-div.alert {
-	padding:5px 10px;
+div.flash_alert {
+	position: relative;
+	padding:5px 20px 5px 10px;
 	margin: 20px 0;
 	text-align: left;
 }
-div.alert_success {
+div.flash_alert.alert_success {
 	background-color: #dff0d8;
 	border-color: #d6e9c6;
 	color: #111;
 }
-div.alert_error {
+div.flash_alert.alert_error {
 	background-color: #fae6e6;
 	border-color: #e9c6c6;
 	color: #111;
@@ -528,7 +528,14 @@ div.alert_error {
 	background-repeat: no-repeat;
 	background-position: 10px center;
 }
-
+.flash_alert a.jsclose{
+	display: inline;
+	position: absolute;
+	right: 2px;
+	top: 1px;
+	padding: 3px;
+	line-height: 1;
+}
 /* pagenation */
 .pagination {
 	padding: 10px;

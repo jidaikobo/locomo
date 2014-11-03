@@ -1,10 +1,9 @@
-<?php echo render('inc_header'); ?>
 
 <?php echo \Form::open(); ?>
 <h3><?php echo \Form::label('拡張oilコマンド書式', 'cmd'); ?></h3>
 <p><?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('style' => 'width:100%;height:5em;', 'placeholder'=>'拡張oilコマンド書式')); ?></p>
 <p>
-	<?php echo \Form::hidden($token_key, $token); ?>
+	<?php echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 	<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'button primary')); ?>
 </p>
 <?php echo \Form::close(); ?>
@@ -25,4 +24,3 @@
 <textarea class="pre" style="width: 100%;">php oil refine migrate:down --modules=モジュール名</textarea>
 <p>を実行した後、<code>PROJPATH./modules</code>に展開されたモジュールファイルを削除してください。</p>
 
-<?php echo render('inc_footer'); ?>

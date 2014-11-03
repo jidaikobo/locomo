@@ -2,17 +2,17 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title><?php echo $site_title.' - '.$title; ?></title>
+	<title><?php echo \Config::get('site_title').' - '.$title; ?></title>
 
 	<!--stylesheet-->
-	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/base.css'); ?>" />
-	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/core.css'); ?>" />
-	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/layout.css'); ?>" />
-	<link type="text/css" rel="stylesheet" href="<?php echo $include_asset('css/admin.css'); ?>" />
+	<?php echo \Asset::css('base.css'); ?>
+	<?php echo \Asset::css('core.css'); ?>
+	<?php echo \Asset::css('layout.css'); ?>
+	<?php echo \Asset::css('admin.css'); ?>
 
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	<script src="<?php echo $include_asset('js/jquery.inc.js'); ?>" type="text/javascript"></script>
+	<?php echo \Asset::js('jquery.inc.js'); ?>
 </head>
 <body class="<?php echo $body_class ;?>">
 	<div class="container">

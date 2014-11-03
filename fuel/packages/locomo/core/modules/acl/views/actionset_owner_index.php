@@ -1,4 +1,3 @@
-<?php echo render('inc_admin_header'); ?>
 
 <p>対象コントローラ：<code><?php echo $controller ?></code></p>
 
@@ -20,7 +19,7 @@
 </table>
 
 <?php
-echo \Form::hidden($token_key, $token);
+echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 echo \Form::hidden('controller', $hidden_controller);
 echo \Form::hidden('owner', $hidden_owner);
 ?>
@@ -32,4 +31,3 @@ echo \Form::hidden('owner', $hidden_owner);
 </div>
 <?php echo \Form::close(); ?>
 
-<?php echo render('inc_admin_footer'); ?>
