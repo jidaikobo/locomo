@@ -7,30 +7,29 @@ class Actionset_Option_User extends \Actionset_Option
 	/**
 	 * actionset_usergroup()
 	 */
-	public static function actionset_usergroup($module, $obj, $get_authed_url)
+	public static function actionset_usergroup($module, $obj, $id, $urls = array())
 	{
-		if($get_authed_url):
-			$url = self::check_auth($module, 'usergroup_bulk') ? "user/usergroup_bulk" : '';
-			$url_new = $url ? "user/usergroup_bulk/?create=1" : '';
-			$url_rev = $url ? "user/index_revision/usergroup?opt=usergroup" : '';
-			$urls = array(
-				array('ユーザグループ設定', $url),
-				array('ユーザグループ新規作成', $url_new),
-				array('ユーザグループ設定履歴', $url_rev),
-			);
-		endif;
+		//urls
+		$actions = array(array("/user/usergroup/", 'ユーザグループ'));
+		$urls = static::generate_anchors('user', 'usergroup', $actions, $obj);
+
+		//overrides
+		$overrides = static::generate_bulk_anchors(
+			$module      = 'user',
+			$model       = 'usergroup',
+			$opt         = 'usergroup',
+			$nicename    = 'ユーザグループ',
+			$is_override = $urls
+		);
 
 		$retvals = array(
-			'is_admin_only' => false,
-			'url'           => @$urls ?: array(),
-			'action_name'   => 'ユーザグループ',
-			'explanation'   => 'ユーザが所属するユーザグループです。コントローラオプションのため、この権限を許可するとほかのオプション類も許可されます。',
-			'menu_str'      => '',
+			'urls'         => $urls,
+			'overrides'    => $overrides,
+			'action_name'  => 'ユーザグループ',
+			'explanation'  => 'ユーザが所属するユーザグループの設定権限です。',
+			'order'        => 10,
 			'dependencies' => array(
-				'option',
-				'option_revisions',
-//				'option/usergroup',
-//				'option_revisions/usergroup',
+				'usergroup',
 			)
 		);
 		return $retvals;

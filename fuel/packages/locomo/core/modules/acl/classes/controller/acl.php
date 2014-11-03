@@ -3,65 +3,6 @@ namespace Acl;
 class Controller_Acl extends \Locomo\Controller_Base
 {
 	/**
-	 * auth()
-	 */
-	public static function auth($current_action = null, $userinfo = null)
-	{
-		if($current_action === null || $userinfo === null) return false;
-
-		//管理者は許可
-		if(
-			in_array(-2, $userinfo['usergroup_ids']) ||
-			in_array(-1, $userinfo['usergroup_ids'])
-		)
-		return true;
-
-		//userinfoを確認
-		return (in_array($current_action, @$userinfo['acls']));
-	}
-
-	/**
-	 * owner_auth()
-	 */
-	public static function owner_auth($controller = null, $action = null, $obj = null, $userinfo = null)
-	{
-		if( ! $obj) return false;
-
-		//管理者は許可
-		if(
-			in_array(-2, $userinfo['usergroup_ids']) ||
-			in_array(-1, $userinfo['usergroup_ids'])
-		)
-		return true;
-
-		//$objのcreator_idカラムを確認し、user_idと比較する。
-		$column = isset($obj::$_creator_field_name) ?
-			$obj::$_creator_field_name :
-			$obj::get_default_field_name('creator');
-
-		if(self::is_exists_owner_auth($controller, $action)):
-			return ($obj->{$column} == $userinfo['user_id']);
-		else:
-			return false;
-		endif;
-	}
-
-	/**
-	 * is_exists_owner_auth()
-	 */
-	public static function is_exists_owner_auth($controller = null, $action = null)
-	{
-		$opt = array(
-			'where' => array(
-				array('controller', $controller),
-				array('action', $action),
-				array('owner_auth', '!=', null),
-			)
-		);
-		return ! is_null(\Acl\Model_Acl::find('first', $opt));
-	}
-
-	/**
 	 * action_controller_index()
 	 */
 	public function action_controller_index()
@@ -103,13 +44,8 @@ class Controller_Acl extends \Locomo\Controller_Base
 		$controllers = \Acl\Model_Acl::get_controllers();
 		$usergroups  = \Acl\Model_Acl::get_usergroups();
 		$users       = \Acl\Model_Acl::get_users();
-		$actionsets = \Actionset::get_all_actionset_single(
-			$controller,
-			$realm = 'all',
-			$obj = false,
-			$get_authed_url = false,
-			$exceptions = array('owner')
-		);
+		$actionsets  = \Actionset::get_module_actionset($controller);
+		if(isset($actionsets['owner'])) unset($actionsets['owner']);
 
 		//check database
 		$q = \DB::select('action');
@@ -153,7 +89,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 		endif;
 
 		//対象コントローラのオーナ向けアクションセットの取得
-		$actionsets = \Actionset::get_all_actionset_single(
+		$actionsets = \Actionset::get_module_actionset(
 			$controller,
 			$realm = 'owner',
 			$obj = false,
@@ -201,7 +137,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 		endif;
 
 		//vals
-		$actionsets = \Actionset::get_all_actionset_single(
+		$actionsets = \Actionset::get_module_actionset(
 			$controller,
 			$realm = 'all',
 			$obj = false,
@@ -223,7 +159,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 			if(is_array(\Input::post('acls'))):
 				foreach($acls as $realm => $acl):
 					foreach($acl as $action => $v):
-						foreach($actionsets[$realm]->{$action}['dependencies'] as $each_action):
+						foreach($actionsets[$realm][$action]['dependencies'] as $each_action):
 							$q = \DB::insert('acls');
 							$q->set(array(
 								'controller' => $controller,
@@ -262,7 +198,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 		if($controller == null) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 		//vals
-		$actionsets = \Actionset::get_all_actionset_single(
+		$actionsets = \Actionset::get_module_actionset(
 			$controller,
 			$realm = 'owner',
 			$obj = false,

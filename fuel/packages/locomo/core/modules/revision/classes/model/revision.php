@@ -35,6 +35,7 @@ class Model_Revision extends \Locomo\Model_Base
 
 	/**
 	 * find_all_revisions()
+	 * \DB::Expr()があるためpaginated_find()が使えない
 	*/
 	public static function find_all_revisions($view, $model, $opt)
 	{
@@ -136,47 +137,6 @@ class Model_Revision extends \Locomo\Model_Base
 		$view->set('items', $items);
 
 		return $view;
-	}
-
-	/**
-	 * find_revisions()
-	*/
-	public static function find_revisions($model = null, $pk_id = null)
-	{
-		if(is_null($model) || is_null($pk_id)) die('find_revisions()');
-		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
-		$likes = \Input::get('likes')  ?: null ;
-
-		//リビジョンの一覧を取得
-		$q = \DB::select('*');
-		$q->from('revisions');
-		$q->where('model', $model_str);
-		$q->where('pk_id', $pk_id);
-		$items = $q->as_object()->execute()->as_array();
-
-		//dataをunserialize（一覧表に編集者とsubjectの変遷を出すため）
-		foreach($items as $k => $item):
-			$items[$k]->data = unserialize($item->data);
-			$modifier_name = \User\Model_User::find($item->modifier_id, array('select'=>array('display_name')));
-			$modifier_name = $modifier_name ? static::$_modifiers[$item->modifier_id] : $modifier_name;
-			$items[$k]->modifier_name = $modifier_name;
-		endforeach;
-
-		return $items;
-	}
-
-	/**
-	 * find_revision()
-	*/
-	public static function find_revision($id = null)
-	{
-		is_null($id) and \Response::redirect($this->request->module);
-
-		//リビジョンを取得
-		$q = \DB::select('*');
-		$q->from('revisions');
-		$q->where('id', $id);
-		return $q->as_object()->execute()->current();
 	}
 
 	/**

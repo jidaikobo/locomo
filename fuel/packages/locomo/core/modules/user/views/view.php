@@ -1,38 +1,20 @@
 <?php echo render('inc_header'); ?>
 
 <h2>Viewing <span class='muted'>#<?php echo $item->id; ?></span></h2>
-<p>
-	<strong>User name:</strong>
-	<?php echo $item->user_name; ?></p>
-<p>
-	<strong>Password:</strong>
-	<?php echo $item->password; ?></p>
-<p>
-	<strong>Email:</strong>
-	<?php echo $item->email; ?></p>
-<p>
-	<strong>Last login:</strong>
-	<?php echo $item->last_login_at; ?></p>
-<p>
-	<strong>Delete date:</strong>
-	<?php echo $item->deleted_at; ?></p>
-<p>
-	<strong>Activation key:</strong>
-	<?php echo $item->activation_key; ?></p>
 
-<?php
-$ctrl_sfx = isset($is_deleted) ? '_deleted' : '' ;
-echo Html::anchor('user/edit'.$ctrl_sfx.'/'.$item->id, 'Edit');
-echo ' | ';
-echo Html::anchor('user/index'.$ctrl_sfx.'/', 'Back');
-if(isset($is_deleted)||isset($is_delete_deleted)):
-	echo ' | ';
-	echo Html::anchor('user/undelete/'.$item->id, 'Undelete');
-endif;
-if(isset($is_delete_deleted)):
-	echo ' | ';
-	echo Html::anchor('user/delete_deleted/'.$item->id, 'Delete Completely');
-endif;
-?>
+<table class="tbl">
+<tr>
+	<th>User name:</th>
+	<td><?php echo $item->user_name; ?></td>
+</tr>
+<tr>
+	<th>Email:</th>
+	<td><?php echo $item->email; ?></td>
+</tr>
+<tr>
+	<th>Last login:</th>
+	<td><?php echo $item->last_login_at; ?></td>
+</tr>
+</table>
 
 <?php echo render('inc_footer'); ?>

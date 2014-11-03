@@ -24,6 +24,8 @@
 	</tbody>
 </table>
 
+<?php echo \Pagination::create_links(); ?>
+
 <?php else: ?>
 <p>編集履歴が存在しません。</p>
 <?php endif; ?>
