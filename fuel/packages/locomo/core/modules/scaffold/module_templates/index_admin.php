@@ -3,8 +3,7 @@
 <p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <?php 
 	//index menu
-	$actions = \Actionset::get_menu($controller, 'index', null, $get_authed_url = true);
-	echo \Actionset::generate_menu_html($actions, array('class'=>'holizonal_list'));
+	echo \Actionset::generate_menu_html($actions['index'], array('class'=>'holizonal_list'));
 ?>
 <?php if ($items): ?>
 <table class="tbl datatable">
@@ -19,9 +18,9 @@
 ###TBODY###			<td>
 				<div class="btn_group">
 					<?php
-					echo Html::anchor('user/view'.'/'.$item->id, '閲覧', array('class' => 'edit'));
+					echo Html::anchor('xxx/view'.'/'.$item->id, '閲覧', array('class' => 'edit'));
 					echo ' ';
-					echo Html::anchor('user/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
+					echo Html::anchor('xxx/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
 					?>
 				</div>
 			</td>

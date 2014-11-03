@@ -2,8 +2,13 @@
 namespace Locomo;
 class Controller_Crud extends Controller_Base
 {
+	public $_index_template = 'index_admin';
 
-	public $template = 'index_admin';
+	/**
+	 * Presenterに渡り、ACLを確認するときに使う
+	 * 個票を返すようなとき、その値を$_single_itemに渡すこと
+	 */
+	public $_single_item ;
 
 	/**
 	 * @var array default setting of pagination
@@ -32,18 +37,20 @@ class Controller_Crud extends Controller_Base
 	/**
 	 * action_index_admin()
 	 * 管理者用の index
+	 * @param $options
+	 * @param $model
+	 * @param $deleted
 	 */
 	public function action_index_admin()
 	{
-		$view = \View::forge($this->template);
+		$options = @func_get_arg(0) ?: array();
+		$model = @func_get_arg(1) ?: null;
+		$deleted = @func_get_arg(2) ?: false;
+		$view = \View::forge($this->_index_template);
 
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find());
+		$view->set('items',  $this->paginated_find($options, $model));
 
-		$view->set_safe('pagination', \Pagination::create_links());
-		$view->set('hit', \Pagination::get('total_items')); ///
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', self::$nicename);
+		$view->set_global('title', static::$nicename);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
@@ -53,18 +60,8 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index()
 	{
-		$this->template = 'index';
-		$view = \View::forge($this->template);
-
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find());
-
-		$view->set_safe('pagination', \Pagination::create_links());
-		$view->set('hit', \Pagination::get('total_items')); ///
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', self::$nicename);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$this->_index_template = 'index';
+		return static::action_index_admin();//$options, $model, $deleted);
 	}
 
 	/**
@@ -76,22 +73,13 @@ class Controller_Crud extends Controller_Base
 	{
 		$model = $this->model_name;
 
-		if (!isset($model::properties()['created_at'])) throw new HttpNotFoundException;
+		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
-		$options['where'][] = array('created_at', '>=', date('Y-m-d'));
-		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
+		$model::$_conditions['where'][] = array('created_at', '>=', date('Y-m-d'));
+		$model::$_conditions['where'][] = array('expired_at', '>=', date('Y-m-d'));
 
-		$view = \View::forge($this->template);
-
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find($options, $model));
-
-		$view->set_safe('pagination', \Pagination::create_links());
-		$view->set('hit', \Pagination::get('total_items')); ///
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', self::$nicename . 'の予約項目');
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		\View::set_global('title', static::$nicename . '予約項目');
+		return $this->action_index_admin();
 	}
 
 	/**
@@ -100,23 +88,13 @@ class Controller_Crud extends Controller_Base
 	public function action_index_expired($pagenum = 1)
 	{
 		$model = $this->model_name;
+		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
-		if (!isset($model::properties()['created_at'])) throw new \HttpNotFoundException;
+		$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d'));
+		$model::$_conditions['where'][] = array('expired_at', '<=', date('Y-m-d'));
 
-		$options['where'][] = array('created_at', '<=', date('Y-m-d'));
-		$options['where'][] = array('expired_at', '>=', date('Y-m-d'));
-
-		$view = \View::forge($this->template);
-
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find($options, $model));
-
-		$view->set_safe('pagination', \Pagination::create_links());
-		$view->set('hit', \Pagination::get('total_items')); ///
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', self::$nicename . 'の期限切れ項目');
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		\View::set_global('title', static::$nicename . 'の期限切れ項目');
+		return $this->action_index_admin();
 	}
 
 	/**
@@ -125,22 +103,12 @@ class Controller_Crud extends Controller_Base
 	public function action_index_invisible($pagenum = 1)
 	{
 		$model = $this->model_name;
-
 		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
 
-		$options['where'][] = array('is_visible', '=', 0);
+		$model::$_conditions['where'][] = array('is_visible', '=', 0);
 
-		$view = \View::forge($this->template);
-
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find($options, $model));
-
-		$view->set_safe('pagination', \Pagination::create_links());
-		$view->set('hit', \Pagination::get('total_items')); ///
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', self::$nicename . 'の不可視項目');
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		\View::set_global('title', static::$nicename . 'の不可視項目');
+		return $this->action_index_admin();
 	}
 
 	/**
@@ -148,41 +116,32 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_deleted()
 	{
-		$model = $this->model_name ;
+		$model = $this->model_name;
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
-		$view = \View::forge($this->template);
+		$deleted_column = $model::soft_delete_property('deleted_field', 'deletd_at');
+		$model::$_conditions['where'][] = array($deleted_column, 'IS NOT', null);
 
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find(array(), null, true));
+		$model::disable_filter();
+		//static::enable_filter();
 
-		$view->set_safe('pagination', \Pagination::create_links());
-		$view->set('hit', \Pagination::get('total_items')); ///
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', self::$nicename . 'の削除済み項目');
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		\View::set_global('title', static::$nicename . 'の削除済み項目');
+		return $this->action_index_admin();
 	}
 
 	/*
 	 * action_index_all()
 	 */
-	public function action_index_all() {
-		$model = $this->model_name ;
+	public function action_index_all()
+	{
 
+		$model = $this->model_name;
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
-		$view = \View::forge($this->template);
+		$model::disable_filter();
+		\View::set_global('title', static::$nicename . 'の削除を含む全項目');
+		return $this->action_index_admin(array(), null, 'disabled');
 
-		// find & set pagination_config
-		$view->set('items',  $this->paginated_find(array(), null, 'disabled'));
-
-		$view->set_safe('pagination', \Pagination::create_links());
-		$view->set('hit', \Pagination::get('total_items')); ///
-		$view->set('is_deleted', false); ///
-		$view->set_global('title', self::$nicename . 'の削除を含む全項目');
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/*
@@ -242,9 +201,12 @@ class Controller_Crud extends Controller_Base
 			\Response::redirect($this->request->module);
 		endif;
 
+		//$_single_item
+		$this->_single_item = $data['item'];
+
 		//view
 		$view = \View::forge('view');
-		$view->set_global('item', $data['item']);
+		$view->set_global('item', $this->_single_item);
 		$view->set_global('title', self::$nicename . '閲覧');
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
@@ -302,10 +264,13 @@ class Controller_Crud extends Controller_Base
 			endif;
 		endif;
 
+		//set _single_item
+		$this->_single_item = $obj;
+
 		//view
 		$view = \View::forge('edit');
 		$view->set_global('title', $title);
-		$view->set_global('item', $obj, false);
+		$view->set_global('item', $this->_single_item, false);
 		$view->set_global('form', $form, false);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
@@ -452,16 +417,15 @@ class Controller_Crud extends Controller_Base
 	/*
 	 * @param array    $options conditions for find
 	 * @param str      $model model class name
-	 * @param bool|str $deleted
 	 * @param bool     $use_get_query use get query paramaters
 	 * @param array    $pagination_config overwrite $this->pagination_config
 	 *
 	 * @return Model finded
 	 */
-	public function paginated_find($options = array(), $model = null, $deleted = false, $use_get_query = true, $pagination_config = null) {
+	public function paginated_find($options = array(), $model = null, $use_get_query = true, $pagination_config = null) {
 
 		is_null($model) and $model = $this->model_name;
-		$action = \Request::main()->action;
+//		$action = \Request::main()->action;
 
 		if ($use_get_query) {
 			$input_get = \Input::get();
@@ -491,35 +455,21 @@ class Controller_Crud extends Controller_Base
 			}
 		}
 
-		if ($deleted === 'disabled') {
-			$model::disable_filter();
-			$count = count($model::find('all', $options));
-			$deleted = false;
-		} elseif($deleted) {
-			$count = count($model::find_deleted('all', $options));
-		} else {
-			$count = $model::count($options);
-		}
+		$count = $model::count($options);
 
 		$pagination_config = $pagination_config ? array_merge($this->pagination_config, $pagination_config) : $this->pagination_config;
-
 		$pagination_config['total_items'] = $count;
-		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $input_get);
+
+		$segment = $pagination_config['uri_segment'] - 1;
+		$uri = '/'.join('/', array_slice(\Uri::segments(), 0, $segment)).'/';
+		$pagination_config['pagination_url'] = \Uri::create($uri, array(), $input_get);
 
 		if (isset($pagination_config['per_page'])) $options['limit'] = $pagination_config['per_page'];
 		\Pagination::set_config($pagination_config);
 		if (!isset($pagination_config['per_page'])) $options['limit'] = \Pagination::get('per_page');
 		$options['offset'] = \Pagination::get('offset');
 
-		if ($deleted === 'disabled') {
-			$model::disable_filter();
-			return $model::find('all', $options);
-			$deleted = false;
-		} elseif($deleted) {
-			return $model::find_deleted('all', $options);
-		} else {
-			return $model::find('all', $options);
-		}
+		return $model::find('all', $options);
 
 	}
 

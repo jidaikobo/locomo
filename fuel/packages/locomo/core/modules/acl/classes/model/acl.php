@@ -37,7 +37,7 @@ class Model_Acl extends \Orm\Model
 		//アクションセットの条件を満たすものを抽出
 		$results = array();
 		foreach($actionsets as $actionset_name => $v){
-			if( ! is_array($v['dependencies'])) continue;
+			if( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
 			if( ! array_diff($v['dependencies'], $actions)){
 				$results[] = $actionset_name;
 			};
@@ -81,12 +81,11 @@ class Model_Acl extends \Orm\Model
 	 * get_controllers()
 	 * configで指定されたacl対象コントローラの取得（とりあえずモジュール形式だけ）
 	 */
-	public static function get_controllers($realm = '')
+	public static function get_controllers($is_owner = false)
 	{
-		//nicename
-		$modules = array_keys(\Actionset::get_actionset(null, $realm));
 		$controllers = array();
-		foreach($modules as $module):
+		foreach(\Actionset::get_actionset() as $module => $actionset):
+			if($is_owner && ! \Arr::get($actionset, 'owner', false)) continue;
 			$config = \Config::load(\Actionset::get_modules()[$module].DS.'config'.DS.$module.'.php', $module);
 			if(@$config['is_admin_only']) continue;
 			$controllers[$module] = $config['nicename'];

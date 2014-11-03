@@ -56,21 +56,15 @@ class Controller_Sample extends \Locomo\Controller_Crud
 	}
 
 
-	public function action_sample_bulk()
+	public function action_sample()
 	{
+		$this->template = 'default';
+
 		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
 		$form = $this->bulk(array(), null, 'disabled', true, null, 'bulk_ctm');
 
 		$view->set_global('title', 'サンプルバルク');
 		$view->set_global('form', $form, false);
-
-
-		//add_actionset
-		$action = array(
-			'url' => 'user/',
-			'menu_str' => '編集画面に戻る',
-		);
-		\Actionset::set_actionset('sample', 'ctrl', 'back', $action);
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}

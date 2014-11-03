@@ -54,9 +54,9 @@ class Controller_User extends \Locomo\Controller_Crud
 	}
 
 	/**
-	 * action_usergroup_bulk()
+	 * action_usergroup()
 	 */
-	public function action_usergroup_bulk()
+	public function action_usergroup()
 	{
 		$view = \View::forge(PKGCOREPATH.'modules/bulk/views/bulk.php');
 		$form = $this->bulk(array(), '\User\Model_Usergroup');

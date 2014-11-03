@@ -339,26 +339,26 @@ trait Traits_Model_Workflow
 		//編集
 		if ($mode == 'edit') {
 			//作成権限があるユーザだったらin_progress以外を編集できる
-			if(\Acl\Controller_Acl::auth($controller.'/create', $userinfo)):
+			if(\Auth::auth($controller.'/create', $userinfo)):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
 			endif;
 		}
 
 		//承認のための閲覧
-		if(\Acl\Controller_Acl::auth($controller.'/approve', $userinfo)):
+		if(\Auth::auth($controller.'/approve', $userinfo)):
 			//承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
 			return $options;
 		endif;
 
 		//作成ユーザはどんな条件でも閲覧できる
-		if(\Acl\Controller_Acl::auth($controller.'/create', $userinfo)):
+		if(\Auth::auth($controller.'/create', $userinfo)):
 			return $options;
 		endif;
 
 		//閲覧ユーザはfinishを閲覧できる
-		if(\Acl\Controller_Acl::auth($controller.'/view', $userinfo)):
+		if(\Auth::auth($controller.'/view', $userinfo)):
 			$options['where'][] = array(array($column, '=', 'finish'));
 			return $options;
 		endif;

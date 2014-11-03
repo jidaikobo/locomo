@@ -9,6 +9,70 @@ class Auth
 	protected static $is_user_logged_in = false;
 
 	/**
+	 * auth()
+	 */
+	public static function auth($current_action = null, $userinfo = null)
+	{
+		if($current_action === null) return false;
+		$userinfo = $userinfo ?: \Auth::get_userinfo();
+
+		//管理者は許可
+		if(
+			in_array(-2, $userinfo['usergroup_ids']) ||
+			in_array(-1, $userinfo['usergroup_ids'])
+		)
+		return true;
+
+		//userinfoを確認
+		return (in_array($current_action, @$userinfo['acls']));
+	}
+
+	/**
+	 * owner_auth()
+	 */
+	public static function owner_auth($controller = null, $action = null, $obj = null, $userinfo = null)
+	{
+		if( ! $obj) return false;
+		$userinfo = $userinfo ?: \Auth::get_userinfo();
+
+		//管理者は許可
+		if(
+			in_array(-2, $userinfo['usergroup_ids']) ||
+			in_array(-1, $userinfo['usergroup_ids'])
+		)
+		return true;
+
+		//ゲストなど、objを確認できない状態ではowner_authは常にfalse
+		if(! method_exists($obj, 'get_default_field_name')) return false;
+
+		//$objのcreator_idカラムを確認し、user_idと比較する。
+		$column = isset($obj::$_creator_field_name) ?
+			$obj::$_creator_field_name :
+			$obj::get_default_field_name('creator');
+
+		if(self::is_exists_owner_auth($controller, $action)):
+			return ($obj->{$column} == $userinfo['user_id']);
+		else:
+			return false;
+		endif;
+	}
+
+	/**
+	 * is_exists_owner_auth()
+	 */
+	public static function is_exists_owner_auth($controller = null, $action = null)
+	{
+		$opt = array(
+			'where' => array(
+				array('controller', $controller),
+				array('action', $action),
+				array('owner_auth', '!=', null),
+			)
+		);
+		return ! is_null(\Acl\Model_Acl::find('first', $opt));
+	}
+
+	/**
 	 * set_userinfo()
 	 * \Locomo\Controller_Base::before()から呼ばれる。
 	 */

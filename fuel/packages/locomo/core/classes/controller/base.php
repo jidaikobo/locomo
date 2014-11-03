@@ -88,12 +88,12 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$userinfo = \Auth::get_userinfo();
 
 		//ユーザ／ユーザグループ単位のACLを確認する。
-		$is_allow = \Acl\Controller_Acl::auth($this->current_action, $userinfo);
+		$is_allow = \Auth::auth($this->current_action, $userinfo);
 
 		//権限がなくても、オーナACLがある行為だったらいったん留保
 		//modelのauthorized_option()に判断をゆだねる
 		if( ! $is_allow):
-			$is_allow = \Acl\Controller_Acl::is_exists_owner_auth($this->request->module, $method);
+			$is_allow = \Auth::is_exists_owner_auth($this->request->module, $method);
 		endif;
 
 		//存在しないアクション

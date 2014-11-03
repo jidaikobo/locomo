@@ -1,5 +1,5 @@
 <?php echo render('inc_header'); ?>
-<h2>項目一覧<?php echo ($hit != 0) ? '（全'.$hit.'件）' : ''; ?></h2>
+<h2>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h2>
 <p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <br>
 <?php if ($items): ?>
@@ -35,7 +35,7 @@
 <?php endforeach; ?>
 	</tbody>
 </table>
-<?php echo $pagination; ?>
+<?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>
 <p>ユーザが存在しません。</p>

@@ -6,32 +6,30 @@ class Actionset_Base_XXX extends \Actionset_Base
 //	use \Workflow\Traits_Actionset_Base_Workflow;
 
 	/*
-	(bool) is_admin_only 管理者のみに許された行為。ACL設定画面に表示されなくなる
-	(str)  url           メニューに表示するリンク先。配列、入れ子の可能。
+	(arr)  urls          メニューに表示するリンク先
+	(arr)  overrides     urlをオーバライドする際に設定。ユーザグループのActionset_Optionにサンプルがある
 	(str)  action_name   ACL設定画面で用いる
 	(str)  explanation   ACL設定画面で用いる説明文
-	(str)  menu_str      メニューで用いる
-	(bool) confirm       確認用のJavaScriptを表示する場合はtrue
-	(arr)  dependencies  このアクションセットが依存するアクション。前後のスラッシュはつけないこと
+	(int)  order         表示順
+	(arr)  dependencies  このアクションセットが依存するアクション
 	*/
 
 	/**
 	 * actionset_sample_action()
 	 * to use remove first underscore at the function name
 	 */
-	public static function _actionset_sample_action($module, $obj, $get_authed_url)
+	public static function _actionset_sample_action($module, $obj, $id, $urls = array())
 	{
-		if($get_authed_url):
-			$url_str = $module."/sample_action" ;
-			$url = self::check_auth($module, 'sample_action') ? $url_str : '' ;
+		if($id):
+			$actions = array(array("xxx/sample_action/".$id, '閲覧'));
+			$urls = static::generate_anchors('xxx', 'sample_action', $actions, $obj, ['view','create']);
 		endif;
 
 		$retvals = array(
-			'is_admin_only' => false,
-			'url'           => @$url ?: '' ,
-			'action_name'   => 'sample_action',
-			'explanation'   => 'explanation of sample_action',
-			'menu_str'      => 'menustr of sample_action',
+			'urls'         => $urls ,
+			'action_name'  => 'sample_action',
+			'explanation'  => 'explanation of sample_action',
+			'order'        => 10,
 			'dependencies' => array(
 				'sample_action',
 			)

@@ -17,13 +17,13 @@ foreach($actionsets as $realm => $each_actionsets):
 ?>
 <fieldset>
 <legend><?php echo $realm ?></legend>
-<table>
+<table class="tbl2">
 <?php
 	foreach($each_actionsets as $action => $actionset):
 	if( ! isset($actionset['action_name'])) continue;
 	?>
 	<tr>
-		<th style="white-space: nowrap;">
+		<th style="width:30%">
 			<?php
 			$checked = in_array($action, $aprvd_actionset[$realm]) ? ' checked="checked"' : null ;
 			echo '<label>'.\Form::checkbox("acls[{$realm}][{$action}]", 1, array($checked)).' '.$actionset['action_name'].'</label><br />';
