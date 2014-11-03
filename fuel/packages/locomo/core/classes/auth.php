@@ -117,6 +117,38 @@ class Auth
 	}
 
 	/**
+	 * is_guest()
+	 */
+	public static function is_guest()
+	{
+		return ! static::is_user_logged_in();
+	}
+
+	/**
+	 * is_user()
+	 */
+	public static function is_user()
+	{
+		return static::is_user_logged_in();
+	}
+
+	/**
+	 * is_admin()
+	 */
+	public static function is_admin()
+	{
+		return (static::get_user_id() == -1 || static::get_user_id() == -2);
+	}
+
+	/**
+	 * is_root()
+	 */
+	public static function is_root()
+	{
+		return (static::get_user_id() == -2);
+	}
+
+	/**
 	 * get_userinfo()
 	 */
 	public static function get_userinfo($key = null)

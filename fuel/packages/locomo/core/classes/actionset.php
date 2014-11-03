@@ -199,11 +199,13 @@ class Actionset
 	{
 		if(! $urls) return array();
 		$target = join('/',array_slice(\Uri::segments(), 0, 3));
-		$patterns[] = "{$module}/{$model}";
 		$patterns[] = "{$module}/index_revision/{$model}";
 		$patterns[] = "{$module}/each_index_revision/{$model}";
 		$patterns[] = "{$module}/view_revision/{$model}";
-		if(in_array($target, $patterns)):
+
+		$target_short = join('/',array_slice(\Uri::segments(), 0, 2));
+		$patterns_short[] = "{$module}/{$model}";
+		if(in_array($target, $patterns) || in_array($target_short, $patterns_short)):
 			$override_urls['base'] = array(
 				\Html::anchor("{$module}/{$model}/?create=1","{$nicename}新規作成"),
 				\Html::anchor("{$module}/index_revision/{$model}?opt={$opt}","設定履歴"),

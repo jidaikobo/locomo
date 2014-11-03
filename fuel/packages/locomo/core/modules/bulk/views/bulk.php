@@ -1,4 +1,3 @@
-<?php echo render('inc_admin_header'); ?>
 <?php
 if( ! \Input::get('create') && ! @$is_revision):
 	echo \Form::open(array('method' => 'get'));
@@ -17,7 +16,7 @@ endif;
 <p>
 	<?php
 	if( ! @$is_revision): 
-		echo \Form::hidden($token_key, $token);
+		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 	endif;
 	?>
@@ -28,4 +27,3 @@ endif;
 <?php echo \Form::close(); ?>
 <?php if( ! @$is_revision) echo $pagination; ?>
 
-<?php echo render('inc_admin_footer'); ?>

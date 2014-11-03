@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 <h2>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h2>
 <p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <br>
@@ -42,9 +41,6 @@
 
 <?php endif; ?>
 
-<?php echo render('inc_footer'); ?>
-
-
 <style>
 th a.asc:after{
 	content: '[↓]';
@@ -52,5 +48,4 @@ th a.asc:after{
 th a.desc:after{
 	content: '[↑]';
 }
-
 </style>

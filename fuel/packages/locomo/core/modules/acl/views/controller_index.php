@@ -1,4 +1,3 @@
-<?php echo render('inc_admin_header'); ?>
 
 <ul>
 	<li>アクセス権限は「ユーザグループ単位」「ユーザ単位」のいずれかごとに設定できます。</li>
@@ -24,7 +23,7 @@
 </p>
 <p>
 <?php
-	echo \Form::hidden($token_key, $token);
+	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
 </p>
@@ -49,7 +48,7 @@
 </p>
 <p>
 <?php
-	echo \Form::hidden($token_key, $token);
+	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
 </p>
@@ -68,7 +67,7 @@
 </p>
 <p>
 <?php
-	echo \Form::hidden($token_key, $token);
+	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 	echo \Form::hidden('owner', '1');
 	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
@@ -76,4 +75,3 @@
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<?php echo render('inc_admin_footer'); ?>

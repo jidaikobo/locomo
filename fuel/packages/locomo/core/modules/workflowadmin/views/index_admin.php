@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <h2>ワークフロー一覧 (<?php echo $hit ?>)</h2>
 <br>
@@ -46,4 +45,3 @@
 <?php endif; ?>
 
 
-<?php echo render('inc_footer'); ?>

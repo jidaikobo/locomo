@@ -1,5 +1,3 @@
-<?php echo render('inc_header'); ?>
-
 <h2><img src="/content/fetch_view/images/parts/logo.png" alt=""><?php echo $site_title ;?></h2>
 
 <?php echo \Form::open(array('action' => \Uri::base(false).'user/login/','class' => 'login')); ?>
@@ -28,5 +26,3 @@ echo Html::anchor('/', "{$site_title}へ");
 }
 echo \Form::close();
 ?>
-
-<?php echo render('inc_footer'); ?>

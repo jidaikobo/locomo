@@ -42,7 +42,8 @@ class Controller_User extends \Locomo\Controller_Crud
 		$view = \View::forge('login');
 		$view->set('ret', $ret);
 		$view->set_global('title', 'ログイン');
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -59,14 +60,18 @@ class Controller_User extends \Locomo\Controller_Crud
 	public function action_usergroup()
 	{
 		$view = \View::forge(PKGCOREPATH.'modules/bulk/views/bulk.php');
-		$form = $this->bulk(array(), '\User\Model_Usergroup');
+
+		\User\Model_Usergroup::disable_filter();
+		//	\Locomo\Bulk::set_define_function('ctm_func');
+		
+		$form = $this->bulk(array(), array('per_page' => 2), '\User\Model_Usergroup');
 
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);
 
 		$view->set_safe('pagination', \Pagination::create_links());
 		$view->set('hit', \Pagination::get('total_items')); ///
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 }

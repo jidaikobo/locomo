@@ -1,11 +1,16 @@
 <?php
 namespace Locomo;
-class Controller_Base extends \Fuel\Core\Controller_Rest
+class Controller_Base extends \Fuel\Core\Controller_Hybrid
 {
 	/**
 	* @var string name for human
 	*/
 	public static $nicename = '';
+
+	/**
+	* @var string template
+	*/
+	public $template = 'default';
 
 	/**
 	 * @var string model name
@@ -122,5 +127,5 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		//通常の処理に渡す
 		return parent::router($method, $params);
 	}
-
 }
+

@@ -65,8 +65,8 @@ class Controller_Sample extends \Locomo\Controller_Crud
 
 		$view->set_global('title', 'サンプルバルク');
 		$view->set_global('form', $form, false);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 }

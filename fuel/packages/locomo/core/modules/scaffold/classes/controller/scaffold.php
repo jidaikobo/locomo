@@ -44,7 +44,6 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$actionset_owner  = Helper_Scaffold::generate_actionset_owner($name);
 			$actionset_option = Helper_Scaffold::generate_actionset_option($name);
 			$model            = Helper_Scaffold::generate_model($name, $cmd_orig);
-			$viewmodel        = Helper_Scaffold::generate_view($name);
 			$config           = Helper_Scaffold::generate_config($cmd_orig);
 
 			//molding - view
@@ -84,10 +83,6 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			if( ! file_exists($scfldpath.'/classes/model')) mkdir($scfldpath.'/classes/model');
 			Helper_Scaffold::putfiles($scfldpath.'/classes/model/'.$name.'.php', $model) ;
 
-			//viewmodel
-			if( ! file_exists($scfldpath.'/classes/view')) mkdir($scfldpath.'/classes/view');
-			Helper_Scaffold::putfiles($scfldpath.'/classes/view/'.$name.'.php', $viewmodel) ;
-
 			//config
 			if( ! file_exists($scfldpath.'/config')) mkdir($scfldpath.'/config');
 			Helper_Scaffold::putfiles($scfldpath.'/config/'.$name.'.php', $config) ;
@@ -114,7 +109,8 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 		//view
 		$view->set_global('title', '足場組み');
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 }

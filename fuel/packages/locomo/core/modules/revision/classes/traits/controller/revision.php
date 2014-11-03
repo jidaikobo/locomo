@@ -37,8 +37,8 @@ trait Traits_Controller_Revision
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->set_global('model_simple_name', $model_simple_name);
 		$view->set_global('opt', \Input::get('opt') ? '?opt='.\Input::get('opt') : '');
-
-		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -58,11 +58,8 @@ trait Traits_Controller_Revision
 		$options['where'][] = array('pk_id', '=', $id);
 		$options['order_by'][] = array('created_at', 'DESC');
 
-		//pagination_config
-		$pagination_config = array('uri_segment' => 5,);
-
 		//find pagination_config
-		$items = $this->paginated_find($options, '\\Revision\\Model_Revision', false, true, $pagination_config);
+		$items = \Revision\Model_Revision::paginated_find($options, array('uri_segment' => 5,));
 
 		//失敗
 		if ( ! $items):
@@ -95,8 +92,8 @@ trait Traits_Controller_Revision
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->set_global('model_simple_name', $model_simple_name);
 		$view->set_global('opt', $opt_arg);
-
-		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -162,8 +159,8 @@ trait Traits_Controller_Revision
 		$action['urls'][] = \Html::anchor($module.'/edit/'.$revisions->pk_id, '編集画面へ');
 		$action['order'] = 10;
 		\Actionset::add_actionset($module, 'ctrl', 'back', $action);
-
-		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 }

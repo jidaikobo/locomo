@@ -1,4 +1,3 @@
-<?php echo render('inc_admin_header'); ?>
 
 <h2>Editing <span class='muted'>Sample</span></h2>
 
@@ -17,4 +16,3 @@
 	?>
 </p>
 
-<?php echo render('inc_admin_footer'); ?>

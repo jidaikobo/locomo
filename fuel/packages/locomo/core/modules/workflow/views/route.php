@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <h2>ルート設定</h2>
 <?php echo \Form::open(); ?>
@@ -17,7 +16,7 @@
 
 <p>
 <?php
-echo \Form::hidden($token_key, $token);
+echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 echo Html::anchor($controller.'/edit/'.$item_id, '戻る',array('class'=>'button'));
 echo \Form::submit('submit', '経路設定する', array('class' => 'button primary'));
 ?>
@@ -25,4 +24,3 @@ echo \Form::submit('submit', '経路設定する', array('class' => 'button prim
 
 <?php echo \Form::close(); ?>
 
-<?php echo render('inc_footer'); ?>

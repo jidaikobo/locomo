@@ -1,5 +1,3 @@
-<?php echo render('inc_header'); ?>
-
 <h2>Viewing <span class='muted'>#<?php echo $item->id; ?></span></h2>
 
 <table class="tbl">
@@ -16,5 +14,3 @@
 	<td><?php echo $item->last_login_at; ?></td>
 </tr>
 </table>
-
-<?php echo render('inc_footer'); ?>

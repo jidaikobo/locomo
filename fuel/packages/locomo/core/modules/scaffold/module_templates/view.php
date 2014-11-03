@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <h1>Viewing #<?php echo $item->id; ?></h1>
 
@@ -6,4 +5,3 @@
 ###fields###
 </table>
 
-<?php echo render('inc_footer'); ?>

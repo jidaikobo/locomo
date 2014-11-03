@@ -99,8 +99,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		//assign
 		$view->set_global('title', '関連ワークフロー');
 		$view->set('items', \Arr::sort($items, 'is_current', 'desc'));
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -142,8 +142,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		$view->set('items', $items);
 		$view->set('route_id', $route_id);
 		$view->set('item_id', $id);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -178,7 +178,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		$view->set_global('title', '承認申請');
 		$view->set('button', '申請する');
 		$view->set('id', $id);
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -227,8 +228,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		$view->set_global('title', '承認');
 		$view->set('button', '承認する');
 		$view->set('id', $id);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -287,7 +288,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		$view->set('button',       '差し戻す');
 		$view->set('target_steps', $target_steps);
 		$view->set('id',           $id);
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -323,7 +325,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		$view->set_global('title', '却下の確認');
 		$view->set('button', '却下する');
 		$view->set('id', $id);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 }
