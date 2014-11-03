@@ -50,13 +50,33 @@ trait Traits_Controller_Revision
 
 		//vals
 		$module = $this->request->module;
-		$model = '\\'.ucfirst($module).'\\Model_'.ucfirst($model_simple_name);
+		$model_str = ucfirst($module).'\\Model_'.ucfirst($model_simple_name);
+		$model = '\\'.$model_str;
 
-		//履歴を取得
-		if ( ! $revisions = \Revision\Model_Revision::find_revisions($model, $id)):
+		//options
+		$options['where'][] = array('model', '=', $model_str);
+		$options['where'][] = array('pk_id', '=', $id);
+		$options['order_by'][] = array('created_at', 'DESC');
+
+		//pagination_config
+		$pagination_config = array('uri_segment' => 5,);
+
+		//find pagination_config
+		$items = $this->paginated_find($options, '\\Revision\\Model_Revision', false, true, $pagination_config);
+
+		//失敗
+		if ( ! $items):
 			\Session::set_flash('error', '履歴を取得できませんでした');
 			return \Response::redirect(\Uri::create($module.'/view/'.$id));
 		endif;
+
+		//dataをunserialize（一覧表に編集者とsubjectの変遷を出すため）
+		foreach($items as $k => $item):
+			$items[$k]->data = unserialize($item->data);
+			$modifier_name = \User\Model_User::find($item->modifier_id, array('select'=>array('display_name')));
+			$modifier_name = $modifier_name ? static::$_modifiers[$item->modifier_id] : $modifier_name;
+			$items[$k]->modifier_name = $modifier_name;
+		endforeach;
 
 		//add_actionset
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
@@ -64,11 +84,12 @@ trait Traits_Controller_Revision
 			$action['urls'][] = \Html::anchor($module.'/edit/'.$id,'編集画面へ');
 		endif;
 		$action['urls'][] = \Html::anchor($module.'/index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
+		$action['order'] = 10;
 		\Actionset::add_actionset($module, 'ctrl', 'back', $action);
 
 		//view
 		$view = \View::forge(\Util::fetch_tpl('/revision/views/each_index_revision.php'));
-		$view->set_global('items', $revisions);
+		$view->set_global('items', $items);
 		$view->set_global('controller', $module);
 		$view->set_global('title', '履歴');
 		$view->set_global('subject', $model::get_default_field_name('subject'));
@@ -87,13 +108,14 @@ trait Traits_Controller_Revision
 		$model = \Revision\Model_Revision::forge();
 		$module = $this->request->module;
 
-		if ( ! $revisions = $model::find_revision($id)):
+		if ( ! $revisions = $model::find($id)):
 			\Session::set_flash('error', '履歴を取得できませんでした');
 			return \Response::redirect(\Uri::base());
 		endif;
 
 		//unserialize
 		$data = unserialize($revisions->data);
+		$data->comment = '('.$revisions->operation.') '.$revisions->comment;
 
 		//model
 		$original_model = '\\'.ucfirst($module).'\\Model_'.ucfirst($model_simple_name);
@@ -137,9 +159,8 @@ trait Traits_Controller_Revision
 		//add_actionset
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
 		$action['urls'][] = \Html::anchor($module.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg, '履歴一覧へ');
-		if($opt_arg):
-			$action['urls'][] = \Html::anchor($module.'/edit/'.$revisions->pk_id, '編集画面へ');
-		endif;
+		$action['urls'][] = \Html::anchor($module.'/edit/'.$revisions->pk_id, '編集画面へ');
+		$action['order'] = 10;
 		\Actionset::add_actionset($module, 'ctrl', 'back', $action);
 
 		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));

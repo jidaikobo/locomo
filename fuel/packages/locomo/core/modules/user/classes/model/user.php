@@ -122,20 +122,13 @@ class Model_User extends \Locomo\Model_Base
 		$opt = \User\Model_Usergroup::get_option_options('usergroup');
 		$usergroups = \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
 		$checked = isset($obj->usergroup) ? array_keys($obj->usergroup) : array();
-		if($usergroups):
-			$form->add(
-					'usergroup',
-					'ユーザグループ',
-					array('type' => 'checkbox', 'options' => $usergroups)
-				)
-				->set_value($checked);
-		else:
-			$form->add(
-					'usergroup',
-					'ユーザグループ',
-					array('type' => 'hidden')
-				);
-		endif;
+		$form->add(
+				'usergroup',
+				'ユーザグループ',
+				array('type' => 'checkbox', 'options' => $usergroups)
+			)
+			->set_value($checked);
+
 
 		//password
 		$form->add(
@@ -175,7 +168,7 @@ class Model_User extends \Locomo\Model_Base
 		$form->add(
 				'created_at',
 				'作成日',
-				array('type' => 'text', 'size' => 20, 'placeholder' => date('Y-m-d H:i:s'))
+				array('type' => 'text', 'size' => 20, 'placeholder' => date('Y-m-d H:i:s'), 'class' => 'datetime')
 			)
 			->set_value(@$obj->created_at);
 //未来の日付を入れると、予約項目になります。
