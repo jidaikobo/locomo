@@ -1,10 +1,33 @@
+//なにかしら閉じちゃうイベント
+
+
 $(function(){
-///// baseとして追加予定のもの /////
+
+function jsclose(event){
+	var t = event.target;
+	$(t).closest('div').hide();
+	return false;
+}
+$('a.jsclose').click(jsclose);
 
 //JavaScript有効時に表示する、無効時には非表示にする（CSS）
 $("body *").removeClass("hide_if_no_js");
 
-//管理バーの高さに合わせてパディングを設定したい。リサイズ時の処理をちょっと考える
+//ページ読み込み直後のフォーカス制御
+if($('.flash_alert')[0]){
+	var firstFocus = $('.flash_alert').first();
+}else if($('body').hasClass('login')){
+	var firstFocus = $('input:visible').first();
+}
+if(firstFocus){
+	$(firstFocus).focus();
+	if($(firstFocus)[0].nodeName == 'input'){
+		$(firstFocus).select();
+	}
+}
+
+
+//管理バーの高さ+αのパディングを設定。リサイズ時の処理をちょっと考える
 //ExResize等プラグインを使う？　jQueryUIになにかある？
 if($('#adminbar')[0]){
 	var bar = '#adminbar';
@@ -12,6 +35,22 @@ if($('#adminbar')[0]){
 	var barPaddingTop = parseInt($(bar).css('padding-top'), 10)
 	$('body').css('padding-top', barHeight+barPaddingTop+3+'px' );
 }
+
+//クリックイベント
+$(document).click(function(event){
+	var t = event.target;
+//リストの開け閉め もっといろいろかんがえたい
+
+	if( $(t).closest('a.modal').length != 0 && !$(t).closest('a.modal').next('ul.modal').hasClass('currentitem')){
+	//対象のnextにcurrentmenuがなければ付与
+		$('.currentitem').removeClass('currentitem')
+		$(t).closest('a.modal').next('ul.modal').addClass('currentitem')
+	}else if($('.currentitem')[0] && $(t).closest('.currentitem').length == 0){
+	//開いたメニューの外であればとにかくcurrentmenuを外しちゃう。
+		$('.currentitem').removeClass('currentitem');
+	}
+} );
+
 /*
 $('a.listopen').click(function(){
 	$('#adminbar .currentmenu').removeClass('currentmenu');
@@ -30,21 +69,6 @@ $(document).click(function(event){
 	}
 } );
 */
-//クリックイベント
-$(document).click(function(event){
-	var t = event.target;
-//リストの開け閉め もっといろいろかんがえたい
-
-	if( $(t).closest('a.modal').length != 0 && !$(t).closest('a.modal').next('ul.modal').hasClass('currentitem')){
-	//対象のnextにcurrentmenuがなければ付与
-		$('.currentitem').removeClass('currentitem')
-		$(t).closest('a.modal').next('ul.modal').addClass('currentitem')
-	}else if($('.currentitem')[0] && $(t).closest('.currentitem').length == 0){
-	//開いたメニューの外であればとにかくcurrentmenuを外しちゃう。
-		$('.currentitem').removeClass('currentitem');
-	}
-} );
-
 /*
 //クリックイベント
 $(document).click(function(event){
