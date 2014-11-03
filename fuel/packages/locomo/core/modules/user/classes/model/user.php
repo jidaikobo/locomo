@@ -122,12 +122,20 @@ class Model_User extends \Locomo\Model_Base
 		$opt = \User\Model_Usergroup::get_option_options('usergroup');
 		$usergroups = \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
 		$checked = isset($obj->usergroup) ? array_keys($obj->usergroup) : array();
-		$form->add(
-				'usergroup',
-				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $usergroups)
-			)
-			->set_value($checked);
+		if($usergroups):
+			$form->add(
+					'usergroup',
+					'ユーザグループ',
+					array('type' => 'checkbox', 'options' => $usergroups)
+				)
+				->set_value($checked);
+		else:
+			$form->add(
+					'usergroup',
+					'ユーザグループ',
+					array('type' => 'hidden')
+				);
+		endif;
 
 		//password
 		$form->add(

@@ -14,7 +14,7 @@ LOCOMO_ENV=develop php oil refine migrate:up --modules=acl
 
 というように、LOCOMO_ENVの値で環境変数を送信すれば、任意のcli_hostで実行できます。
 
-//APPPATH.config/development/db.php 
+//APPPATH.config/development/db.php
 
 APPPATHのdb.phpを以下のように設定します。
 
@@ -43,6 +43,13 @@ security設定をしてください。
 		 'csrf_autoload'    => false,
 		 'csrf_token_key'   => 'locomo_csrf_token',
 		 'csrf_expiration'  => 300,
+
+//APPPATH.config/session.php
+
+とりあえずcookieに
+
+	'driver'			=> 'cookie',
+
 
 /*
  * モジュール開発
