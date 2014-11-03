@@ -1,0 +1,16 @@
+ver.0
+- ORM基礎構築
+- Controller_Base, Model_Base実装
+- Aclの実装
+- Loginの実装
+- Actionsetの実装
+- 管理バーおよび管理画面作成
+- Bulkモジュール実装
+- Scaffoldモジュール実装
+- Workflowモジュール実装
+- Revisionモジュール実装
+- Adminモジュール実装
+- Helpモジュール実装
+
+ver.1
+- Appディレクトリでの動作

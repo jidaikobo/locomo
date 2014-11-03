@@ -129,7 +129,6 @@ class Model_User extends \Locomo\Model_Base
 			)
 			->set_value($checked);
 
-
 		//password
 		$form->add(
 				'password',
