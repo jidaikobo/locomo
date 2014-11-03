@@ -61,8 +61,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		\Auth::set_userinfo();
 
 		//profile表示はrootだけ（当然ながらConfigでtrueだったら計測はされる）
-		if(\Auth::get_user_id() >= -1)
-			\Fuel::$profiling = false;
+		\Fuel::$profiling = \Auth::get_user_id() == -2 ?: false ;
 
 		//current_actionのセット
 		//HMVCの場合は、呼ばれたモジュールに応じたものにかわる

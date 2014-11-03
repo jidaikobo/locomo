@@ -13,6 +13,7 @@
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="<?php echo $include_asset('js/jquery.inc.js'); ?>" type="text/javascript"></script>
+	<script src="<?php echo $include_asset('js/jquery.exresize.0.1.0.js'); ?>" type="text/javascript"></script>
 </head>
 <body class="<?php echo $body_class ;?>">
 	<div class="container">
