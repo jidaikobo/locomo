@@ -64,7 +64,7 @@ class Controller_User extends \Locomo\Controller_Crud
 		\User\Model_Usergroup::disable_filter();
 		//	\Locomo\Bulk::set_define_function('ctm_func');
 		
-		$form = $this->bulk(array(), array('per_page' => 2), '\User\Model_Usergroup');
+		$form = $this->bulk(array(), array(), '\User\Model_Usergroup');
 
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);
