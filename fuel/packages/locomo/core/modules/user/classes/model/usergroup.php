@@ -2,6 +2,7 @@
 namespace User;
 class Model_Usergroup extends \Locomo\Model_Base
 {
+
 	protected static $_table_name = 'usergroups';
 	public static $_subject_field_name = 'name';
 
@@ -117,5 +118,4 @@ class Model_Usergroup extends \Locomo\Model_Base
 
 		return $form;
 	}
-
 }

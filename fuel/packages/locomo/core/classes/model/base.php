@@ -395,4 +395,76 @@ class Model_Base extends \Orm\Model_Soft
 		$items = \Arr::assoc_to_keyval($items, $primary_key, $label);
 		return $items;
 	}
+
+
+	/*
+	 * @param array    $options conditions for find. limit は pagination_config['perpage'] を使うため無視される
+	 * @param str      $model model class name
+	 * @param bool     $use_get_query use get query paramaters
+	 * @param array    $pagination_config overwrite $this->pagination_config
+	 *
+	 * @return Model finded
+	 */
+	public static function paginated_find($options = array(), $pagination_config = array()) {
+
+
+		$use_get_query = static::paginated_find_use_get_query();
+
+		\Pagination::set_config($pagination_config);
+
+
+		if ($use_get_query) {
+			$input_get = \Input::get();
+		} else {
+			$input_get = array();
+		}
+		if ($use_get_query and \Input::get()) {
+			if (\Input::get('orders')) {
+				$orders = array();
+				foreach (\Input::get('orders') as $k => $v) {
+					$orders[$k] = $v;
+				}
+				$options['order_by'] = $orders;
+			}
+			if (\Input::get('searches')) {
+				foreach (\Input::get('searches') as $k => $v) {
+					if ($v == false) continue;
+					$options['where'][] = array($k, '=', $v);
+				}
+			}
+			if (\Input::get('likes')) {
+				$likes = array();
+				foreach (\Input::get('likes') as $k => $v) {
+					if ($v == false) continue;
+					$options['where'][] = array($k, 'LIKE', '%' . $v . '%');
+				}
+			}
+		}
+
+		$count = static::count($options);
+
+		\Pagination::set('total_items', $count);
+
+		$segment = \Pagination::get('uri_segment') - 1;
+		$uri = '/'.join('/', array_slice(\Uri::segments(), 0, $segment)).'/';
+		\Pagination::set_config('pagination_url', \Uri::create($uri, array(), $input_get));
+
+		$options['limit'] = \Pagination::get('per_page');
+		$options['offset'] = \Pagination::get('offset');
+
+		return static::find('all', $options);
+
+	}
+
+
+	protected static $_use_get_query = true;
+
+	public static function paginated_find_use_get_query($bool = null) {
+		if (is_null($bool)) {
+			return static::$_use_get_query;
+		} else {
+			static::$_use_get_query = $bool;
+		}
+	}
+
 }
