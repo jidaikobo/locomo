@@ -42,7 +42,6 @@ var closeModal = function(){
 	isModalOpen = false;
 }
 $('a.modal').click(function(event){
-	var t = event.target;
 	if($(this).next('ul.modal').is(':hidden')){
 		closeModal();
 		$(this).next('ul.modal').addClass('currentitem');
@@ -53,12 +52,16 @@ $('a.modal').click(function(event){
 //	event.stopPropagation();
 	return false;
 });
+$(document).on('click', '.currentitem.modal', function(){
+	event.stopPropagation();
+});
+
 
 $(document).click(function(event){
 	var t = event.target;
 	
-//リストの開け閉め もっといろいろかんがえたい
-	if(isModalOpen && $(t).closest('.modal.currentitem').length == 0){
+//リストの開け閉め
+	if(isModalOpen){
 		closeModal();
 	}
 } );
