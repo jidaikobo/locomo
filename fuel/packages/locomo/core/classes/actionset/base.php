@@ -126,17 +126,16 @@ class Actionset_Base extends Actionset
 	public static function actionset_delete($module, $obj, $id, $urls = array())
 	{
 		if($id):
-			$actions = array(array($module."/delete/".$id, '削除'));
+			$actions = array(array($module."/delete/".$id, '削除', array('class' => 'confirm', 'data-text' => '削除してよいですか？')));
 			$urls = static::generate_anchors($module, 'delete', $actions, $obj, ['create']);
 		endif;
 
 		//retval
 		$retvals = array(
 			'urls'         => $urls ,
-			'confirm'      => true,
 			'action_name'  => '項目の削除',
 			'explanation'  => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
-			'order'        => 10,
+			'order'        => 15,
 			'dependencies' => array(
 				'view',
 				'view_deleted',

@@ -5,12 +5,6 @@ class Controller_Crud extends Controller_Base
 	public $_index_template = 'index_admin';
 
 	/**
-	 * Presenterに渡り、ACLを確認するときに使う
-	 * 個票を返すようなとき、その値を$_single_itemに渡すこと
-	 */
-	public $_single_item ;
-
-	/**
 	 * @var array default setting of pagination
 	 */
 	protected $pagination_config = array(
@@ -46,13 +40,12 @@ class Controller_Crud extends Controller_Base
 		$options = @func_get_arg(0) ?: array();
 		$model = @func_get_arg(1) ?: null;
 		$deleted = @func_get_arg(2) ?: false;
+
 		$view = \View::forge($this->_index_template);
-
+		$view->base_assign();
 		$view->set('items',  $this->paginated_find($options, $model));
-
 		$view->set_global('title', static::$nicename);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$this->template->content = $view;
 	}
 
 	/**
@@ -201,15 +194,12 @@ class Controller_Crud extends Controller_Base
 			\Response::redirect($this->request->module);
 		endif;
 
-		//$_single_item
-		$this->_single_item = $data['item'];
-
 		//view
 		$view = \View::forge('view');
-		$view->set_global('item', $this->_single_item);
+		$view->base_assign($data['item']);
+		$view->set_global('item', $data['item']);
 		$view->set_global('title', self::$nicename . '閲覧');
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$this->template->content = $view;
 	}
 
 	public function action_create() {
@@ -264,16 +254,12 @@ class Controller_Crud extends Controller_Base
 			endif;
 		endif;
 
-		//set _single_item
-		$this->_single_item = $obj;
-
-		//view
 		$view = \View::forge('edit');
+		$view->base_assign($obj);
 		$view->set_global('title', $title);
-		$view->set_global('item', $this->_single_item, false);
+		$view->set_global('item', $obj, false);
 		$view->set_global('form', $form, false);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$this->template->content = $view;
 	}
 
 	/**
@@ -301,38 +287,6 @@ class Controller_Crud extends Controller_Base
 		endif;
 
 		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
-	}
-
-	/**
-	 * action_confirm_delete()
-	 */
-	public function action_confirm_delete($id = null)
-	{
-		$model = $this->model_name ; 
-		if (!$id) {
-			\Session::set_flash(
-				'error',
-				sprintf('%1$s #%2$d は表示できません', self::$nicename, $id)
-			);
-			\Response::redirect(\Uri::base());
-		}
-
-		if ( ! $data['item'] = $model::find_deleted($id)):
-			\Session::set_flash(
-				'error',
-				sprintf('%1$s #%2$d は表示できません', self::$nicename, $id)
-			);
-			echo 'purge'; die();
-			\Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
-		endif;
-
-		//view
-		$view = \View::forge('view');
-		$view->set('item', $data['item']);
-		$view->set('is_delete_deleted', true);
-		$view->set_global('title', sprintf($this->titles['confirm_delete'], self::$nicename));
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
 
 	/**

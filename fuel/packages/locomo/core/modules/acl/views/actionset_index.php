@@ -1,4 +1,3 @@
-<?php echo render('inc_admin_header'); ?>
 
 <p><?php if($user): ?>
 対象ユーザ：<code><?php echo $user ?></code><br />
@@ -37,7 +36,7 @@ foreach($actionsets as $realm => $each_actionsets):
 <?php endforeach; ?>
 
 <?php
-echo \Form::hidden($token_key, $token);
+echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 echo \Form::hidden('controller', $hidden_controller);
 echo \Form::hidden('user', $hidden_user);
 echo \Form::hidden('usergroup', $hidden_usergroup);
@@ -49,4 +48,3 @@ echo \Form::hidden('usergroup', $hidden_usergroup);
 </div>
 <?php echo \Form::close(); ?>
 
-<?php echo render('inc_admin_footer'); ?>

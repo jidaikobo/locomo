@@ -25,7 +25,8 @@ class Controller_Content extends \Locomo\Controller_Base
 		//描画
 		$view = \View::forge('home');
 		$view->set_global('title', \Config::get('site_title'));
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -36,7 +37,8 @@ class Controller_Content extends \Locomo\Controller_Base
 	{
 		$view = \View::forge('404');
 		$view->set_global('title', 'Page Not Found');
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -47,7 +49,8 @@ class Controller_Content extends \Locomo\Controller_Base
 	{
 		$view = \View::forge('403');
 		$view->set_global('title', 'Forbidden');
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -55,13 +58,11 @@ class Controller_Content extends \Locomo\Controller_Base
 	*/
 	public function action_help_index()
 	{
-		
-
-
 		//描画
 		$view = \View::forge('home');
 		$view->set_global('title', \Config::get('site_title'));
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -69,13 +70,11 @@ class Controller_Content extends \Locomo\Controller_Base
 	*/
 	public function action_help($filename)
 	{
-		
-
-
 		//描画
 		$view = \View::forge('home');
 		$view->set_global('title', \Config::get('site_title'));
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 
@@ -108,6 +107,6 @@ class Controller_Content extends \Locomo\Controller_Base
 		$headers = array( 'Content-type' => $config['mime_whitelist'][$ext] );
 		$view = \View::forge('fetch_view');
 		$view->set_global('item', file_get_contents($filename), false);
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view),200, $headers);
+		return \Response::forge($view, 200, $headers);
 	}
 }

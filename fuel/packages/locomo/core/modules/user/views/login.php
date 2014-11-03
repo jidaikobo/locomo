@@ -1,5 +1,3 @@
-<?php echo render('inc_header'); ?>
-
 <script type="text/javascript">
 <!--thx WordPress-->
 function locomo_attempt_focus(){
@@ -45,5 +43,3 @@ echo Html::anchor('/', "{$site_title}へ");
 }
 echo \Form::close();
 ?>
-
-<?php echo render('inc_footer'); ?>

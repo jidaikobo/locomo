@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <?php if ($items): ?>
 
@@ -41,4 +40,3 @@ echo \Form::close();
 <p>編集履歴が存在しません。</p>
 <?php endif; ?>
 
-<?php echo render('inc_footer'); ?>

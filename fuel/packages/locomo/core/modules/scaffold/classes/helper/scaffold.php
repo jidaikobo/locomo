@@ -314,16 +314,6 @@ class Helper_Scaffold
 	}
 
 	/**
-	 * generate_view()
-	 */
-	public static function generate_view($name)
-	{
-		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'viewmodel.php');
-		$val = self::replaces($name, $val);
-		return $val;
-	}
-
-	/**
 	 * generate_views_index()
 	 */
 	public static function generate_views_index($name, $cmd_orig, $is_admin = false)
@@ -432,7 +422,7 @@ class Helper_Scaffold
 				//admin
 				if(in_array($field, $admins)):
 					$admin_hidden_fields.= "\t\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n" ;
-					$fields.= '<?php if($is_admin): ?>'."\n" ;
+					$fields.= '<?php if(\Auth::is_admin()): ?>'."\n" ;
 				endif;
 
 				$fields.= '<tr>'."\n" ;
@@ -453,7 +443,7 @@ class Helper_Scaffold
 		}
 		
 		if($admin_hidden_fields):
-			$hidden_fields.= 'if( ! $is_admin):'."\n{$admin_hidden_fields}\n" ;
+			$hidden_fields.= 'if( ! \Auth::is_admin()):'."\n{$admin_hidden_fields}\n" ;
 			$hidden_fields.= 'endif;'."\n" ;
 		endif;
 

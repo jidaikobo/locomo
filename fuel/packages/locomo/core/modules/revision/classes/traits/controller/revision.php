@@ -37,8 +37,8 @@ trait Traits_Controller_Revision
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->set_global('model_simple_name', $model_simple_name);
 		$view->set_global('opt', \Input::get('opt') ? '?opt='.\Input::get('opt') : '');
-
-		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -95,8 +95,8 @@ trait Traits_Controller_Revision
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->set_global('model_simple_name', $model_simple_name);
 		$view->set_global('opt', $opt_arg);
-
-		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -162,8 +162,8 @@ trait Traits_Controller_Revision
 		$action['urls'][] = \Html::anchor($module.'/edit/'.$revisions->pk_id, '編集画面へ');
 		$action['order'] = 10;
 		\Actionset::add_actionset($module, 'ctrl', 'back', $action);
-
-		return \Response::forge(\ViewModel::forge($module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 }

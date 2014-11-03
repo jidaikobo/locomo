@@ -61,6 +61,7 @@ class Controller_Workflowadmin extends \Locomo\Controller_Base
 		$view->set('workflow_id', $workflow->id);
 		$view->set('workflow_name', $workflow->name);
 		$view->set_global('title', 'ワークフローの設定');
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 }

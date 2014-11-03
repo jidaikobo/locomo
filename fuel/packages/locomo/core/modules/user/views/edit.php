@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 <?php echo \Form::open(); ?>
 <h2>編集</h2>
 <div class="form_group">
@@ -33,7 +32,7 @@
 			<th><?php echo $form->field('created_at')->set_template('{label}{required}'); ?></th>
 			<td><?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?></td>
 		</tr>
-		<?php if($is_admin): ?>
+		<?php if(\Auth::is_admin()): ?>
 		<tr>
 			<th><?php echo $form->field('is_visible')->set_template('{label}{required}'); ?></th>
 			<td><?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?></td>
@@ -50,18 +49,16 @@
 		</div>
 		<div class="submit_button">
 			<?php
-			if( ! $is_admin):
+			if( ! \Auth::is_admin()):
 				echo $form->field('is_visible')->set_template('{field}');
 			endif;
 
 			if(!@$is_revision):
-				echo \Form::hidden($token_key, $token);
+				echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 				echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 			endif;
 			?>
 		</div>
 	</div>
 </div>
-
 <?php echo \Form::close(); ?>
-<?php echo render('inc_footer'); ?>

@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <h2>項目一覧 (<?php echo $hit ?>)</h2>
 <?php if ($items): ?>
@@ -22,4 +21,3 @@
 
 <?php endif; ?>
 
-<?php echo render('inc_footer'); ?>

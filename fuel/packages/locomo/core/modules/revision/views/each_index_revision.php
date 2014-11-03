@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <?php if ($items): ?>
 <table class="tbl2">
@@ -30,4 +29,3 @@
 <p>編集履歴が存在しません。</p>
 <?php endif; ?>
 
-<?php echo render('inc_footer'); ?>

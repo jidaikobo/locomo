@@ -1,4 +1,3 @@
-<?php echo render('inc_header'); ?>
 
 <?php echo \Form::open(); ?>
 
@@ -39,7 +38,7 @@
 
 <p>
 	<?php
-		echo \Form::hidden($token_key, $token);
+		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::hidden('allstep', $allstep);
 		echo Html::anchor('workflowadmin/index_admin', '一覧に戻る',array('class'=>'button'));
 		echo \Form::submit('add_step', '承認ステップを1つ増やす', array('class' => 'button primary'));
@@ -49,4 +48,3 @@
 
 <?php echo \Form::close(); ?>
 
-<?php echo render('inc_footer'); ?>

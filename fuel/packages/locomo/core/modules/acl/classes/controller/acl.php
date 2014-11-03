@@ -20,8 +20,8 @@ class Controller_Acl extends \Locomo\Controller_Base
 		$view->set('controllers_owner4acl', $controllers_owner);
 		$view->set('usergroups',            $usergroups);
 		$view->set('users',                 $users);
-
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -72,7 +72,8 @@ class Controller_Acl extends \Locomo\Controller_Base
 		$view->set('actionsets',        $actionsets);
 		$view->set('aprvd_actionset',   $aprvd_actionset);
 
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
@@ -115,7 +116,8 @@ class Controller_Acl extends \Locomo\Controller_Base
 		$view->set('actionsets', $actionsets['owner']);
 		$view->set('aprvd_actionset', $aprvd_actionset);
 
-		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 
 	/**
