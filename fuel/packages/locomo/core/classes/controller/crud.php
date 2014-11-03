@@ -471,7 +471,7 @@ class Controller_Crud extends Controller_Base
 	public function paginated_find($options = array(), $model = null, $deleted = false, $use_get_query = true, $pagination_config = null) {
 
 		is_null($model) and $model = $this->model_name;
-		$action = \Request::main()->action;
+//		$action = \Request::main()->action;
 
 		if ($use_get_query) {
 			$input_get = \Input::get();
@@ -512,9 +512,11 @@ class Controller_Crud extends Controller_Base
 		}
 
 		$pagination_config = $pagination_config ? array_merge($this->pagination_config, $pagination_config) : $this->pagination_config;
-
 		$pagination_config['total_items'] = $count;
-		$pagination_config['pagination_url'] = \Uri::create('/'.$this->request->module.'/'.$action.'/', array(), $input_get);
+
+		$segment = $pagination_config['uri_segment'] - 1;
+		$uri = '/'.join('/', array_slice(\Uri::segments(), 0, $segment)).'/';
+		$pagination_config['pagination_url'] = \Uri::create($uri, array(), $input_get);
 
 		if (isset($pagination_config['per_page'])) $options['limit'] = $pagination_config['per_page'];
 		\Pagination::set_config($pagination_config);
