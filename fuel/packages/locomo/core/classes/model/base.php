@@ -2,6 +2,12 @@
 namespace Locomo;
 class Model_Base extends \Orm\Model_Soft
 {
+	protected static $_soft_delete = array(
+		'deleted_field'   => 'deleted_at',
+		'mysql_timestamp' => true,
+	);
+
+	public static $_conditions = array();
 	/*
 	 * default field names
 	 */
@@ -252,9 +258,10 @@ class Model_Base extends \Orm\Model_Soft
 	 * @return  bool      whether validation succeeded
 	 * @important   \Response::redirect() after save() or Regenerate Fieldset instance
 	 */
-	public function cascade_set($input_post = null, $form = null, $repopulate = false)
+	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true)
 	{
 		if (!$input_post) $input_post = \Input::post();
+		$validated = array();
 
 		if (!is_null($form)) {
 			if ($form instanceof \Fieldset) {
@@ -271,19 +278,19 @@ class Model_Base extends \Orm\Model_Soft
 		// モデル名から
 		if (isset($input_post[$model_name])) {
 			$this->set($input_post[$model_name]);
-			!is_null($form) and $validated[] = $form->validation()->run($input_post[$model_name]);
+			!is_null($form) and $validation and $validated[] = $form->validation()->run($input_post[$model_name]);
 			$repopulate and $form->populate($input_post[$model_name]);
 
 		// テーブル名から
 		} elseif (isset($input_post[$table_name])) {
 			$this->set($input_post[$table_name]);
-			!is_null($form) and $validated[] = $form->validation()->run($input_post[$table_name]);
+			!is_null($form) and $validation and $validated[] = $form->validation()->run($input_post[$table_name]);
 			$repopulate and $form->populate($input_post($table_name));
 
 		// 何もなければ、生のプロパティを relations になければつっこむ
 		} else {
 			$this->set(\Arr::filter_keys($input_post, array_keys(static::relations()), true));
-			!is_null($form) and $validated[] = $form->validation()->run($input_post);
+			!is_null($form) and $validation and $validated[] = $form->validation()->run($input_post);
 			$repopulate and $form->populate($input_post);
 		}
 		// => root の設定ココまで
@@ -296,21 +303,22 @@ class Model_Base extends \Orm\Model_Soft
 				if (!$form->field($k)) continue;
 
 				isset($input_post[$k]) and $this[$k]->set($input_post[$k]);
-				!is_null($form) and $validated[] = $form->field($k)->validation()->run($input_post[$k]);
+				!is_null($form) and $validation and $validated[] = $form->field($k)->validation()->run($input_post[$k]);
 				$repopulate and $form->field($k)->populate($input_post[$k]);
 
 			// has_many
 			} elseif (static::relations()[$k]->cascade_save and static::relations()[$k] instanceof \Orm\HasMany ) {
+				if (!$form->field($k)) continue;
 
 				// hm 既存列
 				foreach ($this[$k] as $kk => $vv) {
-					if (isset($input_post[$k][$kk]['_delete'])){ // _deleted
+					if (isset($input_post[$k][$kk]['_delete']) or !isset($input_post[$k][$kk])){ // _deleted
 						unset($this->{$k}[$kk]);
 					} else {
 						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
+						!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
+						$repopulate and $form->field($k)->field($k.'_row_'.$kk)->populate($input_post[$k][$kk]);
 					}
-					!is_null($form) and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
-					$repopulate and $form->field($k)->field($k.'_row_'.$kk)->populate($input_post[$k][$kk]);
 				}
 
 				// hm 新規列
@@ -321,7 +329,7 @@ class Model_Base extends \Orm\Model_Soft
 							$vv = array_filter($vv);
 							if (!empty($vv)) { // array_filter で引数が全て空なら 空の配列が返る -> 新規の保存なし
 								$this->{$k}[] = $hm_model::forge()->set($vv);
-								!is_null($form) and $validated[] = $form->field($k)->field($k.'_new_'.$kk)->validation()->run($input_post[$k.'_new'][$kk]);
+								!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_new_'.$kk)->validation()->run($input_post[$k.'_new'][$kk]);
 								$repopulate and $form->field($k)->field($k.'_new_'.$kk)->populate($input_post[$k.'_new'][$kk]);
 							}
 						}

@@ -103,6 +103,9 @@ class Bulk {
 				} else {
 					is_null($field->template) and $field->set_template("\t\t\t\t<td>{field}{error_msg}</td>");
 				}
+			// no required rules on this row
+			$field->delete_rule('required', false)->delete_rule('required_with', false);
+
 			}
 
 			$output .= $form->build();

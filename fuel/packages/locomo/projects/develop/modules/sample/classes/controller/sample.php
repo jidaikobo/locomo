@@ -58,6 +58,8 @@ class Controller_Sample extends \Locomo\Controller_Crud
 
 	public function action_sample_bulk()
 	{
+		$this->template = 'default';
+
 		$view = \View::forge(PKGCOREPATH . 'modules/bulk/views/bulk.php');
 		$form = $this->bulk(array(), null, 'disabled', true, null, 'bulk_ctm');
 
@@ -71,6 +73,7 @@ class Controller_Sample extends \Locomo\Controller_Crud
 			'menu_str' => '編集画面に戻る',
 		);
 		\Actionset::set_actionset('sample', 'ctrl', 'back', $action);
+
 
 		return \Response::forge(\ViewModel::forge($this->request->module, 'view', null, $view));
 	}
