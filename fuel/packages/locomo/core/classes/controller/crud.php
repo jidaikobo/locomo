@@ -54,8 +54,7 @@ class Controller_Crud extends Controller_Base
 	public function action_index()
 	{
 		$this->_index_template = 'index';
-		$this->template = 'default';
-		return static::action_index_admin();//$options, $model, $deleted);
+		static::action_index_admin();//$options, $model, $deleted);
 	}
 
 	/**
@@ -73,7 +72,7 @@ class Controller_Crud extends Controller_Base
 		$model::$_conditions['where'][] = array('expired_at', '>=', date('Y-m-d'));
 
 		\View::set_global('title', static::$nicename . '予約項目');
-		return $this->action_index_admin();
+		static::action_index_admin();
 	}
 
 	/**
@@ -88,7 +87,7 @@ class Controller_Crud extends Controller_Base
 		$model::$_conditions['where'][] = array('expired_at', '<=', date('Y-m-d'));
 
 		\View::set_global('title', static::$nicename . 'の期限切れ項目');
-		return $this->action_index_admin();
+		static::action_index_admin();
 	}
 
 	/**
@@ -102,7 +101,7 @@ class Controller_Crud extends Controller_Base
 		$model::$_conditions['where'][] = array('is_visible', '=', 0);
 
 		\View::set_global('title', static::$nicename . 'の不可視項目');
-		return $this->action_index_admin();
+		static::action_index_admin();
 	}
 
 	/**
@@ -120,7 +119,7 @@ class Controller_Crud extends Controller_Base
 		//static::enable_filter();
 
 		\View::set_global('title', static::$nicename . 'の削除済み項目');
-		return $this->action_index_admin();
+		static::action_index_admin();
 	}
 
 	/*
@@ -133,7 +132,7 @@ class Controller_Crud extends Controller_Base
 
 		$model::disable_filter();
 		\View::set_global('title', static::$nicename . 'の削除を含む全項目');
-		return $this->action_index_admin();
+		static::action_index_admin();
 	}
 
 	/*
@@ -202,7 +201,7 @@ class Controller_Crud extends Controller_Base
 	}
 
 	public function action_create() {
-		return $this->action_edit(null);
+		static::action_edit(null);
 	}
 
 	public function action_edit($id = null) {
