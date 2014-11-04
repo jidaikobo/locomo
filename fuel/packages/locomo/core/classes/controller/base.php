@@ -70,7 +70,9 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 
 		//current_actionのセット
 		//HMVCの場合は、呼ばれたモジュールに応じたものにかわる
-		$this->current_action = $this->request->module.DS.$this->request->action ;
+		$this->current_action = $this->request->module.DS.$this->request->controller.DS.$this->request->action ;
+//		$this->current_action = $this->request->module.DS.$this->request->action ;
+// strtolower(str_replace('Controller_','',\Inflector::denamespace(\Request::main()->controller)) )
 
 		//model_name
 		$controller = ucfirst($this->request->module);
