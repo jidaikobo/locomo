@@ -1,5 +1,5 @@
 <?php
-namespace Locomo;
+namespace User;
 class Observer_Password extends \Orm\Observer
 {
 	/**
@@ -56,7 +56,7 @@ class Observer_Password extends \Orm\Observer
 		$property = $property ? $property : @$obj->{$this->_property};
 
 		if ( ! empty($property)):
-			$obj->{$this->_property} = md5($property);
+			$obj->{$this->_property} = \Auth::instance()->hash_password($property);
 		else:
 			//$objをvar_dump()すると、_originalが見えるので、きっとここ、リファクタリングできる
 			$originals = $obj->get_original_values();

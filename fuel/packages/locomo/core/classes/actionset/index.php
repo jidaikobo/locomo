@@ -5,18 +5,18 @@ class Actionset_Index extends Actionset
 	/**
 	 * index()
 	 */
-	public static function actionset_index($module, $obj, $id, $urls = array())
+	public static function actionset_index($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-//		$url_str = $module."/index" ;
-//		$urls = \Auth::auth($url_str) ? array(\Html::anchor($url_str,'一覧')) : '' ;
+		$actions = array(array($module.DS.$controller.DS."index", '一覧'));
+		$urls = static::generate_uris($module, $controller, 'index', $actions);
 
 		$retvals = array(
-//			'urls'          => $urls ,
+			'urls'          => $urls ,
 			'action_name'  => '一覧（通常項目）',
 			'explanation'  => '通常項目の一覧の閲覧権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index',
+				$module.DS.$controller.DS.'index',
 			)
 		);
 		return $retvals;
@@ -25,10 +25,10 @@ class Actionset_Index extends Actionset
 	/**
 	 * index_admin()
 	 */
-	public static function actionset_index_admin($module, $obj, $id, $urls = array())
+	public static function actionset_index_admin($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		$url_str = $module."/index_admin" ;
-		$urls = \Auth::auth($url_str) ? array(\Html::anchor($url_str,'一覧')) : '' ;
+		$actions = array(array($module.DS.$controller.DS."index_admin", '一覧'));
+		$urls = static::generate_uris($module, $controller, 'index_admin', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -36,7 +36,7 @@ class Actionset_Index extends Actionset
 			'explanation'  => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index_admin',
+				$module.DS.$controller.DS.'index_admin',
 			)
 		);
 		return $retvals;
@@ -45,10 +45,10 @@ class Actionset_Index extends Actionset
 	/**
 	 * index_deleted()
 	 */
-	public static function actionset_index_deleted($module, $obj, $id, $urls = array())
+	public static function actionset_index_deleted($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		$url_str = $module."/index_deleted" ;
-		$urls = \Auth::auth($url_str) ? array(\Html::anchor($url_str,'削除項目')) : '' ;
+		$actions = array(array($module.DS.$controller.DS."index_deleted", 'ごみ箱'));
+		$urls = static::generate_uris($module, $controller, 'index_deleted', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -56,7 +56,7 @@ class Actionset_Index extends Actionset
 			'explanation'  => '削除された項目一覧の権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index_deleted',
+				$module.DS.$controller.DS.'index_deleted',
 			)
 		);
 		return $retvals;
@@ -65,10 +65,10 @@ class Actionset_Index extends Actionset
 	/**
 	 * index_expired()
 	 */
-	public static function actionset_index_expired($module, $obj, $id, $urls = array())
+	public static function actionset_index_expired($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		$url_str = $module."/index_expired" ;
-		$urls = \Auth::auth($url_str) ? array(\Html::anchor($url_str,'期限切れ項目')) : '' ;
+		$actions = array(array($module.DS.$controller.DS."index_expired", '期限切れ項目'));
+		$urls = static::generate_uris($module, $controller, 'index_expired', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -76,7 +76,7 @@ class Actionset_Index extends Actionset
 			'explanation'  => '期限切れ項目一覧の権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index_expired',
+				$module.DS.$controller.DS.'index_expired',
 			)
 		);
 		return $retvals;
@@ -85,10 +85,10 @@ class Actionset_Index extends Actionset
 	/**
 	 * index_yet()
 	 */
-	public static function actionset_index_yet($module, $obj, $id, $urls = array())
+	public static function actionset_index_yet($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		$url_str = $module."/index_yet" ;
-		$urls = \Auth::auth($url_str) ? array(\Html::anchor($url_str,'予約項目')) : '' ;
+		$actions = array(array($module.DS.$controller.DS."index_yet", '予約項目'));
+		$urls = static::generate_uris($module, $controller, 'index_yet', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -96,7 +96,7 @@ class Actionset_Index extends Actionset
 			'explanation'  => '予約項目一覧の権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index_yet',
+				$module.DS.$controller.DS.'index_yet',
 			)
 		);
 		return $retvals;
@@ -105,10 +105,10 @@ class Actionset_Index extends Actionset
 	/**
 	 * index_invisible()
 	 */
-	public static function actionset_index_invisible($module, $obj, $id, $urls = array())
+	public static function actionset_index_invisible($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		$url_str = $module."/index_invisible" ;
-		$urls = \Auth::auth($url_str) ? array(\Html::anchor($url_str,'不可視項目')) : '' ;
+		$actions = array(array($module.DS.$controller.DS."index_invisible", '不可視項目'));
+		$urls = static::generate_uris($module, $controller, 'index_invisible', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -116,16 +116,16 @@ class Actionset_Index extends Actionset
 			'explanation'  => '不可視項目一覧の権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index_invisible',
+				$module.DS.$controller.DS.'index_invisible',
 			)
 		);
 		return $retvals;
 	}
 
-	public static function actionset_index_all($module, $obj, $id, $urls = array())
+	public static function actionset_index_all($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		$url_str = $module."/index_all" ;
-		$urls = \Auth::auth($url_str) ? array(\Html::anchor($url_str,'すべて')) : '' ;
+		$actions = array(array($module.DS.$controller.DS."index_all", 'すべて'));
+		$urls = static::generate_uris($module, $controller, 'index_all', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -133,13 +133,13 @@ class Actionset_Index extends Actionset
 			'explanation'  => '全項目項目一覧の権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index',
-				'index_admin',
-				'index_deleted',
-				'index_expired',
-				'index_yet',
-				'index_invisible',
-				'index_all',
+				$module.DS.$controller.DS.'index',
+				$module.DS.$controller.DS.'index_admin',
+				$module.DS.$controller.DS.'index_deleted',
+				$module.DS.$controller.DS.'index_expired',
+				$module.DS.$controller.DS.'index_yet',
+				$module.DS.$controller.DS.'index_invisible',
+				$module.DS.$controller.DS.'index_all',
 			)
 		);
 		return $retvals;

@@ -5,10 +5,10 @@ trait Actionset_Traits_Testdata
 	/**
 	 * actionset_add_testdata()
 	 */
-	public static function actionset_add_testdata($module, $obj, $id, $urls = array())
+	public static function actionset_add_testdata($controller, $module, $obj = null, $id = null, $urls = array())
 	{
 		$url = '';
-		$usergroup_ids = \Auth::get_usergroups();
+		$usergroup_ids = \Auth::get_groups();
 
 		//ルート管理者のみ
 		if(in_array(-2, $usergroup_ids)):

@@ -4,14 +4,22 @@
 
 <!--ユーザ名かメールアドレス-->
 <div class="form_group">
-	<?php echo '<span id="label1">'.\Form::label('アカウント', 'account').'</span>'; ?>
-	<?php echo '<span id="desc1" class="skip">ユーザ名かメールアドレス</span>'.\Form::input('account', Input::post('account', isset($item) ? $item->account : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1')); ?>
+	<?php echo '<span id="label1">'.\Form::label('アカウント', 'username').'</span>'; ?>
+	<?php echo '<span id="desc1" class="skip">ユーザ名かメールアドレス</span>'.\Form::input('username', Input::post('username', isset($item) ? $item->username : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1')); ?>
 </div>
 
 <!--パスワード-->
 <div class="form_group">
 	<?php echo '<span id="label2">'. \Form::label('パスワード', 'password').'</span>'; ?>
 	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('placeholder'=>'パスワード')); ?>
+</div>
+
+<!--remember me-->
+<div class="form_group">
+	<span id="label2">
+	<?php echo \Form::checkbox('remember', Input::post('remember', isset($item) ? $item->remember : '')); ?>
+	<?php echo \Form::label('ログインを維持する', 'remember'); ?>
+	</span>
 </div>
 
 <?php

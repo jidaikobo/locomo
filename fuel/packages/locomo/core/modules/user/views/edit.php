@@ -5,8 +5,8 @@
 		<legend>項目</legend>
 		<table>
 		<tr>
-			<th><?php echo $form->field('user_name')->set_template('{label}{required}'); ?></th>
-			<td><?php echo $form->field('user_name')->set_template('{error_msg}{field}'); ?></td>
+			<th><?php echo $form->field('username')->set_template('{label}{required}'); ?></th>
+			<td><?php echo $form->field('username')->set_template('{error_msg}{field}'); ?></td>
 		</tr>
 		<tr>
 			<th><?php echo $form->field('display_name')->set_template('{label}{required}'); ?></th>

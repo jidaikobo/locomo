@@ -44,7 +44,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$actionset_owner  = Helper_Scaffold::generate_actionset_owner($name);
 			$actionset_option = Helper_Scaffold::generate_actionset_option($name);
 			$model            = Helper_Scaffold::generate_model($name, $cmd_orig);
-			$config           = Helper_Scaffold::generate_config($cmd_orig);
+			$config           = Helper_Scaffold::generate_config($name, $cmd_orig);
 
 			//molding - view
 			$tpl_index        = Helper_Scaffold::generate_views_index($name, $cmd_orig);

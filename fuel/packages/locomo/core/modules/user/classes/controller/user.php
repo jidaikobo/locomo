@@ -12,29 +12,30 @@ class Controller_User extends \Locomo\Controller_Crud
 	 */
 	public function action_login()
 	{
-		$ret = \Input::param('ret', @$_SERVER['HTTP_REFERER']);
+		$ret = \Input::param('ret', @$_SERVER['HTTP_REFERER'], null);
+		$ret = (in_array($ret, array(\Uri::create('user/login/'), \Uri::create('user/user/login/')))) ? '/' : $ret ;
 		$ret = $ret == null ? '/' : $ret ;
 
 		//ログイン済みのユーザだったらログイン画面を表示しない
-		if(\Auth::is_user_logged_in()):
+		if(\Auth::check()):
 			\Session::set_flash('error', 'あなたは既にログインしています');
-			\Response::redirect($ret);
+			\Response::redirect_back();
 		endif;
 
 		//ログイン処理
 		if(\Input::method() == 'POST'):
-			$account = \Input::post('account');
+			$username = \Input::post('username');
 			$password = \Input::post('password');
 
 			//ログイン成功
-			if(\Auth::login($account, $password)):
-				\Session::set_flash( 'success', 'ログインしました。');
-				\Response::redirect($ret);
+			if(\Auth::instance()->login($username, $password)):
+				\Session::set_flash('success', 'ログインしました。');
+				return \Response::redirect($ret);
 			else:
 				//ログイン失敗
-				\Auth::add_user_log($account, $password, false);
-				\Session::set_flash( 'error', 'ログインに失敗しました。入力内容に誤りがあります。');
-				\Response::redirect('user/login/');
+				\Auth::instance()->add_user_log($username, $password, false);
+				\Session::set_flash('error', 'ログインに失敗しました。入力内容に誤りがあります。');
+				return \Response::redirect('user/login/');
 			endif;
 		endif;
 
@@ -51,7 +52,14 @@ class Controller_User extends \Locomo\Controller_Crud
 	 */
 	public function action_logout()
 	{
+		// remove the remember-me cookie, we logged-out on purpose
+		\Auth::dont_remember_me();
+		
+		// logout
 		\Auth::logout();
+		
+		\Session::set_flash('success', 'ログアウトしました。');
+		\Response::redirect_back();
 	}
 
 	/**

@@ -1,4 +1,4 @@
-<h2>項目一覧<?php echo ($hit != 0) ? '（全'.$hit.'件）' : ''; ?></h2>
+<h2>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h2>
 <p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <?php 
 	//index menu
@@ -27,7 +27,7 @@
 <?php endforeach; ?>
 	</tbody>
 </table>
-<?php echo $pagination; ?>
+<?php echo \Pagination::create_links(); ?>
 <?php else: ?>
 <p>xxxが存在しません。</p>
 <?php endif; ?>

@@ -10,12 +10,11 @@ class View extends \Fuel\Core\View
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
 		if( \Request::main()->route->action == 'login' && \Config::get('use_login_as_top') ) $class_arr[] = 'home';
-		if(\Auth::is_user_logged_in()) $class_arr[] = 'loggedin';
+		if(\Auth::check()) $class_arr[] = 'loggedin';
 		$this->set_global('body_class', implode($class_arr,' '));
 
 		//actionset
-		$item = is_object($item) ? $item : (object) array();
-		$actions = \Actionset::get_actionset(\Request::main()->module, $item);
+		$actions = \Actionset::get_actionset(\Request::main()->controller, \Request::main()->module, $item);
 		$this->set_global('actions', $actions, false);
 	}
 
@@ -25,57 +24,56 @@ class View extends \Fuel\Core\View
 	public static function get_controllers($is_admin = false)
 	{
 		//ログインした人向けのメニューなので、ゲストには何も返さない
-		if( ! \Auth::is_user_logged_in()) return false;
+		if( ! \Auth::check()) return false;
 
-		//対象モジュールを取得する
+		//すべてのコントローラのconfigを取得する
+		$configs = \Util::get_all_configs();
 		$controllers = array();
-		$userinfo = \Auth::get_userinfo();
-		$n = 0 ;
-		foreach(\Config::get('module_paths') as $path):
-			foreach (glob($path.'*') as $dirname):
-				if( ! is_dir($dirname)) continue;
+		$uris = array();
+		foreach($configs as $config):
+			//そもそもURLを持たないものを除外
+			if(! \Arr::get($config, 'adminindex', false)) continue;
 
-				//config
-				$config = \Config::load($dirname.'/config/'.basename($dirname).'.php', true, true);
-				if( ! $config) continue;
-				if( ! $config['adminindex']) continue;
+			//管理者向けは非管理者には表示しない
+			if(\Arr::get($config, 'is_admin_only', false) && \Auth::get_user_id() <= -1) continue;
 
-				$adminmodule = isset($config['adminmodule']) ?: false;
-				if($is_admin && ! $adminmodule) continue;
-				if( ! $is_admin && $adminmodule) continue;
+			//$is_admin条件があれば、管理者向けのみ表示。そうでなければ、非管理者向けを表示
+			if( ! $is_admin && \Arr::get($config, 'is_admin_only', false)) continue;
+			if( $is_admin && ! \Arr::get($config, 'is_admin_only', false)) continue;
+			if( $is_admin && ! \Auth::is_admin()) continue;
 
-				//adminindexへのurlを取得する
-				$url = basename($dirname).'/'.$config['adminindex'];
+			//すでにあるuriは足さない（オーバライドモジュール対策）
+			$uri = \Uri::base().$config['adminindex'];
+			if(in_array($uri, $uris)) continue;
+			$uris[] = $uri;
 
-				//すでにあるURLは足さない（オーバライドモジュールなんかは重複する）
-				if(\Arr::in_array_recursive($url, $controllers)) continue;
+			//links
+			$links = array();
+			$links['url']      = $uri;
+			$links['index_nicename'] = $config['index_nicename'];
 
-				//links
-				$links = array();
-				$links['url']      = $url;
-				$links['nicename'] = $config['nicename'];
-				$links['order']    = $config['order_in_menu'];
+			//管理者はすべてのコントローラへのリンクを得る
+			if(\Auth::get_user_id() <= -1):
+				$controllers[] = $links;
+			else:
+				//管理者向けコントローラは表示しない
+				if(@$settings['is_admin_only']) continue;
 
-				//管理者はすべてのコントローラへのリンクを得る
-				if(\Auth::get_user_id() <= -1):
-					$controllers[$n] = $links;
-				else:
-					//管理者向けコントローラは表示しない
-					if(@$settings['is_admin_only']) continue;
-
-					//adminindexが許されていない場合は表示しない
-					if( ! in_array($url, $userinfo['acls'])) continue;
-					$controllers[$n] = $links;
-				endif;
-			$n++;
-			endforeach;
+				//adminindexが許されていない場合は表示しない
+/*
+				if( ! in_array($url, $userinfo['acls'])) continue;
+*/
+				$controllers[] = $links;
+			endif;
 		endforeach;
-
-		//array_multisort
-		foreach($controllers as $key => $row):
-			$order[$key]  = $row['order'];
-		endforeach;
-		array_multisort($order, SORT_ASC, $controllers);
 		return $controllers;
+	}
+
+	/**
+	 * get_active_request()
+	 */
+	public function get_active_request($item = null)
+	{
+		return $this->$item->active_request;
 	}
 }

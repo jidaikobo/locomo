@@ -59,4 +59,18 @@ class Validation extends \Fuel\Core\Validation
 			return ! ($result->count() > 0);
 		endif;
 	}
+
+	/**
+	 * _validation_banned_string()
+	 * 
+	 * @param str $val
+	 * @param str $options perioded value
+	 * 
+	 * @return bool
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function _validation_banned_string($val, $options)
+	{
+		return ! in_array($val, $options);
+	}
 }

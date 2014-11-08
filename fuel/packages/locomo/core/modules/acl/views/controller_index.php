@@ -55,23 +55,3 @@
 </fieldset>
 <?php echo \Form::close(); ?>
 
-<!--オーナ権限設定-->
-<?php echo \Form::open(array('action' => \Uri::base(false).'acl/actionset_owner_index/')); ?>
-<fieldset>
-<legend>オーナ権限設定</legend>
-<p>
-<?php
-	echo \Form::label('コントローラをドロップダウンから選択', 'controller');
-	echo \Form::select('controller', 'none', $controllers_owner4acl);
-?>
-</p>
-<p>
-<?php
-	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-	echo \Form::hidden('owner', '1');
-	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
-?>
-</p>
-</fieldset>
-<?php echo \Form::close(); ?>
-

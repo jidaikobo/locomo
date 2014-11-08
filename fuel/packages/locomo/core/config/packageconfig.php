@@ -1,4 +1,17 @@
 <?php
+
+$admins = array(
+	'root' => array(
+		//'username' => array('username', 'password')
+		'root' => array('root', '131313'),
+	),
+	'admin' => array(
+		'admin'  => array('admin', '121212'),
+		'admin2' => array('admin2', '121212'),
+	),
+);
+defined('LOCOMO_ADMINS') or define('LOCOMO_ADMINS',serialize($admins));
+
 //root user
 defined('ROOT_USER_NAME') or define('ROOT_USER_NAME','root');
 defined('ROOT_USER_PASS') or define('ROOT_USER_PASS','131313');
@@ -10,7 +23,7 @@ defined('ADMN_USER_PASS') or define('ADMN_USER_PASS','121212');
 //fuel config
 return array(
 	//base
-	'site_title' => 'locomo package',
+	'site_title' => 'Lightstaff',
 
 	//identity
 	'identity' => array(
@@ -38,6 +51,7 @@ return array(
 
 	//module_paths
 	'module_paths' => array(
+		APPPATH.'modules'.DS,
 		PKGPROJPATH.'modules'.DS,
 		PKGPATH.'locomo/core/modules'.DS
 	),
@@ -50,12 +64,12 @@ return array(
 
 	//always guest allowed actions
 	'always_allowed' => array(
-		'user/login',
-		'user/logout',
-		'content/home',
-		'content/404',
-		'content/403',
-		'content/fetch_view',
+		'user/\\User\\Controller_User/login/',
+		'user/\\User\\Controller_User/logout/',
+		'user/\\User\\Controller_User/edit/',
+		'content/\\Content\\Controller_Content/home/',
+		'content/\\Content\\Controller_Content/403/',
+		'content/\\Content\\Controller_Content/404/',
+		'content/\\Content\\Controller_Content/fetch_view/',
 	),
-
 );

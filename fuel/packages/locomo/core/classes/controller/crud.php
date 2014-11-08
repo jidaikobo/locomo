@@ -194,10 +194,11 @@ class Controller_Crud extends Controller_Base
 
 		//view
 		$view = \View::forge('view');
-		$view->base_assign($data['item']);
 		$view->set_global('item', $data['item']);
 		$view->set_global('title', self::$nicename . '閲覧');
 		$this->template->content = $view;
+		\Auth_Acl_Locomoacl::set_item($this);
+		$view->base_assign($data['item']);
 	}
 
 	public function action_create() {
@@ -253,11 +254,12 @@ class Controller_Crud extends Controller_Base
 		endif;
 
 		$view = \View::forge('edit');
-		$view->base_assign($obj);
 		$view->set_global('title', $title);
 		$view->set_global('item', $obj, false);
 		$view->set_global('form', $form, false);
 		$this->template->content = $view;
+		\Auth_Acl_Locomoacl::set_item($this);
+		$view->base_assign($obj);
 	}
 
 	/**

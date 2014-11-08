@@ -3,14 +3,10 @@
 <table class="tbl">
 <tr>
 	<th>User name:</th>
-	<td><?php echo $item->user_name; ?></td>
+	<td><?php echo $item->username; ?></td>
 </tr>
 <tr>
 	<th>Email:</th>
 	<td><?php echo $item->email; ?></td>
-</tr>
-<tr>
-	<th>Last login:</th>
-	<td><?php echo $item->last_login_at; ?></td>
 </tr>
 </table>

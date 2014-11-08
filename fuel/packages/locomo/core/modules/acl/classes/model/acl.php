@@ -36,9 +36,13 @@ class Model_Acl extends \Orm\Model
 	{
 		//アクションセットの条件を満たすものを抽出
 		$results = array();
+
+
 		foreach($actionsets as $actionset_name => $v){
 			if( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
-			if( ! array_diff($v['dependencies'], $actions)){
+			$dependencies = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $v['dependencies']);
+			$dependencies = array_map('serialize', $dependencies);
+			if( ! array_diff($dependencies, $actions)){
 				$results[] = $actionset_name;
 			};
 		}
@@ -62,7 +66,7 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_users()
 	{
-		$options['select'][] = 'user_name';
+		$options['select'][] = 'username';
 //		$options['where'][] = array('is_visible', true);
 		$options['where'][] = array('created_at', '<', date('Y-m-d H:i:s'));
 		$options['where'][] = array(
@@ -72,23 +76,23 @@ class Model_Acl extends \Orm\Model
 			)
 		);
 		$users = array('none' => '選択してください');
-		$users += \User\Model_User::get_options($options, $label = 'user_name');
+		$users += \User\Model_User::get_options($options, $label = 'username');
 
 		return $users;
 	}
 
 	/**
 	 * get_controllers()
-	 * configで指定されたacl対象コントローラの取得（とりあえずモジュール形式だけ）
+	 * configで指定されたacl対象コントローラの取得
 	 */
 	public static function get_controllers($is_owner = false)
 	{
 		$controllers = array();
-		foreach(\Actionset::get_actionset() as $module => $actionset):
-			if($is_owner && ! \Arr::get($actionset, 'owner', false)) continue;
-			$config = \Config::load(\Actionset::get_modules()[$module].DS.'config'.DS.$module.'.php', $module);
-			if(@$config['is_admin_only']) continue;
-			$controllers[$module] = $config['nicename'];
+		foreach(\Util::get_all_configs() as $module => $config):
+			if(\Arr::get($config, 'is_admin_only', false)) continue;
+			if( ! \Arr::get($config, 'actionset_classes', false)) continue;
+			if( ! $controller = \Arr::get($config, 'main_controller', false)) continue;
+			$controllers[$controller] = $config['nicename'];
 		endforeach;
 		return array('none' => '選択してください') + $controllers;
 	}

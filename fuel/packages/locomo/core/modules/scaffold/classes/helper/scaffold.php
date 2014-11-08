@@ -459,15 +459,15 @@ class Helper_Scaffold
 	/**
 	 * generate_config()
 	 */
-	public static function generate_config($cmd_orig)
+	public static function generate_config($name, $cmd_orig)
 	{
 		//vals
 		$cmds = explode(' ', $cmd_orig);
-		$name = array_shift($cmds);
-		$nicename = self::get_nicename($name);
+		$nicename = self::get_nicename(array_shift($cmds));
 
 		//template
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'config.php');
+		$val = self::replaces($name, $val);
 		$val = str_replace ('###nicename###', $nicename , $val) ;
 		return $val;
 	}

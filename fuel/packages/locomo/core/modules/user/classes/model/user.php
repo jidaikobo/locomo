@@ -6,7 +6,7 @@ class Model_User extends \Locomo\Model_Base
 	 * vals
 	 */
 	protected static $_table_name = 'users';
-	public static $_subject_field_name = 'user_name';
+	public static $_subject_field_name = 'username';
 	public static $_creator_field_name = 'id';
 
 	/**
@@ -14,13 +14,15 @@ class Model_User extends \Locomo\Model_Base
 	 */
 	protected static $_properties = array(
 		'id',
-		'user_name',
-		'display_name',
+		'username',
 		'password',
 		'email',
-		'activation_key',
-		'is_visible',
+		'display_name',
 		'last_login_at',
+		'login_hash',
+		'activation_key',
+		'profile_fields',
+		'is_visible',
 		'deleted_at',
 		'created_at',
 		'expired_at',
@@ -65,14 +67,17 @@ class Model_User extends \Locomo\Model_Base
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
 		),
-		'Locomo\Observer_Password' => array(
-			'events' => array('before_insert', 'before_save'),
-		),
 		'Locomo\Observer_Expired' => array(
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
 		'Locomo\Observer_Userids' => array(
+			'events' => array('before_insert', 'before_save'),
+		),
+		'User\Observer_Password' => array(
+			'events' => array('before_insert', 'before_save'),
+		),
+		'User\Observer_Users' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
 		'Revision\Observer_Revision' => array(
@@ -96,17 +101,24 @@ class Model_User extends \Locomo\Model_Base
 		//forge
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 
-		//user_name
+		// banned user names - same as administrators
+		$alladmins = unserialize(LOCOMO_ADMINS);
+		$roots     = array_keys(\Arr::get($alladmins, 'root', array()));
+		$admins    = array_keys(\Arr::get($alladmins, 'admin', array()));
+		$allnames  = array_unique(array_merge($roots, $admins));
+
+		//username
 		$form->add(
-				'user_name',
+				'username',
 				'ユーザ名',
 				array('type' => 'text', 'size' => 20)
 			)
-			->set_value(@$obj->user_name)
+			->set_value(@$obj->username)
 			->add_rule('required')
 			->add_rule('max_length', 50)
+			->add_rule('banned_string', $allnames)
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
-			->add_rule('unique', "users.user_name.{$id}");
+			->add_rule('unique', "users.username.{$id}");
 
 		//display_name
 		$form->add(
@@ -181,11 +193,11 @@ class Model_User extends \Locomo\Model_Base
 			->set_value(@$obj->deleted_at);
 
 		//is_visible
-		if(\Auth::get_user_id() > 0):
+		if(\Auth::is_admin()):
 			$form->add(
 					'is_visible',
 					'可視属性',
-					array('type' => 'hidden', 'default' => 1)
+					array('type' => 'select', 'options' => array('0' => '不可視', '1' => '可視'), 'default' => 1)
 				)
 				->add_rule('required')
 				->set_value(@$obj->is_visible);
@@ -193,7 +205,7 @@ class Model_User extends \Locomo\Model_Base
 			$form->add(
 					'is_visible',
 					'可視属性',
-					array('type' => 'select', 'options' => array('0' => '不可視', '1' => '可視'), 'default' => 1)
+					array('type' => 'hidden', 'default' => 1)
 				)
 				->add_rule('required')
 				->set_value(@$obj->is_visible);

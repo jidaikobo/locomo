@@ -55,4 +55,40 @@ class Util
 			return $strs[0];
 		}
 	}
+
+	/**
+	 * get_all_configs()
+	 */
+	public static $configs = array();
+
+	public static function get_all_configs()
+	{
+		if(static::$configs) return static::$configs;
+
+		//modules' config
+		foreach (\Config::get('module_paths') as $path):
+			foreach (glob($path.'*') as $modname):
+				if( ! is_dir($modname)) continue;
+				$modname_str = basename($modname);
+				static::$configs[$modname_str] = \Config::load($modname.'/config/'.$modname_str.'.php', true, true);
+			endforeach;
+		endforeach;
+
+		//controllers
+		foreach (glob(APPPATH.DS.'classes'.DS.'controller'.DS.'*') as $classname):
+			$classname = basename($classname);
+			static::$configs[$classname] = \Config::load($classname);
+		endforeach;
+
+		foreach(static::$configs as $k => $config):
+			static::$configs[$k]['nicename'] = \Arr::get($config, 'nicename', false) ?: $k;
+			static::$configs[$k]['index_nicename'] = \Arr::get($config, 'index_nicename', false) ?: $k;
+			static::$configs[$k]['order_in_menu'] = \Arr::get($config, 'order_in_menu', false) ?: 200;
+		endforeach;
+
+		//array_multisort
+		static::$configs = \Arr::multisort(static::$configs, array('order_in_menu' => SORT_ASC,));
+
+		return static::$configs;
+	}
 }

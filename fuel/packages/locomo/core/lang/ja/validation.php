@@ -24,5 +24,6 @@ return array(
 	'unique'          => ':valueは既に使われています。',
 	'alnum'           => ':valueの値はアルファベットか数字にしてください。',
 	'alnumplus'       => ':valueの値はハイフン、アンダーバー、アルファベット、数字にしてください。',
+	'banned_string'   => ':valueは禁止された値です。他の値にしてください。',
 );
 

@@ -18,33 +18,9 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	protected $model_name = '';
 
 	/**
-	* @var string current_action
-	*/
-	protected $current_action = '';
-
-	/**
 	 * @var config
 	 */
-	protected $config = array();
-
-	/**
-	* @var string current_id
-	*/
-	public static $current_id = '';
-
-	/**
-	 * @var array set by self::set_actionset()
-	 */
-	public static $actionset = array();
-	public static $actionset_owner = array();
-
-	/**
-	* @var test datas
-	* array fieldname => 'type(text|email|int|date|datetime|geometry)'
-	*/
-	protected $test_datas = array();
-
-	protected static $views_path_module = '';
+	public static $config = array();
 
 	/**
 	* before()
@@ -56,34 +32,25 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 
 		//テンプレートの検索パスを追加
 		$request = \Request::active();
-
-		$views_path_module = static::$views_path_module ?: $this->request->module;
-
-		$request->add_path(PKGPROJPATH.'views'.DS.$views_path_module.DS,true);
-		$request->add_path(PKGPROJPATH.'modules'.DS.$views_path_module.DS,true);
-
-		//ユーザ情報のセット
-		\Auth::set_userinfo();
+		$request->add_path(PKGPROJPATH.'views'.DS.$this->request->module,true);
+		$request->add_path(PKGPROJPATH.'modules'.DS.$this->request->module,true);
 
 		//profile表示はrootだけ（当然ながらConfigでtrueだったら計測はされる）
 		\Fuel::$profiling = \Auth::get_user_id() == -2 ?: false ;
 
-		//current_actionのセット
-		//HMVCの場合は、呼ばれたモジュールに応じたものにかわる
-		$this->current_action = $this->request->module.DS.$this->request->action ;
-//		$this->current_action = $this->request->module.DS.$this->request->action ;
-// strtolower(str_replace('Controller_','',\Inflector::denamespace(\Request::main()->controller)) )
-
 		//model_name
-		$controller = ucfirst($this->request->module);
-		$this->model_name = '\\'.$controller.'\\Model_'.$controller;
+		$controller = substr(ucfirst(\Inflector::denamespace($this->request->controller)), 11);
+		if($this->request->module)
+		{
+			$module = ucfirst($this->request->module);
+			$this->model_name = '\\'.$module.'\\Model_'.$module;
+		}else{
+			$this->model_name = '\\Model_'.$controller;
+		}
 
 		//nicename 人間向けのモジュール名
-		$this->config = \Config::load($controller);
-		self::$nicename = $this->config['nicename'];
-
-		//actionset
-		\Actionset::forge($this->request->module);
+		static::$config = \Config::load(strtolower($controller));
+		static::$nicename = @static::$config['nicename'];
 	}
 
 	/**
@@ -91,18 +58,8 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	*/
 	public function router($method, $params)
 	{
-		$userinfo = \Auth::get_userinfo();
-
-		//ユーザ／ユーザグループ単位のACLを確認する。
-		$is_allow = \Auth::auth($this->current_action, $userinfo);
-
-		//権限がなくても、オーナACLがある行為だったらいったん留保
-		//modelのauthorized_option()に判断をゆだねる
-		if( ! $is_allow):
-			$is_allow = \Auth::is_exists_owner_auth($this->request->module, $method);
-		endif;
-
 		//存在しないアクション
+		$is_allow = true;
 		if(
 			! method_exists(get_called_class(), 'action_'.$method) &&
 			! method_exists(get_called_class(), 'get_'.$method)
@@ -112,7 +69,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		}
 
 		if( ! $is_allow):
-			$page = \Request::forge('content/403')->execute();
+			$page = \Request::forge('content/content/403')->execute();
 			return new \Response($page, 403);
 		endif;
 
@@ -123,11 +80,26 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 			\Auth::get_user_id() == 0 && //ログイン画面はゲスト用
 			$this->request->module.DS.$method == 'content/home' //トップページを求められているとき
 		):
-			return \Response::redirect(\Uri::create('user/login'));
+			return \Response::redirect(\Uri::create('user/user/login'));
 		endif;
 
 		//通常の処理に渡す
 		return parent::router($method, $params);
+	}
+
+
+	/**
+	 * after()
+	 */
+	public function after($response)
+	{
+		//ACLを確認する。
+		if( ! \Auth::instance()->has_access($this->request->module.DS.'\\'.$this->request->controller.DS.$this->request->action.DS)):
+			$page = \Request::forge('content/content/403')->execute();
+			return new \Response($page, 403);
+		endif;
+
+		return parent::after($response);
 	}
 }
 

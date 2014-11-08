@@ -149,6 +149,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function authorized_option($options = array(), $mode = null)
 	{
+/*
 		$userinfo = \Auth::get_userinfo();
 		$controller = \Inflector::denamespace(\Request::main()->controller);
 		$controller = strtolower(substr($controller, 11));
@@ -162,7 +163,7 @@ class Model_Base extends \Orm\Model_Soft
 				$options = static::$authorize_method($controller, $userinfo, $options, $mode);
 			endforeach;
 		}
-
+*/
 		return $options;
 	}
 
