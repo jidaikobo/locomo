@@ -12,8 +12,9 @@ if(\Auth::check()):
 			//context menu
 			$html.='<div class="adminbar_main">';
 				$html.= '<div class="admin_controller">';
+					$ctrl_home = \Html::anchor(\Uri::create(\Config::get('adminindex')),\Config::get('nicename'));
 					$action_name = $title ? '：'.$title : '';
-					$html.="<h3>".\Config::get('nicename')."{$action_name}</h3>"; //ツールバーのアンカーにも足す？
+					$html.="<h3>".$ctrl_home."{$action_name}</h3>"; //ツールバーのアンカーにも足す？
 				$html.= '</div><!-- /.admin_controller -->';
 				if(@$actions['base']):
 					$html.= '<div class="admin_context">';

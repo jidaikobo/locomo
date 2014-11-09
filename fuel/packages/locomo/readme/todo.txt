@@ -3,7 +3,7 @@
 validationルールはもしかするとmodel_userか？
 
 scaffoldのチェック
-workflowのチェック
+workflowのチェック。workflowadminをworkflowに統合
 appディレクトリに回帰
 ユーザauthの動作確認（Auth_Login_Locomoauth::perform_check）
 workflowのactionsetは細かい見直しが必要
@@ -18,8 +18,13 @@ workflowのactionsetは細かい見直しが必要
 モジュールのmigrationでContentに突っ込む
 HELPはauthを通らない。ログインユーザにのみ見せる特殊authとする。
 
+helpインデクスは、カテゴリ的にコントローラを持つ
 特定のコントローラにいるときには、getでコントローラを渡す。
-
+渡されたコントローラのhelpインデクスを優先的に表示する。
+helpインデクスには、カテゴリを同じくするhelpを表示する
+help統合インデクスはコントローラをずらっと並べる。
+helpはrevision対応にする
+helpはコントローラリストに表示しない
 
 ＊　＊　＊
 
