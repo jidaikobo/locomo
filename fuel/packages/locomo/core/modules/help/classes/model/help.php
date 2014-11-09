@@ -96,7 +96,8 @@ class Model_Help extends \Locomo\Model_Base
 		//controller - コントローラ
 		$controllers = array('all' => '共通ヘルプ');
 		foreach(\Util::get_all_configs() as $controller => $config):
-			$controllers[$controller] = $config['nicename'];
+			if( ! $config['main_controller']) continue;
+			$controllers[$config['main_controller']] = $config['nicename'];
 		endforeach;
 		$checked = isset($obj->controller) ? $obj->controller : '';
 		$form->add(

@@ -18,11 +18,11 @@ class Actionset_Base_XXX extends \Actionset_Base
 	 * actionset_sample_action()
 	 * to use remove first underscore at the function name
 	 */
-	public static function _actionset_sample_action($module, $obj, $id, $urls = array())
+	public static function _actionset_sample_action($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		if($id):
-			$actions = array(array("xxx/sample_action/".$id, '閲覧'));
-			$urls = static::generate_anchors('xxx', 'sample_action', $actions, $obj, ['view','create']);
+		if(\Request::main()->action == 'edit' && $id):
+			$actions = array(array($module.DS.$controller.DS."view/".$id, '閲覧'));
+			$urls = static::generate_uris($module, $controller, 'view', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -31,7 +31,7 @@ class Actionset_Base_XXX extends \Actionset_Base
 			'explanation'  => 'explanation of sample_action',
 			'order'        => 10,
 			'dependencies' => array(
-				'sample_action',
+				$module.DS.$controller.DS.'sample_action',
 			)
 		);
 		return $retvals;

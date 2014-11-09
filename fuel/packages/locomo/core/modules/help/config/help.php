@@ -1,10 +1,10 @@
 <?php
 return array(
-	'nicename'        => 'ヘルプ',      //モジュール名称
-	'index_nicename'  => 'ヘルプ',      //モジュール名称
-	'adminindex'      => 'help/help/index_admin', //モジュールの管理者向けインデクス
-	'is_admin_only'   => false,                 //trueだと、aclの候補にならず、かつ管理者向けメニューにか表示されなくなります
-	'order_in_menu'   => 100,                   //ログイン後のメニューの表示順。小さいほど上
+	'nicename'        => 'ヘルプ',
+	'index_nicename'  => 'ヘルプ',
+	'adminindex'      => 'help/help/index_admin',
+	'is_admin_only'   => true,
+	'order_in_menu'   => 100,//help module won't appeared at controller menu by inc_admin_bar.html
 	'main_controller' => '\\Help\\Controller_Help',
 	'actionset_classes' => array(
 		'base'   => '\\Help\\Actionset_Base_Help',

@@ -11,7 +11,7 @@
 <h2>使い方</h2>
 
 <h3>拡張oil書式例</h3>
-<textarea class="pre" style="width: 100%;height: 5em;">test(テストモジュール) title(表題):varchar[255] body(本文):text is_bool(真偽値):bool:null created_at(作成日時):datetime:null updated_at(更新日時):datetime:null expired_at(有効期日):datetime:null deleted_at(削除日):datetime:null is_visible(可視属性):int:null creator_id:int[5] modifier_id:int[5] workflow_status:varchar[50]:null</textarea>
+<textarea class="pre" style="width: 100%;height: 5em;">test(テストモジュール) title(表題):varchar[255] body(本文):text is_bool(真偽値):bool:null created_at(作成日時):datetime:null updated_at(更新日時):datetime:null expired_at(有効期日):datetime:null deleted_at(削除日):datetime:null is_visible(可視属性):int:null creator_id:int[5] modifier_id:int[5] workflow_status:enum[init,approve,reject,remand,finish]:null</textarea>
 
 <h3>足場組み</h3>
 <p>oilふうコマンド書式をpostしたあと、<code>PROJPATH./modules</code>にモジュールが展開されます。</p>

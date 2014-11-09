@@ -172,16 +172,6 @@ class Helper_Scaffold
 	}
 
 	/**
-	 * generate_actionset_owner()
-	 */
-	public static function generate_actionset_owner($name)
-	{
-		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'actionset_owner.php');
-		$val = self::replaces($name, $val);
-		return $val;
-	}
-
-	/**
 	 * generate_actionset_option()
 	 */
 	public static function generate_actionset_option($name)

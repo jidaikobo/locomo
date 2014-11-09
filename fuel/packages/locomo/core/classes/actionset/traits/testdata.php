@@ -12,7 +12,7 @@ trait Actionset_Traits_Testdata
 
 		//ルート管理者のみ
 		if(in_array(-2, $usergroup_ids)):
-			$url = \Html::anchor($module."/add_testdata", 'テストデータの追加', array('class' => 'confirm', 'data-jslcm-msg' => 'テストデータを追加してよいですか？'));
+			$url = \Html::anchor($module.DS.\Inflector::to_dir($controller).DS."add_testdata", 'テストデータの追加', array('class' => 'confirm', 'data-jslcm-msg' => 'テストデータを追加してよいですか？'));
 		endif;
 
 		//インデクスでしか表示しない

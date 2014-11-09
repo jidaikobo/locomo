@@ -4,7 +4,7 @@ return array(
 	'nicename'          => 'ユーザ',
 	'index_nicename'    => 'ユーザ管理',
 	'adminindex'        => 'user/user/index_admin',
-	'is_admin_only'     => false,
+	'is_admin_only'     => true,
 	'order_in_menu'     => 10,
 	'main_controller'   => '\\User\\Controller_User',
 	'actionset_classes' => array(

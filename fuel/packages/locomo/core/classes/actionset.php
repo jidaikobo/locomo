@@ -62,7 +62,9 @@ class Actionset
 		$actions = array();
 		foreach($classes as $realm => $class):
 			//methods
-			$methods = array_flip(get_class_methods($class));
+			$methods = get_class_methods($class);
+			if(! is_array($methods)) continue;
+			$methods = array_flip($methods);
 			$methods = \Arr::filter_prefixed($methods, 'actionset_');
 			$methods = array_flip($methods);
 
@@ -84,6 +86,7 @@ class Actionset
 				}
 			endforeach;
 			//orderを修正
+			if( ! \Arr::get(static::$actions[$controller][$realm_name], 'order')) continue;
 			static::$actions[$controller][$realm_name] = \Arr::multisort(static::$actions[$controller][$realm_name], array('order' => SORT_ASC,));
 		endforeach;
 
@@ -168,17 +171,21 @@ class Actionset
 	 */
 	public static function generate_bulk_anchors($module, $controller, $model, $opt, $nicename, $urls)
 	{
-
-//モジュールがない場合を想定する
 		if(! $urls) return array();
 		$target = join('/',array_slice(\Uri::segments(), 0, 4));
 		$patterns[] = "{$module}/{$controller}/index_revision/{$model}";
 		$patterns[] = "{$module}/{$controller}/each_index_revision/{$model}";
 		$patterns[] = "{$module}/{$controller}/view_revision/{$model}";
 
+
 		$target_short = join('/',array_slice(\Uri::segments(), 0, 3));
 		$patterns_short[] = "{$module}/{$controller}/{$model}";
-		if(in_array($target, $patterns) || in_array($target_short, $patterns_short)):
+
+		$target_more_short = join('/',array_slice(\Uri::segments(), 0, 2));
+		$patterns_more_short[] = "{$module}/{$model}";
+		$patterns_more_short[] = "{$controller}/{$model}";
+
+		if(in_array($target, $patterns) || in_array($target_short, $patterns_short) || in_array($target_more_short, $patterns_more_short)):
 			$override_urls['base'] = array(
 				\Html::anchor("{$module}/{$controller}/{$model}/?create=1","{$nicename}新規作成"),
 				\Html::anchor("{$module}/{$controller}/index_revision/{$model}?opt={$opt}","設定履歴"),

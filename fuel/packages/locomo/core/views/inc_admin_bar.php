@@ -97,7 +97,7 @@ if(\Auth::check()):
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_option.png\" alt=\"管理者設定\"></span></a>";
 					$html.= '<ul class="modal dropdown_list boxshadow">';
 					foreach($controller4menu as $v):
-						if( ! $v['url']) continue;
+						if( ! $v['url'] || $v['url'] == \Uri::create('/help/help/index_admin')) continue;
 						$html.= "<li><a href=\"{$v['url']}\">{$v['index_nicename']}</a></li>";
 					endforeach;
 					$html.= '</ul>';
@@ -106,7 +106,7 @@ if(\Auth::check()):
 		
 			//help
 			$html.= '<div class="admin_help">';
-				$html.= '<a href="" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[controller]='.\Request::main()->controller.'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 			
 			//処理速度

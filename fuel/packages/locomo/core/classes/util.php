@@ -67,6 +67,7 @@ class Util
 
 		foreach(static::$configs as $k => $config):
 			static::$configs[$k]['nicename'] = \Arr::get($config, 'nicename', false) ?: $k;
+			static::$configs[$k]['main_controller'] = \Arr::get($config, 'main_controller', false) ?: '';
 			static::$configs[$k]['index_nicename'] = \Arr::get($config, 'index_nicename', false) ?: $k;
 			static::$configs[$k]['order_in_menu'] = \Arr::get($config, 'order_in_menu', false) ?: 200;
 		endforeach;

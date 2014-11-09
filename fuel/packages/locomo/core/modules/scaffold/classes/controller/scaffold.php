@@ -41,7 +41,6 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$controller       = Helper_Scaffold::generate_controller($name);
 			$actionset_index  = Helper_Scaffold::generate_actionset_index($name);
 			$actionset_base   = Helper_Scaffold::generate_actionset_base($name);
-			$actionset_owner  = Helper_Scaffold::generate_actionset_owner($name);
 			$actionset_option = Helper_Scaffold::generate_actionset_option($name);
 			$model            = Helper_Scaffold::generate_model($name, $cmd_orig);
 			$config           = Helper_Scaffold::generate_config($name, $cmd_orig);
@@ -72,11 +71,9 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			if( ! file_exists($scfldpath.'/classes/actionset')) mkdir($scfldpath.'/classes/actionset');
 			if( ! file_exists($scfldpath.'/classes/actionset/index')) mkdir($scfldpath.'/classes/actionset/index');
 			if( ! file_exists($scfldpath.'/classes/actionset/base')) mkdir($scfldpath.'/classes/actionset/base');
-			if( ! file_exists($scfldpath.'/classes/actionset/owner')) mkdir($scfldpath.'/classes/actionset/owner');
 			if( ! file_exists($scfldpath.'/classes/actionset/option')) mkdir($scfldpath.'/classes/actionset/option');
 			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/index/'.$name.'.php', $actionset_index) ;
 			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/base/'.$name.'.php', $actionset_base) ;
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/owner/'.$name.'.php', $actionset_owner) ;
 			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/option/'.$name.'.php', $actionset_option) ;
 
 			//model
