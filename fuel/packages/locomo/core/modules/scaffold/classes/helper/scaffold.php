@@ -234,8 +234,8 @@ class Helper_Scaffold
 
 			//attribute
 			$max  = preg_match('/\[(.*?)\]/', $attr, $m) ? intval($m[1]) : 0 ;
-			$size = $max >= 30 ? 30 : $max ;
-			$size = $max == 0  ? 30 : $max ;
+			$size = ($max >= 30) ? 30 : $max ;
+			$size = ($max == 0)  ? 30 : $size ;
 
 			//form_definition
 			$form_definition_str.= "\t\t\$form->add(\n";
