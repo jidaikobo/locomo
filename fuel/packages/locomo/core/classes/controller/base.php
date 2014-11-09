@@ -27,29 +27,30 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	*/
 	public function before()
 	{
-		//parent
+		// parent
 		parent::before();
 
-		//テンプレートの検索パスを追加
+		// add template path
 		$request = \Request::active();
 		$request->add_path(PKGPROJPATH.'views'.DS.$this->request->module,true);
 		$request->add_path(PKGPROJPATH.'modules'.DS.$this->request->module,true);
 
-		//profile表示はrootだけ（当然ながらConfigでtrueだったら計測はされる）
+		// show profile to root only
 		\Fuel::$profiling = \Auth::get_user_id() == -2 ?: false ;
 
-		//model_name
+		// load config and set model_name
 		$controller = substr(ucfirst(\Inflector::denamespace($this->request->controller)), 11);
 		if($this->request->module)
 		{
 			$module = ucfirst($this->request->module);
 			$this->model_name = '\\'.$module.'\\Model_'.$module;
+			static::$config = \Config::load(strtolower($this->request->module));
 		}else{
 			$this->model_name = '\\Model_'.$controller;
+			static::$config = \Config::load(strtolower($controller));
 		}
 
-		//nicename 人間向けのモジュール名
-		static::$config = \Config::load(strtolower($controller));
+		// nicename
 		static::$nicename = @static::$config['nicename'];
 	}
 
@@ -58,7 +59,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	*/
 	public function router($method, $params)
 	{
-		//存在しないアクション
+		// action not exists
 		$is_allow = true;
 		if(
 			! method_exists(get_called_class(), 'action_'.$method) &&
@@ -73,17 +74,16 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 			return new \Response($page, 403);
 		endif;
 
-		//ログイン画面をトップページにする処理
+		// use login as a toppage
 		$use_login_as_top = \Config::get('use_login_as_top');
 		if(
-			$use_login_as_top && //configで設定
-			\Auth::get_user_id() == 0 && //ログイン画面はゲスト用
-			$this->request->module.DS.$method == 'content/home' //トップページを求められているとき
+			$use_login_as_top && // config
+			\Auth::get('id') == 0 && // for guest
+			$this->request->module.DS.$method == 'content/home' // when toppage
 		):
 			return \Response::redirect(\Uri::create('user/user/login'));
 		endif;
 
-		//通常の処理に渡す
 		return parent::router($method, $params);
 	}
 
@@ -93,7 +93,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	 */
 	public function after($response)
 	{
-		//ACLを確認する。
+		// check auth
 		if( ! \Auth::instance()->has_access($this->request->module.DS.'\\'.$this->request->controller.DS.$this->request->action.DS)):
 			$page = \Request::forge('content/content/403')->execute();
 			return new \Response($page, 403);

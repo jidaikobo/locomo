@@ -1,12 +1,14 @@
+まず、いったんworkflowを回復。動くようにする。
+workflowadminをworkflowに統合
+workflowのactionsetは細かい見直しが必要
+
+appディレクトリに回帰
+ユーザidにおけるauthの動作確認（Auth_Login_Locomoauth::perform_check）
+
 ユーザパスワード変更には、以前のパスワードが必要（管理者は強制的にパスワードを変更可能）
 ユーザモジュールのauthコントローラにログイン類を実装。ユーザモジュールを空に
-validationルールはもしかするとmodel_userか？
+ユーザ用validationルールはもしかするとmodel_userか？
 
-scaffoldのチェック
-workflowのチェック。workflowadminをworkflowに統合
-appディレクトリに回帰
-ユーザauthの動作確認（Auth_Login_Locomoauth::perform_check）
-workflowのactionsetは細かい見直しが必要
 
 アクションセット「解除」を作る（通常リストとリビジョンで実験）
 

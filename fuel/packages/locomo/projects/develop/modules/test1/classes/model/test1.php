@@ -19,7 +19,6 @@ class Model_Test1 extends \Locomo\Model_Base
 		'is_visible',
 		'creator_id',
 		'modifier_id',
-		'workflow_status',
 	);
 
 	protected static $_depend_modules = array();
@@ -109,10 +108,10 @@ class Model_Test1 extends \Locomo\Model_Base
 		$form->add(
 			'title',
 			'表題',
-			array('type' => 'text', 'size' => 50, 'class' => 'varchar')
+			array('type' => 'text', 'size' => 30, 'class' => 'varchar')
 		)
 		->add_rule('required')
-		->add_rule('max_length', 50)
+		->add_rule('max_length', 255)
 		->set_value(@$obj->title);
 
 		//body - 本文
