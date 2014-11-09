@@ -5,19 +5,21 @@ class Actionset
 	public static $actions  = array();
 
 	/**
-	 * add_actionset_arr()
+	 * add_actionset()
+	 * use at controllers' business logic section
+	 * see sample at \Revision\Traits_Controller_Revision::action_each_index_revision
+	 *
+	 * @param string $controller	\NMSPC\Controller_NAME
+	 * @param string $realm	[base|option|index]
+	 * @param string $name	whatever
+	 * @param arr    $arr	array(array($module.DS.\NMSPC\Controller_NAME.DS.'ACTION', MENUSTR, ATTR))
 	 */
-	public static function add_actionset(
-		$module,
-		$realm = null,
-		$name = null,
-		$arr = array()
-	)
+	public static function add_actionset($controller, $realm = null, $name = null, $arr = array())
 	{
-		if( ! isset(static::$actions[$realm])):
-			static::$actions[$realm] = array();
+		if( ! isset(static::$actions[$controller][$realm])):
+			static::$actions[$controller][$realm] = array();
 		endif;
-		static::$actions[$realm][$name] = $arr;
+		static::$actions[$controller][$realm][$name] = $arr;
 	}
 
 	/**
@@ -27,15 +29,12 @@ class Actionset
 	{
 		if(is_null($controller)) return false;
 
-		//staticがあったら返す。なければ生成。
-		if(isset(static::$actions[$controller])) return static::$actions[$controller];
-
-		//Module::load()
+		// Module::load() to read config
 		if( ! \Module::loaded($module) && ! is_null($module)){
 			if( ! \Module::load($module)) die("module doesn't exist");
 		}
 
-		//一つのモジュールについてすべてのアクションセットを取得する
+		// set actionset to controller
 		static::set_actionset($controller, $module, $obj);
 		if( ! isset(static::$actions[$controller])) return false;
 
@@ -47,7 +46,7 @@ class Actionset
 	 */
 	public static function set_actionset($controller = null, $module = null, $obj = null)
 	{
-		//check args - search actionset class
+		// check args - search actionset class
 		if(is_null($controller)) return array();
 		$s_controller = substr(ucfirst(\Inflector::denamespace($controller)), 11);
 		$config = \Config::load(strtolower($s_controller).'.php');
@@ -137,7 +136,7 @@ class Actionset
 		if(count($parse_uris) <= 2) throw new \InvalidArgumentException('Given action seems not a valid. maybe module is not set. even if using non module controller, set "locomo/controller_class/action".');
 
 		if(is_null($parse_uris[0])) unset($parse_uris[0]);
-		$parse_uris[1] = str_replace('_', '/', substr(strtolower(\Inflector::denamespace($parse_uris[1])), 11));
+		$parse_uris[1] = \Inflector::to_dir($parse_uris[1]);
 		return join('/',$parse_uris) ;
 	}
 
@@ -160,6 +159,7 @@ class Actionset
 		if(isset($obj['override_url'])){
 			$arr = $obj['override_url'];
 		}
+
 		return \Html::ul($arr, $ul_attr);
 	}
 

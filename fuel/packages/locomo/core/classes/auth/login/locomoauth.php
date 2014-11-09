@@ -1,15 +1,4 @@
 <?php
-/**
- * Locomo auth login driver
- *
- * @package    Locomo
- * @version    0.5
- * @author     jidaikobo Inc.
- * @license    MIT License
- * @copyright  2003 - 2014 jidaikobo Inc.
- * @link       http://www.jidaikobo.com
- */
-
 namespace Locomo;
 
 class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
@@ -24,7 +13,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	private static $_alladmins;
 	protected $_root_info = array(
 		'id'           => -2,
-		'display_name' => 'root権限管理者',
+		'display_name' => 'root管理者',
 		'usergroups'   => array(-1,-2),
 	);
 	protected $_admin_info = array(
@@ -346,6 +335,9 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		return $login_hash;
 	}
 
+	/*
+	 * get_groups()
+	 */
 	public function get_groups()
 	{
 		if(isset(static::instance()->user->usergroup))

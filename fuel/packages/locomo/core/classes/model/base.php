@@ -153,31 +153,33 @@ class Model_Base extends \Orm\Model_Soft
 		$userinfo = \Auth::get_userinfo();
 		$controller = \Inflector::denamespace(\Request::main()->controller);
 		$controller = strtolower(substr($controller, 11));
+*/
+		$module     = \Request::main()->module;
+		$controller = \Request::main()->controller;
 
 		//view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (\Auth::auth($controller.'/view_anyway', $userinfo)) {
+		if (\Auth::instance()->has_access($module.DS.$controller.DS.'view_anyway')) {
 			static::disable_filter();
 		} else {
 			//モデルが持っている判定材料を、適宜$optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method):
-				$options = static::$authorize_method($controller, $userinfo, $options, $mode);
+				$options = static::$authorize_method($module, $controller, $options, $mode);
 			endforeach;
 		}
-*/
 		return $options;
 	}
 
 	/*
 	 * auth_expired()
 	 */
-	public static function auth_expired($controller = null, $userinfo = null, $options = array(), $mode = null)
+	public static function auth_expired($module = null, $controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_expired_field_name) ?
 			static::$_expired_field_name :
 			static::$_default_expired_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::auth($controller.'/view_expired', $userinfo)
+			! \Auth::instance()->has_access($module.DS.$controller.'/view_expired')
 		) {
 			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
@@ -188,14 +190,14 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_created()
 	 */
-	public static function auth_created($controller = null, $userinfo = null, $options = array(), $mode = null)
+	public static function auth_created($module = null, $controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_created_field_name) ?
 			static::$_created_field_name :
 			static::$_default_created_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::auth($controller.'/view_yet', $userinfo)
+			! \Auth::instance()->has_access($module.DS.$controller.'/view_yet')
 		) {
 			$options['where'][] = array(array($column, '<', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
@@ -206,11 +208,11 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_deleted()
 	 */
-	public static function auth_deleted($controller = null, $userinfo = null, $options = array(), $mode = null)
+	public static function auth_deleted($module = null, $controller = null, $options = array(), $mode = null)
 	{
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			! \Auth::auth($controller.'/view_deleted', $userinfo)
+			! \Auth::instance()->has_access($module.DS.$controller.'/view_deleted')
 		) {
 			static::enable_filter();
 		} else {
@@ -222,7 +224,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_visibility()
 	 */
-	public static function auth_visibility($controller = null, $userinfo = null, $options = array(), $mode = null)
+	public static function auth_visibility($module = null, $controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_visibility_field_name) ?
 			static::$_visibility_field_name :
@@ -230,34 +232,10 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::auth($controller.'/view_invisible', $userinfo)
+			! \Auth::instance()->has_access($module.DS.$controller.'/view_invisible')
 		) {
 			$options['where'][] = array($column, '=', true);
 		}
-		return $options;
-	}
-
-	/*
-	 * auth_owner()
-	 */
-	public static function auth_owner($controller = null, $userinfo = null, $options = array(), $mode = null)
-	{
-		//グループに許されている場合はオーナ権限は判定する必要がない（管理者もこれで貫通する）
-		if(\Auth::auth($controller.DS.\Request::main()->action, $userinfo))
-			return $options;
-
-		//グループに許されていない場合
-		$column = isset(static::$_creator_field_name) ?
-			static::$_creator_field_name :
-			static::$_default_creator_field_name;
-
-		if (
-			isset(static::properties()[$column]) &&
-			\Auth::is_exists_owner_auth($controller, 'view')
-		) {
-			$options['where'][] = array($column, '=', $userinfo['user_id']);
-		}
-
 		return $options;
 	}
 

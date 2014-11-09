@@ -8,17 +8,17 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 
 	public static function _init()
 	{
-		static::$_valid_roles = array_keys(\Config::get('locomoauth.roles'));
+//		static::$_valid_roles = array_keys(\Config::get('locomoauth.roles'));
 	}
 
 	public function roles()
 	{
+		//Auth_Acl_Locomoaclではroleを使わない
 		return static::$_valid_roles;
 	}
 
 	/**
 	 * Parses a conditions string into it's array equivalent
-	 *
 	 * @rights	mixed	conditions array or string
 	 * @return	array	conditions array formatted as array(module, controller, action)
 	 *
@@ -57,22 +57,24 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 
 	/*
 	 * has_access()
+	 * @param $condition	[array|string]
+	 * @param $entity	not used at \Locomo
 	 * @return bool
 	 */
 	public function has_access($condition, Array $entity)
 	{
-		//admins are all allowed
+		// admins are all allowed
 		if(in_array(\Auth::get('id'), array(-1, -2))) return true;
 
-		//$condition_s = $condition;
-		//parse condition to serialize
+		// parse condition to serialize
 		$conditions = static::_parse_conditions($condition);
 		$condition = serialize($conditions);
 
-		//まずグループ権限を確認する
+		// at first, check group auth with allowed data
 		$is_allow = in_array($condition, \Auth::get('allowed'));
 
 		//グループが不許可なら、\Auth::get('allowed')の中にcondition付きの配列がないか確認する
+		//このauthは個別のレコードのフィールドをみるため、static::$_itemに値を格納してある必要がある
 		if( ! $is_allow && static::$_item):
 			$allows = array_map('unserialize', \Auth::get('allowed'));
 
@@ -130,7 +132,7 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 	/*
 	 * set_item()
 	 * used by $this->has_access()
-	 * @return bool
+	 * @param $object	object	it is given at \Locomo\Controller_Curd::edit and view
 	 */
 	public static function set_item($obejct = null)
 	{

@@ -42,21 +42,6 @@ class Util
 	}
 
 	/**
-	 * get_module_name_from_class()
-	 */
-	public static function get_module_name_from_class($class = null)
-	{
-		is_null($class) and \Response::redirect(\Uri::base());
-		$class = strtolower($class);
-		$strs = explode('\\', $class);
-		if(count($strs) > 2){
-			return $strs[1];
-		}else{
-			return $strs[0];
-		}
-	}
-
-	/**
 	 * get_all_configs()
 	 */
 	public static $configs = array();

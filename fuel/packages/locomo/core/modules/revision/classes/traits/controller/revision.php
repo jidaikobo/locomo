@@ -70,19 +70,28 @@ trait Traits_Controller_Revision
 		//dataをunserialize（一覧表に編集者とsubjectの変遷を出すため）
 		foreach($items as $k => $item):
 			$items[$k]->data = unserialize($item->data);
-			$modifier_name = \User\Model_User::find($item->modifier_id, array('select'=>array('display_name')));
-			$modifier_name = $modifier_name ? static::$_modifiers[$item->modifier_id] : $modifier_name;
-			$items[$k]->modifier_name = $modifier_name;
+			if ($item->modifier_id == -2)
+			{
+				$items[$k]->modifier_name = 'root管理者';
+			} elseif ($item->modifier_id == -1) {
+				$items[$k]->modifier_name = '管理者';
+			} else {
+				$modifier_name = \User\Model_User::find($item->modifier_id, array('select'=>array('display_name')));
+				$modifier_name = $modifier_name ? $modifier_name->display_name : 'deleted user #'.$item->modifier_id;
+				$items[$k]->modifier_name = $modifier_name;
+			}
 		endforeach;
 
 		//add_actionset
+		$ctrl_url = \Inflector::to_dir($this->request->controller);
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
 		if($opt_arg):
-			$action['urls'][] = \Html::anchor($module.'/edit/'.$id,'編集画面へ');
+			$action['urls'][] = \Html::anchor($module.DS.$ctrl_url.DS.'edit/'.$id,'編集画面へ');
 		endif;
-		$action['urls'][] = \Html::anchor($module.'/index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
+		$action['urls'][] = \Html::anchor($module.DS.$ctrl_url.DS.'index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
 		$action['order'] = 10;
-		\Actionset::add_actionset($module, 'ctrl', 'back', $action);
+		$action['overrides'] = array('base' => array());
+		\Actionset::add_actionset($this->request->controller, 'ctrl', 'back', $action);
 
 		//view
 		$view = \View::forge(\Util::fetch_tpl('/revision/views/each_index_revision.php'));

@@ -61,6 +61,7 @@ Autoloader::add_classes(array(
 	'Locomo\\Auth_Group_Locomogroup' => PKGCOREPATH.'classes'.DS.'auth/group/locomogroup.php',
 	'Locomo\\Auth_Acl_Locomoacl'     => PKGCOREPATH.'classes'.DS.'auth/acl/locomoacl.php',
 	'Locomo\\View'                   => PKGCOREPATH.'classes'.DS.'view.php',
+	'Locomo\\Inflector'              => PKGCOREPATH.'classes'.DS.'inflector.php',
 ));
 
 // core override class

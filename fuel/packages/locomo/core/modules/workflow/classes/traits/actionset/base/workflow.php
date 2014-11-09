@@ -5,10 +5,10 @@ trait Traits_Actionset_Base_Workflow
 	/**
 	 * actionset_index_workflow()
 	 */
-	public static function actionset_index_workflow($module, $obj, $id, $urls = array())
+	public static function actionset_index_workflow($controller, $module, $obj = null, $id = null, $urls = array())
 	{
-		$url_str = $module."/index_workflow" ;
-		$urls = \Auth::auth($url_str) ? $url_str : '' ;
+		$actions = array(array($module.DS.$controller.DS."index_workflow", '承認項目一覧'));
+		$urls = static::generate_uris($module, $controller, 'create', $actions);
 
 		$retvals = array(
 			'urls'         => $urls,
@@ -16,7 +16,7 @@ trait Traits_Actionset_Base_Workflow
 			'explanation'  => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index_workflow',
+				$module.DS.$controller.DS.'index_workflow',
 			)
 		);
 		return $retvals;
@@ -25,23 +25,23 @@ trait Traits_Actionset_Base_Workflow
 	/**
 	 * workflow()
 	 */
-	public static function actionset_workflow($module, $obj, $id, $urls = array())
+	public static function actionset_workflow($controller, $module, $obj = null, $id = null, $urls = array())
 	{
 		$retvals = array(
 			'action_name'  => 'ワークフロー作業',
 			'explanation'  => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。不可視項目の閲覧権限などに依存します。',
 			'order'        => 10,
 			'dependencies' => array(
-				'view',
-				'edit',
-				'create',
-				'index',
-				'index_admin',
-				'index_invisible',
-				'view_invisible',
-				'index_workflow',
-				'apply',
-				'route',
+				$module.DS.$controller.DS.'view',
+				$module.DS.$controller.DS.'edit',
+				$module.DS.$controller.DS.'create',
+				$module.DS.$controller.DS.'index',
+				$module.DS.$controller.DS.'index_admin',
+				$module.DS.$controller.DS.'index_invisible',
+				$module.DS.$controller.DS.'view_invisible',
+				$module.DS.$controller.DS.'index_workflow',
+				$module.DS.$controller.DS.'apply',
+				$module.DS.$controller.DS.'route',
 			)
 		);
 		return $retvals;
@@ -50,7 +50,7 @@ trait Traits_Actionset_Base_Workflow
 	/**
 	 * workflow_process()
 	 */
-	public static function actionset_workflow_process($module, $obj, $id, $urls = array())
+	public static function actionset_workflow_process($controller, $module, $obj = null, $id = null, $urls = array())
 	{
 		$retvals = array(
 			'url'          => '',
@@ -58,15 +58,15 @@ trait Traits_Actionset_Base_Workflow
 			'explanation'  => 'ワークフロー管理下コントローラにおける承認権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。',
 			'order'        => 10,
 			'dependencies' => array(
-				'index',
-				'index_admin',
-				'view',
-				'index_invisible',
-				'view_invisible',
-				'index_workflow',
-				'approve',
-				'reject',
-				'remand',
+				$module.DS.$controller.DS.'index',
+				$module.DS.$controller.DS.'index_admin',
+				$module.DS.$controller.DS.'view',
+				$module.DS.$controller.DS.'index_invisible',
+				$module.DS.$controller.DS.'view_invisible',
+				$module.DS.$controller.DS.'index_workflow',
+				$module.DS.$controller.DS.'approve',
+				$module.DS.$controller.DS.'reject',
+				$module.DS.$controller.DS.'remand',
 			)
 		);
 		return $retvals;
@@ -76,7 +76,7 @@ trait Traits_Actionset_Base_Workflow
 	 * workflow_actions()
 	 * 重たい処理。ワークフローが不要なコントローラでは読まないように注意。
 	 */
-	public static function actionset_workflow_actions($module, $obj, $id, $urls = array())
+	public static function actionset_workflow_actions($controller, $module, $obj = null, $id = null, $urls = array())
 	{
 		$retval = array('dependencies'=>array());
 		if(is_null($module) || empty($obj) || ! isset($obj->id)) return $retval;
@@ -119,7 +119,7 @@ trait Traits_Actionset_Base_Workflow
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
 		if(
 			$model::get_current_step($module, $obj->id) == -2 &&
-			\Auth::auth($module.'/route')
+			\Auth::instance()->has_access($module.DS.$controller.'/route')
 		):
 			$url = "{$module}/route/{$obj->id}" ;
 			$menu_str = '経路設定';

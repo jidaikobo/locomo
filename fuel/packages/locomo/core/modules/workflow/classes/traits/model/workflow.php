@@ -314,7 +314,6 @@ trait Traits_Model_Workflow
 		return;
 	}
 
-
 	/**
 	 * add_authorize_methods()
 	 */
@@ -328,7 +327,7 @@ trait Traits_Model_Workflow
 	/*
 	 * auth_workflow()
 	 */
-	public static function auth_workflow($controller = null, $userinfo = null, $options = array(), $mode = null)
+	public static function auth_workflow($module = null, $controller = null, $options = array(), $mode = null)
 	{
 		//workflow_statusカラムがなければ、対象にしない
 		$column = isset(static::$_workflow_field_name) ?
@@ -339,26 +338,26 @@ trait Traits_Model_Workflow
 		//編集
 		if ($mode == 'edit') {
 			//作成権限があるユーザだったらin_progress以外を編集できる
-			if(\Auth::auth($controller.'/create', $userinfo)):
+			if(\Auth::instance()->has_access($module.DS.$controller.'/create')):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
 			endif;
 		}
 
 		//承認のための閲覧
-		if(\Auth::auth($controller.'/approve', $userinfo)):
+		if(\Auth::instance()->has_access($module.DS.$controller.'/approve')):
 			//承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
 			return $options;
 		endif;
 
 		//作成ユーザはどんな条件でも閲覧できる
-		if(\Auth::auth($controller.'/create', $userinfo)):
+		if(\Auth::instance()->has_access($module.DS.$controller.'/create')):
 			return $options;
 		endif;
 
 		//閲覧ユーザはfinishを閲覧できる
-		if(\Auth::auth($controller.'/view', $userinfo)):
+		if(\Auth::instance()->has_access($module.DS.$controller.'/view')):
 			$options['where'][] = array(array($column, '=', 'finish'));
 			return $options;
 		endif;

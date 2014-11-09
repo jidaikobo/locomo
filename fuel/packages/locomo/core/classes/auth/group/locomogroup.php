@@ -3,7 +3,6 @@ namespace Locomo;
 
 class Auth_Group_Locomogroup extends \Auth_Group_Driver
 {
-
 	protected static $_valid_groups = array();
 
 	public static function _init()
