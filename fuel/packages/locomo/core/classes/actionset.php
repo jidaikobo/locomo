@@ -24,78 +24,101 @@ class Actionset
 
 	/**
 	 * get_actionset()
+	 * @param string $ctrl_or_mod controller full class name or module dir name
+	 * @param object $obj use for auth. Fuel\Model object
+	 * @return array()
 	 */
-	public static function get_actionset($controller = null, $module = null, $obj = null)
+	public static function get_actionset($ctrl_or_mod = null, $obj = null)
 	{
-		if(is_null($controller)) return false;
+		if(is_null($ctrl_or_mod)) throw new \InvalidArgumentException('Argument must be controller name or module name.');
+
+		// judge module or controller
+		$module = strpos($ctrl_or_mod, 'Controller_') !== false ? null : $ctrl_or_mod;
+		$controller = $module ? null : $ctrl_or_mod;
 
 		// Module::load() to read config
 		if( ! \Module::loaded($module) && ! is_null($module)){
-			if( ! \Module::load($module)) die("module doesn't exist");
+			if( ! \Module::load($module)) throw new \InvalidArgumentException('module doesn\'t exist');
 		}
 
-		// set actionset to controller
-		static::set_actionset($controller, $module, $obj);
-		if( ! isset(static::$actions[$controller])) return false;
+		// set actionset
+		$unique_key = static::set_actionset($controller, $module, $obj);
 
-		return static::$actions[$controller] ? static::$actions[$controller] : false;
+		return $unique_key ? static::$actions[$unique_key] : false;
 	}
 
 	/**
 	 * set_actionset()
+	 * @param string $controller controller full class name
+	 * @param string $module module dir name
+	 * @param object $obj use for auth. Fuel\Model object
+	 * @return [bool|string unique_key]
 	 */
 	public static function set_actionset($controller = null, $module = null, $obj = null)
 	{
-		// check args - search actionset class
-		if(is_null($controller)) return array();
-		$s_controller = substr(ucfirst(\Inflector::denamespace($controller)), 11);
-		$config = \Config::load(strtolower($s_controller).'.php');
-		$config = $config ?: \Config::load($s_controller.'::'.strtolower($s_controller).'.php');
-		if( ! isset($config['actionset_classes'])) return array();
-		$classes = $config['actionset_classes'];
-		if(! is_array($classes)) throw new \InvalidArgumentException('Given class were not array. Received: '.$classes);
+		if(is_null($controller) && is_null($module)) return false;
 
-		//primary key
+		// check args - if module, search contain controller
+		$controllers = array();
+		$classes = $module ? array_keys(\Module::get_controllers($module)) : array($controller);
+		foreach($classes as $class):
+			if( ! property_exists($class, 'locomo')) continue;
+			if( ! \Arr::get($class::$locomo, 'actionset_classes')) continue;
+			$controllers[$class] = $class::$locomo;
+		endforeach;
+
+		// primary key
 		$obj = is_object($obj) ? $obj : (object) array() ;
 		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
 
-		$actions = array();
-		foreach($classes as $realm => $class):
-			//methods
-			$methods = get_class_methods($class);
-			if(! is_array($methods)) continue;
-			$methods = array_flip($methods);
-			$methods = \Arr::filter_prefixed($methods, 'actionset_');
-			$methods = array_flip($methods);
+		// unique_key
+		$unique_key = md5($controller.$module);
 
-			foreach($methods as $method):
-				$p_method = 'actionset_'.$method;
-				static::$actions[$controller][$realm][$method] = $class::$p_method($controller, $module, $obj, $id);
+		$actions = array();
+		//controllers
+		foreach($controllers as $controller => $p):
+			//actionset_classes
+			foreach($p['actionset_classes'] as $realm => $class):
+				//methods - search prefixed 'actionset_'
+				$methods = get_class_methods($class);
+				if(! is_array($methods)) continue;
+				$methods = array_flip($methods);
+				$methods = \Arr::filter_prefixed($methods, 'actionset_');
+				$methods = array_flip($methods);
+	
+				foreach($methods as $method):
+					$p_method = 'actionset_'.$method;
+					$as = $class::$p_method($controller, $module, $obj, $id);
+					//not exists "urls" and "dependencies", retun nothing
+					if(! \Arr::get($as, 'urls.0') && ! \Arr::get($as, 'dependencies.0')) continue;
+					static::$actions[$unique_key][$controller]['nicename'] = $p['nicename'];
+					static::$actions[$unique_key][$controller]['actionset'][$realm][$method] = $as;
+				endforeach;
 			endforeach;
 		endforeach;
 
-		if( ! isset(static::$actions[$controller])) return false;
+		if( ! isset(static::$actions[$unique_key])) return false;
 
 		//整形
 		$overrides = array();
-		foreach(static::$actions[$controller] as $realm_name => $actions):
+		foreach(static::$actions[$unique_key][$controller]['actionset'] as $realm_name => $actions):
 			foreach($actions as $action_k => $action):
 				//prepare override
-				if(isset(static::$actions[$controller][$realm_name][$action_k]['overrides'])){
-					$overrides = array_merge($overrides, static::$actions[$controller][$realm_name][$action_k]['overrides']);
+				if(isset(static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides'])){
+					$overrides = array_merge($overrides, static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides']);
 				}
 			endforeach;
 			//orderを修正
-			if( ! \Arr::get(static::$actions[$controller][$realm_name], 'order')) continue;
-			static::$actions[$controller][$realm_name] = \Arr::multisort(static::$actions[$controller][$realm_name], array('order' => SORT_ASC,));
+			if( ! \Arr::get(static::$actions[$unique_key][$controller]['actionset'][$realm_name], 'order')) continue;
+			static::$actions[$unique_key][$controller]['actionset'][$realm_name] = \Arr::multisort(static::$actions[$unique_key][$controller]['actionset'][$realm_name], array('order' => SORT_ASC,));
 		endforeach;
 
 		//override
 		foreach($overrides as $realm_name => $urls):
-			static::$actions[$controller][$realm_name]['override_url'] = $urls;
+			static::$actions[$unique_key][$controller]['actionset'][$realm_name]['override_url'] = $urls;
 		endforeach;
 
-		return true;
+		return $unique_key;
 	}
 
 	/**
@@ -139,7 +162,7 @@ class Actionset
 		if(count($parse_uris) <= 2) throw new \InvalidArgumentException('Given action seems not a valid. maybe module is not set. even if using non module controller, set "locomo/controller_class/action".');
 
 		if(is_null($parse_uris[0])) unset($parse_uris[0]);
-		$parse_uris[1] = \Inflector::to_dir($parse_uris[1]);
+		$parse_uris[1] = \Inflector::ctrl_to_dir($parse_uris[1]);
 		return join('/',$parse_uris) ;
 	}
 

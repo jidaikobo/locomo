@@ -86,7 +86,7 @@ if(\Auth::check()):
 				if( ! \Auth::is_admin()):
 					$html.= "<li><a href=\"".\Uri::base()."user/user/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
 				endif;
-				$html.= "<li><a href=\"".\Uri::base()."user/user/logout\">ログアウト</a></li>";
+				$html.= "<li><a href=\"".\Uri::base()."user/auth/logout\">ログアウト</a></li>";
 				$html.= '</ul>';
 			$html.= '</div><!-- /.adminbar_user -->';
 		

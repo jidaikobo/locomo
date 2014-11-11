@@ -53,16 +53,12 @@ security設定をしてください。
 
 
 /*
- * モジュール開発
+ * コントローラ／モジュール開発
  */
 
-Locomoパッケージ（以下locomo）はfuelphpのmoduleを基礎にしています。
-
-locomoを用いて構築する際は、原則PKGPATH.'/projects/PROJECTNAME/modules/'以下に、以下のような構成のファイルをおいてください。locomoのscaffoldを使うと簡単に生成できます。
-
-locomoには、基本的なcrudを実装した基礎classがあります。この基礎classは、fuelのclassを継承していますが、必ず使わなくていけないということはありません。必要に応じてfuelのclassを直に継承して問題はありません。
-
-パッケージコアモジュールのclassをオーバライドする場合は、プロジェクトのmodulesのなかにパッケージコアモジュールと同じ名前のディレクトリを作ってください。
+Locomoパッケージ（以下locomo）はfuelphpのcontroller/moduleを基礎にしています。
+scaffoldを使うとモジュールが生成されますが、class/controllerにコントローラをおいても機能します。
+その際、コントローラは必要に応じて、\Locomo\Controller_Crudを継承してください。
 
 /*
  * テンプレートのオーバライド

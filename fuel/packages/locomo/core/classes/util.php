@@ -20,7 +20,7 @@ class Util
 			return false;
 		endif;
 	}
-	
+
 	/**
 	 * get_valid_controller_name()
 	 */

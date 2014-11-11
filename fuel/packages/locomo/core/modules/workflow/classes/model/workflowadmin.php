@@ -1,5 +1,5 @@
 <?php
-namespace Workflowadmin;
+namespace Workflow;
 class Model_Workflowadmin extends \Locomo\Model_Base
 {
 	protected static $_table_name = 'workflows';
@@ -36,7 +36,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 		//user_name
 		$form->add(
 				'name',
-				'ルート名名',
+				'ルート名',
 				array('type' => 'text', 'size' => 255)
 			)
 			->set_value(@$obj->name)

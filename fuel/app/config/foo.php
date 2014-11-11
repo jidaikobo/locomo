@@ -1,8 +1,8 @@
 <?php
 
 return array(
-	'nicename'        => 'テスト',
-	'index_nicename'  => 'テストコントローラ',
+	'nicename'        => 'FOO',
+	'index_nicename'  => 'FOOコントローラ',
 	'adminindex'      => 'foo/index',
 	'is_admin_only'   => false,
 	'order_in_menu'   => 30,

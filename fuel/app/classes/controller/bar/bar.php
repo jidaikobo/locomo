@@ -1,9 +1,9 @@
 <?php
-class Controller_Foo extends \Locomo\Controller_Crud
+class Controller_Bar_Bar extends \Locomo\Controller_Crud
 {
 	//locomo
 	public static $locomo = array(
-		'nicename' => 'fooコントローラ',
+		'nicename' => 'barコントローラ',
 		'actionset_classes' =>array(
 			'base'   => '\\Actionset_Foo',
 		),

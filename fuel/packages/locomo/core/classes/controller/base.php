@@ -81,7 +81,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 			\Auth::get('id') == 0 && // for guest
 			$this->request->module.DS.$method == 'content/home' // when toppage
 		):
-			return \Response::redirect(\Uri::create('user/user/login'));
+			return \Response::redirect(\Uri::create('user/auth/login'));
 		endif;
 
 		return parent::router($method, $params);

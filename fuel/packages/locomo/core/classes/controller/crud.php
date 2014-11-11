@@ -205,8 +205,8 @@ class Controller_Crud extends Controller_Base
 		static::action_edit(null);
 	}
 
-	public function action_edit($id = null) {
-		
+	public function action_edit($id = null)
+	{
 		$model = $this->model_name ;
 
 		if ($id) {
@@ -253,6 +253,13 @@ class Controller_Crud extends Controller_Base
 			endif;
 		endif;
 
+		//add_actionset
+		$ctrl_url = \Inflector::to_dir($this->request->controller);
+		$action['urls'][] = \Html::anchor($this->request->module.DS.$ctrl_url.DS.'index_admin/','一覧へ');
+		$action['order'] = 10;
+		\Actionset::add_actionset($this->request->controller, 'ctrl', 'back', $action);
+
+		//view
 		$view = \View::forge('edit');
 		$view->set_global('title', $title);
 		$view->set_global('item', $obj, false);

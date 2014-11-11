@@ -1,5 +1,5 @@
 <?php
-namespace Workflowadmin;
+namespace Workflow;
 class Actionset_Base_Workflowadmin extends \Actionset
 {
 	/**

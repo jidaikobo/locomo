@@ -11,8 +11,8 @@
 <legend>ユーザグループ単位の権限設定</legend>
 <p>
 <?php
-	echo \Form::label('コントローラをドロップダウンから選択', 'controller');
-	echo \Form::select('controller', 'none', $controllers4acl);
+	echo \Form::label('コントローラをドロップダウンから選択', 'mod_or_ctrl');
+	echo \Form::select('mod_or_ctrl', 'none', $mod_or_ctrl);
 ?>
 </p>
 <p>
@@ -36,8 +36,8 @@
 <legend>ユーザ単位の権限設定</legend>
 <p>
 <?php
-	echo \Form::label('コントローラをドロップダウンから選択', 'controller');
-	echo \Form::select('controller', 'none', $controllers4acl);
+	echo \Form::label('コントローラをドロップダウンから選択', 'mod_or_ctrl');
+	echo \Form::select('mod_or_ctrl', 'none', $mod_or_ctrl);
 ?>
 </p>
 <p>

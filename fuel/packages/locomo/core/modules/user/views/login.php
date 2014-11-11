@@ -1,6 +1,6 @@
 <h2><img src="/content/fetch_view/images/parts/logo.png" alt=""><?php echo \Config::get('site_title') ;?></h2>
 
-<?php echo \Form::open(array('action' => \Uri::base(false).'user/login/','class' => 'login')); ?>
+<?php echo \Form::open(array('action' => \Uri::base(false).'user/auth/login/','class' => 'login')); ?>
 
 <!--ユーザ名かメールアドレス-->
 <div class="form_group">

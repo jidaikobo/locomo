@@ -1,7 +1,24 @@
 <?php
-namespace Workflowadmin;
-class Controller_Workflowadmin extends \Locomo\Controller_Base
+namespace Workflow;
+class Controller_Workflowadmin extends \Locomo\Controller_Crud
 {
+
+	/**
+	 * action_setup()
+	 */
+	public function before()
+	{
+		parent::before();
+		$this->model_name = '\\Workflow\\Model_Workflowadmin';
+	}
+
+	/**
+	 * action_edit()
+	 */
+	public function action_edit($id = null) {
+		parent::action_edit($id);
+	}
+
 	/**
 	 * action_setup()
 	 */

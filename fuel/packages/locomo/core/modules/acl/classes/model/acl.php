@@ -37,7 +37,6 @@ class Model_Acl extends \Orm\Model
 		//アクションセットの条件を満たすものを抽出
 		$results = array();
 
-
 		foreach($actionsets as $actionset_name => $v){
 			if( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
 			$dependencies = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $v['dependencies']);
@@ -82,19 +81,33 @@ class Model_Acl extends \Orm\Model
 	}
 
 	/**
-	 * get_controllers()
-	 * configで指定されたacl対象コントローラの取得
+	 * get_mod_or_ctrl()
+	 * Locomo配下にあるacl対象コントローラ／モジュールの取得
 	 */
-	public static function get_controllers($is_owner = false)
+	public static function get_mod_or_ctrl()
 	{
-		$controllers = array();
-		foreach(\Util::get_all_configs() as $module => $config):
-			if(\Arr::get($config, 'is_admin_only', false)) continue;
-			if( ! \Arr::get($config, 'actionset_classes', false)) continue;
-			if( ! $controller = \Arr::get($config, 'main_controller', false)) continue;
-			$controllers[$controller] = $config['nicename'];
+		//モジュールディレクトリを走査し、$locomoのメンバ変数を持っている物を洗い出す
+		$retvals = array();
+		foreach(array_keys(\Module::get_exists()) as $module)
+		{
+			if( ! $controllers = \Module::get_controllers($module)) continue;// module which not has controllers
+			\Module::loaded($module) or \Module::load($module);
+			foreach($controllers as $controller)
+			{
+				$mod_ctrl = \Inflector::path_to_ctrl($controller);
+				if( ! property_exists($mod_ctrl, 'locomo')) continue;
+				if(array_key_exists($module, $retvals)) continue; // already exists
+				$retvals[$module] = \Arr::get($mod_ctrl::$locomo, 'nicename') ?: $mod_ctrl ; 
+			}
+		}
+
+		//classを走査し、$locomoのメンバ変数を持っている物を洗い出す
+		foreach(array_keys(\Inflector::dir_to_ctrl(APPPATH.'classes/controller')) as $ctrl):
+			if( ! property_exists($ctrl, 'locomo')) continue;
+			$retvals[$ctrl] = \Arr::get($ctrl::$locomo, 'nicename') ?: $ctrl ; 
 		endforeach;
-		return array('none' => '選択してください') + $controllers;
+
+		return array('none' => '選択してください') + $retvals;
 	}
 
 }

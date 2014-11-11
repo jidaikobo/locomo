@@ -63,10 +63,9 @@ return array(
 	'home_url' => 'content/home',
 
 	//always guest allowed actions
-	//always guest allowed actions
 	'always_allowed' => array(
-		'user/\\User\\Controller_User/login',
-		'user/\\User\\Controller_User/logout',
+		'user/\\User\\Controller_Auth/login',
+		'user/\\User\\Controller_Auth/logout',
 		'content/\\Content\\Controller_Content/home',
 		'content/\\Content\\Controller_Content/403',
 		'content/\\Content\\Controller_Content/404',
