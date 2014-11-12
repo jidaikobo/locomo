@@ -56,8 +56,8 @@ return array(
 		PKGPATH.'locomo/core/modules'.DS
 	),
 
-	//use_login_as_top
-	'use_login_as_top' => false,
+	//no_home
+	'no_home' => false,
 
 	//home_url
 	'home_url' => 'content/home',

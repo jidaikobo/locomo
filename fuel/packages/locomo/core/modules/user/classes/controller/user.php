@@ -2,6 +2,16 @@
 namespace User;
 class Controller_User extends \Locomo\Controller_Crud
 {
+	//locomo
+	public static $locomo = array(
+		'nicename' => 'ユーザ',
+		'actionset_classes' =>array(
+			'base'   => '\\User\\Actionset_Base_User',
+			'index'  => '\\User\\Actionset_Index_User',
+			'option' => '\\User\\Actionset_Option_User',
+		),
+	);
+
 	//trait
 	use \Locomo\Controller_Traits_Testdata;
 	use \Revision\Traits_Controller_Revision;

@@ -75,9 +75,9 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		endif;
 
 		// use login as a toppage
-		$use_login_as_top = \Config::get('use_login_as_top');
+		$no_home = \Config::get('no_home');
 		if(
-			$use_login_as_top && // config
+			$no_home && // config
 			\Auth::get('id') == 0 && // for guest
 			$this->request->module.DS.$method == 'content/home' // when toppage
 		):

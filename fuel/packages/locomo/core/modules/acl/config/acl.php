@@ -6,5 +6,4 @@ return array(
 	'adminindex'      => 'acl/acl/controller_index',
 	'is_admin_only'   => true,
 	'order_in_menu'   => 30,
-	'main_controller' => '\\Acl\\Controller_Acl',
 );

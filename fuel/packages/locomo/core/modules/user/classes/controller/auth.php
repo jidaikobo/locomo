@@ -9,7 +9,7 @@ class Controller_Auth extends \Locomo\Controller_Crud
 	{
 		$ret = \Input::param('ret', @$_SERVER['HTTP_REFERER'], null);
 		$ret = (in_array($ret, array(\Uri::create('user/auth/login/'), \Uri::create('user/auth/login/')))) ? '/' : $ret ;
-		$ret = $ret == null ? '/' : $ret ;
+		$ret = $ret == null ? '/admin/dashboard/' : $ret ;
 
 		//ログイン済みのユーザだったらログイン画面を表示しない
 		if(\Auth::check()):
@@ -52,7 +52,6 @@ class Controller_Auth extends \Locomo\Controller_Crud
 		
 		// logout
 		\Auth::logout();
-		
 		\Session::set_flash('success', 'ログアウトしました。');
 		\Response::redirect_back();
 	}

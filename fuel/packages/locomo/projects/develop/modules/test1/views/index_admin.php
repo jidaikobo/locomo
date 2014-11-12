@@ -2,7 +2,7 @@
 <p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <?php 
 	//index menu
-	echo \Actionset::generate_menu_html($actions['index'], array('class'=>'holizonal_list'));
+	echo \Actionset::generate_menu_html($actionset['index'], array('class'=>'holizonal_list'));
 ?>
 <?php if ($items): ?>
 <table class="tbl datatable">

@@ -1,6 +1,8 @@
 <?php
 //is_user?
 if(\Auth::check()):
+	$actionset = $actionset;
+
 	$html = '';
 
 	$html.= '<nav id="adminbar" class="clearfix">';
@@ -16,27 +18,26 @@ if(\Auth::check()):
 					$action_name = $title ? '：'.$title : '';
 					$html.="<h3>".$ctrl_home."{$action_name}</h3>"; //ツールバーのアンカーにも足す？
 				$html.= '</div><!-- /.admin_controller -->';
-				if(@$actions['base']):
+				if(@$actionset['base']):
 					$html.= '<div class="admin_context">';
-					$html.= \Actionset::generate_menu_html($actions['base'], array('class'=>'holizonal_list'));
+					$html.= \Actionset::generate_menu_html($actionset['base'], array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 			$html.= '</div><!-- .adminbar_main -->';
 
-	
 			//context menu2
 			$html.= '<div class="adminbar_sub">';			
-			if(@$actions['ctrl']):
+			if(@$actionset['ctrl']):
 				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-				$html.= \Actionset::generate_menu_html($actions['ctrl'], array('class'=>'holizonal_list'));
+				$html.= \Actionset::generate_menu_html($actionset['ctrl'], array('class'=>'holizonal_list'));
 				$html.='</div><!-- /.admin_ctrl -->';
 			endif;
 			
 				//option menu
-				if(@$actions['option']):
+				if(@$actionset['option']):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"></span></a>";
-					$html.= \Actionset::generate_menu_html($actions['option'], array('class'=>'modal dropdown_list boxshadow'));
+					$html.= \Actionset::generate_menu_html($actionset['option'], array('class'=>'modal dropdown_list boxshadow'));
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
 
@@ -47,6 +48,8 @@ if(\Auth::check()):
 		$html.= '<div class="adminbar_top">'; 
 			$html.= "<img src=\"".\Uri::base()."content/fetch_view/images/parts/logo.png\" id=\"adminbar_logo\" alt=\"".\Config::get('site_title')."\" title=\"".\Config::get('site_title')."トップへ\">" ;
 			$html.= '<div class="adminbar_main">';
+			$html.= \Config::get('no_home') ? '' : '<span><a href="'.\Uri::base().'" style="color:#fff;">ホーム</a></span>';
+			$html.= '<span><a href="'.\Uri::base().'/admin/dashboard/" style="color:#fff;">ダッシュボード</a></span>';
 			$html.= '<h3 class="skip">メインメニュー</h3>';
 			//controller menu
 			$controller4menu = \View::get_controllers();
@@ -64,10 +67,10 @@ if(\Auth::check()):
 			endif;
 		/*
 			//index menu
-			if(@$actions['index']):
+			if(@$actionset['index']):
 				$html.= '<div id="adminbar_index">';
 				$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
-				$html.= \Actionset::generate_menu_html($actions['index'], array('class'=>'boxshadow'));
+				$html.= \Actionset::generate_menu_html($actionset['index'], array('class'=>'boxshadow'));
 				$html.= '</div>';
 			endif;
 		*/

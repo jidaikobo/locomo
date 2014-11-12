@@ -148,6 +148,7 @@ class Helper_Scaffold
 	{
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'controller.php');
 		$val = self::replaces($name, $val);
+		$val = str_replace ('###nicename###', $nicename , $val) ;
 		return $val;
 	}
 

@@ -29,7 +29,7 @@ echo \Form::submit('submit', 'ログイン', array('class' => 'button primary bu
 ?>
 
 <?php
-if(!\Config::get('use_login_as_top')){
+if(!\Config::get('no_home')){
 echo Html::anchor('/', "{$site_title}へ");
 }
 echo \Form::close();

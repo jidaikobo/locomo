@@ -60,6 +60,9 @@ Locomoパッケージ（以下locomo）はfuelphpのcontroller/moduleを基礎�
 scaffoldを使うとモジュールが生成されますが、class/controllerにコントローラをおいても機能します。
 その際、コントローラは必要に応じて、\Locomo\Controller_Crudを継承してください。
 
+またコントローラ／モジュールには、configファイルが必須です。fuelのconfig検索パス（app/configやmodule/MODNAME/configなど）
+
+
 /*
  * テンプレートのオーバライド
  */

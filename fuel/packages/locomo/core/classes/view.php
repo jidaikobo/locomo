@@ -9,13 +9,23 @@ class View extends \Fuel\Core\View
 	{
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
-		if( \Request::main()->route->action == 'login' && \Config::get('use_login_as_top') ) $class_arr[] = 'home';
+		if( \Request::main()->route->action == 'login' && \Config::get('no_home') ) $class_arr[] = 'home';
 		if(\Auth::check()) $class_arr[] = 'loggedin';
 		$this->set_global('body_class', implode($class_arr,' '));
 
+		//mod_or_ctrl
+		$mod_or_ctrl = \Request::main()->module ?: \Request::main()->controller;
+		$this->set_global('mod_or_ctrl', $mod_or_ctrl);
+
+		//ctrls
+		$ctrls = \Actionset::get_actionset($mod_or_ctrl, $item) ?: array();
+		$this->set_global('ctrls', $ctrls, false);
+
 		//actionset
-		$actions = \Actionset::get_actionset(\Request::main()->controller, \Request::main()->module, $item);
-		$this->set_global('actions', $actions, false);
+		$default = array('index' => array(), 'base' => array(), 'ctrl' => array());
+		$controller = \Request::main()->controller;
+		$actionset = \Arr::get($ctrls, "\\{$controller}.actionset") ?: $default;
+		$this->set_global('actionset', $actionset, false);
 	}
 
 	/**
