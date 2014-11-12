@@ -4,6 +4,9 @@ class Controller_XXX extends \Locomo\Controller_Crud
 {
 	//locomo
 	public static $locomo = array(
+		'show_at_menu' => true,
+		'order_at_menu' => 10,
+		'is_for_admin' => false,
 		'nicename' => '###nicename###',
 		'actionset_classes' =>array(
 			'base'   => '\\XXX\\Actionset_Base_XXX',

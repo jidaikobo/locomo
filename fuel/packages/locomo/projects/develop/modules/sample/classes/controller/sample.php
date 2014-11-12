@@ -3,6 +3,19 @@ namespace Sample;
 \Module::load('bulk');
 class Controller_Sample extends \Locomo\Controller_Crud
 {
+	//locomo
+	public static $locomo = array(
+		'show_at_menu' => true,
+		'order_at_menu' => 10,
+		'is_for_admin' => false,
+		'nicename' => 'サンプル',
+		'actionset_classes' =>array(
+			'base'   => '\\Sample\\Actionset_Base_Sample',
+			'index'  => '\\Sample\\Actionset_Index_Sample',
+			'option' => '\\Sample\\Actionset_Option_Sample',
+		),
+	);
+
 	//trait
 	use \Bulk\Traits_Controller_Bulk;
 //	use \Workflow\Controller_Workflow;

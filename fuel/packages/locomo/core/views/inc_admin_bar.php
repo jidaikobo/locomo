@@ -52,28 +52,20 @@ if(\Auth::check()):
 			$html.= '<span><a href="'.\Uri::base().'/admin/dashboard/" style="color:#fff;">ダッシュボード</a></span>';
 			$html.= '<h3 class="skip">メインメニュー</h3>';
 			//controller menu
-			$controller4menu = \View::get_controllers();
-			if($controller4menu):
+			if($locomo['controllers']):
 				$html.= '<div class="admin_menu">';
 				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー</span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
 				$html.= '<ul class="modal dropdown_list boxshadow">';
-				foreach($controller4menu as $v):
-					if( ! $v['url']) continue;
-					$html.= "<li><a href=\"{$v['url']}\">{$v['index_nicename']}</a></li>";
+				foreach($locomo['controllers'] as $k => $v):
+					if( ! $v['is_for_admin'] && $v['show_at_menu'])
+					{
+						$html.= '<li><a href="'.\Uri::base().'admin/home/'.$k.'">'.$v['nicename'].'</a></li>';
+					}
 				endforeach;
 				$html.= '</ul>';
 				$html.= '</div><!-- /.admin_menu -->';
 			endif;
-		/*
-			//index menu
-			if(@$actionset['index']):
-				$html.= '<div id="adminbar_index">';
-				$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
-				$html.= \Actionset::generate_menu_html($actionset['index'], array('class'=>'boxshadow'));
-				$html.= '</div>';
-			endif;
-		*/
 			$html.= '</div><!-- /.adminbar_main -->';
 		
 			$html.='<div class="adminbar_sub">';
@@ -94,14 +86,15 @@ if(\Auth::check()):
 			$html.= '</div><!-- /.adminbar_user -->';
 		
 			//admin option menu
-			$controller4menu = \View::get_controllers($is_admin = true);
-			if($controller4menu):
+			if(\Auth::is_admin()):
 				$html.= '<div class="admin_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_option.png\" alt=\"管理者設定\"></span></a>";
 					$html.= '<ul class="modal dropdown_list boxshadow">';
-					foreach($controller4menu as $v):
-						if( ! $v['url'] || $v['url'] == \Uri::create('/help/help/index_admin')) continue;
-						$html.= "<li><a href=\"{$v['url']}\">{$v['index_nicename']}</a></li>";
+					foreach($locomo['controllers'] as $k => $v):
+						if($v['is_for_admin'] && $v['show_at_menu'])
+						{
+							$html.= '<li><a href="'.\Uri::base().'admin/home/'.$k.'">'.$v['nicename'].'</a></li>';
+						}
 					endforeach;
 					$html.= '</ul>';
 				$html.= '</div><!-- /.admin_option -->';

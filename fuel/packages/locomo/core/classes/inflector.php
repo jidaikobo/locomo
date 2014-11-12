@@ -22,21 +22,33 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function dir_to_ctrl($path = null)
 	{
-		// read files
-		$paths = \File::read_dir($path);
-		$paths = \Arr::flatten(\Arr::flatten($paths, '/'));
-
-		// classify
-		$classes = array();
-		foreach ($paths as $k => $v)
+		$cache_str = 'inflector_dir_to_ctrl_'.static::friendly_title($path);
+		try
 		{
-			$k = substr($k, 0, strrpos($k, '/'));
-			$k.= \Str::ends_with($k, '_') ? '' : '/';
-			$full_path = str_replace(DS.DS, DS, $path.DS.$k.$v);
-			$class = static::path_to_ctrl($full_path);
-			$classes[$class] = $full_path;
+			return \Cache::get($cache_str);
 		}
-		return $classes;
+		catch (\CacheNotFoundException $e)
+		{
+			// read files
+			$paths = \File::read_dir($path);
+			$paths = \Arr::flatten(\Arr::flatten($paths, '/'));
+	
+			// classify
+			$classes = array();
+			foreach ($paths as $k => $v)
+			{
+				$k = substr($k, 0, strrpos($k, '/'));
+				$k.= \Str::ends_with($k, '_') ? '' : '/';
+				$full_path = str_replace(DS.DS, DS, $path.DS.$k.$v);
+				$class = static::path_to_ctrl($full_path);
+				$classes[$class] = $full_path;
+			}
+
+			//cache 20 min
+			\Cache::set($cache_str, $classes, 3600 / 3);
+
+			return $classes;
+		}
 	}
 
 	/**

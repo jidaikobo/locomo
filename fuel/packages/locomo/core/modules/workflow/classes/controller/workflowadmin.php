@@ -2,6 +2,17 @@
 namespace Workflow;
 class Controller_Workflowadmin extends \Locomo\Controller_Crud
 {
+	//locomo
+	public static $locomo = array(
+		'show_at_menu' => true,
+		'order_at_menu' => 100,
+		'is_for_admin' => true,
+		'nicename' => 'ワークフロー',
+		'actionset_classes' =>array(
+			'base'   => '\\Workflowadmin\\Actionset_Base_Workflowadmin',
+			'index'  => '\\Workflowadmin\\Actionset_Index_Workflowadmin',
+		),
+	);
 
 	/**
 	 * action_setup()

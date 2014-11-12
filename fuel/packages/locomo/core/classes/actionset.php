@@ -5,6 +5,14 @@ class Actionset
 	public static $actions  = array();
 
 	/**
+	 * set_unique_key()
+	 */
+	private static function set_unique_key($str = '')
+	{
+		return md5($str);
+	}
+
+	/**
 	 * add_actionset()
 	 * use at controllers' business logic section
 	 * see sample at \Revision\Traits_Controller_Revision::action_each_index_revision
@@ -16,10 +24,14 @@ class Actionset
 	 */
 	public static function add_actionset($controller, $realm = null, $name = null, $arr = array())
 	{
-		if( ! isset(static::$actions[$controller][$realm])):
-			static::$actions[$controller][$realm] = array();
+		$module = \Inflector::get_namespace($controller) ?: '';
+		$mod_or_ctrl = $module ? strtolower(trim($module, '\\')) : $controller ;
+		$controller = '\\'.$controller;
+		$unique_key = static::set_unique_key($mod_or_ctrl);
+		if( ! isset(static::$actions[$unique_key][$controller]['actionset'][$realm])):
+			static::$actions[$unique_key][$controller]['actionset'][$realm] = array();
 		endif;
-		static::$actions[$controller][$realm][$name] = $arr;
+		static::$actions[$unique_key][$controller]['actionset'][$realm][$name] = $arr;
 	}
 
 	/**
@@ -72,7 +84,7 @@ class Actionset
 		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
 
 		// unique_key
-		$unique_key = md5($controller.$module);
+		$unique_key = static::set_unique_key($controller.$module);
 
 		$actions = array();
 		//controllers

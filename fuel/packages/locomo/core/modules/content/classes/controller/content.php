@@ -2,6 +2,13 @@
 namespace Content;
 class Controller_Content extends \Locomo\Controller_Base
 {
+	//locomo
+	public static $locomo = array(
+		'show_at_menu' => false,
+		'order_at_menu' => 1000,
+		'is_for_admin' => false,
+	);
+
 	/**
 	* acl()
 	* contents allowed to all user

@@ -42,39 +42,48 @@ class Util
 	}
 
 	/**
-	 * get_all_configs()
+	 * get_mod_or_ctrl()
+	 * Locomo配下にある対象コントローラ／モジュールの取得
+	 * controllerがlocomoメンバ変数を持っているときにLocomo配下と見なす
+	 * \Locomo\View::base_assign()で毎回呼ぶのでcacheする
 	 */
-	public static $configs = array();
-
-	public static function get_all_configs()
+	public static function get_mod_or_ctrl()
 	{
-		if(static::$configs) return static::$configs;
-
-		//modules' config
-		foreach (\Config::get('module_paths') as $path):
-			foreach (glob($path.'*') as $modname):
-				if( ! is_dir($modname)) continue;
-				$modname_str = basename($modname);
-				static::$configs[$modname_str] = \Config::load($modname.'/config/'.$modname_str.'.php', true, true);
+		//キャッシュ
+		try
+		{
+			return \Cache::get('locomo_mod_or_ctrl');
+		}
+		catch (\CacheNotFoundException $e)
+		{
+			//モジュールディレクトリを走査し、$locomoのメンバ変数を持っている物を洗い出す
+			$retvals = array();
+			foreach(array_keys(\Module::get_exists()) as $module)
+			{
+				if( ! $controllers = \Module::get_controllers($module)) continue;// module without controllers
+				\Module::loaded($module) or \Module::load($module);
+				foreach($controllers as $controller)
+				{
+					$mod_ctrl = \Inflector::path_to_ctrl($controller);
+					if( ! property_exists($mod_ctrl, 'locomo')) continue;
+					if(array_key_exists($module, $retvals)) continue; // already exists
+					$retvals[$module] = $mod_ctrl::$locomo ; 
+				}
+			}
+	
+			//classディレクトリを走査し、$locomoのメンバ変数を持っている物を洗い出す
+			foreach(array_keys(\Inflector::dir_to_ctrl(APPPATH.'classes/controller')) as $ctrl):
+				if( ! property_exists($ctrl, 'locomo')) continue;
+				$retvals[$ctrl] = $ctrl::$locomo ; 
 			endforeach;
-		endforeach;
+	
+			//順番制御
+			$retvals = \Arr::multisort($retvals, array('order_at_menu' => SORT_ASC,));
+	
+			//cache 1 hour
+			\Cache::set('locomo_mod_or_ctrl', $retvals, 3600);
 
-		//controllers
-		foreach (glob(APPPATH.DS.'classes'.DS.'controller'.DS.'*') as $classname):
-			$classname = basename($classname);
-			static::$configs[$classname] = \Config::load($classname);
-		endforeach;
-
-		foreach(static::$configs as $k => $config):
-			static::$configs[$k]['nicename'] = \Arr::get($config, 'nicename', false) ?: $k;
-			static::$configs[$k]['main_controller'] = \Arr::get($config, 'main_controller', false) ?: '';
-			static::$configs[$k]['index_nicename'] = \Arr::get($config, 'index_nicename', false) ?: $k;
-			static::$configs[$k]['order_in_menu'] = \Arr::get($config, 'order_in_menu', false) ?: 200;
-		endforeach;
-
-		//array_multisort
-		static::$configs = \Arr::multisort(static::$configs, array('order_in_menu' => SORT_ASC,));
-
-		return static::$configs;
+			return $retvals;
+		}
 	}
 }

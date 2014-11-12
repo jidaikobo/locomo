@@ -4,7 +4,10 @@ class Controller_Acl extends \Locomo\Controller_Base
 {
 	//locomo
 	public static $locomo = array(
-		'nicename' => 'Aclモジュール',
+		'show_at_menu' => true,
+		'order_at_menu' => 50,
+		'is_for_admin' => true,
+		'nicename' => 'アクセス権',
 	);
 
 	/**

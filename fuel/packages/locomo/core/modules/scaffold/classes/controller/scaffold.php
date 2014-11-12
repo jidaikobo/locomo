@@ -2,6 +2,14 @@
 namespace Scaffold;
 class Controller_Scaffold extends \Locomo\Controller_Base
 {
+	//locomo
+	public static $locomo = array(
+		'show_at_menu' => true,
+		'order_at_menu' => 150,
+		'is_for_admin' => true,
+		'nicename' => '足場組み',
+	);
+
 	/**
 	 * action_main()
 	 */
@@ -23,7 +31,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 			if( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
-//				return \Response::redirect(\Uri::create('/scaffold/main/'));
+				return \Response::redirect(\Uri::create('/scaffold/main/'));
 			endif;
 
 			//vals

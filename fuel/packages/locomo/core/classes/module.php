@@ -2,6 +2,9 @@
 namespace Locomo;
 class Module extends \Fuel\Core\Module
 {
+	public static $exist_modules = array();
+	public static $exist_controllers = array();
+
 	/**
 	 * get_exists()
 	 * get all modules
@@ -9,16 +12,28 @@ class Module extends \Fuel\Core\Module
 	 */
 	public static function get_exists()
 	{
-		$finded = array();
-		foreach(\Config::get('module_paths') as $path):
-			foreach (glob($path.DS."*") as $modpath):
-				$module = strtolower(basename($modpath));
-				if( ! is_dir($path) || in_array($module, $finded)) continue;
-				$retvals[$module] = str_replace(DS.DS, DS, $modpath);//eliminate doubled slash
-				$finded[] = $module;
+		//cache
+		try
+		{
+			return \Cache::get('exist_modules');
+		}
+		catch (\CacheNotFoundException $e)
+		{
+			$finded = array();
+			foreach(\Config::get('module_paths') as $path):
+				foreach (glob($path.DS."*") as $modpath):
+					$module = strtolower(basename($modpath));
+					if( ! is_dir($path) || in_array($module, $finded)) continue;
+					$retvals[$module] = str_replace(DS.DS, DS, $modpath);//eliminate doubled slash
+					$finded[] = $module;
+				endforeach;
 			endforeach;
-		endforeach;
-		return $retvals;
+
+			//cache 1 hour
+			\Cache::set('exist_modules', $retvals, 3600);
+
+			return $retvals;
+		}
 	}
 
 	/**
