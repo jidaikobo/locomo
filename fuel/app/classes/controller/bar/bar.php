@@ -6,6 +6,7 @@ class Controller_Bar_Bar extends \Locomo\Controller_Crud
 		'show_at_menu' => true,
 		'order_at_menu' => 10,
 		'is_for_admin' => false,
+		'admin_home' => '\\Controller_Bar/index_admin',
 		'nicename' => 'barコントローラ',
 		'actionset_classes' =>array(
 			'base'   => '\\Actionset_Foo',

@@ -4,10 +4,10 @@ class Actionset_Foo extends \Locomo\Actionset
 	/**
 	 * create()
 	 */
-	public static function actionset_create($controller, $module, $obj = null, $id = null, $urls = array())
+	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($module.DS.$controller.DS."create", '新規作成'));
-		$urls = static::generate_uris($module, $controller, 'create', $actions, ['create']);
+		$actions = array(array($controller.DS."create", '新規作成'));
+		$urls = static::generate_uris($controller, 'create', $actions, ['create']);
 
 		$retvals = array(
 			'urls'         => $urls,
@@ -27,11 +27,11 @@ class Actionset_Foo extends \Locomo\Actionset
 	/**
 	 * view()
 	 */
-	public static function actionset_view($controller, $module, $obj = null, $id = null, $urls = array())
+	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
 		if(\Request::main()->action == 'edit' && $id):
-			$actions = array(array($module.DS.$controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_uris($module, $controller, 'view', $actions, ['create']);
+			$actions = array(array($controller.DS."view/".$id, '閲覧'));
+			$urls = static::generate_uris($controller, 'view', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -50,11 +50,11 @@ class Actionset_Foo extends \Locomo\Actionset
 	/**
 	 * edit()
 	 */
-	public static function actionset_edit($controller, $module, $obj = null, $id = null, $urls = array())
+	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
 		if(\Request::main()->action == 'view' && $id):
-			$actions = array(array($module.DS.$controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_uris($module, $controller, 'edit', $actions, ['edit','create']);
+			$actions = array(array($controller.DS."edit/".$id, '編集'));
+			$urls = static::generate_uris($controller, 'edit', $actions, ['edit','create']);
 		endif;
 
 		$retvals = array(

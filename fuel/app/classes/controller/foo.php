@@ -6,6 +6,7 @@ class Controller_Foo extends \Locomo\Controller_Crud
 		'show_at_menu' => true,
 		'order_at_menu' => 10,
 		'is_for_admin' => false,
+		'admin_home' => '\\Controller_Foo/index_admin',
 		'nicename' => 'fooコントローラ',
 		'actionset_classes' =>array(
 			'base'   => '\\Actionset_Foo',
