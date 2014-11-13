@@ -49,7 +49,7 @@ return array(
 	),
 
 	//no_home
-	'no_home' => false,
+	'no_home' => true,
 
 	//home_url
 	'home_url' => 'content/home',
