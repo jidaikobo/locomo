@@ -35,7 +35,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 			if( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
-//				return \Response::redirect(\Uri::create('/scaffold/main/'));
+				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
 			endif;
 
 			//vals
@@ -116,7 +116,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$messages[] = "を実行してください。";
 
 			\Session::set_flash('success', $messages);
-			\Response::redirect(\Uri::create('/scaffold/main/'));
+			\Response::redirect(\Uri::create('/scaffold/scaffold/main'));
 		endif;
 
 		//view

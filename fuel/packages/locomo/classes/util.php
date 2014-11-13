@@ -3,44 +3,6 @@ namespace Locomo;
 class Util
 {
 	/**
-	 * fetch_tpl()
-	 */
-	public static function fetch_tpl($path = null)
-	{
-		is_null($path) and \Response::redirect(\Uri::base());
-
-		$tpl_path_default = LOCOMOPATH.'modules/'.$path;
-
-		if(file_exists($tpl_path)):
-			return $tpl_path;
-		elseif(file_exists($tpl_path_default)):
-			return $tpl_path_default;
-		else:
-			return false;
-		endif;
-	}
-
-	/**
-	 * get_valid_controller_name()
-	 */
-	public static function get_valid_controller_name($controller = null)
-	{
-		is_null($controller) and \Response::redirect(\Uri::base());
-		$controller_ucfirst = ucfirst($controller);
-		return "\\$controller_ucfirst\Controller_".$controller_ucfirst;
-	}
-
-	/**
-	 * get_valid_model_name()
-	 */
-	public static function get_valid_model_name($controller = null)
-	{
-		is_null($controller) and \Response::redirect(\Uri::base());
-		$controller_ucfirst = ucfirst($controller);
-		return "\\$controller_ucfirst\Model_".$controller_ucfirst;
-	}
-
-	/**
 	 * get_mod_or_ctrl()
 	 * Locomo配下にある対象コントローラ／モジュールの取得
 	 * controllerがlocomoメンバ変数を持っているときにLocomo配下と見なす

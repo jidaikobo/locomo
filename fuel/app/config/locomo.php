@@ -12,14 +12,6 @@ $admins = array(
 );
 defined('LOCOMO_ADMINS') or define('LOCOMO_ADMINS',serialize($admins));
 
-//root user
-defined('ROOT_USER_NAME') or define('ROOT_USER_NAME','root');
-defined('ROOT_USER_PASS') or define('ROOT_USER_PASS','131313');
-
-//admin user
-defined('ADMN_USER_NAME') or define('ADMN_USER_NAME','admin');
-defined('ADMN_USER_PASS') or define('ADMN_USER_PASS','121212');
-
 //fuel config
 return array(
 	//base
@@ -57,7 +49,7 @@ return array(
 	),
 
 	//no_home
-	'no_home' => true,
+	'no_home' => false,
 
 	//home_url
 	'home_url' => 'content/home',
@@ -70,8 +62,8 @@ return array(
 		'\\Content\\Controller_Content/403/',
 		'\\Content\\Controller_Content/404/',
 		'\\Content\\Controller_Content/fetch_view/',
-		'\Admin\Controller_Admin/home',
-		'\Admin\Controller_Admin/dashboard',
+		'\\Admin\\Controller_Admin/home',
+		'\\Admin\\Controller_Admin/dashboard',
 		'\\Help\\Controller_Help/index_admin',//not for guest. ban by \Help\Controller_Help::before()
 	),
 );

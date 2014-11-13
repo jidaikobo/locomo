@@ -62,7 +62,7 @@ trait Traits_Controller_Workflow
 	public function action_index_workflow($pagenum = null)
 	{
 		//model and view
-		$view = \View::forge(\Util::fetch_tpl('/workflow/views/index_workflow.php'));
+		$view = \View::forge('index_workflow');
 		$model_name = str_replace('Controller', 'Model', get_called_class());
 		$model = $model_name::forge();
 
@@ -91,6 +91,16 @@ trait Traits_Controller_Workflow
 			$items[$k]['item']          = $model::find_item_by_ctrl_and_id($current_item->controller, $current_item->controller_id);
 
 			//表示用の名称
+
+/*
+ここでしか使ってないので、移動
+	public static function get_valid_model_name($controller = null)
+	{
+		is_null($controller) and \Response::redirect(\Uri::base());
+		$controller_ucfirst = ucfirst($controller);
+		return "\\$controller_ucfirst\Model_".$controller_ucfirst;
+	}
+*/
 			$modelname = \Util::get_valid_model_name($current_item->controller);
 die('プライマリネームはやめたので、propertiesをみるようにする');
 			$items[$k]['primary_name_field'] = $modelname::get_primary_name();
@@ -111,7 +121,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		//model and view
-		$view = \View::forge(\Util::fetch_tpl('/workflow/views/route.php'));
+		$view = \View::forge(LOCOMOPATH.'/workflow/views/route.php');
 		$model_name = str_replace('Controller', 'Model', get_called_class());
 		$model = $model_name::forge();
 
@@ -172,7 +182,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		endif;
 
 		//コメント入力viewを表示
-		$view = \View::forge(\Util::fetch_tpl('/workflow/views/comment.php'));
+		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/comment.php');
 
 		//assign
 		$view->set_global('title', '承認申請');
@@ -191,7 +201,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		//model and view
-		$view = \View::forge(\Util::fetch_tpl('/workflow/views/comment.php'));
+		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/comment.php');
 		$model_name = str_replace('Controller', 'Model', get_called_class());
 		$model = $model_name::forge();
 
@@ -281,7 +291,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		endforeach;
 
 		//コメント入力viewを表示
-		$view = \View::forge(\Util::fetch_tpl('/workflow/views/comment.php'));
+		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/comment.php');
 
 		//assign
 		$view->set_global('title', '差し戻し');
@@ -300,7 +310,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		//model and view
-		$view = \View::forge(\Util::fetch_tpl('/workflow/views/comment.php'));
+		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/comment.php');
 		$model_name = str_replace('Controller', 'Model', get_called_class());
 		$model = $model_name::forge();
 

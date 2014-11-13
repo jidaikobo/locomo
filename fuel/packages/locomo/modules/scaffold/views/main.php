@@ -26,13 +26,11 @@ workflow_status:enum[init,approve,reject,remand,finish]:null
 </textarea>
 
 <h3>足場組み</h3>
-<p>拡張oil書式をpostしたあと、<code>PROJPATH./modules</code>にモジュールが展開されます。</p>
-<p>モジュール内のmigrationsのマイグレーションファイルと、モデルに書かれたデータベースのフィールドなど、必要な調整を加えた後、ターミナルでoilコマンドを実行します。oilコマンド実行前には、projects.iniの<code>cli_host</code>の値に注意してください。</p>
+<p>拡張oil書式をpostしたあと、<code>APPPATH.modules</code>にモジュールが展開されます。</p>
+<p>モジュール内のmigrationsのマイグレーションファイルと、モデルに書かれたデータベースのフィールドなど、必要な調整を加えた後、ターミナルでoilコマンドを実行します。</p>
 <textarea class="pre" style="width: 100%;">php oil refine migrate:up --modules=モジュール名</textarea>
-<p>必要に応じて<code>PKGPATH.locomo/modules</code>のファイルのパーミッションを調整してください。</p>
 
 <h3>削除</h3>
 <p>ターミナルで</p>
 <textarea class="pre" style="width: 100%;">php oil refine migrate:down --modules=モジュール名</textarea>
-<p>を実行した後、<code>PROJPATH./modules</code>に展開されたモジュールファイルを削除してください。</p>
-
+<p>を実行した後、<code>APPPATH.modules</code>に展開されたモジュールファイルを削除してください。</p>

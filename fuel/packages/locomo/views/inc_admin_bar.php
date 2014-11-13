@@ -1,10 +1,7 @@
 <?php
 //is_user?
 if(\Auth::check()):
-	$actionset = $actionset;
-
 	$html = '';
-
 	$html.= '<nav id="adminbar" class="clearfix">';
 		$html.= '<a href="#anchor_adminbar" class="skip show_if_focus" tabindex="1">ツールバーに移動</a>';
 		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="-1">ツールバー</a></h2>';
@@ -57,7 +54,7 @@ if(\Auth::check()):
 			$html.= "<img src=\"".\Uri::base()."content/fetch_view/images/parts/logo.png\" id=\"adminbar_logo\" alt=\"".\Config::get('site_title')."\" title=\"".\Config::get('site_title')."トップへ\">" ;
 			$html.= '<div class="adminbar_main">';
 			$html.= \Config::get('no_home') ? '' : '<span><a href="'.\Uri::base().'" style="color:#fff;">ホーム</a></span>';
-			$html.= '<span><a href="'.\Uri::base().'/admin/dashboard/" style="color:#fff;">ダッシュボード</a></span>';
+			$html.= '<span><a href="'.\Uri::base().'admin/dashboard/" style="color:#fff;">ダッシュボード</a></span>';
 			$html.= '<h3 class="skip">メインメニュー</h3>';
 			//controller menu
 			if($locomo['controllers']):

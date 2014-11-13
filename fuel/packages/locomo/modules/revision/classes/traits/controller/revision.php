@@ -94,7 +94,7 @@ trait Traits_Controller_Revision
 		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
 
 		//view
-		$view = \View::forge(\Util::fetch_tpl('/revision/views/each_index_revision.php'));
+		$view = \View::forge(LOCOMOPATH.'modules/revision/views/each_index_revision.php');
 		$view->set_global('items', $items);
 		$view->set_global('controller', $module);
 		$view->set_global('title', '履歴');

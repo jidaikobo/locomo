@@ -30,19 +30,18 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		// parent
 		parent::before();
 
-		// add template path - 消せる？
-		$request = \Request::active();
-		$request->add_path(APPPATH.'views'.DS.$this->request->module,true);
-		$request->add_path(APPPATH.'modules'.DS.$this->request->module,true);
-
 		// show profile to root only
 		\Fuel::$profiling = \Auth::get_user_id() == -2 ?: false ;
 
+		//template path
+		$request = \Request::active();
+		$request->add_path(APPPATH.'views'.DS.$this->request->module.DS, true);
+
 		// load config and set model_name
 		$controller = substr(ucfirst(\Inflector::denamespace($this->request->controller)), 11);
-		if($this->request->module)
+		if(\Request::main()->module)
 		{
-			$module = ucfirst($this->request->module);
+			$module = ucfirst(\Request::main()->module);
 			$this->model_name = '\\'.$module.'\\Model_'.$module;
 			static::$config = \Config::load(strtolower($this->request->module));
 		}else{
