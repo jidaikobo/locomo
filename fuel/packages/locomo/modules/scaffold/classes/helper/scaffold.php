@@ -32,7 +32,9 @@ class Helper_Scaffold
 				$field_array['name'] = array_shift($parts);
 				foreach ($parts as $part_i => $part)
 				{
-					preg_match('/([a-z0-9_-]+)(?:\[([0-9a-z_\-\,\s]+)\])?/i', $part, $part_matches);
+					// locomo: add \'
+					preg_match('/([a-z0-9_-]+)(?:\[([\'0-9a-z_\-\,\s]+)\])?/i', $part, $part_matches);
+//					preg_match('/([a-z0-9_-]+)(?:\[([0-9a-z_\-\,\s]+)\])?/i', $part, $part_matches);
 					array_shift($part_matches);
 	
 					if (count($part_matches) < 1)
@@ -96,7 +98,14 @@ class Helper_Scaffold
 						// This allows you to put any number of :option or :option[val] into your field and these will...
 						// ... always be passed through to the action making it really easy to add extra options for a field
 						$option_name = array_shift($option);
-						if (count($option) > 0)
+
+						//locomo - start
+						if ($option_name == 'default' && $option[0] == "''")
+						{
+							$option = '';
+						}
+						//locomo - end
+						elseif (count($option) > 0)
 						{
 							$option = $option[0];
 						}
@@ -144,8 +153,13 @@ class Helper_Scaffold
 	/**
 	 * generate_controller()
 	 */
-	public static function generate_controller($name)
+	public static function generate_controller($name, $cmd_orig)
 	{
+		//nicename
+		$cmds = explode(' ', $cmd_orig);
+		$nicename = self::get_nicename(array_shift($cmds));
+
+		// replace
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'controller.php');
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###nicename###', $nicename , $val) ;

@@ -35,11 +35,14 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 			if( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
-				return \Response::redirect(\Uri::create('/scaffold/main/'));
+//				return \Response::redirect(\Uri::create('/scaffold/main/'));
 			endif;
 
 			//vals
 			$cmd_orig = \Input::post('cmd');
+			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_orig );
+			$cmd_orig = join(explode("\n", $cmd_orig),' ');
+			$cmd_orig = trim(preg_replace("/ +/", ' ', $cmd_orig ));
 			$cmd  = Helper_Scaffold::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
 
@@ -50,7 +53,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 			//molding - logic
 			$migration        = Helper_Scaffold::migration($name, $subjects, $cmds);
-			$controller       = Helper_Scaffold::generate_controller($name);
+			$controller       = Helper_Scaffold::generate_controller($name, $cmd_orig);
 			$actionset_index  = Helper_Scaffold::generate_actionset_index($name);
 			$actionset_base   = Helper_Scaffold::generate_actionset_base($name);
 			$actionset_option = Helper_Scaffold::generate_actionset_option($name);
