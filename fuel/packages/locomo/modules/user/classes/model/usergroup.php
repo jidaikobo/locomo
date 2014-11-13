@@ -10,7 +10,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 		'id',
 		'name',
 		'description',
-		'order',
+		'seq',
 		'is_available',
 		'deleted_at',
 	);
@@ -29,7 +29,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 		'usergroup' => array(
 			'nicename'        => 'ユーザグループ',
 			'label'           => 'name',
-			'order_field'     => 'order',
+			'order_field'     => 'seq',
 			'template'        => '',//use bulk
 			'form_definition' => 'form_definition',
 			'option' => array(
@@ -38,7 +38,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 					array('is_available', '1'),
 				),
 				'order_by'  => array(
-					array('order', 'ASC'),
+					array('seq', 'ASC'),
 				)
 			),
 			'range' => array(
@@ -47,7 +47,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 					array('id', '>', '0'),
 				),
 				'order_by'  => array(
-					array('order', 'ASC'),
+					array('seq', 'ASC'),
 				)
 			)
 		)
@@ -105,7 +105,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 				'表示順',
 				array('type' => 'text', 'size' => 5)
 			)
-			->set_value(@$obj->order)
+			->set_value(@$obj->seq)
 			->add_rule('valid_string', array('numeric'));
 
 		//is_available

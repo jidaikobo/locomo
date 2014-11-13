@@ -9,8 +9,8 @@ class Actionset_Base_XXX extends \Actionset_Base
 	(arr)  urls          メニューに表示するリンク先
 	(arr)  overrides     urlをオーバライドする際に設定。ユーザグループのActionset_Optionにサンプルがある
 	(bool) show_at_top   モジュール／コントローラトップに表示するかどうか
-	(str)  action_name   ACL設定画面で用いる
-	(str)  explanation   ACL設定画面で用いる説明文
+	(str)  action_name   ACL設定画面などで用いる
+	(str)  explanation   ACL設定画面などで用いる説明文
 	(int)  order         表示順
 	(arr)  dependencies  このアクションセットが依存するアクション
 	*/

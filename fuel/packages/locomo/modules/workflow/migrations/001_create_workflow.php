@@ -1,6 +1,6 @@
 <?php
 namespace Fuel\Migrations;
-class Create_workflowadmin
+class Create_workflow
 {
 	public function up()
 	{
@@ -17,7 +17,7 @@ class Create_workflowadmin
 			'name'        => array('constraint' => 200, 'type' => 'varchar'),
 			'workflow_id' => array('constraint' => 11, 'type' => 'int'),
 			'condition'   => array('constraint' => 50, 'type' => 'varchar'),
-			'order'       => array('constraint' => 11, 'type' => 'int'),
+			'seq'         => array('constraint' => 11, 'type' => 'int'),
 			'action'      => array('constraint' => 200, 'type' => 'varchar'),
 		), array('id'));
 

@@ -37,10 +37,10 @@
 </tr>
 
 <?php endif; ?>
-<?php if($item->order): ?>
+<?php if($item->seq): ?>
 <tr>
 	<th></th>
-	<td><?php echo $item->order; ?></td>
+	<td><?php echo $item->seq; ?></td>
 </tr>
 
 <?php endif; ?>

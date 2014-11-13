@@ -22,8 +22,8 @@
 </tr>
 
 <tr>
-	<th><?php echo $form->field('order')->set_template('{label}{required}'); ?></th>
-	<td><?php echo $form->field('order')->set_template('{error_msg}{field}'); ?></td>
+	<th><?php echo $form->field('seq')->set_template('{label}{required}'); ?></th>
+	<td><?php echo $form->field('seq')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 

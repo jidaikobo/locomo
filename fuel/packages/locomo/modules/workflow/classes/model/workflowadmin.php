@@ -60,7 +60,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 		$q = \DB::select('*');
 		$q->from('workflow_steps');
 		$q->where('workflow_id', $id);
-		$q->order_by('order', 'ASC');
+		$q->order_by('seq', 'ASC');
 		$steps = $q->execute()->as_array();
 		
 		$retvals = array();
@@ -96,7 +96,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 			$q = \DB::select('id');
 			$q->from('workflow_steps');
 			$q->where('workflow_id', $workflow_id);
-			$q->where('order', $order);
+			$q->where('seq', $order);
 			$step_id = $q->execute()->current();
 
 			//値の準備
@@ -104,7 +104,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 				'name'        => $arg['name'],
 				'workflow_id' => $workflow_id,
 				'condition'   => $arg['condition'],
-				'order'       => $order,
+				'seq'         => $order,
 				'action'      => $arg['action'],
 			);
 

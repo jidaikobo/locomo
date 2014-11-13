@@ -46,7 +46,7 @@ trait Traits_Model_Workflow
 		$q = \DB::select('id');
 		$q->from('workflow_steps');
 		$q->where('workflow_id', $workflow_id);
-		$q->order_by('order', 'ASC');
+		$q->order_by('seq', 'ASC');
 		$steps = $q->execute()->as_array();
 
 		return (isset($steps[$step])) ? (int) $steps[$step]['id'] : false;
