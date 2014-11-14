@@ -15,7 +15,7 @@ defined('LOCOMO_ADMINS') or define('LOCOMO_ADMINS',serialize($admins));
 //fuel config
 return array(
 	//base
-	'site_title' => 'Lightstaff',
+	'site_title' => 'Locomo',
 	'slogan' => 'Accessible Web System Package for FuelPHP',
 
 	//identity
@@ -50,7 +50,6 @@ return array(
 
 	//no_home
 	'no_home' => true,
-
 	//home_url
 	'home_url' => 'content/home',
 

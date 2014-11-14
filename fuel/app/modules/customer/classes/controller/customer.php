@@ -2,6 +2,20 @@
 namespace Customer;
 class Controller_Customer extends \Locomo\Controller_Crud
 {
+	//locomo
+	public static $locomo = array(
+		'show_at_menu' => true,
+		'order_at_menu' => 10,
+		'is_for_admin' => false,
+		'admin_home' => '\\Customer\\Controller_Customer/index_admin',
+		'nicename' => '顧客管理',
+		'actionset_classes' =>array(
+			'base'   => '\\Customer\\Actionset_Base_Customer',
+			'index'  => '\\Customer\\Actionset_Index_Customer',
+			'option' => '\\Customer\\Actionset_Option_Customer',
+		),
+	);
+
 	//trait
 //	use \Option\Traits_Controller_Option;
 //	use \Workflow\Traits_Controller_Workflow;

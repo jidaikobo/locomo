@@ -25,8 +25,8 @@
 					<div class="btn-group">
 <?php
 						//$delete_ctrl = $is_deleted ? 'confirm_delete' : 'delete' ;
-						echo Html::anchor('customer/view'.'/'.$item->id, 'View', array('class' => 'button'));
-						echo Html::anchor('customer/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'button'));
+						echo Html::anchor('customer/customer/view'.'/'.$item->id, 'View', array('class' => 'button'));
+						echo Html::anchor('customer/customer/edit'.'/'.$item->id, '<i class="icon-wrench"></i> Edit', array('class' => 'button'));
 						/*
 						if($is_deleted):
 							echo Html::anchor('customer/undelete/'.$item->id, '<i class="icon-trash icon-white"></i> Undelete', array('class' => 'button'));

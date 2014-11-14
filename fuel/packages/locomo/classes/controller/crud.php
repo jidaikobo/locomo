@@ -211,7 +211,7 @@ class Controller_Crud extends Controller_Base
 	public function action_edit($id = null)
 	{
 		$model = $this->model_name ;
-		$contetnt = \View::forge($this->_content_template ?: 'edit');
+		$content = \View::forge($this->_content_template ?: 'edit');
 
 		if ($id) {
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
@@ -264,12 +264,12 @@ class Controller_Crud extends Controller_Base
 		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
 
 		//view
-		$contetnt->set_global('title', $title);
-		$contetnt->set_global('item', $obj, false);
-		$contetnt->set_global('form', $form, false);
+		$content->set_global('title', $title);
+		$content->set_global('item', $obj, false);
+		$content->set_global('form', $form, false);
 		$this->template->content = $content;
 		\Auth_Acl_Locomoacl::set_item($this);
-		$contetnt->base_assign($obj);
+		$content->base_assign($obj);
 	}
 
 	/**
