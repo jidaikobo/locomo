@@ -4,7 +4,7 @@
 
 //mv config
 
-LOCOMOPATH.config/to_app_config のファイルを APPPTH.configに移動してください。
+LOCOMOPATH.config/to_app_config のファイルを APPPATH.configに移動してください。
 packageconfigをオーバライドするためには、APPPATH.configにlocomo.phpとリネームして移動してください。
 
 //APPPATH.config/config.php
@@ -29,7 +29,7 @@ dbの設定後、oilコマンドで基礎モジュールのmigrationを実行し
 
 php oil refine migrate:up --modules=acl
 php oil refine migrate:up --modules=user
-php oil refine migrate:up --modules=workflowadmin
+php oil refine migrate:up --modules=workflow
 php oil refine migrate:up --modules=revision
 php oil refine migrate:up --modules=help
 

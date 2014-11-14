@@ -5,7 +5,7 @@
 <!--ユーザ名かメールアドレス-->
 <div class="form_group">
 	<?php echo \Form::label('アカウント', 'username'); ?>
-	<?php echo '<span class="skip">ユーザ名かメールアドレス</span>'.\Form::input('account', Input::post('account', isset($item) ? $item->username : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1')); ?>
+	<?php echo '<span class="skip">ユーザ名かメールアドレス</span>'.\Form::input('username', Input::post('username', isset($item) ? $item->username : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1')); ?>
 </div>
 
 <!--パスワード-->
