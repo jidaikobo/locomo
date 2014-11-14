@@ -1,6 +1,7 @@
 .DS_Store
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
+fuel/app/cache
 fuel/packages/locomo/config/packageconfig.php
 fuel/packages/locomo/projects/*
 !fuel/packages/locomo/projects/develop
