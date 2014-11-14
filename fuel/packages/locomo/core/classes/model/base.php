@@ -467,4 +467,8 @@ class Model_Base extends \Orm\Model_Soft
 		}
 	}
 
+
+	public static function plain_definition($factory = 'plain', $obj = null) {
+		return static::form_definition($factory, $obj);
+	}
 }

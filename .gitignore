@@ -12,3 +12,5 @@ view/css/*
 view/js/*
 view/images/*
 fuel/app/config/development/migrations.php
+
+fuel/lightstaff_csv

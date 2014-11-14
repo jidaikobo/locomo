@@ -53,10 +53,9 @@ class Fieldset extends \Fuel\Core\Fieldset
 				// 不具合懸念有り
 			}
 		}
-		//die();
-
 		return $this;
 	}
+
 
 	/*
 	 * Fieldset class の input name を配列形式にする
@@ -96,6 +95,7 @@ class Fieldset extends \Fuel\Core\Fieldset
 	 *
 	 * @return  Fieldset  this, to allow chaining
 	 */
+	/*
 	public function set_bulk_form($model, $relation, $parent, $blanks = 1)
 	{
 		// make sure our parent is an ORM model instance
@@ -186,4 +186,209 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 		return $this;
 	}
+*/
+
+
+	/*
+	 * 全リフレッシュ用の tabular
+	 */
+	public function set_tabular_form_blank($model, $relation, $parent, $blanks = 1)
+	{
+		if ( ! $parent instanceOf \Orm\Model) throw new \RuntimeException('Parent passed to set_tabular_form() is not an ORM model object.');
+
+		$relations = call_user_func(array($parent, 'relations'));
+		if ( ! array_key_exists($relation, $relations)) throw new \RuntimeException('Relation passed to set_tabular_form() is not a valid relation of the ORM parent model object.');
+
+		try
+		{
+			$primary_key = call_user_func($model.'::primary_key');
+			if (count($primary_key) !== 1)
+			{
+			throw new \RuntimeException('set_tabular_form() does not supports models with compound primary keys.');
+			}
+			$primary_key = reset($primary_key);
+		}
+		catch (\Exception $e)
+		{
+			throw new \RuntimeException('Unable to fetch the models primary key information.');
+		}
+
+		// store the tabular form class name
+		$this->tabular_form_model = $model;
+
+		// and the relation on which we model the rows
+		$this->tabular_form_relation = $relation;
+
+		// load the form config if not loaded yet
+		\Config::load('form', true);
+
+		// load the config for embedded forms
+		$this->set_config(array(
+			'form_template' => \Config::get('form.tabular_form_template', "<table>{fields}</table>\n"),
+			'field_template' => \Config::get('form.tabular_field_template', "{field}")
+		));
+
+		// 既に入力されている列
+		$inputed = array();
+		// add the rows to the tabular form fieldset
+		foreach ($parent->{$relation} as $row)
+		{
+			$value = $row->to_array();
+			// var_dump($value[$primary_key]);
+			$value[$primary_key] = null;
+			// var_dump($value[$primary_key]);
+			$inputed[] = $model::forge()
+				->set($value);
+		}
+
+		// and finish with zero or more empty rows so we can add new data
+		if ( ! is_numeric($blanks) or $blanks < 0) $blanks = 1;
+
+		$blanks = $blanks + count($parent->{$relation});
+		for ($i = 0; $i < $blanks; $i++)
+		{
+			$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_new_'.$i));
+			if (isset($inputed[$i])) {
+				$fieldset->add_model($inputed[$i])->populate($inputed[$i], false)->set_fieldset_tag(false);
+			} else {
+				$fieldset->add_model($model)->set_fieldset_tag(false);
+			}
+			$fieldset->set_config(array(
+				'form_template' => \Config::get('form.tabular_row_template_blank', "<tr class=\"{$this->tabular_form_relation}{$i}\">{fields}</tr>"),
+				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
+			));
+			$fieldset->add($this->tabular_form_relation.'_new['.$i.'][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
+
+			// no required rules on this row
+			foreach ($fieldset->field() as $f)
+			{
+				$f->delete_rule('required', false)->delete_rule('required_with', false);
+			}
+		}
+
+		return $this;
+	}
+
+
+
+
+	/*
+	 * alike a build method
+	 * input タグ を出力しない
+	 * @param bool|array  $build_field array('form_name' => array(output values)))
+	 * @param str         $date_format
+	 * @return  string
+	 */
+	public function build_plain($build_field = false, $date_format = null)
+	{
+
+		$fields_output = '';
+
+		// construct the tabular form table header
+		if ($this->tabular_form_relation)
+		{
+			$properties = call_user_func($this->tabular_form_model.'::properties');
+			$primary_keys = call_user_func($this->tabular_form_model.'::primary_key');
+			$fields_output .= '<thead><tr>'.PHP_EOL;
+			foreach ($properties as $field => $settings)
+			{
+				if ((isset($settings['skip']) and $settings['skip']) or in_array($field, $primary_keys))
+				{
+					continue;
+				}
+				if (isset($settings['form']['type']) and ($settings['form']['type'] === false or $settings['form']['type'] === 'hidden'))
+				{
+					continue;
+				}
+				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label'])?\Lang::get($settings['label'], array(), $settings['label']):'').'</th>'.PHP_EOL;
+			}
+
+			$fields_output .= '</tr></thead>'.PHP_EOL;
+		}
+
+		foreach ($this->field() as $f)
+		{
+
+			// リレーションされたフィールド
+			// todo mm のセレクトなど
+			if ($f instanceof \Fieldset_Field) {
+				if (is_array($build_field)) {
+					if ((isset($build_field[$this->name]) and !in_array($f->name, $build_field[$this->name])) or !isset($build_field[$this->name]))
+						if (!$f->type or $f->type == 'hidden') continue;
+				} elseif (!$build_field) {
+					if (!$f->type or $f->type == 'hidden') continue;
+				}
+
+			}
+			!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($build_field, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
+		}
+
+		/*
+		$close = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
+			? $this->form()->close($attributes).PHP_EOL
+			: $this->form()->{$this->fieldset_tag.'_close'}($attributes);
+		 */
+
+		$template = $this->form()->get_config('form_template_plain', "\n\t\t<table class=''>\n{fields}\n\t\t</table>\n");
+
+		$output = str_replace(array('{fields}'), array($fields_output), $template);
+
+		return $output;
+	}
+
+
+
+	public function set_tabular_form_plain($model, $relation, $parent)
+	{
+		if ( ! $parent instanceOf \Orm\Model) throw new \RuntimeException('Parent passed to set_tabular_form() is not an ORM model object.');
+		$relations = call_user_func(array($parent, 'relations'));
+		if ( ! array_key_exists($relation, $relations)) throw new \RuntimeException('Relation passed to set_tabular_form() is not a valid relation of the ORM parent model object.');
+
+		// check for compound primary keys
+		try
+		{
+			// fetch the relations of the parent model
+			$primary_key = call_user_func($model.'::primary_key');
+
+			// we don't support compound primary keys
+			if (count($primary_key) !== 1) throw new \RuntimeException('set_tabular_form() does not supports models with compound primary keys.');
+
+			$primary_key = reset($primary_key);
+		}
+		catch (\Exception $e)
+		{
+			throw new \RuntimeException('Unable to fetch the models primary key information.');
+		}
+
+		// store the tabular form class name
+		$this->tabular_form_model = $model;
+
+		// and the relation on which we model the rows
+		$this->tabular_form_relation = $relation;
+
+		\Config::load('form', true);
+
+		$this->set_config(array(
+			'form_template_plain' => \Config::get('form.tabular_form_template_plain', "<table>{fields}</table>\n"),
+			'field_template_plain' => \Config::get('form.tabular_field_template_plain', "{field}")
+		));
+
+		// add the rows to the tabular form fieldset
+		foreach ($parent->{$relation} as $row)
+		{
+			$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_row_'.$row->{$primary_key}));
+
+			$fieldset->add_model($model, $row)->set_fieldset_tag(false);
+			$fieldset->set_config(array(
+				'form_template_plain' => \Config::get('form.tabular_row_template_plain', "<table>{fields}</table>\n"),
+				'field_template_plain' => \Config::get('form.tabular_row_field_template_plain', "{field}")
+			));
+		}
+
+		return $this;
+	}
+
+
+
+
 }

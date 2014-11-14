@@ -2,4 +2,5 @@
 
 <?php echo $content ?>
 
-<?php echo render('inc_footer'); ?>
+<?php echo render('inc_admin_footer'); ?>
+

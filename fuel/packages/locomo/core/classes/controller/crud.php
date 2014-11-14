@@ -2,7 +2,9 @@
 namespace Locomo;
 class Controller_Crud extends Controller_Base
 {
-	public $_index_template = 'index_admin';
+	// public $_master_template = 'default';
+	public $_template = 'default';
+	public $_content_template = null;
 
 	/**
 	 * @var array default setting of pagination
@@ -38,14 +40,14 @@ class Controller_Crud extends Controller_Base
 	public function action_index_admin()
 	{
 		$model = $this->model_name;
-		$view = \View::forge($this->_index_template);
+		$contetnt = \View::forge($this->_content_template ?: 'index_admin');
 
 		//$model::paginated_find_use_get_query(false);
-		$view->set('items',  $model::paginated_find(array(), $this->pagination_config));
+		$contetnt->set('items',  $model::paginated_find(array(), $this->pagination_config));
 
-		$view->base_assign();
-		$view->set_global('title', static::$nicename);
-		$this->template->content = $view;
+		$contetnt->base_assign();
+		$contetnt->set_global('title', static::$nicename);
+		$this->template->content = $contetnt;
 	}
 
 	/**
@@ -53,7 +55,7 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index()
 	{
-		$this->_index_template = 'index';
+		$contetnt = \View::forge($this->_content_template ?: 'index');
 		static::action_index_admin();//$options, $model, $deleted);
 	}
 
@@ -177,13 +179,14 @@ class Controller_Crud extends Controller_Base
 	public function action_view($id = null)
 	{
 
+		$contetnt = \View::forge($this->_content_template ?: 'view');
 		$model = $this->model_name;
 
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		$authorized_option = $model::authorized_option();
 
-		if ( ! $data['item'] = $model::find($id, $authorized_option)):
+		if ( ! $item = $model::find($id, $authorized_option)):
 			\Session::set_flash(
 				'error',
 				sprintf('%1$s #%2$d は表示できません', self::$nicename, $id)
@@ -192,12 +195,12 @@ class Controller_Crud extends Controller_Base
 			\Response::redirect($this->request->module);
 		endif;
 
+		$item = $model::plain_definition('view', $item)->build_plain();
 		//view
-		$view = \View::forge('view');
-		$view->base_assign($data['item']);
-		$view->set_global('item', $data['item']);
-		$view->set_global('title', self::$nicename . '閲覧');
-		$this->template->content = $view;
+		$contetnt->base_assign($item);
+		$contetnt->set_safe('item', $item);
+		$contetnt->set_global('title', self::$nicename . '閲覧');
+		$this->template->content = $contetnt;
 	}
 
 	public function action_create() {
@@ -205,8 +208,9 @@ class Controller_Crud extends Controller_Base
 	}
 
 	public function action_edit($id = null) {
-		
+
 		$model = $this->model_name ;
+		$contetnt = \View::forge($this->_content_template ?: 'edit');
 
 		if ($id) {
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
@@ -252,12 +256,11 @@ class Controller_Crud extends Controller_Base
 			endif;
 		endif;
 
-		$view = \View::forge('edit');
-		$view->base_assign($obj);
-		$view->set_global('title', $title);
-		$view->set_global('item', $obj, false);
-		$view->set_global('form', $form, false);
-		$this->template->content = $view;
+		$contetnt->base_assign($obj);
+		$contetnt->set_global('title', $title);
+		$contetnt->set_global('item', $obj, false);
+		$contetnt->set_global('form', $form, false);
+		$this->template->content = $contetnt;
 	}
 
 	/**

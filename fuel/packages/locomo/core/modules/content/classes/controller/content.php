@@ -84,6 +84,7 @@ class Controller_Content extends \Locomo\Controller_Base
 	 */
 	public function action_fetch_view()
 	{
+		// echo 0 ; die(0);
 		//ヘンなアクセスを追い返す
 		$ext = \Input::extension();
 		$args = func_get_args();
@@ -105,8 +106,6 @@ class Controller_Content extends \Locomo\Controller_Base
 
 		//描画
 		$headers = array( 'Content-type' => $config['mime_whitelist'][$ext] );
-		$view = \View::forge('fetch_view');
-		$view->set_global('item', file_get_contents($filename), false);
-		return \Response::forge($view, 200, $headers);
+		return \Response::forge(file_get_contents($filename), 200, $headers);
 	}
 }

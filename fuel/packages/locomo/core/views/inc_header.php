@@ -14,6 +14,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<?php echo \Asset::js('jquery.inc.js'); ?>
 	<?php echo \Asset::js('jquery.exresize.0.1.0.js'); ?>
+	<?php echo Asset::render('js_group'); ?>
 	
 </head>
 <body class="<?php echo $body_class ;?>">

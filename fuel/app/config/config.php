@@ -238,6 +238,9 @@ return array(
 	 * Paths MUST end with a directory separator (the DS constant)!
 	 */
 
+	'module_paths' => array(
+		APPPATH.'modules'.DS,
+	),
 	/**
 	 * To enable you to split up your additions to the framework, packages are
 	 * used. You can define the basepaths for your packages here. By default
