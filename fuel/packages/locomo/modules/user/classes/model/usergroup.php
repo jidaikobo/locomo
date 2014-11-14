@@ -101,7 +101,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 
 		//order
 		$form->add(
-				'order',
+				'seq',
 				'表示順',
 				array('type' => 'text', 'size' => 5)
 			)

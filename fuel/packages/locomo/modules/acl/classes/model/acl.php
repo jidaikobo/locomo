@@ -44,7 +44,7 @@ class Model_Acl extends \Orm\Model
 	{
 		$opt = \User\Model_Usergroup::get_option_options('usergroup');
 		$usergroups = \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
-		$usergroups = array('none' => '選択してください', 0 => 'ゲスト');
+		$usergroups = array('none' => '選択してください', 0 => 'ゲスト', '-10' => 'ログインユーザすべて');
 		$usergroups += \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
 		return $usergroups;
 	}
@@ -75,27 +75,13 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_mod_or_ctrl()
 	{
-		//モジュールディレクトリを走査し、$locomoのメンバ変数を持っている物を洗い出す
+		$all = \Util::get_mod_or_ctrl();
 		$retvals = array();
-		foreach(array_keys(\Module::get_exists()) as $module)
-		{
-			if( ! $controllers = \Module::get_controllers($module)) continue;// module which not has controllers
-			\Module::loaded($module) or \Module::load($module);
-			foreach($controllers as $controller)
-			{
-				$mod_ctrl = \Inflector::path_to_ctrl($controller);
-				if( ! property_exists($mod_ctrl, 'locomo')) continue;
-				if(array_key_exists($module, $retvals)) continue; // already exists
-				$retvals[$module] = \Arr::get($mod_ctrl::$locomo, 'nicename') ?: $mod_ctrl ; 
-			}
-		}
-
-		//classを走査し、$locomoのメンバ変数を持っている物を洗い出す
-		foreach(array_keys(\Inflector::dir_to_ctrl(APPPATH.'classes/controller')) as $ctrl):
-			if( ! property_exists($ctrl, 'locomo')) continue;
-			$retvals[$ctrl] = \Arr::get($ctrl::$locomo, 'nicename') ?: $ctrl ; 
+		foreach($all as $k => $v):
+			if(\Arr::get($v, 'is_for_admin')) continue;
+			if( ! \Arr::get($v, 'show_at_menu')) continue;
+			$retvals[$k] = \Arr::get($v, 'nicename');
 		endforeach;
-
 		return array('none' => '選択してください') + $retvals;
 	}
 

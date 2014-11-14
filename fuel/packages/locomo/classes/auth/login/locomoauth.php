@@ -114,11 +114,15 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			// return true when login was verified, and either the hash matches or multiple logins are allowed
 			if ($this->user and (\Config::get('locomoauth.multiple_logins', false) or $this->user['login_hash'] === $login_hash))
 			{
+				$usergroups = array(-10); // logged in usergroup
+				$usergroups+= array_keys($this->user->usergroup);
 				$acl_tmp = \Acl\Model_Acl::find('all',
 					array(
 						'select' => array('slug'),
-						'where' => array(array('usergroup_id', 'IN', array_keys($this->user->usergroup))),
-	//					'or_where' => array(array('user_id', 'IN', $this->user->id))
+						'where' => array(
+							array('usergroup_id', 'IN', $usergroups),
+							'or' => array('user_id', 'IN', array( (int) $this->user->id))
+						),
 					)
 				);
 				foreach($acl_tmp as $v):
@@ -328,7 +332,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				->execute();
 		}else{
 			//普通のユーザ
-			\DB::update(\Config::get('locomoauth.table_name'))
+			\DB::update('users')
 				->set(array('last_login_at' => date('Y-m-d H:i:s', $last_login), 'login_hash' => $login_hash))
 				->where('username', '=', $this->user['username'])
 				->execute();
