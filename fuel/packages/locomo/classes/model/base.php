@@ -35,7 +35,6 @@ class Model_Base extends \Orm\Model_Soft
 		'auth_created',
 		'auth_deleted',
 		'auth_visibility',
-		'auth_owner',
 	);
 
 	/*
