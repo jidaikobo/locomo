@@ -4,16 +4,15 @@
 
 <!--ユーザ名かメールアドレス-->
 <div class="form_group">
-	<?php echo '<span id="label1">'.\Form::label('アカウント', 'account').'</span>'; ?>
-	<?php echo '<span id="desc1" class="skip">ユーザ名かメールアドレス</span>'.\Form::input('account', Input::post('account', isset($item) ? $item->account : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1')); ?>
+	<?php echo \Form::label('アカウント', 'account'); ?>
+	<?php echo '<span class="skip">ユーザ名かメールアドレス</span>'.\Form::input('account', Input::post('account', isset($item) ? $item->account : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1')); ?>
 </div>
 
 <!--パスワード-->
 <div class="form_group">
-	<?php echo '<span id="label2">'. \Form::label('パスワード', 'password').'</span>'; ?>
+	<?php echo \Form::label('パスワード', 'password'); ?>
 	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('placeholder'=>'パスワード')); ?>
 </div>
-
 <?php
 //buttons
 echo \Form::hidden('ret', $ret);

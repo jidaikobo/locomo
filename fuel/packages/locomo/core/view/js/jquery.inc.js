@@ -1,6 +1,14 @@
 $(function(){
+//UA
+var userAgent = window.navigator.userAgent;
+
+isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
+
 //JavaScript有効時に表示、無効時にはCSSで非表示
-$("body *").removeClass("hide_if_no_js");
+$('.hide_if_no_js').removeClass("hide_if_no_js");
+
+//.show_if_no_js的な処理があるとすれば？？
+//$(".show_if_no_js").();
 
 //ページ読み込み直後のフォーカス制御
 if($('.flash_alert')[0]){
@@ -9,71 +17,122 @@ if($('.flash_alert')[0]){
 	var firstFocus = $('input:visible').first();
 }
 if(firstFocus){
-	$(firstFocus).focus();
-	if($(firstFocus)[0].nodeName == 'input'){
-		$(firstFocus).select();
+	set_focus(firstFocus);
+}
+function set_focus(t){
+	$(t).focus();
+	if($(t).is(':input') && !isNetReader){
+		$(t).select();
 	}
 }
 
-//管理バーの高さ+αのパディングを設定。
-function add_body_padding(barHeight){
-	paddingTop = parseInt($(bar).css('padding-top'), 10); //padding+heightがadminbarの高さ
-//	barHeight = Math.round(barHeight);
-	$('body').css('padding-top', barHeight+paddingTop+4+'px' );
+//管理バーの高さ+αのヘッダーの高さを確保
+var headerheight = 0;
+function add_body_padding(headerheight){
+	$('body').css('padding-top', headerheight+'px' );
 }
 if($('#adminbar')[0]){
 	var bar = '#adminbar';
-	var barHeight = $(bar).height();
-	add_body_padding(barHeight);
-
-	$(bar).exResize(function(api){
-		var size = api.getSize();
-		barHeight = size.height;
-		add_body_padding(barHeight);
-	});	
+	headerheight = $(bar).outerHeight();
+	add_body_padding(headerheight);
+	
+	$(bar).exResize(function(){
+	headerheight = $(this).outerHeight();
+		add_body_padding(headerheight);
+	});
 }
 
-//クリックイベント
-
-//モーダル
-var isModalOpen = false; //なくてもよいのかも
-var closeModal = function(){
-	$('.modal.currentitem').removeClass('currentitem');
-	isModalOpen = false;
-}
-$('a.modal').click(function(event){
-	if($(this).next('ul.modal').is(':hidden')){
-		closeModal();
-		$(this).next('ul.modal').addClass('currentitem');
-		 isModalOpen = true;
-	}else{
-		closeModal();
-	}
-//	event.stopPropagation();
+//ページ内リンク ヘッダー分位置調整とスムーズスクロール
+//html要素がスクロール対象であるか判定。
+//http://www.webdesignleaves.com/wp/jquery/573/
+var isHtmlScrollable = (function(){
+	var html = $('html'), top = html.scrollTop();
+	var elm = $('<div/>').height(10000).prependTo('body');
+	html.scrollTop(10000);
+	var rs = !!html.scrollTop();
+	html.scrollTop(top);
+	elm.remove();
+	return rs;
+})();
+//スクロール
+$(document).on('click', 'a[href^=#]', function(){
+	var href= $(this).attr("href");
+	var t = $(href == '#' || href == '' ? 'html' : href);
+	var position = t.offset().top-headerheight-10;
+	$(isHtmlScrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+	set_focus(t);
 	return false;
 });
-$(document).on('click', '.currentitem.modal', function(){
+
+//クリックイベント
+$(document).click(function(event){
+	var t = event.target;
+//リストの開け閉め
+	if(isModal){
+		closeModal(t);
+	}
+} );
+
+//モーダル
+var isModal = false; 
+var closeModal = function(t){
+	$('.modal.on').removeClass('on');
+	isModal = false;
+}
+$('a.modal').click(function(event){
+	var index = $('.toggle_item').index(this); //modalは.toggle_item-.hidden_itemとセットで使う
+	var t = $('.hidden_item').eq(index);
+	if($(this).hasClass('on')){
+		$(document).find('.modal.on').removeClass('on');
+		isModal = false;
+	}else{
+		t.addClass('on');
+		$(this).addClass('on');
+		isModal = true;
+	}
+	return false;
+});
+$(document).on('click', '.modal.on', function(){
 	event.stopPropagation();
 });
 
-
-$(document).click(function(event){
-	var t = event.target;
-	
-//リストの開け閉め
-	if(isModalOpen){
-		closeModal();
+//表示・非表示切り替え
+$('.hidden_item').each(function(){
+	if((isModal == true)&& ( $(this).not(':input') || $(this).val()=='')){
+		$(this).hide();
 	}
-} );
+});
+$(document).on('click', '.toggle_item', function(){
+	var index = $('.toggle_item').index(this);
+	var t = $('.hidden_item').eq(index);
+	t.toggle().toggleClass('on');
+	$(this).toggleClass('on');
+});
+
+
 
 //確認ウィンドウ
 $('.confirm').click(function(){
 	var msg = $(this).data('jslcmMsg');
+	if(msg){
 		msg = msg.replace(/\\n/g, "\n");
+	}else if($(this).text()){
+		msg = $(this).text()+'しますか？';
+	}else if($(this).children('img')[0]){
+		msg = $(this).children('img').attr('alt')+'しますか？';
+	}else if($(this).is(':input')){
+		msg = $(this).val()+'しますか？';
+	}else{
+		msg = 'よろしいですか？';
+	}
 	if (!confirm(msg)){
 		return false;
 	}
 });
+
+//=== form ===
+$('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
+
 
 
 //=== rollover ===
@@ -101,6 +160,79 @@ $('input.bt').hover(function(){
 	var imgsrc = $(this).attr('src').replace(/_ro\.(gif|png|jpg|jpeg)$/i,'\.$1');
 	$(this).attr('src',imgsrc);
 });
+
+
+/* Tiny MCE  */
+tinymce.init({
+	mode : "none",
+//	selector: "textarea.tinymce",
+	theme : "modern",
+	theme_advanced_buttons3_add : "tablecontrols",
+	plugins:"table code"	
+});
+$(':input.tinymce').each(function(){
+	var id = this.id;
+	$(this).before('<p class="cf" style="font-size:.8em;"><a id="switch_'+id+'" class="switch_mce is_text" href="javascript: void(0);">')
+	$(document).find('.switch_mce').text('ビジュアルエディタを使用');
+});
+$(document).on('click', '.switch_mce', function(){
+	var id = this.id.replace('switch_','');
+	if( $(this).hasClass('is_visual') ){
+		$(this).removeClass('is_visual').addClass('is_text').text('ビジュアルエディタを使用');
+		tinymce.EditorManager.execCommand('mceRemoveEditor', false, id);
+	} else {
+		$(this).removeClass('is_text').addClass('is_visual').text('テキストエディタを使用');
+		tinymce.EditorManager.execCommand('mceAddEditor', true, id);
+	}
+});
+
+/* jQuery UI */
+
+//calendar
+$('.datetime.schedule').datetimepicker({
+	timeFormat: 'HH:mm',
+	stepMinute: 15
+});
+$('.datetime').datetimepicker();
+
+$('.date').datepicker();
+$('.date').datepicker("option", "dateFormat", 'yy-mm-dd');
+$('.date').datepicker("option", "changeMonth", true);
+$('.date').datepicker("option", "changeYear", true);
+
+//tooltip
+//title属性はブラウザの対応がまちまちなので、data-を対象にする
+//※要調
+$('.validation_error :input').tooltip({
+	tooltipClass : 'form_tooltip',
+	show         : 200,
+	hide         : 'fade',
+	position     : {
+		             my : 'left bottom-8',
+		             at : 'left top'
+		            },
+	items        : '[data-jslcm-tooltip]',
+	content      : function(){
+	                 return $(this).data('jslcmTooltip')
+		           }
+});
+
+//login failed
+//中央表示の方法要考？ jquery uiのeffectは制御しづらそうなのでここではつかわない
+//そもそもjavascriptだけヘッダに直書きのほうがよいかも。
+/*
+if($('.login .alert_error')[0]){
+	$('.container').delay(0)
+                   .animate({ left: -8 }, 75)
+                   .animate({ left: 8 }, 75)
+                   .animate({ left: -8 }, 75)
+                   .animate({ left: 8 }, 75)
+                   .animate({ left: 0 }, 75);
+}
+*/
+
+
+
 
 
 /*

@@ -36,8 +36,8 @@ if(\Auth::is_user()):
 				//option menu
 				if(@$actions[$current_module]['option']):
 					$html.= '<div class="admin_module_option">';
-					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"></span></a>";
-					$html.= \Actionset::generate_menu_html($actions[$current_module]['option'], array('class'=>'modal dropdown_list boxshadow'));
+					$html.= "<a href=\"javascript:void(0)\" class=\"modal has_dropdown toggle_item\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"></span></a>";
+					$html.= \Actionset::generate_menu_html($actions[$current_module]['option'], array('class'=>'modal hidden_item boxshadow'));
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
 
@@ -53,9 +53,9 @@ if(\Auth::is_user()):
 			$controller4menu = \View::get_controllers();
 			if($controller4menu):
 				$html.= '<div class="admin_menu">';
-				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー</span></a>';
+				$html.= '<a href="javascript:void(0);" class="modal has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー</span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
-				$html.= '<ul class="modal dropdown_list boxshadow">';
+				$html.= '<ul class="modal hidden_item boxshadow">';
 				foreach($controller4menu as $v):
 					if( ! $v['url']) continue;
 					$html.= "<li><a href=\"".\Uri::base()."{$v['url']}\">{$v['nicename']}</a></li>";
@@ -63,15 +63,6 @@ if(\Auth::is_user()):
 				$html.= '</ul>';
 				$html.= '</div><!-- /.admin_menu -->';
 			endif;
-		/*
-			//index menu
-			if(@$actions['index']):
-				$html.= '<div id="adminbar_index">';
-				$html.= '<a href="javascript:void(0);" class="listopen" title="インデクスメニューを開く">インデクス</a>';
-				$html.= \Actionset::generate_menu_html($actions['index'], array('class'=>'boxshadow'));
-				$html.= '</div>';
-			endif;
-		*/
 			$html.= '</div><!-- /.adminbar_main -->';
 		
 			$html.='<div class="adminbar_sub">';
@@ -81,8 +72,8 @@ if(\Auth::is_user()):
 		
 			//user menu
 			$html.= '<div class="adminbar_user">';
-				$html.= '<a href="javascript:void(0);" class="modal dropdown_list trigger" title="ユーザメニューを開く:'.\Auth::get_userinfo('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get_userinfo('display_name').'</span></a>';
-				$html.= '<ul class="modal dropdown_list boxshadow">';
+				$html.= '<a href="javascript:void(0);" class="modal has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get_userinfo('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get_userinfo('display_name').'</span></a>';
+				$html.= '<ul class="modal hidden_item boxshadow">';
 				$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get_userinfo('display_name').'</span></li>';
 				if( ! \Auth::is_admin()):
 					$html.= "<li><a href=\"".\Uri::base()."user/view/{$userinfo["user_id"]}\">ユーザ情報</a></li>";
@@ -95,8 +86,8 @@ if(\Auth::is_user()):
 			$controller4menu = \View::get_controllers(\Auth::is_admin());
 			if($controller4menu):
 				$html.= '<div class="admin_option">';
-					$html.= "<a href=\"javascript:void(0)\" class=\"modal dropdown_list trigger\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_option.png\" alt=\"管理者設定\"></span></a>";
-					$html.= '<ul class="modal dropdown_list boxshadow">';
+					$html.= "<a href=\"javascript:void(0)\" class=\"modal has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_option.png\" alt=\"管理者設定\"></span></a>";
+					$html.= '<ul class="modal hidden_item boxshadow">';
 					foreach($controller4menu as $v):
 						if( ! $v['url']) continue;
 						$html.= "<li><a href=\"".\Uri::base()."{$v['url']}\">{$v['nicename']}</a></li>";

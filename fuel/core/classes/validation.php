@@ -561,6 +561,7 @@ class Validation
 	 */
 	public function error($field = null, $default = false)
 	{
+	
 		if ($field === null)
 		{
 			return $this->errors;

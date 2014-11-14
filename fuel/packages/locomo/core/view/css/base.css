@@ -130,6 +130,7 @@ a.danger:visited {
 :focus {
 	outline:4px solid rgb(153,198,200);
 	outline: -webkit-focus-ring-color auto 4px;
+	outline-color: rgba(153,198,200,.6);
 	z-index: 99;
 }
 body:focus {
@@ -244,8 +245,8 @@ dfn {
 	left: auto;
 	clip: rect(1px 1px 1px 1px);
 	clip: rect(1px, 1px, 1px, 1px);
-	height: 0;
-	width: 0;
+	height: 1px;
+	width: 1px;
 	overflow: hidden;
 }
 
@@ -263,6 +264,7 @@ dfn {
 	z-index: 1000;
 	height: auto;
 	width: auto;
+	text-decoration: none;
 }
 
 .div,
