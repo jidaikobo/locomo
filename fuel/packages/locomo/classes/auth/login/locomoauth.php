@@ -309,7 +309,11 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		$last_login = \Date::forge()->get_timestamp();
 		$login_hash = sha1(\Config::get('locomoauth.login_hash_salt').$this->user['username'].$last_login);
 
-		if(in_array($this->user['username'] , array(ROOT_USER_NAME, ADMN_USER_NAME)))
+		$admins = unserialize(LOCOMO_ADMINS);
+		if(
+			array_key_exists($this->user['username'], $admins['root']) ||
+			array_key_exists($this->user['username'], $admins['admin'])
+		)
 		{
 			//管理者
 			\DB::delete('users_admins')
@@ -321,13 +325,13 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 					'last_login_at' => date('Y-m-d H:i:s', $last_login),
 					'login_hash' => $login_hash,
 				))
-				->execute(\Config::get('locomoauth.db_connection'));
+				->execute();
 		}else{
 			//普通のユーザ
 			\DB::update(\Config::get('locomoauth.table_name'))
 				->set(array('last_login_at' => date('Y-m-d H:i:s', $last_login), 'login_hash' => $login_hash))
 				->where('username', '=', $this->user['username'])
-				->execute(\Config::get('locomoauth.db_connection'));
+				->execute();
 		}
 
 		$this->user['login_hash'] = $login_hash;
