@@ -2,7 +2,6 @@
 namespace Locomo;
 class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 {
-	public static $_item;
 	protected static $_valid_roles = array();
 
 	public static function _init()
@@ -61,15 +60,5 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		$condition = serialize($conditions);
 
 		return in_array($condition, \Auth::get('allowed'));
-	}
-
-	/*
-	 * set_item()
-	 * used by $this->has_access()
-	 * @param $object	object	it is given at \Locomo\Controller_Curd::edit and view
-	 */
-	public static function set_item($obejct = null)
-	{
-		static::$_item = $obejct;
 	}
 }

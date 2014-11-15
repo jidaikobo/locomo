@@ -67,7 +67,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null)
+	public static function form_definition($factory = 'usergroup', $obj = null)
 	{
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 

@@ -1,7 +1,9 @@
+<?php
+echo $item;
+?>
 
-<h1>Viewing #<?php echo $item->id; ?></h1>
-
+<?php /* ?>
 <table class="tbl">
 ###fields###
 </table>
-
+<?php */ ?>

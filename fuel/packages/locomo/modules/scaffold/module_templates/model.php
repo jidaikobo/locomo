@@ -7,8 +7,8 @@ class Model_###NAME### extends \Locomo\Model_Base
 	protected static $_table_name = '###TABLE_NAME###';
 	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
 
-	protected static $_properties = array(
-###FIELD_STR###	);
+	protected static $_properties =
+###FIELD_STR### ;
 
 	protected static $_depend_modules = array();
 
@@ -50,27 +50,52 @@ class Model_###NAME### extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null)
+	public static function form_definition($factory = 'xxx', $obj = null)
 	{
 		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 
-		//forge
-		$form = \Fieldset::forge($factory, \Config::get('form'));
+		$form = parent::form_definition($factory, $obj);
+
 /*
-		//user_name
-		$val->add('name', 'サンプル')
-			->add_rule('required')
-			->add_rule('max_length', 50)
-			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
-			->add_rule('unique', "users.user_name.".@$obj->id);
-			->add_rule('required')
-			->add_rule('valid_email')
-			->add_rule('max_length', 255)
-			->add_rule('unique', "users.email.".@$obj->id);
+		//add field
+		$options = \Model_Name::get_options(array('where' => array(array('category', 'NAME'))), 'name');
+		$form->add_after('objname', 'NAME', array('type' => 'checkbox', 'options' => $options), array(), 'user_type')
+			->set_value(array_keys($obj->objname));
+
+		//template set
+		$form->field('field_name')
+			->set_template("\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} <span>{description}</span> {error_msg} <input type=\"button\" value=\"VALUE\"></td>\n\t\t</tr>\n");
 */
-###FORM_DEFINITION###
+
+		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
+			->set_value(\Security::fetch_token());
+		$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'));
 
 		static::$_cache_form_definition = $form;
+		return $form;
+	}
+
+	/**
+	 * plain_definition()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function plain_definition($factory = 'xxx', $obj = null)
+	{
+		$form = static::form_definition($factory, $obj);
+/*
+		$form->field('created_at')
+			->set_attribute(array('type' => 'text'));
+*/
+		$form->field('submit')
+			->set_attribute(array('type' => false));
+
+		$form->field(\Config::get('security.csrf_token_key'))
+			->set_attribute(array('type' => false));
+
 		return $form;
 	}
 }

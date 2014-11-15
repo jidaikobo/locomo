@@ -85,11 +85,11 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 				$latest_one = array_pop($migrations);
 				$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));
 				$latest_prefix = sprintf("%03d" , $latest_prefix + 1);
-				$migrate_path = APPPATH.'/migrations/'.$latest_prefix.'_create_'.$name.'.php';
+				$migrate_path = APPPATH.'migrations/'.$latest_prefix.'_create_'.$name.'.php';
 				Helper_Scaffold::putfiles($migrate_path, $migration);
 
 				//model
-				$model_path = APPPATH.'/classes/model/'.$name.'.php';
+				$model_path = APPPATH.'classes/model/'.$name.'.php';
 				Helper_Scaffold::putfiles($model_path, $model);
 
 				//message

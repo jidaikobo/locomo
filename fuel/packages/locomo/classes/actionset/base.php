@@ -226,7 +226,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_expired($controller, $obj = null, $id = null, $urls = array())
 	{
-		if($id):
+		if(\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view_expired', $actions, ['view','create']);
 		endif;
@@ -248,7 +248,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_yet($controller, $obj = null, $id = null, $urls = array())
 	{
-		if($id):
+		if(\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view_yet', $actions, ['view','create']);
 		endif;
@@ -271,7 +271,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_invisible($controller, $obj = null, $id = null, $urls = array())
 	{
-		if($id):
+		if(\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view_invisible', $actions, ['view','create']);
 		endif;
