@@ -448,8 +448,29 @@ class Model_Base extends \Orm\Model_Soft
 		}
 	}
 
+	public static function form_definition($factory = 'form', $obj = null) {
+
+		$form = \Fieldset::forge($factory);
+
+		/*
+		$form->add('id', 'ID', array('type' => 'hidden'))
+			->set_value($obj->id);
+		 */
+
+		$form->add_model($obj)->populate($obj, true);
+
+		if ($factory == 'form') {
+			$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
+				->set_value(\Security::fetch_token());
+
+			$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'));
+		}
+
+		return $form;
+	}
 
 	public static function plain_definition($factory = 'plain', $obj = null) {
 		return static::form_definition($factory, $obj);
 	}
+
 }

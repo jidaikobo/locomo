@@ -1,6 +1,6 @@
 <h2>Editing <span class='muted'>Customer</span></h2>
 
-<?php echo $form; ?>
+<?php echo $form->build(); ?>
 
 <p>
 	<?php
@@ -14,3 +14,9 @@
 	endif;
 	?>
 </p>
+
+
+<style>
+table, tr, th,td {
+border: 1px solid #ccc;
+}

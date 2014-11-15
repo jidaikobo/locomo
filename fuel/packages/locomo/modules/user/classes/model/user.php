@@ -93,7 +93,7 @@ class Model_User extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null)
+	public static function form_definition($factory = 'user', $obj = null)
 	{
 		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 		$id = isset($obj->id) ? $obj->id : '';
