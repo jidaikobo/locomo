@@ -10,7 +10,6 @@ class Validation extends \Fuel\Core\Validation
 	 * @param str $options perioded value
 	 * 
 	 * @return bool
-	 * @author shibata@jidaikobo.com
 	 */
 	public static function _validation_require_once($val, $options)
 	{
@@ -37,7 +36,6 @@ class Validation extends \Fuel\Core\Validation
 	 * @param str $options perioded value
 	 * 
 	 * @return bool
-	 * @author shibata@jidaikobo.com
 	 */
 	public static function _validation_unique($val, $options)
 	{
@@ -67,7 +65,6 @@ class Validation extends \Fuel\Core\Validation
 	 * @param str $options perioded value
 	 * 
 	 * @return bool
-	 * @author shibata@jidaikobo.com
 	 */
 	public static function _validation_match_password($val, $options)
 	{
@@ -89,7 +86,6 @@ class Validation extends \Fuel\Core\Validation
 	 * @param str $options perioded value
 	 * 
 	 * @return bool
-	 * @author shibata@jidaikobo.com
 	 */
 	public static function _validation_match_db_field($val, $options)
 	{
@@ -111,10 +107,24 @@ class Validation extends \Fuel\Core\Validation
 	 * @param str $options perioded value
 	 * 
 	 * @return bool
-	 * @author shibata@jidaikobo.com
 	 */
 	public static function _validation_banned_string($val, $options)
 	{
 		return ! in_array($val, $options);
+	}
+
+	/**
+	 * _validation_non_zero_datetime()
+	 * require at first time and at changing
+	 * 
+	 * @param str $val
+	 * @param str $options
+	 * 
+	 * @return bool
+	 */
+	public static function _validation_non_zero_datetime($val)
+	{
+		if( ! strtotime($val) || strtotime($val) <= 0) return false;
+		return true;
 	}
 }

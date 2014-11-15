@@ -196,8 +196,9 @@ class Model_User extends \Locomo\Model_Base
 				'作成日',
 				array('type' => 'text', 'size' => 20, 'placeholder' => date('Y-m-d H:i:s'), 'class' => 'datetime')
 			)
-			->set_value(@$obj->created_at);
-//未来の日付を入れると、予約項目になります。
+			->set_value(@$obj->created_at)
+			->add_rule('non_zero_datetime');
+			//未来の日付を入れると、予約項目になります。
 
 		//deleted_at
 		$form->add(
