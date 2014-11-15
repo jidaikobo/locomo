@@ -60,17 +60,25 @@ class Create_users
 		), array('user_id','group_id'));
 
 		//default acl
-/*
-		$query = \DB::insert('acls');
-		$query->columns(array(
-			'controller',
-			'action',
-			'owner_auth',
-		));
-		$query->values(array('user','view',1,));
-		$query->values(array('user','edit',1,));
-		$query->execute();
-*/
+		$arr = array(
+			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/home'),
+			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/dashboard'),
+			array('\\Help\\Controller_Help',   'index_admin', '\\Help\\Controller_Help/index_admin'),
+		);
+		foreach($arr as $v):
+			$slug = serialize(\Locomo\Auth_Acl_Locomoacl::_parse_conditions($v[2]));
+
+
+			$query = \DB::insert('acls');
+			$query->columns(array(
+				'controller',
+				'action',
+				'slug',
+				'usergroup_id',
+			));
+			$query->values(array($v[0], $v[1], $slug, -10));//'-10' means all logged in users
+			$query->execute();
+		endforeach;
 	}
 
 	public function down()

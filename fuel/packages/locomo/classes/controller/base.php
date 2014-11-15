@@ -18,9 +18,9 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	protected $model_name = '';
 
 	/**
-	 * @var config
+	 * @var string config
 	 */
-	public static $config = array();
+	protected static $config = '';
 
 	/**
 	 * before()
@@ -31,7 +31,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		parent::before();
 
 		// show profile to root only
-		\Fuel::$profiling = \Auth::get_user_id() == -2 ?: false ;
+		\Fuel::$profiling = \Auth::get('id') == -2 ?: false ;
 
 		//template path
 		$request = \Request::active();
@@ -66,6 +66,18 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	public function router($method, $params)
 	{
 		$called_class = get_called_class();
+
+		// auth
+		if( ! static::auth()):
+			if(\Auth::check())
+			{
+				return \Response::redirect(\Uri::create('content/content/403'));
+			}else{
+				$qstr = \Arr::get($_SERVER, 'QUERY_STRING') ;
+				$qstr = $qstr ? '?'.e($qstr) : '' ;
+				return \Response::redirect(\Uri::create('user/auth/login?ret='.\Uri::string().$qstr));
+			}
+		endif;
 
 		// action not exists - index
 		$is_allow = true;
@@ -121,19 +133,27 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		return parent::router($method, $params);
 	}
 
-
 	/**
-	 * after()
+	 * auth()
+	 * @return void
 	 */
-	public function after($response)
+	public function auth()
 	{
-		// check auth
-		if( ! \Auth::instance()->has_access('\\'.$this->request->controller.DS.$this->request->action.DS)):
-			$page = \Request::forge('content/content/403')->execute();
-			return new \Response($page, 403);
-		endif;
+		$current_action = '\\'.$this->request->controller.DS.$this->request->action.DS;
 
-		return parent::after($response);
+		// ordinary auth
+		$is_allow = \Auth::instance()->has_access($current_action);
+
+		// additional conditions
+		$conditions = \Arr::get(static::$config, 'conditioned_allowed', false);
+		if( ! $is_allow && $conditions && array_key_exists($current_action, $conditions))
+		{
+			$methods = $conditions[$current_action];
+			if( ! method_exists($methods[0], $methods[1])) throw new \BadFunctionCallException();
+			$is_allow = $methods[0]::$methods[1]();
+		}
+
+		return $is_allow;
 	}
 }
 

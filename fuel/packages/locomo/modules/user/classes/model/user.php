@@ -141,11 +141,26 @@ class Model_User extends \Locomo\Model_Base
 			)
 			->set_value($checked);
 
+		//管理者以外は旧パスワードを求める
+		if( ! \Auth::is_admin()):
+			$form->add(
+					'old_password',
+					'旧パスワード',
+					array('type' => 'password', 'size' => 20, 'placeholder'=>'旧パスワードを入れてください')
+				)
+				->set_value('')
+				->add_rule('required')
+				->add_rule('min_length', 8)
+				->add_rule('max_length', 50)
+				->add_rule('match_password', "users.password.{$id}")
+				->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+		endif;
+
 		//password
 		$form->add(
 				'password',
 				'パスワード',
-				array('type' => 'text', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください')
+				array('type' => 'password', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください')
 			)
 			->set_value('')
 			->add_rule('require_once', "users.password.{$id}")
@@ -153,12 +168,12 @@ class Model_User extends \Locomo\Model_Base
 			->add_rule('max_length', 50)
 			->add_rule('match_field', 'confirm_password')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
-
+	
 		//confirm_password
 		$form->add(
 				'confirm_password',
 				'確認用パスワード',
-				array('type' => 'text', 'size' => 20)
+				array('type' => 'password', 'size' => 20)
 			)
 			->set_value('')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));

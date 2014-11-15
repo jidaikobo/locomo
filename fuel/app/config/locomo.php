@@ -61,8 +61,5 @@ return array(
 		'\\Content\\Controller_Content/403/',
 		'\\Content\\Controller_Content/404/',
 		'\\Content\\Controller_Content/fetch_view/',
-		'\\Admin\\Controller_Admin/home',
-		'\\Admin\\Controller_Admin/dashboard',
-		'\\Help\\Controller_Help/index_admin',//not for guest. ban by \Help\Controller_Help::before()
 	),
 );

@@ -61,6 +61,50 @@ class Validation extends \Fuel\Core\Validation
 	}
 
 	/**
+	 * _validation_match_password()
+	 * 
+	 * @param str $val
+	 * @param str $options perioded value
+	 * 
+	 * @return bool
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function _validation_match_password($val, $options)
+	{
+		//validate
+		list($table, $field, $id) = explode('.', $options);
+		if($id):
+			$result = \DB::select("id")
+			->where('id', '=', $id)
+			->where($field, '=', \Auth::instance()->hash_password($val))
+			->from($table)->execute();
+			return ($result->count() >= 1);
+		endif;
+	}
+
+	/**
+	 * _validation_match_db_field()
+	 * 
+	 * @param str $val
+	 * @param str $options perioded value
+	 * 
+	 * @return bool
+	 * @author shibata@jidaikobo.com
+	 */
+	public static function _validation_match_db_field($val, $options)
+	{
+		//validate
+		list($table, $field, $id) = explode('.', $options);
+		if($id):
+			$result = \DB::select("id")
+			->where('id', '=', $id)
+			->where($field, '=', $val)
+			->from($table)->execute();
+			return ($result->count() >= 1);
+		endif;
+	}
+
+	/**
 	 * _validation_banned_string()
 	 * 
 	 * @param str $val

@@ -41,4 +41,16 @@ class Controller_User extends \Locomo\Controller_Crud
 		$view->base_assign();
 		$this->template->content = $view;
 	}
+
+	/**
+	 * user_auth_find()
+	 */
+	public static function user_auth_find()
+	{
+		// honesty at this case, ($pkid == \Auth::get('id')) is make sence.
+		//this is a sort of sample code.
+		$pkid = \Request::main()->id;
+		$obj = \User\Model_User::find($pkid);
+		return ($obj->id == \Auth::get('id'));
+	}
 }
