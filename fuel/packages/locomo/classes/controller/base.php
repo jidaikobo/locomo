@@ -31,7 +31,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		parent::before();
 
 		// show profile to root only
-		\Fuel::$profiling = \Auth::get_user_id() == -2 ?: false ;
+		//\Fuel::$profiling = \Auth::get_user_id() == -2 ?: false ;
 
 		//template path
 		$request = \Request::active();

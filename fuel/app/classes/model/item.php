@@ -37,7 +37,7 @@ class Model_Item extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null, $id = '')
+	public static function form_definition($factory = 'item', $obj = null)
 	{
 		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 
