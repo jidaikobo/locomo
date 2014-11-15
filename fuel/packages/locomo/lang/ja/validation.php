@@ -20,10 +20,12 @@ return array(
 	'valid_date'      => ':labelを正しい日付の形式にしてください。',
 
 	//original
-	'require_once'    => ':labelは入力必須項目です。',
-	'unique'          => ':valueは既に使われています。',
-	'alnum'           => ':valueの値はアルファベットか数字にしてください。',
-	'alnumplus'       => ':valueの値はハイフン、アンダーバー、アルファベット、数字にしてください。',
-	'banned_string'   => ':valueは禁止された値です。他の値にしてください。',
+	'require_once'   => ':labelは入力必須項目です。',
+	'unique'         => ':valueは既に使われています。',
+	'alnum'          => ':valueの値はアルファベットか数字にしてください。',
+	'alnumplus'      => ':valueの値はハイフン、アンダーバー、アルファベット、数字にしてください。',
+	'banned_string'  => ':valueは禁止された値です。他の値にしてください。',
+	'match_db_field' => '現在保存されている値と入力値が異なります。',
+	'match_password' => 'パスワードが正しくありません。',
 );
 

@@ -16,7 +16,7 @@ class Model_Help extends \Locomo\Model_Base
 		'deleted_at',
 		'creator_id',
 		'modifier_id',
-		'order',
+		'seq',
 	);
 
 	protected static $_depend_modules = array();

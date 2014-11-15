@@ -88,7 +88,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 				}
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description), $template);
+				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}'), array($label, '', $build_fields, '', '', ''), $template);
 
 				return $template;
 			}

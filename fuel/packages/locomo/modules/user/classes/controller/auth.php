@@ -54,6 +54,6 @@ class Controller_Auth extends \Locomo\Controller_Crud
 		// logout
 		\Auth::logout();
 		\Session::set_flash('success', 'ログアウトしました。');
-		\Response::redirect_back();
+		return \Response::redirect('user/auth/login/');
 	}
 }

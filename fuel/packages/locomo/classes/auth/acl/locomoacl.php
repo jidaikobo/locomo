@@ -37,7 +37,6 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		$conditions = array(
 			'controller' => $rights[0],
 			'action'     => $rights[1],
-			'condition'  => \Arr::get($rights, 3, ''),
 		);
 
 		return $conditions;
@@ -61,63 +60,7 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		$conditions = static::_parse_conditions($condition);
 		$condition = serialize($conditions);
 
-		// at first, check group auth with allowed data
-		$is_allow = in_array($condition, \Auth::get('allowed'));
-
-		//グループが不許可なら、\Auth::get('allowed')の中にcondition付きの配列がないか確認する
-		//このauthは個別のレコードのフィールドをみるため、static::$_itemに値を格納してある必要がある
-		if( ! $is_allow && static::$_item):
-			$allows = array_map('unserialize', \Auth::get('allowed'));
-
-			//condition付きの配列を見つけたら確保し単純比較
-			$conditioned_alowed = array();
-			$n = 0;
-			foreach($allows as $allow):
-				if(empty($allow['condition'])) continue;
-				$conditioned_alowed[$n]['condition'] = array_pop($allow);//conditionを取り除く
-				$allow['condition'] = '';
-				$conditioned_alowed[$n]['str'] = serialize($allow);
-				$n++;
-			endforeach;
-
-			$key = \Arr::search($conditioned_alowed, $condition);
-
-			//単純比較で存在しなかったらfalse
-			if( ! $key) return false;
-
-			//条件をパース
-			list($p, $c) = explode('.',$key);
-			$condition_str = \Arr::get($conditioned_alowed, "{$p}.condition");
-			$condition_strs = explode(',', trim($condition_str, '[]'));
-			$condition_strs = array_map('trim', $condition_strs);
-
-			$target_column = isset(static::$_item->template->get_active_request('content')->$condition_strs[2]) ?
-				static::$_item->template->get_active_request('content')->$condition_strs[2] :
-				false;
-			//そもそも条件を満たすフィールドを持たないのだったらfalse
-			if( ! $target_column) return false;
-
-			//条件を照合
-			$id = $condition_strs[0] == 'user_id' ? \Auth::get('id') : '';
-			switch($condition_strs[1]):
-				case '=':
-					return ($id == $target_column); break;
-				case '<':
-					return ($id < $target_column); break;
-				case '>':
-					return ($id > $target_column); break;
-				case '<=':
-					return ($id <= $target_column); break;
-				case '>=':
-					return ($id >= $target_column); break;
-				case '=':
-					return ($id <> $target_column); break;
-				default:
-					return false;
-			endswitch;
-		endif;
-
-		return $is_allow;
+		return in_array($condition, \Auth::get('allowed'));
 	}
 
 	/*
