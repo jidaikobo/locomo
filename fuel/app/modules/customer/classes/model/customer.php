@@ -157,35 +157,161 @@ class Model_Customer extends \Locomo\Model_Base
 			),
 			'default' => '個人',
 		),
-		'birthday_at',
-		'representative',
-		'person_in_charge',
+		'birthday_at' => array(
+			'label' => '生年月日',
+			'data_type' => 'date',
+			'form' => array(
+				'type' => 'text',
+				// 'class' => 'date',
+			),
+			'validation' => array(
+			),
+		),
 
-		'company_name',
-		'company_zip',
-		'company_address',
-		'company_tel',
-		'company_fax',
-		'company_email',
-		'volunteer_insurance_type',
-		'dm_issue_type',
-		'dm_zip',
-		'dm_address',
-		'dm_name_1',
-		'dm_name_2',
-		'dm_tel',
-		'memo',
-		'status',
-		'sys_date_at',
-		'sys_name',
-		'sys_position',
-		'sys_sub_name',
-		'sys_wf_status',
+		'representative' => array(
+			'label' => '団体等 代表者'
+		),
+		'person_in_charge' => array(
+			'label' => '団体等 担当者'
+		),
+		'dm_issue_type' => array(
+			'label' => 'DM発行区分',
+			'data_type' => 'varchar',
+			'form' => array(
+				'type' => 'radio',
+				'options' => array(
+					'自宅／所在地' => '自宅／所在地',
+					'勤務先' => '勤務先',
+				),
+			),
+			'validation' => array(
+				'required',
+			),
+			'default' => '自宅／所在地',
+		),
+		'supporter_type' => array(
+			'label' => '後援会',
+			'data_type' => 'varchar',
+			'form' => array(
+				'type' => 'radio',
+				'options' => array(
+					'非会員' => '非会員',
+					'会員' => '会員',
+					'旧会員' => '旧会員',
+				),
+			),
+			'validation' => array(
+				'required',
+			),
+			'default' => '自宅／所在地',
+		),
+		'volunteer_insurance_type' => array(
+			'label' => '後援会',
+			'data_type' => 'varchar',
+			'form' => array(
+				'type' => 'radio',
+				'options' => array(
+					'加入' => '加入',
+					'未加入' => '未加入',
+				),
+			),
+			'validation' => array(
+				'required',
+			),
+			'default' => '自宅／所在地',
+		),
 
-		'created_at',
-		'updated_at',
-		'expired_at',
-		'deleted_at',
+		'memo' => array(
+			'label' => '備考',
+			'data_type' => 'varchar(50)',
+			'form' => array(
+				'type' => 'textarea',
+				'cols' => 50,
+				'rows' => 3,
+			),
+			'validation' => array(
+			),
+			'default' => '',
+		),
+		'company_name' => array(
+			'label' => '勤務先名',
+			'form' => array(
+				'type' => 'text',
+				'size' => 50,
+			),
+
+		),
+		'company_zip' => array(
+			'label' => '勤務先郵便番号',
+			'form' => array(
+				'type' => 'text',
+				'size' => 8,
+			),
+		),
+		'company_address' => array(
+			'label' => '勤務先住所',
+			'data_type' => 'varchar(50)',
+			'form' => array(
+				'type' => 'textarea',
+				'cols' => 50,
+				'rows' => 3,
+			),
+
+		),
+		'company_tel' => array(
+			'label' => '勤務先電話番号'
+		),
+		'company_fax' => array(
+			'label' => '勤務先fax番号'
+		),
+		'company_email' => array(
+			'label' => '勤務先email'
+		),
+		'dm_zip' => array(
+			'label' => 'dm郵便番号'
+		),
+		'dm_address' => array(
+			'label' => 'dm住所',
+			'data_type' => 'varchar(50)',
+			'form' => array(
+				'type' => 'textarea',
+				'cols' => 50,
+				'rows' => 3,
+			),
+
+		),
+		'dm_name_1' => array(
+			'label' => 'dm宛名1'
+		),
+		'dm_name_2' => array(
+			'label' => 'dm宛名2'
+		),
+		'dm_tel' => array(
+			'label' => 'dm電話番号'
+		),
+		'status' => array(
+			'label' => 'ステータス',
+		),
+		'sys_date_at' => array(
+			'label' => 'システム申請日',
+		),
+		'sys_name' => array(
+			'label' => 'システム申請者名',
+		),
+		'sys_position' => array(
+			'label' => 'システム申請部署',
+		),
+		'sys_sub_name' => array(
+			'label' => 'システム代理申請者名',
+		),
+		'sys_wf_status' => array(
+			'label' => 'システムWFステータス',
+		),
+
+		'created_at' => array('form' => array('type' => false)),
+		'updated_at' => array('form' => array('type' => false)),
+		'expired_at' => array('form' => array('type' => false)),
+		'deleted_at' => array('form' => array('type' => false)),
 
 // 'workflow_status',
 	);
@@ -227,29 +353,29 @@ class Model_Customer extends \Locomo\Model_Base
 		// ユーザー区分個人
 		'personal_group' => array(
 			'key_from' => 'id',
-			'key_through_from' => 'object_id',
+			'key_through_from' => 'customer_id',
 			'table_through' => 'customers_items_personal',
-			'model_to' => '\Customer\Model_Item',
-			'key_through_to' => 'devision_id',
+			'model_to' => '\Model_Item',
+			'key_through_to' => 'item_id',
 			'key_to' => 'id',
 			'cascade_save' => false,
 			'cascade_delete' => false,
 			'conditions' => array(
-				array('category', 'LIKE', '個人'),
+				array('category', 'ユーザー区分個人'),
 			),
 		),
 		// ユーザー区分団体等
 		'common_group' => array(
 			'key_from' => 'id',
-			'key_through_from' => 'object_id',
+			'key_through_from' => 'customer_id',
 			'table_through' => 'customers_items_common',
-			'model_to' => '\Customer\Model_Item',
-			'key_through_to' => 'devision_id',
+			'model_to' => '\Model_Item',
+			'key_through_to' => 'item_id',
 			'key_to' => 'id',
 			'cascade_save' => false,
 			'cascade_delete' => false,
 			'conditions' => array(
-				array('category', 'LIKE', '団体'),
+				array('category', 'ユーザー区分団体等'),
 			),
 		),
 
@@ -324,7 +450,7 @@ class Model_Customer extends \Locomo\Model_Base
 		/*
 		 * add field
 		 */
-		$options = \Customer\Model_Item::get_options(array('where' => array(array('category', 'LIKE', '%個人%'))), 'name');
+		$options = \Model_Item::get_options(array('where' => array(array('category', 'ユーザー区分個人'))), 'name');
 		$form->add_after('personal_group', 'ユーザーグループ個人', array('type' => 'checkbox', 'options' => $options), array(), 'user_type')
 			->set_value(array_keys($obj->personal_group));
 
@@ -332,7 +458,7 @@ class Model_Customer extends \Locomo\Model_Base
 		var_dump($obj->personal_group);
 		var_dump($obj->common_group);
 		 */
-		$options = \Customer\Model_Item::get_options(array('where' => array(array('category', 'LIKE', '%団体%'))), 'name');
+		$options = \Customer\Model_Item::get_options(array('where' => array(array('category', 'ユーザー区分団体等'))), 'name');
 		$form->add_after('common_group', 'ユーザーグループ団体等', array('type' => 'checkbox', 'options' => $options), array(), 'personal_group')
 			->set_value(array_keys($obj->common_group));
 
