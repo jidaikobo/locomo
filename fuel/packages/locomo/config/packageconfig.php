@@ -51,9 +51,6 @@ return array(
 	// no_home
 	'no_home' => false,
 
-	// home_url
-	'home_url' => 'content/home',
-
 	// always guest allowed actions
 	// ex) '\\Modname\\Controller_Something/action'
 	'always_allowed' => array(

@@ -39,14 +39,14 @@ class Controller_Crud extends Controller_Base
 	public function action_index_admin()
 	{
 		$model = $this->model_name;
-		$contetnt = \View::forge($this->_content_template ?: 'index_admin');
+		$content = \View::forge($this->_content_template ?: 'index_admin');
 
 		//$model::paginated_find_use_get_query(false);
-		$contetnt->set('items',  $model::paginated_find(array(), $this->pagination_config));
+		$content->set('items',  $model::paginated_find(array(), $this->pagination_config));
 
-		$contetnt->base_assign();
-		$contetnt->set_global('title', static::$nicename);
-		$this->template->content = $contetnt;
+		$content->base_assign();
+		$content->set_global('title', static::$nicename);
+		$this->template->content = $content;
 	}
 
 	/**
@@ -54,7 +54,7 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index()
 	{
-		$contetnt = \View::forge($this->_content_template ?: 'index');
+		$content = \View::forge($this->_content_template ?: 'index');
 		static::action_index_admin();//$options, $model, $deleted);
 	}
 
@@ -178,7 +178,7 @@ class Controller_Crud extends Controller_Base
 	public function action_view($id = null)
 	{
 
-		$contetnt = \View::forge($this->_content_template ?: 'view');
+		$content = \View::forge($this->_content_template ?: 'view');
 		$model = $this->model_name;
 
 		is_null($id) and \Response::redirect(\Uri::base());
@@ -195,13 +195,14 @@ class Controller_Crud extends Controller_Base
 		endif;
 
 		$item = $model::plain_definition('view', $item)->build_plain();
+
 		//view
-		$contetnt = \View::forge('view');
-		$contetnt->set_global('item', $item);
-		$contetnt->set_global('title', self::$nicename . '閲覧');
-		$this->template->content = $contetnt;
+		$content = \View::forge('view');
+		$content->set_safe('item', $item);
+		$content->set_global('title', self::$nicename . '閲覧');
+		$this->template->content = $content;
 		\Auth_Acl_Locomoacl::set_item($this);
-		$view->base_assign($item);
+		$content->base_assign($this);
 	}
 
 	public function action_create() {
