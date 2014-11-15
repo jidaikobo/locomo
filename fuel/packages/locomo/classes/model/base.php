@@ -383,13 +383,16 @@ class Model_Base extends \Orm\Model_Soft
 	 *
 	 * @return Model finded
 	 */
-	public static function paginated_find($options = array(), $pagination_config = array()) {
-
+	public static function paginated_find($options = array(), $pagination_config = array())
+	{
 
 		$use_get_query = static::paginated_find_use_get_query();
 
-		\Pagination::set_config($pagination_config);
+		//search segment
+		$suspicious = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
+		$pagination_config['uri_segment'] = $suspicious ?: $pagination_config['uri_segment'] ;
 
+		\Pagination::set_config($pagination_config);
 
 		if ($use_get_query) {
 			$input_get = \Input::get();
