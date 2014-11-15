@@ -38,6 +38,9 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_admin()
 	{
+	
+
+
 		$model = $this->model_name;
 		$content = \View::forge($this->_content_template ?: 'index_admin');
 

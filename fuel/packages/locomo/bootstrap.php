@@ -1,5 +1,6 @@
 <?php
 /*
+ * Locomo - Accessible Web System Package for FuelPHP
  * bootstrap for locomo
  */
 
@@ -29,12 +30,10 @@ Autoloader::add_classes(array(
 	'Locomo\\Actionset_Option'       => LOCOMOPATH.'classes'.DS.'actionset/option.php',
 	'Locomo\\Actionset_Index'        => LOCOMOPATH.'classes'.DS.'actionset/index.php',
 	'Locomo\\Util'                   => LOCOMOPATH.'classes'.DS.'util.php',
-	'Locomo\\Auth'                   => LOCOMOPATH.'classes'.DS.'auth.php',
+	'Locomo\\Auth'                   => LOCOMOPATH.'classes'.DS.'auth.php',//package
 	'Locomo\\Auth_Login_Locomoauth'  => LOCOMOPATH.'classes'.DS.'auth/login/locomoauth.php',
 	'Locomo\\Auth_Group_Locomogroup' => LOCOMOPATH.'classes'.DS.'auth/group/locomogroup.php',
 	'Locomo\\Auth_Acl_Locomoacl'     => LOCOMOPATH.'classes'.DS.'auth/acl/locomoacl.php',
-	'Locomo\\View'                   => LOCOMOPATH.'classes'.DS.'view.php',
-	'Locomo\\Inflector'              => LOCOMOPATH.'classes'.DS.'inflector.php',
 ));
 
 // core override class
@@ -46,6 +45,8 @@ Autoloader::add_classes(array(
 	'Locomo\\Fieldset_Field' => LOCOMOPATH.'classes'.DS.'fieldset/field.php',
 	'Locomo\\Module'         => LOCOMOPATH.'classes'.DS.'module.php',
 	'Locomo\\Request'        => LOCOMOPATH.'classes'.DS.'request.php',
+	'Locomo\\View'           => LOCOMOPATH.'classes'.DS.'view.php',
+	'Locomo\\Inflector'      => LOCOMOPATH.'classes'.DS.'inflector.php',
 ));
 
 // always load module

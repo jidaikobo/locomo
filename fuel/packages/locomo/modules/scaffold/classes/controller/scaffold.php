@@ -35,8 +35,10 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 			if( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
-				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+//				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
 			endif;
+
+			$is_model = \Input::post('is_model');
 
 			//vals
 			$cmd_orig = \Input::post('cmd');
@@ -72,48 +74,76 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 			//put files
 			$name = strtolower($name);
+			$messages   = array();
 
 			//migrations
-			if( ! file_exists($scfldpath.'/migrations')) mkdir($scfldpath.'/migrations');
-			Helper_Scaffold::putfiles($scfldpath.'/migrations/001_create_'.$name.'.php', $migration) ;
+			if($is_model)
+			{
+				//migrations
+				$migrations = \File::read_dir(APPPATH.'migrations');
+				sort($migrations);
+				$latest_one = array_pop($migrations);
+				$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));
+				$latest_prefix = sprintf("%03d" , $latest_prefix + 1);
+				$migrate_path = APPPATH.'/migrations/'.$latest_prefix.'_create_'.$name.'.php';
+				Helper_Scaffold::putfiles($migrate_path, $migration);
 
-			//controller
-			if( ! file_exists($scfldpath.'/classes')) mkdir($scfldpath.'/classes');
-			if( ! file_exists($scfldpath.'/classes/controller')) mkdir($scfldpath.'/classes/controller');
-			Helper_Scaffold::putfiles($scfldpath.'/classes/controller/'.$name.'.php', $controller) ;
+				//model
+				$model_path = APPPATH.'/classes/model/'.$name.'.php';
+				Helper_Scaffold::putfiles($model_path, $model);
 
-			//actionset
-			if( ! file_exists($scfldpath.'/classes/actionset')) mkdir($scfldpath.'/classes/actionset');
-			if( ! file_exists($scfldpath.'/classes/actionset/index')) mkdir($scfldpath.'/classes/actionset/index');
-			if( ! file_exists($scfldpath.'/classes/actionset/base')) mkdir($scfldpath.'/classes/actionset/base');
-			if( ! file_exists($scfldpath.'/classes/actionset/option')) mkdir($scfldpath.'/classes/actionset/option');
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/index/'.$name.'.php', $actionset_index) ;
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/base/'.$name.'.php', $actionset_base) ;
-			Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/option/'.$name.'.php', $actionset_option) ;
+				//message
+				$messages[] = "modelとmigrationを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
+				$messages[] = "sudo chmod 777 {$migrate_path}";
+				$messages[] = "sudo chmod -R 777 {$model_path}";
+				$messages[] = "migrationを調整したら、コマンドラインで";
+				$messages[] = "cd ".DOCROOT;
+				$messages[] = "php oil refine migrate:up";
+				$messages[] = "を実行してください。";
+			}
+			else
+			{
+				//migrations
+				if( ! file_exists($scfldpath.'/migrations')) mkdir($scfldpath.'/migrations');
+				Helper_Scaffold::putfiles($scfldpath.'/migrations/001_create_'.$name.'.php', $migration) ;
+	
+				//controller
+				if( ! file_exists($scfldpath.'/classes')) mkdir($scfldpath.'/classes');
+				if( ! file_exists($scfldpath.'/classes/controller')) mkdir($scfldpath.'/classes/controller');
+				Helper_Scaffold::putfiles($scfldpath.'/classes/controller/'.$name.'.php', $controller) ;
+	
+				//actionset
+				if( ! file_exists($scfldpath.'/classes/actionset')) mkdir($scfldpath.'/classes/actionset');
+				if( ! file_exists($scfldpath.'/classes/actionset/index')) mkdir($scfldpath.'/classes/actionset/index');
+				if( ! file_exists($scfldpath.'/classes/actionset/base')) mkdir($scfldpath.'/classes/actionset/base');
+				if( ! file_exists($scfldpath.'/classes/actionset/option')) mkdir($scfldpath.'/classes/actionset/option');
+				Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/index/'.$name.'.php', $actionset_index) ;
+				Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/base/'.$name.'.php', $actionset_base) ;
+				Helper_Scaffold::putfiles($scfldpath.'/classes/actionset/option/'.$name.'.php', $actionset_option) ;
+	
+				//model
+				if( ! file_exists($scfldpath.'/classes/model')) mkdir($scfldpath.'/classes/model');
+				Helper_Scaffold::putfiles($scfldpath.'/classes/model/'.$name.'.php', $model) ;
+	
+				//config
+				if( ! file_exists($scfldpath.'/config')) mkdir($scfldpath.'/config');
+				Helper_Scaffold::putfiles($scfldpath.'/config/'.$name.'.php', $config) ;
+	
+				//views
+				if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');
+				Helper_Scaffold::putfiles($scfldpath.'/views/index.php', $tpl_index) ;
+				Helper_Scaffold::putfiles($scfldpath.'/views/index_admin.php', $tpl_index_admin) ;
+				Helper_Scaffold::putfiles($scfldpath.'/views/view.php', $tpl_view) ;
+				Helper_Scaffold::putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
 
-			//model
-			if( ! file_exists($scfldpath.'/classes/model')) mkdir($scfldpath.'/classes/model');
-			Helper_Scaffold::putfiles($scfldpath.'/classes/model/'.$name.'.php', $model) ;
-
-			//config
-			if( ! file_exists($scfldpath.'/config')) mkdir($scfldpath.'/config');
-			Helper_Scaffold::putfiles($scfldpath.'/config/'.$name.'.php', $config) ;
-
-			//views
-			if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');
-			Helper_Scaffold::putfiles($scfldpath.'/views/index.php', $tpl_index) ;
-			Helper_Scaffold::putfiles($scfldpath.'/views/index_admin.php', $tpl_index_admin) ;
-			Helper_Scaffold::putfiles($scfldpath.'/views/view.php', $tpl_view) ;
-			Helper_Scaffold::putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
-
-			//messages
-			$messages   = array();
-			$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
-			$messages[] = "sudo chmod -R 777 {$scfldpath}";
-			$messages[] = "migrationとconfigを調整したら、コマンドラインで";
-			$messages[] = "cd ".DOCROOT;
-			$messages[] = "php oil refine migrate:up --modules={$name}";
-			$messages[] = "を実行してください。";
+				//messages
+				$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
+				$messages[] = "sudo chmod -R 777 {$scfldpath}";
+				$messages[] = "migrationとconfigを調整したら、コマンドラインで";
+				$messages[] = "cd ".DOCROOT;
+				$messages[] = "php oil refine migrate:up --modules={$name}";
+				$messages[] = "を実行してください。";
+			}
 
 			\Session::set_flash('success', $messages);
 			\Response::redirect(\Uri::create('/scaffold/scaffold/main'));

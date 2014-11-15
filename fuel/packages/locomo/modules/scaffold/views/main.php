@@ -1,7 +1,10 @@
 
 <?php echo \Form::open(); ?>
 <h3><?php echo \Form::label('拡張oilコマンド書式', 'cmd'); ?></h3>
-<p><?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('style' => 'width:100%;height:10em;', 'placeholder'=>'拡張oilコマンド書式')); ?></p>
+<p>
+	<?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('style' => 'width:100%;height:10em;', 'placeholder'=>'拡張oilコマンド書式')); ?><br />
+	<label><?php echo \Form::checkbox('is_model', 1); ?> モデルとマイグレーションのみ生成する</label>
+</p>
 <p>
 	<?php echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 	<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'button primary')); ?>
