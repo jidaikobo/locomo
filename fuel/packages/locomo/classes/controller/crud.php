@@ -260,7 +260,7 @@ class Controller_Crud extends Controller_Base
 
 		//add_actionset
 		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
-		$action['urls'][] = \Html::anchor($this->request->module.DS.$ctrl_url.DS.'index_admin/','一覧へ');
+		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
 		$action['order'] = 10;
 		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
 

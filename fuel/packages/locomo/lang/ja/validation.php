@@ -27,5 +27,6 @@ return array(
 	'banned_string'  => ':valueは禁止された値です。他の値にしてください。',
 	'match_db_field' => '現在保存されている値と入力値が異なります。',
 	'match_password' => 'パスワードが正しくありません。',
+	'non_zero_datetime' => '有効な日付の値ではないようです。YYYY-MM-DD HH:MM:SSの形式で入力してください。',
 );
 
