@@ -123,7 +123,11 @@ class Actionset_Index extends Actionset
 		return $retvals;
 	}
 
-	public static function actionset_index_all($controller, $obj = null, $id = null, $urls = array())
+	/**
+	 * index_all()
+	 * 開発中。一旦停止。
+	 */
+	public static function _actionset_index_all($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_all", 'すべて'));
 		$urls = static::generate_uris($controller, 'index_all', $actions);

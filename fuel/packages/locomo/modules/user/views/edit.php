@@ -44,20 +44,17 @@
 	</tr>
 	<?php endif; ?>
 	</table>
-	<div class="revision_comment">
-		<h3><a href="javascript: void(0);" class="toggle_item disclosure"><?php echo \Form::label('編集履歴用メモ', 'revision_comment'); ?></a></h3>
-	<?php echo \Form::textarea('revision_comment', Input::post('revision_comment', isset($item->comment) ? $item->comment : ''), array('style'=>'width: 100%;','class'=>'hidden_item')); ?>
-	</div>
-	<div class="submit_button">
-		<?php
-		if( ! \Auth::is_admin()):
-			echo $form->field('is_visible')->set_template('{field}');
-		endif;
-			if(!@$is_revision):
-			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-			echo \Form::submit('submit', '保存', array('class' => 'button primary'));
-		endif;
-		?>
-	</div>
+	<?php echo render(LOCOMOPATH.'modules/revision/views/inc_revision_memo.php'); ?>
+</div>
+<div class="submit_button">
+	<?php
+	if( ! \Auth::is_admin()):
+		echo $form->field('is_visible')->set_template('{field}');
+	endif;
+		if(!@$is_revision):
+		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+		echo \Form::submit('submit', '保存', array('class' => 'button primary'));
+	endif;
+	?>
 </div>
 <?php echo \Form::close(); ?>

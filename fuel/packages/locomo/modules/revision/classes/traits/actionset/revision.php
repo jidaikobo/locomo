@@ -8,7 +8,8 @@ trait Traits_Actionset_Revision
 	public static function actionset_index_revision($controller, $obj = null, $id = null, $urls = array())
 	{
 		if($id && in_array(\Request::main()->action, array('edit','view'))):
-			$actions = array(array($controller.DS."each_index_revision/{$controller}/".$id, '編集履歴'));
+			$controller_name = basename(\Inflector::ctrl_to_dir($controller));
+			$actions = array(array($controller.DS."each_index_revision/{$controller_name}/".$id, '編集履歴'));
 			$urls = static::generate_uris($controller, 'index_revision', $actions);
 		endif;
 
@@ -30,7 +31,8 @@ trait Traits_Actionset_Revision
 	public static function actionset_view_revision($controller, $obj = null, $id = null, $urls = array())
 	{
 		if($id):
-			$actions = array(array($controller.DS."each_index_revision/{$controller}/".$id, '編集履歴'));
+			$controller_name = basename(\Inflector::ctrl_to_dir($controller));
+			$actions = array(array($controller.DS."each_index_revision/{$controller_name}/".$id, '編集履歴'));
 			$urls = static::generate_uris($controller, 'index_revision', $actions);
 		endif;
 

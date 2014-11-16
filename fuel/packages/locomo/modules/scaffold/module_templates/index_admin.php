@@ -31,4 +31,3 @@
 <?php else: ?>
 <p>xxxが存在しません。</p>
 <?php endif; ?>
-

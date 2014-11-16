@@ -38,8 +38,6 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 //				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
 			endif;
 
-			$is_model = \Input::post('is_model');
-
 			//vals
 			$cmd_orig = \Input::post('cmd');
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_orig );
@@ -76,8 +74,8 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$name = strtolower($name);
 			$messages   = array();
 
-			//migrations
-			if($is_model)
+			//generate
+			if(\Input::post('type') == 'model')
 			{
 				//migrations
 				$migrations = \File::read_dir(APPPATH.'migrations');
@@ -100,6 +98,20 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 				$messages[] = "cd ".DOCROOT;
 				$messages[] = "php oil refine migrate:up";
 				$messages[] = "を実行してください。";
+			}
+			elseif(\Input::post('type') == 'view')
+			{
+				//views
+				$viewpath = APPPATH.'/views/'.$name;
+				if( ! file_exists($viewpath)) mkdir($viewpath);
+				Helper_Scaffold::putfiles($viewpath.'/index.php', $tpl_index) ;
+				Helper_Scaffold::putfiles($viewpath.'/index_admin.php', $tpl_index_admin) ;
+				Helper_Scaffold::putfiles($viewpath.'/view.php', $tpl_view) ;
+				Helper_Scaffold::putfiles($viewpath.'/edit.php', $tpl_edit) ;
+
+				//message
+				$messages[] = "viewsのファイル群を生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
+				$messages[] = "sudo chmod -R 777 {$viewpath}";
 			}
 			else
 			{

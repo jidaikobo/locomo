@@ -162,7 +162,7 @@ class Helper_Scaffold
 		// replace
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'controller.php');
 		$val = self::replaces($name, $val);
-		$val = str_replace ('###nicename###', $nicename , $val) ;
+		$val = str_replace ('###nicename###', $nicename, $val);
 		return $val;
 	}
 
@@ -214,7 +214,7 @@ class Helper_Scaffold
 		$field_str = '';
 		$properties['id'] = '';//fuel's spec
 		foreach($cmds as $field):
-			$is_required = strpos($field, 'null') !== false ? false : true ;
+			$is_required = strpos($field, 'null') !== false ? false : true;
 			list($field, $attr) = explode(':', $field);
 			$nicename = self::get_nicename($field);
 			$field    = self::remove_nicename($field);
@@ -229,9 +229,9 @@ class Helper_Scaffold
 			{
 				if(is_numeric($m[1]))
 				{
-					$max  = $m[1] ? intval($m[1]) : 0 ;
-					$size = ($max >= 30) ? 30 : $max ;
-					$size = ($max == 0)  ? 30 : $size ;
+					$max  = $m[1] ? intval($m[1]) : 0;
+					$size = ($max >= 30) ? 30 : $max;
+					$size = ($max == 0)  ? 30 : $size;
 				}
 				else
 				//scalar
@@ -337,7 +337,6 @@ class Helper_Scaffold
 		$str = self::replaces($name, $str);
 		$str = str_replace('###DLT_FLD###',    $dlt_fld,    $str);
 		$str = str_replace('###OBSRVR###',     $observers,  $str);
-		$str = str_replace('###NAME###',       $name,       $str);
 		$str = str_replace('###TABLE_NAME###', $table_name, $str);
 		$str = str_replace('###FIELD_STR###',  $field_str,  $str);
 
@@ -353,7 +352,7 @@ class Helper_Scaffold
 		array_shift($cmds);//remove name
 
 		$thead = "\t\t\t<th><?php echo \Pagination::sort('id', 'ID', false);?></th>\n";
-		$tbody = "\t<td><?php echo \$item->id; ?></td>\n" ;
+		$tbody = "\t<td><?php echo \$item->id; ?></td>\n";
 
 		foreach($cmds as $field){
 			list($field, $attr) = explode(':', $field);
@@ -370,7 +369,7 @@ class Helper_Scaffold
 
 			//td
 			if(substr($field,0,3)=='is_'):
-				$tdv = "<?php echo \$item->{$field} ? 'Yes' : 'No' ; ?>";
+				$tdv = "<?php echo \$item->{$field} ? 'Yes' : 'No'; ?>";
 			else:
 				$tdv = "<?php echo \$item->{$field}; ?>";
 			endif;
@@ -383,11 +382,11 @@ class Helper_Scaffold
 		}
 		
 		//mold
-		$tpl = $is_admin ? 'index_admin.php' : 'index.php' ;
+		$tpl = $is_admin ? 'index_admin.php' : 'index.php';
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.$tpl);
 		$val = self::replaces($name, $val);
-		$val = str_replace ('###THEAD###', $thead , $val) ;
-		$val = str_replace ('###TBODY###', $tbody , $val) ;
+		$val = str_replace ('###THEAD###', $thead, $val);
+		$val = str_replace ('###TBODY###', $tbody, $val);
 
 		return $val;
 	}
@@ -401,7 +400,7 @@ class Helper_Scaffold
 		array_shift($cmds);//remove name
 		$banned = array('workflow_status', 'creator_id', 'modifier_id', 'is_visible');
 
-		$fields = '' ;
+		$fields = '';
 
 		foreach($cmds as $field){
 			list($field, $attr) = explode(':', $field);
@@ -409,22 +408,22 @@ class Helper_Scaffold
 			$field    = self::remove_nicename($field);
 			if(in_array($field, $banned)) continue;
 
-			$fields.= "<?php if(\$item->{$field}): ?>\n" ;
-			$fields.= '<tr>'."\n" ;
-			$fields.= "\t<th>".$nicename."</th>\n" ;
+			$fields.= "<?php if(\$item->{$field}): ?>\n";
+			$fields.= '<tr>'."\n";
+			$fields.= "\t<th>".$nicename."</th>\n";
 			if(substr($field,0,3)=='is_'):
-				$fields.= "\t<td><?php echo \$item->{$field} ? 'Yes' : 'No' ; ?></td>\n";
+				$fields.= "\t<td><?php echo \$item->{$field} ? 'Yes' : 'No'; ?></td>\n";
 			else:
 				$fields.= "\t<td><?php echo \$item->{$field}; ?></td>\n";
 			endif;
-			$fields.= '</tr>'."\n\n" ;
-			$fields.= '<?php endif; ?>'."\n" ;
+			$fields.= '</tr>'."\n\n";
+			$fields.= '<?php endif; ?>'."\n";
 		}
 		
 		//mold
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'view.php');
 		$val = self::replaces($name, $val);
-		$val = str_replace ('###fields###', $fields , $val) ;
+		$val = str_replace ('###fields###', $fields, $val);
 	
 		return $val;
 	}
@@ -438,51 +437,51 @@ class Helper_Scaffold
 		$admins  = array('is_visible');
 		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'modifier_id');
 
-		$fields = '' ;
-		$admin_fields = '' ;
-		$admin_hidden_fields = '' ;
-		$hidden_fields = '' ;
+		$fields = '';
+		$admin_fields = '';
+		$admin_hidden_fields = '';
+		$hidden_fields = '';
 		foreach($cmds as $field){
 			list($field, $attr) = explode(':', $field);
 			if(in_array($field, $banned)) continue;
 
 			//hidden
 			if(in_array($field, $hiddens)):
-				$hidden_fields.= "\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n" ;
+				$hidden_fields.= "\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n";
 			else:
 				//admin
 				if(in_array($field, $admins)):
-					$admin_hidden_fields.= "\t\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n" ;
-					$fields.= '<?php if(\Auth::is_admin()): ?>'."\n" ;
+					$admin_hidden_fields.= "\t\techo \$form->field('{$field}')->set_template('{error_msg}{field}');\n";
+					$fields.= '<?php if(\Auth::is_admin()): ?>'."\n";
 				endif;
 
-				$fields.= '<tr>'."\n" ;
+				$fields.= '<tr>'."\n";
 				//label
-				$fields.= "\t<th><?php echo \$form->field('{$field}')->set_template('{label}{required}'); ?></th>\n" ;
+				$fields.= "\t<th><?php echo \$form->field('{$field}')->set_template('{label}{required}'); ?></th>\n";
 				
 				//field
 				if(substr($field,0,3)=='is_'){//checkbox
-					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{error_msg}{field}'); ?></td>\n" ;
+					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{error_msg}{field}'); ?></td>\n";
 				}else{//input
-					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{error_msg}{field}'); ?></td>\n" ;
+					$fields.= "\t<td><?php echo \$form->field('{$field}')->set_template('{error_msg}{field}'); ?></td>\n";
 				}
-				$fields.= '</tr>'."\n\n" ;
+				$fields.= '</tr>'."\n\n";
 				if(in_array($field, $admins)):
-					$fields.= '<?php endif; ?>'."\n" ;
+					$fields.= '<?php endif; ?>'."\n";
 				endif;
 			endif;
 		}
 		
 		if($admin_hidden_fields):
-			$hidden_fields.= 'if( ! \Auth::is_admin()):'."\n{$admin_hidden_fields}\n" ;
-			$hidden_fields.= 'endif;'."\n" ;
+			$hidden_fields.= 'if( ! \Auth::is_admin()):'."\n{$admin_hidden_fields}\n";
+			$hidden_fields.= 'endif;'."\n";
 		endif;
 
 		//mold
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'edit.php');
 		$val = self::replaces($name, $val);
-		$val = str_replace ('###FIELDS###', $fields , $val) ;
-		$val = str_replace ('###HIDDEN_FIELDS###', $hidden_fields , $val) ;
+		$val = str_replace ('###FIELDS###', $fields, $val);
+		$val = str_replace ('###HIDDEN_FIELDS###', $hidden_fields, $val);
 
 		return $val;
 	}
@@ -499,7 +498,7 @@ class Helper_Scaffold
 		//template
 		$val = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'config.php');
 		$val = self::replaces($name, $val);
-		$val = str_replace ('###nicename###', $nicename , $val) ;
+		$val = str_replace ('###nicename###', $nicename, $val);
 		return $val;
 	}
 
@@ -508,9 +507,9 @@ class Helper_Scaffold
 	 */
 	public static function replaces($name,$tpl)
 	{
-		$tpl = str_replace ('XXX', ucfirst($name) , $tpl);
-		$tpl = str_replace ('xxx', strtolower($name) , $tpl);
-		$tpl = str_replace ('YYY', $name , $tpl);
+		$tpl = str_replace ('XXX', ucfirst($name), $tpl);
+		$tpl = str_replace ('xxx', strtolower($name), $tpl);
+		$tpl = str_replace ('YYY', $name, $tpl);
 		return $tpl;
 	}
 
@@ -519,11 +518,11 @@ class Helper_Scaffold
 	 */
 	public static function putfiles($path, $val)
 	{
-		touch($path) ;
+		touch($path);
 		$fp = fopen($path, 'w');
 		fwrite($fp, $val);
 //			fwrite($fp, pack('C*',0xEF,0xBB,0xBF));//BOM -> php unaccept BOM
-		fclose($fp) ;
+		fclose($fp);
 		@chmod($path, 0777);
 	}
 
