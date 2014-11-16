@@ -82,7 +82,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 				foreach ($build_field as $lbl => $bf)
 				{
 					$bf_temp = str_replace('{label}', $lbl, $match[1]);
-					$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
+					$bf_temp = str_replace('{required}', '','');
 					$bf_temp = str_replace('{field}', $bf, $bf_temp);
 					$build_fields .= $bf_temp;
 				}
