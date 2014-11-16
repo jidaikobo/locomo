@@ -111,7 +111,7 @@ class Model_User extends \Locomo\Model_Base
 		$form->add(
 				'username',
 				'ユーザ名',
-				array('type' => 'text', 'size' => 20)
+				array('type' => 'text', 'size' => 20, 'class' => 'username')
 			)
 			->set_value(@$obj->username)
 			->add_rule('required')

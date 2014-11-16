@@ -1,6 +1,6 @@
 <?php
-namespace ###NAME###;
-class Model_###NAME### extends \Locomo\Model_Base
+namespace XXX;
+class Model_XXX extends \Locomo\Model_Base
 {
 //	use \Workflow\Traits_Model_Workflow;
 
@@ -52,7 +52,10 @@ class Model_###NAME### extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory = 'xxx', $obj = null)
 	{
-		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+		if(static::$_cache_form_definition && $obj == null)
+		{
+			return static::$_cache_form_definition;
+		}
 
 		$form = parent::form_definition($factory, $obj);
 
@@ -66,10 +69,6 @@ class Model_###NAME### extends \Locomo\Model_Base
 		$form->field('field_name')
 			->set_template("\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} <span>{description}</span> {error_msg} <input type=\"button\" value=\"VALUE\"></td>\n\t\t</tr>\n");
 */
-
-		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
-			->set_value(\Security::fetch_token());
-		$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'));
 
 		static::$_cache_form_definition = $form;
 		return $form;

@@ -45,4 +45,3 @@ return array(
 	'tabular_row_field_template' => "\t\t\t<td>{label}{required}&nbsp;{field} {error_msg}</td>\n",
 	'tabular_delete_label'       => "De?",
 );
-

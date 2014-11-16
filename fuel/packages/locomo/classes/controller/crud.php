@@ -54,7 +54,7 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index()
 	{
-		$content = \View::forge($this->_content_template ?: 'index');
+		$this->_content_template = 'index';
 		static::action_index_admin();//$options, $model, $deleted);
 	}
 
@@ -177,8 +177,6 @@ class Controller_Crud extends Controller_Base
 
 	public function action_view($id = null)
 	{
-
-		$content = \View::forge($this->_content_template ?: 'view');
 		$model = $this->model_name;
 
 		is_null($id) and \Response::redirect(\Uri::base());
@@ -196,8 +194,8 @@ class Controller_Crud extends Controller_Base
 
 		//view
 		$content = \View::forge('view');
-		$content->set_safe('item', $model::plain_definition('view', $item)->build_plain());
-		$content->set('obj', $item);
+		$content->set_safe('plain', $model::plain_definition('view', $item)->build_plain());
+		$content->set('item', $item);
 		$content->set_global('title', self::$nicename.'閲覧');
 		$this->template->content = $content;
 		$content->base_assign($item);
@@ -210,7 +208,7 @@ class Controller_Crud extends Controller_Base
 	public function action_edit($id = null)
 	{
 		$model = $this->model_name ;
-		$content = \View::forge($this->_content_template ?: 'edit');
+		$content = \View::forge('edit');
 
 		if ($id) {
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
