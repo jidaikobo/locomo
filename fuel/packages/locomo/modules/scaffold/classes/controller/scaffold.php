@@ -46,6 +46,11 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$cmd  = Helper_Scaffold::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
 
+			if( ! $cmd_orig):
+				\Session::set_flash('error', 'invalid value sent');
+				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+			endif;
+
 			//migration
 			$name       = array_shift($cmds);
 			$table_name = \Inflector::pluralize($name);
@@ -70,20 +75,37 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$scfldpath = APPPATH.'modules/'.$name;
 			if( ! file_exists($scfldpath)) mkdir($scfldpath);
 
-			//put files
+			// path
+			$viewpath = $scfldpath.'/views';
+			if(\Input::post('type') == 'all2' || \Input::post('type') == 'view')
+			{
+				$scfldpath = APPPATH;
+				$viewpath = APPPATH.'/views/'.$name;
+			}
+
+			// put files
 			$name = strtolower($name);
-			$messages   = array();
+			$messages = array();
+			$error_message = 'maybe same name files are already exist.';
+
+			//migrate_path
+			$migrations = \File::read_dir(APPPATH.'migrations');
+			sort($migrations);
+			$latest_one = array_pop($migrations);
+			$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));
+			$latest_prefix = sprintf("%03d" , $latest_prefix + 1);
+			$migrate_path = APPPATH.'migrations/'.$latest_prefix.'_create_'.$name.'.php';
 
 			//generate
 			if(\Input::post('type') == 'model')
 			{
+				// existence check
+				if(file_exists($migrate_path)):
+					\Session::set_flash('error', $error_message);
+					return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+				endif;
+
 				//migrations
-				$migrations = \File::read_dir(APPPATH.'migrations');
-				sort($migrations);
-				$latest_one = array_pop($migrations);
-				$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));
-				$latest_prefix = sprintf("%03d" , $latest_prefix + 1);
-				$migrate_path = APPPATH.'migrations/'.$latest_prefix.'_create_'.$name.'.php';
 				Helper_Scaffold::putfiles($migrate_path, $migration);
 
 				//model
@@ -101,8 +123,13 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			}
 			elseif(\Input::post('type') == 'view')
 			{
+				// existence check
+				if(file_exists($viewpath.'/index.php')):
+					\Session::set_flash('error', $error_message);
+					return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+				endif;
+
 				//views
-				$viewpath = APPPATH.'/views/'.$name;
 				if( ! file_exists($viewpath)) mkdir($viewpath);
 				Helper_Scaffold::putfiles($viewpath.'/index.php', $tpl_index) ;
 				Helper_Scaffold::putfiles($viewpath.'/index_admin.php', $tpl_index_admin) ;
@@ -117,8 +144,25 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			{
 				//migrations
 				if( ! file_exists($scfldpath.'/migrations')) mkdir($scfldpath.'/migrations');
-				Helper_Scaffold::putfiles($scfldpath.'/migrations/001_create_'.$name.'.php', $migration) ;
-	
+				if(\Input::post('type') == 'all2')
+				{
+					// existence check
+					if(file_exists($migrate_path)):
+						\Session::set_flash('error', $error_message);
+						return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+					endif;
+				}
+				else
+				{
+					// existence check
+					$migrate_path = $scfldpath.'/migrations/001_create_'.$name.'.php';
+					if(file_exists($migrate_path)):
+						\Session::set_flash('error', $error_message);
+						return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+					endif;
+				}
+				Helper_Scaffold::putfiles($migrate_path, $migration);
+
 				//controller
 				if( ! file_exists($scfldpath.'/classes')) mkdir($scfldpath.'/classes');
 				if( ! file_exists($scfldpath.'/classes/controller')) mkdir($scfldpath.'/classes/controller');
@@ -143,18 +187,34 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 	
 				//views
 				if( ! file_exists($scfldpath.'/views')) mkdir($scfldpath.'/views');
-				Helper_Scaffold::putfiles($scfldpath.'/views/index.php', $tpl_index) ;
-				Helper_Scaffold::putfiles($scfldpath.'/views/index_admin.php', $tpl_index_admin) ;
-				Helper_Scaffold::putfiles($scfldpath.'/views/view.php', $tpl_view) ;
-				Helper_Scaffold::putfiles($scfldpath.'/views/edit.php', $tpl_edit) ;
+				Helper_Scaffold::putfiles($viewpath.'/index.php', $tpl_index) ;
+				Helper_Scaffold::putfiles($viewpath.'/index_admin.php', $tpl_index_admin) ;
+				Helper_Scaffold::putfiles($viewpath.'/view.php', $tpl_view) ;
+				Helper_Scaffold::putfiles($viewpath.'/edit.php', $tpl_edit) ;
 
 				//messages
-				$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
-				$messages[] = "sudo chmod -R 777 {$scfldpath}";
-				$messages[] = "migrationとconfigを調整したら、コマンドラインで";
-				$messages[] = "cd ".DOCROOT;
-				$messages[] = "php oil refine migrate:up --modules={$name}";
-				$messages[] = "を実行してください。";
+				if(\Input::post('type') == 'all2')
+				{
+					$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'class/controller';
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'class/model';
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'class/config';
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'class/migration';
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'class/views';
+					$messages[] = "migrationとconfigを調整したら、コマンドラインで";
+					$messages[] = "cd ".DOCROOT;
+					$messages[] = "php oil refine migrate:up";
+					$messages[] = "を実行してください。";
+				}
+				else
+				{
+					$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
+					$messages[] = "sudo chmod -R 777 {$scfldpath}";
+					$messages[] = "migrationとconfigを調整したら、コマンドラインで";
+					$messages[] = "cd ".DOCROOT;
+					$messages[] = "php oil refine migrate:up --modules={$name}";
+					$messages[] = "を実行してください。";
+				}
 			}
 
 			\Session::set_flash('success', $messages);
