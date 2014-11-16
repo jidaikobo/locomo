@@ -120,13 +120,13 @@ class Model_Help extends \Locomo\Model_Base
 
 		//order - 
 		$form->add(
-			'order',
-			'order',
+			'seq',
+			'表示順',
 			array('type' => 'text', 'size' => 5, 'class' => 'int[5]')
 		)
 		->add_rule('required')
 		->add_rule('max_length', 5)
-		->set_value(@$obj->order);
+		->set_value(@$obj->seq);
 
 
 
