@@ -9,8 +9,10 @@
 	<?php echo \Asset::css('base.css'); ?>
 	<?php echo \Asset::css('core.css'); ?>
 	<?php echo \Asset::css('layout.css'); ?>
+	<?php echo \Asset::css('layout.css'); ?>
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css">
 	<link rel="stylesheet" href="<?php echo \Uri::base() ?>/content/fetch_view/js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css">
+	<?php echo \Asset::render('css'); ?>
 
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -21,6 +23,7 @@
 	<script src="<?php echo \Uri::base() ?>/content/fetch_view/js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
 	<script src="<?php echo \Uri::base() ?>/content/fetch_view/js/jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js"></script>
 	<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
+	<?php echo \Asset::render('js'); ?>
 	
 </head>
 <body class="<?php echo $body_class ;?>">

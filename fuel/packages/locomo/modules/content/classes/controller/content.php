@@ -115,6 +115,7 @@ class Controller_Content extends \Locomo\Controller_Base
 
 		//描画
 		$headers = array( 'Content-type' => $config['mime_whitelist'][$ext] );
+		$this->template->set_global('title', '');
 		return \Response::forge(file_get_contents($filename), 200, $headers);
 	}
 }

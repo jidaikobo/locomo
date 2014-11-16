@@ -72,18 +72,18 @@ class Pagination extends \Fuel\Core\Pagination {
 		if ($model::primary_key()[0] == $field) {
 			$label = 'ID';
 		} else {
-			$form = $model::form_definition('sort_info');
-			if ($form->field($field)) {
-				$label = $form->field($field)->label;
+
+			if (isset($model::properties()[$field]['label'])) {
+				$label = $model::properties()[$field]['label'];
 			} else {
 				$label = $field;
 			}
 		}
 
 		if ($sort == 'asc') {
-			return $field . 'を昇順で並べ替えています。';
+			return $label . 'を昇順で並べ替えています。';
 		} else {
-			return $field . 'を降順で並べ替えています。';
+			return $label . 'を降順で並べ替えています。';
 		}
 
 	}
