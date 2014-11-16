@@ -194,15 +194,13 @@ class Controller_Crud extends Controller_Base
 			\Response::redirect($this->request->module);
 		endif;
 
-		$item = $model::plain_definition('view', $item)->build_plain();
-
 		//view
 		$content = \View::forge('view');
-		$content->set_safe('item', $item);
-		$content->set_global('title', self::$nicename . '閲覧');
+		$content->set_safe('item', $model::plain_definition('view', $item)->build_plain());
+		$content->set('obj', $item);
+		$content->set_global('title', self::$nicename.'閲覧');
 		$this->template->content = $content;
-		\Auth_Acl_Locomoacl::set_item($this);
-		$content->base_assign($this);
+		$content->base_assign($item);
 	}
 
 	public function action_create() {
@@ -269,7 +267,6 @@ class Controller_Crud extends Controller_Base
 		$content->set_global('item', $obj, false);
 		$content->set_global('form', $form, false);
 		$this->template->content = $content;
-		\Auth_Acl_Locomoacl::set_item($this);
 		$content->base_assign($obj);
 	}
 

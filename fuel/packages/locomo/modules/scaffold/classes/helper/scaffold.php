@@ -212,8 +212,7 @@ class Helper_Scaffold
 
 		//fieldset
 		$field_str = '';
-		$form_definition_str = '';
-		$field_str.= "\t\t'id',\n";//fuel's spec
+		$properties['id'] = '';//fuel's spec
 		foreach($cmds as $field):
 			$is_required = strpos($field, 'null') !== false ? false : true ;
 			list($field, $attr) = explode(':', $field);
@@ -222,65 +221,86 @@ class Helper_Scaffold
 			$class    = ", 'class' => '".self::remove_length($attr)."'";
 			$cmd_mods[] = $field;
 
-			//field_str
-			$field_str.= "\t\t'{$field}',\n";
-
-			//banned
-			if(in_array($field, $banned)) continue;
-
-			//title
-			$form_definition_str.= "\t\t//{$field} - {$nicename}\n";
-
-			//adminsだけは特別扱い
-			if(in_array($field, $admins)):
-				$form_definition_str.= "\t\tif(\Auth::get_user_id() >= 0):\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'hidden', 'value' => 1)\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\telse:\n\t\t\t\$form->add(\n\t\t\t\t\t'{$field}',\n\t\t\t\t\t'{$nicename}',\n\t\t\t\t\tarray('type' => 'select', 'options' => array('0' => 'no', '1' => 'yes'), 'default' => 1{$class})\n\t\t\t\t)\n\t\t\t->add_rule('required')\n\n\t\t\t\t->set_value(@\$obj->{$field});\n\t\tendif;\n\n";
-				continue;
-			endif;
-
 			//attribute
-			$max  = preg_match('/\[(.*?)\]/', $attr, $m) ? intval($m[1]) : 0 ;
-			$size = ($max >= 30) ? 30 : $max ;
-			$size = ($max == 0)  ? 30 : $size ;
+			$default = '';
+			$size = 0;
+			$max = 0;
+			if(preg_match('/\[(.*?)\]/', $attr, $m))
+			{
+				if(is_numeric($m[1]))
+				{
+					$max  = $m[1] ? intval($m[1]) : 0 ;
+					$size = ($max >= 30) ? 30 : $max ;
+					$size = ($max == 0)  ? 30 : $size ;
+				}
+				else
+				//scalar
+				{
+					$default = $m[1];
+				}
+			}
 
-			//form_definition
-			$form_definition_str.= "\t\t\$form->add(\n";
-			$form_definition_str.= "\t\t\t'{$field}',\n";
-			$form_definition_str.= $nicename ? "\t\t\t'{$nicename}',\n" : "\t\t\t'{$field}',\n";
+			//field_str
+			$items = array();
 
-			//field
-			if(in_array($field, array('text', 'memo', 'body', 'content', 'etc', 'message'))):
-				//textarea
-				$form_definition_str.= "\t\t\tarray('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;'{$class})\n";
-			elseif(substr($field,0,3)=='is_'):
-				//bool
-				$form_definition_str.= "\t\t\tarray('type' => 'select', 'options' => array(0, 1){$class})\n";
-			elseif(substr($field,-3)=='_at'):
-				//date
-				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => 20, 'placeholder' => date('Y-m-d H:i:s'){$class})\n";
-			else:
-				//text
-				$form_definition_str.= "\t\t\tarray('type' => 'text', 'size' => {$size}{$class})\n";
-			endif;
-			$form_definition_str.= "\t\t)\n";
-
-			//require
-			if(in_array($field, array('name', 'title', 'subject')) || $is_required):
-				$form_definition_str.= "\t\t->add_rule('required')\n";
-			endif;
-
-			//require
-			if($max):
-				$form_definition_str.= "\t\t->add_rule('max_length', {$max})\n";
-			endif;
-
-			//default value
-			if($field == 'created_at'):
-				//created_at
-				$form_definition_str.= "\t\t->set_value(isset(\$obj->created_at) ? \$obj->created_at : date('Y-m-d H:i:s'));\n\n";
-			else:
-				//others
-				$form_definition_str.= "\t\t->set_value(@\$obj->{$field});\n\n";
-			endif;
+			if( ! in_array($field, $banned))
+			{
+				//label
+				if($nicename)
+				{
+					$properties[$field]['label'] = $nicename;
+				}
+	
+				//data_type
+				if($attr)
+				{
+					$properties[$field]['data_type'] = str_replace(array('[',']'), array('(',')'), $attr);
+				}
+	
+				//form
+				$form = array();
+				if(in_array($field, array('text', 'memo', 'body', 'content', 'etc', 'message'))):
+					//textarea
+					$form = array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;');
+				elseif(substr($field,0,3)=='is_'):
+					//bool
+					$form = array('type' => 'select', 'options' => array(0, 1));
+				elseif(substr($field,-3)=='_at'):
+					//date
+					$form = array('type' => 'text', 'size' => 20);
+				else:
+					//text
+					$form = array('type' => 'text', 'size' => $size);
+				endif;
+				if($form)
+				{
+					$form['class'] = self::remove_length($attr);
+					$properties[$field]['form'] = $form;
+				}
+	
+				//validation
+				$validation = array();
+				if(in_array($field, array('name', 'title', 'subject')) || $is_required)
+				{
+					//require
+					$validation['required'] ='';
+				}
+	
+				if($max)
+				{
+					//max
+					$validation['max_length'] = array($max => '');
+				}
+	
+				if($validation)
+				{
+					$properties[$field]['validation'] = $validation;
+				}
+			}
+			else
+			{
+				$properties[$field] = array('form' => array('type' => false));
+			}
 		endforeach;
 
 		//soft_delete
@@ -306,14 +326,20 @@ class Helper_Scaffold
 		$observers.= "//\t\t'Workflow\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
 		$observers.= "//\t\t'Revision\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
 
+		//$field_str
+		$field_str = var_export($properties, true);
+		$field_str = str_replace('  ', "\t", $field_str);
+		$field_str = preg_replace("/^/m", "\t", $field_str);
+		$field_str = str_replace(" => '',", ",", $field_str);
+
 		//template
 		$str = file_get_contents(LOCOMO_SCFLD_TPL_PATH.'model.php');
+		$str = self::replaces($name, $str);
 		$str = str_replace('###DLT_FLD###',    $dlt_fld,    $str);
 		$str = str_replace('###OBSRVR###',     $observers,  $str);
 		$str = str_replace('###NAME###',       $name,       $str);
 		$str = str_replace('###TABLE_NAME###', $table_name, $str);
 		$str = str_replace('###FIELD_STR###',  $field_str,  $str);
-		$str = str_replace('###FORM_DEFINITION###',  $form_definition_str,  $str);
 
 		return $str;
 	}
