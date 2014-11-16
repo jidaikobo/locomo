@@ -81,7 +81,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		if(in_array($username, static::$_alladmins))
 		{
 			$db_login_hash = \DB::select('login_hash')
-				->from('users_admins')
+				->from('user_admins')
 				->where(array(array('username', '=', $username)))
 				->execute()->current();
 
@@ -320,10 +320,10 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		)
 		{
 			//管理者
-			\DB::delete('users_admins')
+			\DB::delete('user_admins')
 				->where(array(array('username', '=', $this->user['username'])))
 				->execute();
-			\DB::insert('users_admins')
+			\DB::insert('user_admins')
 				->set(array(
 					'username'   => $this->user['username'],
 					'last_login_at' => date('Y-m-d H:i:s', $last_login),
@@ -371,7 +371,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		$limit_deny_time  = $user_ban_setting ? $user_ban_setting['limit_deny_time'] : 10 ;
 		$limit_count      = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
 
-		$list = \DB::select()->from("users_logs")
+		$list = \DB::select()->from("user_logs")
 						->where("login_id", $account)
 						->where("ipaddress", $_SERVER["REMOTE_ADDR"])
 						->where("add_at", ">=", \DB::expr("NOW() - INTERVAL " . $limit_deny_time . " MINUTE"))
@@ -401,7 +401,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		$limit_count = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
 
 		// 既にデータがあるかどうか
-		$list = \DB::select()->from("users_logs")
+		$list = \DB::select()->from("user_logs")
 						//->where("login_id", $username)
 						->where("status", 0)
 						->where("ipaddress", $_SERVER["REMOTE_ADDR"])
@@ -412,7 +412,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 
 		// データがあればカウントアップ
 		if (count($list) && ! $status) {
-			\DB::update("users_logs")->value("count", $list[0]['count'] + 1)
+			\DB::update("user_logs")->value("count", $list[0]['count'] + 1)
 					->where("loginlog_id", $list[0]['loginlog_id'])
 					->execute();
 
@@ -424,7 +424,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			}
 		} else {
 			// 成功時データを追加
-			\DB::insert("users_logs")
+			\DB::insert("user_logs")
 					->set(array(
 						"login_id"   => $username,
 						"login_pass" => $password,
