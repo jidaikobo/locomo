@@ -38,7 +38,7 @@ class Model_User extends \Locomo\Model_Base
 		'usergroup' => array(
 			'key_from' => 'id',
 			'key_through_from' => 'user_id',
-			'table_through' => 'usergroups_r',
+			'table_through' => 'user_usergroups',
 			'key_through_to' => 'group_id',
 			'model_to' => '\User\Model_Usergroup',
 			'key_to' => 'id',

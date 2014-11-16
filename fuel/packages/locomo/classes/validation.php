@@ -124,6 +124,7 @@ class Validation extends \Fuel\Core\Validation
 	 */
 	public static function _validation_non_zero_datetime($val)
 	{
+		if (empty($val)) return true; // empty string is today.
 		if( ! strtotime($val) || strtotime($val) <= 0) return false;
 		return true;
 	}

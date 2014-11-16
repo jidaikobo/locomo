@@ -25,15 +25,15 @@ class Create_users
 		), array('id'));
 		\DBUtil::create_index('users', array('username', 'email'), 'username', 'UNIQUE');
 
-		// table users_admins
-		\DBUtil::create_table('users_admins', array(
+		// table user_admins
+		\DBUtil::create_table('user_admins', array(
 			'username'      => array('type' => 'varchar', 'constraint' => 50),
 			'last_login_at' => array('type' => 'datetime'),
 			'login_hash'    => array('type' => 'varchar', 'constraint' => 255),
 		), array('username'));
 
-		// users_logs
-		\DBUtil::create_table('users_logs', array(
+		// user_logs
+		\DBUtil::create_table('user_logs', array(
 			'loginlog_id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'login_id'    => array('constraint' => 255, 'type' => 'varchar'),
 			'login_pass'  => array('constraint' => 255, 'type' => 'varchar'),
@@ -53,8 +53,8 @@ class Create_users
 			'deleted_at'   => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 
-		// usergroups_r
-		\DBUtil::create_table('usergroups_r', array(
+		// user_usergroups
+		\DBUtil::create_table('user_usergroups', array(
 			'user_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 			'group_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 		), array('user_id','group_id'));
@@ -84,10 +84,10 @@ class Create_users
 	public function down()
 	{
 		\DBUtil::drop_table('users');
-		\DBUtil::drop_table('users_admins');
-		\DBUtil::drop_table('users_logs');
+		\DBUtil::drop_table('user_admins');
+		\DBUtil::drop_table('user_logs');
 		\DBUtil::drop_table('usergroups');
-		\DBUtil::drop_table('usergroups_r');
+		\DBUtil::drop_table('user_usergroups');
 		if(\DBUtil::table_exists('acls')) \DBUtil::truncate_table('acls');
 	}
 }
