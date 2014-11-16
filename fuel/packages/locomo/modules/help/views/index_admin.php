@@ -10,7 +10,7 @@
 		<tr>
 			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
 			<th><?php echo \Pagination::sort('title', '表題', false);?></th>
-			<th><?php echo \Pagination::sort('controller', 'コントローラ', false);?></th>
+			<th><?php echo \Pagination::sort('mod_or_ctrl', 'コントローラ', false);?></th>
 			<th><?php echo \Pagination::sort('body', '本文', false);?></th>
 			<th><?php echo \Pagination::sort('updated_at', '更新日時', false);?></th>
 			<th><?php echo \Pagination::sort('deleted_at', '削除日', false);?></th>
@@ -22,7 +22,7 @@
 <?php foreach ($items as $item): ?>		<tr>
 	<td><?php echo $item->id; ?></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->title; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->controller; ?></div></td>
+	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->mod_or_ctrl; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->body; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->updated_at; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->deleted_at; ?></div></td>

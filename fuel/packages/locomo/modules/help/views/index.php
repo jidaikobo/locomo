@@ -6,7 +6,7 @@
 		<tr>
 			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
 			<th>表題</th>
-			<th>コントローラ</th>
+			<th>対象</th>
 			<th>本文</th>
 			<th>更新日時</th>
 			<th>削除日</th>
@@ -17,7 +17,7 @@
 <?php foreach ($items as $item): ?>		<tr>
 	<td><?php echo $item->id; ?></td>
 	<td><?php echo $item->title; ?></td>
-	<td><?php echo $item->controller; ?></td>
+	<td><?php echo $item->mod_or_ctrl; ?></td>
 	<td><?php echo $item->body; ?></td>
 	<td><?php echo $item->updated_at; ?></td>
 	<td><?php echo $item->deleted_at; ?></td>

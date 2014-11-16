@@ -20,20 +20,5 @@ class Controller_Help extends \Locomo\Controller_Crud
 	use \Locomo\Controller_Traits_Testdata;
 //	use \Option\Traits_Controller_Option;
 //	use \Workflow\Traits_Controller_Workflow;
-//	use \Revision\Traits_Controller_Revision;
-
-	/**
-	 * before()
-	 * help is fot logged in users
-	 */
-	public function before ()
-	{
-		if( ! \Auth::check())
-		{
-			return \Response::redirect('content/content/home');
-		}
-
-		//parent
-		parent::before();
-	}
+	use \Revision\Traits_Controller_Revision;
 }

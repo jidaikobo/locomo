@@ -86,9 +86,9 @@ trait Traits_Controller_Revision
 		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
 		if($opt_arg):
-			$action['urls'][] = \Html::anchor($module.DS.$ctrl_url.DS.'edit/'.$id,'編集画面へ');
+			$action['urls'][] = \Html::anchor($ctrl_url.DS.'edit/'.$id,'編集画面へ');
 		endif;
-		$action['urls'][] = \Html::anchor($module.DS.$ctrl_url.DS.'index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
+		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
 		$action['order'] = 10;
 		$action['overrides'] = array('base' => array());
 		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);

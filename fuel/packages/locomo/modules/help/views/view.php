@@ -9,10 +9,10 @@
 </tr>
 
 <?php endif; ?>
-<?php if($item->controller): ?>
+<?php if($item->mod_or_ctrl): ?>
 <tr>
 	<th>コントローラ</th>
-	<td><?php echo $item->controller; ?></td>
+	<td><?php echo $item->mod_or_ctrl; ?></td>
 </tr>
 
 <?php endif; ?>
