@@ -39,10 +39,11 @@ if(\Auth::check()):
 			endif;
 			
 				//option menu
-				if(@$actionset['option']):
+				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'modal hidden_item boxshadow')) : false ;
+				if($optmenu):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"modal has_dropdown toggle_item\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"></span></a>";
-					$html.= \Actionset::generate_menu_html($actionset['option'], array('class'=>'modal hidden_item boxshadow'));
+					$html.= $optmenu;
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
 
@@ -105,10 +106,10 @@ if(\Auth::check()):
 					$html.= '</ul>';
 				$html.= '</div><!-- /.admin_option -->';
 			endif;
-		
+
 			//help
 			$html.= '<div class="admin_help">';
-				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[controller]='.\Request::main()->controller.'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[mod_or_ctrl]='.$locomo['current']['mod_or_ctrl']['name'].'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 			
 			//処理速度

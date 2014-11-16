@@ -52,18 +52,17 @@ footer,
 
 /*=== login ===*/
 body.login{
-/*	background-color: #aeb8bf;*/
 	background-color: #cdd7de;
 }
 .login .container {
 	min-height: inherit;
 	width: 22em;
-	height: 23.5em !important;
+	height: 23.75em !important;
 	padding: 0 1.5em;
 	margin-bottom: 0;
 	position: absolute;
 	top: 0;
-	bottom: 100px;
+	bottom: 0;
 	right: 0;
 	left: 0;
 	margin: auto;
@@ -73,7 +72,7 @@ body.login{
 	text-align: center;
 }
 .login.home .container{
-	height: 20.5em !important;
+	height: 21.5em !important;
 }
 .login h1{
 	position: absolute !important;
@@ -100,12 +99,10 @@ body.login{
 	border: none;
 	padding: 0;
 	margin: .5em 0;
-}
-.login input{
-	width: 12em;
+	background-color: transparent;
 }
 .login input#form_submit {
-	margin: 2em 0;
+	margin: 1.5em 0;
 	width: 100%;
 }
 .login a{
@@ -368,11 +365,6 @@ ul.holizonal_list {
 	margin-right: 10px;
 }
 
-.loggedin .submit_button {
-	position: absolute;
-	bottom: -2.5em;
-	right: 0;
-}
 
 /* button */
 .btn,
@@ -609,16 +601,15 @@ div.form_tooltip{
 .form_group{
 	margin: 10px 0 20px;
 	padding: 10px;
-	border: 1px solid #aaa;
+	background-color: #eee;
 }
 form tbody th{
 	text-align: left;
 	padding-right: 5px;
 }
 .submit_button{
-	position: absolute;
-	bottom: -2.5em;
-	right: 0;
+	width: 100%;
+	text-align: right;
 }
 
 a.disclosure{
@@ -638,18 +629,7 @@ a.disclosure.on{
 a.show_item:hover{
 	text-decoration: underline;
 }
-/*
-form .submit_field{
-	display: table;
-	width: 100%;
-}
-form .submit_field .submit_button{
-	display: table-header-group;
-}
-form .submit_field .revision_comment{
-	display: table-row;
-}
-*/
+
 /*===  table  ===*/
 .datatable{
 	background-color: #fefefe;
@@ -695,6 +675,23 @@ table.datatable td{
 	padding: 0 .5em;
 }
 
+.formtable{
+	border-spacing: 0px;
+	width: 100%;
+	border-left: none;
+}
+.formtable th,
+.formtable td {
+	text-align: left;
+	padding: 8px 5px;
+	border-bottom: 1px #ccc solid;
+	box-shadow: 0 1px 0 #f3f3f3;
+	border-right: none;
+}
+.formtable thead th {
+	text-align: left;
+}
+
 /*=== contents ===*/
 .contents {
 }
@@ -735,10 +732,6 @@ table.datatable td{
 }
 .ui-datepicker-current {
 	opacity: 1 !important;
-}
-.ui_tpicker_second_label,
-.ui_tpicker_second {
-	display: none;
 }
 div.ui-timepicker-div dl dd {
 	margin: .75em 10px .25em 40%;
