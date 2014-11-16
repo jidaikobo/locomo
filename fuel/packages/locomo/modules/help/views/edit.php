@@ -30,12 +30,7 @@
 	</table>
 </fieldset>
 
-<!--コントローラがリビジョンをサポートしている場合だけ有効です。適宜削除してください-->
-<fieldset>
-	<legend><?php echo \Form::label('編集履歴用メモ', 'revision_comment'); ?></legend>
-	<?php echo \Form::textarea('revision_comment', Input::post('revision_comment', isset($item->comment) ? $item->comment : ''), array('style'=>'width: 100%;')); ?>
-</fieldset>
-<!--リビジョン用編集メモここまで-->
+	<?php echo render(LOCOMOPATH.'modules/revision/views/inc_revision_memo.php'); ?>
 
 <p>
 	<?php
