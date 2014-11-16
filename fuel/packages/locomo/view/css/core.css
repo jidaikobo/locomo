@@ -52,7 +52,6 @@ footer,
 
 /*=== login ===*/
 body.login{
-/*	background-color: #aeb8bf;*/
 	background-color: #cdd7de;
 }
 .login .container {
@@ -63,7 +62,7 @@ body.login{
 	margin-bottom: 0;
 	position: absolute;
 	top: 0;
-	bottom: 100px;
+	bottom: 0;
 	right: 0;
 	left: 0;
 	margin: auto;
@@ -100,6 +99,7 @@ body.login{
 	border: none;
 	padding: 0;
 	margin: .5em 0;
+	background-color: transparent;
 }
 .login input#form_submit {
 	margin: 1.5em 0;
@@ -601,7 +601,7 @@ div.form_tooltip{
 .form_group{
 	margin: 10px 0 20px;
 	padding: 10px;
-	border: 1px solid #aaa;
+	background-color: #eee;
 }
 form tbody th{
 	text-align: left;
@@ -685,7 +685,7 @@ table.datatable td{
 	text-align: left;
 	padding: 8px 5px;
 	border-bottom: 1px #ccc solid;
-	box-shadow: 0 1px 0 #fff;
+	box-shadow: 0 1px 0 #f3f3f3;
 	border-right: none;
 }
 .formtable thead th {
