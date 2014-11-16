@@ -5,7 +5,7 @@ trait Traits_Controller_Revision
 	/**
 	 * action_index_revision()
 	 */
-	public function action_index_revision($model_simple_name, $page = 1)
+	public function action_index_revision($model_simple_name = null, $page = 1)
 	{
 		//vals
 		$module = $this->request->module;
@@ -44,7 +44,7 @@ trait Traits_Controller_Revision
 	/**
 	 * action_each_index_revision()
 	 */
-	public function action_each_index_revision($model_simple_name, $id = null)
+	public function action_each_index_revision($model_simple_name = null, $id = null)
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 

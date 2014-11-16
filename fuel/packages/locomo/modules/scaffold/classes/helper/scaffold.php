@@ -312,7 +312,7 @@ class Helper_Scaffold
 		//observers
 		$observers = '';
 		if(in_array('created_at', $cmd_mods)):
-			$observers.= "\t\t'Orm\Observer_CreatedAt' => array(\n\t\t\t'events' => array('before_insert'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
+			$observers.= "\t\t'Locomo\Observer_Created' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
 		endif;
 		if(in_array('updated_at', $cmd_mods)):
 			$observers.= "\t\t'Orm\Observer_UpdatedAt' => array(\n\t\t\t\t'events' => array('before_save'),\n\t\t\t\t'mysql_timestamp' => true,\n\t\t\t),\n";

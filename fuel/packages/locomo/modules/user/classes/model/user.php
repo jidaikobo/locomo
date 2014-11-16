@@ -59,8 +59,8 @@ class Model_User extends \Locomo\Model_Base
 	 * $_observers
 	 */
 	protected static $_observers = array(
-		'Orm\Observer_CreatedAt' => array(
-			'events' => array('before_insert'),
+		'Locomo\Observer_Created' => array(
+			'events' => array('before_insert', 'before_save'),
 			'mysql_timestamp' => true,
 		),
 		'Orm\Observer_UpdatedAt' => array(
