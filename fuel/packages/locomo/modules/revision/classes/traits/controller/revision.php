@@ -83,7 +83,7 @@ trait Traits_Controller_Revision
 		endforeach;
 
 		//add_actionset
-		$ctrl_url = \Inflector::to_dir($this->request->controller);
+		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
 		if($opt_arg):
 			$action['urls'][] = \Html::anchor($module.DS.$ctrl_url.DS.'edit/'.$id,'編集画面へ');

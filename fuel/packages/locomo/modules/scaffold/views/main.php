@@ -1,5 +1,6 @@
 
 <?php echo \Form::open(); ?>
+<div class="form_group">
 <h3><?php echo \Form::label('拡張oilコマンド書式', 'cmd'); ?></h3>
 <p>
 	<?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('style' => 'width:100%;height:10em;', 'placeholder'=>'拡張oilコマンド書式')); ?><br />
@@ -10,6 +11,7 @@
 	<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'button primary')); ?>
 </div>
 <?php echo \Form::close(); ?>
+</div>
 
 <h2>使い方</h2>
 
