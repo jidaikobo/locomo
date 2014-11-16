@@ -96,7 +96,7 @@ class Model_Help extends \Locomo\Model_Base
 		//controller - コントローラ
 		$controllers = array('all' => '共通ヘルプ');
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if( ! isset($v['nicename'])) continue;
+			if( ! isset($v['nicename']) || $k == 'help' || $k == 'admin' || $k == 'content') continue;
 			$controllers[$k] = $v['nicename'];
 		endforeach;
 		$checked = isset($obj->controller) ? $obj->controller : '';
@@ -113,7 +113,7 @@ class Model_Help extends \Locomo\Model_Base
 		$form->add(
 			'body',
 			'本文',
-			array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;', 'class' => 'text')
+			array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;', 'class' => 'text tinymce')
 		)
 		->add_rule('required')
 		->set_value(@$obj->body);
