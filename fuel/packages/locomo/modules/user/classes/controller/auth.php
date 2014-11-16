@@ -7,7 +7,7 @@ class Controller_Auth extends \Locomo\Controller_Crud
 	 */
 	public function action_login()
 	{
-		$ret = \Input::param('ret', @$_SERVER['HTTP_REFERER'], null);
+		$ret = \Input::param('ret', \Input::referrer(), null);
 		$ret = $ret == \Uri::create('user/auth/login/') ? '/' : $ret ;
 		$ret = $ret == null ? '/admin/dashboard/' : $ret ;
 
@@ -54,6 +54,6 @@ class Controller_Auth extends \Locomo\Controller_Crud
 		// logout
 		\Auth::logout();
 		\Session::set_flash('success', 'ログアウトしました。');
-		return \Response::redirect('user/auth/login/');
+		return \Response::redirect('user/auth/login/?ret=/');
 	}
 }
