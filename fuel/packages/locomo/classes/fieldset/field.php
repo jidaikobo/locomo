@@ -60,8 +60,14 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 				return $this->template_plain('');
 			}
 		}
-		return $this->template_plain($this->value);
 
+		if (!empty($this->options)) {
+			!is_array($this->value) and $this->value = array($this->value);
+			$val = \Arr::filter_keys($this->options, $this->value);
+			return $this->template_plain($val);
+		} else {
+			return $this->template_plain($this->value);
+		}
 	}
 
 
@@ -75,14 +81,14 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		if (is_array($build_field))
 		{
 			$label = $this->label ? str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>')) : '';
-			$template = $this->template ?: $form->get_config('form.multi_field_template_plain', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
+			$template = $this->template ?: $form->get_config('form.multi_field_template_plain', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}\n{fields}\t\t\t\n\t\t\t</td>\n\t\t</tr>\n");
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
 				foreach ($build_field as $lbl => $bf)
 				{
-					$bf_temp = str_replace('{label}', $lbl, $match[1]);
-					$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
+					$bf_temp = str_replace('{label}', '', $match[1]);
+					$bf_temp = str_replace('{required}', '', $bf_temp);
 					$bf_temp = str_replace('{field}', $bf, $bf_temp);
 					$build_fields .= $bf_temp;
 				}
@@ -108,6 +114,11 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		$template = str_replace(array('{label}', '{field}', '{field_id}'),
 			array($label, $build_field, $field_id),
 			$template);
+
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
+			array($label, '', $build_field, '', '', '', ''),
+			$template);
+
 
 		return $template;
 	}
