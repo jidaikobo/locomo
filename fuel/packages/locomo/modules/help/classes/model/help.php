@@ -93,16 +93,17 @@ class Model_Help extends \Locomo\Model_Base
 		->add_rule('max_length', 255)
 		->set_value(@$obj->title);
 
-		//mod_or_ctrl - コントローラ
-		$urls = parse_url(\Input::referrer());
-$qstrs = explode('[mod_or_ctrl]=',\Arr::get($urls, 'query', ''));
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $qstrs ) ;
-echo '</textarea>' ;
-
-
-
-
+		// mod_or_ctrl - コントローラ
+		$urls = parse_url(\Input::referrer());// parse referrer
+		list($s, $q) = explode('[mod_or_ctrl]=', \Arr::get($urls, 'query', ''));// explode by key str
+		// multiple query?
+		$mod_or_ctrl = '';
+		if(strpos($q, '&') !== false)
+		{
+			list($mod_or_ctrl, $q) = explode('&', $q);
+		}else{
+			$mod_or_ctrl = $q;
+		}
 		$mod_or_ctrls = array('all' => '共通ヘルプ');
 		$exceptions = array('help', 'admin', 'content');
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
@@ -110,7 +111,9 @@ echo '</textarea>' ;
 			$key = substr($v['admin_home'], 0, strpos($v['admin_home'], '/'));
 			$mod_or_ctrls[$k] = $v['nicename'];
 		endforeach;
-		$checked = isset($obj->mod_or_ctrl) ? $obj->mod_or_ctrl : '';
+		$checked = isset($obj->mod_or_ctrl) && ! empty($obj->mod_or_ctrl) ? $obj->mod_or_ctrl : $mod_or_ctrl;
+
+		
 		$form->add(
 			'mod_or_ctrl',
 			'コントローラ',
