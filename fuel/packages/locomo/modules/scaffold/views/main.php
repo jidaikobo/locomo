@@ -39,3 +39,9 @@ workflow_status:enum[init,approve,reject,remand,finish]:null
 <p>ターミナルで</p>
 <textarea class="pre" style="width: 100%;">php oil refine migrate:down[--modules=モジュール名]</textarea>
 <p>を実行した後、展開されたファイル群を削除してください。</p>
+
+<h3>オーバライド</h3>
+<p><code>LOCOMOPATH./modules/scaffold/classes/helper/</code>から、<code>APPPATH.classes/scaffold/helper/</code>に必要なファイルを移動すれば、処理をオーバライドできます。</p>
+<p><code>LOCOMOPATH./modules/scaffold/module_templates/</code>から、<code>APPPATH.locomo/modules/scaffold/module_templates/</code>に必要なファイルを移動すれば、基礎テンプレートのみを変更できます。</p>
+
+

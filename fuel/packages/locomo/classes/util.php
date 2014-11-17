@@ -49,4 +49,20 @@ class Util
 			return $retvals;
 		}
 	}
+
+	/**
+	 * get_latestprefix()
+	 * @param string dir
+	 * @param string format
+	 * @return string|false
+	 */
+	public static function get_latestprefix($dir, $format = '%03d')
+	{
+		$files = \File::read_dir($dir);
+		sort($files);
+		$latest_one = array_pop($files);
+		$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));
+		$latest_prefix = sprintf($format , $latest_prefix + 1);
+		return $latest_prefix;
+	}
 }
