@@ -8,7 +8,7 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 	public function render($group = null, $raw = false)
 	{
 		$retval = parent::render($group, $raw);
-		$search = 'fuel/packages/locomo/view';
+		$search = LOCOMOPATH.'view';
 		$replace = 'content/fetch_view';
 		return str_replace($search, $replace, $retval);
 	}
