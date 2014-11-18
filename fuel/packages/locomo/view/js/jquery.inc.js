@@ -97,6 +97,7 @@ $(document).on('click', '.modal.on', function(){
 });
 
 //表示・非表示切り替え
+
 $('.hidden_item').each(function(){
 	if((isModal == true)&& ( $(this).not(':input') || $(this).val()=='')){
 		$(this).hide();
@@ -220,7 +221,7 @@ $('.validation_error :input').tooltip({
 //login failed
 //中央表示の方法要考？ jquery uiのeffectは制御しづらそうなのでここではつかわない
 //そもそもjavascriptだけヘッダに直書きのほうがよいかも。
-/*
+
 if($('.login .alert_error')[0]){
 	$('.container').delay(0)
                    .animate({ left: -8 }, 75)
@@ -229,7 +230,6 @@ if($('.login .alert_error')[0]){
                    .animate({ left: 8 }, 75)
                    .animate({ left: 0 }, 75);
 }
-*/
 
 
 

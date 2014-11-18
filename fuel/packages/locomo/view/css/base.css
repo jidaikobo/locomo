@@ -507,6 +507,7 @@ textarea {
 	-o-box-sizing: border-box;
 	-ms-box-sizing: border-box;
 	box-sizing: border-box;
+	max-width: 100%;
 }
 .btn,
 .button {
@@ -853,17 +854,7 @@ table.tbl4 thead th {
 /* === table.radius === */
 table.tr,
 table.radius { /* 上、左にborder */
-/*	width: 98%;
-	border-collapse: separate;
-	border-spacing: 0;
-*/
 	border-radius: 4px;
-/*
-	border-top: 1px solid #bbb;
-	border-left: 1px solid #bbb;
-	border-right: none;
-	border-bottom: none;
-*/
 }
 *>table.tr,
 *>table.radius {

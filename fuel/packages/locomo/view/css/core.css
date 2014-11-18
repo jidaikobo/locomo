@@ -51,19 +51,24 @@ footer,
 }
 
 /*=== login ===*/
+
 body.login{
-	background-color: #cdd7de;
+	background-color: #dde7ee;
+	border-top: 4px solid #004896;
+	box-shadow: inset 0 1px 0 #edf7fc;
 }
 .login .container {
 	min-height: inherit;
 	width: 23em;
+	min-width: 23em;
 	height: 23.75em !important;
 	padding: 0 1.5em;
 	margin: 9em auto 50px;
 	background-color: #fff;
-	border: 1px solid #004896;
+	border: 1px solid #ccc;
 	border-radius: 3px;
 	text-align: center;
+	outline: none;
 }
 .login input[type="text"],
 .login input[type="password"] {
@@ -806,5 +811,29 @@ body{
 	padding:0 20px;
 	white-space: normal;
 }
+
+}
+
+@media screen and (max-width: 320px) {
+	body{
+		padding: 0;
+	}
+	.container{
+		width: 100%;
+		max-width: 100%;
+		min-width: 100%;
+		margin: 0;
+	}
+	.login .account label,
+	.login .password label {
+		position: absolute !important;
+		left: auto;
+		height: 0;
+		clip: rect(1px 1px 1px 1px);
+		clip: rect(1px, 1px, 1px, 1px);
+	}
+	select{
+		width: 100%;
+	}
 
 }
