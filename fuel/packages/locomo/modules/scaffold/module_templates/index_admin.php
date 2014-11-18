@@ -1,5 +1,5 @@
 <h2>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h2>
-<p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
+<p><?php echo \Pagination::sort_info('\XXX\Model_XXX'); ?></p>
 <?php 
 	//index menu
 	echo \Actionset::generate_menu_html($actionset['index'], array('class'=>'holizonal_list'));

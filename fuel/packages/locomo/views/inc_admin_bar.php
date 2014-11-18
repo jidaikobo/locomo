@@ -106,10 +106,10 @@ if(\Auth::check()):
 					$html.= '</ul>';
 				$html.= '</div><!-- /.admin_option -->';
 			endif;
-		
+
 			//help
 			$html.= '<div class="admin_help">';
-				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[controller]='.\Request::main()->controller.'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[mod_or_ctrl]='.$locomo['current']['mod_or_ctrl']['name'].'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/images/parts/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 			
 			//処理速度

@@ -10,7 +10,7 @@ class Model_Help extends \Locomo\Model_Base
 	protected static $_properties = array(
 		'id',
 		'title',
-		'controller',
+		'mod_or_ctrl',
 		'body',
 		'updated_at',
 		'deleted_at',
@@ -93,17 +93,31 @@ class Model_Help extends \Locomo\Model_Base
 		->add_rule('max_length', 255)
 		->set_value(@$obj->title);
 
-		//controller - コントローラ
-		$controllers = array('all' => '共通ヘルプ');
+		// mod_or_ctrl - コントローラ
+		$urls = parse_url(\Input::referrer());// parse referrer
+		list($s, $q) = explode('[mod_or_ctrl]=', \Arr::get($urls, 'query', ''));// explode by key str
+		// multiple query?
+		$mod_or_ctrl = '';
+		if(strpos($q, '&') !== false)
+		{
+			list($mod_or_ctrl, $q) = explode('&', $q);
+		}else{
+			$mod_or_ctrl = $q;
+		}
+		$mod_or_ctrls = array('all' => '共通ヘルプ');
+		$exceptions = array('help', 'admin', 'content');
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if( ! isset($v['nicename']) || $k == 'help' || $k == 'admin' || $k == 'content') continue;
-			$controllers[$k] = $v['nicename'];
+			if( ! isset($v['nicename']) || ! isset($v['admin_home']) || in_array($k, $exceptions)) continue;
+			$key = substr($v['admin_home'], 0, strpos($v['admin_home'], '/'));
+			$mod_or_ctrls[$k] = $v['nicename'];
 		endforeach;
-		$checked = isset($obj->controller) ? $obj->controller : '';
+		$checked = isset($obj->mod_or_ctrl) && ! empty($obj->mod_or_ctrl) ? $obj->mod_or_ctrl : $mod_or_ctrl;
+
+		
 		$form->add(
-			'controller',
+			'mod_or_ctrl',
 			'コントローラ',
-			array('type' => 'select', 'style' => 'width: 30%;', 'options' => $controllers, 'class' => 'varchar')
+			array('type' => 'select', 'style' => 'width: 30%;', 'options' => $mod_or_ctrls, 'class' => 'varchar')
 		)
 		->add_rule('required')
 		->add_rule('max_length', 255)
@@ -126,7 +140,7 @@ class Model_Help extends \Locomo\Model_Base
 		)
 		->add_rule('required')
 		->add_rule('max_length', 5)
-		->set_value(@$obj->seq);
+		->set_value(@$obj->seq ?: 10);
 
 
 

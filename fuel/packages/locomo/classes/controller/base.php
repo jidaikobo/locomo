@@ -60,6 +60,11 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		static::$nicename = $nicename;
 	}
 
+	public function after($response) {
+		if (!isset($this->template->title)) throw new \Exception("template に title を設定して下さい。<br>\$this->template->set_global('title', TITLE_VALUE')");
+		return parent::after($response);
+	}
+
 	/**
 	 * router()
 	*/

@@ -89,11 +89,6 @@ class Model_XXX extends \Locomo\Model_Base
 		$form->field('created_at')
 			->set_attribute(array('type' => 'text'));
 */
-		$form->field('submit')
-			->set_attribute(array('type' => false));
-
-		$form->field(\Config::get('security.csrf_token_key'))
-			->set_attribute(array('type' => false));
 
 		return $form;
 	}

@@ -6,7 +6,7 @@
 	<thead>
 		<tr>
 			<th><?php echo \Pagination::sort('id', 'ID', false); ?></th>
-			<th><?php echo \Pagination::sort('user_name', 'User name'); ?></th>
+			<th><?php echo \Pagination::sort('username', 'User name'); ?></th>
 			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
 			<th><?php echo \Pagination::sort('last_login_at', 'Last login'); ?></th>
 			<th>Delete date</th>

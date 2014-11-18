@@ -21,13 +21,6 @@ class Controller_Crud extends Controller_Base
 		),
 	);
 
-	protected $titles = array(
-		'deleted'   => '(削除済み項目)',
-		'yet'       => '(予約項目)',
-		'expired'   => '(期限切れ項目',
-		'invisible' => '(の不可視項目)',
-		'all'       => '(削除を含む全項目)',
-	);
 
 	/**
 	 * action_index_admin()
@@ -45,7 +38,7 @@ class Controller_Crud extends Controller_Base
 		$content->set('items',  $model::paginated_find(array(), $this->pagination_config));
 
 		$content->base_assign();
-		$content->set_global('title', static::$nicename);
+		$this->template->set_global('title', static::$nicename);
 		$this->template->content = $content;
 	}
 
@@ -72,7 +65,7 @@ class Controller_Crud extends Controller_Base
 		$model::$_conditions['where'][] = array('created_at', '>=', date('Y-m-d'));
 		$model::$_conditions['where'][] = array('expired_at', '>=', date('Y-m-d'));
 
-		\View::set_global('title', static::$nicename . '予約項目');
+		$this->template->set_global('title', static::$nicename . '予約項目');
 		static::action_index_admin();
 	}
 
@@ -87,7 +80,7 @@ class Controller_Crud extends Controller_Base
 		$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d'));
 		$model::$_conditions['where'][] = array('expired_at', '<=', date('Y-m-d'));
 
-		\View::set_global('title', static::$nicename . 'の期限切れ項目');
+		$this->template->set_global('title', static::$nicename . 'の期限切れ項目');
 		static::action_index_admin();
 	}
 
@@ -101,7 +94,7 @@ class Controller_Crud extends Controller_Base
 
 		$model::$_conditions['where'][] = array('is_visible', '=', 0);
 
-		\View::set_global('title', static::$nicename . 'の不可視項目');
+		$this->template->set_global('title', static::$nicename . 'の不可視項目');
 		static::action_index_admin();
 	}
 
@@ -119,7 +112,7 @@ class Controller_Crud extends Controller_Base
 		$model::disable_filter();
 		//static::enable_filter();
 
-		\View::set_global('title', static::$nicename . 'の削除済み項目');
+		$this->template->set_global('title', static::$nicename . 'の削除済み項目');
 		static::action_index_admin();
 	}
 
@@ -132,49 +125,14 @@ class Controller_Crud extends Controller_Base
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
 		$model::disable_filter();
-		\View::set_global('title', static::$nicename . 'の削除を含む全項目');
+		$this->template->set_global('title', static::$nicename . 'の削除を含む全項目');
 		static::action_index_admin();
 	}
 
-	/*
-	 * index_add 用にステータスを付与する
-	 * 後、下記と統合する
-	 */
-	private function add_status_all($objects = array()) {
-		foreach ($objects as $obj) {
-			static::add_status($obj);
-		}
-		return $objects;
-	}
-
-	/*
-	 * @param \Orm\Model
-	 */
-	private function add_status($obj = null) {
-		if (!$obj->status) {
-			if (isset($obj::properties()['created_at'])) {
-				if (strtotime($obj->created_at) > time()) $status = 'yet';
-				if (isset($obj::properties()['expired_at'])) {
-					if (strtotime($obj->expired_at) < time()) $status = 'expired';
-					/*if (strtotime($obj->expired_at) > time())*/ $status = 'yet';
-				}
-			}
-			// var_dump($obj->status); die();
-		}
-
-		array(
-			'invisible', // 不過視 in_progress
-			'revision', // リビジョン
-			'expired', // 期限切れ
-			'yet', // 予約済み
-			'deleted', // 削除済み
-		);
-	}
 
 	/**
 	 * action_view()
 	 */
-
 	public function action_view($id = null)
 	{
 		$model = $this->model_name;
@@ -189,7 +147,7 @@ class Controller_Crud extends Controller_Base
 				sprintf('%1$s #%2$d は表示できません', self::$nicename, $id)
 			);
 			throw new \HttpNotFoundException;
-			\Response::redirect($this->request->module);
+			\Response::redirect(\Inflector::ctrl_to_dir(get_called_class()));
 		endif;
 
 		//view
@@ -238,7 +196,7 @@ class Controller_Crud extends Controller_Base
 						'success',
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
-					\Response::redirect(\Uri::create($this->request->module.'/edit/'.$obj->id));
+					\Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
 				else:
 					//save failed
 					\Session::set_flash(
@@ -261,7 +219,7 @@ class Controller_Crud extends Controller_Base
 		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
 
 		//view
-		$content->set_global('title', $title);
+		$this->template->set_global('title', $title);
 		$content->set_global('item', $obj, false);
 		$content->set_global('form', $form, false);
 		$this->template->content = $content;
@@ -270,29 +228,34 @@ class Controller_Crud extends Controller_Base
 
 	/**
 	 * action_delete()
+	 * post only
+	 * need csrf token
 	 */
 	public function action_delete($id = null)
 	{
 		$model = $this->model_name ;
+		if ($obj = $model::find($id)) {
 
-		is_null($id) and \Response::redirect(\Uri::base());
-
-		if ($obj = $model::find($id)):
-
-			$obj->delete();
+			try {
+				$obj->delete(null, true);
+			}
+			catch (\Exception $e) {
+				\Session::set_flash(
+					'error',
+					sprintf('%1$sの #%2$d の削除中にエラーが発生しました', self::$nicename, $id)
+				);
+			}
 
 			\Session::set_flash(
 				'success',
 				sprintf('%1$sの #%2$d を削除しました', self::$nicename, $id)
 			);
-		else:
-			\Session::set_flash(
-				'error',
-				sprintf('%1$sの #%2$d を削除できませんでした', self::$nicename, $id)
-			);
-		endif;
 
-		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
+			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()) . '/index_deleted');
+		}
+
+		\Session::set_flash('error', sprintf('完全削除中にエラーが発生しました'));
+		throw new \HttpNotFoundException;
 	}
 
 	/**
@@ -300,80 +263,78 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_undelete($id = null)
 	{
-		$model = $this->model_name ;
-		is_null($id) and \Response::redirect(\Uri::base());
+		$model = $this->model_name;
+		if ($obj = $model::find_deleted($id)) {
 
-		if ($obj = $model::find_deleted($id)):
-			$obj->undelete();
-
+			try {
+				$obj->undelete();
+			}
+			catch (\Exception $e) {
+				\Session::set_flash('error', sprintf('%1$sの #%2$d の復活中にエラーが発生しました', self::$nicename, $id));
+				return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class() . '/index_deleted'));
+			}
 			\Session::set_flash(
 				'success',
 				sprintf('%1$sの #%2$d を復活しました', self::$nicename, $id)
 			);
-		else:
-			\Session::set_flash(
-				'error',
-				sprintf('%1$sの #%2$d を復活できませんでした', self::$nicename, $id)
-			);
-		endif;
+			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()));
+		}
 
-		return \Response::redirect(\Uri::create($this->request->module.'/index_admin'));
+		\Session::set_flash('error', sprintf('項目の復活中にエラーが発生しました'));
+		throw new \HttpNotFoundException;
+	}
+
+	public function action_purge_confirm ($id = null) {
+
+		$model = $this->model_name;
+
+		// if (!$item = $model::find_deleted($id)) {
+		if (!$item = $model::find($id)) {
+			\Session::set_flash('error', sprintf('完全削除中にエラーが発生しました'));
+			throw new \HttpNotFoundException;
+		}
+
+		$content = \View::forge('purge');
+
+		$plain = $model::plain_definition('purge_confirm', $item);
+		$content->set_safe('plain', $plain->build_plain());
+
+		$form = \Fieldset::forge('confirm_submit');
+		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))->set_value(\Security::fetch_token());
+		$form->add('submit', '', array('type'=>'submit', 'value' => '消去する'))->set_template('<div class="submit">{field}</div>');
+		$content->set_safe('form', $form->build(\Inflector::ctrl_to_dir(get_called_class()) . DS . 'purge' . DS . $item->id));
+
+		$this->template->set_global('title', self::$nicename.'消去');
+		$this->template->content = $content;
+		$content->base_assign($item);
 	}
 
 	/**
-	 * action_delete_deleted()
+	 * action_purge()
 	 */
-	public function action_delete_deleted($id = null)
+	public function action_purge($id = null)
 	{
-		$model = $this->model_name ;
+		$model = $this->model_name;
+		if (\Auth::is_root()
+			and \Input::post()
+			and \Security::check_token()
+			and $obj = $model::find($id)) {
 
-		is_null($id) and \Response::redirect(\Uri::base());
+			try {
+				// 現状 Cascading deleteの恩恵を受けられない？ 要実装 
+				$obj->purge(null, true);
+			}
+			catch (\Exception $e) {
+				\Session::set_flash('error', sprintf('%1$sの #%2$d の完全削除中にエラーが発生しました', self::$nicename, $id));
+				return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()) . DS .  'index_deleted');
+			}
 
-		if ($obj = $model::find_deleted($id)):
+			\Session::set_flash('success', sprintf('%1$sの #%2$d を完全に削除しました', self::$nicename, $id));
 
-			// 現状 Cascading deleteの恩恵を受けられない？ 要確認
-			$obj->purge();
+			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()));
+		}
 
-			\Session::set_flash(
-				'success',
-				sprintf('%1$sの #%2$d を完全に削除しました', self::$nicename, $id)
-			);
-		else:
-			\Session::set_flash(
-				'error',
-				sprintf('%1$sの #%2$d を削除できませんでした', self::$nicename, $id)
-			);
-		endif;
-
-		return \Response::redirect(\Uri::create($this->request->module.'/index_deleted'));
+		\Session::set_flash('error', sprintf('項目の完全削除中にエラーが発生しました'));
+		throw new \HttpNotFoundException;
 	}
-
-	/**
-	 * get_items()
-	 */
-	public function get_items()
-	{
-		$model = $this->model_name ;
-		$arg = array(
-			'limit'  => \Input::get('limit') ?: 10,
-			'offset' => \Input::get('offset') ?: 0,
-		);
-		//view
-		$this->response($model::find_items($arg)->results);
-	}
-
-	/**
-	 * get_item()
-	 */
-	public function get_item()
-	{
-		if( ! ($id = intval( \Input::get('id')))) die();
-		//view
-		$model = $this->model_name ;
-		$this->response($model::find_item($id));
-	}
-
-
-
-
 }

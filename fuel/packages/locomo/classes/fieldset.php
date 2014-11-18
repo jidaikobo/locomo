@@ -271,7 +271,6 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 
 
-
 	/*
 	 * alike a build method
 	 * input タグ を出力しない
@@ -312,15 +311,20 @@ class Fieldset extends \Fuel\Core\Fieldset
 			// リレーションされたフィールド
 			// todo mm のセレクトなど
 			if ($f instanceof \Fieldset_Field) {
-				if (is_array($build_field)) {
-					if ((isset($build_field[$this->name]) and !in_array($f->name, $build_field[$this->name])) or !isset($build_field[$this->name]))
-						if (!$f->type or $f->type == 'hidden') continue;
-				} elseif (!$build_field) {
+
+				if (is_array($build_field) and isset($build_field[$this->name])) {
+					var_dump($this->name);
+						if (in_array($f->name, $build_field[$this->name])) {
+							if (!$f->type or $f->type == 'hidden') continue;
+							!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($build_field, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
+					}
+
+				} elseif (!$build_field or !is_array($bild_field[$this->name])) {
 					if (!$f->type or $f->type == 'hidden') continue;
+					!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($build_field, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
 				}
 
 			}
-			!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($build_field, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
 		}
 
 		/*
@@ -385,6 +389,11 @@ class Fieldset extends \Fuel\Core\Fieldset
 			));
 		}
 
+		return $this;
+	}
+
+	public function delete($name) {
+		unset($this->fields[$name]);
 		return $this;
 	}
 
