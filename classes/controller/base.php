@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Controller_Base extends \Fuel\Core\Controller_Hybrid
+class Controller_Base extends \Fuel\Core\Controller_Rest
 {
 	/**
 	* @var string name for human
@@ -10,7 +10,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 	/**
 	* @var string template
 	*/
-	public $template = 'default';
+	public $_template = 'admin';
 
 	/**
 	 * @var string model name
@@ -61,10 +61,6 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 		static::$nicename = $nicename;
 	}
 
-	public function after($response) {
-		if (!isset($this->template->title)) throw new \Exception("template に title を設定して下さい。<br>\$this->template->set_global('title', TITLE_VALUE')");
-		return parent::after($response);
-	}
 
 	/**
 	 * router()
@@ -161,5 +157,89 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 
 		return $is_allow;
 	}
+
+
+
+
+
+
+
+
+	/*
+	 * ココからHybridそのまま
+	 * 
+	 * After controller method has run output the template
+	 *
+	 * @param  Response  $response
+	 */
+	public function after($response)
+	{
+		if (!isset($this->template->title)) throw new \Exception("template に title を設定して下さい。<br>\$this->template->set_global('title', TITLE_VALUE')");
+
+		// return the template if no response is present and this isn't a RESTful call
+		if ( ! $this->is_restful())
+		{
+			// do we have a response passed?
+			if ($response === null)
+			{
+				// maybe one in the rest body?
+				$response = $this->response->body;
+				if ($response === null)
+				{
+					// fall back to the defined template
+					$response = $this->template;
+				}
+			}
+
+			if ( ! $response instanceof \Response)
+			{
+				$response = \Response::forge($response, $this->response_status);
+			}
+		}
+
+		return parent::after($response);
+	}
+
+	/**
+	 * Decide whether to return RESTful or templated response
+	 * Override in subclass to introduce custom switching logic.
+	 *
+	 * @param  boolean
+	 */
+	public function is_restful()
+	{
+		return \Input::is_ajax();
+	}
+
+	public function __get($name) {
+
+		//var_dump($this->_template);
+
+		if ($name == 'template') {
+			if (isset($this->template) and $this->template instanceof \View) return $this->template;
+			if ( ! empty($this->_template) and is_string($this->_template)) {
+				return $this->template = \View::forge($this->_template);
+			}
+
+		}
+		/*
+		// setup the template if this isn't a RESTful call
+		if ( ! $this->is_restful())
+		{
+			if ( ! empty($this->template) and is_string($this->template))
+			{
+				// Load the template
+				$this->template = \View::forge($this->template);
+			}
+		}
+		 */
+		// if ($name == 'template') return $this->template = \View::forge('default'); //var_dump($name); die();
+	}
+
+
+
+
+
+
 }
 
