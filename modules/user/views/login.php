@@ -1,5 +1,6 @@
 <h2>
 <?php
+	// use default or override logo
 	echo \Asset::img('system/logo.png', array('id' => 'logo'));
 	echo \Config::get('site_title');
 ?>
