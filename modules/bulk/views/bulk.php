@@ -8,7 +8,7 @@ endif;
 ?>
 
 <?php if($form): ?>
-<?php echo \Form::open(\Uri::create('', array(), \Input::get())); ?>
+<?php echo \Form::open(\Uri::create(\Uri::current(), array(), \Input::get())); ?>
 <div class="form_group">
 
 <?php echo $form; ?>

@@ -41,7 +41,7 @@ trait Traits_Controller_Bulk
 		/* deletedも保持 */
 		$ids = array();
 		foreach ($objects as $object) {
-			$ids[] = $object->{$object::primary_key()[0]};
+			!is_null($object->{$object::primary_key()[0]}) and $ids[] = $object->{$object::primary_key()[0]};
 		}
 
 		if (\Input::post() && \Security::check_token()) {
@@ -54,6 +54,7 @@ trait Traits_Controller_Bulk
 				}
 
 				$ids = array_unique($ids);
+
 				// 新規を全て空で保存した時の処理
 				$judge = array_filter($ids);
 				if (empty($judge)) {

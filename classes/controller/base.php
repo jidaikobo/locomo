@@ -30,9 +30,6 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		// parent
 		parent::before();
 
-		//template
-		$this->_template = 'admin';
-
 		// show profile to root only
 		\Fuel::$profiling = \Auth::get('id') == -2 ?: false ;
 
