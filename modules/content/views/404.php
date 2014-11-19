@@ -1,5 +1,6 @@
+<h1>Not Found.</h1>
 
-<p>ページが見つかりませんでした。</p>
+<p>The requested URL <code><?php echo \Input::protocol().'://'.\Input::server('HTTP_HOST').\Input::server('REQUEST_URI') ?></code> was not found on this server.</p>
 <?php
 	if(\Auth::check())
 	{

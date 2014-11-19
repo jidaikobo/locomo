@@ -44,8 +44,9 @@ class Controller_Content extends \Locomo\Controller_Base
 	*/
 	public function action_404()
 	{
+		$this->_template = 'default';
 		$view = \View::forge('404');
-		$view->set_global('title', 'Page Not Found');
+		$view->set_global('title', 'Not Found');
 		$view->base_assign();
 		$this->template->content = $view;
 	}
@@ -102,8 +103,18 @@ class Controller_Content extends \Locomo\Controller_Base
 			return \Response::redirect('/', 'location', 404);
 
 		//存在確認
-		$filename = LOCOMOPATH."view/{$path}";
-		if( ! file_exists($filename)) return \Response::forge();
+		$filename = '' ;
+		$locomo_assets = LOCOMOPATH."assets/{$path}";
+		$app_assets = APPPATH."locomo/assets/{$path}";
+
+		$filename = file_exists($locomo_assets) ? $locomo_assets : '';
+		$filename = file_exists($app_assets)    ? $app_assets : $filename;
+
+		if( ! $filename)
+		{
+			$page = \Request::forge('content/content/404')->execute();
+			return new \Response($page, 404);
+		}
 
 		//拡張子を確認
 		$config = \Config::load('upload');
