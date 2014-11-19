@@ -11,7 +11,7 @@ class Auth_Group_Locomogroup extends \Auth_Group_Driver
 	}
 
 	protected $config = array(
-		'drivers' => array('acl' => array('Locomoacl'))
+		'drivers' => array('acl' => array('\\Locomo\\Locomoacl'))
 	);
 
 	public function groups()

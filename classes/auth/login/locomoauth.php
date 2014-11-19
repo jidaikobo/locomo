@@ -29,7 +29,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		'email' => false
 	);
 	protected $config = array(
-		'drivers' => array('group' => array('Locomogroup')),
+		'drivers' => array('group' => array('\\Locomo\\Locomogroup')),
 		'additional_fields' => array('profile_fields'),
 	);
 
