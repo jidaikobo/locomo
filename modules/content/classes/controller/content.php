@@ -44,7 +44,7 @@ class Controller_Content extends \Locomo\Controller_Base
 	*/
 	public function action_404()
 	{
-//		$this->template = 'default';
+		$this->_template = 'default';
 		$view = \View::forge('404');
 		$view->set_global('title', 'Not Found');
 		$view->base_assign();
