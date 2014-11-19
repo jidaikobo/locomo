@@ -12,7 +12,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	public $_template = 'admin';
 
-	/**
+	/*
 	 * @var string model name
 	 */
 	protected $model_name = '';
@@ -29,6 +29,9 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	{
 		// parent
 		parent::before();
+
+		//template
+		$this->_template = 'admin';
 
 		// show profile to root only
 		\Fuel::$profiling = \Auth::get('id') == -2 ?: false ;
