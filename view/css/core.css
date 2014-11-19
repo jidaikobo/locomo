@@ -54,8 +54,6 @@ footer,
 
 body.login{
 	background-color: #dde7ee;
-	border-top: 4px solid #004896;
-	box-shadow: inset 0 1px 0 #edf7fc;
 }
 .login .container {
 	min-height: inherit;
@@ -146,7 +144,7 @@ body.login{
 
 #adminbar {
 	width: 100%;
-	min-width: 320px;
+	min-width: 300px;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -237,6 +235,9 @@ body.login{
 .adminbar_top .adminbar_sub {
 	vertical-align: middle;
 }
+.adminbar_top .adminbar_main a{
+	margin-right: 5px;
+}
 .adminbar_top .adminbar_sub {
 	height: 2.5em;
 }
@@ -246,7 +247,6 @@ body.login{
 	line-height: 2em;
 }
 .adminbar_top .adminbar_sub div {
-	float:right;
 	line-height: 2em;
 	vertical-align: middle;
 	padding-left: 5px;
@@ -774,10 +774,6 @@ body{
 .container{
 	min-width: 300px;
 }
-
-}
-
-@media screen and (max-width: 520px) {
 .adminbar_bottom .adminbar_main{
 	padding-right: 3.5em;
 }
