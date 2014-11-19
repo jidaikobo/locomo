@@ -8,7 +8,6 @@
 	<!--stylesheet-->
 	<?php echo \Asset::css('base.css'); ?>
 	<?php echo \Asset::css('core.css'); ?>
-	<?php echo \Asset::css('layout.css'); ?>
 	<?php echo \Asset::css('admin.css'); ?>
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css">
 	<link rel="stylesheet" href="<?php echo \Uri::base() ?>/content/fetch_view/js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css">

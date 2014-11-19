@@ -48,6 +48,7 @@ class Controller_Base extends \Fuel\Core\Controller_Hybrid
 			$this->model_name = '\\Model_'.$controller;
 			static::$config = \Config::load(strtolower($controller));
 		}
+		static::$config = static::$config ?: array();
 
 		// nicename
 		$called_class = get_called_class();

@@ -63,7 +63,7 @@ Autoloader::add_classes(array(
 \Package::load('auth');
 
 // add asset path
-\Asset::add_path(LOCOMOPATH.'view/');
-\Asset::add_path(DOCROOT.'view/');
+\Asset::add_path(LOCOMOPATH.'assets/');
+\Asset::add_path(APPPATH.'locomo/assets/');
 
 /* End of file bootstrap.php */

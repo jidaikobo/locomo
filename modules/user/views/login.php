@@ -1,4 +1,9 @@
-<h2><img src="<?php echo \Uri::base() ?>/content/fetch_view/images/parts/logo.png" alt=""><?php echo \Config::get('site_title') ;?></h2>
+<h2>
+<?php
+	echo \Asset::img('system/logo.png', array('id' => 'logo'));
+	echo \Config::get('site_title');
+?>
+</h2>
 
 <?php echo \Form::open(array('action' => \Uri::base(false).'user/auth/login/','class' => 'login')); ?>
 

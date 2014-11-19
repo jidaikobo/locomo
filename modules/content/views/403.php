@@ -1,5 +1,7 @@
+<h1>Forbidden</h1>
 
-<p>許可されていません。</p>
+<p>You don't have permission to access here.</p>
+
 
 <?php
 	if(\Auth::check())

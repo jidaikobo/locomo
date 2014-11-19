@@ -7,6 +7,15 @@ class View extends \Fuel\Core\View
 	 */
 	public function base_assign($item = null)
 	{
+		// logo
+		$logo = APPPATH.'locomo/system/img/logo.png';
+		if( ! file_exists($logo))
+		{
+			$logo = \Asset::img();
+			$logo = LOCOMOPATH.'assets/img/parts/logo.png';
+		}
+		
+
 		//guest
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
