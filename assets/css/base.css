@@ -974,7 +974,7 @@ dl.search_results dt {
 	margin: 0;
 	padding: 0 0 0 10px;
 	font-weight: bold;
-	background-image: url( '../images/_base/menulist_blue.gif' );
+	background-image: url( '../img/_base/menulist_blue.gif' );
 	background-repeat: no-repeat;
 	background-position: -8px 5px;
 }
@@ -1024,18 +1024,18 @@ dl.search_results dd strong {
 /* === Download Icons === */
 
 /* thx argon and XCL project */
-a.pdf:before,    a.icon[href$=".pdf"]:before    { content: url( '../images/icons/icon_pdf.gif' ); }
-a.ppt:before,    a.icon[href$=".ppt"]:before    { content: url( '../images/icons/icon_ppt.gif' ); }
-a.doc:before,    a.icon[href$=".doc"]:before    { content: url( '../images/icons/icon_doc.gif' ); }
-a.docx:before,   a.icon[href$=".docx"]:before   { content: url( '../images/icons/icon_doc.gif' ); }
-a.xls:before,    a.icon[href$=".xls"]:before    { content: url( '../images/icons/icon_xls.gif' ); }
-a.xlsx:before,   a.icon[href$=".xlsx"]:before   { content: url( '../images/icons/icon_xls.gif' ); }
-a.zip:before,    a.icon[href$=".zip"]:before    { content: url( '../images/icons/icon_zip.gif' ); }
-a.lzh:before,    a.icon[href$=".lzh"]:before    { content: url( '../images/icons/icon_lzh.gif' ); }
-a.txt:before,    a.icon[href$=".txt"]:before    { content: url( '../images/icons/icon_txt.gif' ); }
-a.tar_gz:before, a.icon[href$=".tar.gz"]:before { content: url( '../images/icons/icon_tgz.gif' ); }
-a.lock:after,    a.icon[href^="https:"]:before  { content: url( '../images/icons/lock.gif' ); }
-a._blank:after,  a.icon[target="_blank"]:after  { content: url( '../images/icons/window.gif' ); }
+a.pdf:before,    a.icon[href$=".pdf"]:before    { content: url( '../img/icons/icon_pdf.gif' ); }
+a.ppt:before,    a.icon[href$=".ppt"]:before    { content: url( '../img/icons/icon_ppt.gif' ); }
+a.doc:before,    a.icon[href$=".doc"]:before    { content: url( '../img/icons/icon_doc.gif' ); }
+a.docx:before,   a.icon[href$=".docx"]:before   { content: url( '../img/icons/icon_doc.gif' ); }
+a.xls:before,    a.icon[href$=".xls"]:before    { content: url( '../img/icons/icon_xls.gif' ); }
+a.xlsx:before,   a.icon[href$=".xlsx"]:before   { content: url( '../img/icons/icon_xls.gif' ); }
+a.zip:before,    a.icon[href$=".zip"]:before    { content: url( '../img/icons/icon_zip.gif' ); }
+a.lzh:before,    a.icon[href$=".lzh"]:before    { content: url( '../img/icons/icon_lzh.gif' ); }
+a.txt:before,    a.icon[href$=".txt"]:before    { content: url( '../img/icons/icon_txt.gif' ); }
+a.tar_gz:before, a.icon[href$=".tar.gz"]:before { content: url( '../img/icons/icon_tgz.gif' ); }
+a.lock:after,    a.icon[href^="https:"]:before  { content: url( '../img/icons/lock.gif' ); }
+a._blank:after,  a.icon[target="_blank"]:after  { content: url( '../img/icons/window.gif' ); }
 
 a.noicon:before,
 .noicon a:before {
@@ -1116,7 +1116,7 @@ a.edit_link {
 
 /* !!画像なし!! */
 a.edit_link span.icon {
-	background-image: url( '/wp-admin/images/menu.png' );
+	background-image: url( '/wp-admin/img/menu.png' );
 	background-position: -277px -40px;
 	display: inline-block;
 	height: 15px;

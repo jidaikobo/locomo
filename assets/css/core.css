@@ -7,7 +7,7 @@ IE8,MacIE5,Opera9以下 html:first-child
 	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #7393c6;
 	background-color: #0e3664;
-	background-image: url('../images/parts/adminbar_bg.png');
+	background-image: url('../img/system/adminbar_bg.png');
 }
 .adminbar_main li a:hover,
 .adminbar_main li a:focus {
@@ -154,7 +154,7 @@ body.login{
 }
 .adminbar_top {
 	background-color: #0e3664;
-	background-image: url('../images/parts/adminbar_bg.png');
+	background-image: url('../img/system/adminbar_bg.png');
 	background-position: center top;
 	background-repeat: no-repeat;
 	color: #fff !important;
@@ -261,14 +261,14 @@ body.login{
 }
 a.has_dropdown {
 	padding-right: 15px;
-	background-image: url('../images/parts/mark_listopen_bk.png');
+	background-image: url('../img/system/mark_listopen_bk.png');
 	background-position: right center;
 	background-repeat: no-repeat;
 	padding-left: 0;
 }
 .adminbar_top a.has_dropdown {
 	padding-right: 15px;
-	background-image: url('../images/parts/mark_listopen_wh.png');
+	background-image: url('../img/system/mark_listopen_wh.png');
 	background-position: right center;
 	background-repeat: no-repeat;
 }
@@ -504,7 +504,7 @@ div.flash_alert.alert_error {
 	border-color: #e9c6c6;
 	color: #111;
 	padding-left: 35px;
-	background-image: url('../images/led-icons/error.png');
+	background-image: url('../img/led-icons/error.png');
 	background-repeat: no-repeat;
 	background-position: 10px center;
 }
@@ -588,14 +588,14 @@ a.disclosure{
 	color: #333;
 	font-size: .9em;
 	text-decoration: none;
-	background-image: url('../images/parts/mark_disclose.png');
+	background-image: url('../img/system/mark_disclose.png');
 	background-position: 3px center;
 	background-repeat: no-repeat;
 	padding-right: 0;
 	padding-left: 15px;
 }
 a.disclosure.on{
-	background-image: url('../images/parts/mark_listopen_bk.png');
+	background-image: url('../img/system/mark_listopen_bk.png');
 	background-position-x: 0;
 }
 a.show_item:hover{
@@ -721,10 +721,10 @@ body .ui-datepicker select.ui-datepicker-month{
 	background-position: left top;
 }
 .switch_mce.is_visual{
-	background-image: url( '../images/led-icons/text_align_left.png' );
+	background-image: url( '../img/led-icons/text_align_left.png' );
 }
 .switch_mce.is_text{
-	background-image: url( '../images/led-icons/style.png' );
+	background-image: url( '../img/led-icons/style.png' );
 }
 
 

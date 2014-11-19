@@ -12,7 +12,7 @@ class View extends \Fuel\Core\View
 		if( ! file_exists($logo))
 		{
 			$logo = \Asset::img();
-			$logo = LOCOMOPATH.'assets/img/parts/logo.png';
+			$logo = LOCOMOPATH.'assets/img/system/logo.png';
 		}
 		
 
