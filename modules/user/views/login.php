@@ -8,7 +8,7 @@
 
 <?php echo \Form::open(array('action' => \Uri::base(false).'user/auth/login/','class' => 'login')); ?>
 
-<!--ユーザ名かメールアドレス-->
+<!-- username or mail -->
 <div class="form_group account">
 	<?php echo \Form::label('アカウント', 'username'); ?>
 	<?php echo '<span class="skip">ユーザ名かメールアドレス</span>'.\Form::input('username', Input::post('username', isset($item) ? $item->username : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1','size'=>'17')); ?>
