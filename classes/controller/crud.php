@@ -2,8 +2,6 @@
 namespace Locomo;
 class Controller_Crud extends Controller_Base
 {
-	// public $_master_template = 'default';
-	public $_template = 'default';
 	public $_content_template = null;
 
 	/**
@@ -20,7 +18,6 @@ class Controller_Crud extends Controller_Base
 			'active_end'    => '</span>',
 		),
 	);
-
 
 	/**
 	 * action_index_admin()
