@@ -21,7 +21,7 @@ if(\Auth::check()):
 					{
 						$ctrl_home = \Html::anchor($locomo['current']['controller']['home'], $locomo['current']['controller']['nicename']).': ';
 					}
-					$html.="<h3>".$mod_home.$ctrl_home.'</h3>'; //ツールバーのアンカーにも足す？
+					$html.="<h3>".$mod_home.$ctrl_home.'</h3>';
 				$html.= '</div><!-- /.admin_controller -->';
 				if(@$actionset['base']):
 					$html.= '<div class="admin_context">';
@@ -54,8 +54,8 @@ if(\Auth::check()):
 		$html.= '<div class="adminbar_top">'; 
 			$html.= "<img src=\"".\Uri::base()."content/fetch_view/img/system/logo.png\" id=\"adminbar_logo\" alt=\"".\Config::get('site_title')."\" title=\"".\Config::get('site_title')."トップへ\">" ;
 			$html.= '<div class="adminbar_main">';
-			$html.= \Config::get('no_home') ? '' : '<span><a href="'.\Uri::base().'" style="color:#fff;">ホーム</a></span>';
-			$html.= '<span><a href="'.\Uri::base().'admin/dashboard/" style="color:#fff;">ダッシュボード</a></span>';
+			$html.= \Config::get('no_home') ? '' : '<a href="'.\Uri::base().'" title="ホーム"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_home.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ホーム</span></a>';
+			$html.= '<a href="'.\Uri::base().'admin/dashboard/" title="ダッシュボード"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_dashboard.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ダッシュボード</span></a>';
 			$html.= '<h3 class="skip">メインメニュー</h3>';
 			//controller menu
 			if($locomo['controllers']):
@@ -76,21 +76,15 @@ if(\Auth::check()):
 		
 			$html.='<div class="adminbar_sub">';
 		
-			//thx debe
-			$root_prefix = \Auth::is_root() ? '_root' : '' ;
-		
-			//user menu
-			$html.= '<div class="adminbar_user">';
-			$html.= '<a href="javascript:void(0);" class="modal has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'</span></a>';
-			$html.= '<ul class="modal hidden_item boxshadow">';
-			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
-			if( ! \Auth::is_admin()):
-				$html.= "<li><a href=\"".\Uri::base()."user/user/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
-			endif;
-			$html.= "<li><a href=\"".\Uri::base()."user/auth/logout\">ログアウト</a></li>";
-			$html.= '</ul>';
-			$html.= '</div><!-- /.adminbar_user -->';
-		
+			//処理速度
+			$html.= \Auth::is_admin() ? '<div id="render_info" class="hide_if_smalldisplay">{exec_time}s  {mem_usage}mb</div>' : '';
+			
+			//help
+			$html.= '<div class="admin_help">';
+				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[mod_or_ctrl]='.$locomo['current']['mod_or_ctrl']['name'].'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+			$html.= '</div><!-- /.admin_help -->';
+			
+
 			//admin option menu
 			if(\Auth::is_admin()):
 				$html.= '<div class="admin_option">';
@@ -107,13 +101,22 @@ if(\Auth::check()):
 				$html.= '</div><!-- /.admin_option -->';
 			endif;
 
-			//help
-			$html.= '<div class="admin_help">';
-				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[mod_or_ctrl]='.$locomo['current']['mod_or_ctrl']['name'].'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
-			$html.= '</div><!-- /.admin_help -->';
-			
-			//処理速度
-			$html.= \Auth::is_admin() ? '<div id="render_info" class="hide_if_smalldisplay">{exec_time}s  {mem_usage}mb</div>' : '';
+		//thx debe
+			$root_prefix = \Auth::is_admin() ? '_admin' : '' ;
+			$root_prefix = \Auth::is_root() ? '_root' : $root_prefix ;
+		
+			//user menu
+			$html.= '<div class="adminbar_user">';
+			$html.= '<a href="javascript:void(0);" class="modal has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'</span></a>';
+			$html.= '<ul class="modal hidden_item boxshadow">';
+			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
+			if( ! \Auth::is_admin()):
+				$html.= "<li><a href=\"".\Uri::base()."user/user/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
+			endif;
+			$html.= "<li><a href=\"".\Uri::base()."user/auth/logout\">ログアウト</a></li>";
+			$html.= '</ul>';
+			$html.= '</div><!-- /.adminbar_user -->';
+
 		$html.= '</div><!-- /.adminbar_sub -->';
 		$html.= '</div><!-- /.adminbar_top -->';
 	

@@ -14,7 +14,7 @@
 	<?php echo '<span class="skip">ユーザ名かメールアドレス</span>'.\Form::input('username', Input::post('username', isset($item) ? $item->username : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1','size'=>'17')); ?>
 </div>
 
-<!--パスワード-->
+<!-- password -->
 <div class="form_group password">
 	<?php echo \Form::label('パスワード', 'password'); ?>
 	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('placeholder'=>'パスワード','size'=>'17')); ?>
