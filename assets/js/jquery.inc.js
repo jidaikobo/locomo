@@ -56,6 +56,7 @@ var isHtmlScrollable = (function(){
 })();
 //スクロール
 $(document).on('click', 'a[href^=#]', function(){
+	$(window).off('beforeunload'); //ページ内リンク時に画面遷移の警告をキャンセル
 	var href= $(this).attr("href");
 	var t = $(href == '#' || href == '' ? 'html' : href);
 	var position = t.offset().top-headerheight-10;
@@ -111,8 +112,6 @@ $(document).on('click', '.toggle_item', function(){
 	$(this).toggleClass('on');
 });
 
-
-
 //確認ウィンドウ
 $('.confirm').click(function(){
 	var msg = $(this).data('jslcmMsg');
@@ -133,8 +132,32 @@ $('.confirm').click(function(){
 });
 
 //=== form ===
-$('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
 
+//ページ遷移時の警告
+//イベントを渡して.targetの値を見ることも可
+//エラー時も移動させたくない
+
+function confirm_beforeunload(){
+	$(window).on('beforeunload', function(){
+		return '変更内容は保存されていません。';
+	});
+}
+
+if(! $('body').hasClass('login')){
+	$('form').change( function(){
+		confirm_beforeunload();
+	});
+	if($('#alert_error')[0]){
+		confirm_beforeunload();
+	}
+}
+
+$("input[type=submit]").click(function(){
+	$(window).off('beforeunload');
+});
+
+//エラー時のナビゲーション
+$('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
 
 
 //=== rollover ===

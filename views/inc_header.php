@@ -23,7 +23,10 @@
 	<script src="<?php echo \Uri::base() ?>/content/fetch_view/js/jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js"></script>
 	<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
 	<?php echo \Asset::render('js'); ?>
-	
+	<!--[if lt IE 9]>
+	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+	<![endif]-->
+
 </head>
 <body class="<?php echo $body_class ;?>">
 	<div class="container">
