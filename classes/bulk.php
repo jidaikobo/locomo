@@ -43,6 +43,7 @@ class Bulk {
 			}
 			
 			if ($model->is_new()) {
+
 				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
 				!$model::get_filter_status() and $this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
 			} else {
