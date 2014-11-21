@@ -735,46 +735,53 @@ li.show_if_smalldisplay{
 
 
 @media screen and (max-width: 640px) {
-
-body{
-	padding-bottom: 10px;
-}
-.container{
-	min-width: 300px;
-}
-.adminbar_bottom .adminbar_main{
-	padding-right: 3.5em;
-}
-.adminbar_bottom .adminbar_sub{
-	position: absolute;
-	top: 0;
-	right: 0;
-}
-#adminbar .toggle_item .adminbar_icon{
-	margin-right: -8px;
-}
-#adminbar .adminbar_bottom .holizonal_list li {
-	margin-left: -.25em;
-}
-#adminbar .hide_if_smalldisplay{
-	position: absolute !important;
-	left: auto;
-	height: 0;
-	clip: rect(1px 1px 1px 1px);
-	clip: rect(1px, 1px, 1px, 1px);
-}
-#adminbar li.show_if_smalldisplay{
-	display: list-item !important;
-}
-#adminbar li.show_if_smalldisplay .label{
-	position: relative !important;
-	height: auto;
-	color: #333 !important;
-	text-shadow: none;
-	font-weight: bold;
-	padding:0 20px;
-	white-space: normal;
-}
+	body{
+		padding-bottom: 10px;
+	}
+	.container{
+		min-width: 300px;
+	}
+	.adminbar_bottom .adminbar_main{
+		padding-right: 3.5em;
+	}
+	.adminbar_bottom .adminbar_sub{
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	#adminbar .toggle_item .adminbar_icon{
+		margin-right: -8px;
+	}
+	#adminbar .adminbar_bottom .holizonal_list li {
+		margin-left: -.25em;
+	}
+	#adminbar .hide_if_smalldisplay{
+		position: absolute !important;
+		left: auto;
+		height: 0;
+		clip: rect(1px 1px 1px 1px);
+		clip: rect(1px, 1px, 1px, 1px);
+	}
+	#adminbar li.show_if_smalldisplay{
+		display: list-item !important;
+	}
+	#adminbar li.show_if_smalldisplay .label{
+		position: relative !important;
+		height: auto;
+		color: #333 !important;
+		text-shadow: none;
+		font-weight: bold;
+		padding:0 20px;
+		white-space: normal;
+	}
+	#render_info{
+		position: fixed;
+		bottom: 0;
+		left: 1%;
+		color: #333;
+		text-shadow: none;
+		line-height: 1;
+	}
 
 }
 

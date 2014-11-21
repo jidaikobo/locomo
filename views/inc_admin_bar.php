@@ -50,7 +50,7 @@ if(\Auth::check()):
 			$html.= '</div><!-- /.adminbar_sub -->';
 		$html.= '</div><!-- /.adminbar_bottom -->';
 
-		//adminbar_top  -- logo(sitetop), mainmenu, user, option, renderinfo
+		//adminbar_top  -- logo(sitetop), mainmenu, renderinfo, option, user
 		$html.= '<div class="adminbar_top">'; 
 			$html.= "<img src=\"".\Uri::base()."content/fetch_view/img/system/logo.png\" id=\"adminbar_logo\" alt=\"".\Config::get('site_title')."\" title=\"".\Config::get('site_title')."トップへ\">" ;
 			$html.= '<div class="adminbar_main">';
@@ -77,7 +77,7 @@ if(\Auth::check()):
 			$html.='<div class="adminbar_sub">';
 		
 			//処理速度
-			$html.= \Auth::is_admin() ? '<div id="render_info" class="hide_if_smalldisplay">{exec_time}s  {mem_usage}mb</div>' : '';
+			$html.= \Auth::is_admin() ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
 			
 			//help
 			$html.= '<div class="admin_help">';
