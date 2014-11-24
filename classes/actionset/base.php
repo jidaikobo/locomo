@@ -127,7 +127,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
 		if($id):
-			$actions = array(array($controller.DS."delete".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
+			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 			$urls = static::generate_uris($controller, 'delete', $actions, ['create']);
 		endif;
 
@@ -154,7 +154,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_undelete($controller, $obj = null, $id = null, $urls = array())
 	{
 		if(isset($obj->deleted_at) && $obj->deleted_at && $id):
-			$actions = array(array($controller.DS."undelete".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
+			$actions = array(array($controller.DS."undelete/".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
 			$urls = static::generate_uris($controller, 'undelete', $actions, ['create']);
 		endif;
 
@@ -180,7 +180,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_delete_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
 		if(isset($obj->deleted_at) && $obj->deleted_at && $id):
-			$actions = array(array($controller.DS."delete_deleted".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
+			$actions = array(array($controller.DS."delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
 			$urls = static::generate_uris($controller, 'delete_deleted', $actions, ['create']);
 		endif;
 
