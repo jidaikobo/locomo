@@ -49,15 +49,18 @@ class Observer_Created extends \Orm\Observer
 	{
 		$utime = strtotime(\Input::post($this->_property));
 
-		if($utime || ! empty($obj->{$this->_property}))
+		//empty means today
+		if(empty($utime) || ! $utime)
 		{
-			if($utime >= 0)
-			{
-				$obj->{$this->_property} = $this->_mysql_timestamp ? date('Y-m-d H:i:s', $utime) : $utime ;
-				return;
-			}
+			$this->before_save($obj);
+			return;
 		}
-		$this->before_save($obj); 
+
+		if($utime >= 0)
+		{
+			$obj->{$this->_property} = $this->_mysql_timestamp ? date('Y-m-d H:i:s', $utime) : $utime ;
+			return;
+		}
 	}
 
 	/**
@@ -66,6 +69,7 @@ class Observer_Created extends \Orm\Observer
 	 */
 	public function before_save(\Orm\Model $obj)
 	{
+		//empty means today
 		if ($this->_overwrite or empty($obj->{$this->_property}))
 		{
 			$obj->{$this->_property} = $this->_mysql_timestamp ? \Date::time()->format('mysql') : \Date::time()->get_timestamp();
