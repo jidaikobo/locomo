@@ -124,8 +124,9 @@ class Actionset
 					$overrides = array_merge($overrides, static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides']);
 				}
 			endforeach;
+
 			//orderを修正
-			if( ! \Arr::get(static::$actions[$unique_key][$controller]['actionset'][$realm_name], 'order')) continue;
+//			if( ! \Arr::get(static::$actions[$unique_key][$controller]['actionset'][$realm_name], 'order')) continue;
 			static::$actions[$unique_key][$controller]['actionset'][$realm_name] = \Arr::multisort(static::$actions[$unique_key][$controller]['actionset'][$realm_name], array('order' => SORT_ASC,));
 		endforeach;
 

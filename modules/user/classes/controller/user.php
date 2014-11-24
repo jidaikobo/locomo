@@ -22,6 +22,15 @@ class Controller_User extends \Locomo\Controller_Crud
 	use \Bulk\Traits_Controller_Bulk;
 
 	/**
+	 * action_index()
+	 * user module is not for public.
+	 */
+	public function action_index()
+	{
+		return \Response::redirect(\Uri::create('user/user/index_admin'));
+	}
+
+	/**
 	 * action_usergroup()
 	 */
 	public function action_usergroup()
@@ -48,7 +57,7 @@ class Controller_User extends \Locomo\Controller_Crud
 	public static function user_auth_find()
 	{
 		// honesty at this case, ($pkid == \Auth::get('id')) is make sence.
-		//this is a sort of sample code.
+		// this is a sort of sample code.
 		$pkid = \Request::main()->id;
 		$obj = \User\Model_User::find($pkid);
 		return ($obj->id == \Auth::get('id'));

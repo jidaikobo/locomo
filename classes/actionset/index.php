@@ -7,14 +7,14 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index", '一覧'));
+		$actions = array(array($controller.DS."index", '公開一覧'));
 		$urls = static::generate_uris($controller, 'index', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '一覧（通常項目）',
 			'explanation'  => '通常項目の一覧の閲覧権限です。',
-			'order'        => 10,
+			'order'        => 100,
 			'dependencies' => array(
 				$controller.DS.'index',
 			)
@@ -27,7 +27,7 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_admin", '一覧'));
+		$actions = array(array($controller.DS."index_admin", '管理一覧'));
 		$urls = static::generate_uris($controller, 'index_admin', $actions);
 
 		$retvals = array(
@@ -55,29 +55,9 @@ class Actionset_Index extends Actionset
 			'urls'          => $urls ,
 			'action_name'  => '一覧（削除された項目）',
 			'explanation'  => '削除された項目一覧の権限です。',
-			'order'        => 10,
+			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'index_deleted',
-			)
-		);
-		return $retvals;
-	}
-
-	/**
-	 * index_expired()
-	 */
-	public static function actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
-	{
-		$actions = array(array($controller.DS."index_expired", '期限切れ項目'));
-		$urls = static::generate_uris($controller, 'index_expired', $actions);
-
-		$retvals = array(
-			'urls'          => $urls ,
-			'action_name'  => '一覧（期限切れ項目）',
-			'explanation'  => '期限切れ項目一覧の権限です。',
-			'order'        => 10,
-			'dependencies' => array(
-				$controller.DS.'index_expired',
 			)
 		);
 		return $retvals;
@@ -95,9 +75,29 @@ class Actionset_Index extends Actionset
 			'urls'          => $urls ,
 			'action_name'  => '一覧（予約項目）',
 			'explanation'  => '予約項目一覧の権限です。',
-			'order'        => 10,
+			'order'        => 30,
 			'dependencies' => array(
 				$controller.DS.'index_yet',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * index_expired()
+	 */
+	public static function actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
+	{
+		$actions = array(array($controller.DS."index_expired", '期限切れ項目'));
+		$urls = static::generate_uris($controller, 'index_expired', $actions);
+
+		$retvals = array(
+			'urls'          => $urls ,
+			'action_name'  => '一覧（期限切れ項目）',
+			'explanation'  => '期限切れ項目一覧の権限です。',
+			'order'        => 40,
+			'dependencies' => array(
+				$controller.DS.'index_expired',
 			)
 		);
 		return $retvals;
@@ -115,7 +115,7 @@ class Actionset_Index extends Actionset
 			'urls'          => $urls ,
 			'action_name'  => '一覧（不可視項目）',
 			'explanation'  => '不可視項目一覧の権限です。',
-			'order'        => 10,
+			'order'        => 50,
 			'dependencies' => array(
 				$controller.DS.'index_invisible',
 			)

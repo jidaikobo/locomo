@@ -1,9 +1,13 @@
-<h2>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h2>
-<p><?php echo \Pagination::sort_info('\User\Model_User'); ?></p>
 <?php
-	//index menu
+	// index menu
 	echo \Actionset::generate_menu_html($actionset['index'], array('class'=>'holizonal_list'));
+	// index information
+	echo '<p class="index_info">';
+	echo \Pagination::sort_info('\User\Model_User');
+	echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : '';
+	echo '</p>';
 ?>
+
 <?php if ($items): ?>
 <table class="tbl datatable">
 	<thead>

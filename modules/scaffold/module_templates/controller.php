@@ -2,7 +2,7 @@
 namespace XXX;
 class Controller_XXX extends \Locomo\Controller_Crud
 {
-	//locomo
+	// locomo
 	public static $locomo = array(
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
 		'order_at_menu' => 10,   // order of appearance
@@ -16,7 +16,7 @@ class Controller_XXX extends \Locomo\Controller_Crud
 		),
 	);
 
-	//trait
+	// trait
 	use \Locomo\Controller_Traits_Testdata;
 //	use \Option\Traits_Controller_Option;
 //	use \Workflow\Traits_Controller_Workflow;

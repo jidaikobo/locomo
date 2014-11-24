@@ -1,0 +1,301 @@
+/**
+ * development
+ */
+
+// locomoパス
+
+Locomoパッケージ（以下locomo）では、モジュールやコントローラを起動するためのURI（パス）を、しばしば以下のように記述します。
+
+[\Namespace]\Controller_Name/action
+
+完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。
+
+// $locomo
+
+LocomoはFuelPHPのcontroller/moduleを基礎にしています。
+scaffoldを使うとモジュールが生成されますが、class/controllerにコントローラを配置しても機能します。
+その際、コントローラは必要に応じて、\Locomo\Controller_Crudを継承してください。
+
+またLocomo管理下に置かれるコントローラ／モジュールには、$locomoというメンバ変数を参照します。
+このメンバ変数はactionsetとaclで用います。
+
++quote start-----------------------------+
+	// locomo
+	public static $locomo = array(
+		// (bool)	show at menus
+		'show_at_menu' => true,
+		// (int)	order at menu
+		'order_at_menu' => 10,
+		// (bool)	true: not appear to acl menu
+		'is_for_admin' => true,
+		// (locomo-path)	home url of controller.
+		'admin_home' => '\\User\\Controller_User/index_admin',
+		// (str)	name for human
+		'nicename' => 'ユーザ', ->
+		// (arr)	actionset classes
+		'actionset_classes' =>array( ->
+			'base'   => '\\User\\Actionset_Base_User',
+			'index'  => '\\User\\Actionset_Index_User',
+			'option' => '\\User\\Actionset_Option_User',
+		),
+	);
++-------------------------------quote end+
+
+// actionset - overview
+
+アクションセットは、ユーザインタフェイスの提供とアクセス権管理の設定用クラスです。
+ユーザインタフェイス（リンク）が表示される画面上のデフォルトの領域（レルム）が4つあります。
+
++------------------------------------+
+|global admin bar                    |
++------------------------------------+
+|[base]                [ctrl][option]|
++------------------------------------+
+|[index]                             |
+|                                    |
+
+[base]  : 基本的な操作系のリンクです。
+[ctrl]  : アクション固有のリンクです。「戻る」などのリンクが主です。
+[option]: コントローラやモジュールの設定を変更するリンクです。ギアマークのドロップダウンに格納されます。
+[index] : 一覧を切り替えるリンクです。原則、index時に表示されます。
+
+アクションセットのクラスは上記のレルムごとに一つのクラスを持ちます。
+ctrlレルム以外は、LOCOMOPATH.classes/actionset/に、基本的なクラスを持っていますので、適宜、extendsしてください。
+ここで定義されているアクションセットが、アクセス権管理やユーザインタフェイス設定として用いられます。
+
+// actionset - disable default actionset
+
+基本的なアクションセットのクラスを使いつつ、しかし一部アクションセットを無効にしたい場合は、以下のように無効にしたいアクションセットでarray()をreturnしてください。
+
++quote start-----------------------------+
+	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
+	{
+		return array();
+	}
++-------------------------------quote end+
+
+// actionset - prepare user interface
+
+アクションセットのメソッドはactionset_という接頭辞を必要とします。この接頭辞がない場合は、アクションセットとして機能しませんので、一旦停止したい場合などは、_actionset_というようにすることもできます。
+
+以下はbaseレルム用のアクションセットの例です。
+
++quote start-----------------------------+
+	/**
+	 * edit()
+	 */
+	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
+	{
+		if(\Request::main()->action == 'view' && $id):
+			$actions = array(array($controller.DS."edit/".$id, '編集'));
+			$urls = static::generate_uris($controller, 'edit', $actions, ['edit','create']);
+		endif;
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '編集（通常項目）',
+			'explanation'  => '通常項目の編集権限',
+			'order'        => 30,
+			'dependencies' => array(
+				$controller.DS.'view',
+				$controller.DS.'edit',
+			)
+		);
+		return $retvals;
+	}
++-------------------------------quote end+
+
+$retvalsで返される項目が、\Locomo\Actionsetで判定されます。
+urlsには、完全なa要素を配列でセットしてください。
+コントローラにいる間、常に表示されていてよいリンクの場合は、そのままa要素を渡してもいいのですが、だいたいはリンクが表示されてほしいタイミングがあります。上記例は個別の項目の編集へのリンクなので、個別の項目を表示しているときに表示してほしいものです。ので
+
+if(\Request::main()->action == 'view' && $id):
+
+で、アクションがviewのときで$idが存在しているとき──つまり個別項目を表示しているとき──に編集へのリンクを表示します。
+
+また、権限のないユーザに対しては、リンクを非表示にしたい、ということもあります。その判定をしているのが、\Actionset::generate_uris()です。ここに、以下のように引数を渡すと、権限のあるものを完全なa要素の形にして返します。
+
+(array) \Actionset::generate_uris((str) controller, (str) action, (array) urls, [(array) exceptions]);
+
+第1引数と第2引数で、アクセス権を判定します。その次にlocomo-pathで記述したURIとリンク文字列のarrayを書きます。このリンク文字列は、\Html::anchor()を通るので、第3引数に属性値を入れても機能します（サンプルは\Actionset\actionset_delete()を参照してください）。
+
+generate_uris()の第4引数は、generate_uris()で判定される例外です。ここに設定したアクションの際にはリンクを返しません。ここを囲っているif分が必要条件なのに対し、こちらはいわば排他条件です。
+
+generate_uris()でurlsを生成することで、所与の条件でリンクが所定の位置に表示されるようになります。
+
+// actionset - override interface
+
+ある種のコントローラでは、baseレルムのリンクを上書きしたい場合があります。
+基本的には、$retvalsのoverridesを設定することで、オーバライドされますので、オーバライド条件を設定して、urlsと同様にa要素を配列で渡します。
+本ファイルの「bulk edit」の箇所もあわせて読んでみてください。
+
+// actionset - acl
+
+アクションセットで設定されているdependenciesは、アクションセットのリンクを表示する上で必要なアクションです。ここにはlocomo-pathのuriを配列で渡します。ここで設定したものがlocomoのaclの画面に表示され、管理の対象になります。
+
+// config
+
+configにnicenameとmain_controllerを設定してください。nicenameは人間用にコントローラ（モジュール）名を読みやすくしたもの。main_controllerは、これを使って、モジュールの代表画面を設定します。
+モジュールの場合は、モジュールディレクトリのconfigのなか、モジュールでない場合は、APPPATH.configにあるコントローラ名と同名のconfigを参照します。
+
+// exclusive acl
+
+configでは、通常のaclと異なったアクセス権管理を行いたい際のメソッドを指定する項目があります。conditioned_allowedに、locomo-pathとメソッド名を配列で指定します。
+
++quote start-----------------------------+
+	'conditioned_allowed' => array(
+		'\\User\\Controller_User/view/' => array('\\User\\Controller_User', 'user_auth_find'),
+		'\\User\\Controller_User/edit/' => array('\\User\\Controller_User', 'user_auth_find'),
+	),
++-------------------------------quote end+
+
+この例では、userモジュールのviewとeditにおいて、特別なアクセス権管理を行う処理を\User\Controller_Userのuser_auth_find()で定義しています。
+
+// template override
+
+モジュールのテンプレートだけオーバライドする場合は、APPPATH.views/MODNAME/views/に同じ名前のファイルで設置してください。inc_header等のオーバライドに関しては、APPPATH.views/に設置できます。
+
+// column name
+
+tableを作るとき、以下のカラム名は特別な仕事をします。
+
+is_visible:int:null
+可視属性フラグです。
+
+deleted_at:datetime:null
+削除フラグです。nullのときは表示され、dateが入っているときには削除されたことになります。
+
+created_at:datetime:null
+作成日です。未来の日付が入っていると予約項目になります。
+
+updated_at:datetime:null
+更新日です。
+
+expired_at:datetime:null
+表示期日です。過去の日付が入っていると表示終了になります。
+
+creator_id:int[5]
+modifier_id:int[5]
+作成者idと編集者idが格納されます。
+
+workflow_status:varchar[50]
+ワークフローを適用するコントローラでは必要です。
+
+seq:int[n]
+orderはいちおうMySQLの予約語なので、表示順を制御する際は、seqを使ってください。
+
+これらの条件は、Model::authorized_option()で判定材料にされ、tableの構成とユーザの権限にあわせて、表示権限等を制御します。
+
+// Model::cascade_set()
+
+モデルでORM用のリレーションを設定している場合、Model::cascade_set()でsave()に適した形のオブジェクトを生成できます。また、このメソッドは、リレーション先のバリデーションを同時に行うので、bool値を返します。
+
+// revision
+
+revisionを適用したいコントローラとアクションセットで、Traitを追加します。
+scaffoldを使った場合はコメントアウトされています。
+
+	use \Revision\Traits_Controller_Revision;
+	use \Revision\Traits_Actionset_Revision;
+
+モデルでは、observerを足してください。
+
+		'Locomo\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
+
+またモデルで、そのモデルの項目の表題名にあたるフィールド名を設定してください。
+	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
+
+これでモジュールでの編集履歴が有効になります。
+
+// workflow
+
+ワークフローを適用したいコントローラとモデルとアクションセットで、Traitを追加します。
+scaffoldを使った場合はコメントアウトされています。
+
+	use \Workflow\Traits_Controller_Workflow;
+	use \Workflow\Traits_Model_Workflow;
+	use \Workflow\Traits_Actionset_Base_Workflow;
+
+対象モデルの$_propertiesにworkflow_statusを足します。
+対象モデルにobserverを追加します。
+
+		'Workflow\Observer_Workflow' => array(
+			'events' => array('before_insert', 'before_save','after_load'),
+		),
+
+// bulk edit
+
+バルク編集をするためには、Modelをすこし変更する必要があります。ここでは、ユーザモジュールのユーザグループ編集を例にとります。
+
+まずバルク対象のモデルを作成します。ユーザグループの場合は、\User\Model_Usergroupです。モデルには、以下のようにメンバ変数を設定してください。ここで、バルク編集の範囲や順序制御に使っている条件等を設定します。
+
++quote start-----------------------------+
+	public static $_option_options = array(
+		'usergroup' => array(
+			'nicename'        => 'ユーザグループ',
+			'label'           => 'name',
+			'order_field'     => 'seq',
+			'template'        => '',//use bulk
+			'form_definition' => 'form_definition',
+			'option' => array(
+				'select' => array('name'),
+				'where'  => array(
+					array('is_available', '1'),
+				),
+				'order_by'  => array(
+					array('seq', 'ASC'),
+				)
+			),
+			'range' => array(
+				'select' => array('name'),
+				'where'  => array(
+					array('id', '>', '0'),
+				),
+				'order_by'  => array(
+					array('seq', 'ASC'),
+				)
+			)
+		)
+	);
++-------------------------------quote end+
+
+ユーザモジュールのユーザグループ設定では、\Actionset::generate_bulk_anchors()で条件設定とバルク編集特有のurlの生成をしています。$moduleなどは、すべてurlをパースしたものと考えてください。この条件のurlの配下にあるときには、オーバライド用のurlを生成しているということになります。
+
++quote start-----------------------------+
+	/**
+	 * actionset_usergroup()
+	 */
+	public static function actionset_usergroup($controller, $obj = null, $id = null, $urls = array())
+	{
+		$actions = array(array($controller.DS."usergroup", 'ユーザグループ'));
+		$urls = static::generate_uris($controller, 'create', $actions);
+
+		//overrides
+		$overrides = static::generate_bulk_anchors(
+			$module      = 'user',
+			$controller  = 'user',
+			$model       = 'usergroup',
+			$opt         = 'usergroup',
+			$nicename    = 'ユーザグループ',
+			$is_override = $urls
+		);
+
+		$retvals = array(
+			'urls'         => $urls,
+			'overrides'    => $overrides,
+			'show_at_top'  => true,
+			'action_name'  => 'ユーザグループ',
+			'explanation'  => 'ユーザが所属するユーザグループ管理です。追加、削除、設定等を行います。',
+			'order'        => 10,
+			'dependencies' => array(
+				$controller.DS.'usergroup',
+			)
+		);
+		return $retvals;
+	}
++-------------------------------quote end+
+
+$_option_optionsとアクションセットの二つで項目のバルク編集を実装できます。
+

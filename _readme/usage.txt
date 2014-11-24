@@ -2,118 +2,30 @@
  * deploy
  */
 
-//mv config
+// mv configs
 
 LOCOMOPATH.config/to_app_config のファイルを APPPATH.configに移動してください。
 packageconfigをオーバライドするためには、APPPATH.configにlocomo.phpとリネームして移動してください。
 
-//APPPATH.config/config.php
+// database
+
+APPPATH.configのdb.php（development内など適切なもの）に、データベースの接続情報を記述してください。
+
+// APPPATH.config/config.php
 
 always_loadに、locomoを足してください。
 
 security設定をしてください。
+
++quote start-----------------------------+
 	'security' => array(
 		 'csrf_autoload'    => false,
 		 'csrf_token_key'   => 'locomo_csrf_token',
 		 'csrf_expiration'  => 300,
++-------------------------------quote end+
 
-//oil
+// oil
 
 dbの設定後、oilコマンドで基礎モジュールのmigrationを実行してください。
 
 php oil refine migrate --modules=acl,user,workflow,revision,help
-
-/*
- * コントローラ／モジュール開発
- */
-
-Locomoパッケージ（以下locomo）はfuelphpのcontroller/moduleを基礎にしています。
-scaffoldを使うとモジュールが生成されますが、class/controllerにコントローラをおいても機能します。
-その際、コントローラは必要に応じて、\Locomo\Controller_Crudを継承してください。
-
-またLocomo管理下に置かれるコントローラ／モジュールには、$locomoというメンバ変数を参照します。
-モジュール「\User\Controller_User」を参考に記述してください。
-
-/*
- * アクションセット
- */
-
-これから書きます。
-
-/*
- * テンプレートのオーバライド
- */
-
-モジュールのテンプレートだけオーバライドする場合は、PROJPATH.views/MODNAME/views/に同じ名前のファイルで設置してください。inc_header等のオーバライドに関しては、PROJPATH.views/に設置できます。
-
-/*
- * 特別な名前のカラム
- */
-
-tableを作るとき、以下のカラム名は特別な仕事をします。
-
-is_visible:int:null
-可視属性フラグです。
-
-deleted_at:datetime:null
-削除フラグです。nullのときは表示され、dateが入っているときには削除されたことになります。
-
-created_at:datetime:null
-作成日です。未来の日付が入っていると予約項目になります。
-
-updated_at:datetime:null
-更新日です。
-
-expired_at:datetime:null
-表示期日です。過去の日付が入っていると表示終了になります。
-
-creator_id:int[5]
-modifier_id:int[5]
-作成者idと編集者idが格納されます。
-
-workflow_status:varchar[50]
-ワークフローを適用するコントローラでは必要です。
-
-/*
- * revision（編集履歴）
- */
-
-revisionを適用したいコントローラとアクションセットで、Traitを追加します。
-scaffoldを使った場合はコメントアウトされています。
-
-	use \Revision\Traits_Controller_Revision;
-	use \Revision\Traits_Actionset_Revision;
-
-モデルでは、observerを足してください。
-
-		'Locomo\Observer_Revision' => array(
-			'events' => array('after_insert', 'after_save'),
-		),
-
-またモデルで、そのモデルの項目の表題名にあたるフィールド名を設定してください。
-	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
-
-これでモジュールでの編集履歴が有効になります。
-
-/*
- * ワークフロー管理
- */
-
-ワークフローを適用したいコントローラとモデルとアクションセットで、Traitを追加します。
-scaffoldを使った場合はコメントアウトされています。
-
-	use \Workflow\Traits_Controller_Workflow;
-	use \Workflow\Traits_Model_Workflow;
-	use \Workflow\Traits_Actionset_Base_Workflow;
-
-対象モデルの$_propertiesにworkflow_statusを足します。
-対象モデルにobserverを追加します。
-
-		'Workflow\Observer_Workflow' => array(
-			'events' => array('before_insert', 'before_save','after_load'),
-		),
-
-/*
- * バルク編集
- */
-
