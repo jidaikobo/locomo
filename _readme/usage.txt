@@ -17,21 +17,11 @@ security設定をしてください。
 		 'csrf_token_key'   => 'locomo_csrf_token',
 		 'csrf_expiration'  => 300,
 
-//APPPATH.config/session.php
-
-ドライバをcookieに変更してください。
-
-	'driver'			=> 'cookie',
-
 //oil
 
-dbの設定後、oilコマンドで基礎モジュールのmigrationを実行してください（ACLを最初にrefineしてください）。
+dbの設定後、oilコマンドで基礎モジュールのmigrationを実行してください。
 
-php oil refine migrate:up --modules=acl
-php oil refine migrate:up --modules=user
-php oil refine migrate:up --modules=workflow
-php oil refine migrate:up --modules=revision
-php oil refine migrate:up --modules=help
+php oil refine migrate --modules=acl,user,workflow,revision,help
 
 /*
  * コントローラ／モジュール開発
