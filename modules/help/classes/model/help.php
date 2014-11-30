@@ -115,7 +115,6 @@ class Model_Help extends \Locomo\Model_Base
 		endforeach;
 		$checked = isset($obj->mod_or_ctrl) && ! empty($obj->mod_or_ctrl) ? $obj->mod_or_ctrl : $mod_or_ctrl;
 
-		
 		$form->add(
 			'mod_or_ctrl',
 			'コントローラ',
@@ -143,8 +142,6 @@ class Model_Help extends \Locomo\Model_Base
 		->add_rule('required')
 		->add_rule('max_length', 5)
 		->set_value(@$obj->seq ?: 10);
-
-
 
 		static::$_cache_form_definition = $form;
 		return $form;

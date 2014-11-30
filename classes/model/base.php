@@ -420,7 +420,13 @@ class Model_Base extends \Orm\Model_Soft
 				foreach (\Input::get('likes') as $k => $v) {
 					if ($v == false) continue;
 					if ( ! in_array($k, static::$_properties)) continue;
-					$options['where'][] = array($k, 'LIKE', '%' . $v . '%');
+					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
+				}
+			}
+			if (\Input::get('all')) {
+				foreach (static::$_properties as $k => $v) {
+					if (in_array($v, static::$_primary_key)) continue;
+					$options['or_where'][] = array($v, 'LIKE', '%'.\Input::get('all').'%');
 				}
 			}
 		}
@@ -439,7 +445,6 @@ class Model_Base extends \Orm\Model_Soft
 		return static::find('all', $options);
 
 	}
-
 
 	protected static $_use_get_query = true;
 
