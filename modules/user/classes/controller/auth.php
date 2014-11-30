@@ -7,37 +7,42 @@ class Controller_Auth extends \Locomo\Controller_Crud
 	 */
 	public function action_login()
 	{
-		//戻り先
+		// return to
+		$dashboard = '/admin/dashboard/';
 		$ret = \Input::param('ret', \Input::referrer(), null);
-		$ret = $ret == \Uri::create('user/auth/login/') ? '/' : $ret ;
-		$ret = $ret == null ? '/admin/dashboard/' : $ret ;
-		$ret = substr($ret, 0, strlen(\Uri::base())) != \Uri::base() ? '/admin/dashboard/' : $ret;
+		$ret = $ret == \Uri::create('user/auth/login/') ? $dashboard : $ret ;
+		$ret = $ret == null ? $dashboard : $ret ;
+		$ret = substr($ret, 0, strlen(\Uri::base())) != \Uri::base() ? $dashboard : $ret;
 
-		//ログイン済みのユーザだったらログイン画面を表示しない
-		if (\Auth::check()):
+		// this action is for guest not logged in users
+		if (\Auth::check())
+		{
 			\Session::set_flash('error', 'あなたは既にログインしています');
-				return \Response::redirect($ret);
-//			\Response::redirect_back();
-		endif;
+			return \Response::redirect($ret);
+		}
 
-		//ログイン処理
-		if (\Input::method() == 'POST'):
+		// login check
+		if (\Input::method() == 'POST')
+		{
 			$username = \Input::post('username');
 			$password = \Input::post('password');
 
-			//ログイン成功
-			if (\Auth::instance()->login($username, $password)):
+			// success
+			if (\Auth::instance()->login($username, $password))
+			{
 				\Session::set_flash('success', 'ログインしました。');
 				return \Response::redirect($ret);
-			else:
-				//ログイン失敗
+			}
+			// failed
+			else
+			{
 				\Auth::instance()->add_user_log($username, $password, false);
 				\Session::set_flash('error', 'ログインに失敗しました。入力内容に誤りがあります。');
 				return \Response::redirect('user/auth/login/');
-			endif;
-		endif;
+			}
+		}
 
-		//view
+		// view
 		$view = \View::forge('login');
 		$view->set('ret', $ret);
 		$view->set_global('title', 'ログイン');
