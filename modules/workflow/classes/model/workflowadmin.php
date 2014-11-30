@@ -26,9 +26,10 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory, $obj = null, $id = '')
+	public static function form_definition($factory = 'user', $obj = null)
 	{
 		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+		$id = isset($obj->id) ? $obj->id : '';
 
 		//forge
 		$form = \Fieldset::forge('form', \Config::get('form'));

@@ -1,6 +1,5 @@
-
-<h2>ルート設定</h2>
 <?php echo \Form::open(); ?>
+
 <ul class="nlm">
 <?php foreach($items as $item): ?>
 	<li>
@@ -23,4 +22,3 @@ echo \Form::submit('submit', '経路設定する', array('class' => 'button prim
 </p>
 
 <?php echo \Form::close(); ?>
-

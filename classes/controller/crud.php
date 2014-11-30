@@ -212,7 +212,7 @@ class Controller_Crud extends Controller_Base
 			endif;
 		endif;
 
-		//add_actionset
+		//add_actionset - back to index at edit
 		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
 		$action['order'] = 10;

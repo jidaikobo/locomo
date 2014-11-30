@@ -207,7 +207,7 @@ scaffoldを使った場合はコメントアウトされています。
 またモデルで、そのモデルの項目の表題名にあたるフィールド名を設定してください。
 	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
 
-これでモジュールでの編集履歴が有効になります。
+以上でコントローラでの編集履歴が有効になります。
 
 // workflow
 
@@ -224,6 +224,8 @@ scaffoldを使った場合はコメントアウトされています。
 		'Workflow\Observer_Workflow' => array(
 			'events' => array('before_insert', 'before_save','after_load'),
 		),
+
+以上でコントローラでのワークフロー管理が有効になります。
 
 // bulk edit
 

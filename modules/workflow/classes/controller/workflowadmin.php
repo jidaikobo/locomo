@@ -10,10 +10,18 @@ class Controller_Workflowadmin extends \Locomo\Controller_Crud
 		'admin_home' => '\\Workflow\\Controller_Workflowadmin/index_admin',
 		'nicename' => 'ワークフロー',
 		'actionset_classes' =>array(
-			'base'   => '\\Workflow\\Actionset_Base_Workflow',
-			'index'  => '\\Workflow\\Actionset_Index_Workflow',
+			'base'   => '\\Workflow\\Actionset_Base_Workflowadmin',
+			'index'  => '\\Workflow\\Actionset_Index_Workflowadmin',
 		),
 	);
+
+	/**
+	 * action_index()
+	 */
+	public function action_index()
+	{
+		return \Response::redirect('/workflow/workflowadmin/index_admin');
+	}
 
 	/**
 	 * action_setup()
@@ -27,7 +35,8 @@ class Controller_Workflowadmin extends \Locomo\Controller_Crud
 	/**
 	 * action_edit()
 	 */
-	public function action_edit($id = null) {
+	public function action_edit($id = null)
+	{
 		parent::action_edit($id);
 	}
 
@@ -50,37 +59,51 @@ class Controller_Workflowadmin extends \Locomo\Controller_Crud
 		$allstep = \Input::post('allstep') ? intval(\Input::post('allstep')) : count($steps);
 		$allstep = ( ! $allstep) ? 1 : $allstep;
 		$steps = \Input::post('steps') ?: $steps;
-		if (\Input::post('steps')):
+		if (\Input::post('steps'))
+		{
 			//post値が空だったらunsetして整理
-			foreach($steps as $key => $step):
+			foreach($steps as $key => $step)
+			{
 				if (
 					empty($step['name']) &&
 					$step['condition'] == 'none' &&
 					empty($step['allowers']) &&
 					empty($step['actions'])
-				):
+				)
+				{
 					unset($steps[$key]);
-				endif;
-			endforeach;
+				}
+			}
 			$allstep = count($steps) + 1;
-		endif;
+		}
 
 		//ステップ数デフォルト
 		$stepnum = array();
-		for($n = 1; $n <= $allstep; $n++):
+		for ($n = 1; $n <= $allstep; $n++)
+		{
 			$stepnum[] = $n;
-		endfor;
+		}
 
 		//DBに保存
-		if ($steps && \Input::post('submit')):
-			if ($model::update_workflow($id, $steps)):
+		if ($steps && \Input::post('submit'))
+		{
+			if ($model::update_workflow($id, $steps))
+			{
 				\Session::set_flash('success', 'ワークフローを更新しました');
-			else:
+			}
+			else
+			{
 				//いまのところtrueしか返らない。
 				\Session::set_flash('error', 'ワークフローの更新に失敗しました');
-			endif;
-			\Response::redirect(\Uri::create('workflowadmin/setup/'.$id));
-		endif;
+			}
+			\Response::redirect(\Uri::create('workflow/workflowadmin/setup/'.$id));
+		}
+
+		//add_actionset - back to index at edit
+		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
+		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
+		$action['order'] = 10;
+		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
 
 		//assign
 		$view = \View::forge('setup');
