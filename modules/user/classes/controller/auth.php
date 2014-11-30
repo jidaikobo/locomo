@@ -7,9 +7,11 @@ class Controller_Auth extends \Locomo\Controller_Crud
 	 */
 	public function action_login()
 	{
+		//戻り先
 		$ret = \Input::param('ret', \Input::referrer(), null);
 		$ret = $ret == \Uri::create('user/auth/login/') ? '/' : $ret ;
 		$ret = $ret == null ? '/admin/dashboard/' : $ret ;
+		$ret = substr($ret, 0, strlen(\Uri::base())) != \Uri::base() ? '/admin/dashboard/' : $ret;
 
 		//ログイン済みのユーザだったらログイン画面を表示しない
 		if (\Auth::check()):
