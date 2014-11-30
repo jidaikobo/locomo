@@ -6,6 +6,12 @@
 	echo \Pagination::sort_info('\User\Model_XXX');
 	echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : '';
 	echo '</p>';
+
+	// search form
+	echo \Form::open(array('method' => 'get', 'class' => 'index_search_form'));
+	echo \Form::input(array('name' => 'all', 'type' => 'text', 'value' => \Input::get('all') ?: '',));
+	echo \Form::submit('submit', '検索', array('class' => 'button primary'));
+	echo \Form::close();
 ?>
 
 <?php if ($items): ?>

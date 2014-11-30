@@ -205,7 +205,9 @@ class Controller_Crud extends Controller_Base
 			else:
 				//edit view or validation failed of CSRF suspected
 				if (\Input::method() == 'POST'):
-					\Session::set_flash('error', $form->error());
+					$errors = $form->error();
+					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
+					\Session::set_flash('error', $errors);
 				endif;
 			endif;
 		endif;

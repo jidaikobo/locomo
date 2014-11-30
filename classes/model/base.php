@@ -148,11 +148,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function authorized_option($options = array(), $mode = null)
 	{
-/*
-		$userinfo = \Auth::get_userinfo();
-		$controller = \Inflector::denamespace(\Request::main()->controller);
-		$controller = strtolower(substr($controller, 11));
-*/
 		$module     = \Request::main()->module;
 		$controller = \Request::main()->controller;
 
@@ -179,7 +174,8 @@ class Model_Base extends \Orm\Model_Soft
 		if (
 			isset(static::properties()[$column]) &&
 			! \Auth::instance()->has_access($module.DS.$controller.'/view_expired')
-		) {
+		)
+		{
 			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
 		}
