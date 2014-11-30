@@ -40,7 +40,7 @@ class Model_Revision extends \Locomo\Model_Base
 	public static function find_all_revisions($view, $model, $opt)
 	{
 		//vals
-		if( ! class_exists($model)) return false;
+		if ( ! class_exists($model)) return false;
 		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
 		$likes = \Input::get('likes')  ?: null ;
 		$range = isset($opt['range']['where']) ? $opt['range']['where'] : null ;
@@ -67,7 +67,7 @@ class Model_Revision extends \Locomo\Model_Base
 		$q->where('revisions.model', $model_str);
 
 		//like
-		if($likes):
+		if ($likes):
 			$columns = \DB::list_columns('revisions');
 			$q->and_where_open();
 			foreach($columns as $field => $v):
@@ -83,7 +83,7 @@ class Model_Revision extends \Locomo\Model_Base
 		$q->where($pk, '=', \DB::Expr('`revisions`.pk_id'));
 
 		//opt
-		if($range){
+		if ($range){
 			//where句を確認
 			foreach($range as $r):
 				list($field, $op, $val) = $r == 2 ?
@@ -94,7 +94,7 @@ class Model_Revision extends \Locomo\Model_Base
 		}
 
 		//order
-		if($order){
+		if ($order){
 			foreach($order as $r):
 				list($order_by, $order) = $r == 1 ?
 					array($table.'.'.$r[0], 'ASC') :
@@ -117,8 +117,8 @@ class Model_Revision extends \Locomo\Model_Base
 		$limit  = \Input::get('limit')  ?: $pagination_config['per_page'];
 
 		//num
-		if( $limit ) $q->limit($limit);
-		if( $offset ) $q->offset($offset);
+		if ( $limit ) $q->limit($limit);
+		if ( $offset ) $q->offset($offset);
 
 		//retval
 		$items = $q->as_object($model)->execute()->as_array() ;
@@ -164,7 +164,7 @@ class Model_Revision extends \Locomo\Model_Base
 
 		//最新データと規定時間との比較 - $created_at がゼロのときは初めて
 		//コメントがあるときにも保存する
-		if(
+		if (
 			! $force_save &&
 			$created_at && strtotime($created_at) >= time() - intval($config['revision_interval']) &&
 			empty($this->comment)

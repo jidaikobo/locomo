@@ -1,4 +1,3 @@
-
 <?php echo \Form::open(); ?>
 
 <h2>ワークフロー名</h2>
@@ -11,7 +10,7 @@
 	</div>
 </fieldset>
 
-<?php if(@$target_steps): ?>
+<?php if (@$target_steps): ?>
 <fieldset>
 	<legend>差戻し先</legend>
 	<div class="form-group">

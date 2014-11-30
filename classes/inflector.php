@@ -10,7 +10,7 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function ctrl_to_dir($controller = null)
 	{
-		if( ! $controller) throw new \InvalidArgumentException('argument must not be null or empty');
+		if ( ! $controller) throw new \InvalidArgumentException('argument must not be null or empty');
 
 		//if slash exists
 		$strs = explode('/', $controller);
@@ -32,7 +32,7 @@ class Inflector extends \Fuel\Core\Inflector
 		try
 		{
 			//root not use cache
-			if(\Auth::is_root()) throw new \CacheNotFoundException();
+			if (\Auth::is_root()) throw new \CacheNotFoundException();
 			return \Cache::get($cache_str);
 		}
 		catch (\CacheNotFoundException $e)
@@ -67,7 +67,7 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function path_to_ctrl($path = null)
 	{
-		if( ! file_exists($path)) throw new \InvalidArgumentException('file not found.');
+		if ( ! file_exists($path)) throw new \InvalidArgumentException('file not found.');
 		$paths = explode('/', $path);
 
 		// module name is next to modules dir.
@@ -77,7 +77,7 @@ class Inflector extends \Fuel\Core\Inflector
 
 		// search controller position
 		$class_pos = \Arr::search($paths, 'controller');
-		if( ! $class_pos) throw new \InvalidArgumentException('controller not found.');
+		if ( ! $class_pos) throw new \InvalidArgumentException('controller not found.');
 
 		//classify
 		$class = ucfirst(join('/', array_slice($paths, $class_pos)));

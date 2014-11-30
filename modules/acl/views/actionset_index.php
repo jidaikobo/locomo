@@ -1,5 +1,5 @@
 
-<p><?php if($user): ?>
+<p><?php if ($user): ?>
 対象ユーザ：<code><?php echo $user ?></code><br />
 <?php else: ?>
 対象グループ：<code><?php echo $usergroup ?></code><br />
@@ -19,7 +19,7 @@
 	<table class="tbl2">
 	<?php
 		foreach($each_actionset as $action => $actionset):
-		if( ! isset($actionset['action_name'])) continue;
+		if ( ! isset($actionset['action_name'])) continue;
 		?>
 		<tr>
 			<th style="width:30%">

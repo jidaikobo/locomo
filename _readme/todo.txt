@@ -1,5 +1,3 @@
-createのオブザーバを確認。
-
 まず、いったんworkflowを回復。動くようにする。
 workflowadminをworkflowに統合
 workflowのactionsetは細かい見直しが必要
@@ -15,7 +13,6 @@ cacheのガベコレをつくる。一日一回動く程度でよいか。
 ヘルプの仕様を考える。やはりユーザが育てていけるのがよいか？ その場合、デフォルトテキストを作っておいて、migrationで入れてしまうか。
 
 各モジュールはHELPを持つ。
-モジュールのmigrationでContentに突っ込む
 HELPはauthを通らない。ログインユーザにのみ見せる特殊authとする。
 
 helpインデクスは、カテゴリ的にコントローラを持つ

@@ -7,7 +7,7 @@ trait Traits_Actionset_Revision
 	 */
 	public static function actionset_index_revision($controller, $obj = null, $id = null, $urls = array())
 	{
-		if($id && in_array(\Request::main()->action, array('edit','view'))):
+		if ($id && in_array(\Request::main()->action, array('edit','view'))):
 			//if model name is different from controller name, copy from this file and write controller own actionset.
 			$model = basename(\Inflector::ctrl_to_dir($controller));
 			$actions = array(array($controller.DS."each_index_revision/{$model}/".$id, '編集履歴'));
@@ -31,7 +31,7 @@ trait Traits_Actionset_Revision
 	 */
 	public static function actionset_view_revision($controller, $obj = null, $id = null, $urls = array())
 	{
-		if($id):
+		if ($id):
 			//if model name is different from controller name, copy from this file and write controller own actionset.
 			$model = basename(\Inflector::ctrl_to_dir($controller));
 			$actions = array(array($controller.DS."each_index_revision/{$model}/".$id, '編集履歴'));

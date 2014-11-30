@@ -21,7 +21,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_current_step($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) return false;
+		if (is_null($controller) || is_null($controller_id)) return false;
 
 		//コントローラとidから最新のworkflow_logs取得
 		$q = \DB::select('id','workflow_id','current_step');
@@ -40,7 +40,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_current_step_id($workflow_id = null, $step = null)
 	{
-		if(is_null($workflow_id) || is_null($step)) return false;
+		if (is_null($workflow_id) || is_null($step)) return false;
 
 		//workflow_idとstepからstep_idを取得
 		$q = \DB::select('id');
@@ -58,7 +58,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function set_route($route_id = null, $controller = null, $controller_id = null)
 	{
-		if(is_null($route_id) || is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
+		if (is_null($route_id) || is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 		self::add_log($status = 'init', $route_id, $controller, $controller_id);
 	}
 
@@ -67,7 +67,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_route($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) return false;
+		if (is_null($controller) || is_null($controller_id)) return false;
 
 		//ワークフローidを得る
 		$q = \DB::select('workflow_id');
@@ -84,7 +84,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_log_id($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
+		if (is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 
 		//ログidを得る
 		$q = \DB::select('id');
@@ -101,7 +101,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_total_step($workflow_id = null)
 	{
-		if(is_null($workflow_id)) return false;
+		if (is_null($workflow_id)) return false;
 
 		//ワークフローの全体のステップを取得
 		$q = \DB::select(\DB::expr('count(id)'));
@@ -118,7 +118,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function is_in_workflow($controller = null, $controller_id = null)
 	{
-		if(is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
+		if (is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 		$workflow_id = self::get_route($controller, $controller_id);
 		$current_step = self::get_current_step($controller, $controller_id);
 		$total_step = self::get_total_step($workflow_id);
@@ -130,7 +130,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_all_members($workflow_id = null)
 	{
-		if(is_null($workflow_id)) \Response::redirect(\Uri::base());
+		if (is_null($workflow_id)) \Response::redirect(\Uri::base());
 
 		//このルートに存在するすべてのユーザの取得
 		$q = \DB::select('workflow_allowers.user_id');
@@ -148,7 +148,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_members($workflow_id = null, $step_id = null)
 	{
-		if(is_null($workflow_id) || is_null($step_id)) \Response::redirect(\Uri::base());
+		if (is_null($workflow_id) || is_null($step_id)) \Response::redirect(\Uri::base());
 
 		//当該ステップのメンバー
 		$q = \DB::select('user_id');
@@ -164,7 +164,7 @@ trait Traits_Model_Workflow
 	*/
 	public static function get_route_logs($controller = null, $controller_id = null, $step = null)
 	{
-		if(is_null($controller) || is_null($controller_id) || is_null($step)) \Response::redirect(\Uri::base());
+		if (is_null($controller) || is_null($controller_id) || is_null($step)) \Response::redirect(\Uri::base());
 
 		//差戻しも含めて、これまでのすべての経路情報を取得する
 		$q = \DB::select('*');
@@ -189,7 +189,7 @@ trait Traits_Model_Workflow
 		$q = \DB::select('*');
 		$q->from('workflow_current_users');
 		$q->where('user_id', $userinfo['user_id']);
-		if($controller) $q->where('controller', $controller);
+		if ($controller) $q->where('controller', $controller);
 		$q->limit('256');
 		$availables = $q->as_object()->execute()->as_array();
 
@@ -222,7 +222,7 @@ trait Traits_Model_Workflow
 			$q->where('workflow_logs.status', '<>', 'finish');
 			$q->limit('256');
 			$ctrls = $q->execute()->as_array();
-			if( ! $ctrls) continue;
+			if ( ! $ctrls) continue;
 				foreach($ctrls as $ctrl):
 				$retvals[$n] = (object) array();
 				$retvals[$n]->controller    = $ctrl['controller'];
@@ -239,20 +239,20 @@ trait Traits_Model_Workflow
 	*/
 	public static function add_log($status = 'approve', $workflow_id = null, $controller = null, $controller_id = null, $comment = '', $target_step = null)
 	{
-		if(is_null($controller) || is_null($controller_id) ) \Response::redirect(\Uri::base());
+		if (is_null($controller) || is_null($controller_id) ) \Response::redirect(\Uri::base());
 
 		//workflow_idと現在のステップを取得
 		$workflow_id = $workflow_id ? $workflow_id : self::get_route($controller, $controller_id);
 		$current_step = self::get_current_step($controller, $controller_id);
 
 		//current stepの変更
-		if($status == 'init'):
+		if ($status == 'init'):
 			$current_step = -1;
-		elseif($status == 'approve' || $status == 'finish'):
+		elseif ($status == 'approve' || $status == 'finish'):
 			$current_step++;
-		elseif($status == 'reject'):
+		elseif ($status == 'reject'):
 			$current_step = -3;
-		elseif($status == 'remand'):
+		elseif ($status == 'remand'):
 			$current_step = $target_step ? $target_step : $current_step - 1;
 		endif;
 
@@ -288,7 +288,7 @@ trait Traits_Model_Workflow
 		$q->execute();
 
 		//最後の承認か、ルート設定直後だったら、「次のユーザたち」を削除後return
-		if($status == 'finish' || $status == 'init'):
+		if ($status == 'finish' || $status == 'init'):
 			return;
 		endif;
 
@@ -319,7 +319,7 @@ trait Traits_Model_Workflow
 	 */
 	public static function add_authorize_methods()
 	{
-		if( ! in_array('auth_workflow', static::$_authorize_methods)):
+		if ( ! in_array('auth_workflow', static::$_authorize_methods)):
 			static::$_authorize_methods[] = 'auth_workflow';
 		endif;
 	}
@@ -333,31 +333,31 @@ trait Traits_Model_Workflow
 		$column = isset(static::$_workflow_field_name) ?
 			static::$_workflow_field_name :
 			static::get_default_field_name('workflow');
-		if( ! isset(static::properties()[$column])) return $options;
+		if ( ! isset(static::properties()[$column])) return $options;
 
 		//編集
 		if ($mode == 'edit') {
 			//作成権限があるユーザだったらin_progress以外を編集できる
-			if(\Auth::instance()->has_access($module.DS.$controller.'/create')):
+			if (\Auth::instance()->has_access($module.DS.$controller.'/create')):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
 			endif;
 		}
 
 		//承認のための閲覧
-		if(\Auth::instance()->has_access($module.DS.$controller.'/approve')):
+		if (\Auth::instance()->has_access($module.DS.$controller.'/approve')):
 			//承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
 			return $options;
 		endif;
 
 		//作成ユーザはどんな条件でも閲覧できる
-		if(\Auth::instance()->has_access($module.DS.$controller.'/create')):
+		if (\Auth::instance()->has_access($module.DS.$controller.'/create')):
 			return $options;
 		endif;
 
 		//閲覧ユーザはfinishを閲覧できる
-		if(\Auth::instance()->has_access($module.DS.$controller.'/view')):
+		if (\Auth::instance()->has_access($module.DS.$controller.'/view')):
 			$options['where'][] = array(array($column, '=', 'finish'));
 			return $options;
 		endif;

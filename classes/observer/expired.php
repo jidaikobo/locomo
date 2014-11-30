@@ -65,7 +65,7 @@ class Observer_Expired extends \Orm\Observer
 		endforeach;
 
 		//期限切れは特別扱い。空の場合は、unixtimeの上限を入れる
-		if(in_array($this->_expired_filed, $this->_properties)):
+		if (in_array($this->_expired_filed, $this->_properties)):
 			if (empty($obj->{$property})):
 				$obj->expired_at = null ;
 	//			$obj->expired_at = \Input::post($this->_expired_filed) ?: $maxdate ;

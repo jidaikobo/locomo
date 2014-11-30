@@ -31,7 +31,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view', $actions, ['create']);
 		endif;
@@ -53,7 +53,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
 			$urls = static::generate_uris($controller, 'edit', $actions, ['edit','create']);
 		endif;
@@ -76,7 +76,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_edit_anyway($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
 			$urls = static::generate_uris($controller, 'edit_anyway', $actions, ['edit','create']);
 		endif;
@@ -102,7 +102,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_edit_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
 			$urls = static::generate_uris($controller, 'edit_deleted', $actions, ['edit','create']);
 		endif;
@@ -126,7 +126,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if($id):
+		if ($id):
 			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 			$urls = static::generate_uris($controller, 'delete', $actions, ['create']);
 		endif;
@@ -153,7 +153,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_undelete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(isset($obj->deleted_at) && $obj->deleted_at && $id):
+		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."undelete/".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
 			$urls = static::generate_uris($controller, 'undelete', $actions, ['create']);
 		endif;
@@ -179,7 +179,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_delete_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(isset($obj->deleted_at) && $obj->deleted_at && $id):
+		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
 			$urls = static::generate_uris($controller, 'delete_deleted', $actions, ['create']);
 		endif;
@@ -204,7 +204,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(isset($obj->deleted_at) && $obj->deleted_at && $id):
+		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view_deleted', $actions, ['view','create']);
 		endif;
@@ -226,7 +226,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_expired($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view_expired', $actions, ['view','create']);
 		endif;
@@ -248,7 +248,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_yet($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view_yet', $actions, ['view','create']);
 		endif;
@@ -271,7 +271,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_invisible($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view_invisible', $actions, ['view','create']);
 		endif;

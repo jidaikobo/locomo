@@ -33,6 +33,6 @@ echo \Form::submit('submit', 'ログイン', array('class' => 'button primary bu
 ?>
 
 <?php
-if(!\Config::get('no_home')) echo Html::anchor('/', \Config::get('site_title')."へ");
+if ( ! \Config::get('no_home')) echo Html::anchor('/', \Config::get('site_title')."へ");
 echo \Form::close();
 ?>

@@ -9,7 +9,7 @@ class Request extends \Fuel\Core\Request
 		parent::__construct($uri, $route, $method);
 
 		// id suspect
-		if(isset($this->method_params[0]) && is_numeric($this->method_params[0]))
+		if (isset($this->method_params[0]) && is_numeric($this->method_params[0]))
 		{
 			$this->id = $this->method_params[0];
 		}

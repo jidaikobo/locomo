@@ -28,7 +28,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory, $obj = null, $id = '')
 	{
-		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 
 		//forge
 		$form = \Fieldset::forge('form', \Config::get('form'));
@@ -54,7 +54,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 	*/
 	public static function find_workflow_setting($id = null)
 	{
-		if(is_null($id)) \Response::redirect(\Uri::base());
+		if (is_null($id)) \Response::redirect(\Uri::base());
 
 		//workflow_steps取得
 		$q = \DB::select('*');
@@ -88,7 +88,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 	*/
 	public static function update_workflow($workflow_id = null, $args = null)
 	{
-		if(is_null($workflow_id) || is_null($args)) \Response::redirect(\Uri::base());
+		if (is_null($workflow_id) || is_null($args)) \Response::redirect(\Uri::base());
 
 		//loop
 		foreach($args as $order => $arg):
@@ -108,7 +108,7 @@ class Model_Workflowadmin extends \Locomo\Model_Base
 				'action'      => $arg['action'],
 			);
 
-			if($step_id):
+			if ($step_id):
 				//更新
 				$q = \DB::update();
 				$q->table('workflow_steps');

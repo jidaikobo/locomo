@@ -27,10 +27,10 @@ class Model_Acl extends \Orm\Model
 		$results = array();
 
 		foreach($actionsets as $actionset_name => $v){
-			if( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
+			if ( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
 			$dependencies = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $v['dependencies']);
 			$dependencies = array_map('serialize', $dependencies);
-			if( ! array_diff($dependencies, $actions)){
+			if ( ! array_diff($dependencies, $actions)){
 				$results[] = $actionset_name;
 			};
 		}
@@ -78,8 +78,8 @@ class Model_Acl extends \Orm\Model
 		$all = \Util::get_mod_or_ctrl();
 		$retvals = array();
 		foreach($all as $k => $v):
-			if(\Arr::get($v, 'is_for_admin')) continue;
-			if( ! \Arr::get($v, 'show_at_menu')) continue;
+			if (\Arr::get($v, 'is_for_admin')) continue;
+			if ( ! \Arr::get($v, 'show_at_menu')) continue;
 			$retvals[$k] = \Arr::get($v, 'nicename');
 		endforeach;
 		return array('none' => '選択してください') + $retvals;

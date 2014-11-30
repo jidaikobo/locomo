@@ -50,13 +50,13 @@ class Observer_Created extends \Orm\Observer
 		$utime = strtotime(\Input::post($this->_property));
 
 		//empty means today
-		if(empty($utime) || ! $utime)
+		if (empty($utime) || ! $utime)
 		{
 			$this->before_save($obj);
 			return;
 		}
 
-		if($utime >= 0)
+		if ($utime >= 0)
 		{
 			$obj->{$this->_property} = $this->_mysql_timestamp ? date('Y-m-d H:i:s', $utime) : $utime ;
 			return;

@@ -17,7 +17,7 @@ class Validation extends \Fuel\Core\Validation
 		list($table, $field, $id) = explode('.', $options);
 
 		//if data exists allow empty
-		if($id):
+		if ($id):
 			$result = \DB::select($field)
 				->from($table)
 				->where('id',$id)
@@ -43,7 +43,7 @@ class Validation extends \Fuel\Core\Validation
 		list($table, $field, $id) = explode('.', $options);
 
 		//if it is updating then allow same id
-		if($id):
+		if ($id):
 			$result = \DB::select("id")
 			->where('id', '<>', $id)
 			->where($field, '=', \Str::lower($val))
@@ -70,7 +70,7 @@ class Validation extends \Fuel\Core\Validation
 	{
 		//validate
 		list($table, $field, $id) = explode('.', $options);
-		if($id):
+		if ($id):
 			$result = \DB::select("id")
 			->where('id', '=', $id)
 			->where($field, '=', \Auth::instance()->hash_password($val))
@@ -91,7 +91,7 @@ class Validation extends \Fuel\Core\Validation
 	{
 		//validate
 		list($table, $field, $id) = explode('.', $options);
-		if($id):
+		if ($id):
 			$result = \DB::select("id")
 			->where('id', '=', $id)
 			->where($field, '=', $val)
@@ -125,7 +125,7 @@ class Validation extends \Fuel\Core\Validation
 	public static function _validation_non_zero_datetime($val)
 	{
 		if (empty($val)) return true; // empty string is today.
-		if( ! strtotime($val) || strtotime($val) <= 0) return false;
+		if ( ! strtotime($val) || strtotime($val) <= 0) return false;
 		return true;
 	}
 }

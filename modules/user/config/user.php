@@ -9,4 +9,12 @@ return array(
 		'\\User\\Controller_User/view/' => array('\\User\\Controller_User', 'user_auth_find'),
 		'\\User\\Controller_User/edit/' => array('\\User\\Controller_User', 'user_auth_find'),
 	),
+
+	// help document
+	'help' => array(
+		'ユーザモジュールについて' => dirname(__DIR__).'/help/user.html',
+	),
+
+	// user module setting
+	'password_length' => 8, // default 8
 );

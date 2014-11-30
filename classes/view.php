@@ -9,7 +9,7 @@ class View extends \Fuel\Core\View
 	{
 		// logo
 		$logo = APPPATH.'locomo/system/img/logo.png';
-		if( ! file_exists($logo))
+		if ( ! file_exists($logo))
 		{
 			$logo = \Asset::img();
 			$logo = LOCOMOPATH.'assets/img/system/logo.png';
@@ -19,12 +19,12 @@ class View extends \Fuel\Core\View
 		//guest
 		//body_class
 		$class_arr = array(\Request::main()->route->module, \Request::main()->route->action );
-		if( \Request::main()->route->action == 'login' && \Config::get('no_home') ) $class_arr[] = 'home';
-		if(\Auth::check()) $class_arr[] = 'loggedin';
+		if (\Request::main()->route->action == 'login' && \Config::get('no_home') ) $class_arr[] = 'home';
+		if (\Auth::check()) $class_arr[] = 'loggedin';
 		$this->set_global('body_class', implode($class_arr,' '));
 
 		//for users
-		if( ! \Auth::check())
+		if ( ! \Auth::check())
 		{
 			$this->set_global('locomo', array());
 			return;
@@ -41,7 +41,7 @@ class View extends \Fuel\Core\View
 		//check accessible controller
 		$all_ctrls = \Util::get_mod_or_ctrl();
 		foreach($all_ctrls as $k => $v):
-			if( ! \Auth::instance()->has_access(\Arr::get($v, 'admin_home'))) unset($all_ctrls[$k]);
+			if ( ! \Auth::instance()->has_access(\Arr::get($v, 'admin_home'))) unset($all_ctrls[$k]);
 		endforeach;
 
 		$locomo['controllers'] = $all_ctrls;
@@ -57,7 +57,7 @@ class View extends \Fuel\Core\View
 
 		// module home
 		$mod_config = \Config::load($module.'::'.$module);
-		if($module && $mod_config['main_controller'])
+		if ($module && $mod_config['main_controller'])
 		{
 			$ctrl_home = \Arr::get($mod_config['main_controller']::$locomo, 'admin_home');
 			$ctrl_home = \Inflector::ctrl_to_dir($ctrl_home);

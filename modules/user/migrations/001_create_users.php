@@ -88,6 +88,6 @@ class Create_users
 		\DBUtil::drop_table('user_logs');
 		\DBUtil::drop_table('usergroups');
 		\DBUtil::drop_table('user_usergroups');
-		if(\DBUtil::table_exists('acls')) \DBUtil::truncate_table('acls');
+		if (\DBUtil::table_exists('acls')) \DBUtil::truncate_table('acls');
 	}
 }

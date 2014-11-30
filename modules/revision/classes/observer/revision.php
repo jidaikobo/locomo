@@ -27,16 +27,16 @@ class Observer_Revision extends \Orm\Observer
 	public function after_save(\Orm\Model $obj)
 	{
 		//delete、createの際は、saveが走るので、その抑止
-		if(static::$delete || static::$create) return;
+		if (static::$delete || static::$create) return;
 
 		$operation = 'update';
 
 		/*
 		//復活 - after_save()で復活は捕まえられない。model_softにobserver追加を希望するか？
 		//あるいはrevisionテーブルをみて、直前のoperationと比較するか
-		if(isset($obj->deleted_at) && is_null($obj->deleted_at)):
+		if (isset($obj->deleted_at) && is_null($obj->deleted_at)):
 			$originals = $obj->get_original_values();
-			if( ! is_null($originals['deleted_at'])):
+			if ( ! is_null($originals['deleted_at'])):
 				$operation = 'undelete';
 			endif;
 		endif;
@@ -64,7 +64,7 @@ class Observer_Revision extends \Orm\Observer
 	{
 		//本当はafter_deleteをとりたいが、after_deleteではprimary keyが消えているので、loggingできない
 		$operation = 'delete';
-		if(isset($obj->deleted_at) && ! is_null($obj->deleted_at)):
+		if (isset($obj->deleted_at) && ! is_null($obj->deleted_at)):
 			$operation = 'purge';
 		endif;
 		$args = $this->insert_revision($obj, $operation);
@@ -85,7 +85,7 @@ class Observer_Revision extends \Orm\Observer
 		$model_name = get_class($obj);
 		$form = $model_name::form_definition('revision_'.$counter);
 		foreach($form->field() as $property => $v):
-			if( ! isset($obj->{$property})) continue;
+			if ( ! isset($obj->{$property})) continue;
 			$tmp->{$property} = $obj->{$property};
 		endforeach;
 

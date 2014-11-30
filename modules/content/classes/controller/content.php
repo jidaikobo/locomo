@@ -27,7 +27,7 @@ class Controller_Content extends \Locomo\Controller_Base
 	public function action_home()
 	{
 		//このアクションはトップページ専用として、content/homeへのアクセスはできないようにする。
-		if(substr(\Uri::string(),0,12) == 'content/home'):
+		if (substr(\Uri::string(),0,12) == 'content/home'):
 			return \Response::redirect('/', 'location', 404);
 		endif;
 
@@ -99,7 +99,7 @@ class Controller_Content extends \Locomo\Controller_Base
 		$ext = \Input::extension();
 		$args = func_get_args();
 		$path = join('/', $args).'.'.$ext;
-		if(empty($path) || empty($ext))
+		if (empty($path) || empty($ext))
 			return \Response::redirect('/', 'location', 404);
 
 		//存在確認
@@ -110,7 +110,7 @@ class Controller_Content extends \Locomo\Controller_Base
 		$filename = file_exists($locomo_assets) ? $locomo_assets : '';
 		$filename = file_exists($app_assets)    ? $app_assets : $filename;
 
-		if( ! $filename)
+		if ( ! $filename)
 		{
 			$page = \Request::forge('content/content/404')->execute();
 			return new \Response($page, 404);
@@ -119,7 +119,7 @@ class Controller_Content extends \Locomo\Controller_Base
 		//拡張子を確認
 		$config = \Config::load('upload');
 		$ext = strtolower($ext);
-		if( ! isset($config['mime_whitelist'][$ext])) return \Response::forge();
+		if ( ! isset($config['mime_whitelist'][$ext])) return \Response::forge();
 
 		//profilerをoffに
 		\Fuel\Core\Fuel::$profiling = false;

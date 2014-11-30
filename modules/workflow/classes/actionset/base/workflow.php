@@ -8,7 +8,7 @@ class Actionset_Base_Workflow extends \Actionset
 	 */
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view', $actions, ['create']);
 		endif;
@@ -31,7 +31,7 @@ class Actionset_Base_Workflow extends \Actionset
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
 			$urls = static::generate_uris($controller, 'edit', $actions, ['edit','create']);
 		endif;
@@ -79,7 +79,7 @@ class Actionset_Base_Workflow extends \Actionset
 	 */
 	public static function actionset_setup($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."setup/".$id, '設定'));
 			$urls = static::generate_uris($controller, 'setup', $actions, ['setup','create']);
 		endif;

@@ -79,7 +79,7 @@ trait Traits_Actionset_Base_Workflow
 	public static function actionset_workflow_actions($controller, $module, $obj = null, $id = null, $urls = array())
 	{
 		$retval = array('dependencies'=>array());
-		if(is_null($module) || empty($obj) || ! isset($obj->id)) return $retval;
+		if (is_null($module) || empty($obj) || ! isset($obj->id)) return $retval;
 
 		//ステップなどを取得
 		$model_name = '\\'.ucfirst($module).'\\Model_'.ucfirst($module);
@@ -94,15 +94,15 @@ trait Traits_Actionset_Base_Workflow
 		$menu_str        = '';
 
 		//-1の場合は、承認申請
-		if($current_step == -1):
-			if(\Auth::auth($module.'/apply')):
+		if ($current_step == -1):
+			if (\Auth::auth($module.'/apply')):
 				$url = "{$module}/apply/{$obj->id}" ;
 				$menu_str = '承認申請';
 			endif;
-		elseif($current_step < $total_step):
+		elseif ($current_step < $total_step):
 		//ワークフロー進行中だったら承認・却下・差戻しができる
 			$members = $model::get_members($route_id, $current_step_id);
-			if(is_array($members) && in_array($user_id, $members)):
+			if (is_array($members) && in_array($user_id, $members)):
 				$url = array(
 					array('承認',   "{$module}/approve/{$obj->id}"),
 					array('却下',   "{$module}/reject/{$obj->id}"),
@@ -110,14 +110,14 @@ trait Traits_Actionset_Base_Workflow
 				);
 			endif;
 			$menu_str = '';
-		elseif($current_step == $total_step):
+		elseif ($current_step == $total_step):
 		//すでに承認が終わっていたらワークフローとしては、何もできない
 			$url = "" ;
 			$menu_str = '';
 		endif;
 
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
-		if(
+		if (
 			$model::get_current_step($module, $obj->id) == -2 &&
 			\Auth::instance()->has_access($module.DS.$controller.'/route')
 		):

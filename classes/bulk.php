@@ -20,7 +20,7 @@ class Bulk {
 
 	public function add_model($model) {//, $define_function = null) {
 
-		if(is_array($model)) {
+		if (is_array($model)) {
 			foreach ($model as $model_obj) {
 				$this->add_model($model_obj);
 			}

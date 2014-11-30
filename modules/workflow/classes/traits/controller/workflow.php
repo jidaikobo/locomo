@@ -8,10 +8,10 @@ trait Traits_Controller_Workflow
 	public function pre_workflow_save_hook($obj = null, $mode = 'edit')
 	{
 		//ワークフロー管理
-		if(array_key_exists('workflow_actions', self::$actionset)):
+		if (array_key_exists('workflow_actions', self::$actionset)):
 			//ワークフロー管理するコントローラにはworkflow_statusを作る
 			$model = $this->model_name ;
-			if( ! \DBUtil::field_exists($model::get_table_name(), array('workflow_status'))):
+			if ( ! \DBUtil::field_exists($model::get_table_name(), array('workflow_status'))):
 				\DBUtil::add_fields($model::get_table_name(),array(
 					'workflow_status' => array('constraint' => 50, 'type' => 'varchar', 'null' => true),
 				));
@@ -29,11 +29,11 @@ trait Traits_Controller_Workflow
 	public function workflow_save_hook($obj = null, $mode = 'edit')
 	{
 		//ワークフロー管理
-		if($mode == 'create' && array_key_exists('workflow_actions', self::$actionset)):
+		if ($mode == 'create' && array_key_exists('workflow_actions', self::$actionset)):
 			//ワークフロー管理下のコンテンツのworkflow_statusはbefore_progressで作成される
 			$model = $this->model_name ;
 			$primary_key = $model::get_primary_key();
-			if(isset($obj->$primary_key[0])):
+			if (isset($obj->$primary_key[0])):
 				$obj->workflow_status = 'before_progress';
 				$obj->save();
 			endif;
@@ -48,7 +48,7 @@ trait Traits_Controller_Workflow
 	 */
 	public function workflow_edit_core($id = null, $obj = null, $redirect = null, $title = null)
 	{
-		if(@$obj->workflow_status == 'in_progress'):
+		if (@$obj->workflow_status == 'in_progress'):
 			\Session::set_flash('error','この項目はワークフロー管理下にあり、現在、編集できません。');
 			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
 		endif;
@@ -128,7 +128,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		//postがあったら経路設定して、表示画面に戻る
 		if (\Input::method() == 'POST'):
 			$route_id = \Input::post('route');
-			if($route_id):
+			if ($route_id):
 				$model::set_route($route_id, $this->request->module, $id);
 				\Session::set_flash('success', 'ルートを設定しました');
 
@@ -208,7 +208,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		//postがあったら承認処理をして、閲覧画面に戻る
 		if (\Input::method() == 'POST'):
 			$route_id = $model::get_route($this->request->module, $id);
-			if($route_id):
+			if ($route_id):
 				$comment = \Input::post('comment');
 
 				//最後の承認かどうか確認する
@@ -220,7 +220,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 				$model::add_log($mode, $route_id, $this->request->module, $id,$comment);
 
 				//最後の承認であれば、項目のステータスを変更する
-				if($mode == 'finish'):
+				if ($mode == 'finish'):
 					$target_model = $this->model_name ;
 					$obj = $target_model::find($id);
 					$obj->workflow_status = 'finish';
@@ -260,7 +260,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 			\Session::set_flash('success', '差し戻し処理をしました');
 
 			//差し戻しが最初まで戻った場合、in_progressを解除して編集できるようにする
-			if($target_step == -1):
+			if ($target_step == -1):
 				$target_model = $this->model_name ;
 				$obj = $target_model::find($id);
 				$obj->workflow_status = 'before_progress';
@@ -277,10 +277,10 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 		foreach($logs as $log):
 			//初期化と承認のログをとる
-			if($log->status == 'remand') continue;
+			if ($log->status == 'remand') continue;
 
 			//現在のステップより上のログは除外する
-			if($log->current_step > $current_step) continue;
+			if ($log->current_step > $current_step) continue;
 
 			//一つ下のステップに設定
 			$target_step = (int) $log->current_step - 1;
@@ -318,7 +318,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		if (\Input::method() == 'POST'):
 			$route_id = $model::get_route($this->request->module, $id);
 
-			if($route_id):
+			if ($route_id):
 				$comment = \Input::post('comment');
 				$model::add_log('reject', $route_id, $this->request->module, $id, $comment);
 				\Session::set_flash('success', '項目を却下しました');

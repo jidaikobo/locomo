@@ -20,15 +20,15 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 	public function action_main()
 	{
 		// only at development
-//		if(\Fuel::$env != 'development') die();
+//		if (\Fuel::$env != 'development') die();
 
 		//view
 		$view = \View::forge('main');
 
 		// scaffold
-		if(\Input::method() == 'POST'):
+		if (\Input::method() == 'POST'):
 
-			if( ! \Security::check_token()):
+			if ( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
 //				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
 			endif;
@@ -41,7 +41,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$cmd  = Helper::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
 
-			if( ! $cmd_orig):
+			if ( ! $cmd_orig):
 				\Session::set_flash('error', 'invalid value sent');
 				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
 			endif;
@@ -60,13 +60,13 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 				$helper_file = $helper.'.php';
 				$helper_class = ucfirst($helper);
 				//views
-				if(in_array($helper, array('index', 'view', 'edit')))
+				if (in_array($helper, array('index', 'view', 'edit')))
 				{
 					$helper_file = 'views/'.$helper.'.php';
 					$helper_class = 'Views_'.ucfirst($helper);
 				}
 				//add_class
-				if(file_exists(APPPATH.'classes/scaffold/helper/'.$helper_file))
+				if (file_exists(APPPATH.'classes/scaffold/helper/'.$helper_file))
 				{
 					\Autoloader::add_class(
 						'Scaffold\\Helper_'.$helper_class,
@@ -97,16 +97,16 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 			// mkdir for module
 			$scfldpath = APPPATH.'modules/';
-			if(\Input::post('type') == 'all')
+			if (\Input::post('type') == 'all')
 			{
-				if(\File::create_dir($scfldpath, $name))
+				if (\File::create_dir($scfldpath, $name))
 				{
 					$scfldpath = APPPATH.'modules/'.$name;
 				}
 			}
 
 			// path
-			if(\Input::post('type') == 'all2' || \Input::post('type') == 'view')
+			if (\Input::post('type') == 'all2' || \Input::post('type') == 'view')
 			{
 				$scfldpath = APPPATH;
 			}
@@ -121,7 +121,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$migrate_file = $latest.'_create_'.$filename;
 
 			//generate
-			if(\Input::post('type') == 'model')
+			if (\Input::post('type') == 'model')
 			{
 				//migrations
 				\File::update(APPPATH.'migrations', $migrate_file, $migration);
@@ -138,10 +138,10 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 				$messages[] = "php oil refine migrate:up";
 				$messages[] = "を実行してください。";
 			}
-			elseif(\Input::post('type') == 'view')
+			elseif (\Input::post('type') == 'view')
 			{
 				//views
-				if( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
+				if ( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
 				$viewpath = APPPATH.'views/'.$name;
 				\File::update($viewpath, '/index.php', $tpl_index);
 				\File::update($viewpath, '/index_admin.php', $tpl_index_admin);
@@ -156,8 +156,8 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			// all and all2
 			{
 				//migrations
-				if( ! file_exists($scfldpath.'/migrations')) \File::create_dir($scfldpath, 'migrations');
-				if(\Input::post('type') == 'all')
+				if ( ! file_exists($scfldpath.'/migrations')) \File::create_dir($scfldpath, 'migrations');
+				if (\Input::post('type') == 'all')
 				{
 					$migrate_file = '001_create_'.$filename;
 				}
@@ -165,33 +165,33 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 
 				//controller
 				$classpath = $scfldpath.'/classes';
-				if( ! file_exists($classpath.'/controller')) \File::create_dir($scfldpath, 'classes/controller');
+				if ( ! file_exists($classpath.'/controller')) \File::create_dir($scfldpath, 'classes/controller');
 				\File::update($classpath.'/controller', $filename, $controller);
 
 				//actionset
 				$actionsetpath = $classpath.'/actionset';
-				if( ! file_exists($actionsetpath)) \File::create_dir($scfldpath, 'classes/actionset');
-				if( ! file_exists($actionsetpath.'/index')) \File::create_dir($actionsetpath, 'index');
-				if( ! file_exists($actionsetpath.'/base')) \File::create_dir($actionsetpath, 'base');
-				if( ! file_exists($actionsetpath.'/option')) \File::create_dir($actionsetpath, 'option');
+				if ( ! file_exists($actionsetpath)) \File::create_dir($scfldpath, 'classes/actionset');
+				if ( ! file_exists($actionsetpath.'/index')) \File::create_dir($actionsetpath, 'index');
+				if ( ! file_exists($actionsetpath.'/base')) \File::create_dir($actionsetpath, 'base');
+				if ( ! file_exists($actionsetpath.'/option')) \File::create_dir($actionsetpath, 'option');
 				\File::update($actionsetpath.'/index', $filename, $actionset_index);
 				\File::update($actionsetpath.'/base', $filename, $actionset_base);
 				\File::update($actionsetpath.'/option', $filename, $actionset_option);
 
 				//model
-				if( ! file_exists($classpath.'/model')) \File::create_dir($classpath, 'model');
+				if ( ! file_exists($classpath.'/model')) \File::create_dir($classpath, 'model');
 				\File::update($classpath.'/model', $filename, $model);
 	
 				//config
-				if( ! file_exists($scfldpath.'/config')) \File::create_dir($scfldpath, 'config');
+				if ( ! file_exists($scfldpath.'/config')) \File::create_dir($scfldpath, 'config');
 				\File::update($scfldpath.'/config', $filename, $config);
 	
 				//views
-				if( ! file_exists($scfldpath.'/views')) \File::create_dir($scfldpath, 'views');
+				if ( ! file_exists($scfldpath.'/views')) \File::create_dir($scfldpath, 'views');
 				$viewpath = $scfldpath.'/views';
-				if(\Input::post('type') == 'all2')
+				if (\Input::post('type') == 'all2')
 				{
-					if( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
+					if ( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
 					$viewpath = APPPATH.'views/'.$name;
 				}
 				\File::update($viewpath, 'index.php', $tpl_index);
@@ -200,7 +200,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 				\File::update($viewpath, 'edit.php', $tpl_edit);
 
 				//messages
-				if(\Input::post('type') == 'all2')
+				if (\Input::post('type') == 'all2')
 				{
 					$messages[] = "各ファイルを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
 					$messages[] = "sudo chmod -R 777 ".APPPATH.'class';
@@ -222,7 +222,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			}
 
 			//log
-			if( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scaffold/'.$name);
+			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scaffold/'.$name);
 			$latest = \Util::get_latestprefix($log_dir);
 			\File::update($log_dir, $latest.'_scaffold.txt', $cmd_raw);
 	

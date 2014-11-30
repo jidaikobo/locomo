@@ -10,7 +10,7 @@ class Helper
 		$default = dirname(__DIR__).'/module_templates/'.$template;
 		$override = APPPATH.'locomo/modules/scaffold/module_templates/'.$template;
 
-		if(file_exists($override))
+		if (file_exists($override))
 		{
 			return file_get_contents($override);
 		}
@@ -50,7 +50,7 @@ class Helper
 	 */
 	public static function remove_length($str)
 	{
-		if(preg_match('/(.*?)\[.\d+\]/', $str, $m)){
+		if (preg_match('/(.*?)\[.\d+\]/', $str, $m)){
 			return @$m[1];
 		}else{
 			return $str;

@@ -167,7 +167,8 @@ class Controller_Crud extends Controller_Base
 
 		if ($id) {
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
-			if( ! $obj){
+			if ( ! $obj)
+			{
 				$page = \Request::forge('content/403')->execute();
 				return new \Response($page, 403);
 			}

@@ -7,7 +7,7 @@ class Auth extends \Auth\Auth
 	 */
 	public static function is_admin()
 	{
-		if( ! $id = \Auth::instance()->get('id')) return false;
+		if ( ! $id = \Auth::instance()->get('id')) return false;
 		return ($id <= -1);
 	}
 
@@ -16,7 +16,7 @@ class Auth extends \Auth\Auth
 	 */
 	public static function is_root()
 	{
-		if( ! $id = \Auth::instance()->get('id')) return false;
+		if ( ! $id = \Auth::instance()->get('id')) return false;
 		return ($id === -2);
 	}
 }

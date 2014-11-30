@@ -18,7 +18,7 @@
 	</tr>
 	<?php
 	//管理者以外は旧パスワードを求める
-	if( ! \Auth::is_admin()): ?>
+	if ( ! \Auth::is_admin()): ?>
 	<tr class="<?php echo $form->field('old_password')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('old_password')->set_template('{label}{required}'); ?></th>
 		<td><?php echo $form->field('old_password')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
@@ -40,7 +40,7 @@
 		<th><?php echo $form->field('created_at')->set_template('{label}{required}'); ?></th>
 		<td><?php echo $form->field('created_at')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
 	</tr>
-	<?php if(\Auth::is_admin()): ?>
+	<?php if (\Auth::is_admin()): ?>
 	<tr class="<?php echo $form->field('is_visible')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('is_visible')->set_template('{label}{required}'); ?></th>
 		<td><?php echo $form->field('is_visible')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
@@ -51,10 +51,10 @@
 </div>
 <div class="submit_button">
 	<?php
-	if( ! \Auth::is_admin()):
+	if ( ! \Auth::is_admin()):
 		echo $form->field('is_visible')->set_template('{field}');
 	endif;
-		if(!@$is_revision):
+		if ( ! @$is_revision):
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 	endif;

@@ -2,7 +2,7 @@
 namespace Help;
 class Controller_Help extends \Locomo\Controller_Crud
 {
-	//locomo
+	// locomo
 	public static $locomo = array(
 		'show_at_menu' => false,
 		'order_at_menu' => 1000,
@@ -16,9 +16,20 @@ class Controller_Help extends \Locomo\Controller_Crud
 		),
 	);
 
-	//trait
+	// trait
 	use \Locomo\Controller_Traits_Testdata;
 //	use \Option\Traits_Controller_Option;
 //	use \Workflow\Traits_Controller_Workflow;
 	use \Revision\Traits_Controller_Revision;
+
+	/**
+	 * action_index_admin()
+	 */
+	public function action_index_admin()
+	{
+		// parent
+		parent::action_index_admin();
+
+		//モジュールかコントローラが指定されていたら、当該ヘルプを呼び出す
+	}
 }

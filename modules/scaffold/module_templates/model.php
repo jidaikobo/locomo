@@ -52,7 +52,7 @@ class Model_XXX extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory = 'xxx', $obj = null)
 	{
-		if(static::$_cache_form_definition && $obj == null)
+		if (static::$_cache_form_definition && $obj == null)
 		{
 			return static::$_cache_form_definition;
 		}

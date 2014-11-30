@@ -45,7 +45,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		static::$_roots  = array_keys(\Arr::get($alladmins, 'root', array()));
 		static::$_admins = array_keys(\Arr::get($alladmins, 'admin', array()));
 		$allnames        = array_unique(array_merge(static::$_roots, static::$_admins));
-		if(count(static::$_roots)+count(static::$_admins) <> count($allnames))
+		if (count(static::$_roots)+count(static::$_admins) <> count($allnames))
 		{
 			throw new \OutOfBoundsException('administrators\' username is must be unique.');
 		}
@@ -78,17 +78,17 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		$login_hash  = \Session::get('login_hash');
 
 		//admins
-		if(in_array($username, static::$_alladmins))
+		if (in_array($username, static::$_alladmins))
 		{
 			$db_login_hash = \DB::select('login_hash')
 				->from('user_admins')
 				->where(array(array('username', '=', $username)))
 				->execute()->current();
 
-			if($db_login_hash['login_hash'] == $login_hash)
+			if ($db_login_hash['login_hash'] == $login_hash)
 			{
 				//is_root
-				if(in_array($username, static::$_roots))
+				if (in_array($username, static::$_roots))
 				{
 					\Arr::set($this->_root_info, 'username', $username);
 					$this->user = $this->_root_info;
@@ -171,13 +171,13 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		$admin = \Arr::get($admins['admin'], $username_or_email, $root);
 
 		//rootユーザ
-		if($username_or_email == $root[0] && $password == $root[1]):
+		if ($username_or_email == $root[0] && $password == $root[1]):
 			\Arr::set($this->_root_info, 'username', $root[0]);
 			return $this->_root_info;
 		endif;
 
 		//rootユーザ
-		if($username_or_email == $admin[0] && $password == $admin[1]):
+		if ($username_or_email == $admin[0] && $password == $admin[1]):
 			\Arr::set($this->_admin_info, 'username', $admin[0]);
 			return $this->_admin_info;
 		endif;
@@ -208,7 +208,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	public function login($username_or_email = '', $password = '')
 	{
 		// reject banned user
-		if( ! static::check_deny(\Input::post("username"))):
+		if ( ! static::check_deny(\Input::post("username"))):
 			$user_ban_setting = \Config::get('user_ban_setting');
 			$limit_count = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
 			$limit_time  = $user_ban_setting ? $user_ban_setting['limit_time'] : 300 ;
@@ -232,7 +232,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		// set session
 		\Session::set('username', $this->user['username']);
 		\Session::set('login_hash', $this->create_login_hash());
-		if(isset($this->user->usergroup))
+		if (isset($this->user->usergroup))
 		{
 			//other users
 			\Session::set('usergroups', array_keys($this->user->usergroup));
@@ -314,7 +314,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		$login_hash = sha1(\Config::get('locomoauth.login_hash_salt').$this->user['username'].$last_login);
 
 		$admins = unserialize(LOCOMO_ADMINS);
-		if(
+		if (
 			array_key_exists($this->user['username'], $admins['root']) ||
 			array_key_exists($this->user['username'], $admins['admin'])
 		)
@@ -348,10 +348,10 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	 */
 	public function get_groups()
 	{
-		if(isset(static::instance()->user->usergroup))
+		if (isset(static::instance()->user->usergroup))
 		{
 			return array_keys(static::instance()->user->usergroup);
-		}elseif(isset(static::instance()->user['usergroups'])){
+		}elseif (isset(static::instance()->user['usergroups'])){
 			return static::instance()->user['usergroups'];
 		}
 		return array();
@@ -366,7 +366,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	 */
 	public static function check_deny($account = null)
 	{
-		if($account == null) return false;
+		if ($account == null) return false;
 		$user_ban_setting = \Config::get('user_ban_setting');
 		$limit_deny_time  = $user_ban_setting ? $user_ban_setting['limit_deny_time'] : 10 ;
 		$limit_count      = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
@@ -392,7 +392,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	 */
 	public function add_user_log($username = null, $password = null, $status = false)
 	{
-		if($username == null || $password == null) return false;
+		if ($username == null || $password == null) return false;
 		$password = $this->hash_password($password);
 
 		//設定値

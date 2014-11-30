@@ -10,7 +10,7 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 		$retval = parent::render($group, $raw);
 		$replace = 'content/fetch_view/';
 
-		if(strpos($retval, APPPATH) !== false)
+		if (strpos($retval, APPPATH) !== false)
 		{
 			$search = APPPATH.'locomo/assets';
 		}

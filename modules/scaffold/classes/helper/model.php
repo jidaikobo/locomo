@@ -31,9 +31,9 @@ class Helper_Model extends Helper
 			$default = '';
 			$size = 0;
 			$max = 0;
-			if(preg_match('/\[(.*?)\]/', $attr, $m))
+			if (preg_match('/\[(.*?)\]/', $attr, $m))
 			{
-				if(is_numeric($m[1]))
+				if (is_numeric($m[1]))
 				{
 					$max  = $m[1] ? intval($m[1]) : 0;
 					$size = ($max >= 30) ? 30 : $max;
@@ -49,36 +49,36 @@ class Helper_Model extends Helper
 			//field_str
 			$items = array();
 
-			if( ! in_array($field, $banned))
+			if ( ! in_array($field, $banned))
 			{
 				//label
-				if($nicename)
+				if ($nicename)
 				{
 					$properties[$field]['label'] = $nicename;
 				}
 	
 				//data_type
-				if($attr)
+				if ($attr)
 				{
 					$properties[$field]['data_type'] = str_replace(array('[',']'), array('(',')'), $attr);
 				}
 	
 				//form
 				$form = array();
-				if(in_array($field, array('text', 'memo', 'body', 'content', 'etc', 'message'))):
+				if (in_array($field, array('text', 'memo', 'body', 'content', 'etc', 'message'))):
 					//textarea
 					$form = array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;');
-				elseif(substr($field,0,3)=='is_'):
+				elseif (substr($field,0,3)=='is_'):
 					//bool
 					$form = array('type' => 'select', 'options' => array(0, 1));
-				elseif(substr($field,-3)=='_at'):
+				elseif (substr($field,-3)=='_at'):
 					//date
 					$form = array('type' => 'text', 'size' => 20);
 				else:
 					//text
 					$form = array('type' => 'text', 'size' => $size);
 				endif;
-				if($form)
+				if ($form)
 				{
 					$form['class'] = self::remove_length($attr);
 					$properties[$field]['form'] = $form;
@@ -86,19 +86,19 @@ class Helper_Model extends Helper
 	
 				//validation
 				$validation = array();
-				if(in_array($field, array('name', 'title', 'subject')) || $is_required)
+				if (in_array($field, array('name', 'title', 'subject')) || $is_required)
 				{
 					//require
 					$validation['required'] ='';
 				}
 	
-				if($max)
+				if ($max)
 				{
 					//max
 					$validation['max_length'] = array($max => '');
 				}
 	
-				if($validation)
+				if ($validation)
 				{
 					$properties[$field]['validation'] = $validation;
 				}
@@ -111,22 +111,22 @@ class Helper_Model extends Helper
 
 		//soft_delete
 		$dlt_fld = '';
-		if(in_array('deleted_at', $cmd_mods)):
+		if (in_array('deleted_at', $cmd_mods)):
 			$dlt_fld = "\tprotected static \$_soft_delete = array(\n\t\t'deleted_field'   => 'deleted_at',\n\t\t'mysql_timestamp' => true,\n\t);\n";
 		endif;
 
 		//observers
 		$observers = '';
-		if(in_array('created_at', $cmd_mods)):
+		if (in_array('created_at', $cmd_mods)):
 			$observers.= "\t\t'Locomo\Observer_Created' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
 		endif;
-		if(in_array('updated_at', $cmd_mods)):
+		if (in_array('updated_at', $cmd_mods)):
 			$observers.= "\t\t'Orm\Observer_UpdatedAt' => array(\n\t\t\t\t'events' => array('before_save'),\n\t\t\t\t'mysql_timestamp' => true,\n\t\t\t),\n";
 		endif;
-		if(in_array('expired_at', $cmd_mods)):
+		if (in_array('expired_at', $cmd_mods)):
 			$observers.= "\t\t'Locomo\Observer_Expired' => array(\n\t\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t\t'properties' => array('expired_at'),\n\t\t\t),\n";
 		endif;
-		if(in_array('creator_id', $cmd_mods) || in_array('modifier_id', $cmd_mods)):
+		if (in_array('creator_id', $cmd_mods) || in_array('modifier_id', $cmd_mods)):
 			$observers.= "\t\t'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
 		endif;
 		$observers.= "//\t\t'Workflow\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";

@@ -15,7 +15,7 @@ define('LOCOMOPATH', __DIR__.DS);
 
 // load config
 \Config::load('form', 'form');
-if( ! \Config::load('locomo'))
+if ( ! \Config::load('locomo'))
 {
 	\Config::load('packageconfig');
 }

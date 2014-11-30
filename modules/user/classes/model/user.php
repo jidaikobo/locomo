@@ -95,7 +95,7 @@ class Model_User extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory = 'user', $obj = null)
 	{
-		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 		$id = isset($obj->id) ? $obj->id : '';
 
 		//forge
@@ -142,7 +142,7 @@ class Model_User extends \Locomo\Model_Base
 			->set_value($checked);
 
 		//管理者以外は旧パスワードを求める
-		if( ! \Auth::is_admin()):
+		if ( ! \Auth::is_admin()):
 			$form->add(
 					'old_password',
 					'旧パスワード',
@@ -209,7 +209,7 @@ class Model_User extends \Locomo\Model_Base
 			->set_value(@$obj->deleted_at);
 
 		//is_visible
-		if(\Auth::is_admin()):
+		if (\Auth::is_admin()):
 			$form->add(
 					'is_visible',
 					'可視属性',

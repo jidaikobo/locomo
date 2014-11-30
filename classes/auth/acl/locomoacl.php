@@ -23,7 +23,7 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 	 */
 	public static function _parse_conditions($rights)
 	{
-		if(! is_array($rights))
+		if ( ! is_array($rights))
 		{
 			if ( ! is_string($rights) or strpos($rights, '/') === false)
 			{
@@ -50,10 +50,10 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 	public function has_access($condition, Array $entity)
 	{
 		//no rights for no condition
-		if( ! $condition) return false;
+		if ( ! $condition) return false;
 
 		// admins are all allowed
-		if(in_array(\Auth::get('id'), array(-1, -2))) return true;
+		if (in_array(\Auth::get('id'), array(-1, -2))) return true;
 
 		// parse condition to serialize
 		$conditions = static::_parse_conditions($condition);

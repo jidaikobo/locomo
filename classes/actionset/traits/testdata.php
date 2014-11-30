@@ -11,7 +11,7 @@ trait Actionset_Traits_Testdata
 		$usergroup_ids = \Auth::get_groups();
 
 		//ルート管理者のみ
-		if(in_array(-2, $usergroup_ids)):
+		if (in_array(-2, $usergroup_ids)):
 			$url = \Html::anchor(\Inflector::ctrl_to_dir($controller).DS."add_testdata", 'テストデータの追加', array('class' => 'confirm', 'data-jslcm-msg' => 'テストデータを追加してよいですか？'));
 		endif;
 

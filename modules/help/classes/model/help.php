@@ -62,10 +62,9 @@ class Model_Help extends \Locomo\Model_Base
 //		'Workflow\Observer_Workflow' => array(
 //			'events' => array('before_insert', 'before_save','after_load'),
 //		),
-//		'Revision\Observer_Revision' => array(
-//			'events' => array('after_insert', 'after_save', 'before_delete'),
-//		),
-
+		'Revision\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save', 'before_delete'),
+		),
 	);
 
 	/**
@@ -78,7 +77,7 @@ class Model_Help extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory = 'help', $obj = NULL)
 	{
-		if(static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 
 		//forge
 		$form = \Fieldset::forge($factory, \Config::get('form'));
@@ -94,20 +93,23 @@ class Model_Help extends \Locomo\Model_Base
 		->set_value(@$obj->title);
 
 		// mod_or_ctrl - コントローラ
-		$urls = parse_url(\Input::referrer());// parse referrer
-		list($s, $q) = explode('[mod_or_ctrl]=', \Arr::get($urls, 'query', ''));// explode by key str
-		// multiple query?
 		$mod_or_ctrl = '';
-		if(strpos($q, '&') !== false)
+		$urls = parse_url(\Input::referrer());// parse referrer
+		if (\Arr::get($urls, 'query', ''))
 		{
-			list($mod_or_ctrl, $q) = explode('&', $q);
-		}else{
-			$mod_or_ctrl = $q;
+			list($s, $q) = explode('[mod_or_ctrl]=', \Arr::get($urls, 'query', ''));// explode by key str
+			// multiple query?
+			if (strpos($q, '&') !== false)
+			{
+				list($mod_or_ctrl, $q) = explode('&', $q);
+			}else{
+				$mod_or_ctrl = $q;
+			}
 		}
 		$mod_or_ctrls = array('all' => '共通ヘルプ');
 		$exceptions = array('help', 'admin', 'content');
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if( ! isset($v['nicename']) || ! isset($v['admin_home']) || in_array($k, $exceptions)) continue;
+			if ( ! isset($v['nicename']) || ! isset($v['admin_home']) || in_array($k, $exceptions)) continue;
 			$key = substr($v['admin_home'], 0, strpos($v['admin_home'], '/'));
 			$mod_or_ctrls[$k] = $v['nicename'];
 		endforeach;

@@ -13,8 +13,8 @@ trait Traits_Controller_Revision
 
 		//option - ise \Module\Model_Module::$_option_options['range']
 		$opt = false;
-		if(\Input::get('opt')):
-			if( ! isset($model::$_option_options[\Input::get('opt')])) die('missing $_option_options.');
+		if (\Input::get('opt')):
+			if ( ! isset($model::$_option_options[\Input::get('opt')])) die('missing $_option_options.');
 			$opt = $model::$_option_options[\Input::get('opt')] ;
 		endif;
 
@@ -22,13 +22,13 @@ trait Traits_Controller_Revision
 		$view = \View::forge(LOCOMOPATH.'modules/revision/views/index_revision.php');
 		$view = \Revision\Model_Revision::find_all_revisions($view, $model, $opt);
 
-		if( ! $view):
+		if ( ! $view):
 			\Session::set_flash('error', '表示できませんでした');
 			return \Response::redirect(\Uri::base());
 		endif;
 
 		//assign
-		if($opt):
+		if ($opt):
 			$view->set_global('title', $opt['nicename'].'履歴一覧');
 		else:
 			$view->set_global('title', '履歴一覧');
@@ -85,7 +85,7 @@ trait Traits_Controller_Revision
 		//add_actionset
 		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
-		if($opt_arg):
+		if ($opt_arg):
 			$action['urls'][] = \Html::anchor($ctrl_url.DS.'edit/'.$id,'編集画面へ');
 		endif;
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
@@ -130,8 +130,8 @@ trait Traits_Controller_Revision
 		//option - ise \Module\Model_Module::$_option_options['range']
 		$opt = false;
 		$opt_arg = '';
-		if(\Input::get('opt')):
-			if( ! isset($original_model::$_option_options[\Input::get('opt')])) die('missing $_option_options.');
+		if (\Input::get('opt')):
+			if ( ! isset($original_model::$_option_options[\Input::get('opt')])) die('missing $_option_options.');
 			$opt = $original_model::$_option_options[\Input::get('opt')] ;
 			$opt_arg = '?opt='.\Input::get('opt');
 		endif;
@@ -139,7 +139,7 @@ trait Traits_Controller_Revision
 		//form definition
 		$data->$pk   = $revisions->pk_id;
 		$template = 'edit';
-		if(isset($opt['form_definition'])):
+		if (isset($opt['form_definition'])):
 			$form = $original_model::{$opt['form_definition']}('revision', $data);
 		else:
 			//普通のform_definition
@@ -147,10 +147,10 @@ trait Traits_Controller_Revision
 		endif;
 
 		//template
-		if(isset($opt['template']) && ! empty($opt['template'])):
+		if (isset($opt['template']) && ! empty($opt['template'])):
 			//指定テンプレート
 			$template = $opt['template'];
-		elseif(isset($opt['template']) && empty($opt['template'])):
+		elseif (isset($opt['template']) && empty($opt['template'])):
 			//bulk
 			$template = LOCOMOPATH.'modules/bulk/views/bulk.php';
 		endif;

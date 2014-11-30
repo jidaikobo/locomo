@@ -45,7 +45,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 		$usergroup_id = is_numeric(\Input::param('usergroup')) ? \Input::param('usergroup') : null;
 		$user_id      = is_numeric(\Input::param('user')) ? \Input::param('user') : null;
 
-		if(($mod_or_ctrl == null) || ($usergroup_id == null && $user_id == null)):
+		if (($mod_or_ctrl == null) || ($usergroup_id == null && $user_id == null)):
 			\Session::set_flash('error', '必要項目を選択してから「次へ」を押してください。');
 			return \Response::redirect(\Uri::create('/acl/controller_index/'));
 		endif;
@@ -60,8 +60,8 @@ class Controller_Acl extends \Locomo\Controller_Base
 		$q = \DB::select('slug');
 		$q->from('acls');
 		$q->where('controller', 'IN', array_keys($actionsets));
-		if( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
-		if( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
+		if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
+		if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
 		foreach($actionsets as $controller => $each_actionsets):
@@ -99,14 +99,14 @@ class Controller_Acl extends \Locomo\Controller_Base
 	public function action_update_acl()
 	{
 		//CSRF
-//		if( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
+//		if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 		//user requests
 		$mod_or_ctrl  = \Input::param('mod_or_ctrl') == 'none' ? null : \Input::param('mod_or_ctrl') ;
 		$usergroup_id = is_numeric(\Input::post('usergroup')) ? \Input::post('usergroup') : null;
 		$user_id      = is_numeric(\Input::post('user')) ? \Input::post('user') : null;
 		$acls         = \Input::post('acls');
-		if($mod_or_ctrl == null && ($usergroup_id == null || $user_id == null)):
+		if ($mod_or_ctrl == null && ($usergroup_id == null || $user_id == null)):
 			\Response::redirect(\Uri::create('/acl/controller_index/'));
 		endif;
 
@@ -118,16 +118,16 @@ class Controller_Acl extends \Locomo\Controller_Base
 			//まずすべて削除
 			$q = \DB::delete('acls');
 			$q->where('controller', 'IN', array_keys($actionsets));
-			if( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
-			if( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
+			if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
+			if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
 			$q->execute();
 
 			//aclを更新
-			if(is_array(\Input::post('acls'))):
+			if (is_array(\Input::post('acls'))):
 				foreach($acls as $ctrl => $acl):
 					foreach($acl as $realm => $each_acls):
 						foreach($each_acls as $action => $v):
-							if( ! \Arr::get($actionsets[$ctrl]["actionset"], $realm)) continue;
+							if ( ! \Arr::get($actionsets[$ctrl]["actionset"], $realm)) continue;
 							foreach($actionsets[$ctrl]["actionset"][$realm][$action]['dependencies'] as $each_action):
 								//format conditions
 								$conditions = \Auth_Acl_Locomoacl::_parse_conditions($each_action);

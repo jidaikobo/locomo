@@ -63,7 +63,7 @@ class Model_Base extends \Orm\Model_Soft
 	public static function add_authorize_methods()
 	{
 // see sample at \Workflow\Traits_Model_Workflow -マージでもいいか？
-//		if( ! in_array('auth_sample', static::$_authorize_methods)):
+//		if ( ! in_array('auth_sample', static::$_authorize_methods)):
 //			static::$_authorize_methods[] = 'auth_sample';
 //		endif;
 	}
@@ -119,7 +119,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function get_primary_keys($mode = '')
 	{
-		if($mode == 'first'):
+		if ($mode == 'first'):
 			return reset(static::$_primary_key);
 		endif;
 		return static::$_primary_key;

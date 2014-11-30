@@ -27,7 +27,7 @@ class Actionset
 		$controller = '\\'.trim($controller, '\\');
 		$unique_key = $module ?: $controller;
 		$unique_key = static::set_unique_key($unique_key);
-		if( ! isset(static::$actions[$unique_key][$controller]['actionset'][$realm])):
+		if ( ! isset(static::$actions[$unique_key][$controller]['actionset'][$realm])):
 			static::$actions[$unique_key][$controller]['actionset'][$realm] = array();
 		endif;
 		static::$actions[$unique_key][$controller]['actionset'][$realm]['added'] = $arr;
@@ -41,15 +41,15 @@ class Actionset
 	 */
 	public static function get_actionset($ctrl_or_mod = null, $obj = null)
 	{
-		if(is_null($ctrl_or_mod)) throw new \InvalidArgumentException('Argument must be controller name or module name.');
+		if (is_null($ctrl_or_mod)) throw new \InvalidArgumentException('Argument must be controller name or module name.');
 
 		// judge module or controller
 		$module = strpos($ctrl_or_mod, 'Controller_') !== false ? null : $ctrl_or_mod;
 		$controller = $module ? null : $ctrl_or_mod;
 
 		// Module::load() to read config
-		if( ! \Module::loaded($module) && ! is_null($module)){
-			if( ! \Module::load($module)) throw new \InvalidArgumentException('module doesn\'t exist');
+		if ( ! \Module::loaded($module) && ! is_null($module)){
+			if ( ! \Module::load($module)) throw new \InvalidArgumentException('module doesn\'t exist');
 		}
 
 		// set actionset
@@ -67,14 +67,14 @@ class Actionset
 	 */
 	public static function set_actionset($controller = null, $module = null, $obj = null)
 	{
-		if(is_null($controller) && is_null($module)) return false;
+		if (is_null($controller) && is_null($module)) return false;
 
 		// check args - if module, search contain controller
 		$controllers = array();
 		$classes = $module ? array_keys(\Module::get_controllers($module)) : array($controller);
 		foreach($classes as $class):
-			if( ! property_exists($class, 'locomo')) continue;
-			if( ! \Arr::get($class::$locomo, 'actionset_classes')) continue;
+			if ( ! property_exists($class, 'locomo')) continue;
+			if ( ! \Arr::get($class::$locomo, 'actionset_classes')) continue;
 			$controllers[$class] = $class::$locomo;
 		endforeach;
 
@@ -93,7 +93,7 @@ class Actionset
 			foreach($p['actionset_classes'] as $realm => $class):
 				//methods - search prefixed 'actionset_'
 				$methods = get_class_methods($class);
-				if(! is_array($methods)) continue;
+				if (! is_array($methods)) continue;
 				$methods = array_flip($methods);
 				$methods = \Arr::filter_prefixed($methods, 'actionset_');
 				$methods = array_flip($methods);
@@ -102,14 +102,14 @@ class Actionset
 					$p_method = 'actionset_'.$method;
 					$as = $class::$p_method($controller, $obj, $id);
 					//not exists "urls" and "dependencies", retun nothing
-					if(! \Arr::get($as, 'urls.0') && ! \Arr::get($as, 'dependencies.0')) continue;
+					if (! \Arr::get($as, 'urls.0') && ! \Arr::get($as, 'dependencies.0')) continue;
 					static::$actions[$unique_key][$controller]['nicename'] = $p['nicename'];
 					static::$actions[$unique_key][$controller]['actionset'][$realm][$method] = $as;
 				endforeach;
 			endforeach;
 		endforeach;
 
-		if( ! isset(static::$actions[$unique_key])) return false;
+		if ( ! isset(static::$actions[$unique_key])) return false;
 
 		//コントローラが空のときには、すでにある配列の最初のコントローラをコントローラと見なす
 		//adminモジュールなど、自身はアクションセットを持っていないのに、add_actionset()するとこの事態が起こる
@@ -120,13 +120,13 @@ class Actionset
 		foreach(static::$actions[$unique_key][$controller]['actionset'] as $realm_name => $actions):
 			foreach($actions as $action_k => $action):
 				//prepare override
-				if(isset(static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides'])){
+				if (isset(static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides'])){
 					$overrides = array_merge($overrides, static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides']);
 				}
 			endforeach;
 
 			//orderを修正
-//			if( ! \Arr::get(static::$actions[$unique_key][$controller]['actionset'][$realm_name], 'order')) continue;
+//			if ( ! \Arr::get(static::$actions[$unique_key][$controller]['actionset'][$realm_name], 'order')) continue;
 			static::$actions[$unique_key][$controller]['actionset'][$realm_name] = \Arr::multisort(static::$actions[$unique_key][$controller]['actionset'][$realm_name], array('order' => SORT_ASC,));
 		endforeach;
 
@@ -147,12 +147,12 @@ class Actionset
 
 		$urls = array();
 		//check $exceptions
-		if(\Request::main()->controller == $controller && in_array(\Request::main()->action, $exceptions)):
+		if (\Request::main()->controller == $controller && in_array(\Request::main()->action, $exceptions)):
 			return $urls;
 		endif;
 
 		//check auth
-		if( ! \Auth::instance()->has_access(array($controller, $action))){
+		if ( ! \Auth::instance()->has_access(array($controller, $action))){
 			return $urls;
 		}
 
@@ -161,7 +161,7 @@ class Actionset
 			$url  = \Inflector::ctrl_to_dir(\Arr::get($v, 0, false));
 			$str  = \Arr::get($v, 1, false);
 			$attr = \Arr::get($v, 2, array());
-			if(! $url || ! $str || in_array($url, $exists)) continue;
+			if (! $url || ! $str || in_array($url, $exists)) continue;
 			$exists[] = $url;
 			$urls[] = \Html::anchor($url, $str, $attr);
 		endforeach;
@@ -174,18 +174,18 @@ class Actionset
 	 */
 	public static function generate_menu_html($obj, $ul_attr = array())
 	{
-		if( ! $obj) return false;
+		if ( ! $obj) return false;
 
 		$arr = array();
 		foreach($obj as $label => $v):
-			if($anchors = \Arr::get($v, 'urls', array())){
+			if ($anchors = \Arr::get($v, 'urls', array())){
 				$arr = array_merge($arr, $anchors);
 			}
 		endforeach;
-		if( ! $arr) return false;
+		if ( ! $arr) return false;
 
 		//override
-		if(isset($obj['override_url'])){
+		if (isset($obj['override_url'])){
 			$arr = $obj['override_url'];
 		}
 
@@ -197,7 +197,7 @@ class Actionset
 	 */
 	public static function generate_bulk_anchors($module, $controller, $model, $opt, $nicename, $urls)
 	{
-		if(! $urls) return array();
+		if (! $urls) return array();
 		$target = join('/',array_slice(\Uri::segments(), 0, 4));
 		$patterns[] = "{$module}/{$controller}/index_revision/{$model}";
 		$patterns[] = "{$module}/{$controller}/each_index_revision/{$model}";
@@ -211,7 +211,7 @@ class Actionset
 		$patterns_more_short[] = "{$module}/{$model}";
 		$patterns_more_short[] = "{$controller}/{$model}";
 
-		if(in_array($target, $patterns) || in_array($target_short, $patterns_short) || in_array($target_more_short, $patterns_more_short)):
+		if (in_array($target, $patterns) || in_array($target_short, $patterns_short) || in_array($target_more_short, $patterns_more_short)):
 			$override_urls['base'] = array(
 				\Html::anchor("{$module}/{$controller}/{$model}/?create=1","{$nicename}新規作成"),
 				\Html::anchor("{$module}/{$controller}/index_revision/{$model}?opt={$opt}","設定履歴"),

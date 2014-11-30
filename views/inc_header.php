@@ -44,7 +44,7 @@
 			<a id="anchor_alert_error" class="skip" tabindex="-1">エラー:メッセージが次の行にあります</a>
 <?php $i = 0;
 foreach((array) Session::get_flash('error') as $id => $e):
-if($id === 0):
+if ($id === 0):
 	echo "<p>$e</p>" ;
 else:
 	echo $i == 0 ? '<ul class="link">' : '';

@@ -86,7 +86,7 @@ ctrlレルム以外は、LOCOMOPATH.classes/actionset/に、基本的なクラ�
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
 			$urls = static::generate_uris($controller, 'edit', $actions, ['edit','create']);
 		endif;
@@ -109,7 +109,7 @@ $retvalsで返される項目が、\Locomo\Actionsetで判定されます。
 urlsには、完全なa要素を配列でセットしてください。
 コントローラにいる間、常に表示されていてよいリンクの場合は、そのままa要素を渡してもいいのですが、だいたいはリンクが表示されてほしいタイミングがあります。上記例は個別の項目の編集へのリンクなので、個別の項目を表示しているときに表示してほしいものです。ので
 
-if(\Request::main()->action == 'view' && $id):
+if (\Request::main()->action == 'view' && $id):
 
 で、アクションがviewのときで$idが存在しているとき──つまり個別項目を表示しているとき──に編集へのリンクを表示します。
 

@@ -17,7 +17,7 @@ class Module extends \Fuel\Core\Module
 		try
 		{
 			//root not use cache
-			if(\Auth::is_root()) throw new \CacheNotFoundException();
+			if (\Auth::is_root()) throw new \CacheNotFoundException();
 			return \Cache::get('exist_modules');
 		}
 		catch (\CacheNotFoundException $e)
@@ -26,7 +26,7 @@ class Module extends \Fuel\Core\Module
 			foreach(\Config::get('module_paths') as $path):
 				foreach (glob($path.DS."*") as $modpath):
 					$module = strtolower(basename($modpath));
-					if( ! is_dir($path) || in_array($module, $finded)) continue;
+					if ( ! is_dir($path) || in_array($module, $finded)) continue;
 					$retvals[$module] = str_replace(DS.DS, DS, $modpath);//eliminate doubled slash
 					$finded[] = $module;
 				endforeach;

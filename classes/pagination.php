@@ -53,7 +53,7 @@ class Pagination extends \Fuel\Core\Pagination {
 				$url = \Uri::create($url, array(), $input_get);
 				return \Html::anchor($url, $label ?: $field, array('class' => $class));
 
-			} elseif(is_string($p_seg)) {
+			} elseif (is_string($p_seg)) {
 				unset($input_get[$p_seg]);
 			}
 		}

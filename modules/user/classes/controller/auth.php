@@ -12,19 +12,19 @@ class Controller_Auth extends \Locomo\Controller_Crud
 		$ret = $ret == null ? '/admin/dashboard/' : $ret ;
 
 		//ログイン済みのユーザだったらログイン画面を表示しない
-		if(\Auth::check()):
+		if (\Auth::check()):
 			\Session::set_flash('error', 'あなたは既にログインしています');
 				return \Response::redirect($ret);
 //			\Response::redirect_back();
 		endif;
 
 		//ログイン処理
-		if(\Input::method() == 'POST'):
+		if (\Input::method() == 'POST'):
 			$username = \Input::post('username');
 			$password = \Input::post('password');
 
 			//ログイン成功
-			if(\Auth::instance()->login($username, $password)):
+			if (\Auth::instance()->login($username, $password)):
 				\Session::set_flash('success', 'ログインしました。');
 				return \Response::redirect($ret);
 			else:

@@ -17,12 +17,12 @@ class Helper_Views_view extends Helper
 			list($field, $attr) = explode(':', $field);
 			$nicename = self::get_nicename($field);
 			$field    = self::remove_nicename($field);
-			if(in_array($field, $banned)) continue;
+			if (in_array($field, $banned)) continue;
 
-			$fields.= "<?php if(\$item->{$field}): ?>\n";
+			$fields.= "<?php if (\$item->{$field}): ?>\n";
 			$fields.= '<tr>'."\n";
 			$fields.= "\t<th>".$nicename."</th>\n";
-			if(substr($field,0,3)=='is_'):
+			if (substr($field,0,3)=='is_'):
 				$fields.= "\t<td><?php echo \$item->{$field} ? 'Yes' : 'No'; ?></td>\n";
 			else:
 				$fields.= "\t<td><?php echo \$item->{$field}; ?></td>\n";

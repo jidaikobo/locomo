@@ -21,7 +21,7 @@ class Actionset_Base_XXX extends \Actionset_Base
 	 */
 	public static function _actionset_sample_action($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_uris($controller, 'view', $actions, ['create']);
 		endif;
