@@ -403,6 +403,7 @@ class Model_Base extends \Orm\Model_Soft
 			if (\Input::get('orders')) {
 				$orders = array();
 				foreach (\Input::get('orders') as $k => $v) {
+					if ( ! in_array($k, static::$_properties)) continue;
 					$orders[$k] = $v;
 				}
 				$options['order_by'] = $orders;
@@ -410,6 +411,7 @@ class Model_Base extends \Orm\Model_Soft
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {
 					if ($v == false) continue;
+					if ( ! in_array($k, static::$_properties)) continue;
 					$options['where'][] = array($k, '=', $v);
 				}
 			}
@@ -417,6 +419,7 @@ class Model_Base extends \Orm\Model_Soft
 				$likes = array();
 				foreach (\Input::get('likes') as $k => $v) {
 					if ($v == false) continue;
+					if ( ! in_array($k, static::$_properties)) continue;
 					$options['where'][] = array($k, 'LIKE', '%' . $v . '%');
 				}
 			}
