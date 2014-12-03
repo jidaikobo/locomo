@@ -11,7 +11,7 @@
         timezoneText: 'タイムゾーン',
         currentText: '現時刻',
         closeText: '閉じる',
-        timeFormat: 'HH:mm:ss	',
+        timeFormat: 'HH:mm:ss',
         amNames: ['午前', 'AM', 'A'],
         pmNames: ['午後', 'PM', 'P'],
         isRTL: false,
