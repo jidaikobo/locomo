@@ -31,8 +31,13 @@ class Controller_Crud extends Controller_Base
 		$model = $this->model_name;
 		$content = \View::forge($this->_content_template ?: 'index_admin');
 
+
 		//$model::paginated_find_use_get_query(false);
-		$content->set('items',  $model::paginated_find(array(), $this->pagination_config));
+		$condition = $model::condition();
+		$options = $condition;
+		$model::$_conditions = array();
+
+		$content->set('items',  $model::paginated_find($options, $this->pagination_config));
 
 		$content->base_assign();
 		$this->template->set_global('title', static::$nicename);
@@ -148,7 +153,7 @@ class Controller_Crud extends Controller_Base
 		endif;
 
 		//view
-		$content = \View::forge('view');
+		$content = \View::forge($this->_content_template ?: 'view');
 		$content->set_safe('plain', $model::plain_definition('view', $item)->build_plain());
 		$content->set('item', $item);
 		$content->set_global('title', self::$nicename.'閲覧');
@@ -163,7 +168,7 @@ class Controller_Crud extends Controller_Base
 	public function action_edit($id = null)
 	{
 		$model = $this->model_name ;
-		$content = \View::forge('edit');
+		$content = \View::forge($this->_content_template ?: 'edit');
 
 		if ($id) {
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
