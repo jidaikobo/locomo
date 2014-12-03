@@ -9,6 +9,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 		'is_for_admin' => true,
 		'admin_home' => '\\Acl\\Controller_Acl/controller_index',
 		'nicename' => 'アクセス権',
+		'help'     => 'packages/locomo/modules/acl/help/acl.html',
 		'actionset_classes' =>array(
 			'base'   => '\\Acl\\Actionset_Base_Acl',
 		),

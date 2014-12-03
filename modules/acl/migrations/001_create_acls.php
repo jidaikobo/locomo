@@ -12,12 +12,14 @@ class Create_acls
 			'usergroup_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'user_id'      => array('constraint' => 11, 'type' => 'int', 'null' => true),
 		), array('id','controller','action'));
-		\DBUtil::create_index('acls', array('controller', 'action', 'slug', 'usergroup_id', 'user_id'), 'aclsindex');
+		\DBUtil::create_index('acls', array('usergroup_id'), 'acls_idx_usergroup_id');
+		\DBUtil::create_index('acls', array('user_id'), 'acls_idx_user_id');
 	}
 
 	public function down()
 	{
-		\DBUtil::drop_index('acls','aclsindex');
+		\DBUtil::drop_index('acls','acls_idx_usergroup_id');
+		\DBUtil::drop_index('acls','acls_idx_user_id');
 		\DBUtil::drop_table('acls');
 	}
 }

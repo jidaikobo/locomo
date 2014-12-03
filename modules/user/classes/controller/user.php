@@ -9,6 +9,7 @@ class Controller_User extends \Locomo\Controller_Crud
 		'is_for_admin' => true,
 		'admin_home' => '\\User\\Controller_User/index_admin',
 		'nicename' => 'ユーザ',
+		'help'     => 'packages/locomo/modules/user/help/user.html',//app/../からのパス
 		'actionset_classes' =>array(
 			'base'   => '\\User\\Actionset_Base_User',
 			'index'  => '\\User\\Actionset_Index_User',
