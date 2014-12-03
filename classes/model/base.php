@@ -421,7 +421,7 @@ class Model_Base extends \Orm\Model_Soft
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {
 					if ($v == false) continue;
-					if ( ! in_array($k, array_keys(static::properties())) continue;
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
 					$options['where'][] = array($k, '=', $v);
 				}
 			}
