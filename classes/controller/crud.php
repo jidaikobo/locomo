@@ -206,7 +206,7 @@ class Controller_Crud extends Controller_Base
 				//edit view or validation failed of CSRF suspected
 				if (\Input::method() == 'POST'):
 					$errors = $form->error();
-					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
+					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
 					\Session::set_flash('error', $errors);
 				endif;
 			endif;
