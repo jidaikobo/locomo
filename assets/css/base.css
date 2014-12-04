@@ -508,10 +508,11 @@ textarea {
 	-ms-box-sizing: border-box;
 	box-sizing: border-box;
 	max-width: 100%;
+	vertical-align: middle;
 }
 .btn,
 .button {
-	vertical-align: bottom;
+	vertical-align: middle;
 	padding: 5px 15px ;
 	margin: 0 5px;
 	line-height: 1.5em;

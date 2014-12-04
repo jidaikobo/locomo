@@ -136,17 +136,17 @@ body.login{
 .adminbar_bottom .adminbar_icon{
 	width: 1.5em;
 }
+
 .adminbar_top .adminbar_icon img{
 	width: 1.75em;
 	height: 1.75em;
-	padding: .125em 0;
-	
+	padding: .1em 0;
 }
+
 .adminbar_bottom .adminbar_icon img{
-	width: 1.5em;
-	height: 1.5em;
 	padding: .25em 0;
 }
+
 .adminbar_top,
 .adminbar_bottom {
 	display: block;
@@ -203,7 +203,7 @@ body.login{
 .adminbar_top .adminbar_sub {
 	vertical-align: middle;
 }
-.adminbar_top .adminbar_main a{
+.adminbar_top .adminbar_main > a{
 	margin-right: 5px;
 }
 .adminbar_top .adminbar_sub {
@@ -487,6 +487,14 @@ a.delete{
 	color: #a20;
 }
 
+/* hidden_item */
+.hidden_item{
+	display: none;
+}
+.hidden_item.on{
+	display: block;
+}
+
 /* alert */
 div.flash_alert {
 	position: relative;
@@ -688,11 +696,12 @@ table.datatable td{
 }
 
 /*=== modal ===*/
+/*
 .modal
 {
 	display: none;
 }
-
+*/
 /*=== jQuery UI ===*/
 .ui-widget {
 	font-size: .8em !important;
