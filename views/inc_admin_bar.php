@@ -3,8 +3,8 @@
 if (\Auth::check()):
 	$html = '';
 	$html.= '<nav id="adminbar" class="clearfix">';
-		$html.= '<a href="#anchor_adminbar" class="skip show_if_focus" tabindex="1">ツールバーに移動</a>';
-		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="-1">ツールバー</a></h2>';
+//		$html.= '<a href="#anchor_adminbar" class="skip show_if_focus" tabindex="1">ツールバーに移動</a>'; //inc_header,inc_admin_headerに移動。
+		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="0">ここからツールバーです</a></h2>';
 
 	//.adminbar_bottom
 		$html.='<div class="adminbar_bottom">';
@@ -56,7 +56,7 @@ if (\Auth::check()):
 			$html.= '<div class="adminbar_main">';
 			$html.= \Config::get('no_home') ? '' : '<a href="'.\Uri::base().'" title="ホーム"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_home.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ホーム</span></a>';
 			$html.= '<a href="'.\Uri::base().'admin/dashboard/" title="ダッシュボード"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_dashboard.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ダッシュボード</span></a>';
-			$html.= '<h3 class="skip">メインメニュー</h3>';
+			$html.= '<h3 class="skip">ここからメインメニューです</h3>';
 			//controller menu
 			if ($locomo['controllers']):
 				$html.= '<div class="admin_menu">';
@@ -77,7 +77,7 @@ if (\Auth::check()):
 			$html.='<div class="adminbar_sub">';
 		
 			//処理速度
-			$html.= \Auth::is_admin() ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
+			$html.= \Auth::is_root() ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
 			
 			//help
 			$html.= '<div class="admin_help">';
@@ -119,7 +119,7 @@ if (\Auth::check()):
 
 		$html.= '</div><!-- /.adminbar_sub -->';
 		$html.= '</div><!-- /.adminbar_top -->';
-	
+		$html.='<a class="skip show_if_focus" href="#page_title">本文へ移動</a>';
 	$html.= '</nav><!-- /#adminbar -->';
 
 	echo $html;

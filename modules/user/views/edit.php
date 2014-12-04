@@ -1,4 +1,4 @@
-<?php echo \Form::open(); ?>
+<?php echo \Form::open(array('autocomplete'=>'off')); ?>
 <div class="form_group">
 	<table class="formtable">
 	<tr class="<?php echo $form->field('username')->set_template('{error_class}'); ?>">
