@@ -234,6 +234,18 @@ class Model_Base extends \Orm\Model_Soft
 		return $options;
 	}
 
+
+
+	/*
+	 * $_delete_unseted_tabular_row
+	 * has many 特に tabular form で、postされたデータ以外のものを削除するか
+	 */
+	protected static $_unset_tabular_row_delete = false;
+
+	public static function set_unset_tabular_row_delete(bool $bool) {
+		static::$_unset_tabular_row_delete = $bool;
+	}
+
 	/*
 	 * @param   array     $input_post
 	 * @param   Fieldset  $form (for validation)
@@ -290,13 +302,15 @@ class Model_Base extends \Orm\Model_Soft
 				$repopulate and $form->field($k)->populate($input_post[$k]);
 
 			// has_many
-			} elseif (static::relations()[$k]->cascade_save and static::relations()[$k] instanceof \Orm\HasMany ) {
+			} elseif (/* static::relations()[$k]->cascade_save and */static::relations()[$k] instanceof \Orm\HasMany ) {
 				if (!$form->field($k)) continue;
 
 				// hm 既存列
 				foreach ($this[$k] as $kk => $vv) {
-					if (isset($input_post[$k][$kk]['_delete']) or !isset($input_post[$k][$kk])){ // _deleted
+					if (isset($input_post[$k][$kk]['_delete'])/* or !isset($input_post[$k][$kk])*/){ // _deleted
 						unset($this->{$k}[$kk]);
+					} elseif (!isset($input_post[$k][$kk])) {
+						if (static::$_unset_tabular_row_delete) unset($this->{$k}[$kk]);
 					} else {
 						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
 						!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
@@ -407,7 +421,7 @@ class Model_Base extends \Orm\Model_Soft
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {
 					if ($v == false) continue;
-					if ( ! in_array($k, static::$_properties)) continue;
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
 					$options['where'][] = array($k, '=', $v);
 				}
 			}
@@ -415,7 +429,7 @@ class Model_Base extends \Orm\Model_Soft
 				$likes = array();
 				foreach (\Input::get('likes') as $k => $v) {
 					if ($v == false) continue;
-					if ( ! in_array($k, static::$_properties)) continue;
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
 					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
 				}
 			}
@@ -427,6 +441,7 @@ class Model_Base extends \Orm\Model_Soft
 			}
 		}
 
+		$count_all = static::count();
 		$count = static::count($options);
 
 		\Pagination::set('total_items', $count);
@@ -434,12 +449,10 @@ class Model_Base extends \Orm\Model_Soft
 		$segment = \Pagination::get('uri_segment') - 1;
 		$uri = '/'.join('/', array_slice(\Uri::segments(), 0, $segment)).'/';
 		\Pagination::set_config('pagination_url', \Uri::create($uri, array(), $input_get));
-
-		$options['limit'] = \Pagination::get('per_page');
-		$options['offset'] = \Pagination::get('offset');
+		$options['rows_limit'] = \Pagination::get('per_page');
+		$options['rows_offset'] = \Pagination::get('offset');
 
 		return static::find('all', $options);
-
 	}
 
 	protected static $_use_get_query = true;
