@@ -73,6 +73,7 @@ class Actionset
 		$controllers = array();
 		$classes = $module ? array_keys(\Module::get_controllers($module)) : array($controller);
 		foreach($classes as $class):
+			$class = substr($class, 0, 1) == '\\' ? $class : '\\'.$class;
 			if ( ! property_exists($class, 'locomo')) continue;
 			if ( ! \Arr::get($class::$locomo, 'actionset_classes')) continue;
 			$controllers[$class] = $class::$locomo;
@@ -97,7 +98,7 @@ class Actionset
 				$methods = array_flip($methods);
 				$methods = \Arr::filter_prefixed($methods, 'actionset_');
 				$methods = array_flip($methods);
-	
+
 				foreach($methods as $method):
 					$p_method = 'actionset_'.$method;
 					$as = $class::$p_method($controller, $obj, $id);
