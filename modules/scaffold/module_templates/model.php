@@ -7,6 +7,8 @@ class Model_XXX extends \Locomo\Model_Base
 	protected static $_table_name = '###TABLE_NAME###';
 	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
 
+	public static $_conditions = array();
+
 	protected static $_properties =
 ###FIELD_STR### ;
 

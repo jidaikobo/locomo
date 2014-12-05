@@ -105,72 +105,48 @@ trait Traits_Controller_Revision
 		$this->template->content = $view;
 	}
 
-	/**
-	 * action_view_revision()
-	 */
-	public function action_view_revision($model_simple_name, $id = null)
-	{
-		is_null($id) and \Response::redirect(\Uri::base());
-		$model = \Revision\Model_Revision::forge();
-		$module = $this->request->module;
 
-		if ( ! $revisions = $model::find($id)):
+	public function action_view_revision($revision_id = null)
+	{
+
+		is_null($revision_id) and \Response::redirect(\Uri::base());
+
+		$model = $this->model_name;
+
+		if ( ! $revisions = \Revision\Model_Revision::find($revision_id)):
 			\Session::set_flash('error', '履歴を取得できませんでした');
 			return \Response::redirect(\Uri::base());
 		endif;
 
+	//	$model = $revisions->model;
+
+		$obj = $model::forge();
+
 		//unserialize
 		$data = unserialize($revisions->data);
-		$data->comment = '('.$revisions->operation.') '.$revisions->comment;
 
-		//model
-		$original_model = '\\'.ucfirst($module).'\\Model_'.ucfirst($model_simple_name);
-		$pk = $original_model::get_primary_keys('first');
+		$obj->comment = '('.$revisions->operation.') '.$revisions->comment;
 
-		//option - ise \Module\Model_Module::$_option_options['range']
-		$opt = false;
-		$opt_arg = '';
-		if (\Input::get('opt')):
-			if ( ! isset($original_model::$_option_options[\Input::get('opt')])) die('missing $_option_options.');
-			$opt = $original_model::$_option_options[\Input::get('opt')] ;
-			$opt_arg = '?opt='.\Input::get('opt');
-		endif;
+		$obj->set($data);
+		$plain = $model::plain_definition('revision', $obj);
 
-		//form definition
-		$data->$pk   = $revisions->pk_id;
-		$template = 'edit';
-		if (isset($opt['form_definition'])):
-			$form = $original_model::{$opt['form_definition']}('revision', $data);
-		else:
-			//普通のform_definition
-			$form = $original_model::form_definition('revision', $data);
-		endif;
-
-		//template
-		if (isset($opt['template']) && ! empty($opt['template'])):
-			//指定テンプレート
-			$template = $opt['template'];
-		elseif (isset($opt['template']) && empty($opt['template'])):
-			//bulk
-			$template = LOCOMOPATH.'modules/bulk/views/bulk.php';
-		endif;
-		
 		//view
-		$view = \View::forge($template);
-		$view->set_global('form', $form, false);
-		$view->set_global('item', $data);
-		$view->set_global('title', '履歴個票');
-		$view->set_global('is_revision', true);
+		$content = \View::forge(LOCOMOPATH.'modules/revision/views/view_revision.php');
+		$content->set_safe('plain', $plain->build_plain());
+		$content->set_global('item', $obj);
+		$content->set_global('title', '履歴個票');
+		$content->set_global('is_revision', true);
 
+		//$module = $this->request->module;
 		//add_actionset
-		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
-		$module_url = $module ? $module.'/' : '' ;
-		$action['urls'][] = \Html::anchor($module_url.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg, '履歴一覧へ');
-		$action['urls'][] = \Html::anchor($module_url.'/edit/'.$revisions->pk_id, '編集画面へ');
-		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, $module, 'ctrl', $action);
-		$view->base_assign();
-		$this->template->content = $view;
+		//$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
+		//$module_url = $module ? $module.'/' : '' ;
+		//$action['urls'][] = \Html::anchor($module_url.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg, '履歴一覧へ');
+		//$action['urls'][] = \Html::anchor($module_url.'/edit/'.$revisions->pk_id, '編集画面へ');
+		//$action['order'] = 10;
+		//\Actionset::add_actionset($this->request->controller, $module, 'ctrl', $action);
+		$content->base_assign();
+		$this->template->content = $content;
+ 
 	}
-
 }

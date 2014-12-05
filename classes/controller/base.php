@@ -42,10 +42,10 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		if (\Request::main()->module)
 		{
 			$module = ucfirst(\Request::main()->module);
-			$this->model_name = '\\'.$module.'\\Model_'.$module;
+			if (! $this->model_name) $this->model_name = '\\'.$module.'\\Model_'.$module;
 			static::$config = \Config::load(strtolower($this->request->module));
 		}else{
-			$this->model_name = '\\Model_'.$controller;
+			if (! $this->model_name) $this->model_name = '\\Model_'.$controller;
 			static::$config = \Config::load(strtolower($controller));
 		}
 		static::$config = static::$config ?: array();

@@ -131,15 +131,20 @@ class Model_User extends \Locomo\Model_Base
 			->add_rule('max_length', 255);
 
 		//usergroups
-		$opt = \User\Model_Usergroup::get_option_options('usergroup');
-		$usergroups = \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
-		$checked = isset($obj->usergroup) ? array_keys($obj->usergroup) : array();
+	//	$opt = \User\Model_Usergroup::get_option_options('usergroup');
+		$options = \User\Model_Usergroup::get_options(array('where' => array(array('is_available', true))), 'name');
+
+		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
 		$form->add(
 				'usergroup',
 				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $usergroups)
+				array('type' => 'checkbox', 'options' => $options)
 			)
-			->set_value($checked);
+			->set_value( array_keys($obj->usergroup));
+
+
+
+
 
 		//管理者以外は旧パスワードを求める
 		if ( ! \Auth::is_admin()):

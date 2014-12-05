@@ -82,18 +82,12 @@ class Observer_Revision extends \Orm\Observer
 
 		//$objしたものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
 		$primary_key = $obj::get_primary_keys('first');
-		$model_name = get_class($obj);
-		$form = $model_name::form_definition('revision_'.$counter);
-		foreach($form->field() as $property => $v):
-			if ( ! isset($obj->{$property})) continue;
-			$tmp->{$property} = $obj->{$property};
-		endforeach;
 
 		//args
 		$args = array();
 		$args['model']       = get_class($obj);
 		$args['pk_id']       = $obj->$primary_key;
-		$args['data']        = serialize($tmp);
+		$args['data']        = serialize(\Input::post());
 		$args['comment']     = \Input::post('revision_comment') ?: '';
 		$args['created_at']  = date('Y-m-d H:i:s');
 		$args['operation']   = $operation;
@@ -105,4 +99,5 @@ class Observer_Revision extends \Orm\Observer
 		$counter++;
 	}
 
+	
 }
