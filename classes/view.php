@@ -14,7 +14,6 @@ class View extends \Fuel\Core\View
 			$logo = \Asset::img();
 			$logo = LOCOMOPATH.'assets/img/system/logo.png';
 		}
-		
 
 		//guest
 		//body_class

@@ -7,12 +7,12 @@ isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
 //JavaScript有効時に表示、無効時にはCSSで非表示
 $('.hide_if_no_js').removeClass("hide_if_no_js");
 
-//.show_if_no_js的な処理があるとすれば？？
-//$(".show_if_no_js").();
+//.show_if_no_js noscript的な扱い
+$(".show_if_no_js").remove();
 
 //ページ読み込み直後のフォーカス制御
 if($('.flash_alert')[0]){
-	var firstFocus = $('.flash_alert').first();
+	var firstFocus = $('.flash_alert a.skip').first();
 }else if($('body').hasClass('login')){
 	var firstFocus = $('input:visible').first();
 }
@@ -25,6 +25,9 @@ function set_focus(t){
 		$(t).select();
 	}
 }
+
+//Focusまわりのテスト（NetReaderでFocus移動を検知したい）
+//setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
 
 //管理バーの高さ+αのヘッダーの高さを確保
 var headerheight = 0;
@@ -56,7 +59,7 @@ var isHtmlScrollable = (function(){
 })();
 //スクロール
 $(document).on('click', 'a[href^=#]', function(){
-	$(window).off('beforeunload'); //ページ内リンク時に画面遷移の警告をキャンセル
+	$(window).off('beforeunload'); //ページ内リンクでは画面遷移の警告をキャンセル
 	var href= $(this).attr("href");
 	var t = $(href == '#' || href == '' ? 'html' : href);
 	var position = t.offset().top-headerheight-10;
@@ -65,52 +68,180 @@ $(document).on('click', 'a[href^=#]', function(){
 	return false;
 });
 
-//クリックイベント
-$(document).click(function(event){
-	var t = event.target;
-//リストの開け閉め
-	if(isModal){
-		closeModal(t);
+
+//非表示
+$('.hidden_item').each(function(){
+	if( $(this).is(':input') && $(this).val() ){ //hidden_itemでも中に値がある場合は表示
+		var index  = $('.hidden_item').index(this);
+		var trigger = $('.toggle_item').eq(index);
+		$(this).show().addClass('on');
+		trigger.addClass('on');
 	}
+});
+
+
+//クリックイベント
+$(document).click(function(e){
+	if(!e){
+		e = event;
+	}
+	var t = e.target;
+//リストの開け閉め
+	close_modal();
 } );
 
+
 //モーダル
-var isModal = false; 
-var closeModal = function(t){
-	$('.modal.on').removeClass('on');
-	isModal = false;
-}
-$('a.modal').click(function(event){
-	var index = $('.toggle_item').index(this); //modalは.toggle_item-.hidden_itemとセットで使う
-	var t = $('.hidden_item').eq(index);
-	if($(this).hasClass('on')){
-		$(document).find('.modal.on').removeClass('on');
-		isModal = false;
-	}else{
-		$(document).find('.modal.on').removeClass('on');
-		t.addClass('on');
-		$(this).addClass('on');
-		isModal = true;
+function close_modal(){
+	var t = $(document).find('.modal.on');
+//	console.log($(t).text());
+	if($(t)[0]){
+		var index = $(document).find('.hidden_item').index(t);
+		var trigger = $('.toggle_item').eq(index);
+		trigger.removeClass('on'); //torigger?のonを外す
+		//focusをあてる対象は、closemodalが自分自身か、外かで異なる
+		trigger.focus();
+		$('.modal.on').removeClass('on'); //modalを閉じる
+		$(document).find(':focusable').each(function(){ //tabindexの値をなおす
+			if($(this).data('tabindex')){
+				$(this).attr('tabindex', $(this).data('tabindex'))
+			}else{
+				$(this).removeAttr('tabindex');
+			}
+		});
 	}
 	return false;
-});
-$(document).on('click', '.modal.on', function(){
-	event.stopPropagation();
+}
+
+$(document).on('click', '.modal.on', function(e){
+	if(!e){
+		e = event;
+	}
+	e.stopPropagation();
 });
 
 //表示・非表示切り替え
-
-$('.hidden_item').each(function(){
-	if((isModal == true) && ( $(this).not(':input') || $(this).val()=='')){
-		$(this).hide();
+$(document).on('click', '.toggle_item', function(e){
+	if(!e){
+		e = event;
 	}
-});
-$(document).on('click', '.toggle_item', function(){
 	var index = $('.toggle_item').index(this);
-	var t = $('.hidden_item').eq(index);
-	t.toggle().toggleClass('on');
-	$(this).toggleClass('on');
+	var t = $('.hidden_item').eq(index);		//切り替える相手
+	if($('.modal.on')[0] ){	//モーダルが開いている場合モーダルを消す
+		var itself = t.is('.modal.on');		//開いているのはそのモーダルか
+		close_modal();
+		if(itself){	//モーダルが自分ならそこでおわり
+			return false;
+		}
+	}
+	$(t).toggleClass('on');
+	$(this).toggleClass('on').focus();
+
+	if(t.is('.modal.on')){ //ここまででmodalが開いている場合、tabindexの制御を行う
+		$(document).find(':focusable').each(function(){
+			if($(this).attr('tabindex')){
+				$(this).data('tabindex',$(this).attr('tabindex'));	//もとのtabindexをdataに格納
+			}
+			$(this).attr('tabindex','-1');
+		});
+		
+		//targetの中とtoggleの要素だけtabindexを元に。//data('tabindex')を見る？ tabindex=0にする？
+		$(this).removeAttr('tabindex');
+		t.find(':focusable').removeAttr('tabindex');
+	}
+	e.stopPropagation();
+	return false;
 });
+
+//キーボード操作の制御
+//NetReaderでうまく取得できないので、なにか考える
+$(document).on('keypress',function(e){
+	if(!e){
+		e = event;
+	}
+//alert(e);
+});
+
+$(document).on('keydown',function(e){
+	if(!e){
+		e = event;
+	}
+	var t = e.target;
+	var k = e.which;
+	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
+	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン依存する？)
+	//モーダル周り
+	if($(document).find('.modal.on')[0]){
+		var tabbable = $(document).find(':tabbable');
+		var index = null;
+		switch( e.keyCode ){
+		case $.ui.keyCode.LEFT:
+			return false;
+			break;
+		case $.ui.keyCode.RIGHT:
+			return false;
+			break;
+		case $.ui.keyCode.DOWN:
+			var index = tabbable.index($(':focus'))+1;
+			if( t == tabbable.last()[0]){
+				var index = 0;
+			}
+			break;
+		case $.ui.keyCode.UP:
+			var index = tabbable.index($(':focus'))-1;
+			break;
+		case $.ui.keyCode.TAB:
+			if( t == tabbable.last()[0] && ! e.shiftKey){
+				var index = 0;
+			}else if( t == tabbable.first()[0] && e.shiftKey){
+				var index = -1;
+			}
+			break;
+		case $.ui.keyCode.ESCAPE:
+			close_modal();
+			break;
+		}
+			if(index!==null){
+			tabbable.eq(index).focus();
+			return false;
+		}
+	}
+	/*
+	//モーダル周り
+	if($(document).find('.modal.on')[0]){
+		var tabbable = $(document).find(':tabbable');
+		var index = null;
+		if((k == 37 || k == 39)&& !isNetReader ){
+			$(t).text('左右');
+		} 
+		if(k == 37 || k == 39 ) return false;//左右キーは止めてしまう
+		if(k == 40){ //↓
+			var index = tabbable.index($(':focus'))+1;
+			if( t == tabbable.last()[0]){
+				var index = 0;
+			}
+		}else
+		if(k == 38){ //↑
+			var index = tabbable.index($(':focus'))-1;
+		}else
+		if(k == 9){ //Tab
+			if( t == tabbable.last()[0] && ! e.shiftKey){
+				var index = 0;
+			}else if( t == tabbable.first()[0] && e.shiftKey){
+				var index = -1;
+			}
+		}
+		if(index!==null){
+			tabbable.eq(index).focus();
+			return false;
+		}
+		if(k == 27){
+			close_modal();
+		}
+	}
+*/
+});
+
 
 //確認ウィンドウ
 $('.confirm').click(function(){
@@ -134,8 +265,9 @@ $('.confirm').click(function(){
 //=== form ===
 
 //ページ遷移時の警告
+//エラー時には必ず。
+//login画面とsubmitがない場合(編集履歴など)では出さない。編集履歴はむしろdisableにするほうがよい？
 //イベントを渡して.targetの値を見ることも可
-//エラー時も移動させたくない
 
 function confirm_beforeunload(){
 	$(window).on('beforeunload', function(){
@@ -143,20 +275,35 @@ function confirm_beforeunload(){
 	});
 }
 
-if(! $('body').hasClass('login')){
-	$('form').change( function(){
-		confirm_beforeunload();
+if($('a:submit, input:submit')[0] && !$('body').hasClass('login')){
+	var datetime = $('.datetime');
+	datetime.each(function(){
+		var val = $(this).val();
+		$(this).data('val',val);
+	});
+	$('form').change( function(e){
+	if(!e){
+		e = event;
+	}
+		var t = e.target;
+		if($(t).hasClass('datetime') && $(t).val() == $(t).data('val') ){
+			return false;
+		}else{
+			confirm_beforeunload();
+		}
 	});
 	if($('#alert_error')[0]){
 		confirm_beforeunload();
 	}
 }
 
-$("input[type=submit]").click(function(){
+//ページ遷移警告抑止
+$('a:submit, input:submit').click(function(){
 	$(window).off('beforeunload');
 });
 
-//エラー時のナビゲーション
+
+//エラー時の、入力エリアから一覧へのナビゲーション
 $('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
 
 
@@ -214,20 +361,41 @@ $(document).on('click', '.switch_mce', function(){
 /* jQuery UI */
 
 //calendar
-$('.datetime.schedule').datetimepicker({
+
+$('input.date , input[type=date]').datepicker({
+	dateFormat: 'yy-mm-dd',
+	changeMonth: true,
+	changeYear: true,
+});
+
+$('input.datetime.min15, input[type=datetime].min15').datetimepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 15
 });
-$('.datetime').datetimepicker();
+$('input.datetime.min30, input[type=datetime].min30').datetimepicker({
+	timeFormat: 'HH:mm',
+	stepMinute: 30
+});
+$('input.datetime,  input[type=datetime]').datetimepicker();
 
-$('.date').datepicker();
-$('.date').datepicker("option", "dateFormat", 'yy-mm-dd');
-$('.date').datepicker("option", "changeMonth", true);
-$('.date').datepicker("option", "changeYear", true);
+$('input.time.min15').timepicker({
+	timeFormat: 'HH:mm',
+	hourMin:$(this).data('hourMin'),
+	hourMax:18,
+	stepMinute: 15
+});
+$('input.time.min30').timepicker({
+	timeFormat: 'HH:mm',
+	stepMinute: 30
+});
+$('input.time').timepicker({timeFormat: 'HH:mm'});
+
+
+
 
 //tooltip
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
-//※要調
+//※要確認
 $('.validation_error :input').tooltip({
 	tooltipClass : 'form_tooltip',
 	show         : 200,
