@@ -13,7 +13,7 @@ trait Controller_Traits_Testdata
 
 		//$test_datas
 		$model = $this->model_name;
-		$form = $model::form_definition('add_testdata');
+		$form = $model::form_definition('add_testdata', $model::forge());
 		if ( ! $form):
 			\Session::set_flash('error', 'form_definition failed.');
 			\Response::redirect($this->request->module);
@@ -23,6 +23,7 @@ trait Controller_Traits_Testdata
 		$args = array();
 		for ($n = 1; $n <= $num; $n++):
 			foreach ($form->field() as $property => $v):
+				if ( ! property_exists($v, 'rules')) continue;
 				if (
 					\Arr::search($v->rules, 'required', null, true) != true &&
 					\Arr::search($v->rules, 'require_once', null, true) != true //original

@@ -25,6 +25,7 @@ class Controller_Admin extends \Locomo\Controller_Base
 			$view->set_global('title', '管理ホーム');
 		}else{
 			//show actionset of target module and controller
+			$mod_or_ctrl = substr($mod_or_ctrl, 0, 1) == '\\' ? $mod_or_ctrl : '\\'.$mod_or_ctrl;
 			$actionset = \Actionset::get_actionset($mod_or_ctrl);
 			$view->set('mod_or_ctrl', $actionset, false);
 
