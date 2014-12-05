@@ -413,7 +413,7 @@ class Model_Base extends \Orm\Model_Soft
 			if (\Input::get('orders')) {
 				$orders = array();
 				foreach (\Input::get('orders') as $k => $v) {
-					if ( ! in_array($k, static::$_properties)) continue;
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
 					$orders[$k] = $v;
 				}
 				$options['order_by'] = $orders;
