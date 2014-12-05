@@ -26,6 +26,9 @@ function set_focus(t){
 	}
 }
 
+//Focusまわりのテスト（NetReaderでFocus移動を検知したい）
+//setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
+
 //管理バーの高さ+αのヘッダーの高さを確保
 var headerheight = 0;
 function add_body_padding(headerheight){
@@ -159,30 +162,14 @@ $(document).on('keypress',function(e){
 //alert(e);
 });
 
-/*
- switch( event.keyCode ) {
-    case $.ui.keyCode.LEFT:
-      console.log( "left" );
-      break;
-    case $.ui.keyCode.RIGHT:
-      console.log( "right" );
-      break;
-    case $.ui.keyCode.UP:
-      console.log( "up" );
-      break;
-    case $.ui.keyCode.DOWN:
-      console.log( "down" );
-      break;
-  }
-*/
-
 $(document).on('keydown',function(e){
 	if(!e){
 		e = event;
 	}
 	var t = e.target;
 	var k = e.which;
-	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→ 
+	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
+	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン依存する？)
 	//モーダル周り
 	if($(document).find('.modal.on')[0]){
 		var tabbable = $(document).find(':tabbable');
@@ -374,16 +361,37 @@ $(document).on('click', '.switch_mce', function(){
 /* jQuery UI */
 
 //calendar
-$('.datetime.schedule').datetimepicker({
+
+$('input.date , input[type=date]').datepicker({
+	dateFormat: 'yy-mm-dd',
+	changeMonth: true,
+	changeYear: true,
+});
+
+$('input.datetime.min15, input[type=datetime].min15').datetimepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 15
 });
-$('.datetime').datetimepicker();
+$('input.datetime.min30, input[type=datetime].min30').datetimepicker({
+	timeFormat: 'HH:mm',
+	stepMinute: 30
+});
+$('input.datetime,  input[type=datetime]').datetimepicker();
 
-$('.date').datepicker();
-$('.date').datepicker("option", "dateFormat", 'yy-mm-dd');
-$('.date').datepicker("option", "changeMonth", true);
-$('.date').datepicker("option", "changeYear", true);
+$('input.time.min15').timepicker({
+	timeFormat: 'HH:mm',
+	hourMin:$(this).data('hourMin'),
+	hourMax:18,
+	stepMinute: 15
+});
+$('input.time.min30').timepicker({
+	timeFormat: 'HH:mm',
+	stepMinute: 30
+});
+$('input.time').timepicker({timeFormat: 'HH:mm'});
+
+
+
 
 //tooltip
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
