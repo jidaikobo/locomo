@@ -475,7 +475,7 @@ class Model_Base extends \Orm\Model_Soft
 		 */
 
 		$form->add_model($obj)->populate($obj, true);
-
+		
 		if ($factory == 'form') {
 			$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
 				->set_value(\Security::fetch_token());
