@@ -66,4 +66,8 @@ Autoloader::add_classes(array(
 \Asset::add_path(LOCOMOPATH.'assets/');
 \Asset::add_path(APPPATH.'locomo/assets/');
 
+
+$var = 5;
+\Log::debug('$var is now '.$var);
+
 /* End of file bootstrap.php */
