@@ -8,6 +8,7 @@ class Controller_Workflowadmin extends \Locomo\Controller_Crud
 		'order_at_menu' => 100,
 		'is_for_admin' => true,
 		'admin_home' => '\\Workflow\\Controller_Workflowadmin/index_admin',
+		'admin_home_name' => '管理一覧',
 		'nicename' => 'ワークフロー',
 		'actionset_classes' =>array(
 			'base'   => '\\Workflow\\Actionset_Base_Workflowadmin',

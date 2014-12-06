@@ -84,4 +84,24 @@ class Inflector extends \Fuel\Core\Inflector
 		$class = \Inflector::words_to_upper(str_replace('/', '_', $module.$class));
 		return str_replace('.php', '', $class);
 	}
+
+	/**
+	 * remove_head_backslash()
+	 * @param string [\\]str
+	 * @return string str
+	 */
+	public static function remove_head_backslash($str = null)
+	{
+		return trim($str, '\\');
+	}
+
+	/**
+	 * add_head_backslash()
+	 * @param string [\\]str
+	 * @return string \\str
+	 */
+	public static function add_head_backslash($str = null)
+	{
+		return '\\'.self::remove_head_backslash($str);
+	}
 }

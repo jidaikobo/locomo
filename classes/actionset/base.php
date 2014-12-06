@@ -126,7 +126,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($id):
+		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id):
 			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 			$urls = static::generate_uris($controller, 'delete', $actions, ['create']);
 		endif;

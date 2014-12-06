@@ -73,9 +73,9 @@ class Create_users
 
 		//default acl
 		$arr = array(
-			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/home'),
-			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/dashboard'),
-			array('\\Help\\Controller_Help',   'index_admin', '\\Help\\Controller_Help/index_admin'),
+			array('Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/home'),
+			array('Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/dashboard'),
+			array('Help\\Controller_Help',   'index_admin', '\\Help\\Controller_Help/index_admin'),
 		);
 		foreach($arr as $v):
 			$slug = serialize(\Locomo\Auth_Acl_Locomoacl::_parse_conditions($v[2]));

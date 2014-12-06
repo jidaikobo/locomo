@@ -11,21 +11,29 @@ if (\Auth::check()):
 			//context menu
 			$html.='<div class="adminbar_main">';
 				$html.= '<div class="admin_controller">';
-					$mod_home = '';
-					if (isset($locomo['current']['module']['home']))
-					{
-						$mod_home = \Html::anchor($locomo['current']['module']['home'], $locomo['current']['module']['nicename']).': ';
-					}
+				$mod_home = '';
+
+				$current_module_name = \Arr::get($locomo, 'current.module.name');
+				$ctrl_index = '';
+				if ($current_module_name == 'admin'):
+					$top_link = \Html::anchor(\Uri::create('admin/home/'), '管理トップ');
+				else:
+					$top_link = \Html::anchor(\Uri::create('admin/home/'.$current_module_name), $locomo['current']['controller']['nicename']).' ';
 					$action_name = $title ? $title : '';
-					if (isset($locomo['current']['controller']['home']))
-					{
-						$ctrl_home = \Html::anchor($locomo['current']['controller']['home'], $locomo['current']['controller']['nicename']).': ';
-					}
-					$html.="<h3>".$mod_home.$ctrl_home.'</h3>';
+					if (isset($locomo['current']['controller']['home'])):
+						$home_name = \Arr::get($locomo, 'current.controller.home_name') ?: 'トップ';
+						$ctrl_index = \Html::anchor($locomo['current']['controller']['home'], $home_name);
+					endif;
+				endif;
+				$html.= "<h3>{$top_link}</h3>\n";
 				$html.= '</div><!-- /.admin_controller -->';
-				if (@$actionset['base']):
+
+				$bases = \Arr::get($actionset, 'base', array());
+				$ctrl_index and array_unshift($bases, array('urls' => array($ctrl_index)));
+
+				if ($bases):
 					$html.= '<div class="admin_context">';
-					$html.= \Actionset::generate_menu_html($actionset['base'], array('class'=>'holizonal_list'));
+					$html.= \Actionset::generate_menu_html($bases, array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 			$html.= '</div><!-- .adminbar_main -->';
@@ -77,13 +85,12 @@ if (\Auth::check()):
 			$html.='<div class="adminbar_sub">';
 		
 			//処理速度
-			$html.= \Auth::is_root() ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
-			
+			$html.= \Fuel::$env == 'development' ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
+
 			//help
 			$html.= '<div class="admin_help">';
 				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[mod_or_ctrl]='.$locomo['current']['mod_or_ctrl']['name'].'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 			$html.= '</div><!-- /.admin_help -->';
-			
 
 			//admin option menu
 			if (\Auth::is_admin()):

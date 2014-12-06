@@ -18,20 +18,42 @@ class Controller_Admin extends \Locomo\Controller_Base
 	public function action_home ($mod_or_ctrl = null)
 	{
 		$view = \View::forge('home');
-		//if $mod_or_ctrl is null, show link to modules and controllers
+		// if $mod_or_ctrl is null, show link to modules and controllers
 		if (is_null($mod_or_ctrl))
 		{
 			$view->set('is_admin_home', true);
 			$view->set_global('title', '管理ホーム');
-		}else{
-			//show actionset of target module and controller
-			$mod_or_ctrl = substr($mod_or_ctrl, 0, 1) == '\\' ? $mod_or_ctrl : '\\'.$mod_or_ctrl;
+		}
+		else
+		{
+			// show actionset of target module and controller
+			$mod_or_ctrl = \Inflector::remove_head_backslash($mod_or_ctrl);
 			$actionset = \Actionset::get_actionset($mod_or_ctrl);
-			$view->set('mod_or_ctrl', $actionset, false);
 
 			//page title
 			$mod_config = \Config::load($mod_or_ctrl.'::'.$mod_or_ctrl);
 			$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$mod_or_ctrl]['nicename'] ;
+
+			// add 'admin_home' from controller::$locomo
+			foreach ($actionset as $k => $v)
+			{
+				$locomo = $k::$locomo;
+				$home      = \Arr::get($locomo, 'admin_home');
+				$home_name = \Arr::get($locomo, 'admin_home_name', $name);
+				$home_exp  = \Arr::get($locomo, 'admin_home_explanation', $name.'のトップです。');
+				if ($home)
+				{
+					$args = array(
+						'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($home), $home_name)),
+						'show_at_top' => true,
+						'explanation' => $home_exp
+					);
+					array_unshift($actionset[$k]['actionset']['base'], $args);
+				}
+			}
+
+			// assign
+			$view->set('mod_or_ctrl', $actionset, false);
 			$view->set_global('title', $name.' トップ');
 		}
 		$view->base_assign();
