@@ -15,7 +15,7 @@ class Model_Help extends \Locomo\Model_Base
 		'updated_at',
 		'deleted_at',
 		'creator_id',
-		'modifier_id',
+		'updater_id',
 		'seq',
 	);
 

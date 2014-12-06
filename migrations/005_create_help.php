@@ -12,7 +12,7 @@ class Create_help
 			'updated_at'   => array('type' => 'datetime', 'null' => true),
 			'deleted_at'   => array('type' => 'datetime', 'null' => true),
 			'creator_id'   => array('constraint' => 5, 'type' => 'int'),
-			'modifier_id'  => array('constraint' => 5, 'type' => 'int'),
+			'updater_id'  => array('constraint' => 5, 'type' => 'int'),
 			'seq'          => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 	}

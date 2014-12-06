@@ -21,7 +21,7 @@ class Create_users
 			'expired_at'     => array('type' => 'datetime', 'null' => true),
 			'updated_at'     => array('type' => 'datetime', 'null' => true),
 			'creator_id'     => array('constraint' => 5, 'type' => 'int'),
-			'modifier_id'    => array('constraint' => 5, 'type' => 'int'),
+			'updater_id'    => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 
 		\DBUtil::create_index('users', array('username'), 'users_idx_username', 'UNIQUE');
@@ -93,22 +93,11 @@ class Create_users
 
 	public function down()
 	{
-		\DBUtil::drop_index('users','users_idx_username');
-		\DBUtil::drop_index('users','users_idx_password');
-		\DBUtil::drop_index('users','users_idx_email');
-		\DBUtil::drop_index('users','users_idx_login_hash');
-		\DBUtil::drop_index('users','users_idx_created_at');
-		\DBUtil::drop_index('users','users_idx_deleted_at');
-		\DBUtil::drop_index('users','users_idx_is_visible');
 		\DBUtil::drop_table('users');
 
-		\DBUtil::drop_index('users','user_admins_idx_username');
 		\DBUtil::drop_table('user_admins');
 		\DBUtil::drop_table('user_logs');
 
-		\DBUtil::drop_index('usergroups','usergroups_idx_seq');
-		\DBUtil::drop_index('usergroups','usergroups_idx_is_available');
-		\DBUtil::drop_index('usergroups','usergroups_idx_deleted_at');
 		\DBUtil::drop_table('usergroups');
 		\DBUtil::drop_table('user_usergroups');
 		if (\DBUtil::table_exists('acls')) \DBUtil::truncate_table('acls');

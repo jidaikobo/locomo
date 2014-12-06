@@ -42,9 +42,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_option_options = array();
 
-	/*
-	 * __construct
-	 */
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
 	{
 		//depend_modules

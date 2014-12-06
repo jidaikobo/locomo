@@ -18,7 +18,7 @@ class Model_Revision extends \Locomo\Model_Base
 		'operation',
 		'created_at',
 		'deleted_at',
-		'modifier_id',
+		'user_id' => array('default' => 0),
 	);
 
 	protected static $pagination_config = array(
@@ -32,6 +32,18 @@ class Model_Revision extends \Locomo\Model_Base
 			'active_end' => '</span>',
 		),
 	);
+
+
+	protected static $_belongs_to = array(
+		'user' => array(
+			'key_from' => 'user_id',
+			'model_to' => '\User\Model_User',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		),
+	);
+
 
 	/**
 	 * find_all_revisions()

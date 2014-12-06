@@ -392,8 +392,14 @@ class Fieldset extends \Fuel\Core\Fieldset
 		return $this;
 	}
 
-	public function delete($name) {
-		unset($this->fields[$name]);
+	public function delete($field) {
+		if (is_array($field) ) {
+			foreach($field as $f) {
+				unset($this->fields[$f]);
+			}
+		} elseif (is_string($field)) {
+			unset($this->fields[$field]);
+		}
 		return $this;
 	}
 

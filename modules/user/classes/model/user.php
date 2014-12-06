@@ -28,7 +28,7 @@ class Model_User extends \Locomo\Model_Base
 		'expired_at',
 		'updated_at',
 		'creator_id',
-		'modifier_id',
+		'updater_id',
 	);
 
 	/**
