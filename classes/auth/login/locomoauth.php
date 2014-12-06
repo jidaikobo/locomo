@@ -115,7 +115,8 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			if ($this->user and (\Config::get('locomoauth.multiple_logins', false) or $this->user['login_hash'] === $login_hash))
 			{
 				$usergroups = array(-10); // logged in usergroup
-				$usergroups+= array_keys($this->user->usergroup);
+				$usergroups = array_merge($usergroups,array_keys($this->user->usergroup));
+
 				$acl_tmp = \Acl\Model_Acl::find('all',
 					array(
 						'select' => array('slug'),
