@@ -8,7 +8,9 @@ class Controller_XXX extends \Locomo\Controller_Crud
 		'order_at_menu' => 10,   // order of appearance
 		'is_for_admin' => false, // true: hide from admin bar
 		'admin_home' => '\\XXX\\Controller_XXX/index_admin', // module's top page
+		'admin_home_name' => '管理一覧',
 		'nicename' => '###nicename###', // for human's name
+		'help'     => 'packages/locomo/modules/user/help/user.html',// path from 'app/../'
 		'actionset_classes' =>array(
 			'base'   => '\\XXX\\Actionset_Base_XXX',
 			'index'  => '\\XXX\\Actionset_Index_XXX',

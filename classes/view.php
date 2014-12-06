@@ -52,6 +52,7 @@ class View extends \Fuel\Core\View
 		$ctrl_home = \Arr::get($controller::$locomo, 'admin_home');
 		$ctrl_home = \Inflector::ctrl_to_dir($ctrl_home);
 		$locomo['current']['controller']['home'] = \Uri::create($ctrl_home);
+		$locomo['current']['controller']['home_name'] = \Arr::get($controller::$locomo, 'admin_home_name');
 		$locomo['current']['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
 
 		// module home
@@ -71,7 +72,7 @@ class View extends \Fuel\Core\View
 		//actionset
 		$default = array('index' => array(), 'base' => array(), 'ctrl' => array());
 		$controller = \Request::main()->controller;
-		$actionset = \Arr::get($ctrls, "\\{$controller}.actionset") ?: $default;
+		$actionset = \Arr::get($ctrls, "{$controller}.actionset") ?: $default;
 		$this->set_global('actionset', $actionset, false);
 	}
 

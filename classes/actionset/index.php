@@ -33,7 +33,7 @@ class Actionset_Index extends Actionset
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '管理者向け一覧（通常項目）',
-			'show_at_top'  => true,
+			'show_at_top'  => false,
 			'explanation'  => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
 			'order'        => 10,
 			'dependencies' => array(
