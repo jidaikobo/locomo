@@ -34,7 +34,7 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 
 		// $conditions
 		$conditions = array(
-			'controller' => $rights[0],
+			'controller' => \Inflector::add_head_backslash($rights[0]),
 			'action'     => $rights[1],
 		);
 

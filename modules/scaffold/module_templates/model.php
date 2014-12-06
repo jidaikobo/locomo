@@ -71,6 +71,7 @@ class Model_XXX extends \Locomo\Model_Base
 		$form->field('field_name')
 			->set_template("\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} <span>{description}</span> {error_msg} <input type=\"button\" value=\"VALUE\"></td>\n\t\t</tr>\n");
 */
+###FRMDFN###
 
 		static::$_cache_form_definition = $form;
 		return $form;

@@ -91,7 +91,7 @@ trait Traits_Controller_Revision
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_revision/'.$model_simple_name.DS.$opt_arg,'履歴一覧へ');
 		$action['order'] = 10;
 		$action['overrides'] = array('base' => array());
-		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
+		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		//view
 		$view = \View::forge(LOCOMOPATH.'modules/revision/views/each_index_revision.php');
@@ -144,7 +144,7 @@ trait Traits_Controller_Revision
 		//$action['urls'][] = \Html::anchor($module_url.'/each_index_revision/'.$model_simple_name.DS.$revisions->pk_id.$opt_arg, '履歴一覧へ');
 		//$action['urls'][] = \Html::anchor($module_url.'/edit/'.$revisions->pk_id, '編集画面へ');
 		//$action['order'] = 10;
-		//\Actionset::add_actionset($this->request->controller, $module, 'ctrl', $action);
+		//\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 		$content->base_assign();
 		$this->template->content = $content;
  

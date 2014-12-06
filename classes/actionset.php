@@ -18,15 +18,13 @@ class Actionset
 	 * see sample at \Revision\Traits_Controller_Revision::action_each_index_revision
 	 *
 	 * @param string $controller	\NMSPC\Controller_NAME
-	 * @param string $module	MODNAME
 	 * @param string $realm	[base|option|index]
 	 * @param arr    $arr	array(array($module.DS.\NMSPC\Controller_NAME.DS.'ACTION', MENUSTR, ATTR))
 	 */
-	public static function add_actionset($controller, $module = null, $realm = null, $arr = array())
+	public static function add_actionset($controller, $realm = null, $arr = array())
 	{
-		$controller = '\\'.trim($controller, '\\');
-		$unique_key = $module ?: $controller;
-		$unique_key = static::set_unique_key($unique_key);
+		$controller = \Inflector::remove_head_backslash($controller);
+		$unique_key = static::set_unique_key($controller);
 		if ( ! isset(static::$actions[$unique_key][$controller]['actionset'][$realm]))
 		{
 			static::$actions[$unique_key][$controller]['actionset'][$realm] = array();
@@ -87,13 +85,16 @@ class Actionset
 		$obj = is_object($obj) ? $obj : (object) array() ;
 		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
 
+
+		// remove head backslash when it has no necessity
+		$controller = \Inflector::remove_head_backslash($controller);
 		// unique_key
-		$unique_key = $module ?: $controller;
-		$unique_key = static::set_unique_key($unique_key);
+//		$unique_key = $module ?: $controller;
+		$unique_key = static::set_unique_key($controller);
 
 		$actions = array();
 		//controllers
-		foreach($controllers as $controller => $p)
+		foreach($controllers as $k => $p)
 		{
 			// actionset_classes
 			foreach($p['actionset_classes'] as $realm => $class)
@@ -105,44 +106,37 @@ class Actionset
 				$methods = \Arr::filter_prefixed($methods, 'actionset_');
 				$methods = array_flip($methods);
 
-				// remove head backslash when it has no necessity
-				$ctrl_key = \Inflector::remove_head_backslash($controller);
-
 				foreach($methods as $method)
 				{
 					$p_method = 'actionset_'.$method;
-					$as = $class::$p_method($controller, $obj, $id);
+					$as = $class::$p_method($k, $obj, $id);
 					// not exists "urls" and "dependencies", retun nothing
 					if (! \Arr::get($as, 'urls.0') && ! \Arr::get($as, 'dependencies.0')) continue;
-					static::$actions[$unique_key][$ctrl_key]['nicename'] = $p['nicename'];
-					static::$actions[$unique_key][$ctrl_key]['actionset'][$realm][$method] = $as;
+
+					$k = \Inflector::remove_head_backslash($k);
+					static::$actions[$unique_key][$k]['nicename'] = $p['nicename'];
+					static::$actions[$unique_key][$k]['actionset'][$realm][$method] = $as;
 				}
 			}
 		}
 
 		if ( ! isset(static::$actions[$unique_key])) return false;
 
-		// コントローラが空のときには、すでにある配列の最初のコントローラをコントローラと見なす
-		// adminモジュールなど、自身はアクションセットを持っていないのに、add_actionset()するとこの事態が起こる
-		$controller = is_null($controller) ? array_keys(static::$actions[$unique_key])[0] : $controller ;
-		$controller = \Inflector::remove_head_backslash($controller);
-
 		// tidy up
 		$overrides = array();
-		foreach(static::$actions[$unique_key][$controller]['actionset'] as $realm_name => $actions)
+		foreach (static::$actions[$unique_key] as $k => $v)
 		{
-			foreach($actions as $action_k => $action)
+			foreach ($v["actionset"] as $realm => $vv)
 			{
-				// prepare override
-				if (isset(static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides']))
-				{
-					$overrides = array_merge($overrides, static::$actions[$unique_key][$controller]['actionset'][$realm_name][$action_k]['overrides']);
-				}
+					// prepare override
+					if (isset($vv['overrides']))
+					{
+						$overrides = array_merge($overrides, $vv['overrides']);
+					}
 			}
 
 			// order
-//			if ( ! \Arr::get(static::$actions[$unique_key][$controller]['actionset'][$realm_name], 'order')) continue;
-			static::$actions[$unique_key][$controller]['actionset'][$realm_name] = \Arr::multisort(static::$actions[$unique_key][$controller]['actionset'][$realm_name], array('order' => SORT_ASC,));
+			static::$actions[$unique_key][$k]['actionset'][$realm] = \Arr::multisort(static::$actions[$unique_key][$k]['actionset'][$realm], array('order' => SORT_ASC,));
 		}
 
 		// override

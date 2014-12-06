@@ -31,7 +31,6 @@ class Controller_Crud extends Controller_Base
 		$model = $this->model_name;
 		$content = \View::forge($this->_content_template ?: 'index_admin');
 
-
 		//$model::paginated_find_use_get_query(false);
 		$condition = $model::condition();
 		$options = $condition;
@@ -172,6 +171,7 @@ class Controller_Crud extends Controller_Base
 
 		if ($id) {
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
+
 			if ( ! $obj)
 			{
 				$page = \Request::forge('content/403')->execute();
@@ -199,7 +199,7 @@ class Controller_Crud extends Controller_Base
 						'success',
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
-					\Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
+					return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
 				else:
 					//save failed
 					\Session::set_flash(
@@ -221,7 +221,7 @@ class Controller_Crud extends Controller_Base
 		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
 		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
+		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		//view
 		$this->template->set_global('title', $title);

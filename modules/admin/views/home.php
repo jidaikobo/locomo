@@ -9,6 +9,7 @@ if ( ! isset($is_admin_home)):
 			foreach($v['actionset'] as $kk => $vv):
 				foreach($vv as $kkk => $vvv):
 					if (\Arr::get($vvv, 'show_at_top') == false) continue;
+					if (\Arr::get($vvv, 'urls') == false) continue;
 						$html.= '<tr>';
 							$html.= '<th class="ctrl">';
 							$html.= '<ul><li>'.join('</li><li>',$vvv['urls']).'</ul>';

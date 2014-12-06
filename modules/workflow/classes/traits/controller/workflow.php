@@ -3,60 +3,6 @@ namespace Workflow;
 trait Traits_Controller_Workflow
 {
 	/**
-	 * pre_workflow_save_hook()
-	 */
-	public function pre_workflow_save_hook($obj = null, $mode = 'edit')
-	{
-		//ワークフロー管理
-		if (array_key_exists('workflow_actions', self::$actionset)):
-			//ワークフロー管理するコントローラにはworkflow_statusを作る
-			$model = $this->model_name ;
-			if ( ! \DBUtil::field_exists($model::get_table_name(), array('workflow_status'))):
-				\DBUtil::add_fields($model::get_table_name(),array(
-					'workflow_status' => array('constraint' => 50, 'type' => 'varchar', 'null' => true),
-				));
-				\Session::set_flash('success', 'ワークフロー管理をするために、workflow_statusフィールドを追加しました。当該モジュールのモデルの$_propertiesにworkflow_statusを足してください。');
-			endif;
-		endif;
-
-		return $obj;
-	}
-
-	/**
-	 * workflow_save_hook()
-	 */
-/*
-	public function workflow_save_hook($obj = null, $mode = 'edit')
-	{
-		//ワークフロー管理
-		if ($mode == 'create' && array_key_exists('workflow_actions', self::$actionset)):
-			//ワークフロー管理下のコンテンツのworkflow_statusはbefore_progressで作成される
-			$model = $this->model_name ;
-			$primary_key = $model::get_primary_key();
-			if (isset($obj->$primary_key[0])):
-				$obj->workflow_status = 'before_progress';
-				$obj->save();
-			endif;
-		endif;
-
-		return $obj;
-	}
-*/
-
-	/**
-	 * workflow_edit_core()
-	 */
-	public function workflow_edit_core($id = null, $obj = null, $redirect = null, $title = null)
-	{
-		if (@$obj->workflow_status == 'in_progress'):
-			\Session::set_flash('error','この項目はワークフロー管理下にあり、現在、編集できません。');
-			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
-		endif;
-		//in_progressでない項目であれば、編集できる。
-		return parent::edit_core($id, $obj, $redirect, $title);
-	}
-
-	/**
 	 * action_index_workflow()
 	 */
 	public function action_index_workflow($pagenum = null)
@@ -121,7 +67,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		//model and view
-		$view = \View::forge(LOCOMOPATH.'/workflow/views/route.php');
+		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/route.php');
 		$model_name = str_replace('Controller', 'Model', get_called_class());
 		$model = $model_name::forge();
 
@@ -129,22 +75,27 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		if (\Input::method() == 'POST'):
 			$route_id = \Input::post('route');
 			if ($route_id):
-				$model::set_route($route_id, $this->request->module, $id);
+				$model::set_route($route_id, $this->request->controller, $id);
 				\Session::set_flash('success', 'ルートを設定しました');
 
-				return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
+				return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir($this->request->controller.'/view/'.$id)));
 			else:
 				\Session::set_flash('error', 'ルートを選択してください');
 			endif;
 		endif;
 
 		//設定されている経路をすべて取得
-		\Module::load('workflowadmin');
-		$model_wfadmin = \Workflowadmin\Model_Workflowadmin::forge();
+		$model_wfadmin = \Workflow\Model_Workflowadmin::forge();
 		$items = $model_wfadmin->find('all');
 
 		//現在設定されている経路を取得（将来のルート変更用）
-		$route_id = $model::get_route($this->request->module, $id);
+		$route_id = $model::get_route($this->request->controller, $id);
+
+		//add_actionset - back to edit
+		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
+		$action['urls'][] = \Html::anchor($ctrl_url.DS.'edit/'.$id,'戻る');
+		$action['order'] = 10;
+		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		//assign
 		$view->set_global('title', 'ルート設定');
@@ -169,7 +120,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		//postがあったら申請処理をして、編集画面に戻る
 		if (\Input::method() == 'POST'):
 			$comment = \Input::post('comment');
-			$model::add_log('approve', null, $this->request->module, $id, $comment);
+			$model::add_log('approve', null, $this->request->controller, $id, $comment);
 			\Session::set_flash('success', '申請しました');
 
 			//項目のworkflow_statusをin_progressにする（編集できないようにする）
@@ -183,6 +134,12 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 		//コメント入力viewを表示
 		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/comment.php');
+
+		//add_actionset - back to edit
+		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
+		$action['urls'][] = \Html::anchor($ctrl_url.DS.'edit/'.$id,'戻る');
+		$action['order'] = 10;
+		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		//assign
 		$view->set_global('title', '承認申請');
@@ -207,17 +164,17 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 		//postがあったら承認処理をして、閲覧画面に戻る
 		if (\Input::method() == 'POST'):
-			$route_id = $model::get_route($this->request->module, $id);
+			$route_id = $model::get_route($this->request->controller, $id);
 			if ($route_id):
 				$comment = \Input::post('comment');
 
 				//最後の承認かどうか確認する
-				$current_step = $model::get_current_step($this->request->module, $id) + 1;
+				$current_step = $model::get_current_step($this->request->controller, $id) + 1;
 				$total_step   = $model::get_total_step($route_id);
 				$mode = $current_step == $total_step ? 'finish' : 'approve';
 
 				//add_log
-				$model::add_log($mode, $route_id, $this->request->module, $id,$comment);
+				$model::add_log($mode, $route_id, $this->request->controller, $id,$comment);
 
 				//最後の承認であれば、項目のステータスを変更する
 				if ($mode == 'finish'):
@@ -256,7 +213,7 @@ die('プライマリネームはやめたので、propertiesをみるように�
 		if (\Input::method() == 'POST'):
 			$comment     = \Input::post('comment');
 			$target_step = (int) \Input::post('target_step');
-			$model::add_log('remand', null, $this->request->module, $id, $comment, $target_step);
+			$model::add_log('remand', null, $this->request->controller, $id, $comment, $target_step);
 			\Session::set_flash('success', '差し戻し処理をしました');
 
 			//差し戻しが最初まで戻った場合、in_progressを解除して編集できるようにする
@@ -267,12 +224,12 @@ die('プライマリネームはやめたので、propertiesをみるように�
 				$obj->save();
 			endif;
 
-			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
+			return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir($this->request->controller)));
 		endif;
 
 		//差し戻し候補を取得する
-		$current_step = $model::get_current_step($this->request->module, $id);
-		$logs         = $model::get_route_logs($this->request->module, $id, $current_step);
+		$current_step = $model::get_current_step($this->request->controller, $id);
+		$logs         = $model::get_route_logs($this->request->controller, $id, $current_step);
 		$target_steps = array();
 
 		foreach($logs as $log):
@@ -286,8 +243,8 @@ die('プライマリネームはやめたので、propertiesをみるように�
 			$target_step = (int) $log->current_step - 1;
 
 			//複数回の差戻しによって同じステップ数を持つ場合は、keyで上書きする
-			$user_info = \User\Model_User::find($log->creator_id);
-			$target_steps[$target_step] = $user_info->user_name;
+			$user_info = \User\Model_User::find($log->did_user_id);
+			$target_steps[$target_step] = $user_info->username;
 		endforeach;
 
 		//コメント入力viewを表示
@@ -316,11 +273,11 @@ die('プライマリネームはやめたので、propertiesをみるように�
 
 		//postがあったら経路設定して、編集画面に戻る
 		if (\Input::method() == 'POST'):
-			$route_id = $model::get_route($this->request->module, $id);
+			$route_id = $model::get_route($this->request->controller, $id);
 
 			if ($route_id):
 				$comment = \Input::post('comment');
-				$model::add_log('reject', $route_id, $this->request->module, $id, $comment);
+				$model::add_log('reject', $route_id, $this->request->controller, $id, $comment);
 				\Session::set_flash('success', '項目を却下しました');
 
 				//項目を削除する（可能であればソフトデリートする）

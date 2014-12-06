@@ -151,8 +151,11 @@ class Model_Base extends \Orm\Model_Soft
 		$module     = \Request::main()->module;
 		$controller = \Request::main()->controller;
 
+		//add_authorize_methods
+		static::add_authorize_methods();
+
 		//view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (\Auth::instance()->has_access($module.DS.$controller.DS.'view_anyway')) {
+		if (\Auth::instance()->has_access($controller.DS.'view_anyway')) {
 			static::disable_filter();
 		} else {
 			//モデルが持っている判定材料を、適宜$optionsに足す。
@@ -173,7 +176,7 @@ class Model_Base extends \Orm\Model_Soft
 			static::$_default_expired_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($module.DS.$controller.'/view_expired')
+			! \Auth::instance()->has_access($controller.'/view_expired')
 		)
 		{
 			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
@@ -192,9 +195,9 @@ class Model_Base extends \Orm\Model_Soft
 			static::$_default_created_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($module.DS.$controller.'/view_yet')
+			! \Auth::instance()->has_access($controller.'/view_yet')
 		) {
-			$options['where'][] = array(array($column, '<', date('Y-m-d H:i:s'))
+			$options['where'][] = array(array($column, '<=', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
 		}
 		return $options;
@@ -207,7 +210,7 @@ class Model_Base extends \Orm\Model_Soft
 	{
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			! \Auth::instance()->has_access($module.DS.$controller.'/view_deleted')
+			! \Auth::instance()->has_access($controller.'/view_deleted')
 		) {
 			static::enable_filter();
 		} else {
@@ -227,7 +230,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($module.DS.$controller.'/view_invisible')
+			! \Auth::instance()->has_access($controller.'/view_invisible')
 		) {
 			$options['where'][] = array($column, '=', true);
 		}
