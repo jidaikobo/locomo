@@ -2,22 +2,25 @@
 //モジュール／コントローラトップ
 if ( ! isset($is_admin_home)):
 	$html = '';
-	foreach($mod_or_ctrl as $k => $v):
-		$html.= '<h2>'.$v['nicename'].'</h2>';
-		$html.= '<table class="tbl2">';
-		foreach($v['actionset'] as $kk => $vv):
-			foreach($vv as $kkk => $vvv):
-				if (\Arr::get($vvv, 'show_at_top') == false) continue;
-					$html.= '<tr>';
-						$html.= '<th class="ctrl">';
-						$html.= '<ul><li>'.join('</li><li>',$vvv['urls']).'</ul>';
-						$html.= '</th>';
-						$html.= '<td>'.$vvv['explanation'].'</td>';
-					$html.= '</tr>';
+	if ($mod_or_ctrl):
+		foreach($mod_or_ctrl as $k => $v):
+			$html.= '<h2>'.$v['nicename'].'</h2>';
+			$html.= '<table class="tbl2">';
+			foreach($v['actionset'] as $kk => $vv):
+				foreach($vv as $kkk => $vvv):
+					if (\Arr::get($vvv, 'show_at_top') == false) continue;
+						$html.= '<tr>';
+							$html.= '<th class="ctrl">';
+							$html.= '<ul><li>'.join('</li><li>',$vvv['urls']).'</ul>';
+							$html.= '</th>';
+							$html.= '<td>'.$vvv['explanation'].'</td>';
+						$html.= '</tr>';
+				endforeach;
 			endforeach;
+			$html.= '</table>';
 		endforeach;
-		$html.= '</table>';
-	endforeach;
+	else:
+	endif;
 	echo $html;
 else:
 //管理ホーム
