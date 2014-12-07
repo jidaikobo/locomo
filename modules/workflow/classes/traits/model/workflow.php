@@ -156,7 +156,7 @@ trait Traits_Model_Workflow
 		$q->where('step_id', $step_id);
 		$members = \Arr::flatten($q->execute()->as_array());
 
-		return $members ? $members : false ;
+		return $members ? $members : array() ;
 	}
 
 	/**
@@ -265,7 +265,7 @@ trait Traits_Model_Workflow
 			'status'        => $status,
 			'comment'       => $comment,
 			'created_at'    => date('Y-m-d H:i:s'),
-			'did_user_id'   => \Auth::get_user_id(),
+			'did_user_id'   => \Auth::get('id'),
 		);
 
 		//ログのアップデート
@@ -338,26 +338,26 @@ trait Traits_Model_Workflow
 		//編集
 		if ($mode == 'edit') {
 			//作成権限があるユーザだったらin_progress以外を編集できる
-			if (\Auth::instance()->has_access($module.DS.$controller.'/create')):
+			if (\Auth::instance()->has_access($controller.'/create')):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
 			endif;
 		}
 
 		//承認のための閲覧
-		if (\Auth::instance()->has_access($module.DS.$controller.'/approve')):
+		if (\Auth::instance()->has_access($controller.'/approve')):
 			//承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
 			return $options;
 		endif;
 
 		//作成ユーザはどんな条件でも閲覧できる
-		if (\Auth::instance()->has_access($module.DS.$controller.'/create')):
+		if (\Auth::instance()->has_access($controller.'/create')):
 			return $options;
 		endif;
 
 		//閲覧ユーザはfinishを閲覧できる
-		if (\Auth::instance()->has_access($module.DS.$controller.'/view')):
+		if (\Auth::instance()->has_access($controller.'/view')):
 			$options['where'][] = array(array($column, '=', 'finish'));
 			return $options;
 		endif;

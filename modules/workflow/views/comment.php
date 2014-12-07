@@ -21,8 +21,6 @@
 
 <p>
 	<?php
-		echo Html::anchor($controller.'/view/'.$id, '戻る',array('class'=>'button'));
-//		echo Html::anchor('workflow/index_admin', '戻る',array('class'=>'button'));
 		echo \Form::submit('submit', $button, array('class' => 'button primary'));
 	?>
 </p>

@@ -12,7 +12,7 @@ class Controller_Auth extends \Locomo\Controller_Crud
 		$ret = \Input::param('ret', \Input::referrer(), null);
 		$ret = $ret == \Uri::create('user/auth/login/') ? $dashboard : $ret ;
 		$ret = $ret == null ? $dashboard : $ret ;
-		$ret = substr($ret, 0, strlen(\Uri::base())) != \Uri::base() ? $dashboard : $ret;
+		$ret = substr($ret, 0, 4) == 'http' && substr($ret, 0, strlen(\Uri::base())) != \Uri::base() ? $dashboard : $ret;
 
 		// this action is for guest not logged in users
 		if (\Auth::check())

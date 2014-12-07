@@ -132,6 +132,17 @@ class Helper_Model extends Helper
 		$observers.= "//\t\t'Workflow\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
 		$observers.= "//\t\t'Revision\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
 
+		//admins
+		$frmdfn = '';
+		foreach ($admins as $admin)
+		{
+			$frmdfn.= "\$form->field('{$admin}')->set_type('hidden')->set_value(\$obj->{$admin} ?: 1)";
+		}
+		if ($frmdfn)
+		{
+			$frmdfn = "\t\tif ( ! \Auth::is_admin())\n\t\t{\n".$frmdfn."\n\t\t}\n";
+		}
+
 		//$field_str
 		$field_str = var_export($properties, true);
 		$field_str = str_replace('  ', "\t", $field_str);
@@ -141,6 +152,7 @@ class Helper_Model extends Helper
 		//template
 		$str = static::fetch_temlpate('model.php');
 		$str = self::replaces($name, $str);
+		$str = str_replace('###FRMDFN###',     $frmdfn,     $str);
 		$str = str_replace('###DLT_FLD###',    $dlt_fld,    $str);
 		$str = str_replace('###OBSRVR###',     $observers,  $str);
 		$str = str_replace('###TABLE_NAME###', $table_name, $str);

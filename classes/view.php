@@ -33,7 +33,7 @@ class View extends \Fuel\Core\View
 		$module = \Request::main()->module;
 		$controller = \Request::main()->controller;
 		$mod_or_ctrl = $module ?: $controller;
-		$ctrls = \Actionset::get_actionset($mod_or_ctrl, $item) ?: array();
+		$ctrls = \Actionset::get_actionset($controller, $item) ?: array();
 
 		$locomo = array();
 

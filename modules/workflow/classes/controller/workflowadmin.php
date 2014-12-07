@@ -104,7 +104,7 @@ class Controller_Workflowadmin extends \Locomo\Controller_Crud
 		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
 		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, $this->request->module, 'ctrl', $action);
+		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		//assign
 		$view = \View::forge('setup');

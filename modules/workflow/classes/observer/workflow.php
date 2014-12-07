@@ -14,13 +14,18 @@ class Observer_Workflow extends \Orm\Observer
 	 */
 	public function after_load(\Orm\Model $obj)
 	{
-		if ($obj->workflow_status == 'in_progress'):
-			\Session::set_flash('success','承認進行中の項目です');
-		endif;
+		if (in_array(\Request::active()->action, ['view','edit']))
+		{
+			if ($obj->workflow_status == 'in_progress')
+			{
+				\Session::set_flash('success','承認進行中の項目です');
+			}
 
-		if ($obj->workflow_status == 'before_progress'):
-			\Session::set_flash('success','承認申請待ちの項目です');
-		endif;
+			if ($obj->workflow_status == 'before_progress')
+			{
+				\Session::set_flash('success','承認申請待ちの項目です');
+			}
+		}
 	}
 
 	/**

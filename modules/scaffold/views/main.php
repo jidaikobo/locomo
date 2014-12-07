@@ -27,7 +27,7 @@ deleted_at(削除日):datetime:null
 is_visible(可視属性):int:null
 creator_id:int[5]
 modifier_id:int[5]
-workflow_status:enum[init,approve,reject,remand,finish]:null
+workflow_status:enum[before_progress,in_progress]:null
 </textarea>
 
 <h3>足場組み</h3>

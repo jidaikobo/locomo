@@ -90,16 +90,14 @@ trait Traits_Actionset_Base_Workflow
 		$current_step_id = $model::get_current_step_id($route_id, $current_step);
 		$total_step      = $route_id ? $model::get_total_step($route_id) : -2;
 		$user_id         = \Auth::get('id');
-		$url             = '';
-		$menu_str        = '';
+		$urls            = array();
 
 		//-1の場合は、承認申請
 		if ($current_step == -1)
 		{
-			if (\Auth::auth($controller.'/apply'))
+			if (\Auth::instance()->has_access($controller.'/apply'))
 			{
-				$url = "{$controller}/apply/{$obj->id}" ;
-				$menu_str = '承認申請';
+				$urls = array(\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/apply/{$obj->id}"), '承認申請'));
 			}
 		}
 		elseif ($current_step < $total_step)
@@ -108,10 +106,10 @@ trait Traits_Actionset_Base_Workflow
 			$members = $model::get_members($route_id, $current_step_id);
 			if (is_array($members) && in_array($user_id, $members))
 			{
-				$url = array(
-					array('承認',   "{$controller}/approve/{$obj->id}"),
-					array('却下',   "{$controller}/reject/{$obj->id}"),
-					array('差戻し', "{$controller}/remand/{$obj->id}"),
+				$urls = array(
+					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/approve/{$obj->id}"), '承認'),
+					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/remand/{$obj->id}"), '差戻し'),
+					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/reject/{$obj->id}"), '却下'),
 				);
 			}
 			$menu_str = '';
@@ -119,26 +117,23 @@ trait Traits_Actionset_Base_Workflow
 		elseif ($current_step == $total_step)
 		{
 		//すでに承認が終わっていたらワークフローとしては、何もできない
-			$url = "" ;
-			$menu_str = '';
+			$urls = array() ;
 		}
 
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
 		if (
 			$model::get_current_step($controller, $obj->id) == -2 &&
-			\Auth::instance()->has_access($controller.DS.$controller.'/route')
+			\Auth::instance()->has_access($controller.'/route')
 		)
 		{
-			$url = "{$controller}/route/{$obj->id}" ;
-			$menu_str = '経路設定';
+			$urls = array(\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/route/{$obj->id}"), '経路設定')) ;
 		}
 
 		$retvals = array(
-			'url'          => $url,
+			'urls'         => $urls,
 			'action_name'  => 'ワークフロー作業（承認申請）',
-			'menu_str'     => $menu_str,
 			'explanation'  => 'ワークフロー管理下コントローラにおける承認申請です。「ワークフロー作業」を有効にすると自動的に有効になります。',
-			'order'        => 10,
+			'order'        => 100,
 			'dependencies' => array()
 		);
 		return $retvals;
