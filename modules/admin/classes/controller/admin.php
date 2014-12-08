@@ -30,17 +30,36 @@ class Controller_Admin extends \Locomo\Controller_Base
 			$mod_or_ctrl = \Inflector::remove_head_backslash($mod_or_ctrl);
 			$actionset = \Actionset::get_actionset($mod_or_ctrl) ?: array();
 
-			//page title
-			$mod_config = \Config::load($mod_or_ctrl.'::'.$mod_or_ctrl);
-			$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$mod_or_ctrl]['nicename'] ;
-
-			// try to find main controller
-			if($mod_config && ! $actionset)
+			// when actionset wasn't exists
+			if (class_exists($mod_or_ctrl))
 			{
-				$actionset = array($mod_config['main_controller'] => array(
-					'nicename' => $mod_config['nicename'],
-					'actionset' => array('base' => array()))
-				);
+				// this is not a module
+				$locomo = $mod_or_ctrl::$locomo ;
+				$name = \Arr::get($locomo, 'nicename') ;
+
+				// try to find main controller
+				if(! $actionset)
+				{
+					$actionset = array($mod_or_ctrl => array(
+						'nicename' => $name,
+						'actionset' => array('base' => array()))
+					);
+				}
+			}
+			else
+			{
+				// module
+				$mod_config = \Config::load($mod_or_ctrl.'::'.$mod_or_ctrl);
+				$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$mod_or_ctrl]['nicename'] ;
+
+				// try to find main controller
+				if($mod_config && ! $actionset)
+				{
+					$actionset = array($mod_config['main_controller'] => array(
+						'nicename' => $mod_config['nicename'],
+						'actionset' => array('base' => array()))
+					);
+				}
 			}
 
 			// add 'admin_home' from controller::$locomo
