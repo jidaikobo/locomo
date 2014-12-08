@@ -28,27 +28,39 @@ class Controller_Admin extends \Locomo\Controller_Base
 		{
 			// show actionset of target module and controller
 			$mod_or_ctrl = \Inflector::remove_head_backslash($mod_or_ctrl);
-			$actionset = \Actionset::get_actionset($mod_or_ctrl);
+			$actionset = \Actionset::get_actionset($mod_or_ctrl) ?: array();
 
 			//page title
 			$mod_config = \Config::load($mod_or_ctrl.'::'.$mod_or_ctrl);
 			$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$mod_or_ctrl]['nicename'] ;
 
-			// add 'admin_home' from controller::$locomo
-			foreach ($actionset as $k => $v)
+			// try to find main controller
+			if($mod_config && ! $actionset)
 			{
-				$locomo = $k::$locomo;
-				$home      = \Arr::get($locomo, 'admin_home');
-				$home_name = \Arr::get($locomo, 'admin_home_name', $name);
-				$home_exp  = \Arr::get($locomo, 'admin_home_explanation', $name.'のトップです。');
-				if ($home)
+				$actionset = array($mod_config['main_controller'] => array(
+					'nicename' => $mod_config['nicename'],
+					'actionset' => array('base' => array()))
+				);
+			}
+
+			// add 'admin_home' from controller::$locomo
+			if($actionset)
+			{
+				foreach ($actionset as $k => $v)
 				{
-					$args = array(
-						'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($home), $home_name)),
-						'show_at_top' => true,
-						'explanation' => $home_exp
-					);
-					array_unshift($actionset[$k]['actionset']['base'], $args);
+					$locomo = $k::$locomo;
+					$home      = \Arr::get($locomo, 'admin_home');
+					$home_name = \Arr::get($locomo, 'admin_home_name', $name);
+					$home_exp  = \Arr::get($locomo, 'admin_home_explanation', $name.'のトップです。');
+					if ($home)
+					{
+						$args = array(
+							'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($home), $home_name)),
+							'show_at_top' => true,
+							'explanation' => $home_exp
+						);
+						array_unshift($actionset[$k]['actionset']['base'], $args);
+					}
 				}
 			}
 
