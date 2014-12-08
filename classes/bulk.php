@@ -87,6 +87,7 @@ class Bulk {
 
 		$fst_obj = reset($this->forms);
 		foreach ($fst_obj->field() as $f) {
+			if ($f->type === false) continue;
 			if (is_null ($f->template)) {
 				$output .=  '<th>' . $f->label . '</th>';
 			} else {

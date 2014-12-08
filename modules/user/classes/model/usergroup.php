@@ -15,7 +15,18 @@ class Model_Usergroup extends \Locomo\Model_Base
 		'deleted_at',
 	);
 
-	protected static $_many_many = array();
+	protected static $_many_many = array(
+		'user' => array(
+			'key_from' => 'id',
+			'key_through_from' => 'group_id',
+			'table_through' => 'user_usergroups',
+			'key_through_to' => 'user_id',
+			'model_to' => '\User\Model_User',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		)
+	);
 
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
