@@ -5,56 +5,39 @@ trait Traits_Controller_Workflow
 	/**
 	 * action_index_workflow()
 	 */
-	public function action_index_workflow($pagenum = null)
+	public function action_index_workflow($controller = null)
 	{
-		//model and view
-		$view = \View::forge('index_workflow');
-		$model_name = str_replace('Controller', 'Model', get_called_class());
+		// model and view
+		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/index_workflow.php');
+		$controller = $controller ?: get_called_class();
+		$model_name = str_replace('Controller', 'Model', $controller);
 		$model = $model_name::forge();
 
-		//ユーザが関わっている項目すべて
-		$current_items   = $model->get_related_current_items();
+		// get related unfinished items
+		$current_items = $model->get_related_current_items($controller, $model);
 
-		//ユーザが行動しなければならない項目のみ
-		$available_items = $model->get_related_current_available_items();
+		// order by is current action?
+		$related = array();
+		$not_related = array();
+		foreach ($current_items as $id => $current_item)
+		{
+			if (in_array(\Auth::get('id'), $current_item->workflow_users))
+			{
+				$related[] = $current_item;
+			}
+			else
+			{
+				$not_related[] = $current_item;
+			}
+		}
 
-		//比較用配列
-		$cmp_arr = array();
-		foreach($available_items as $available_item):
-			$cmp_arr[] = $available_item->controller.'::'.$available_item->controller_id;
-		endforeach;
-
-		//一覧用にマージ
-		$items = array();
-		foreach($current_items as $k => $current_item):
-			//存在比較用文字列
-			$cmp_str = $current_item->controller.'::'.$current_item->controller_id;
-
-			//一覧用配列を作る
-			$items[$k]['controller']    = $current_item->controller;
-			$items[$k]['controller_id'] = $current_item->controller_id;
-			$items[$k]['is_current']    = in_array($cmp_str, $cmp_arr) ? true : false;
-			$items[$k]['item']          = $model::find_item_by_ctrl_and_id($current_item->controller, $current_item->controller_id);
-
-			//表示用の名称
-
-/*
-ここでしか使ってないので、移動
-	public static function get_valid_model_name($controller = null)
-	{
-		is_null($controller) and \Response::redirect(\Uri::base());
-		$controller_ucfirst = ucfirst($controller);
-		return "\\$controller_ucfirst\Model_".$controller_ucfirst;
-	}
-*/
-			$modelname = \Util::get_valid_model_name($current_item->controller);
-die('プライマリネームはやめたので、propertiesをみるようにする');
-			$items[$k]['primary_name_field'] = $modelname::get_primary_name();
-		endforeach;
-
-		//assign
-		$view->set_global('title', '関連ワークフロー');
-		$view->set('items', \Arr::sort($items, 'is_current', 'desc'));
+		// assign
+		$view->set_global('title', '関連ワークフロー項目');
+		$view->set('controller_uri', \Inflector::ctrl_to_dir($controller));
+		$view->set('pk', $model->get_primary_keys('first'));
+		$view->set('subject_field', $model::get_default_field_name('subject'));
+		$view->set('related', $related);
+		$view->set('not_related', $not_related);
 		$view->base_assign();
 		$this->template->content = $view;
 	}
@@ -77,6 +60,11 @@ die('プライマリネームはやめたので、propertiesをみるように�
 			if ($route_id):
 				$model::set_route($route_id, $this->request->controller, $id);
 				\Session::set_flash('success', 'ルートを設定しました');
+
+				// update workflow_status
+				$obj = $model::find($id);
+				$obj->workflow_status = 'init';
+				$obj->save();
 
 				return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir($this->request->controller.'/view/'.$id)));
 			else:

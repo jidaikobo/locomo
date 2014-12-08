@@ -218,7 +218,7 @@ scaffoldを使った場合はコメントアウトされています。
 	use \Workflow\Traits_Model_Workflow;
 	use \Workflow\Traits_Actionset_Base_Workflow;
 
-対象モデルの$_propertiesにworkflow_statusを足します。
+対象モデルの$_propertiesにworkflow_statusを足します（enum('before_progress','in_progress','finish')かvarchar(20)で）。
 対象モデルにobserverを追加します。
 
 		'Workflow\Observer_Workflow' => array(

@@ -146,17 +146,13 @@ trait Traits_Model_Workflow
 	/**
 	 * get_members()
 	*/
-	public static function get_members($workflow_id = null, $step_id = null)
+	public static function get_members($step_id = null)
 	{
-		if (is_null($workflow_id) || is_null($step_id)) \Response::redirect(\Uri::base());
+		if (is_null($step_id)) \Response::redirect(\Uri::base());
 
-		//当該ステップのメンバー
-		$q = \DB::select('user_id');
-		$q->from('workflow_allowers');
-		$q->where('step_id', $step_id);
-		$members = \Arr::flatten($q->execute()->as_array());
+		$members = \Workflow\Model_Workflowadmin::find_allowers($step_id);
 
-		return $members ? $members : array() ;
+		return \Arr::get($members, 'allusers') ?: array() ;
 	}
 
 	/**
@@ -179,59 +175,93 @@ trait Traits_Model_Workflow
 	}
 
 	/**
-	 * get_related_current_available_items()
-	*/
-	public static function get_related_current_available_items($controller = null, $userinfo = null)
-	{
-		$userinfo = $userinfo ? $userinfo : \Auth::get_userinfo();
-
-		//ユーザがいまアクションできる項目のコントローラとidを得る
-		$q = \DB::select('*');
-		$q->from('workflow_current_users');
-		$q->where('user_id', $userinfo['user_id']);
-		if ($controller) $q->where('controller', $controller);
-		$q->limit('256');
-		$availables = $q->as_object()->execute()->as_array();
-
-		return $availables;
-	}
-
-	/**
 	 * get_related_current_items()
 	*/
-	public static function get_related_current_items($controller = null, $userinfo = null)
+	public static function get_related_current_items($controller = null, $model = null)
 	{
-		$userinfo = $userinfo ? $userinfo : \Auth::get_userinfo();
+		if (is_null($controller) || is_null($model)) die('workflow error. to get related currentitems.');
 
-		//ユーザidからworkflow_idを取得
-		$q = \DB::select('workflow_steps.workflow_id');
-		$q->from('workflow_steps');
-		$q->join('workflow_allowers');
-		$q->on('workflow_steps.id', '=', 'workflow_allowers.step_id');
-		$q->where('workflow_allowers.user_id', $userinfo['user_id']);
-		$workflow_ids = \Arr::flatten($q->execute()->as_array());
+		// get unfinished items
+		$unfinished = $model::find('all', array(
+			'where'=>array(array('workflow_status', '<>', 'finish')),
+			'limit' => '256',
+			'order_by' => array(array('created_at','DESC'))
+		));
 
-		//workflow_idから進行中のコントローラとidを得る
-		$retvals = array();
-		$n = 0;
-		foreach($workflow_ids as $workflow_id):
-			$q = \DB::select('workflow_logs.controller','workflow_logs.controller_id');
-			$q->distinct();
+		// add current step
+		foreach ($unfinished as $id => $v)
+		{
+			// get latest log
+			$q = \DB::select('workflow_id', 'current_step', 'created_at');
 			$q->from('workflow_logs');
-			$q->where('workflow_logs.workflow_id', $workflow_id);
-			$q->where('workflow_logs.status', '<>', 'finish');
-			$q->limit('256');
-			$ctrls = $q->execute()->as_array();
-			if ( ! $ctrls) continue;
-				foreach($ctrls as $ctrl):
-				$retvals[$n] = (object) array();
-				$retvals[$n]->controller    = $ctrl['controller'];
-				$retvals[$n]->controller_id = $ctrl['controller_id'];
-				$n++;
-			endforeach;
-		endforeach;
+			$q->where('controller', $controller);
+			$q->where('controller_id', $id);
+			$q->where('status', '<>', 'finish');
+			$q->order_by('id', 'desc');
+			$q->limit(1);
+			$workflow = $q->execute()->current();
 
-		return $retvals;
+			// null means unrouted items
+//			if(is_null($workflow)){}
+
+			// make code shorten
+			$workflow_id  = $workflow['workflow_id'];
+			$current_step = $workflow['current_step'];
+
+			// find writers
+			$writers = \Workflow\Model_Workflowadmin::find_writers($workflow_id);
+
+			// get latest step_id
+			$current_step_id = self::get_current_step_id($workflow_id, $current_step);
+
+			// set latest action date
+			$unfinished[$id]->latest_action_date = $workflow['created_at'];
+
+			//set users - related members are 'allowers'
+			if($current_step_id)
+			{
+				$unfinished[$id]->workflow_users = self::get_members($current_step_id);
+			}
+			else
+			{
+				// null means before progress - related members are 'writers'
+				$unfinished[$id]->workflow_users = $writers['allusers'];
+			}
+
+			// add step information
+			$unfinished[$id]->workflow_step_status = '';
+			if (is_null($current_step))
+			{
+				$unfinished[$id]->workflow_step_status = '経路設定前';
+			}
+			elseif ($current_step == -1)
+			{
+				$unfinished[$id]->workflow_step_status = '申請待ち';
+			}
+			elseif ($current_step >= 0)
+			{
+				$q = \DB::select('name');
+				$q->from('workflow_steps');
+				$q->where('id', $current_step_id);
+				$step_name = $q->execute()->current();
+
+				$unfinished[$id]->workflow_step_status = $step_name['name'].' ('.$current_step.'/'.self::get_total_step($workflow_id).')';
+			}
+
+			// add apply date
+			$q = \DB::select('created_at');
+			$q->from('workflow_logs');
+			$q->where('controller', $controller);
+			$q->where('controller_id', $id);
+			$q->where('status', '<>', 'finish');
+			$q->order_by('id', 'asc');
+			$q->limit(1);
+			$created_at = $q->execute()->current();
+
+			$unfinished[$id]->workflow_apply_date = $created_at ? $created_at['created_at'] : '';
+		}
+
+		return $unfinished;
 	}
 
 	/**
@@ -296,7 +326,7 @@ trait Traits_Model_Workflow
 		$step_id = self::get_current_step_id($workflow_id, $current_step);
 
 		//次のステップのユーザたちを取得
-		$members = self::get_members($workflow_id, $step_id);
+		$members = self::get_members($step_id);
 
 		foreach($members as $user_id):
 			$set = array(
