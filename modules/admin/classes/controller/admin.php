@@ -9,6 +9,9 @@ class Controller_Admin extends \Locomo\Controller_Base
 		'is_for_admin' => false,
 		'admin_home' => '\\Admin\\Controller_Admin/home',
 		'nicename' => '管理トップ',
+		'actionset_classes' =>array(
+			'option' => '\\Admin\\Actionset_Option_Admin',
+		),
 	);
 
 	/**
@@ -97,17 +100,31 @@ class Controller_Admin extends \Locomo\Controller_Base
 	*/
 	public function action_dashboard()
 	{
-/*
-メニューの一番上はダッシュボード
-ログイン後、リダイレクト先がないときには、ここに来る。
-ダッシュボードに何を出すかは、個々のユーザが決定するとよいとおもう。
-モジュールやコントローラはHMVCでブロックを提供するものとする？
-提供されるブロックは、action_fooでユーザにひもつけて登録する。
-まずはテストモジュールの二つのコントローラについて、configを設定する
-*/
+		$realms = array();
+
+		foreach (\Util::get_mod_or_ctrl() as $k => $v)
+		{
+			if ( ! $widgets = \Arr::get($v, 'widgets')) continue;
+			foreach ($widgets as $vv)
+			{
+				$realms['main'] = \Request::forge(\Inflector::ctrl_to_dir($vv))->execute();
+			}
+		}
+
 		$view = \View::forge('dashboard');
 		$view->set_global('title', 'ダッシュボード');
+		$view->set_safe('realms', $realms);
 		$view->base_assign();
 		$this->template->content = $view;
+	}
+
+	/**
+	* action_edit_dashboard()
+	* edit dashboard items
+	*/
+	public function action_edit_dashboard()
+	{
+
+
 	}
 }
