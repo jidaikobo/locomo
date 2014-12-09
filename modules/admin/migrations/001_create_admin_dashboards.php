@@ -14,7 +14,7 @@ class Create_admin_dashboards
 
 	public function down()
 	{
-		\DBUtil::drop_index('acls','admin_dashboards_idx_user_id');
+		//\DBUtil::drop_index('acls','admin_dashboards_idx_user_id');
 		\DBUtil::drop_table('admin_dashboards');
 	}
 }

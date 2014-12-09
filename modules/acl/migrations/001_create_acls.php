@@ -18,8 +18,8 @@ class Create_acls
 
 	public function down()
 	{
-		\DBUtil::drop_index('acls','acls_idx_usergroup_id');
-		\DBUtil::drop_index('acls','acls_idx_user_id');
+		//\DBUtil::drop_index('acls','acls_idx_usergroup_id');
+		//\DBUtil::drop_index('acls','acls_idx_user_id');
 		\DBUtil::drop_table('acls');
 	}
 }

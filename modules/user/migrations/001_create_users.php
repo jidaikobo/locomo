@@ -93,6 +93,7 @@ class Create_users
 
 	public function down()
 	{
+		/*
 		\DBUtil::drop_index('users','users_idx_username');
 		\DBUtil::drop_index('users','users_idx_password');
 		\DBUtil::drop_index('users','users_idx_email');
@@ -100,15 +101,18 @@ class Create_users
 		\DBUtil::drop_index('users','users_idx_created_at');
 		\DBUtil::drop_index('users','users_idx_deleted_at');
 		\DBUtil::drop_index('users','users_idx_is_visible');
+		 */
 		\DBUtil::drop_table('users');
 
-		\DBUtil::drop_index('users','user_admins_idx_username');
+		//\DBUtil::drop_index('users','user_admins_idx_username');
 		\DBUtil::drop_table('user_admins');
 		\DBUtil::drop_table('user_logs');
 
+		/*
 		\DBUtil::drop_index('usergroups','usergroups_idx_seq');
 		\DBUtil::drop_index('usergroups','usergroups_idx_is_available');
 		\DBUtil::drop_index('usergroups','usergroups_idx_deleted_at');
+		 */
 		\DBUtil::drop_table('usergroups');
 		\DBUtil::drop_table('user_usergroups');
 		if (\DBUtil::table_exists('acls')) \DBUtil::truncate_table('acls');

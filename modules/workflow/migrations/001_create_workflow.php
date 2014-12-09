@@ -69,6 +69,7 @@ class Create_workflow
 	public function down()
 	{
 		// workflows
+		/*
 		\DBUtil::drop_index('workflows', 'workflows_idx_deleted_at');
 
 		// workflow_steps
@@ -93,11 +94,13 @@ class Create_workflow
 		\DBUtil::drop_index('workflow_current_users', 'workflow_cusers_idx_controller_id');
 		\DBUtil::drop_index('workflow_current_users', 'workflow_cusers_idx_user_id');
 
+		 */
 		// drop_table
 		\DBUtil::drop_table('workflows');
 		\DBUtil::drop_table('workflow_steps');
 		\DBUtil::drop_table('workflow_step_actions');
 		\DBUtil::drop_table('workflow_allowers');
 		\DBUtil::drop_table('workflow_logs');
+		\DBUtil::drop_table('workflow_current_users');
 	}
 }

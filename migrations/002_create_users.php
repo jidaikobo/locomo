@@ -24,6 +24,7 @@ class Create_users
 			'updater_id'    => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 
+
 		\DBUtil::create_index('users', array('username'), 'users_idx_username', 'UNIQUE');
 		\DBUtil::create_index('users', array('password'), 'users_idx_password');
 		\DBUtil::create_index('users', array('email'), 'users_idx_email', 'UNIQUE');
@@ -100,6 +101,6 @@ class Create_users
 
 		\DBUtil::drop_table('usergroups');
 		\DBUtil::drop_table('user_usergroups');
-		if (\DBUtil::table_exists('acls')) \DBUtil::truncate_table('acls');
+		// if (\DBUtil::table_exists('acls')) \DBUtil::truncate_table('acls');
 	}
 }
