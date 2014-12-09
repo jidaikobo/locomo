@@ -1,3 +1,3 @@
 <?php 
-echo $realms['main'];
+echo @$realms['main'];
 ?>
