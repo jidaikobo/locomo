@@ -9,6 +9,9 @@ class Controller_Admin extends \Locomo\Controller_Base
 		'is_for_admin' => false,
 		'admin_home' => '\\Admin\\Controller_Admin/home',
 		'nicename' => '管理トップ',
+		'actionset_classes' =>array(
+			'option' => '\\Admin\\Actionset_Option_Admin',
+		),
 	);
 
 	/**
@@ -30,17 +33,36 @@ class Controller_Admin extends \Locomo\Controller_Base
 			$mod_or_ctrl = \Inflector::remove_head_backslash($mod_or_ctrl);
 			$actionset = \Actionset::get_actionset($mod_or_ctrl) ?: array();
 
-			//page title
-			$mod_config = \Config::load($mod_or_ctrl.'::'.$mod_or_ctrl);
-			$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$mod_or_ctrl]['nicename'] ;
-
-			// try to find main controller
-			if($mod_config && ! $actionset)
+			// when actionset wasn't exists
+			if (class_exists($mod_or_ctrl))
 			{
-				$actionset = array($mod_config['main_controller'] => array(
-					'nicename' => $mod_config['nicename'],
-					'actionset' => array('base' => array()))
-				);
+				// this is not a module
+				$locomo = $mod_or_ctrl::$locomo ;
+				$name = \Arr::get($locomo, 'nicename') ;
+
+				// try to find main controller
+				if(! $actionset)
+				{
+					$actionset = array($mod_or_ctrl => array(
+						'nicename' => $name,
+						'actionset' => array('base' => array()))
+					);
+				}
+			}
+			else
+			{
+				// module
+				$mod_config = \Config::load($mod_or_ctrl.'::'.$mod_or_ctrl);
+				$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$mod_or_ctrl]['nicename'] ;
+
+				// try to find main controller
+				if($mod_config && ! $actionset)
+				{
+					$actionset = array($mod_config['main_controller'] => array(
+						'nicename' => $mod_config['nicename'],
+						'actionset' => array('base' => array()))
+					);
+				}
 			}
 
 			// add 'admin_home' from controller::$locomo
@@ -78,17 +100,31 @@ class Controller_Admin extends \Locomo\Controller_Base
 	*/
 	public function action_dashboard()
 	{
-/*
-メニューの一番上はダッシュボード
-ログイン後、リダイレクト先がないときには、ここに来る。
-ダッシュボードに何を出すかは、個々のユーザが決定するとよいとおもう。
-モジュールやコントローラはHMVCでブロックを提供するものとする？
-提供されるブロックは、action_fooでユーザにひもつけて登録する。
-まずはテストモジュールの二つのコントローラについて、configを設定する
-*/
+		$realms = array();
+
+		foreach (\Util::get_mod_or_ctrl() as $k => $v)
+		{
+			if ( ! $widgets = \Arr::get($v, 'widgets')) continue;
+			foreach ($widgets as $vv)
+			{
+				$realms['main'] = \Request::forge(\Inflector::ctrl_to_dir($vv))->execute();
+			}
+		}
+
 		$view = \View::forge('dashboard');
 		$view->set_global('title', 'ダッシュボード');
+		$view->set_safe('realms', $realms);
 		$view->base_assign();
 		$this->template->content = $view;
+	}
+
+	/**
+	* action_edit_dashboard()
+	* edit dashboard items
+	*/
+	public function action_edit_dashboard()
+	{
+
+
 	}
 }

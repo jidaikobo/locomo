@@ -97,13 +97,16 @@ trait Traits_Actionset_Base_Workflow
 		{
 			if (\Auth::instance()->has_access($controller.'/apply'))
 			{
-				$urls = array(\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/apply/{$obj->id}"), '承認申請'));
+				$urls = array(
+					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/apply/{$obj->id}"), '承認申請'),
+					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/route/{$obj->id}"), '経路再設定')
+				);
 			}
 		}
 		elseif ($current_step < $total_step)
 		{
 		//ワークフロー進行中だったら承認・却下・差戻しができる
-			$members = $model::get_members($route_id, $current_step_id);
+			$members = $model::get_members($current_step_id);
 			if (is_array($members) && in_array($user_id, $members))
 			{
 				$urls = array(

@@ -34,61 +34,49 @@ class Controller_Workflowadmin extends \Locomo\Controller_Crud
 	}
 
 	/**
-	 * action_edit()
-	 */
-	public function action_edit($id = null)
-	{
-		parent::action_edit($id);
-	}
-
-	/**
 	 * action_setup()
 	 */
 	public function action_setup($id = null)
 	{
 		is_null($id) and \Response::redirect($this->request->module);
 		
-		//ワークフロー名取得
+		// get workflow name
 		$model = $this->model_name ;
 		$workflow = $model::find($id);
 		if ( ! $workflow) \Response::redirect($this->request->module);
 
-		//dbから取得
+		// find_workflow_setting
 		$steps = $model::find_workflow_setting($id);
 
-		//フォーム用に値の保存（いろいろと手抜きだけど、管理者専用なのでとりあえず実装を優先する）
-		$allstep = \Input::post('allstep') ? intval(\Input::post('allstep')) : count($steps);
+		// for form value
+		$allstep = \Input::post('allstep') ? intval(\Input::post('allstep')) : count($steps['allowers']);
 		$allstep = ( ! $allstep) ? 1 : $allstep;
 		$steps = \Input::post('steps') ?: $steps;
 		if (\Input::post('steps'))
 		{
-			//post値が空だったらunsetして整理
-			foreach($steps as $key => $step)
+			// unset empty values to tidt up
+			foreach($steps['allowers'] as $key => $step)
 			{
-				if (
-					empty($step['name']) &&
-					$step['condition'] == 'none' &&
-					empty($step['allowers']) &&
-					empty($step['actions'])
-				)
+				// name is required.
+				if (empty($step['name']))
 				{
-					unset($steps[$key]);
+					unset($steps['allowers'][$key]);
 				}
 			}
-			$allstep = count($steps) + 1;
+			$allstep = count($steps['allowers']) + 1; // add step
 		}
 
-		//ステップ数デフォルト
+		// default step number
 		$stepnum = array();
 		for ($n = 1; $n <= $allstep; $n++)
 		{
 			$stepnum[] = $n;
 		}
 
-		//DBに保存
+		// store to DB
 		if ($steps && \Input::post('submit'))
 		{
-			if ($model::update_workflow($id, $steps))
+			if ($model::update_workflow_setting($id, $steps))
 			{
 				\Session::set_flash('success', 'ワークフローを更新しました');
 			}
