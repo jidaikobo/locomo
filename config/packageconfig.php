@@ -51,6 +51,20 @@ return array(
 	// no_home
 	'no_home' => false,
 
+	// default_dashboard
+	'default_dashboard' => array(
+		array(
+			'name' => 'コントローラ一覧',
+			'action' => '\\Admin\\Controller_Admin/home',
+			'size' => 1,
+		),
+		array(
+			'name' => '現在時刻',
+			'action' => '\\Admin\\Controller_Admin/clock',
+			'size' => 1,
+		),
+	),
+
 	// always guest allowed actions
 	// ex) '\\Modname\\Controller_Something/action'
 	'always_allowed' => array(

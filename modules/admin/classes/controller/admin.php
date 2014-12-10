@@ -13,9 +13,10 @@ class Controller_Admin extends \Locomo\Controller_Crud
 			'option' => '\\Admin\\Actionset_Option_Admin',
 		),
 		'widgets' =>array(
-			array('name' => 'コントローラ', 'uri' => '\\Admin\\Controller_Admin/home'),
-			array('name' => 'アナログ時計', 'uri' => '\\Admin\\Controller_Admin/clock'),
-			array('name' => 'カレンダ', 'uri' => '\\Schedules\\Controller_Schedules/calendar'),
+			array('name' => 'コントローラ一覧', 'uri' => '\\Admin\\Controller_Admin/home'),
+			array('name' => '現在時刻', 'uri' => '\\Admin\\Controller_Admin/clock'),
+			array('name' => 'カレンダ', 'uri' => '\\Schedule\\Controller_Schedule/calendar'),
+			array('name' => '顧客', 'uri' => '\\Controller_Customer/index_admin'),
 		),
 	);
 
@@ -107,10 +108,23 @@ class Controller_Admin extends \Locomo\Controller_Crud
 	{
 		$objs = \Admin\Model_Dashboard::find('all', array('where'=>array(array('user_id'=>\Auth::get('id')))));
 
-
+		// set fall-back widgets
 		if ( ! $objs)
 		{
-			// set fall back actions
+			$configs = \Config::get('default_dashboard') ?: array();
+			$objs = array();
+			foreach ($configs as $config)
+			{
+				$objs[] = (object) $config;
+			}
+		}
+
+		// prepare widget nicename
+		$widget_names = array();
+		foreach (\Util::get_mod_or_ctrl() as $k => $v)
+		{
+			if ( ! $widget = \Arr::get($v, 'widgets')) continue;
+			$widget_names += \Arr::assoc_to_keyval($widget, 'name', 'uri');
 		}
 
 		// set to position
@@ -118,12 +132,32 @@ class Controller_Admin extends \Locomo\Controller_Crud
 		foreach ($objs as $k => $obj)
 		{
 			$act = $obj->action;
-			$act = strpos($act, '?') !== false ? substr($act, 0, strpos($act, '?')) : $act;
-			if( ! \Auth::instance()->has_access($act)) continue;
-			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($obj->action))->execute();
+			$acts = explode('?', $act);
+
+			// auth
+			if( ! \Auth::instance()->has_access($acts[0])) continue;
+
+			// querystring 
+			$qstr = \Arr::get($acts, 1);
+			parse_str($qstr, $q);
+
+			// method exists?
+			$ctrl_act = \Locomo\Auth_Acl_Locomoacl::_parse_conditions($acts[0]);
+			if ( ! class_exists($ctrl_act['controller']))
+			{
+				$mod_ctrl = explode('\\', $ctrl_act['controller']);
+				if ( ! \Module::load($mod_ctrl[1])) continue;
+			}
+			if ( ! method_exists($ctrl_act['controller'], 'action_'.$ctrl_act['action'])) continue;
+
+			// hmvc
+			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute($q);
 			$actions[$k]['size'] = $obj->size ?: 1 ;//default small
+			$actions[$k]['title'] = array_search($act, $widget_names);
+
 		}
 
+		// assign
 		$view = \View::forge('dashboard');
 		$view->set_global('title', 'ダッシュボード');
 		$view->set_safe('actions', $actions);

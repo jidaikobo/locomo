@@ -53,9 +53,23 @@ class Model_User extends \Locomo\Model_Base
 		foreach (\Util::get_mod_or_ctrl() as $k => $v)
 		{
 			if ( ! $widget = \Arr::get($v, 'widgets')) continue;
+
+			$tmps = array();
+
+			// auth
+			foreach ($widget as $kk => $vv)
+			{
+				if(\Auth::instance()->has_access($vv['uri']))
+				{
+					$tmps[$vv['uri']] = $vv['name'];
+				}
+			}
+			if (empty($tmps)) continue;
+
+			// values
 			$key = \Arr::get($v, 'nicename');
 			$widgets[$key] = \Arr::get($widgets, $key) ?: array();
-			$widgets[$key] = array_merge($widgets[$key], \Arr::assoc_to_keyval($widget, 'uri', 'name'));
+			$widgets[$key] = $tmps;
 		}
 
 		// actions

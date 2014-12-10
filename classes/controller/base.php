@@ -45,9 +45,14 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 
 		// load config and set model_name
 		$controller = substr(ucfirst(\Inflector::denamespace($this->request->controller)), 11);
-		if (\Request::main()->module)
+		$current_module = \Request::main()->module;
+		if (\Request::is_hmvc())
 		{
-			$module = ucfirst(\Request::main()->module);
+			$current_module = \Request::active()->module;
+		}
+		if ($current_module)
+		{
+			$module = ucfirst($current_module);
 			if (! $this->model_name) $this->model_name = '\\'.$module.'\\Model_'.$module;
 			static::$config = \Config::load(strtolower($this->request->module));
 		}else{
