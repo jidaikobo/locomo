@@ -42,9 +42,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_option_options = array();
 
-	/*
-	 * __construct
-	 */
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
 	{
 		//depend_modules
@@ -454,6 +451,14 @@ class Model_Base extends \Orm\Model_Soft
 		\Pagination::set_config('pagination_url', \Uri::create($uri, array(), $input_get));
 		$options['rows_limit'] = \Pagination::get('per_page');
 		$options['rows_offset'] = \Pagination::get('offset');
+
+/* 不具合有りました
+		foreach (static::relations() as $ref => $v) {
+			// var_dump($ref);
+			// レイジーロードしない
+			$options['related'][] = $ref;
+		}
+ */
 
 		return static::find('all', $options);
 	}

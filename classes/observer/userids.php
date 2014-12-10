@@ -25,6 +25,6 @@ class Observer_Userids extends \Orm\Observer
 	public function before_save(\Orm\Model $obj)
 	{
 		$obj->creator_id  = $obj->creator_id ? $obj->creator_id : \Auth::get('id');
-		$obj->modifier_id = \Auth::get('id');
+		$obj->updater_id = \Auth::get('id');
 	}
 }

@@ -13,7 +13,7 @@ class Create_revision
 			'operation'   => array('type' => 'text'),
 			'created_at'  => array('type' => 'datetime', 'null' => true),
 			'deleted_at'  => array('type' => 'datetime', 'null' => true),
-			'updater_id' => array('constraint' => 5, 'type' => 'int'),
+			'user_id' => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 	}
 
