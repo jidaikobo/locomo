@@ -30,6 +30,12 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		// parent
 		parent::before();
 
+		// hmvc
+		if (\Request::is_hmvc())
+		{
+			$this->_template = 'widget';
+		}
+
 		// show profile to root only
 		\Fuel::$profiling = \Auth::get('id') == -2 ?: false ;
 
@@ -60,7 +66,6 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$nicename = $nicename ?: @static::$config['nicename'];
 		static::$nicename = $nicename;
 	}
-
 
 	/**
 	 * router()

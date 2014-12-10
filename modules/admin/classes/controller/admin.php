@@ -1,6 +1,6 @@
 <?php
 namespace Admin;
-class Controller_Admin extends \Locomo\Controller_Base
+class Controller_Admin extends \Locomo\Controller_Crud
 {
 	//locomo
 	public static $locomo = array(
@@ -11,6 +11,11 @@ class Controller_Admin extends \Locomo\Controller_Base
 		'nicename' => '管理トップ',
 		'actionset_classes' =>array(
 			'option' => '\\Admin\\Actionset_Option_Admin',
+		),
+		'widgets' =>array(
+			array('name' => 'コントローラ', 'uri' => '\\Admin\\Controller_Admin/home'),
+			array('name' => 'アナログ時計', 'uri' => '\\Admin\\Controller_Admin/clock'),
+			array('name' => 'カレンダ', 'uri' => '\\Schedules\\Controller_Schedules/calendar'),
 		),
 	);
 
@@ -100,20 +105,28 @@ class Controller_Admin extends \Locomo\Controller_Base
 	*/
 	public function action_dashboard()
 	{
-		$realms = array();
+		$objs = \Admin\Model_Dashboard::find('all', array('where'=>array(array('user_id'=>\Auth::get('id')))));
 
-		foreach (\Util::get_mod_or_ctrl() as $k => $v)
+
+		if ( ! $objs)
 		{
-			if ( ! $widgets = \Arr::get($v, 'widgets')) continue;
-			foreach ($widgets as $vv)
-			{
-				$realms['main'] = \Request::forge(\Inflector::ctrl_to_dir($vv))->execute();
-			}
+			// set fall back actions
+		}
+
+		// set to position
+		$actions = array();
+		foreach ($objs as $k => $obj)
+		{
+			$act = $obj->action;
+			$act = strpos($act, '?') !== false ? substr($act, 0, strpos($act, '?')) : $act;
+			if( ! \Auth::instance()->has_access($act)) continue;
+			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($obj->action))->execute();
+			$actions[$k]['size'] = $obj->size ?: 1 ;//default small
 		}
 
 		$view = \View::forge('dashboard');
 		$view->set_global('title', 'ダッシュボード');
-		$view->set_safe('realms', $realms);
+		$view->set_safe('actions', $actions);
 		$view->base_assign();
 		$this->template->content = $view;
 	}
@@ -122,9 +135,32 @@ class Controller_Admin extends \Locomo\Controller_Base
 	* action_edit_dashboard()
 	* edit dashboard items
 	*/
-	public function action_edit_dashboard()
+	public function action_edit($user_id = null)
 	{
+		// get workflow name
+		$this->model_name = '\\Admin\\Model_User';
+		parent::action_edit(\Auth::get('id'));
 
+		//add_actionset - back to index at edit
+		$action['urls'][] = \Html::anchor('/admin/admin/dashboard/','ダッシュボードへ');
+		$action['order'] = 10;
+		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
+		//assign
+		$content= \View::forge('edit_dashboard');
+		$content->set_global('title', 'ダッシュボードの設定');
+		$this->template->content = $content;
 	}
+
+	/**
+	* action_clock()
+	*/
+	public function action_clock()
+	{
+		$view = \View::forge('clock');
+		$view->set_global('title', 'アナログ時計');
+		$view->base_assign();
+		$this->template->content = $view;
+	}
+
 }

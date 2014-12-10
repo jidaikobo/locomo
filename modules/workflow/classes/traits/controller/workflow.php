@@ -7,11 +7,6 @@ trait Traits_Controller_Workflow
 	 */
 	public function action_index_workflow($controller = null)
 	{
-		if (\Request::is_hmvc())
-		{
-			$this->_template = 'widget';
-		}
-
 		// model and view
 		$view = \View::forge(LOCOMOPATH.'modules/workflow/views/index_workflow.php');
 		$controller = $controller ?: get_called_class();

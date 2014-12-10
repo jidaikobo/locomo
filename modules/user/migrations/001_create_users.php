@@ -35,6 +35,7 @@ class Create_users
 
 		// table user_admins
 		\DBUtil::create_table('user_admins', array(
+			'id'            => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true),
 			'username'      => array('type' => 'varchar', 'constraint' => 50),
 			'last_login_at' => array('type' => 'datetime'),
 			'login_hash'    => array('type' => 'varchar', 'constraint' => 255),
@@ -75,6 +76,7 @@ class Create_users
 		$arr = array(
 			array('Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/home'),
 			array('Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/dashboard'),
+			array('Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/edit_dashboard'),
 			array('Help\\Controller_Help',   'index_admin', '\\Help\\Controller_Help/index_admin'),
 		);
 		foreach($arr as $v):
