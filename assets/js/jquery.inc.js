@@ -380,8 +380,6 @@ $('input.datetime,  input[type=datetime]').datetimepicker();
 
 $('input.time.min15').timepicker({
 	timeFormat: 'HH:mm',
-	hourMin:$(this).data('hourMin'),
-	hourMax:18,
 	stepMinute: 15
 });
 $('input.time.min30').timepicker({
