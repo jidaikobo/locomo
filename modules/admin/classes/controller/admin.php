@@ -44,14 +44,13 @@ class Controller_Admin extends \Locomo\Controller_Crud
 			{
 				// this is not a module
 				$locomo = $mod_or_ctrl::$locomo ;
-				$name = \Arr::get($locomo, 'nicename') ;
 
 				// try to find main controller
 				if(! $actionset)
 				{
 					$actionset = array($mod_or_ctrl => array(
-						'nicename' => $name,
-						'actionset' => array('base' => array()))
+						'nicename'    => \Arr::get($locomo, 'nicename'),
+						'actionset'   => array('base' => array()))
 					);
 				}
 			}

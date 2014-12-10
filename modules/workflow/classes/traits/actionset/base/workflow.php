@@ -13,7 +13,8 @@ trait Traits_Actionset_Base_Workflow
 		$retvals = array(
 			'urls'         => $urls,
 			'action_name'  => 'ワークフロー承認項目一覧',
-			'explanation'  => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
+			'explanation'  => '現在承認すべき項目の一覧です。',
+			'acl_exp'      => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'index_workflow',
@@ -29,7 +30,8 @@ trait Traits_Actionset_Base_Workflow
 	{
 		$retvals = array(
 			'action_name'  => 'ワークフロー作業',
-			'explanation'  => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。不可視項目の閲覧権限などに依存します。',
+			'explanation'  => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限を行います。',
+			'acl_exp'      => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。不可視項目の閲覧権限などに依存します。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'view',
@@ -55,7 +57,8 @@ trait Traits_Actionset_Base_Workflow
 		$retvals = array(
 			'url'          => '',
 			'action_name'  => 'ワークフロー承認',
-			'explanation'  => 'ワークフロー管理下コントローラにおける承認権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。',
+			'explanation'  => 'ワークフロー管理下コントローラにおける承認権限です。',
+			'acl_exp'      => 'ワークフロー管理下コントローラにおける承認権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'index',
@@ -135,7 +138,8 @@ trait Traits_Actionset_Base_Workflow
 		$retvals = array(
 			'urls'         => $urls,
 			'action_name'  => 'ワークフロー作業（承認申請）',
-			'explanation'  => 'ワークフロー管理下コントローラにおける承認申請です。「ワークフロー作業」を有効にすると自動的に有効になります。',
+			'explanation'  => 'ワークフロー管理下コントローラにおける承認申請です。',
+			'acl_exp'      => 'ワークフロー管理下コントローラにおける承認申請です。「ワークフロー作業」を有効にすると自動的に有効になります。',
 			'order'        => 100,
 			'dependencies' => array()
 		);

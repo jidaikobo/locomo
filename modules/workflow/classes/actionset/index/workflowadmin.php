@@ -15,7 +15,7 @@ class Actionset_Index_Workflowadmin extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => 'ワークフロー管理',
 			'show_at_top'  => true,
-			'explanation'  => 'ワークフロー管理。管理者のみアクセス可能。',
+			'explanation'  => 'ワークフロー管理。',
 			'order'        => 10,
 			'dependencies' => array()
 		);
@@ -33,7 +33,8 @@ class Actionset_Index_Workflowadmin extends \Actionset
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '一覧（削除された項目）',
-			'explanation'  => '削除された項目一覧の権限です。',
+			'explanation'  => '削除された項目一覧です。',
+			'acl_exp'      => '削除された項目一覧の権限です。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'index_deleted',

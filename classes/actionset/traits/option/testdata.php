@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-trait Actionset_Traits_Testdata
+trait Actionset_Traits_Option_Testdata
 {
 	/**
 	 * actionset_add_testdata()

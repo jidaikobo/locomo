@@ -12,7 +12,7 @@ if ( ! isset($is_admin_home)):
 					if (\Arr::get($vvv, 'urls') == false) continue;
 						$html.= '<tr>';
 							$html.= '<th class="ctrl">';
-							$html.= '<ul><li>'.join('</li><li>',$vvv['urls']).'</ul>';
+							$html.= '<ul style="text-align: left;"><li>'.join('</li><li>',$vvv['urls']).'</ul>';
 							$html.= '</th>';
 							$html.= '<td>'.$vvv['explanation'].'</td>';
 						$html.= '</tr>';
@@ -25,13 +25,23 @@ if ( ! isset($is_admin_home)):
 	echo $html;
 else:
 //管理ホーム
-	$html = '';
-	$html.= '<ul>';
-	foreach($locomo['controllers'] as $k => $v):
-		if (\Arr::get($v, 'show_at_menu') == false) continue;
-		echo '<li><a href="'.\Uri::create('admin/home/').trim($k, '\\').'">'.$v['nicename'].'</a></li>';
-	endforeach;
-	$html.= '</ul>';
-	echo $html;
-endif;
 ?>
+	<?php if (\Request::is_hmvc()): ?>
+		<ul>
+		<?php foreach($locomo['controllers'] as $k => $v): ?>
+		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>
+		<li><a href="<?php echo \Uri::create('admin/home/').trim($k, '\\') ?>"><?php echo $v['nicename'] ?></a></li>
+		<?php endforeach; ?>
+		</ul>
+	<?php else: ?>
+		<table class="tbl">
+		<?php foreach($locomo['controllers'] as $k => $v): ?>
+		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>
+		<tr>
+			<th><a href="<?php echo \Uri::create('admin/home/').trim($k, '\\') ?>"><?php echo $v['nicename'] ?></a></th>
+			<td><?php echo @$v['explanation'] ?></td>
+		</tr>
+		<?php endforeach; ?>
+		</table>
+	<?php endif; ?>
+<?php endif; ?>

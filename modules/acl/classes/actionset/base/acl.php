@@ -14,7 +14,6 @@ class Actionset_Base_Acl extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => 'アクセス権管理',
 			'show_at_top'  => true,
-			'explanation'  => 'ユーザグループ単位、ユーザ単位でのアクセス権設定',
 			'order'        => 1,
 		);
 		return $retvals;

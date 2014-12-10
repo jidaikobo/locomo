@@ -2,7 +2,7 @@
 namespace User;
 class Actionset_Option_User extends \Actionset_Option
 {
-	use \Locomo\Actionset_Traits_Testdata;
+	use \Locomo\Actionset_Traits_Option_Testdata;
 
 	/**
 	 * actionset_usergroup()
@@ -27,7 +27,8 @@ class Actionset_Option_User extends \Actionset_Option
 			'overrides'    => $overrides,
 			'show_at_top'  => true,
 			'action_name'  => 'ユーザグループ',
-			'explanation'  => 'ユーザが所属するユーザグループ管理です。追加、削除、設定等を行います。',
+			'explanation'  => 'ユーザグループ管理です。追加、削除、設定等を行います。',
+			'acl_exp'      => 'ユーザグループ管理です。追加、削除、設定等の権限です。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'usergroup',
