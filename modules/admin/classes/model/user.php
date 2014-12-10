@@ -20,22 +20,17 @@ class Model_User extends \Locomo\Model_Base
 		),
 	);
 
+	/**
+	 * find()
+	 * to find admins who are not in users table
+	 */
 	public static function find($id = NULL, array $options = array())
 	{
 		$retvals = parent::find($id, $options);
 		if ($retvals) return $retvals;
 
-
-
 		// admin
-		$retval = \User\Model_Admin::find('first', array('where' => array(array('username'=>\Auth::get('username')))));
-
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $retval ) ;
-echo '</textarea>' ;
-die();
-
+		return \Admin\Model_Admin::find('first', array('where' => array(array('username'=>\Auth::get('username')))));
 	}
 
 	/**

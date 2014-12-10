@@ -327,6 +327,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			\DB::insert('user_admins')
 				->set(array(
 					'username'   => $this->user['username'],
+					'user_id'    => $this->user['id'],
 					'last_login_at' => date('Y-m-d H:i:s', $last_login),
 					'login_hash' => $login_hash,
 				))

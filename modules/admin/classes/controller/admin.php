@@ -132,13 +132,13 @@ class Controller_Admin extends \Locomo\Controller_Crud
 	}
 
 	/**
-	* action_edit_dashboard()
+	* action_edit()
 	* edit dashboard items
 	*/
 	public function action_edit($user_id = null)
 	{
 		// get workflow name
-		$this->model_name = '\\Admin\\Model_User';
+		$this->model_name = \Auth::is_admin() ? '\\Admin\\Model_Admin' : '\\Admin\\Model_User';
 		parent::action_edit(\Auth::get('id'));
 
 		//add_actionset - back to index at edit

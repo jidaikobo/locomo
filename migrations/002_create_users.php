@@ -21,7 +21,7 @@ class Create_users
 			'expired_at'     => array('type' => 'datetime', 'null' => true),
 			'updated_at'     => array('type' => 'datetime', 'null' => true),
 			'creator_id'     => array('constraint' => 5, 'type' => 'int'),
-			'updater_id'    => array('constraint' => 5, 'type' => 'int'),
+			'updater_id'     => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 
 //		\DBUtil::create_index('users', array('username'), 'users_username', 'UNIQUE');
@@ -35,11 +35,14 @@ class Create_users
 
 		// table user_admins
 		\DBUtil::create_table('user_admins', array(
-			'id'            => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true),
+			'id'            => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true), // to use ORM
+			'user_id'       => array('type' => 'int', 'constraint' => 11),
 			'username'      => array('type' => 'varchar', 'constraint' => 50),
 			'last_login_at' => array('type' => 'datetime'),
 			'login_hash'    => array('type' => 'varchar', 'constraint' => 255),
+			'deleted_at'    => array('type' => 'datetime', 'null' => true), // to use ORM
 		), array('id'));
+		\DBUtil::create_index('user_admins', array('user_id'), 'user_admins_user_id');
 		\DBUtil::create_index('user_admins', array('username'), 'user_admins_username');
 
 		// user_logs
