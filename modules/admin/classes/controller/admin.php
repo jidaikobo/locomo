@@ -1,6 +1,6 @@
 <?php
 namespace Admin;
-class Controller_Admin extends \Locomo\Controller_Base
+class Controller_Admin extends \Locomo\Controller_Crud
 {
 	//locomo
 	public static $locomo = array(
@@ -11,6 +11,12 @@ class Controller_Admin extends \Locomo\Controller_Base
 		'nicename' => '管理トップ',
 		'actionset_classes' =>array(
 			'option' => '\\Admin\\Actionset_Option_Admin',
+		),
+		'widgets' =>array(
+			array('name' => 'コントローラ一覧', 'uri' => '\\Admin\\Controller_Admin/home'),
+			array('name' => '現在時刻', 'uri' => '\\Admin\\Controller_Admin/clock'),
+			array('name' => 'カレンダ', 'uri' => '\\Schedule\\Controller_Schedule/calendar'),
+			array('name' => '顧客', 'uri' => '\\Controller_Customer/index_admin'),
 		),
 	);
 
@@ -38,14 +44,14 @@ class Controller_Admin extends \Locomo\Controller_Base
 			{
 				// this is not a module
 				$locomo = $mod_or_ctrl::$locomo ;
-				$name = \Arr::get($locomo, 'nicename') ;
+				$name = \Arr::get($locomo, 'nicename');
 
 				// try to find main controller
 				if(! $actionset)
 				{
 					$actionset = array($mod_or_ctrl => array(
-						'nicename' => $name,
-						'actionset' => array('base' => array()))
+						'nicename'    => $name,
+						'actionset'   => array('base' => array()))
 					);
 				}
 			}
@@ -100,31 +106,95 @@ class Controller_Admin extends \Locomo\Controller_Base
 	*/
 	public function action_dashboard()
 	{
-		$realms = array();
+		$objs = \Admin\Model_Dashboard::find('all', array('where'=>array(array('user_id'=>\Auth::get('id')))));
 
-		foreach (\Util::get_mod_or_ctrl() as $k => $v)
+		// set fall-back widgets
+		if ( ! $objs)
 		{
-			if ( ! $widgets = \Arr::get($v, 'widgets')) continue;
-			foreach ($widgets as $vv)
+			$configs = \Config::get('default_dashboard') ?: array();
+			$objs = array();
+			foreach ($configs as $config)
 			{
-				$realms['main'] = \Request::forge(\Inflector::ctrl_to_dir($vv))->execute();
+				$objs[] = (object) $config;
 			}
 		}
 
+		// prepare widget nicename
+		$widget_names = array();
+		foreach (\Util::get_mod_or_ctrl() as $k => $v)
+		{
+			if ( ! $widget = \Arr::get($v, 'widgets')) continue;
+			$widget_names += \Arr::assoc_to_keyval($widget, 'name', 'uri');
+		}
+
+		// set to position
+		$actions = array();
+		foreach ($objs as $k => $obj)
+		{
+			$act = $obj->action;
+			$acts = explode('?', $act);
+
+			// auth
+			if( ! \Auth::instance()->has_access($acts[0])) continue;
+
+			// querystring 
+			$qstr = \Arr::get($acts, 1);
+			parse_str($qstr, $q);
+
+			// method exists?
+			$ctrl_act = \Locomo\Auth_Acl_Locomoacl::_parse_conditions($acts[0]);
+			if ( ! class_exists($ctrl_act['controller']))
+			{
+				$mod_ctrl = explode('\\', $ctrl_act['controller']);
+				if ( ! \Module::load($mod_ctrl[1])) continue;
+			}
+			if ( ! method_exists($ctrl_act['controller'], 'action_'.$ctrl_act['action'])) continue;
+
+			// hmvc
+			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute($q);
+			$actions[$k]['size'] = $obj->size ?: 1 ;//default small
+			$actions[$k]['title'] = array_search($act, $widget_names);
+
+		}
+
+		// assign
 		$view = \View::forge('dashboard');
 		$view->set_global('title', 'ダッシュボード');
-		$view->set_safe('realms', $realms);
+		$view->set_safe('actions', $actions);
 		$view->base_assign();
 		$this->template->content = $view;
 	}
 
 	/**
-	* action_edit_dashboard()
+	* action_edit()
 	* edit dashboard items
 	*/
-	public function action_edit_dashboard()
+	public function action_edit($user_id = null)
 	{
+		// get workflow name
+		$this->model_name = \Auth::is_admin() ? '\\Admin\\Model_Admin' : '\\Admin\\Model_User';
+		parent::action_edit(\Auth::get('id'));
 
+		//add_actionset - back to index at edit
+		$action['urls'][] = \Html::anchor('/admin/admin/dashboard/','ダッシュボードへ');
+		$action['order'] = 10;
+		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
+		//assign
+		$content= \View::forge('edit_dashboard');
+		$content->set_global('title', 'ダッシュボードの設定');
+		$this->template->content = $content;
 	}
+
+	/**
+	* action_clock()
+	*/
+	public function action_clock()
+	{
+		$view = \View::forge('clock');
+		$view->set_global('title', 'アナログ時計');
+		$view->base_assign();
+		$this->template->content = $view;
+	}
+
 }

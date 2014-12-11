@@ -29,6 +29,12 @@ class Controller_Crud extends Controller_Base
 	public function action_index_admin()
 	{
 		$model = $this->model_name;
+
+		if (\Request::is_hmvc())
+		{
+			$this->_content_template = 'index_widget';
+		}
+
 		$content = \View::forge($this->_content_template ?: 'index_admin');
 
 		//$model::paginated_find_use_get_query(false);

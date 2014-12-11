@@ -12,8 +12,8 @@ class Create_acls
 			'usergroup_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'user_id'      => array('constraint' => 11, 'type' => 'int', 'null' => true),
 		), array('id','controller','action'));
-		\DBUtil::create_index('acls', array('usergroup_id'), 'acls_idx_usergroup_id');
-		\DBUtil::create_index('acls', array('user_id'), 'acls_idx_user_id');
+		\DBUtil::create_index('acls', array('usergroup_id'), 'acls_ug_id');
+		\DBUtil::create_index('acls', array('user_id'), 'acls_u_id');
 	}
 
 	public function down()

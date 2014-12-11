@@ -11,6 +11,7 @@ class Controller_XXX extends \Locomo\Controller_Crud
 		'admin_home_name' => '管理一覧', // name of module's top page
 		'admin_home_explanation' => '###nicename###のトップです。', // explanation of module's top page
 		'nicename' => '###nicename###', // for human's name
+		'explanation' => '###nicename###のコントローラです', // use at admin/admin/home
 		'help'     => 'packages/locomo/modules/user/help/user.html',// path from 'app/../'
 		'actionset_classes' =>array(
 			'base'   => '\\XXX\\Actionset_Base_XXX',

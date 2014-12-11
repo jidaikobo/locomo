@@ -10,7 +10,8 @@ class Actionset_Base_XXX extends \Actionset_Base
 	(arr)  overrides     urlをオーバライドする際に設定。ユーザグループのActionset_Optionにサンプルがある
 	(bool) show_at_top   モジュール／コントローラトップに表示するかどうか
 	(str)  action_name   ACL設定画面などで用いる
-	(str)  explanation   ACL設定画面などで用いる説明文
+	(str)  explanation   モジュール先頭画面等で用いる説明文
+	(str)  acl_exp       ACL設定画面などで用いる説明文
 	(int)  order         表示順
 	(arr)  dependencies  このアクションセットが依存するアクション
 	*/
@@ -31,6 +32,7 @@ class Actionset_Base_XXX extends \Actionset_Base
 			'action_name'  => 'sample_action',
 			'show_at_top'  => true,
 			'explanation'  => 'explanation of sample_action',
+			'acl_exp'      => 'explanation of sample_action for acl',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'sample_action',

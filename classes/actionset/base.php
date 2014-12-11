@@ -14,7 +14,8 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls,
 			'action_name'  => '新規作成',
 			'show_at_top'  => true,
-			'explanation'  => '新規作成権限',
+			'explanation'  => '新しい項目を追加します。',
+			'acl_exp'      => '新規作成権限',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'index',
@@ -40,6 +41,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls ,
 			'action_name'  => '閲覧（通常項目）',
 			'explanation'  => '通常項目の個票の閲覧権限です。',
+			'acl_exp'      => '通常項目の個票の閲覧権限です。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'view',
@@ -62,6 +64,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls ,
 			'action_name'  => '編集（通常項目）',
 			'explanation'  => '通常項目の編集権限',
+			'acl_exp'      => '通常項目の編集権限',
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.DS.'view',
@@ -86,6 +89,7 @@ class Actionset_Base extends Actionset
 			'id_segment'   => '',
 			'action_name'  => '編集（すべての項目）',
 			'explanation'  => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限',
+			'acl_exp'      => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限',
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.DS.'view',
@@ -111,6 +115,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls,
 			'action_name'  => '削除された項目の編集',
 			'explanation'  => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
+			'acl_exp'      => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.DS.'index_deleted',
@@ -136,6 +141,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls ,
 			'action_name'  => '項目の削除',
 			'explanation'  => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
+			'acl_exp'      => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 40,
 			'dependencies' => array(
 				$controller.DS.'view',
@@ -162,6 +168,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls ,
 			'action_name'  => '項目の復活',
 			'explanation'  => '削除された項目を復活する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
+			'acl_exp'      => '削除された項目を復活する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.DS.'index',
@@ -188,6 +195,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls,
 			'action_name'  => '項目の完全な削除',
 			'explanation'  => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
+			'acl_exp'      => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.DS.'view',
@@ -213,6 +221,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls,
 			'action_name'  => '閲覧（削除された項目）',
 			'explanation'  => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
+			'acl_exp'      => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'view_deleted',
@@ -235,6 +244,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls,
 			'action_name'  => '閲覧（期限切れ）',
 			'explanation'  => '期限切れ項目の閲覧権限です。',
+			'acl_exp'      => '期限切れ項目の閲覧権限です。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'view_expired',
@@ -257,6 +267,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls,
 			'action_name'  => '閲覧（予約項目）',
 			'explanation'  => '予約項目の閲覧権限です。',
+			'acl_exp'      => '予約項目の閲覧権限です。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'index_yet',
@@ -280,6 +291,7 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls,
 			'action_name'  => '閲覧（不可視項目）',
 			'explanation'  => '不可視項目の閲覧権限',
+			'acl_exp'      => '不可視項目の閲覧権限',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'index_invisible',

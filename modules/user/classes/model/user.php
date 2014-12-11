@@ -14,10 +14,14 @@ class Model_User extends \Locomo\Model_Base
 	 */
 	protected static $_properties = array(
 		'id',
-		'username',
+		'username' => array(
+			'label' => 'ユーザ名',
+		),
 		'password',
 		'email',
-		'display_name',
+		'display_name' => array(
+			'label' => '表示名',
+		),
 		'last_login_at',
 		'login_hash',
 		'activation_key',
