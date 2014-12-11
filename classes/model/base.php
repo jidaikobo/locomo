@@ -449,6 +449,7 @@ class Model_Base extends \Orm\Model_Soft
 		$segment = \Pagination::get('uri_segment') - 1;
 		$uri = '/'.join('/', array_slice(\Uri::segments(), 0, $segment)).'/';
 		\Pagination::set_config('pagination_url', \Uri::create($uri, array(), $input_get));
+		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
 		$options['rows_limit'] = \Pagination::get('per_page');
 		$options['rows_offset'] = \Pagination::get('offset');
 
