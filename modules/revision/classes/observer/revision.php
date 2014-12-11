@@ -80,22 +80,45 @@ class Observer_Revision extends \Orm\Observer
 
 		$tmp = (object) array();
 
-		//$objしたものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
+		// $objしたものをそのままserialize()するとunserialize()したときに__PHP_Incomplete_Classになってしまうので、いったん別のobjectにする。
 		$primary_key = $obj::get_primary_keys('first');
+		$properties = $obj::properties();
 
-		//args
-		$args = array();
-		$args['model']       = get_class($obj);
-		$args['pk_id']       = $obj->$primary_key;
-		$args['data']        = serialize(\Input::post());
-		$args['comment']     = \Input::post('revision_comment') ?: '';
-		$args['created_at']  = date('Y-m-d H:i:s');
-		$args['operation']   = $operation;
-		$args['updater_id'] = \Auth::get('id');
+		// is_locomo_bulk
+		$vals = array();
+		$posts = \Input::post();
+		if(isset($posts['is_locomo_bulk']))
+		{
+			foreach ($posts as $k => $post)
+			{
+				foreach ($properties as $kk => $vv)
+				{
+					if( ! isset($post[$kk])) continue;
+					$vals[$k][$kk] = $post[$kk];
+				}
+			}
+		}
+		else
+		{
+			$vals[] = $posts;
+		}
 
-		//save revision
-		$model = \Revision\Model_Revision::forge($args);
-		$model->insert_revision();
+		// args
+		foreach ($vals as $val)
+		{
+			$args = array();
+			$args['model']       = get_class($obj);
+			$args['pk_id']       = $obj->$primary_key;
+			$args['data']        = serialize($val	);
+			$args['comment']     = \Input::post('revision_comment') ?: '';
+			$args['created_at']  = date('Y-m-d H:i:s');
+			$args['operation']   = $operation;
+			$args['updater_id'] = \Auth::get('id');
+	
+			// save revision
+			$model = \Revision\Model_Revision::forge($args);
+			$model->insert_revision();
+		}
 		$counter++;
 	}
 

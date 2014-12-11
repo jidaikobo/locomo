@@ -12,13 +12,14 @@ if (\Auth::check()):
 			$html.='<div class="adminbar_main">';
 				$html.= '<div class="admin_controller">';
 				$mod_home = '';
+				$current_name = \Arr::get($locomo, 'current.module.name');
+				$current_nicename = \Arr::get($locomo, 'current.module.nicename') ?: \Arr::get($locomo, 'current.controller.nicename') ;
 
-				$current_module_name = \Arr::get($locomo, 'current.module.name');
 				$ctrl_index = '';
-				if ($current_module_name == 'admin'):
+				if ($current_name == 'admin'):
 					$top_link = \Html::anchor(\Uri::create('admin/home/'), '管理トップ');
 				else:
-					$top_link = \Html::anchor(\Uri::create('admin/home/'.$current_module_name), $locomo['current']['controller']['nicename']).' ';
+					$top_link = \Html::anchor(\Uri::create('admin/home/'.$current_name), $current_nicename).' ';
 					$action_name = $title ? $title : '';
 					if (isset($locomo['current']['controller']['home'])):
 						$home_name = \Arr::get($locomo, 'current.controller.home_name') ?: 'トップ';

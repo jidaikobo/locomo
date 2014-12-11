@@ -15,15 +15,14 @@ endif;
 
 <p>
 	<?php
-	if ( ! @$is_revision): 
+		echo \Form::hidden('is_locomo_bulk', true);
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
-	endif;
 	?>
 </p>
 
 </div>
 <?php endif; ?>
-<?php echo \Form::close(); ?>
-<?php if ( ! @$is_revision) echo $pagination; ?>
+<?php echo \Form::close() ?>
+<?php echo \Pagination::create_links() ?>
 

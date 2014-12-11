@@ -13,11 +13,28 @@ class Controller_XXX extends \Locomo\Controller_Crud
 		'nicename' => '###nicename###', // for human's name
 		'explanation' => '###nicename###のコントローラです', // use at admin/admin/home
 		'help'     => 'packages/locomo/modules/user/help/user.html',// path from 'app/../'
+
+		// actionset_classes
 		'actionset_classes' =>array(
 			'base'   => '\\XXX\\Actionset_Base_XXX',
 			'index'  => '\\XXX\\Actionset_Index_XXX',
 			'option' => '\\XXX\\Actionset_Option_XXX',
 		),
+/*
+		// actionset
+		'actionset' =>array(
+			'base' => array(
+				array(
+					'show_at_top' => true,
+					'explanation' => '###nicename###',
+					'urls' => array(
+						'\\XXX\\Controller_XXX/index_admin' => '###nicename###',
+					),
+					'order' => 10,
+				),
+			),
+		),
+*/
 	);
 
 	// trait

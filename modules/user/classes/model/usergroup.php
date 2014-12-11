@@ -36,6 +36,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 	/*
 	 * option setting
 	 */
+/*
 	public static $_option_options = array(
 		'usergroup' => array(
 			'nicename'        => 'ユーザグループ',
@@ -63,7 +64,7 @@ class Model_Usergroup extends \Locomo\Model_Base
 			)
 		)
 	);
-
+*/
 	protected static $_observers = array(
 		'Revision\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),

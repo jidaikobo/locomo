@@ -77,7 +77,11 @@ class Actionset
 		{
 			$class = \Inflector::add_head_backslash($class);
 			if ( ! property_exists($class, 'locomo')) continue;
-			if ( ! \Arr::get($class::$locomo, 'actionset_classes')) continue;
+
+			$actionset = \Arr::get($class::$locomo, 'actionset');
+			$actionset_class = \Arr::get($class::$locomo, 'actionset_classes');
+
+			if ( ! $actionset && ! $actionset_class) continue;
 			$controllers[$class] = $class::$locomo;
 		}
 
@@ -85,19 +89,18 @@ class Actionset
 		$obj = is_object($obj) ? $obj : (object) array() ;
 		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
 
-
 		// remove head backslash when it has no necessity
 		$controller = \Inflector::remove_head_backslash($controller);
+
 		// unique_key
-//		$unique_key = $module ?: $controller;
 		$unique_key = static::set_unique_key($controller);
 
 		$actions = array();
-		//controllers
+		// controllers
 		foreach($controllers as $k => $p)
 		{
 			// actionset_classes
-			foreach($p['actionset_classes'] as $realm => $class)
+			foreach(\Arr::get($p, 'actionset_classes', array()) as $realm => $class)
 			{
 				// methods - search prefixed 'actionset_'
 				$methods = get_class_methods($class);
@@ -118,8 +121,24 @@ class Actionset
 					static::$actions[$unique_key][$k]['actionset'][$realm][$method] = $as;
 				}
 			}
-		}
 
+			// actionset not by actionset class
+			foreach(\Arr::get($p, 'actionset', array()) as $realm => $vv)
+			{
+				foreach ($vv as $kk => $vvv)
+				{
+					$links = array();
+					foreach ($vvv["urls"] as $uri => $str)
+					{
+						$links[] = \Html::anchor(\Uri::create(\Inflector::ctrl_to_dir($uri)), $str);
+					}
+					$vv[$kk]['urls'] = $links;
+				}
+				$ctrl = \Inflector::remove_head_backslash($k);
+				static::$actions[$unique_key][$ctrl]['nicename'] = $p['nicename'];
+				static::$actions[$unique_key][$ctrl]['actionset'][$realm] = $vv;
+			}
+		}
 		if ( ! isset(static::$actions[$unique_key])) return false;
 
 		// tidy up
@@ -128,10 +147,13 @@ class Actionset
 		{
 			foreach ($v["actionset"] as $realm => $vv)
 			{
-					// prepare override
-					if (isset($vv['overrides']))
-					{
-						$overrides = array_merge($overrides, $vv['overrides']);
+				foreach ($vv as $kkk => $vvv)
+				{
+						// prepare override
+						if (isset($vvv['overrides']))
+						{
+							$overrides = array_merge($overrides, $vvv['overrides']);
+						}
 					}
 			}
 
@@ -151,31 +173,31 @@ class Actionset
 	/**
 	 * generate_uris()
 	 */
-	public static function generate_uris($controller, $action, $actions, $exceptions = array())
+	public static function generate_uris($controller, $action, $actions, $exceptions = array(), $realm = 'base')
 	{
 		static $exists = array();
 
 		$urls = array();
-		//check $exceptions
+		// check $exceptions
 		if (\Request::main()->controller == $controller && in_array(\Request::main()->action, $exceptions))
 		{
 			return $urls;
 		}
 
-		//check auth
+		// check auth
 		if ( ! \Auth::instance()->has_access(array($controller, $action)))
 		{
 			return $urls;
 		}
 
-		//$actions to uri
+		// $actions to uri
 		foreach($actions as $v)
 		{
 			$url  = \Inflector::ctrl_to_dir(\Arr::get($v, 0, false));
 			$str  = \Arr::get($v, 1, false);
 			$attr = \Arr::get($v, 2, array());
-			if (! $url || ! $str || in_array($url, $exists)) continue;
-			$exists[] = $url;
+			if (! $url || ! $str || in_array($url, \Arr::get($exists, $realm, array()))) continue;
+			$exists[$realm][] = $url;
 			$urls[] = \Html::anchor($url, $str, $attr);
 		}
 
@@ -199,7 +221,7 @@ class Actionset
 		}
 		if ( ! $arr) return false;
 
-		//override
+		// override
 		if (isset($obj['override_url']))
 		{
 			$arr = $obj['override_url'];
@@ -214,22 +236,22 @@ class Actionset
 	public static function generate_bulk_anchors($module, $controller, $model, $opt, $nicename, $urls)
 	{
 		if (! $urls) return array();
-		//target and patterns
+		// target and patterns
 		$target = join('/',array_slice(\Uri::segments(), 0, 4));
 		$patterns[] = "{$module}/{$controller}/index_revision/{$model}";
 		$patterns[] = "{$module}/{$controller}/each_index_revision/{$model}";
 		$patterns[] = "{$module}/{$controller}/view_revision/{$model}";
 
-		//target_short and patterns_short
+		// target_short and patterns_short
 		$target_short = join('/',array_slice(\Uri::segments(), 0, 3));
 		$patterns_short[] = "{$module}/{$controller}/{$model}";
 
-		//target_more_short and patterns_more_short
+		// target_more_short and patterns_more_short
 		$target_more_short = join('/',array_slice(\Uri::segments(), 0, 2));
 		$patterns_more_short[] = "{$module}/{$model}";
 		$patterns_more_short[] = "{$controller}/{$model}";
 
-		//override url
+		//  override url
 		if
 		(
 			in_array($target, $patterns) ||

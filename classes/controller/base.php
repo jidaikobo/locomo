@@ -17,6 +17,11 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	 */
 	protected $model_name = '';
 
+	/*
+	 * @var string base_url
+	 */
+	protected $base_url = '';
+
 	/**
 	 * @var string config
 	 */
@@ -39,12 +44,15 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		// show profile to root only
 		\Fuel::$profiling = \Auth::get('id') == -2 ?: false ;
 
-		//template path
+		// template path
 		$request = \Request::active();
-		$request->add_path(APPPATH.'views'.DS.$this->request->module.DS, true);
+		$request->add_path(APPPATH.'views'.DS.\Request::main()->module.DS, true);
+
+		// base_url
+		$this->base_url = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
 
 		// load config and set model_name
-		$controller = substr(ucfirst(\Inflector::denamespace($this->request->controller)), 11);
+		$controller = substr(ucfirst(\Inflector::denamespace(\Request::main()->controller)), 11);
 		$current_module = \Request::main()->module;
 		if (\Request::is_hmvc())
 		{
@@ -53,7 +61,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		if ($current_module)
 		{
 			$module = ucfirst($current_module);
-			if (! $this->model_name) $this->model_name = '\\'.$module.'\\Model_'.$module;
+//			if (! $this->model_name) $this->model_name = '\\'.$module.'\\Model_'.$module;
+			if (! $this->model_name) $this->model_name = '\\'.$module.'\\Model_'.$controller;
 			static::$config = \Config::load(strtolower($this->request->module));
 		}else{
 			if (! $this->model_name) $this->model_name = '\\Model_'.$controller;

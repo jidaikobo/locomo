@@ -56,7 +56,8 @@ class View extends \Fuel\Core\View
 		$locomo['current']['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
 
 		// module home
-		$mod_config = \Config::load($module.'::'.$module);
+		$mod_config = \Config::load($module.'::'.$module, 'admin_bar', $reload = true);
+
 		if ($module && $mod_config['main_controller'])
 		{
 			$ctrl_home = \Arr::get($mod_config['main_controller']::$locomo, 'admin_home');

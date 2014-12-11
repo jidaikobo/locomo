@@ -30,12 +30,12 @@ class Controller_Crud extends Controller_Base
 	{
 		$model = $this->model_name;
 
+		$this->_content_template = $this->_content_template ?: 'index_admin';
 		if (\Request::is_hmvc())
 		{
-			$this->_content_template = 'index_widget';
+			$this->_content_template.= '_widget';
 		}
-
-		$content = \View::forge($this->_content_template ?: 'index_admin');
+		$content = \View::forge($this->_content_template);
 
 		//$model::paginated_find_use_get_query(false);
 		$condition = $model::condition();

@@ -7,27 +7,35 @@ trait Traits_Controller_Bulk
 	 */
 	public function bulk($options = array(), $pagination_config = array(), $model = null)
 	{
-
 		if (!$model) $model = $this->model_name;
 		$action = \Request::main()->action;
 
 		// save から戻ってきた時の処理
-		if (\Input::get('ids')) {
+		if (\Input::get('ids'))
+		{
 			$options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
 			$pagination_config['per_page'] = count(\Input::get('ids')) * 2;
 			$model::paginated_find_use_get_query(false);
 			$model::disable_filter();
 			$objects = $model::paginated_find($options, $pagination_config);
 		// edit create 分岐
-		} elseif ($create_field = intval(\Input::get('create'))) { // create
-			for ($i = 0; $i < $create_field; $i++) {
+		}
+		// create
+		elseif ($create_field = intval(\Input::get('create')))
+		{
+			for ($i = 0; $i < $create_field; $i++)
+			{
 				$objects[] = $model::forge();
 			}
-		} else { //edit
+		}
+		// edit
+		else
+		{
 			$objects = $model::paginated_find($options, $pagination_config);
 		}
 
-		if (!$objects) {
+		if (!$objects)
+		{
 			\Session::set_flash('error', '該当が 0 件でした');
 			return false;
 		}
@@ -40,16 +48,20 @@ trait Traits_Controller_Bulk
 
 		/* deletedも保持 */
 		$ids = array();
-		foreach ($objects as $object) {
+		foreach ($objects as $object)
+		{
 			!is_null($object->{$object::primary_key()[0]}) and $ids[] = $object->{$object::primary_key()[0]};
 		}
 
-		if (\Input::post() && \Security::check_token()) {
-			if ($bulk->save()) {
+		if (\Input::post() && \Security::check_token())
+		{
+			if ($bulk->save())
+			{
 
 				// saveした object の保持
 				// $ids = array();
-				foreach ($objects as $object) {
+				foreach ($objects as $object)
+				{
 					!is_null($object->{$object::primary_key()[0]}) and $ids[] = $object->{$object::primary_key()[0]};
 				}
 
@@ -57,17 +69,20 @@ trait Traits_Controller_Bulk
 
 				// 新規を全て空で保存した時の処理
 				$judge = array_filter($ids);
-				if (empty($judge)) {
+				if (empty($judge))
+				{
 					\Session::set_flash('error', '保存対象が 0 件です');
-					$url = \Uri::create($this->request->module . '/' . $action, array(), \Input::get());
+					$url = \Uri::create($this->base_url.$action, array(), \Input::get());
 					return \Response::redirect($url);
 				}
 
 				\Session::set_flash('success', self::$nicename . 'への変更を' .  count($ids) . '件保存しました');
 
-				$url = \Uri::create($this->request->module . '/' . $action, array(), array('ids' => $ids));
+				$url = \Uri::create($this->base_url.$action, array(), array('ids' => $ids));
 				return \Response::redirect($url);
-			} else {
+			}
+			else
+			{
 				\Session::set_flash('error', self::$nicename . 'の保存に失敗しました。エラーメッセージを参照して下さい。');
 			}
 		}
@@ -76,7 +91,4 @@ trait Traits_Controller_Bulk
 
 		return $form;
 	}
-
-	
-
 }

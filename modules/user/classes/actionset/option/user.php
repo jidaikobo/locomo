@@ -12,19 +12,19 @@ class Actionset_Option_User extends \Actionset_Option
 		$actions = array(array($controller.DS."usergroup", 'ユーザグループ'));
 		$urls = static::generate_uris($controller, 'create', $actions);
 
-		//overrides
-		$overrides = static::generate_bulk_anchors(
-			$module      = 'user',
-			$controller  = 'user',
-			$model       = 'usergroup',
-			$opt         = 'usergroup',
-			$nicename    = 'ユーザグループ',
-			$is_override = $urls
+		// overrides - when action is 'usergroup', override "base" realm
+		$overrides_urls = array();
+		$overrides_urls = array(
+			array($controller.DS."usergroup", 'ユーザグループ一覧'),
+			array($controller.DS."usergroup?create=1", 'ユーザグループ新規作成')
 		);
+		$overrides_urls = static::generate_uris($controller, 'edit', $overrides_urls, [], 'option');
+		$overrides['base'] = \Request::main()->action == 'usergroup' ? $overrides_urls : false;
 
+		// retvals
 		$retvals = array(
 			'urls'         => $urls,
-			'overrides'    => $overrides,
+			'overrides'    => $overrides['base'] ? $overrides : array(),
 			'show_at_top'  => true,
 			'action_name'  => 'ユーザグループ',
 			'explanation'  => 'ユーザグループ管理です。追加、削除、設定等を行います。',

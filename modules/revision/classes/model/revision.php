@@ -49,14 +49,14 @@ class Model_Revision extends \Locomo\Model_Base
 	 * find_all_revisions()
 	 * \DB::Expr()があるためpaginated_find()が使えない
 	*/
-	public static function find_all_revisions($view, $model, $opt)
+	public static function find_all_revisions($view, $model)
 	{
 		//vals
 		if ( ! class_exists($model)) return false;
 		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
 		$likes = \Input::get('likes')  ?: null ;
-		$range = isset($opt['range']['where']) ? $opt['range']['where'] : null ;
-		$order = isset($opt['range']['order_by']) ? $opt['range']['order_by'] : null ;
+		$range = \Arr::get($model::$_conditions, 'where', null) ;
+		$order = \Arr::get($model::$_conditions, 'order_by', null) ;
 
 		//model information
 		$table = \Inflector::tableize($model);
@@ -72,7 +72,7 @@ class Model_Revision extends \Locomo\Model_Base
 			'revisions.comment',
 			'revisions.operation',
 			'revisions.created_at',
-			'revisions.modifier_id'
+			'revisions.user_id'
 		);
 		$q->from('revisions');
 		$q->from($table);
@@ -137,9 +137,8 @@ class Model_Revision extends \Locomo\Model_Base
 
 		//items
 		foreach($items as $k => $item):
-			$modifier_name = \User\Model_User::find($item->modifier_id, array('select'=>array('display_name')));
-			$modifier_name = $modifier_name ? $modifier_name : static::$_modifiers[$item->modifier_id];
-
+			$modifier_name = \User\Model_User::find($item->user_id, array('select'=>array('display_name')));
+			$modifier_name = $modifier_name ? $modifier_name : static::$_modifiers[$item->user_id];
 			$items[$k]->modifier_name = $modifier_name;
 		endforeach;
 

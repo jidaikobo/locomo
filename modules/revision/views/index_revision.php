@@ -8,7 +8,6 @@ echo \Form::submit('submit', '検索', array('class' => 'button primary'));
 echo \Form::close();
 ?>
 
-
 <table class="tbl datatable">
 	<thead>
 		<tr>
@@ -24,7 +23,7 @@ echo \Form::close();
 <?php foreach ($items as $item): ?>
 		<tr>
 			<th style="text-align:center;"><?php echo $item->pk_id ?></th>
-			<th><div class="col_scrollable"><a href="<?php echo \Uri::base().$controller.'/each_index_revision/'.$model_simple_name.DS.$item->pk_id.$opt ?>"><?php echo $item->$subject; ?></a></div></th>
+			<th><div class="col_scrollable"><a href="<?php echo $base_url.'each_index_revision/'.$item->pk_id ?>"><?php echo $item->$subject; ?></a></div></th>
 			<td><?php echo $item->operation; ?></td>
 			<td><?php echo $item->modifier_name; ?></td>
 			<td><?php echo $item->created_at; ?></td>
