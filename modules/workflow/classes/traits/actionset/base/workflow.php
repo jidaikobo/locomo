@@ -8,7 +8,7 @@ trait Traits_Actionset_Base_Workflow
 	public static function actionset_index_workflow($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_workflow", '承認項目一覧'));
-		$urls = static::generate_uris($controller, 'index_workflow', $actions, ['index_workflow']);
+		$urls = static::generate_urls($controller, 'index_workflow', $actions, ['index_workflow']);
 
 		$retvals = array(
 			'urls'         => $urls,

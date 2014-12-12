@@ -24,7 +24,7 @@ class Actionset_Base_XXX extends \Actionset_Base
 	{
 		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_uris($controller, 'view', $actions, ['create']);
+			$urls = static::generate_urls($controller, 'view', $actions, ['create']);
 		endif;
 
 		$retvals = array(

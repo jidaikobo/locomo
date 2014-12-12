@@ -231,75 +231,23 @@ scaffoldを使った場合はコメントアウトされています。
 
 // bulk edit
 
-バルク編集をするためには、Modelをすこし変更する必要があります。ここでは、ユーザモジュールのユーザグループ編集を例にとります。
-
-まずバルク対象のモデルを作成します。ユーザグループの場合は、\User\Model_Usergroupです。モデルには、以下のようにメンバ変数を設定してください。ここで、バルク編集の範囲や順序制御に使っている条件等を設定します。
-
-+quote start-----------------------------+
-	public static $_option_options = array(
-		'usergroup' => array(
-			'nicename'        => 'ユーザグループ',
-			'label'           => 'name',
-			'order_field'     => 'seq',
-			'template'        => '',//use bulk
-			'form_definition' => 'form_definition',
-			'option' => array(
-				'select' => array('name'),
-				'where'  => array(
-					array('is_available', '1'),
-				),
-				'order_by'  => array(
-					array('seq', 'ASC'),
-				)
-			),
-			'range' => array(
-				'select' => array('name'),
-				'where'  => array(
-					array('id', '>', '0'),
-				),
-				'order_by'  => array(
-					array('seq', 'ASC'),
-				)
-			)
-		)
-	);
-+-------------------------------quote end+
-
-ユーザモジュールのユーザグループ設定では、\Actionset::generate_bulk_anchors()で条件設定とバルク編集特有のurlの生成をしています。$moduleなどは、すべてurlをパースしたものと考えてください。この条件のurlの配下にあるときには、オーバライド用のurlを生成しているということになります。
+バルク編集（複数項目の一括編集）をするためには、バルク編集用のアクションを作ります。
+バルク編集用のアクションでは、対象となるモデルを設定してください。以下の例はユーザモジュールのユーザグループです。モデルは、\User\Model_Usergroupとなっています。
 
 +quote start-----------------------------+
-	/**
-	 * actionset_usergroup()
-	 */
-	public static function actionset_usergroup($controller, $obj = null, $id = null, $urls = array())
+	public function action_bulk($page_num = 1)
 	{
-		$actions = array(array($controller.DS."usergroup", 'ユーザグループ'));
-		$urls = static::generate_uris($controller, 'create', $actions);
+		// bulk
+		\User\Model_Usergroup::disable_filter();
+		$form = $this->bulk(array(), array(), '\User\Model_Usergroup');
 
-		//overrides
-		$overrides = static::generate_bulk_anchors(
-			$module      = 'user',
-			$controller  = 'user',
-			$model       = 'usergroup',
-			$opt         = 'usergroup',
-			$nicename    = 'ユーザグループ',
-			$is_override = $urls
-		);
-
-		$retvals = array(
-			'urls'         => $urls,
-			'overrides'    => $overrides,
-			'show_at_top'  => true,
-			'action_name'  => 'ユーザグループ',
-			'explanation'  => 'ユーザが所属するユーザグループ管理です。追加、削除、設定等を行います。',
-			'order'        => 10,
-			'dependencies' => array(
-				$controller.DS.'usergroup',
-			)
-		);
-		return $retvals;
+		//assin
+		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
+		$view->set_global('title', 'ユーザグループ設定');
+		$view->set_global('form', $form, false);
+		$view->base_assign();
+		$this->template->content = $view;
 	}
 +-------------------------------quote end+
 
-$_option_optionsとアクションセットの二つで項目のバルク編集を実装できます。
-
+バルク編集に関しては、\Admin\Controller_Admin::action_edit()にもちょっと違ったサンプルがあります。こちらはtabular formを使ったサンプルで、\Admin\Model_Adminや\Admin\Model_Userなど、専用のリレーションモデルを対象にした事例です。

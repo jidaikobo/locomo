@@ -39,9 +39,8 @@ class Controller_Usergroup extends \Locomo\Controller_Base
 		// bulk
 		\User\Model_Usergroup::disable_filter();
 		$form = $this->bulk(array(), array(), '\User\Model_Usergroup');
-		//	\Locomo\Bulk::set_define_function('ctm_func');
 
-		//assin
+		//assign
 		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);
