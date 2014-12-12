@@ -690,10 +690,19 @@ h1#page_title {
 	font-size: 1.1em;
 	margin: 1em 0 .25em;
 }
-/*=== aria ===*/
-.aria_nd {
-	aria-hidden: true;
+
+
+/*=== for_screenreader ===*/
+span.add_bracket:before {
+ content: '[';
 }
+span.add_bracket:after {
+ content: ']';
+}
+
+.aria_nd {
+}
+
 
 /*=== modal ===*/
 /*
