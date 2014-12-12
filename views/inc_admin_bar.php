@@ -12,11 +12,11 @@ if (\Auth::check()):
 			$html.='<div class="adminbar_main">';
 				$html.= '<div class="admin_controller">';
 				$mod_home = '';
-				$current_name = \Arr::get($locomo, 'current.module.name');
+				$current_name = \Arr::get($locomo, 'current.module.main_controller');
 				$current_nicename = \Arr::get($locomo, 'current.module.nicename') ?: \Arr::get($locomo, 'current.controller.nicename') ;
 
 				$ctrl_index = '';
-				if ($current_name == 'admin'):
+				if ($current_name == '-Admin-Controller_Admin'):
 					$top_link = \Html::anchor(\Uri::create('admin/home/'), '管理トップ');
 				else:
 					$top_link = \Html::anchor(\Uri::create('admin/home/'.$current_name), $current_nicename).' ';
@@ -75,7 +75,7 @@ if (\Auth::check()):
 				foreach($locomo['controllers'] as $k => $v):
 					if ( ! $v['is_for_admin'] && $v['show_at_menu'])
 					{
-						$html.= '<li><a href="'.\Uri::base().'admin/home/'.trim($k, '\\').'">'.$v['nicename'].'</a></li>';
+						$html.= '<li><a href="'.\Uri::base().'admin/home/'.\Inflector::ctrl_to_urlstr($k).'">'.$v['nicename'].'</a></li>';
 					}
 				endforeach;
 				$html.= '</ul>';

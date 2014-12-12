@@ -30,41 +30,35 @@ class Actionset
 	 * @param object $obj use for auth. Fuel\Model object
 	 * @return array()
 	 */
-	public static function get_actionset($ctrl_or_mod = null, $obj = null)
+	public static function get_actionset($controller = null, $obj = null)
 	{
-		if (is_null($ctrl_or_mod)) throw new \InvalidArgumentException('Argument must be controller name or module name.');
-
-		// judge module or controller
-		$module = strpos($ctrl_or_mod, 'Controller_') !== false ? null : \Inflector::add_head_backslash($ctrl_or_mod);
-		$controller = $module ? null : $ctrl_or_mod;
-
-		// Module::load() to read config
-		$module2load = \Inflector::remove_head_backslash($module);
-		if ( ! \Module::loaded($module2load) && ! is_null($module))
-		{
-			if ( ! \Module::load($module2load)) throw new \InvalidArgumentException('module doesn\'t exist');
-		}
+		if (is_null($controller)) throw new \InvalidArgumentException('Argument must be controller name.');
 
 		// set actionset
-		$main_controller = static::set_actionset($controller, $module, $obj);
-
+		$main_controller = static::set_actionset($controller, $obj);
 		return $main_controller ? static::$actions[$main_controller] : false;
 	}
 
 	/**
 	 * set_actionset()
 	 * @param string $controller controller full class name
-	 * @param string $module module dir name
 	 * @param object $obj use for auth. Fuel\Model object
 	 * @return [bool|string main_controller]
 	 */
-	public static function set_actionset($main_controller = null, $module = null, $obj = null)
+	public static function set_actionset($main_controller = null, $obj = null)
 	{
 		if (is_null($main_controller) && is_null($module)) return false;
 
+		// is module
+		$module = \Inflector::get_modulename($main_controller);
+		if ( $module && ! \Module::loaded($module))
+		{
+			if ( ! \Module::load($module)) throw new \InvalidArgumentException('module doesn\'t exist');
+		}
+		$classes = $module ? array_keys(\Module::get_controllers($module)) : array($main_controller);
+
 		// check args - if module, search contain controller
 		$controllers = array();
-		$classes = $module ? array_keys(\Module::get_controllers($module)) : array($main_controller);
 		foreach($classes as $class)
 		{
 			$class = \Inflector::add_head_backslash($class);
@@ -148,12 +142,12 @@ class Actionset
 
 			// order
 			static::$actions[$main_controller][$k]['actionset'][$realm] = \Arr::multisort(static::$actions[$main_controller][$k]['actionset'][$realm], array('order' => SORT_ASC,));
-		}
 
-		// override
-		foreach($overrides as $realm_name => $urls)
-		{
-			static::$actions[$main_controller][$k]['actionset'][$realm_name]['override_url'] = $urls;
+			// override
+			foreach($overrides as $realm_name => $urls)
+			{
+				static::$actions[$main_controller][$k]['actionset'][$realm_name]['override_url'] = $urls;
+			}
 		}
 
 		return $main_controller;

@@ -88,7 +88,7 @@ ctrlレルム以外は、LOCOMOPATH.classes/actionset/に、基本的なクラ�
 	{
 		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_uris($controller, 'edit', $actions, ['edit','create']);
+			$urls = static::generate_urls($controller, 'edit', $actions, ['edit','create']);
 		endif;
 
 		$retvals = array(
@@ -113,17 +113,17 @@ if (\Request::main()->action == 'view' && $id):
 
 で、アクションがviewのときで$idが存在しているとき──つまり個別項目を表示しているとき──に編集へのリンクを表示します。
 
-また、権限のないユーザに対しては、リンクを非表示にしたい、ということもあります。その判定をしているのが、\Actionset::generate_uris()です。ここに、以下のように引数を渡すと、権限のあるものを完全なa要素の形にして返します。
+また、権限のないユーザに対しては、リンクを非表示にしたい、ということもあります。その判定をしているのが、\Actionset::generate_urls()です。ここに、以下のように引数を渡すと、権限のあるものを完全なa要素の形にして返します。
 
-(array) \Actionset::generate_uris((str) controller, (str) action, (array) urls, [(array) exceptions], [(str) realm = 'base']);
+(array) \Actionset::generate_urls((str) controller, (str) action, (array) urls, [(array) exceptions], [(str) realm = 'base']);
 
 第1引数と第2引数で、アクセス権を判定します。その次にlocomo-pathで記述したURIとリンク文字列のarrayを書きます。このリンク文字列は、\Html::anchor()を通るので、第3引数に属性値を入れても機能します（サンプルは\Actionset\actionset_delete()を参照してください）。
 
-generate_uris()の第4引数は、generate_uris()で判定される例外です。ここに設定したアクションの際にはリンクを返しません。ここを囲っているif分が必要条件なのに対し、こちらはいわば排他条件です。
+generate_urls()の第4引数は、generate_urls()で判定される例外です。ここに設定したアクションの際にはリンクを返しません。ここを囲っているif分が必要条件なのに対し、こちらはいわば排他条件です。
 
-最後の引数realmは、現在の表示位置を送ります。generate_uris()は、すでに存在しているリンクを除外するようになっていますが、現在の場所を指定しておくことで、リンクを除外しないことになります。具体例は\User\Actionset_Option_User::actionset_usergroup()にあります。この例だと「ユーザグループ一覧」はoption realmにすでに存在しているので、そのまま同じURLを渡すと、base realmには表示されません。でも、ユーザとしては、視覚的に見えている場所に一覧があった方が直感的なので、あえて重複して、base realmに「ユーザグループ一覧」を表示しています。generate_uris()のoptionを消して、ユーザグループ一覧ページの挙動を確認してみてください。
+最後の引数realmは、現在の表示位置を送ります。generate_urls()は、すでに存在しているリンクを除外するようになっていますが、現在の場所を指定しておくことで、リンクを除外しないことになります。
 
-generate_uris()でurlsを生成することで、所与の条件でリンクが所定の位置に表示されるようになります。
+generate_urls()でurlsを生成することで、所与の条件でリンクが所定の位置に表示されるようになります。
 
 // actionset - override interface
 

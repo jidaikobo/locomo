@@ -86,6 +86,39 @@ class Inflector extends \Fuel\Core\Inflector
 	}
 
 	/**
+	 * get_modulename()
+	 * @param string [\MODNAME\]Controller_CTRL
+	 * @return string [MODNAME|false]
+	 */
+	public static function get_modulename($str = null)
+	{
+		$module = static::get_namespace($str) ?: false;
+		$module = strtolower(substr($module, 0, -1));
+		if( ! $module) return false;
+		return \Module::exists($module) ? $module : false;
+	}
+
+	/**
+	 * ctrl_to_urlstr()
+	 * @param string [\MODNAME\]Controller_CTRL
+	 * @return string [-MODNAME-]Controller_CTRL
+	 */
+	public static function ctrl_to_urlstr($str = null)
+	{
+		return str_replace('\\', '-', $str);
+	}
+
+	/**
+	 * urlstr_to_ctrl()
+	 * @param string [\MODNAME\]Controller_CTRL
+	 * @return string [MODNAME|false]
+	 */
+	public static function urlstr_to_ctrl($str = null)
+	{
+		return static::words_to_upper(str_replace('-', '\\', $str));
+	}
+
+	/**
 	 * remove_head_backslash()
 	 * @param string [\\]str
 	 * @return string str

@@ -25,24 +25,29 @@ class Util
 			{
 				if ( ! $controllers = \Module::get_controllers($module)) continue;// module without controllers
 				\Module::loaded($module) or \Module::load($module);
+
 				foreach($controllers as $controller)
 				{
 					$mod_ctrl = \Inflector::path_to_ctrl($controller);
-					if ( ! property_exists($mod_ctrl, 'locomo')) continue;
-					if (array_key_exists($module, $retvals)) continue; // already exists
-					$retvals[$module] = $mod_ctrl::$locomo ; 
 
-					// get config
-					$retvals[$module]['config'] = \Config::load($module.'::'.$module);
+					if ( ! property_exists($mod_ctrl, 'locomo')) continue;
+
+					$config = \Config::load($module.'::'.$module, 'util', true);
+
+					if( ! is_array($config)) continue;
+					if( ! $main_controller = \Arr::get($config, 'main_controller')) continue;
+					if (array_key_exists($main_controller, $retvals)) continue; // already exists
+
+					$retvals[$main_controller] = $mod_ctrl::$locomo ; 
+					$retvals[$main_controller]['config'] = $config;
+					$retvals[$main_controller]['is_module'] = true;
 				}
 			}
-	
+
 			//classディレクトリを走査し、$locomoのメンバ変数を持っている物を洗い出す
 			foreach(array_keys(\Inflector::dir_to_ctrl(APPPATH.'classes/controller')) as $ctrl):
 				if ( ! property_exists($ctrl, 'locomo')) continue;
-				$retvals[$ctrl] = $ctrl::$locomo ; 
-
-				// get config
+				$retvals[$ctrl] = $ctrl::$locomo;
 				$retvals[$ctrl]['config'] = \Config::get($ctrl);
 			endforeach;
 	

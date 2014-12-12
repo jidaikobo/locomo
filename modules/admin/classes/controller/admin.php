@@ -2,7 +2,7 @@
 namespace Admin;
 class Controller_Admin extends \Locomo\Controller_Crud
 {
-	//locomo
+	// locomo
 	public static $locomo = array(
 		'show_at_menu' => false,
 		'order_at_menu' => 1000,
@@ -36,11 +36,27 @@ class Controller_Admin extends \Locomo\Controller_Crud
 		else
 		{
 			// show actionset of target module and controller
-			$mod_or_ctrl = \Inflector::remove_head_backslash($mod_or_ctrl);
+			$mod_or_ctrl = \Inflector::urlstr_to_ctrl($mod_or_ctrl);
 			$actionset = \Actionset::get_actionset($mod_or_ctrl) ?: array();
 
-			// when actionset wasn't exists
-			if (class_exists($mod_or_ctrl))
+			// is module's main controller or normal app controller?
+			if ($module = \Inflector::get_modulename($mod_or_ctrl))
+			{
+				// module
+				$mod_config = \Config::load($module.'::'.$module, 'action_home', true);
+				$main_contoller = \Arr::get($mod_config, 'main_contoller');
+				$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$main_contoller]['nicename'] ;
+
+				// try to find main controller
+				if($mod_config && ! $actionset)
+				{
+					$actionset = array($main_contoller => array(
+						'nicename' => $mod_config['nicename'],
+						'actionset' => array('base' => array()))
+					);
+				}
+			}
+			else
 			{
 				// this is not a module
 				$locomo = $mod_or_ctrl::$locomo ;
@@ -52,21 +68,6 @@ class Controller_Admin extends \Locomo\Controller_Crud
 					$actionset = array($mod_or_ctrl => array(
 						'nicename'    => $name,
 						'actionset'   => array('base' => array()))
-					);
-				}
-			}
-			else
-			{
-				// module
-				$mod_config = \Config::load($mod_or_ctrl.'::'.$mod_or_ctrl);
-				$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$mod_or_ctrl]['nicename'] ;
-
-				// try to find main controller
-				if($mod_config && ! $actionset)
-				{
-					$actionset = array($mod_config['main_controller'] => array(
-						'nicename' => $mod_config['nicename'],
-						'actionset' => array('base' => array()))
 					);
 				}
 			}
@@ -152,7 +153,7 @@ class Controller_Admin extends \Locomo\Controller_Crud
 
 			// hmvc
 			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute($q);
-			$actions[$k]['size'] = $obj->size ?: 1 ;//default small
+			$actions[$k]['size'] = $obj->size ?: 1 ;// default small
 			$actions[$k]['title'] = array_search($act, $widget_names);
 
 		}
@@ -175,14 +176,15 @@ class Controller_Admin extends \Locomo\Controller_Crud
 		$this->model_name = \Auth::is_admin() ? '\\Admin\\Model_Admin' : '\\Admin\\Model_User';
 		parent::action_edit(\Auth::get('id'));
 
-		//add_actionset - back to index at edit
+		// add_actionset - back to index at edit
 		$action['urls'][] = \Html::anchor('/admin/admin/dashboard/','ダッシュボードへ');
 		$action['order'] = 10;
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
-		//assign
+		// assign
 		$content= \View::forge('edit_dashboard');
 		$content->set_global('title', 'ダッシュボードの設定');
+		$content->base_assign(); // to override add_actionset()
 		$this->template->content = $content;
 	}
 

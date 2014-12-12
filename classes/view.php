@@ -64,6 +64,7 @@ class View extends \Fuel\Core\View
 			$ctrl_home = \Inflector::ctrl_to_dir($ctrl_home);
 			$locomo['current']['module']['home'] = \Uri::create($ctrl_home);
 			$locomo['current']['module']['nicename'] = $mod_config['nicename'];
+			$locomo['current']['module']['main_controller'] = \Inflector::ctrl_to_urlstr($mod_config['main_controller']);
 		}
 
 		$locomo['current']['mod_or_ctrl']['name'] = $mod_or_ctrl;
