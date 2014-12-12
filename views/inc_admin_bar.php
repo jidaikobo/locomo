@@ -26,7 +26,7 @@ if (\Auth::check()):
 						$ctrl_index = \Html::anchor($locomo['current']['controller']['home'], $home_name);
 					endif;
 				endif;
-				$html.= "<h3>{$top_link}</h3>\n";
+				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
 				$html.= '</div><!-- /.admin_controller -->';
 
 				$bases = \Arr::get($actionset, 'base', array());

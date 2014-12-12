@@ -109,7 +109,7 @@ class Observer_Revision extends \Orm\Observer
 			$args = array();
 			$args['model']       = get_class($obj);
 			$args['pk_id']       = $obj->$primary_key;
-			$args['data']        = serialize($val	);
+			$args['data']        = serialize($val);
 			$args['comment']     = \Input::post('revision_comment') ?: '';
 			$args['created_at']  = date('Y-m-d H:i:s');
 			$args['operation']   = $operation;

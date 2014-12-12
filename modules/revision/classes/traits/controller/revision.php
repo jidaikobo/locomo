@@ -67,8 +67,8 @@ trait Traits_Controller_Revision
 		$action['urls'][] = \Html::anchor($this->base_url.'index_revision/','履歴一覧へ');
 		$action['order'] = 10;
 		$action['overrides']['base'] = array(
-			\Html::anchor($this->base_url.'view/'.$id,'閲覧'),
-			\Html::anchor($this->base_url.'edit/'.$id,'編集')
+//			\Html::anchor($this->base_url.'view/'.$id,'閲覧'),
+//			\Html::anchor($this->base_url.'edit/'.$id,'編集')
 		);
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
@@ -77,7 +77,7 @@ trait Traits_Controller_Revision
 		$view = \View::forge(LOCOMOPATH.'modules/revision/views/each_index_revision.php');
 		$view->set_global('items', $items);
 		$view->set_global('base_url', $this->base_url);
-		$view->set_global('title', '履歴');
+		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$view->base_assign();
 		$this->template->content = $view;
@@ -110,7 +110,6 @@ trait Traits_Controller_Revision
 
 		// add_actionset
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
-		$this->base_url = \Inflector::ctrl_to_dir(\Request::main()->controller) ;
 		$action['urls'][] = \Html::anchor($this->base_url.'each_index_revision/'.$revisions->pk_id, '履歴一覧へ');
 		$action['order'] = 10;
 		$action['overrides']['base'] = array(

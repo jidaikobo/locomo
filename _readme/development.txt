@@ -198,7 +198,7 @@ revisionを適用したいコントローラとアクションセットで、Tra
 scaffoldを使った場合はコメントアウトされています。
 
 	use \Revision\Traits_Controller_Revision;
-	use \Revision\Traits_Actionset_Revision;
+	use \Revision\Traits_Actionset_Base_Revision;
 
 モデルでは、observerを足してください。
 

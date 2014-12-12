@@ -45,7 +45,7 @@ class Controller_Crud extends Controller_Base
 		$content->set('items',  $model::paginated_find($options, $this->pagination_config));
 
 		$content->base_assign();
-		$this->template->set_global('title', static::$nicename);
+		$this->template->set_global('title', static::$nicename.'管理一覧');
 		$this->template->content = $content;
 	}
 
