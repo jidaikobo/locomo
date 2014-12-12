@@ -9,19 +9,26 @@ class Controller_Usergroup extends \Locomo\Controller_Base
 		'is_for_admin' => false,
 		'admin_home' => '\\User\\Controller_Usergroup/index_admin',
 		'admin_home_name' => 'ユーザグループ管理',
-		'admin_home_explanation' => 'ユーザグループ管理のトップです。', // explanation of module's top page
+		'admin_home_explanation' => '既存のユーザグループの名称、表示順、使用可否などを編集します。', // explanation of module's top page
 		'nicename' => 'ユーザグループ',
 		'help'     => 'packages/locomo/modules/user/help/user.html',//app/../からのパス
 		'actionset' =>array(
 			'base' => array(
 				array(
 					'show_at_top' => true,
-					'explanation' => 'ユーザグループを新規作成します',
+					'explanation' => 'ユーザグループを新規作成します。',
 					'urls' => array(
 						'\\User\\Controller_Usergroup/index_admin?create=1' => '新規作成',
-						'\\User\\Controller_Usergroup/index_revision' => '履歴',
 					),
 					'order' => 10,
+				),
+				array(
+					'show_at_top' => true,
+					'explanation' => 'ユーザグループの編集履歴です。',
+					'urls' => array(
+						'\\User\\Controller_Usergroup/index_revision' => '履歴',
+					),
+					'order' => 15,
 				),
 			),
 		),

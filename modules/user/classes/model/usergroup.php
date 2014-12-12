@@ -33,38 +33,6 @@ class Model_Usergroup extends \Locomo\Model_Base
 		'mysql_timestamp' => true,
 	);
 
-	/*
-	 * option setting
-	 */
-/*
-	public static $_option_options = array(
-		'usergroup' => array(
-			'nicename'        => 'ユーザグループ',
-			'label'           => 'name',
-			'order_field'     => 'seq',
-			'template'        => '',//use bulk
-			'form_definition' => 'form_definition',
-			'option' => array(
-				'select' => array('name'),
-				'where'  => array(
-					array('is_available', '1'),
-				),
-				'order_by'  => array(
-					array('seq', 'ASC'),
-				)
-			),
-			'range' => array(
-				'select' => array('name'),
-				'where'  => array(
-					array('id', '>', '0'),
-				),
-				'order_by'  => array(
-					array('seq', 'ASC'),
-				)
-			)
-		)
-	);
-*/
 	protected static $_observers = array(
 		'Revision\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),
