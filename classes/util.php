@@ -10,6 +10,10 @@ class Util
 	 */
 	public static function get_mod_or_ctrl()
 	{
+		// static cache
+		static $cache = array();
+		if ( ! empty($cache)) return $cache;
+
 		//cache
 		try
 		{
@@ -53,6 +57,9 @@ class Util
 	
 			// order
 			$retvals = \Arr::multisort($retvals, array('order_at_menu' => SORT_ASC,));
+
+			// static cache
+			$cache = $retvals;
 
 			// cache 1 hour
 			\Cache::set('locomo_mod_or_ctrl', $retvals, 3600);

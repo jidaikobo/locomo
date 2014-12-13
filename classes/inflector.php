@@ -12,7 +12,7 @@ class Inflector extends \Fuel\Core\Inflector
 	{
 		if ( ! $controller) throw new \InvalidArgumentException('argument must not be null or empty');
 
-		//if slash exists
+		// if slash exists
 		$strs = explode('/', $controller);
 		$strs[0] = str_replace('\\', '', $strs[0]);
 		$strs[0] = str_replace(array('Controller_','_'), '/', $strs[0]);
@@ -28,10 +28,14 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function dir_to_ctrl($path = null)
 	{
+		// static cache
+		static $cache = array();
+		if ( ! empty($cache)) return $cache;
+
 		$cache_str = 'inflector_dir_to_ctrl_'.static::friendly_title($path);
 		try
 		{
-			//root not use cache
+			// root not use cache
 			if (\Auth::is_root()) throw new \CacheNotFoundException();
 			return \Cache::get($cache_str);
 		}
@@ -52,7 +56,10 @@ class Inflector extends \Fuel\Core\Inflector
 				$classes[$class] = $full_path;
 			}
 
-			//cache 20 min
+			// static cache
+			$cache = $classes;
+
+			// cache 20 min
 			\Cache::set($cache_str, $classes, 3600 / 3);
 
 			return $classes;
@@ -79,7 +86,7 @@ class Inflector extends \Fuel\Core\Inflector
 		$class_pos = \Arr::search($paths, 'controller');
 		if ( ! $class_pos) throw new \InvalidArgumentException('controller not found.');
 
-		//classify
+		// classify
 		$class = ucfirst(join('/', array_slice($paths, $class_pos)));
 		$class = \Inflector::words_to_upper(str_replace('/', '_', $module.$class));
 		return str_replace('.php', '', $class);

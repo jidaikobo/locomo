@@ -13,6 +13,10 @@ class Module extends \Fuel\Core\Module
 	 */
 	public static function get_exists()
 	{
+		// static cache
+		static $cache = array();
+		if ( ! empty($cache)) return $cache;
+
 		//cache
 		try
 		{
@@ -31,6 +35,9 @@ class Module extends \Fuel\Core\Module
 					$finded[] = $module;
 				endforeach;
 			endforeach;
+
+			// static cache
+			$cache = $retvals;
 
 			//cache 1 hour
 			\Cache::set('exist_modules', $retvals, 3600);
