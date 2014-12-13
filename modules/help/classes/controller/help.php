@@ -27,6 +27,11 @@ class Controller_Help extends \Locomo\Controller_Crud
 	 */
 	public function action_index_admin()
 	{
+/*
+include(LOCOMOPATH.'migrations/005_create_help.php');
+$h = new \Fuel\Migrations\Create_help();
+$h->up();
+*/
 		// parent
 		parent::action_index_admin();
 

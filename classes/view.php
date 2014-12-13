@@ -51,6 +51,7 @@ class View extends \Fuel\Core\View
 		// current controller
 		$locomo['controller']['name'] = $controller;
 		$ctrl_home = \Arr::get($controller::$locomo, 'admin_home');
+		$locomo['controller']['ctrl_home'] = $ctrl_home;
 		$locomo['controller']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
 		$locomo['controller']['home_name'] = \Arr::get($controller::$locomo, 'admin_home_name');
 		$locomo['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
@@ -66,6 +67,7 @@ class View extends \Fuel\Core\View
 
 			$locomo['module']['name'] = $module;
 			$ctrl_home = \Arr::get($config['main_controller']::$locomo, 'admin_home');
+			$locomo['module']['ctrl_home'] = $ctrl_home;
 			$locomo['module']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
 			$locomo['module']['nicename'] = $config['nicename'];
 			$locomo['module']['main_controller'] = $config['main_controller'];

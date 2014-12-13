@@ -10,7 +10,7 @@ class Model_Help extends \Locomo\Model_Base
 	protected static $_properties = array(
 		'id',
 		'title',
-		'mod_or_ctrl',
+		'action',
 		'body',
 		'updated_at',
 		'deleted_at',
@@ -92,37 +92,68 @@ class Model_Help extends \Locomo\Model_Base
 		->add_rule('max_length', 255)
 		->set_value(@$obj->title);
 
-		// mod_or_ctrl - コントローラ
-		$mod_or_ctrl = '';
+		// action - コントローラ
+		$action = '';
 		$urls = parse_url(\Input::referrer());// parse referrer
 		if (\Arr::get($urls, 'query', ''))
 		{
-			list($s, $q) = explode('[mod_or_ctrl]=', \Arr::get($urls, 'query', ''));// explode by key str
+			list($s, $q) = explode('[action]=', \Arr::get($urls, 'query', ''));// explode by key str
 			// multiple query?
 			if (strpos($q, '&') !== false)
 			{
-				list($mod_or_ctrl, $q) = explode('&', $q);
+				list($action, $q) = explode('&', $q);
 			}else{
-				$mod_or_ctrl = $q;
+				$action = $q;
 			}
 		}
-		$mod_or_ctrls = array('all' => '共通ヘルプ');
-		$exceptions = array('help', 'admin', 'content');
+
+		// prepare options - ugly code...
+		$actions = array('all' => '共通ヘルプ');
+		$exceptions = array('\\Help\\Controller_Help', '\\Admin\\Controller_Admin', '\\Content\\Controller_Content');
+		$controllers = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
 			if ( ! isset($v['nicename']) || ! isset($v['admin_home']) || in_array($k, $exceptions)) continue;
-			$key = substr($v['admin_home'], 0, strpos($v['admin_home'], '/'));
-			$mod_or_ctrls[$k] = $v['nicename'];
+			$module = \Inflector::get_modulename($k);
+			if ($module)
+			{
+				foreach (\Module::get_controllers($module) as $kk => $vv)
+				{
+					if ( ! \Module::loaded($module)) \Module::load($module);
+					if ( ! property_exists($kk, 'locomo')) continue;
+					$nicename = $kk::$locomo['nicename'];
+					$methods = \Arr::filter_prefixed(array_flip(get_class_methods($kk)), 'action_');
+					$options = array();
+					foreach ($methods as $kkk => $vvv)
+					{
+						$key = urlencode(\Inflector::ctrl_to_safestr($k.DS.$kkk));
+						$options[$key] = $kkk;
+					}
+					$actions[$nicename] = $options;
+				}
+			}
+			else
+			{
+				if ( ! property_exists($k, 'locomo')) continue;
+				$nicename = $k::$locomo['nicename'];
+				$methods = \Arr::filter_prefixed(array_flip(get_class_methods($k)), 'action_');
+				$options = array();
+				foreach ($methods as $kk => $vv)
+				{
+					$key = urlencode(\Inflector::ctrl_to_safestr($k.DS.$kk));
+					$options[$key] = $kk;
+				}
+				$actions[$nicename] = $options;
+			}
 		endforeach;
-		$checked = isset($obj->mod_or_ctrl) && ! empty($obj->mod_or_ctrl) ? $obj->mod_or_ctrl : $mod_or_ctrl;
-
+		$selected = isset($obj->action) && ! empty($obj->action) ? $obj->action : $action;
 		$form->add(
-			'mod_or_ctrl',
-			'コントローラ',
-			array('type' => 'select', 'style' => 'width: 30%;', 'options' => $mod_or_ctrls, 'class' => 'varchar')
+			'action',
+			'アクション',
+			array('type' => 'select', 'style' => 'width: 30%;', 'options' => $actions, 'class' => 'varchar')
 		)
 		->add_rule('required')
 		->add_rule('max_length', 255)
-		->set_value($checked);
+		->set_value($selected);
 
 		//body - 本文
 		$form->add(

@@ -45,6 +45,13 @@ class Controller_User extends \Locomo\Controller_Crud
 		// this is a sort of sample code.
 		$pkid = \Request::main()->id;
 		$obj = \User\Model_User::find($pkid);
+
+		// add allowed to show links at actionset
+		\Auth::instance()->add_allowed(array(
+			'\\User\\Controller_User/edit',
+			'\\User\\Controller_User/view',
+		));
+
 		return ($obj->id == \Auth::get('id'));
 	}
 }

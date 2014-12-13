@@ -11,8 +11,8 @@
 	</tr>
 
 	<tr>
-		<th class="ctrl"><?php echo $form->field('mod_or_ctrl')->set_template('{label}{required}'); ?></th>
-		<td><?php echo $form->field('mod_or_ctrl')->set_template('{error_msg}{field}'); ?></td>
+		<th class="ctrl"><?php echo $form->field('action')->set_template('{label}{required}'); ?></th>
+		<td><?php echo $form->field('action')->set_template('{error_msg}{field}'); ?></td>
 	</tr>
 	
 	<tr>

@@ -7,7 +7,7 @@ class Create_help
 		\DBUtil::create_table('helps', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'title'        => array('constraint' => 255, 'type' => 'varchar'),
-			'mod_or_ctrl'  => array('constraint' => 255, 'type' => 'varchar'),
+			'action'       => array('constraint' => 255, 'type' => 'varchar'),
 			'body'         => array('type' => 'text'),
 			'updated_at'   => array('type' => 'datetime', 'null' => true),
 			'deleted_at'   => array('type' => 'datetime', 'null' => true),
