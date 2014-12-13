@@ -39,6 +39,13 @@ class Model_Usergroup extends \Locomo\Model_Base
 		),
 	);
 
+	public static $_conditions = array(
+		'where' => array(
+			array('is_available', true)
+		),
+		'order_by' => array('seq' => 'acs'),
+	);
+
 	/**
 	 * form_definition()
 	 *

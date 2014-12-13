@@ -96,14 +96,6 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
-	 * get_option_options()
-	 */
-	public static function get_option_options($key = null)
-	{
-		return isset(static::$_option_options[$key]) ? static::$_option_options[$key] : static::$_option_options;
-	}
-
-	/**
 	 * get_table_name()
 	 */
 	public static function get_table_name()

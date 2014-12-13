@@ -15,7 +15,8 @@ class Actionset
 	public static function get_actionset($controller, $obj = null, $default = false)
 	{
 		$controller = \Inflector::add_head_backslash($controller);
-		if ( ! empty(static::$actions[$controller])) return static::$actions[$controller];
+// do not turn below on. add_actionset() generate static member variable first
+//		if ( ! empty(static::$actions[$controller])) return static::$actions[$controller];
 		return static::set_actionset($controller, $obj) ? static::$actions[$controller] : $default;
 	}
 
@@ -28,6 +29,7 @@ class Actionset
 	public static function get_module_actionset($module, $obj = null, $default = false)
 	{
 		if ( ! empty(static::$mod_actions[$module])) return static::$mod_actions[$module];
+		\Module::loaded($module) or \Module::load($module);
 		foreach (\Module::get_controllers($module) as $ctrl => $v)
 		{
 			if( ! $actionset = static::get_actionset($ctrl, $obj)) continue;
@@ -92,23 +94,22 @@ class Actionset
 		}
 		if (empty(static::$actions[$controller])) return false;
 
-		// order
-		static::$actions[$controller][$realm] = \Arr::multisort(
-			static::$actions[$controller][$realm],
-			array('order' => SORT_ASC,)
-		);
-
 		// prepare override
 		$overrides = array();
 		foreach (static::$actions[$controller] as $realm => $v)
 		{
 			foreach ($v as $kk => $vv)
 			{
-					if (isset($vv['overrides']))
-					{
-						$overrides = array_merge($overrides, $vv['overrides']);
-					}
+				if (isset($vv['overrides']))
+				{
+					$overrides = array_merge($overrides, $vv['overrides']);
 				}
+			}
+			// order
+			static::$actions[$controller][$realm] = \Arr::multisort(
+				static::$actions[$controller][$realm],
+				array('order' => SORT_ASC,)
+			);
 		}
 
 		// override
@@ -134,7 +135,7 @@ class Actionset
 		$controller = \Inflector::add_head_backslash($controller);
 		if ( ! isset(static::$actions[$controller][$realm]))
 		{
-			static::$actions[$controller][$realm] = array();
+			static::$actions[$controller][$realm]['added'] = array();
 		}
 		static::$actions[$controller][$realm]['added'] += $arr;
 	}

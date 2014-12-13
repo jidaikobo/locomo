@@ -38,7 +38,8 @@ trait Traits_Controller_Revision
 		$items = \Revision\Model_Revision::paginated_find($options, array('uri_segment' => 5,));
 		if ( ! $items):
 			\Session::set_flash('error', '履歴を取得できませんでした');
-			return \Response::redirect($this->base_url.'view/'.$id);
+			$ret = method_exists(__CLASS__, 'action_view') ? $this->base_url.'view/'.$id : $this->base_url;
+			return \Response::redirect($ret);
 		endif;
 
 		// unserialize data - to display usernames
@@ -72,13 +73,17 @@ trait Traits_Controller_Revision
 		);
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
-		// view
+		// subject field
 		$model = $this->model_name;
+		$subject = $model::get_default_field_name('subject');
+		if(empty($subject)) throw new \OutOfBoundsException($model.' doesn\'t have public static $_subject_field_name');
+
+		// view
 		$view = \View::forge(LOCOMOPATH.'modules/revision/views/each_index_revision.php');
 		$view->set_global('items', $items);
 		$view->set_global('base_url', $this->base_url);
 		$view->set_global('title', '履歴一覧');
-		$view->set_global('subject', $model::get_default_field_name('subject'));
+		$view->set_global('subject', $subject);
 		$view->base_assign();
 		$this->template->content = $view;
 	}

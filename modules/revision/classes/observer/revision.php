@@ -107,13 +107,13 @@ class Observer_Revision extends \Orm\Observer
 		foreach ($vals as $val)
 		{
 			$args = array();
-			$args['model']       = get_class($obj);
-			$args['pk_id']       = $obj->$primary_key;
-			$args['data']        = serialize($val);
-			$args['comment']     = \Input::post('revision_comment') ?: '';
-			$args['created_at']  = date('Y-m-d H:i:s');
-			$args['operation']   = $operation;
-			$args['updater_id'] = \Auth::get('id');
+			$args['model']      = \Inflector::add_head_backslash(get_class($obj));
+			$args['pk_id']      = $obj->$primary_key;
+			$args['data']       = serialize($val);
+			$args['comment']    = \Input::post('revision_comment') ?: '';
+			$args['created_at'] = date('Y-m-d H:i:s');
+			$args['operation']  = $operation;
+			$args['user_id']    = \Auth::get('id');
 	
 			// save revision
 			$model = \Revision\Model_Revision::forge($args);

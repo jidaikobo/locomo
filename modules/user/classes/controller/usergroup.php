@@ -9,9 +9,9 @@ class Controller_Usergroup extends \Locomo\Controller_Base
 		'is_for_admin' => false,
 		'admin_home' => '\\User\\Controller_Usergroup/index_admin',
 		'admin_home_name' => 'ユーザグループ管理',
-		'admin_home_explanation' => '既存のユーザグループの名称、表示順、使用可否などを編集します。', // explanation of module's top page
+		'admin_home_explanation' => '既存のユーザグループの名称、表示順、使用可否などを編集します。',
 		'nicename' => 'ユーザグループ',
-		'help'     => 'packages/locomo/modules/user/help/user.html',//app/../からのパス
+		'help' => 'packages/locomo/modules/user/help/user.html',
 		'actionset' =>array(
 			'base' => array(
 				array(
@@ -45,15 +45,17 @@ class Controller_Usergroup extends \Locomo\Controller_Base
 	{
 		// bulk
 		\User\Model_Usergroup::disable_filter();
-		$form = $this->bulk(array(), array(), '\User\Model_Usergroup');
+		$option = array('where' => array(array('is_available', 'is not', null)));
+		\User\Model_Usergroup::$_conditions = array();
+		$form = $this->bulk($option, array(), '\User\Model_Usergroup');
 
-		//add_actionset - back to index at edit
-		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
+		// add_actionset - back to index at edit
+		$ctrl_url = \Inflector::ctrl_to_dir(\Request::main()->controller);
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
 		$action['order'] = 10;
 		\Actionset::add_actionset(\Request::main()->controller, 'ctrl', $action);
 
-		//assign
+		// assign
 		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);

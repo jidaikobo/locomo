@@ -42,10 +42,8 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_usergroups()
 	{
-		$opt = \User\Model_Usergroup::get_option_options('usergroup');
-		$usergroups = \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
 		$usergroups = array('none' => '選択してください', 0 => 'ゲスト', '-10' => 'ログインユーザすべて');
-		$usergroups += \User\Model_Usergroup::get_options($opt['option'], $opt['label']);
+		$usergroups += \User\Model_Usergroup::get_options(array(), 'name') ?: array();
 		return $usergroups;
 	}
 
@@ -75,12 +73,11 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_mod_or_ctrl()
 	{
-		$all = \Util::get_mod_or_ctrl();
 		$retvals = array();
-		foreach($all as $k => $v):
+		foreach(\Util::get_mod_or_ctrl() as $k => $v):
 			if (\Arr::get($v, 'is_for_admin')) continue;
 			if ( ! \Arr::get($v, 'show_at_menu')) continue;
-			$retvals[$k] = \Arr::get($v, 'nicename');
+			$retvals[\Inflector::ctrl_to_safestr($k)] = \Arr::get($v, 'nicename');
 		endforeach;
 		return array('none' => '選択してください') + $retvals;
 	}

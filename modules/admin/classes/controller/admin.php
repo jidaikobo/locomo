@@ -56,18 +56,17 @@ class Controller_Admin extends \Locomo\Controller_Crud
 			else
 			{
 				// this is not a module
-				$actionset = \Actionset::get_actionset($ctrl);
+				$actionset[$ctrl] = \Actionset::get_actionset($ctrl);
 				$locomo = $ctrl::$locomo ;
 				$name = \Arr::get($locomo, 'nicename');
 			}
 
 			// if $actionset is not exist
-			if(! $actionset)
+			if(! $actionset || ! $actionset[$ctrl])
 			{
 				$actionset = array($ctrl => array(
-					'nicename'    => $name,
-					'actionset' => array('base' => array()))
-				);
+					'base' => array()
+				));
 			}
 
 			// add 'admin_home' action to actionset from controller::$locomo
