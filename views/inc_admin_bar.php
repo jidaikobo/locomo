@@ -12,8 +12,8 @@ if (\Auth::check()):
 			$html.='<div class="adminbar_main">';
 				$html.= '<div class="admin_controller">';
 				$mod_home = '';
-				$current_name = \Arr::get($locomo, 'current.module.main_controller');
-				$current_nicename = \Arr::get($locomo, 'current.module.nicename') ?: \Arr::get($locomo, 'current.controller.nicename') ;
+				$current_name = \Inflector::ctrl_to_safestr(\Arr::get($locomo, 'module.main_controller'));
+				$current_nicename = \Arr::get($locomo, 'module.nicename') ?: \Arr::get($locomo, 'controller.nicename') ;
 
 				$ctrl_index = '';
 				if ($current_name == '-Admin-Controller_Admin'):
@@ -21,9 +21,9 @@ if (\Auth::check()):
 				else:
 					$top_link = \Html::anchor(\Uri::create('admin/home/'.$current_name), $current_nicename).' ';
 					$action_name = $title ? $title : '';
-					if (isset($locomo['current']['controller']['home'])):
-						$home_name = \Arr::get($locomo, 'current.controller.home_name') ?: 'トップ';
-						$ctrl_index = \Html::anchor($locomo['current']['controller']['home'], $home_name);
+					if (isset($locomo['controller']['home'])):
+						$home_name = \Arr::get($locomo, 'controller.home_name') ?: 'トップ';
+						$ctrl_index = \Html::anchor($locomo['controller']['home'], $home_name);
 					endif;
 				endif;
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
@@ -75,7 +75,7 @@ if (\Auth::check()):
 				foreach($locomo['controllers'] as $k => $v):
 					if ( ! $v['is_for_admin'] && $v['show_at_menu'])
 					{
-						$html.= '<li><a href="'.\Uri::base().'admin/home/'.\Inflector::ctrl_to_urlstr($k).'">'.$v['nicename'].'</a></li>';
+						$html.= '<li><a href="'.\Uri::base().'admin/home/'.\Inflector::ctrl_to_safestr($k).'">'.$v['nicename'].'</a></li>';
 					}
 				endforeach;
 				$html.= '</ul>';
@@ -90,7 +90,7 @@ if (\Auth::check()):
 
 			//help
 			$html.= '<div class="admin_help">';
-				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[mod_or_ctrl]='.$locomo['current']['mod_or_ctrl']['name'].'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[mod_or_ctrl]='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path'])).'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 
 			//admin option menu

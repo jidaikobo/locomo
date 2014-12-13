@@ -77,7 +77,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		$username    = \Session::get('username');
 		$login_hash  = \Session::get('login_hash');
 
-		//admins
+		// admins
 		if (in_array($username, static::$_alladmins))
 		{
 			$db_login_hash = \DB::select('login_hash')
@@ -87,12 +87,14 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 
 			if ($db_login_hash['login_hash'] == $login_hash)
 			{
-				//is_root
+				// is_root
 				if (in_array($username, static::$_roots))
 				{
 					\Arr::set($this->_root_info, 'username', $username);
 					$this->user = $this->_root_info;
-				}else{
+				}
+				else
+				{
 					\Arr::set($this->_admin_info, 'username', $username);
 					$this->user = $this->_admin_info;
 				}
@@ -100,7 +102,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			}
 		}
 
-		//always_allowed
+		// always_allowed
 		$acls = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), \Config::get('always_allowed'));
 		$acls = array_map('serialize', $acls);
 
@@ -166,24 +168,26 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			return false;
 		}
 
-		//管理者たち
+		// 管理者たち
 		$admins = unserialize(LOCOMO_ADMINS);
 		$root  = \Arr::get($admins['root'],  $username_or_email, false);
 		$admin = \Arr::get($admins['admin'], $username_or_email, $root);
 
-		//rootユーザ
-		if ($username_or_email == $root[0] && $password == $root[1]):
+		// rootユーザ
+		if ($username_or_email == $root[0] && $password == $root[1])
+		{
 			\Arr::set($this->_root_info, 'username', $root[0]);
 			return $this->_root_info;
-		endif;
+		}
 
-		//rootユーザ
-		if ($username_or_email == $admin[0] && $password == $admin[1]):
+		// rootユーザ
+		if ($username_or_email == $admin[0] && $password == $admin[1])
+		{
 			\Arr::set($this->_admin_info, 'username', $admin[0]);
 			return $this->_admin_info;
-		endif;
+		}
 
-		//ほかユーザ
+		// ほかユーザ
 		$password = $this->hash_password($password);
 		$user = \User\Model_User::find('first', array(
 			'where' => array(
@@ -209,13 +213,14 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	public function login($username_or_email = '', $password = '')
 	{
 		// reject banned user
-		if ( ! static::check_deny(\Input::post("username"))):
+		if ( ! static::check_deny(\Input::post("username")))
+		{
 			$user_ban_setting = \Config::get('user_ban_setting');
 			$limit_count = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
 			$limit_time  = $user_ban_setting ? $user_ban_setting['limit_time'] : 300 ;
 			\Session::set_flash('error', "{$limit_count}回のログインに失敗したので、{$limit_time}秒間ログインはできません。");
 			return false;
-		endif;
+		}
 
 		// validate_user
 		if ( ! ($this->user = $this->validate_user($username_or_email, $password)))
@@ -235,10 +240,12 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		\Session::set('login_hash', $this->create_login_hash());
 		if (isset($this->user->usergroup))
 		{
-			//other users
+			// other users
 			\Session::set('usergroups', array_keys($this->user->usergroup));
-		}else{
-			//admin
+		}
+		else
+		{
+			// admin
 			\Session::set('usergroups', $this->user['usergroups']);
 		}
 		static::add_user_log($username_or_email, $password, true);
@@ -320,7 +327,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			array_key_exists($this->user['username'], $admins['admin'])
 		)
 		{
-			//管理者
+			// 管理者
 			\DB::delete('user_admins')
 				->where(array(array('username', '=', $this->user['username'])))
 				->execute();
@@ -332,8 +339,10 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 					'login_hash' => $login_hash,
 				))
 				->execute();
-		}else{
-			//普通のユーザ
+		}
+		else
+		{
+			// 普通のユーザ
 			\DB::update('users')
 				->set(array('last_login_at' => date('Y-m-d H:i:s', $last_login), 'login_hash' => $login_hash))
 				->where('username', '=', $this->user['username'])
@@ -353,7 +362,9 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		if (isset(static::instance()->user->usergroup))
 		{
 			return array_keys(static::instance()->user->usergroup);
-		}elseif (isset(static::instance()->user['usergroups'])){
+		}
+		elseif (isset(static::instance()->user['usergroups']))
+		{
 			return static::instance()->user['usergroups'];
 		}
 		return array();
@@ -397,7 +408,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		if ($username == null || $password == null) return false;
 		$password = $this->hash_password($password);
 
-		//設定値
+		// 設定値
 		$user_ban_setting = \Config::get('user_ban_setting');
 		$limit_time  = 10 ;
 		$limit_count = $user_ban_setting ? $user_ban_setting['limit_count'] : 3 ;
@@ -413,18 +424,24 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 						->execute()->as_array();
 
 		// データがあればカウントアップ
-		if (count($list) && ! $status) {
+		if (count($list) && ! $status)
+		{
 			\DB::update("user_logs")->value("count", $list[0]['count'] + 1)
 					->where("loginlog_id", $list[0]['loginlog_id'])
 					->execute();
 
 			// 回数が一定以上あればfalseを返却
-			if ($limit_count <= $list[0]['count'] + 1) {
+			if ($limit_count <= $list[0]['count'] + 1)
+			{
 				return false;
-			} else {
+			}
+			else
+			{
 				return true;
 			}
-		} else {
+		}
+		else
+		{
 			// 成功時データを追加
 			\DB::insert("user_logs")
 					->set(array(

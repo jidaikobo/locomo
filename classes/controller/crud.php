@@ -188,9 +188,7 @@ class Controller_Crud extends Controller_Base
 		}
 		$form = $model::form_definition('edit', $obj);
 
-		/*
-		 * save
-		 */
+		// save
 		if (\Input::post()) :
 			if (
 				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&

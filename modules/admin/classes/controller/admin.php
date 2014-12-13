@@ -24,11 +24,12 @@ class Controller_Admin extends \Locomo\Controller_Crud
 	* action_home()
 	* toppgae
 	*/
-	public function action_home ($mod_or_ctrl = null)
+	public function action_home ($ctrl = null)
 	{
 		$view = \View::forge('home');
-		// if $mod_or_ctrl is null, show link to modules and controllers
-		if (is_null($mod_or_ctrl))
+
+		// if $ctrl is null, show link to modules and controllers
+		if (is_null($ctrl))
 		{
 			$view->set('is_admin_home', true);
 			$view->set_global('title', '管理ホーム');
@@ -36,43 +37,40 @@ class Controller_Admin extends \Locomo\Controller_Crud
 		else
 		{
 			// show actionset of target module and controller
-			$mod_or_ctrl = \Inflector::urlstr_to_ctrl($mod_or_ctrl);
-			$actionset = \Actionset::get_actionset($mod_or_ctrl) ?: array();
+			$ctrl = \Inflector::safestr_to_ctrl($ctrl);
+			$module = \Inflector::get_modulename($ctrl);
 
 			// is module's main controller or normal app controller?
-			if ($module = \Inflector::get_modulename($mod_or_ctrl))
+			if ($module)
 			{
 				// module
-				$mod_config = \Config::load($module.'::'.$module, 'action_home', true);
-				$main_contoller = \Arr::get($mod_config, 'main_contoller');
-				$name = \Arr::get($mod_config, 'nicename') ?: $actionset[$main_contoller]['nicename'] ;
-
-				// try to find main controller
-				if($mod_config && ! $actionset)
+				$actionset = \Actionset::get_module_actionset($module);
+				$config = \Config::load($module.'::'.$module, 'action_home', true);
+				if ( ! \Arr::get($config, 'nicename') ||  ! \Arr::get($config, 'main_contoller'))
 				{
-					$actionset = array($main_contoller => array(
-						'nicename' => $mod_config['nicename'],
-						'actionset' => array('base' => array()))
-					);
+					new \OutOfBoundsException('module\'s config must contain main_controller value.');
 				}
+				$main_contoller = \Arr::get($config, 'main_contoller');
+				$name = \Arr::get($config, 'nicename', '') ;
 			}
 			else
 			{
 				// this is not a module
-				$locomo = $mod_or_ctrl::$locomo ;
+				$actionset = \Actionset::get_actionset($ctrl);
+				$locomo = $ctrl::$locomo ;
 				$name = \Arr::get($locomo, 'nicename');
-
-				// try to find main controller
-				if(! $actionset)
-				{
-					$actionset = array($mod_or_ctrl => array(
-						'nicename'    => $name,
-						'actionset'   => array('base' => array()))
-					);
-				}
 			}
 
-			// add 'admin_home' from controller::$locomo
+			// if $actionset is not exist
+			if(! $actionset)
+			{
+				$actionset = array($ctrl => array(
+					'nicename'    => $name,
+					'actionset' => array('base' => array()))
+				);
+			}
+
+			// add 'admin_home' action to actionset from controller::$locomo
 			if($actionset)
 			{
 				foreach ($actionset as $k => $v)
@@ -88,13 +86,13 @@ class Controller_Admin extends \Locomo\Controller_Crud
 							'show_at_top' => true,
 							'explanation' => $home_exp
 						);
-						array_unshift($actionset[$k]['actionset']['base'], $args);
+						array_unshift($actionset[$k]['base'], $args);
 					}
 				}
 			}
 
 			// assign
-			$view->set('mod_or_ctrl', $actionset, false);
+			$view->set('actionset', $actionset, false);
 			$view->set_global('title', $name.' トップ');
 		}
 		$view->base_assign();

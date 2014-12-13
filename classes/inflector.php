@@ -30,7 +30,7 @@ class Inflector extends \Fuel\Core\Inflector
 	{
 		// static cache
 		static $cache = array();
-		if ( ! empty($cache)) return $cache;
+		if (isset($cache[$path])) return $cache[$path];
 
 		$cache_str = 'inflector_dir_to_ctrl_'.static::friendly_title($path);
 		try
@@ -57,7 +57,7 @@ class Inflector extends \Fuel\Core\Inflector
 			}
 
 			// static cache
-			$cache = $classes;
+			$cache[$path] = $classes;
 
 			// cache 20 min
 			\Cache::set($cache_str, $classes, 3600 / 3);
@@ -106,21 +106,21 @@ class Inflector extends \Fuel\Core\Inflector
 	}
 
 	/**
-	 * ctrl_to_urlstr()
+	 * ctrl_to_safestr()
 	 * @param string [\MODNAME\]Controller_CTRL
 	 * @return string [-MODNAME-]Controller_CTRL
 	 */
-	public static function ctrl_to_urlstr($str = null)
+	public static function ctrl_to_safestr($str = null)
 	{
 		return str_replace('\\', '-', $str);
 	}
 
 	/**
-	 * urlstr_to_ctrl()
+	 * safestr_to_ctrl()
 	 * @param string [\MODNAME\]Controller_CTRL
 	 * @return string [MODNAME|false]
 	 */
-	public static function urlstr_to_ctrl($str = null)
+	public static function safestr_to_ctrl($str = null)
 	{
 		return static::words_to_upper(str_replace('-', '\\', $str));
 	}

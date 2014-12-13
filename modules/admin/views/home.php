@@ -2,11 +2,11 @@
 //モジュール／コントローラトップ
 if ( ! isset($is_admin_home)):
 	$html = '';
-	if ($mod_or_ctrl):
-		foreach($mod_or_ctrl as $k => $v):
-			$html.= '<h2>'.$v['nicename'].'</h2>';
+	if ($actionset):
+		foreach($actionset as $k => $v):
+			$html.= '<h2>'.$k::$locomo['nicename'].'</h2>';
 			$html.= '<table class="tbl2">';
-			foreach($v['actionset'] as $kk => $vv):
+			foreach($v as $kk => $vv):
 				foreach($vv as $kkk => $vvv):
 					if (\Arr::get($vvv, 'show_at_top') == false) continue;
 					if (\Arr::get($vvv, 'urls') == false) continue;
@@ -30,7 +30,7 @@ else:
 		<ul>
 		<?php foreach($locomo['controllers'] as $k => $v): ?>
 		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>
-		<li><a href="<?php echo \Uri::create('admin/home/').\Inflector::ctrl_to_urlstr($k) ?>"><?php echo $v['nicename'] ?></a></li>
+		<li><a href="<?php echo \Uri::create('admin/home/').\Inflector::ctrl_to_safestr($k) ?>"><?php echo $v['nicename'] ?></a></li>
 		<?php endforeach; ?>
 		</ul>
 	<?php else: ?>
@@ -38,7 +38,7 @@ else:
 		<?php foreach($locomo['controllers'] as $k => $v): ?>
 		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>
 		<tr>
-			<th><a href="<?php echo \Uri::create('admin/home/').\Inflector::ctrl_to_urlstr($k) ?>"><?php echo $v['nicename'] ?></a></th>
+			<th><a href="<?php echo \Uri::create('admin/home/').\Inflector::ctrl_to_safestr($k) ?>"><?php echo $v['nicename'] ?></a></th>
 			<td><?php echo @$v['explanation'] ?></td>
 		</tr>
 		<?php endforeach; ?>

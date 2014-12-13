@@ -7,6 +7,8 @@ class Util
 	 * Locomo配下にある対象コントローラ／モジュールの取得
 	 * controllerがlocomoメンバ変数を持っているときにLocomo配下と見なす
 	 * \Locomo\View::base_assign()で毎回呼ぶのでcacheする
+	 * get locomo related modules and controllers
+	 * @return array()
 	 */
 	public static function get_mod_or_ctrl()
 	{
@@ -36,7 +38,7 @@ class Util
 
 					if ( ! property_exists($mod_ctrl, 'locomo')) continue;
 
-					$config = \Config::load($module.'::'.$module, 'util', true);
+					$config = \Config::load($module.'::'.$module, 'util', true, true);
 
 					if( ! is_array($config)) continue;
 					if( ! $main_controller = \Arr::get($config, 'main_controller')) continue;
@@ -86,7 +88,7 @@ class Util
 
 
 	/*
-	 * 年度の機関を between 句で返す
+	 * 年度の期間を between 句で返す
 	 * todo 4月のみ対応しているので、後々変える
 	 * @return where between 句
 	 */

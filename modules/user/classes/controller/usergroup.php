@@ -47,6 +47,12 @@ class Controller_Usergroup extends \Locomo\Controller_Base
 		\User\Model_Usergroup::disable_filter();
 		$form = $this->bulk(array(), array(), '\User\Model_Usergroup');
 
+		//add_actionset - back to index at edit
+		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
+		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
+		$action['order'] = 10;
+		\Actionset::add_actionset(\Request::main()->controller, 'ctrl', $action);
+
 		//assign
 		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
 		$view->set_global('title', 'ユーザグループ設定');

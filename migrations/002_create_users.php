@@ -77,12 +77,12 @@ class Create_users
 
 		//default acl
 		$arr = array(
-			array('Help\\Controller_Help',   'index_admin', '\\Help\\Controller_Help/index_admin'),
-			array('Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/home'),
-			array('Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/dashboard'),
-			array('Admin\\Controller_Admin', 'edit',        '\\Admin\\Controller_Admin/edit'),
-			array('Admin\\Controller_Admin', 'clock',       '\\Admin\\Controller_Admin/clock'),
-			array('Admin\\Controller_Admin', 'calendar',    '\\Schedules\\Controller_Schedules/calendar'),
+			array('\\Help\\Controller_Help',   'index_admin', '\\Help\\Controller_Help/index_admin'),
+			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/home'),
+			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/dashboard'),
+			array('\\Admin\\Controller_Admin', 'edit',        '\\Admin\\Controller_Admin/edit'),
+			array('\\Admin\\Controller_Admin', 'clock',       '\\Admin\\Controller_Admin/clock'),
+			array('\\Admin\\Controller_Admin', 'calendar',    '\\Schedules\\Controller_Schedules/calendar'),
 		);
 		foreach($arr as $v):
 			$slug = serialize(\Locomo\Auth_Acl_Locomoacl::_parse_conditions($v[2]));

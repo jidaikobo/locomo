@@ -55,8 +55,8 @@ class Module extends \Fuel\Core\Module
 	public static function get_controllers ($module = null)
 	{
 		if ( ! is_scalar($module)) new \InvalidArgumentException('It is necessary to set valid module name.');
-		$module2load = \Inflector::remove_head_backslash($module);
-		if ( ! $path = \Module::exists($module2load)) throw new \InvalidArgumentException('Module not found.');
+		$module = \Inflector::remove_head_backslash($module);
+		if ( ! $path = \Module::exists($module)) throw new \InvalidArgumentException('Module not found.');
 		$path.= 'classes/controller';
 		if ( ! is_dir($path)) return false;
 

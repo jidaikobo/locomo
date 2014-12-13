@@ -32,7 +32,7 @@ trait Traits_Controller_Revision
 		is_null($id) and \Response::redirect(\Uri::base());
 
 		// paginated_find
-		$options['where'][]    = array('model', '=', \Inflector::remove_head_backslash($this->model_name));
+		$options['where'][]    = array('model', '=', \Inflector::add_head_backslash($this->model_name));
 		$options['where'][]    = array('pk_id', '=', $id);
 		$options['order_by'][] = array('created_at', 'DESC');
 		$items = \Revision\Model_Revision::paginated_find($options, array('uri_segment' => 5,));

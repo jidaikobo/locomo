@@ -68,11 +68,11 @@ return array(
 	// always guest allowed actions
 	// ex) '\\Modname\\Controller_Something/action'
 	'always_allowed' => array(
-		'\\User\\Controller_Auth/login/',
-		'\\User\\Controller_Auth/logout/',
-		'\\Content\\Controller_Content/home/',
-		'\\Content\\Controller_Content/403/',
-		'\\Content\\Controller_Content/404/',
-		'\\Content\\Controller_Content/fetch_view/',
+		'\\User\\Controller_Auth/login',
+		'\\User\\Controller_Auth/logout',
+		'\\Content\\Controller_Content/home',
+		'\\Content\\Controller_Content/403',
+		'\\Content\\Controller_Content/404',
+		'\\Content\\Controller_Content/fetch_view',
 	),
 );

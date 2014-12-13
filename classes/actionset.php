@@ -2,41 +2,38 @@
 namespace Locomo;
 class Actionset
 {
-	public static $actions  = array();
-
-	/**
-	 * add_actionset()
-	 * use at controllers' business logic section
-	 * see sample at \Revision\Traits_Controller_Revision::action_each_index_revision
-	 *
-	 * @param string $main_controller	\NMSPC\Controller_NAME
-	 * @param string $realm	[base|option|index|ctrl|...]
-	 * @param arr    $arr	array(array(\NMSPC\Controller_NAME.DS.'ACTION', MENUSTR, ATTR))
-	 */
-	public static function add_actionset($main_controller, $realm = null, $arr = array())
-	{
-		if (is_null($realm)) throw new \InvalidArgumentException('realm is missing.');
-		$main_controller = \Inflector::remove_head_backslash($main_controller);
-		if ( ! isset(static::$actions[$main_controller][$main_controller]['actionset'][$realm]))
-		{
-			static::$actions[$main_controller][$main_controller]['actionset'][$realm] = array();
-		}
-		static::$actions[$main_controller][$main_controller]['actionset'][$realm]['added'] = $arr;
-	}
+	public static $actions     = array();
+	public static $mod_actions = array();
 
 	/**
 	 * get_actionset()
-	 * @param string $ctrl_or_mod controller full class name or module dir name
+	 * @param string $controller controller full class name
 	 * @param object $obj use for auth. Fuel\Model object
+	 * @param mixed $default
 	 * @return array()
 	 */
-	public static function get_actionset($controller = null, $obj = null)
+	public static function get_actionset($controller, $obj = null, $default = false)
 	{
-		if (is_null($controller)) throw new \InvalidArgumentException('Argument must be controller name.');
+		$controller = \Inflector::add_head_backslash($controller);
+		if ( ! empty(static::$actions[$controller])) return static::$actions[$controller];
+		return static::set_actionset($controller, $obj) ? static::$actions[$controller] : $default;
+	}
 
-		// set actionset
-		$main_controller = static::set_actionset($controller, $obj);
-		return $main_controller ? static::$actions[$main_controller] : false;
+	/**
+	 * get_module_actionset()
+	 * @param string $module module name
+	 * @param mixed $default
+	 * @return array()
+	 */
+	public static function get_module_actionset($module, $obj = null, $default = false)
+	{
+		if ( ! empty(static::$mod_actions[$module])) return static::$mod_actions[$module];
+		foreach (\Module::get_controllers($module) as $ctrl => $v)
+		{
+			if( ! $actionset = static::get_actionset($ctrl, $obj)) continue;
+			static::$mod_actions[$module][$ctrl] = $actionset;
+		}
+		return \Arr::get(static::$mod_actions, $module) ?: $default;
 	}
 
 	/**
@@ -45,112 +42,101 @@ class Actionset
 	 * @param object $obj use for auth. Fuel\Model object
 	 * @return [bool|string main_controller]
 	 */
-	public static function set_actionset($main_controller = null, $obj = null)
+	public static function set_actionset($controller, $obj = null)
 	{
-		if (is_null($main_controller) && is_null($module)) return false;
-
-		// is module
-		$module = \Inflector::get_modulename($main_controller);
-		if ( $module && ! \Module::loaded($module))
-		{
-			if ( ! \Module::load($module)) throw new \InvalidArgumentException('module doesn\'t exist');
-		}
-		$classes = $module ? array_keys(\Module::get_controllers($module)) : array($main_controller);
-
-		// check args - if module, search contain controller
-		$controllers = array();
-		foreach($classes as $class)
-		{
-			$class = \Inflector::add_head_backslash($class);
-			if ( ! property_exists($class, 'locomo')) continue;
-
-			$actionset = \Arr::get($class::$locomo, 'actionset');
-			$actionset_class = \Arr::get($class::$locomo, 'actionset_classes');
-
-			if ( ! $actionset && ! $actionset_class) continue;
-			$controllers[$class] = $class::$locomo;
-		}
+		// controller
+		$controller = \Inflector::add_head_backslash($controller);
+		if ( ! property_exists($controller, 'locomo')) return false;
+		$locomo = $controller::$locomo;
 
 		// primary key
 		$obj = is_object($obj) ? $obj : (object) array() ;
 		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
 
-		// remove head backslash when it has no necessity
-		$main_controller = \Inflector::remove_head_backslash($main_controller);
-
+		// actionset_classes
 		$actions = array();
-		// controllers
-		foreach($controllers as $k => $p)
+		foreach(\Arr::get($locomo, 'actionset_classes', array()) as $realm => $class)
 		{
-			// actionset_classes
-			foreach(\Arr::get($p, 'actionset_classes', array()) as $realm => $class)
+			// methods - search prefixed 'actionset_'
+			$methods = get_class_methods($class);
+			if (! is_array($methods)) continue;
+			$methods = array_flip($methods);
+			$methods = \Arr::filter_prefixed($methods, 'actionset_');
+			$methods = array_flip($methods);
+
+			foreach($methods as $method)
 			{
-				// methods - search prefixed 'actionset_'
-				$methods = get_class_methods($class);
-				if (! is_array($methods)) continue;
-				$methods = array_flip($methods);
-				$methods = \Arr::filter_prefixed($methods, 'actionset_');
-				$methods = array_flip($methods);
-
-				foreach($methods as $method)
+				$p_method = 'actionset_'.$method;
+				$as = $class::$p_method($controller, $obj, $id);
+				// require "urls" or "dependencies"
+				if (\Arr::get($as, 'urls.0') || \Arr::get($as, 'dependencies.0'))
 				{
-					$p_method = 'actionset_'.$method;
-					$as = $class::$p_method($k, $obj, $id);
-					// not exists "urls" and "dependencies", retun nothing
-					if (! \Arr::get($as, 'urls.0') && ! \Arr::get($as, 'dependencies.0')) continue;
-
-					$k = \Inflector::remove_head_backslash($k);
-					static::$actions[$main_controller][$k]['nicename'] = $p['nicename'];
-					static::$actions[$main_controller][$k]['actionset'][$realm][$method] = $as;
+					static::$actions[$controller][$realm][$method] = $as;
 				}
-			}
-
-			// actionset not by actionset class
-			foreach(\Arr::get($p, 'actionset', array()) as $realm => $vv)
-			{
-				foreach ($vv as $kk => $vvv)
-				{
-					$links = array();
-					foreach ($vvv["urls"] as $uri => $str)
-					{
-						$links[] = \Html::anchor(\Uri::create(\Inflector::ctrl_to_dir($uri)), $str);
-					}
-					$vv[$kk]['urls'] = $links;
-				}
-				$ctrl = \Inflector::remove_head_backslash($k);
-				static::$actions[$main_controller][$ctrl]['nicename'] = $p['nicename'];
-				static::$actions[$main_controller][$ctrl]['actionset'][$realm] = $vv;
 			}
 		}
-		if ( ! isset(static::$actions[$main_controller])) return false;
 
-		// tidy up
+		// actionset not by actionset class
+		foreach(\Arr::get($locomo, 'actionset', array()) as $realm => $v)
+		{
+			foreach ($v as $k => $vv)
+			{
+				$links = array();
+				foreach ($vv["urls"] as $uri => $str)
+				{
+					$links[] = \Html::anchor(\Uri::create(\Inflector::ctrl_to_dir($uri)), $str);
+				}
+				$v[$k]['urls'] = $links;
+			}
+			static::$actions[$controller][$realm] = $v;
+		}
+		if (empty(static::$actions[$controller])) return false;
+
+		// order
+		static::$actions[$controller][$realm] = \Arr::multisort(
+			static::$actions[$controller][$realm],
+			array('order' => SORT_ASC,)
+		);
+
+		// prepare override
 		$overrides = array();
-		foreach (static::$actions[$main_controller] as $k => $v)
+		foreach (static::$actions[$controller] as $realm => $v)
 		{
-			foreach ($v["actionset"] as $realm => $vv)
+			foreach ($v as $kk => $vv)
 			{
-				foreach ($vv as $kkk => $vvv)
-				{
-						// prepare override
-						if (isset($vvv['overrides']))
-						{
-							$overrides = array_merge($overrides, $vvv['overrides']);
-						}
+					if (isset($vv['overrides']))
+					{
+						$overrides = array_merge($overrides, $vv['overrides']);
 					}
-			}
-
-			// order
-			static::$actions[$main_controller][$k]['actionset'][$realm] = \Arr::multisort(static::$actions[$main_controller][$k]['actionset'][$realm], array('order' => SORT_ASC,));
-
-			// override
-			foreach($overrides as $realm_name => $urls)
-			{
-				static::$actions[$main_controller][$k]['actionset'][$realm_name]['override_url'] = $urls;
-			}
+				}
 		}
 
-		return $main_controller;
+		// override
+		foreach($overrides as $realm => $urls)
+		{
+			static::$actions[$controller][$realm]['override_url'] = $urls;
+		}
+
+		return true;
+	}
+
+	/**
+	 * add_actionset()
+	 * use at controllers' business logic section
+	 * see sample at \Revision\Traits_Controller_Revision::action_each_index_revision
+	 *
+	 * @param string $controller controller full class name
+	 * @param string $realm	[base|option|index|ctrl|...]
+	 * @param arr    $arr	array(array([\NMSPC]\Controller_NAME.DS.'ACTION', MENUSTR, ATTR))
+	 */
+	public static function add_actionset($controller, $realm, $arr = array())
+	{
+		$controller = \Inflector::add_head_backslash($controller);
+		if ( ! isset(static::$actions[$controller][$realm]))
+		{
+			static::$actions[$controller][$realm] = array();
+		}
+		static::$actions[$controller][$realm]['added'] += $arr;
 	}
 
 	/**
@@ -192,8 +178,6 @@ class Actionset
 	 */
 	public static function generate_menu_html($obj, $ul_attr = array())
 	{
-		if ( ! $obj) return false;
-
 		$arr = array();
 		foreach($obj as $label => $v)
 		{
@@ -211,13 +195,5 @@ class Actionset
 		}
 
 		return \Html::ul($arr, $ul_attr);
-	}
-
-	/**
-	 * remove_actionset($realm)
-	 */
-	public static function remove_actionset($controller, $realm)
-	{
-		unset(static::$actions[$controller][$realm]);
 	}
 }

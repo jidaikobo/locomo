@@ -137,7 +137,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 								//insert
 								$q = \DB::insert('acls');
 								$q->set(array(
-									'controller' => \Inflector::remove_head_backslash($conditions['controller']),
+									'controller' => \Inflector::add_head_backslash($conditions['controller']),
 									'action' => $conditions['action'],
 									'slug' => $condition,
 									'usergroup_id' => $usergroup_id,
