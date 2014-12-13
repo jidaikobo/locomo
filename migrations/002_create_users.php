@@ -74,28 +74,6 @@ class Create_users
 			'user_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 			'group_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 		), array('user_id','group_id'));
-
-		//default acl
-		$arr = array(
-			array('\\Help\\Controller_Help',   'index_admin', '\\Help\\Controller_Help/index_admin'),
-			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/home'),
-			array('\\Admin\\Controller_Admin', 'home',        '\\Admin\\Controller_Admin/dashboard'),
-			array('\\Admin\\Controller_Admin', 'edit',        '\\Admin\\Controller_Admin/edit'),
-			array('\\Admin\\Controller_Admin', 'clock',       '\\Admin\\Controller_Admin/clock'),
-			array('\\Admin\\Controller_Admin', 'calendar',    '\\Schedules\\Controller_Schedules/calendar'),
-		);
-		foreach($arr as $v):
-			$slug = serialize(\Locomo\Auth_Acl_Locomoacl::_parse_conditions($v[2]));
-			$query = \DB::insert('acls');
-			$query->columns(array(
-				'controller',
-				'action',
-				'slug',
-				'usergroup_id',
-			));
-			$query->values(array($v[0], $v[1], $slug, -10));//'-10' means all logged in users
-			$query->execute();
-		endforeach;
 	}
 
 	public function down()

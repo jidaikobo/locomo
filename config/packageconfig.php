@@ -75,4 +75,13 @@ return array(
 		'\\Content\\Controller_Content/404',
 		'\\Content\\Controller_Content/fetch_view',
 	),
+
+	// always user allowed actions
+	'always_user_allowed' => array(
+		'\\Help\\Controller_Help/index_admin',
+		'\\Admin\\Controller_Admin/home',
+		'\\Admin\\Controller_Admin/dashboard',
+		'\\Admin\\Controller_Admin/edit',
+		'\\Admin\\Controller_Admin/clock',
+	),
 );
