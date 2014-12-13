@@ -8,7 +8,7 @@ class Actionset_Base extends Actionset
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."create", '新規作成'));
-		$urls = static::generate_urls($controller, 'create', $actions, ['create']);
+		$urls = static::generate_urls($controller.DS.'create', $actions, ['create']);
 
 		$retvals = array(
 			'urls'         => $urls,
@@ -34,7 +34,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller, 'view', $actions, ['create']);
+			$urls = static::generate_urls($controller.DS.'view', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -57,7 +57,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_urls($controller, 'edit', $actions, ['edit','create']);
+			$urls = static::generate_urls($controller.DS.'edit', $actions, ['edit','create']);
 		endif;
 
 		$retvals = array(
@@ -81,7 +81,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_urls($controller, 'edit_anyway', $actions, ['edit','create']);
+			$urls = static::generate_urls($controller.DS.'edit_anyway', $actions, ['edit','create']);
 		endif;
 
 		$retvals = array(
@@ -108,7 +108,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_urls($controller, 'edit_deleted', $actions, ['edit','create']);
+			$urls = static::generate_urls($controller.DS.'edit_deleted', $actions, ['edit','create']);
 		endif;
 
 		$retvals = array(
@@ -133,7 +133,7 @@ class Actionset_Base extends Actionset
 	{
 		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id):
 			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
-			$urls = static::generate_urls($controller, 'delete', $actions, ['create']);
+			$urls = static::generate_urls($controller.DS.'delete', $actions, ['create']);
 		endif;
 
 		//retval
@@ -161,7 +161,7 @@ class Actionset_Base extends Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."undelete/".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
-			$urls = static::generate_urls($controller, 'undelete', $actions, ['create']);
+			$urls = static::generate_urls($controller.DS.'undelete', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -188,7 +188,7 @@ class Actionset_Base extends Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
-			$urls = static::generate_urls($controller, 'delete_deleted', $actions, ['create']);
+			$urls = static::generate_urls($controller.DS.'delete_deleted', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -214,7 +214,7 @@ class Actionset_Base extends Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller, 'view_deleted', $actions, ['view','create']);
+			$urls = static::generate_urls($controller.DS.'view_deleted', $actions, ['view','create']);
 		endif;
 
 		$retvals = array(
@@ -237,7 +237,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller, 'view_expired', $actions, ['view','create']);
+			$urls = static::generate_urls($controller.DS.'view_expired', $actions, ['view','create']);
 		endif;
 
 		$retvals = array(
@@ -260,7 +260,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller, 'view_yet', $actions, ['view','create']);
+			$urls = static::generate_urls($controller.DS.'view_yet', $actions, ['view','create']);
 		endif;
 
 		$retvals = array(
@@ -284,7 +284,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller, 'view_invisible', $actions, ['view','create']);
+			$urls = static::generate_urls($controller.DS.'view_invisible', $actions, ['view','create']);
 		endif;
 
 		$retvals = array(

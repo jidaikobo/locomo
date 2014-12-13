@@ -10,7 +10,7 @@ class Actionset_Option_User extends \Actionset_Option
 	public static function actionset_usergroup($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array("/user/usergroup", 'ユーザグループ'));
-		$urls = static::generate_urls($controller, 'create', $actions);
+		$urls = static::generate_urls($controller.DS.'create', $actions);
 
 		// retvals
 		$retvals = array(

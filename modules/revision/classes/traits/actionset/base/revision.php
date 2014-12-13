@@ -9,7 +9,7 @@ trait Traits_Actionset_Base_Revision
 	{
 		if ($id && in_array(\Request::main()->action, array('edit','view'))):
 			$actions = array(array($controller.DS."each_index_revision/".$id, '編集履歴'));
-			$urls = static::generate_urls($controller, 'index_revision', $actions);
+			$urls = static::generate_urls($controller.DS.'index_revision', $actions);
 		endif;
 
 		// overrides - when action in revisions, override "base" realm
@@ -20,7 +20,7 @@ trait Traits_Actionset_Base_Revision
 			$overrides_urls = array(
 				array($controller.DS, $controller::$locomo['admin_home_name']),
 			);
-			$overrides['base'] = static::generate_urls($controller, 'edit', $overrides_urls, [], 'option');
+			$overrides['base'] = static::generate_urls($controller.DS.'edit', $overrides_urls, [], 'option');
 		}
 
 		$retvals = array(

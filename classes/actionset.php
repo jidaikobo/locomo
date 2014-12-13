@@ -154,9 +154,11 @@ class Actionset
 	/**
 	 * generate_urls()
 	 */
-	public static function generate_urls($controller, $action, $actions, $exceptions = array(), $realm = 'base')
+	public static function generate_urls($locomo_path, $actions, $exceptions = array(), $realm = 'base')
 	{
 		static $exists = array();
+
+		list($controller, $action) = explode('/', $locomo_path);
 
 		$urls = array();
 		// check $exceptions
@@ -166,7 +168,7 @@ class Actionset
 		}
 
 		// check auth
-		if ( ! \Auth::instance()->has_access(array($controller, $action)))
+		if ( ! \Auth::instance()->has_access($locomo_path))
 		{
 			return $urls;
 		}

@@ -9,7 +9,7 @@ class Actionset_Index_Workflowadmin extends \Actionset
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_admin", '一覧'));
-		$urls = static::generate_urls($controller, 'index_admin', $actions);
+		$urls = static::generate_urls($controller.DS.'index_admin', $actions);
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -28,7 +28,7 @@ class Actionset_Index_Workflowadmin extends \Actionset
 	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_deleted", 'ごみ箱'));
-		$urls = static::generate_urls($controller, 'index_deleted', $actions);
+		$urls = static::generate_urls($controller.DS.'index_deleted', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,

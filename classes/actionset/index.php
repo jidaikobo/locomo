@@ -8,7 +8,7 @@ class Actionset_Index extends Actionset
 	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index", '公開一覧'));
-		$urls = static::generate_urls($controller, 'index', $actions);
+		$urls = static::generate_urls($controller.DS.'index', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -29,7 +29,7 @@ class Actionset_Index extends Actionset
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_admin", '管理一覧'));
-		$urls = static::generate_urls($controller, 'index_admin', $actions);
+		$urls = static::generate_urls($controller.DS.'index_admin', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -51,7 +51,7 @@ class Actionset_Index extends Actionset
 	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_deleted", 'ごみ箱'));
-		$urls = static::generate_urls($controller, 'index_deleted', $actions);
+		$urls = static::generate_urls($controller.DS.'index_deleted', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -72,7 +72,7 @@ class Actionset_Index extends Actionset
 	public static function actionset_index_yet($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_yet", '予約項目'));
-		$urls = static::generate_urls($controller, 'index_yet', $actions);
+		$urls = static::generate_urls($controller.DS.'index_yet', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -93,7 +93,7 @@ class Actionset_Index extends Actionset
 	public static function actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_expired", '期限切れ項目'));
-		$urls = static::generate_urls($controller, 'index_expired', $actions);
+		$urls = static::generate_urls($controller.DS.'index_expired', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -114,7 +114,7 @@ class Actionset_Index extends Actionset
 	public static function actionset_index_invisible($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_invisible", '不可視項目'));
-		$urls = static::generate_urls($controller, 'index_invisible', $actions);
+		$urls = static::generate_urls($controller.DS.'index_invisible', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -136,7 +136,7 @@ class Actionset_Index extends Actionset
 	public static function _actionset_index_all($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_all", 'すべて'));
-		$urls = static::generate_urls($controller, 'index_all', $actions);
+		$urls = static::generate_urls($controller.DS.'index_all', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
