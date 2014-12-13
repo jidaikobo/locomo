@@ -11,10 +11,13 @@ trait Traits_Controller_Revision
 		$model = $this->model_name;
 		$view = \View::forge(LOCOMOPATH.'modules/revision/views/index_revision.php');
 		$view = \Revision\Model_Revision::find_all_revisions($view, $model);
-		if ( ! $view):
+		if ( ! $view)
+		{
 			\Session::set_flash('error', '表示できませんでした');
-			return \Response::redirect(\Uri::base());
-		endif;
+			$redirect = \Arr::get(static::$locomo, 'admin_home');
+			$redirect = $redirect ? \Uri::create(\Inflector::ctrl_to_dir($redirect)) : $this->base_url;
+			return \Response::redirect($redirect);
+		}
 
 		// assign
 		$view->set_global('title', static::$locomo['nicename'].'履歴一覧');
@@ -29,7 +32,7 @@ trait Traits_Controller_Revision
 	 */
 	public function action_each_index_revision($id = null)
 	{
-		is_null($id) and \Response::redirect(\Uri::base());
+		is_null($id) and \Response::redirect($this->base_url);
 
 		// paginated_find
 		$options['where'][]    = array('model', '=', \Inflector::add_head_backslash($this->model_name));
@@ -91,12 +94,13 @@ trait Traits_Controller_Revision
 
 	public function action_view_revision($revision_id = null)
 	{
-		is_null($revision_id) and \Response::redirect(\Uri::base());
+		is_null($revision_id) and \Response::redirect($this->base_url);
 
-		if ( ! $revisions = \Revision\Model_Revision::find($revision_id)):
+		if ( ! $revisions = \Revision\Model_Revision::find($revision_id))
+		{
 			\Session::set_flash('error', '履歴を取得できませんでした');
-			return \Response::redirect(\Uri::base());
-		endif;
+			return \Response::redirect($this->base_url);
+		}
 
 		// prepare data
 		$model = $this->model_name;

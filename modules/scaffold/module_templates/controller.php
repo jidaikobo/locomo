@@ -21,6 +21,12 @@ class Controller_XXX extends \Locomo\Controller_Crud
 			'option' => '\\XXX\\Actionset_Option_XXX',
 		),
 /*
+		// actionset_methods
+		'actionset_methods' =>array(
+			'base'   => array(
+				'actionset_SOMETHING_EXISTS_IN_THIS_CLASS',
+			),
+		),
 		// actionset
 		'actionset' =>array(
 			'base' => array(

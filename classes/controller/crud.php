@@ -164,73 +164,20 @@ class Controller_Crud extends Controller_Base
 		$content->base_assign($item);
 	}
 
-	public function action_create() {
-		static::action_edit(null);
+	/**
+	 * action_create()
+	 */
+	public function action_create()
+	{
+		parent::edit_core(null);
 	}
 
+	/**
+	 * action_edit()
+	 */
 	public function action_edit($id = null)
 	{
-		$model = $this->model_name ;
-		$content = \View::forge($this->_content_template ?: 'edit');
-
-		if ($id) {
-			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
-
-			if ( ! $obj)
-			{
-				$page = \Request::forge('content/403')->execute();
-				return new \Response($page, 403);
-			}
-			$title = '#' . $id . ' ' . self::$nicename . '編集';
-		} else {
-			$obj = $model::forge();
-			$title = self::$nicename . '新規作成';
-		}
-		$form = $model::form_definition('edit', $obj);
-
-		// save
-		if (\Input::post()) :
-			if (
-				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
-				 \Security::check_token()
-			):
-				//save
-				if ($obj->save(null, true)):
-					//success
-					\Session::set_flash(
-						'success',
-						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
-					);
-					return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
-				else:
-					//save failed
-					\Session::set_flash(
-						'error',
-						sprintf('%1$sの #%2$d を更新できませんでした', self::$nicename, $id)
-					);
-				endif;
-			else:
-				//edit view or validation failed of CSRF suspected
-				if (\Input::method() == 'POST'):
-					$errors = $form->error();
-					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
-					\Session::set_flash('error', $errors);
-				endif;
-			endif;
-		endif;
-
-		//add_actionset - back to index at edit
-		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
-		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
-		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
-
-		//view
-		$this->template->set_global('title', $title);
-		$content->set_global('item', $obj, false);
-		$content->set_global('form', $form, false);
-		$this->template->content = $content;
-		$content->base_assign($obj);
+		parent::edit_core($id);
 	}
 
 	/**
@@ -241,8 +188,8 @@ class Controller_Crud extends Controller_Base
 	public function action_delete($id = null)
 	{
 		$model = $this->model_name ;
-		if ($obj = $model::find($id)) {
-
+		if ($obj = $model::find($id))
+		{
 			try {
 				$obj->delete(null, true);
 			}
@@ -291,7 +238,11 @@ class Controller_Crud extends Controller_Base
 		throw new \HttpNotFoundException;
 	}
 
-	public function action_purge_confirm ($id = null) {
+	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm ($id = null)
+	{
 
 		$model = $this->model_name;
 

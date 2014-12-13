@@ -60,6 +60,7 @@ class Model_Revision extends \Locomo\Model_Base
 
 		//model information
 		$table = \Inflector::tableize($model);
+		if( ! \DBUtil::table_exists($table)) return false;
 		$subject = $model::get_default_field_name('subject');
 		$subject = $table.'.'.$subject;
 		$pk = $table.'.'.$model::get_primary_keys('first');

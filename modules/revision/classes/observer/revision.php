@@ -100,7 +100,16 @@ class Observer_Revision extends \Orm\Observer
 		}
 		else
 		{
-			$vals[] = $posts;
+			if( ! empty($posts)) $vals[] = $posts;
+		}
+
+		// empty vals means this is added by add_testdata()
+		if (empty($vals))
+		{
+			foreach ($properties as $k => $vv)
+			{
+				$vals[1][$k] = $obj->$k;
+			}
 		}
 
 		// args

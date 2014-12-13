@@ -78,6 +78,17 @@ class Actionset
 			}
 		}
 
+		// actionset not by actionset method
+		foreach(\Arr::get($locomo, 'actionset_methods', array()) as $realm => $methods)
+		{
+			$as = array();
+			foreach($methods as $method)
+			{
+				$as[$method] = $controller::$method($controller, $obj, $id);
+			}
+			static::$actions[$controller][$realm] = $as;
+		}
+
 		// actionset not by actionset class
 		foreach(\Arr::get($locomo, 'actionset', array()) as $realm => $v)
 		{
