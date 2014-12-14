@@ -131,7 +131,6 @@ if (\Auth::check()):
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
 			if ( ! \Auth::is_admin()):
 				$html.= "<li><a href=\"".\Uri::base()."user/user/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
-				$html.= "<li><a href=\"".\Uri::base()."user/auth/logout\">ログアウト</a></li>";
 			endif;
 			// usergroup
 			$usergroups = \Auth::get('usergroup');
@@ -142,7 +141,7 @@ if (\Auth::check()):
 				endforeach;
 				$html.= '</ul></li>';
 			endif;
-
+			$html.= "<li><a href=\"".\Uri::base()."user/auth/logout\">ログアウト</a></li>";
 			$html.= '</ul>';
 			$html.= '</div><!-- /.adminbar_user -->';
 
