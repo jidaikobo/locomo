@@ -1,4 +1,84 @@
+//いろいろ未整理なので見ないでください＞＜
+
+
+
+//モーダル
+function modal(id){
+	var el = document.getElementById(id);
+	if(el){
+		$(function(){
+			var el = $('#'+id);
+			var wrapper = document.createElement('div');
+			var closelink = document.createElement('a');
+			wrapper.id = 'modal_wrapper';
+			wrapper.dataset.modalid = id;
+			closelink.id = 'close_modal';
+			closelink.href = 'javascript: void(0);';
+			closelink.innerHTML = '閉じる';
+			closelink.setAttribute('tabindex','0');
+			
+			$(event.target).addClass('modal_parent');
+			el.addClass('on')
+			//画面中央表示のためにbodyのはじめに移動、その前に元に戻す時のため#modal_wrapperを追加 戻す必要ある？appendのほうがよい？
+				.after(wrapper)
+				.prependTo(document.body)
+				.prepend(closelink);
+			$(document).find('#close_modal').focus();
+			$(el).set_center();
+			$(el).set_tabindex();
+		});
+	}
+	event.stopPropagation();
+	return false;
+}
+
 $(function(){
+
+
+$(document).find('#modal_wrapper').each(function(){
+
+
+});
+
+//モーダルの外制御 //キーボードのことを考えてdisabled制御をするならclickのほうの処理は不要？
+$('#modal_wrapper').on('click', function(){
+	return false;
+});
+
+//要素の中央配置（.set_center ウィンドウリサイズ時に追随）
+$.fn.set_center = function(){
+	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
+	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
+	this.css({'left': left, 'top': top});
+}
+$(window).resize(function(){
+	var el = $('.set_center, .modal.on');
+	if(el){
+		el.set_center();
+	}
+});
+
+//tabindex制御
+$.fn.set_tabindex = function(){
+	$(document).find(':focusable').each(function(){
+	if($(this).attr('tabindex')){
+		$(this).data('tabindex',$(this).attr('tabindex'));
+	}
+	$(this).attr('tabindex','-1');
+	});
+	$(this).find(':focusable').removeAttr('tabindex');
+}
+$.fn.reset_tabindex = function(){
+	$(document).find(':focusable').each(function(){
+		if($(this).data('tabindex')){
+			$(this).attr('tabindex', $(this).data('tabindex'))
+		}else{
+			$(this).removeAttr('tabindex');
+		}
+	});
+}
+
+
 //UA
 var userAgent = window.navigator.userAgent;
 
@@ -26,6 +106,113 @@ function set_focus(t){
 	}
 }
 
+
+/*
+//tbl_scrollable
+if( !isNetReader){
+	$(document).find('.tbl_scrollable').each(tbl_scrollable); //theadやtfootがない場合にどうするか。
+}
+
+function tbl_scrollable(){
+	var thead = $(this).find('thead').clone();
+	if(thead.length){
+		var fixed_thead, tbl_wrapper, tbody_wrapper;
+		fixed_thead = document.createElement('table');
+		tbl_wrapper = document.createElement('div');
+		tbody_wrapper = document.createElement('div');
+
+		tbl_wrapper.className = 'jslcm_tbl_wrapper';
+		tbody_wrapper.className = 'jslcm_tbody_wrapper';
+		fixed_thead.className = $(this).attr('class')+' jslcm_fixedheader';
+		fixed_thead.setAttribute = 'aria-hidden','true';
+		$(fixed_thead).removeClass('tbl_scrollable').append(thead);
+		$(this).addClass('jslcm_tbl_scrollable').wrap(tbl_wrapper).before(fixed_thead).wrap(tbody_wrapper);
+		adjust_columns(this,fixed_thead);//このthisは.tbl_scrollable
+		
+		//その他、下に隠れるtheadのソートリンクを有効にしても大丈夫かどうか。
+	}
+}
+
+function adjust_columns(tbl, fixed_thead, ws){
+	var cols, len, fixed_thead_cols, w;
+		cols = $(tbl).children('thead').find('th, td');
+		len = cols.length;
+		fixed_thead_cols = $(fixed_thead).children().children().children('th, td'); //find的な取り方はできないか
+		for(i=0; i<len-1; i++){
+		if(ws){
+			w = ws[i];
+		}else{
+			w = $(cols[i]).width();
+		}
+		$(cols[i]).width(w);//あわせるために必要？
+		$(fixed_thead_cols[i]).width(w);
+	}
+}
+
+var api = $('.jslcm_tbl_scrollable thead th, .jslcm_tbl_scrollable thead td').exResize({
+	//api オブジェクトの返却を指定
+	api : true,
+	callback :function(){
+		var fixed_header, tbl, ws, i;
+		tbl = $(this).closest('table');
+		var index = $(document).find('.jslcm_tbl_scrollable').index(tbl);
+		fixed_header = $(document).find('.jslcm_fixedheader').eq(index);
+		ws = new Array();
+		i = 0;
+		api.each(function(){
+			ws[i] = this.getSize().width;
+			i++;
+		});
+		adjust_columns(tbl, fixed_header, ws);
+	}
+});
+/*
+$('table.scrollable thead').find('th,td').exResize(function(api){
+var size = api.getSize();
+console.log(size)
+}
+
+/*
+var api = $('table.scrollable thead th,table.scrollable thead td').exResize({
+	//api オブジェクトの返却を指定
+	api : true,
+	callback :function(){
+		var ws = new Array();
+		var i = 0;
+		api.each(function(){
+			ws[i] = this.getSize().width;
+			i++;
+		});
+		adjust_columns(ws);
+	}
+});
+/*
+$('table.scrollable thead').find('th,td').exResize(function(api){
+var size = api.getSize();
+console.log(size)
+//
+});
+
+
+function adjust_columns(col_ws){
+	var cols = $(table).children('thead').find('th,td');
+	var length = cols.length;
+	var fixedheader_cols = $('body').find('.fixedheader thead th,.fixedheader thead td');
+
+	for( i=0; i < length-1; i++){
+		if(col_ws){
+			var width = $(cols[i]).width();
+		}else{
+			var width = col_ws[i];
+		}
+		$(fixedheader_cols[i]).width(width);
+//		$(cols[i]).width(width);
+//これがあれば、いちどexResizeを動かすと、延々とリサイズされ続けてしまう
+	}
+
+*/
+
+
 //Focusまわりのテスト（NetReaderでFocus移動を検知したい）
 //setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
 
@@ -50,11 +237,11 @@ if($('#adminbar')[0]){
 //http://www.webdesignleaves.com/wp/jquery/573/
 var isHtmlScrollable = (function(){
 	var html = $('html'), top = html.scrollTop();
-	var elm = $('<div/>').height(10000).prependTo('body');
+	var el = $('<div/>').height(10000).prependTo('body');
 	html.scrollTop(10000);
 	var rs = !!html.scrollTop();
 	html.scrollTop(top);
-	elm.remove();
+	el.remove();
 	return rs;
 })();
 //スクロール
@@ -87,33 +274,34 @@ $(document).click(function(e){
 	}
 	var t = e.target;
 //リストの開け閉め
-	close_modal();
+	close_semimodal(t);
 } );
 
 
 //モーダル
-function close_modal(){
-	var t = $(document).find('.modal.on');
-//	console.log($(t).text());
+function close_modal(focus,t){
+	//modalを閉じる機能、で、semimodalと併用できるようにパラメータを考える
+	//現在のtabbableを取るなど。（ということはjqueryUIを使わずにtabbableを取得できる？focusable中のtabindexが-でないもの、で行ける？）
+	focus.focus();
+	t.removeClass('on');
+	$(document).reset_tabindex();
+}
+
+function close_semimodal(el){
+	var t = $(document).find('.semimodal.on');
 	if($(t)[0]){
 		var index = $(document).find('.hidden_item').index(t);
 		var trigger = $('.toggle_item').eq(index);
-		trigger.removeClass('on'); //torigger?のonを外す
-		//focusをあてる対象は、closemodalが自分自身か、外かで異なる
-		trigger.focus();
-		$('.modal.on').removeClass('on'); //modalを閉じる
-		$(document).find(':focusable').each(function(){ //tabindexの値をなおす
-			if($(this).data('tabindex')){
-				$(this).attr('tabindex', $(this).data('tabindex'))
-			}else{
-				$(this).removeAttr('tabindex');
-			}
-		});
+		var focus = ($(el).is(':input')) ? el : trigger;
+		trigger.removeClass('on');
+		close_modal(focus,t);
 	}
 	return false;
 }
-
-$(document).on('click', '.modal.on', function(e){
+$(document).on('click', '#close_modal' ,function(){
+	close_modal($('.modal_parent'),$('.modal_on'));
+});
+$(document).on('click', '.semimodal.on, modal.on', function(e){
 	if(!e){
 		e = event;
 	}
@@ -127,9 +315,9 @@ $(document).on('click', '.toggle_item', function(e){
 	}
 	var index = $('.toggle_item').index(this);
 	var t = $('.hidden_item').eq(index);		//切り替える相手
-	if($('.modal.on')[0] ){	//モーダルが開いている場合モーダルを消す
-		var itself = t.is('.modal.on');		//開いているのはそのモーダルか
-		close_modal();
+	if($('.semimodal.on')[0] ){	//モーダルが開いている場合モーダルを消す
+		var itself = t.is('.semimodal.on');		//開いているのはそのモーダルか
+		close_semimodal();
 		if(itself){	//モーダルが自分ならそこでおわり
 			return false;
 		}
@@ -137,30 +325,17 @@ $(document).on('click', '.toggle_item', function(e){
 	$(t).toggleClass('on');
 	$(this).toggleClass('on').focus();
 
-	if(t.is('.modal.on')){ //ここまででmodalが開いている場合、tabindexの制御を行う
-		$(document).find(':focusable').each(function(){
-			if($(this).attr('tabindex')){
-				$(this).data('tabindex',$(this).attr('tabindex'));	//もとのtabindexをdataに格納
-			}
-			$(this).attr('tabindex','-1');
-		});
-		
+	if(t.is('.semimodal.on')){ //ここまででsemimodalが開いている場合、tabindexの制御を行う
+		t.set_tabindex();
 		//targetの中とtoggleの要素だけtabindexを元に。//data('tabindex')を見る？ tabindex=0にする？
 		$(this).removeAttr('tabindex');
-		t.find(':focusable').removeAttr('tabindex');
 	}
 	e.stopPropagation();
 	return false;
 });
 
-//キーボード操作の制御
+//キーボード操作の制御 prevent
 //NetReaderでうまく取得できないので、なにか考える
-$(document).on('keypress',function(e){
-	if(!e){
-		e = event;
-	}
-//alert(e);
-});
 
 $(document).on('keydown',function(e){
 	if(!e){
@@ -168,12 +343,16 @@ $(document).on('keydown',function(e){
 	}
 	var t = e.target;
 	var k = e.which;
+	var modal = $(document).find('.modal.on, .semimodal.on')[0];
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン依存する？)
-	//モーダル周り
-	if($(document).find('.modal.on')[0]){
+	//モーダル周り モーダルの外に出た時のことを考えるとdocument全体のキーイベントを見るのがいいのか、それとも.modal.onや.semimodal.onだけを相手にするのがいいのか
+	if(modal){
 		var tabbable = $(document).find(':tabbable');
-		var index = null;
+		var first    = tabbable.first()[0];
+		var last     = tabbable.last()[0];
+		var index    = null;
+		
 		switch( e.keyCode ){
 		case $.ui.keyCode.LEFT:
 			return false;
@@ -183,7 +362,7 @@ $(document).on('keydown',function(e){
 			break;
 		case $.ui.keyCode.DOWN:
 			var index = tabbable.index($(':focus'))+1;
-			if( t == tabbable.last()[0]){
+			if( t === last){
 				var index = 0;
 			}
 			break;
@@ -191,14 +370,14 @@ $(document).on('keydown',function(e){
 			var index = tabbable.index($(':focus'))-1;
 			break;
 		case $.ui.keyCode.TAB:
-			if( t == tabbable.last()[0] && ! e.shiftKey){
+			if( t === last && ! e.shiftKey){
 				var index = 0;
-			}else if( t == tabbable.first()[0] && e.shiftKey){
+			}else if( t === first && e.shiftKey){
 				var index = -1;
 			}
 			break;
 		case $.ui.keyCode.ESCAPE:
-			close_modal();
+			close_semimodal();
 			break;
 		}
 			if(index!==null){
@@ -206,42 +385,7 @@ $(document).on('keydown',function(e){
 			return false;
 		}
 	}
-	/*
-	//モーダル周り
-	if($(document).find('.modal.on')[0]){
-		var tabbable = $(document).find(':tabbable');
-		var index = null;
-		if((k == 37 || k == 39)&& !isNetReader ){
-			$(t).text('左右');
-		} 
-		if(k == 37 || k == 39 ) return false;//左右キーは止めてしまう
-		if(k == 40){ //↓
-			var index = tabbable.index($(':focus'))+1;
-			if( t == tabbable.last()[0]){
-				var index = 0;
-			}
-		}else
-		if(k == 38){ //↑
-			var index = tabbable.index($(':focus'))-1;
-		}else
-		if(k == 9){ //Tab
-			if( t == tabbable.last()[0] && ! e.shiftKey){
-				var index = 0;
-			}else if( t == tabbable.first()[0] && e.shiftKey){
-				var index = -1;
-			}
-		}
-		if(index!==null){
-			tabbable.eq(index).focus();
-			return false;
-		}
-		if(k == 27){
-			close_modal();
-		}
-	}
-*/
 });
-
 
 //確認ウィンドウ
 $('.confirm').click(function(){

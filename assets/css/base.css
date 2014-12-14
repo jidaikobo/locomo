@@ -1164,6 +1164,12 @@ a.edit_link span span {
 .forsp {
 	display: none;
 }
+
+.nowrap,
+.nobr {
+	white-space: nowrap;
+}
+
 .radius {
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
