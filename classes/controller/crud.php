@@ -28,6 +28,9 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_admin()
 	{
+		// Profiler
+		\Profiler::mark(get_called_class().'::action_index_admin() - Called');
+
 		$model = $this->model_name;
 
 		$this->_content_template = $this->_content_template ?: 'index_admin';

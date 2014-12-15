@@ -32,6 +32,9 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	 */
 	public function before()
 	{
+		// Profiler
+		\Profiler::mark('Locomo\\Controller_Base::before() - Called');
+
 		// parent
 		parent::before();
 
@@ -41,8 +44,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 			$this->_template = 'widget';
 		}
 
-		// show profile to root only
-		\Fuel::$profiling = \Auth::get('id') == -2 ?: false ;
+		// show profile to user_id == 1 only
+		\Fuel::$profiling = \Auth::get('id') == 1 ?: false ;
 
 		// template path
 		$request = \Request::active();
@@ -52,7 +55,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		$this->base_url = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
 
 		// load config and set model_name
-		$controller = substr(ucfirst(\Inflector::denamespace(\Request::main()->controller)), 11);
+		$controller = substr(ucfirst(\Inflector::denamespace(\Request::active()->controller)), 11);
 		$current_module = \Request::main()->module;
 		if (\Request::is_hmvc())
 		{
@@ -88,7 +91,17 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 	*/
 	public function router($method, $params)
 	{
-		$called_class = get_called_class();
+		// Profiler
+		\Profiler::mark('Locomo\\Controller_Base::router() - Called');
+
+		// fetch_view() can be executed without acl
+		if (
+			\Request::main()->controller == 'Content\\Controller_Content' &&
+			$method == 'fetch_view'
+		)
+		{
+			return parent::router($method, $params);
+		}
 
 		// auth
 		if ( ! static::auth())
@@ -106,6 +119,7 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 		}
 
 		// action not exists - index
+		$called_class = get_called_class();
 		$is_allow = true;
 		if (
 			! method_exists($called_class, 'action_index') &&
