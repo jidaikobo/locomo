@@ -3,7 +3,6 @@
 if (\Auth::check()):
 	$html = '';
 	$html.= '<nav id="adminbar" class="clearfix">';
-//		$html.= '<a href="#anchor_adminbar" class="skip show_if_focus" tabindex="1">ツールバーに移動</a>'; //inc_header,inc_admin_headerに移動。
 		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="0">ここからツールバーです</a></h2>';
 
 	// .adminbar_bottom
@@ -58,7 +57,7 @@ if (\Auth::check()):
 			endif;
 			
 				// option menu
-				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'modal hidden_item boxshadow')) : false ;
+				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'semimodal hidden_item boxshadow')) : false ;
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"></span></a>";
@@ -88,7 +87,7 @@ if (\Auth::check()):
 				$html.= '<div class="admin_menu">';
 				$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー</span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
-				$html.= '<ul class="modal hidden_item boxshadow">';
+				$html.= '<ul class="semimodal hidden_item boxshadow">';
 				$html.= $controller_menu;
 				$html.= '</ul>';
 				$html.= '</div><!-- /.admin_menu -->';
@@ -108,7 +107,7 @@ if (\Auth::check()):
 			if (\Auth::is_admin()):
 				$html.= '<div class="admin_option">';
 				$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_option.png\" alt=\"管理者設定\"></span></a>";
-				$html.= '<ul class="modal hidden_item boxshadow">';
+				$html.= '<ul class="semimodal menulist hidden_item">';
 					foreach($locomo['controllers'] as $k => $v):
 						if ($v['is_for_admin'] && $v['show_at_menu'])
 							{
@@ -127,7 +126,7 @@ if (\Auth::check()):
 			// user menu
 			$html.= '<div class="adminbar_user">';
 			$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'</span></a>';
-			$html.= '<ul class="modal hidden_item boxshadow">';
+			$html.= '<ul class="semimodal menulist hidden_item">';
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
 			if ( ! \Auth::is_admin()):
 				$html.= "<li><a href=\"".\Uri::base()."user/user/view/".\Auth::get('id')."\">ユーザ情報</a></li>";

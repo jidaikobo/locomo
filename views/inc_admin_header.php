@@ -27,6 +27,9 @@
 	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 	<![endif]-->
 
+	<!-- favicon -->
+	<!-- link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>" -->
+	
 </head>
 <body class="<?php echo $body_class ;?>">
 <?php 
@@ -57,7 +60,6 @@ endif;
 endforeach;
 echo $i!=0 ? '</ul>': '' ;
 ?>
-			<?php // echo implode('</p><p>', e((array) Session::get_flash('error'))); ?>
 		</div>
 <?php endif; ?>
 		<div class="contents">
