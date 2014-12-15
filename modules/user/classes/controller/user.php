@@ -17,7 +17,7 @@ class Controller_User extends \Locomo\Controller_Crud
 			'option' => '\\User\\Actionset_Option_User',
 		),
 		'widgets' =>array(
-			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_admin?orders%5Bid%5D=desc'),
+			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
 			array('name' => '新規ユーザ登録', 'uri' => '\\User\\Controller_User/create'),
 		),
 	);
