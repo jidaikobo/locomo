@@ -23,9 +23,9 @@ class View extends \Fuel\Core\View
 
 		// body_class
 		$class_arr = array(
-			'lcm_module_'.$module,
-			'lcm_ctrl_'.\Inflector::ctrl_to_safestr($controller),
-			'lcm_action_'.$action
+			'lcm_module_'.strtolower($module),
+			'lcm_ctrl_'.strtolower(\Inflector::ctrl_to_safestr($controller)),
+			'lcm_action_'.strtolower($action)
 		);
 		if ($action == 'login' && \Config::get('no_home'))
 		{
