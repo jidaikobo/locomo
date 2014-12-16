@@ -10,7 +10,7 @@ class Controller_User extends \Locomo\Controller_Crud
 		'admin_home' => '\\User\\Controller_User/index_admin',
 		'admin_home_name' => '管理一覧',
 		'nicename' => 'ユーザ',
-		'help'     => 'packages/locomo/modules/user/help/user.html',//app/../からのパス
+		'help'     => 'packages/locomo/modules/user/help/user.php',//app/../からのパス
 		'actionset_classes' =>array(
 			'base'   => '\\User\\Actionset_Base_User',
 			'index'  => '\\User\\Actionset_Index_User',

@@ -318,7 +318,8 @@ class Controller_Base extends \Fuel\Core\Controller_Rest
 						'success',
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
-					$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
+					$action = \Request::main()->action == 'create' ? 'edit' : \Request::main()->action ;
+					$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.$action);
 					$redirect = $redirect ?: $locomo_path.DS.$obj->id;
 					return \Response::redirect(\Uri::create($redirect));
 				}

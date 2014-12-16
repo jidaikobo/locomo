@@ -5,7 +5,7 @@ class Model_Help extends \Locomo\Model_Base
 //	use \Workflow\Traits_Model_Workflow;
 
 	protected static $_table_name = 'helps';
-	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
+	public static $_subject_field_name = 'title';
 
 	protected static $_properties = array(
 		'id',
