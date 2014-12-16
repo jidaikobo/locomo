@@ -28,6 +28,9 @@ class Controller_Crud extends Controller_Base
 	 */
 	public function action_index_admin()
 	{
+		// Profiler
+		\Profiler::mark(get_called_class().'::action_index_admin() - Called');
+
 		$model = $this->model_name;
 
 		$this->_content_template = $this->_content_template ?: 'index_admin';
@@ -37,9 +40,26 @@ class Controller_Crud extends Controller_Base
 		}
 		$content = \View::forge($this->_content_template);
 
-		//$model::paginated_find_use_get_query(false);
-		$condition = $model::condition();
-		$options = $condition;
+		// $model::paginated_find_use_get_query(false);
+
+		// hmvc gives args by \Request::forge()->execute($args)
+		if ($args = func_get_args())
+		{
+			if (is_array($args[0]))
+			{
+				$options = $args;
+			}
+			else
+			{
+				parse_str($args[0], $q);
+				$options = $q;
+			}
+		}
+		else
+		{
+			$condition = $model::condition();
+			$options = $condition;
+		}
 		$model::$_conditions = array();
 
 		$content->set('items',  $model::paginated_find($options, $this->pagination_config));

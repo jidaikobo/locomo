@@ -8,6 +8,9 @@ class View extends \Fuel\Core\View
 	 */
 	public function base_assign($obj = null)
 	{
+		// Profiler
+		\Profiler::mark('Locomo\\View::base_assign() - Called');
+
 		// module and controller
 		$module     = \Inflector::remove_head_backslash(\Request::main()->module);
 		$controller = \Inflector::add_head_backslash(\Request::main()->controller);
@@ -23,9 +26,9 @@ class View extends \Fuel\Core\View
 
 		// body_class
 		$class_arr = array(
-			'lcm_module_'.$module,
-			'lcm_ctrl_'.\Inflector::ctrl_to_safestr($controller),
-			'lcm_action_'.$action
+			'lcm_module_'.strtolower($module),
+			'lcm_ctrl_'.strtolower(\Inflector::ctrl_to_safestr($controller)),
+			'lcm_action_'.strtolower($action)
 		);
 		if ($action == 'login' && \Config::get('no_home'))
 		{
@@ -74,6 +77,7 @@ class View extends \Fuel\Core\View
 		}
 
 		// get accessible controller
+		\Profiler::mark('Locomo\\View::base_assign() - get accessible controller');
 		$all_ctrls = \Util::get_mod_or_ctrl();
 		foreach($all_ctrls as $k => $v)
 		{
@@ -87,8 +91,12 @@ class View extends \Fuel\Core\View
 		$this->set_global('locomo', $locomo);
 
 		// actionset
+		\Profiler::mark('Locomo\\View::base_assign() - actionset');
 		$default = ['index' => [], 'base' => [], 'ctrl' => []];
 		$actionset = \Actionset::get_actionset($controller, $obj, $default);
 		$this->set_global('actionset', $actionset, false);
+
+		// Profiler
+		\Profiler::mark('Locomo\\View::base_assign() - done');
 	}
 }
