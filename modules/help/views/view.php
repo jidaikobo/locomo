@@ -9,13 +9,6 @@
 </tr>
 
 <?php endif; ?>
-<?php if ($item->mod_or_ctrl): ?>
-<tr>
-	<th>コントローラ</th>
-	<td><?php echo $item->mod_or_ctrl; ?></td>
-</tr>
-
-<?php endif; ?>
 <?php if ($item->body): ?>
 <tr>
 	<th>本文</th>
@@ -35,14 +28,6 @@
 	<th>削除日</th>
 	<td><?php echo $item->deleted_at; ?></td>
 </tr>
-
-<?php endif; ?>
-<?php if ($item->seq): ?>
-<tr>
-	<th></th>
-	<td><?php echo $item->seq; ?></td>
-</tr>
-
 <?php endif; ?>
 
 </table>

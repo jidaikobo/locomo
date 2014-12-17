@@ -137,7 +137,6 @@ class Controller_Admin extends \Locomo\Controller_Crud
 
 			// querystring 
 			$qstr = \Arr::get($acts, 1);
-			parse_str($qstr, $q);
 
 			// method exists?
 			$ctrl_act = \Locomo\Auth_Acl_Locomoacl::_parse_conditions($acts[0]);
@@ -149,10 +148,9 @@ class Controller_Admin extends \Locomo\Controller_Crud
 			if ( ! method_exists($ctrl_act['controller'], 'action_'.$ctrl_act['action'])) continue;
 
 			// hmvc
-			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute($q);
+			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute(array($qstr));
 			$actions[$k]['size'] = $obj->size ?: 1 ;// default small
 			$actions[$k]['title'] = array_search($act, $widget_names);
-
 		}
 
 		// assign

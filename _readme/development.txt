@@ -251,3 +251,26 @@ scaffoldを使った場合はコメントアウトされています。
 +-------------------------------quote end+
 
 バルク編集に関しては、\Admin\Controller_Admin::action_edit()にもちょっと違ったサンプルがあります。こちらはtabular formを使ったサンプルで、\Admin\Model_Adminや\Admin\Model_Userなど、専用のリレーションモデルを対象にした事例です。
+
+// dashboard widget
+
+コントローラクラスの$locomoにwidgetsを宣言すると、ダッシュボードウィジェットの候補にできます。以下はuserモジュールの例です。
+
++quote start-----------------------------+
+		'widgets' =>array(
+			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
+			array('name' => '新規ユーザ登録', 'uri' => '\\User\\Controller_User/create'),
+		),
++-------------------------------quote end+
+
+原則、ウィジェット件名をキーとして、locomo-pathと引数をクエリストリングスの形式で渡します。一点注意が必要なのは、index_adminに渡すようなクエリストリングスでなくfind()に渡すような形式で渡す必要がある、ということです。
+
+この例では、
+
+order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc
+
+ですが、これは以下のように生成した文字列です。
+
+$q = \Uri::build_query_string(array('order_by' => array(array('id', 'desc')))) ;
+
+ウィジェットもaclの対象です。コントローラがウィジェットを宣言していても、アクセス権がなければ、そのユーザのウィジェットの候補にも挙がりません。

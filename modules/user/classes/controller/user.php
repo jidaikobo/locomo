@@ -10,14 +10,14 @@ class Controller_User extends \Locomo\Controller_Crud
 		'admin_home' => '\\User\\Controller_User/index_admin',
 		'admin_home_name' => '管理一覧',
 		'nicename' => 'ユーザ',
-		'help'     => 'packages/locomo/modules/user/help/user.html',//app/../からのパス
+		'help'     => 'packages/locomo/modules/user/help/user.php',//app/../からのパス
 		'actionset_classes' =>array(
 			'base'   => '\\User\\Actionset_Base_User',
 			'index'  => '\\User\\Actionset_Index_User',
 			'option' => '\\User\\Actionset_Option_User',
 		),
 		'widgets' =>array(
-			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_admin?orders%5Bid%5D=desc'),
+			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
 			array('name' => '新規ユーザ登録', 'uri' => '\\User\\Controller_User/create'),
 		),
 	);

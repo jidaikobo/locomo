@@ -2,7 +2,7 @@
 namespace Content;
 class Controller_Content extends \Locomo\Controller_Base
 {
-	//locomo
+	// locomo
 	public static $locomo = array(
 		'show_at_menu' => false,
 		'order_at_menu' => 1000,
@@ -26,12 +26,12 @@ class Controller_Content extends \Locomo\Controller_Base
 	*/
 	public function action_home()
 	{
-		//このアクションはトップページ専用として、content/homeへのアクセスはできないようにする。
+		// このアクションはトップページ専用として、content/homeへのアクセスはできないようにする。
 		if (substr(\Uri::string(),0,12) == 'content/home'):
 			return \Response::redirect('/', 'location', 404);
 		endif;
 
-		//描画
+		// 描画
 		$view = \View::forge('home');
 		$view->set_global('title', \Config::get('slogan'));
 		$view->base_assign();
@@ -68,7 +68,7 @@ class Controller_Content extends \Locomo\Controller_Base
 	*/
 	public function action_help_index()
 	{
-		//描画
+		// 描画
 		$view = \View::forge('home');
 		$view->set_global('title', \Config::get('site_title'));
 		$view->base_assign();
@@ -80,7 +80,7 @@ class Controller_Content extends \Locomo\Controller_Base
 	*/
 	public function action_help($filename)
 	{
-		//描画
+		// 描画
 		$view = \View::forge('home');
 		$view->set_global('title', \Config::get('site_title'));
 		$view->base_assign();
@@ -95,14 +95,16 @@ class Controller_Content extends \Locomo\Controller_Base
 	public function action_fetch_view()
 	{
 		// echo 0 ; die(0);
-		//ヘンなアクセスを追い返す
+		// ヘンなアクセスを追い返す
 		$ext = \Input::extension();
 		$args = func_get_args();
 		$path = join('/', $args).'.'.$ext;
 		if (empty($path) || empty($ext))
+		{
 			return \Response::redirect('/', 'location', 404);
+		}
 
-		//存在確認
+		// 存在確認
 		$filename = '' ;
 		$locomo_assets = LOCOMOPATH."assets/{$path}";
 		$app_assets = APPPATH."locomo/assets/{$path}";
@@ -116,16 +118,16 @@ class Controller_Content extends \Locomo\Controller_Base
 			return new \Response($page, 404);
 		}
 
-		//拡張子を確認
+		// 拡張子を確認
 		$config = \Config::load('upload');
 		$ext = strtolower($ext);
 		if ( ! isset($config['mime_whitelist'][$ext])) return \Response::forge();
 
-		//profilerをoffに
+		// profilerをoffに
 		\Fuel\Core\Fuel::$profiling = false;
 
-		//描画
-		$headers = array( 'Content-type' => $config['mime_whitelist'][$ext] );
+		// 描画
+		$headers = array('Content-type' => $config['mime_whitelist'][$ext]);
 		$this->template->set_global('title', '');
 		return \Response::forge(file_get_contents($filename), 200, $headers);
 	}
