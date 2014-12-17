@@ -254,7 +254,7 @@ class Fieldset extends \Fuel\Core\Fieldset
 				$fieldset->add_model($model)->set_fieldset_tag(false);
 			}
 			$fieldset->set_config(array(
-				'form_template' => \Config::get('form.tabular_row_template_blank', "<tr class=\"{$this->tabular_form_relation}{$i}\">{fields}</tr>"),
+				'form_template' => \Config::get('form.tabular_row_template', \Config::get('form.tabular_row_template_blank', "<tr class=\"{$this->tabular_form_relation}{$i}\">{fields}</tr>")),
 				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
 			));
 			$fieldset->add($this->tabular_form_relation.'_new['.$i.'][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
@@ -313,7 +313,7 @@ class Fieldset extends \Fuel\Core\Fieldset
 			if ($f instanceof \Fieldset_Field) {
 
 				if (is_array($build_field) and isset($build_field[$this->name])) {
-					var_dump($this->name);
+					// var_dump($this->name);
 						if (in_array($f->name, $build_field[$this->name])) {
 							if (!$f->type or $f->type == 'hidden') continue;
 							!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($build_field, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()

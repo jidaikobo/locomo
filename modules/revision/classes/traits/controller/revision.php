@@ -38,7 +38,8 @@ trait Traits_Controller_Revision
 		$options['where'][]    = array('model', '=', \Inflector::add_head_backslash($this->model_name));
 		$options['where'][]    = array('pk_id', '=', $id);
 		$options['order_by'][] = array('created_at', 'DESC');
-		$items = \Revision\Model_Revision::paginated_find($options, array('uri_segment' => 5,));
+		\Pagination::set_config('uri_segment', 5);
+		$items = \Revision\Model_Revision::paginated_find($options);
 		if ( ! $items):
 			\Session::set_flash('error', '履歴を取得できませんでした');
 			$ret = method_exists(__CLASS__, 'action_view') ? $this->base_url.'view/'.$id : $this->base_url;

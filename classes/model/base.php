@@ -242,10 +242,13 @@ class Model_Base extends \Orm\Model_Soft
 	 * @param   array     $input_post
 	 * @param   Fieldset  $form (for validation)
 	 * @param   bool      $repopulate populate input value
+	 * @param   bool      $repopulate populate input value
+	 * @param   bool      $repopulate populate input value
 	 * @return  bool      whether validation succeeded
+	 *
 	 * @important   \Response::redirect() after save() or Regenerate Fieldset instance
 	 */
-	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true)
+	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $delete_else = false)
 	{
 		if (!$input_post) $input_post = \Input::post();
 		$validated = array();
@@ -299,7 +302,9 @@ class Model_Base extends \Orm\Model_Soft
 
 				// hm 既存列
 				foreach ($this[$k] as $kk => $vv) {
-					if (isset($input_post[$k][$kk]['_delete'])/* or !isset($input_post[$k][$kk])*/){ // _deleted
+					if ($delete_else and !isset($input_post[$k][$kk])) { // $delete_else = true なら セットされていないものは全て消去
+						unset($this->{$k}[$kk]);
+					} elseif (isset($input_post[$k][$kk]['_delete'])){ // _deleted
 						unset($this->{$k}[$kk]);
 					} elseif (!isset($input_post[$k][$kk])) {
 						if (static::$_unset_tabular_row_delete) unset($this->{$k}[$kk]);
@@ -385,16 +390,8 @@ class Model_Base extends \Orm\Model_Soft
 	 *
 	 * @return Model finded
 	 */
-	public static function paginated_find($options = array(), $pagination_config = array())
+	public static function paginated_find($options = array(), $use_get_query = true)
 	{
-
-		$use_get_query = static::paginated_find_use_get_query();
-
-		//search segment
-		$suspicious = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
-		$pagination_config['uri_segment'] = $suspicious ?: $pagination_config['uri_segment'] ;
-
-		\Pagination::set_config($pagination_config);
 
 		if ($use_get_query) {
 			$input_get = \Input::get();
@@ -438,9 +435,6 @@ class Model_Base extends \Orm\Model_Soft
 
 		\Pagination::set('total_items', $count);
 
-		$segment = \Pagination::get('uri_segment') - 1;
-		$uri = '/'.join('/', array_slice(\Uri::segments(), 0, $segment)).'/';
-		\Pagination::set_config('pagination_url', \Uri::create($uri, array(), $input_get));
 		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
 		$options['rows_limit'] = \Pagination::get('per_page');
 		$options['rows_offset'] = \Pagination::get('offset');
@@ -456,15 +450,6 @@ class Model_Base extends \Orm\Model_Soft
 		return static::find('all', $options);
 	}
 
-	protected static $_use_get_query = true;
-
-	public static function paginated_find_use_get_query($bool = null) {
-		if (is_null($bool)) {
-			return static::$_use_get_query;
-		} else {
-			static::$_use_get_query = $bool;
-		}
-	}
 
 	public static function form_definition($factory = 'form', $obj = null) {
 

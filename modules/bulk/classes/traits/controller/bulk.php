@@ -15,9 +15,8 @@ trait Traits_Controller_Bulk
 		{
 			$options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
 			$pagination_config['per_page'] = count(\Input::get('ids')) * 2;
-			$model::paginated_find_use_get_query(false);
 			$model::disable_filter();
-			$objects = $model::paginated_find($options, $pagination_config);
+			$objects = $model::paginated_find($options, false);
 		// edit create 分岐
 		}
 		// create
@@ -31,7 +30,7 @@ trait Traits_Controller_Bulk
 		// edit
 		else
 		{
-			$objects = $model::paginated_find($options, $pagination_config);
+			$objects = $model::paginated_find($options);
 		}
 
 		if (!$objects)

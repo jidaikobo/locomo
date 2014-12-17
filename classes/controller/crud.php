@@ -4,20 +4,17 @@ class Controller_Crud extends Controller_Base
 {
 	public $_content_template = null;
 
-	/**
-	 * @var array default setting of pagination
-	 */
-	protected $pagination_config = array(
-		'uri_segment' => 3,
-		'num_links'   => 5,
-		'per_page'    => 20,
-		'template' => array(
-			'wrapper_start' => '<div class="pagination">',
-			'wrapper_end'   => '</div>',
-			'active_start'  => '<span class="current">',
-			'active_end'    => '</span>',
-		),
-	);
+
+	public function before()
+	{
+		parent::before();
+
+		if (is_null($this->pagination_config)) {
+			$suspicious_segment = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
+			\Pagination::set_config('uri_segment', $suspicious_segment);
+		}
+
+	}
 
 	/**
 	 * action_index_admin()
@@ -37,12 +34,11 @@ class Controller_Crud extends Controller_Base
 		}
 		$content = \View::forge($this->_content_template);
 
-		//$model::paginated_find_use_get_query(false);
 		$condition = $model::condition();
 		$options = $condition;
 		$model::$_conditions = array();
 
-		$content->set('items',  $model::paginated_find($options, $this->pagination_config));
+		$content->set('items',  $model::paginated_find($options));
 
 		$content->base_assign();
 		$this->template->set_global('title', static::$nicename.'管理一覧');
