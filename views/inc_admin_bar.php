@@ -100,7 +100,7 @@ if (\Auth::check()):
 
 			// help
 			$html.= '<div class="admin_help">';
-				$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[action]='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path'])).'" title="ヘルプ"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+			$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[action]='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path'])).'" title="ヘルプ" id="lcm_help" data-uri="'.\Uri::create('help/help/index_admin').'?searches[action]='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path'])).'"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 
 			// admin option menu
@@ -153,3 +153,5 @@ if (\Auth::check()):
 endif;
 // is_user?
 ?>
+
+<div id="help_txt" style="position: absolute;z-index:10000;top:0;border:1px #333 solid;height:200px;width:200px;overflow: auto;background-color: #fff;display: none;"></div>

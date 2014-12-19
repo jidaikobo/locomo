@@ -1,6 +1,6 @@
 <?php
 namespace Help;
-class Controller_Help extends \Locomo\Controller_Crud
+class Controller_Help extends \Locomo\Controller_Base
 {
 	// locomo
 	public static $locomo = array(
@@ -17,10 +17,33 @@ class Controller_Help extends \Locomo\Controller_Crud
 	);
 
 	// trait
-	use \Locomo\Controller_Traits_Testdata;
-//	use \Option\Traits_Controller_Option;
-//	use \Workflow\Traits_Controller_Workflow;
 	use \Revision\Traits_Controller_Revision;
+
+	/*
+	 * before()
+	 */
+	public function before()
+	{
+		parent::before();
+		// revision use this
+		$this->model_name = '\\Help\\Model_Help';
+	}
+
+	/*
+	 * 新規作成
+	 */
+	public function action_create($id = NULL)
+	{
+		self::action_edit();
+	}
+
+	/*
+	 * 編集
+	 */
+	public function action_edit($id = NULL)
+	{
+		parent::edit_core($id);
+	}
 
 	/**
 	 * action_index_admin()
@@ -35,6 +58,9 @@ $h->up();
 		// set default help
 		$locomo_path_raw = \Input::get('searches.action');
 		$locomo_path = \Inflector::safestr_to_ctrl($locomo_path_raw);
+		$help_path = '';
+		$nicename = '';
+		$action = '';
 		if (strpos($locomo_path, '/') !== false)
 		{
 			// each index
@@ -49,16 +75,22 @@ $h->up();
 			}
 
 			// $locomo
-			if (property_exists($controller, 'locomo'))
+			if (
+				property_exists($controller, 'locomo') &&
+				$help_path = \Arr::get($controller::$locomo, 'help', false)
+			)
 			{
-				$help_path = realpath(APPPATH.'../'.\Arr::get($controller::$locomo, 'help', false));
+				$help_path = realpath(APPPATH.'../'.$help_path);
 				$nicename = \Arr::get($controller::$locomo, 'nicename', '');
 			}
 		}
 
 		// help text from default
 		$help_texts = array();
-		$help_texts[] = \Arr::get(\Fuel::load($help_path), strtolower($action), '');
+		if ($help_path)
+		{
+			$help_texts[] = \Arr::get(\Fuel::load($help_path), strtolower($action), '');
+		}
 
 		$body = '';
 		if (\Arr::get($help_texts, '0.title'))
@@ -78,31 +110,57 @@ $h->up();
 			$body.= $obj->body;
 		}
 
+		// controller help index
+		if (empty($body))
+		{
+			$module = \Inflector::get_modulename($locomo_path);
+			$options = array();
+
+/*
+モジュールでなくコントローラを相手にしよう。
+この上の単位でコントローラ一覧を並べよう。それがトップ。
+でもって、aclもみるか？
+aclをみる場合はそもそもviewを表示するときにもaclすべきか？
+*/
+			if ($module)
+			{
+				\Module::loaded($module) or \Module::load($module);
+				foreach (\Module::get_controllers($module) as $kk => $vv)
+				{
+					if ( ! property_exists($kk, 'locomo')) continue;
+					$nicename = $kk::$locomo['nicename'];
+					$methods = \Arr::filter_prefixed(array_flip(get_class_methods($kk)), 'action_');
+					foreach ($methods as $kkk => $vvv)
+					{
+						$key = urlencode(\Inflector::ctrl_to_safestr($kk.DS.$kkk));
+						$options[$key] = $kkk;
+					}
+				}
+			}
+			else
+			{
+
+			}
+		}
+
+
+
 		// total help index
 		if (empty($body))
 		{
 
 		}
 
+		// related help
+
+		// assign
 		$content = \View::forge('index_admin');
 		$content->base_assign();
-		$this->template->set_global('title', $nicename.' &gt; '.$action);
-		$this->template->set_safe('content', $body);
+		$content->set_global('title', $nicename.' &gt; '.$action);
+		$content->set_safe('content', $body);
+//		$this->template->content = $content;
 
-
-
-/*
-		// parent
-		parent::action_index_admin();
-
-		// get default help
-		$mod_or_ctrl = \Input::get('searches.mod_or_ctrl');
-		$alls = \Util::get_mod_or_ctrl();
-		$locomo = \Arr::get($alls, $mod_or_ctrl, array());
-		$help_path = realpath(APPPATH.'../'.\Arr::get($locomo, 'help', false));
-		if ( ! $help_path) return;
-
-		$this->template->content->set_safe('default_help', file_get_contents($help_path));
-*/
+echo $content;
+exit;
 	}
 }

@@ -4,6 +4,9 @@
  * bootstrap for locomo
  */
 
+// version
+define('LOCOMOVERSION', '1.1');
+
 // load package
 \Package::load('auth');
 

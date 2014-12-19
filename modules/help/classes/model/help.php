@@ -24,27 +24,6 @@ class Model_Help extends \Locomo\Model_Base
 	//$_option_options - see sample at \User\Model_Usergroup
 	public static $_option_options = array();
 
-/*
-	protected static $_has_many = array(
-		'foo' => array(
-			'key_from' => 'id',
-			'model_to' => 'Model_Foo',
-			'key_to' => 'bar_id',
-			'cascade_save' => true,
-			'cascade_delete' => false
-		)
-	);
-	protected static $_belongs_to = array(
-		'foo' => array(
-						'key_from' => 'foo_id',
-						'model_to' => 'Model_Foo',
-						'key_to' => 'id',
-						'cascade_save' => true,
-						'cascade_delete' => false,
-					)
-	);
-*/
-
 	//observers
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
@@ -93,19 +72,7 @@ class Model_Help extends \Locomo\Model_Base
 		->set_value(@$obj->title);
 
 		// action - コントローラ
-		$action = '';
-		$urls = parse_url(\Input::referrer());// parse referrer
-		if (\Arr::get($urls, 'query', ''))
-		{
-			list($s, $q) = explode('[action]=', \Arr::get($urls, 'query', ''));// explode by key str
-			// multiple query?
-			if (strpos($q, '&') !== false)
-			{
-				list($action, $q) = explode('&', $q);
-			}else{
-				$action = $q;
-			}
-		}
+		$action = urlencode(\Input::get('action'));
 
 		// prepare options - ugly code...
 		$actions = array('all' => '共通ヘルプ');
@@ -116,16 +83,16 @@ class Model_Help extends \Locomo\Model_Base
 			$module = \Inflector::get_modulename($k);
 			if ($module)
 			{
+				if ( ! \Module::loaded($module)) \Module::load($module);
 				foreach (\Module::get_controllers($module) as $kk => $vv)
 				{
-					if ( ! \Module::loaded($module)) \Module::load($module);
 					if ( ! property_exists($kk, 'locomo')) continue;
 					$nicename = $kk::$locomo['nicename'];
 					$methods = \Arr::filter_prefixed(array_flip(get_class_methods($kk)), 'action_');
 					$options = array();
 					foreach ($methods as $kkk => $vvv)
 					{
-						$key = urlencode(\Inflector::ctrl_to_safestr($k.DS.$kkk));
+						$key = urlencode(\Inflector::ctrl_to_safestr($kk.DS.$kkk));
 						$options[$key] = $kkk;
 					}
 					$actions[$nicename] = $options;

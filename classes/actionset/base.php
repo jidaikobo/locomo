@@ -15,6 +15,7 @@ class Actionset_Base extends Actionset
 			'action_name'  => '新規作成',
 			'show_at_top'  => true,
 			'explanation'  => '新しい項目を追加します。',
+			'help'         => '新しい項目を追加します。',
 			'acl_exp'      => '新規作成権限',
 			'order'        => 10,
 			'dependencies' => array(

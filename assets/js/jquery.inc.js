@@ -1,3 +1,19 @@
+// ヘルプ呼び出し
+$(function(){
+	$('#lcm_help').click(function(e){
+		e.preventDefault();
+		var uri = $(this).data('uri');
+		$.ajax({
+			url: uri,
+			dataType: 'html',
+		})
+		.success(function(data) {
+			$("#help_txt").toggle();
+			$("#help_txt").html(data);
+		})
+	});
+});
+
 //いろいろ未整理なので見ないでください＞＜
 
 
