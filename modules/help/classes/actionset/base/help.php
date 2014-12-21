@@ -19,17 +19,17 @@ class Actionset_Base_Help extends \Actionset
 	}
 
 	/**
-	 * create()
+	 * edit()
 	 */
-	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
 		$qstr = static::generate_qstr($obj, 'action');
-		$actions = array(array($controller.DS."create".$qstr, '新規作成'));
-		$urls = static::generate_urls($controller.DS.'create', $actions, ['create']);
+		$actions = array(array($controller.DS."edit".$qstr, '編集'));
+		$urls = static::generate_urls($controller.DS.'create', $actions, ['edit']);
 
 		$retvals = array(
-			'urls'         => $urls,
-			'order'        => 10,
+			'urls'  => $urls,
+			'order' => 10,
 		);
 
 		return $retvals;
@@ -40,16 +40,16 @@ class Actionset_Base_Help extends \Actionset
 	 */
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ( ! in_array(\Request::main()->action, ['index_admin', 'create']))
+		if ( ! in_array(\Request::main()->action, ['view', 'edit']))
 		{
 			$qstr = static::generate_qstr($obj, 'searches[action]');
-			$actions = array(array($controller.DS."index_admin".$qstr, '閲覧'));
-			$urls = static::generate_urls($controller.DS.'create', $actions, ['create']);
+			$actions = array(array($controller.DS."view".$qstr, '閲覧'));
+			$urls = static::generate_urls($controller.DS.'create', $actions, ['edit']);
 		}
 
 		$retvals = array(
-			'urls'         => $urls,
-			'order'        => 10,
+			'urls'  => $urls,
+			'order' => 10,
 		);
 
 		return $retvals;

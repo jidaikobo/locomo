@@ -99,8 +99,9 @@ if (\Auth::check()):
 			$html.= \Fuel::$env == 'development' ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
 
 			// help
+			$help_uri = \Uri::base().'help/help/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
 			$html.= '<div class="admin_help">';
-			$html.= '<a href="'.\Uri::base().'help/help/index_admin?searches[action]='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path'])).'" title="ヘルプ" id="lcm_help" data-uri="'.\Uri::create('help/help/index_admin').'?searches[action]='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path'])).'"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+			$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 
 			// admin option menu

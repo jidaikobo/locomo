@@ -7,12 +7,10 @@ class Controller_Help extends \Locomo\Controller_Base
 		'show_at_menu' => false,
 		'order_at_menu' => 1000,
 		'is_for_admin' => false,
-		'admin_home' => '\\Help\\Controller_Help/index_admin',
+		'admin_home' => '\\Help\\Controller_Help/view',
 		'nicename' => 'ヘルプ',
 		'actionset_classes' =>array(
 			'base'   => '\\Help\\Actionset_Base_Help',
-			'index'  => '\\Help\\Actionset_Index_Help',
-			'option' => '\\Help\\Actionset_Option_Help',
 		),
 	);
 
@@ -30,137 +28,119 @@ class Controller_Help extends \Locomo\Controller_Base
 	}
 
 	/*
-	 * 新規作成
-	 */
-	public function action_create($id = NULL)
-	{
-		self::action_edit();
-	}
-
-	/*
-	 * 編集
+	 * action_edit()
 	 */
 	public function action_edit($id = NULL)
 	{
+		$action = urlencode(\Input::get('action'));
+		$ctrl = \Inflector::words_to_upper(substr($action, 0, strpos($action, '%')));
+		$obj = \Help\Model_Help::find('first', array('where'=>array(array('ctrl', $ctrl))));
+		$id = @$obj->id ?: '';
 		parent::edit_core($id);
 	}
 
 	/**
-	 * action_index_admin()
+	 * action_view()
 	 */
-	public function action_index_admin()
+	public function action_view()
 	{
 /*
 include(LOCOMOPATH.'migrations/005_create_help.php');
 $h = new \Fuel\Migrations\Create_help();
 $h->up();
 */
-		// set default help
-		$locomo_path_raw = \Input::get('searches.action');
+		// set default help from actionset
+		$locomo_path_raw = \Input::get('action');
 		$locomo_path = \Inflector::safestr_to_ctrl($locomo_path_raw);
-		$help_path = '';
+		$controller = $locomo_path;
 		$nicename = '';
 		$action = '';
+		$actionsets = array();
 		if (strpos($locomo_path, '/') !== false)
 		{
-			// each index
+			// get actionset
 			list($controller, $action) = explode('/', $locomo_path);
 			$action = strtolower($action);
-			$locomo_path = $controller.'/'.$action;
+		}
 
-			// module?
-			if ($module = \Inflector::get_modulename($controller))
+		// controller is not exist
+		if( ! $controller)
+		{
+			$content = \View::forge('view');
+			$content->base_assign();
+			$content->set_global('title', 'ヘルプインデクス');
+			$content->set_safe('content', '');
+			$this->template->content = $content;
+			return;
+		}
+		else
+		{
+			$actionsets = \Actionset::get_actionset($controller);
+		}
+
+		// get action from actionset
+		$help = '';
+		if ($actionsets)
+		{
+			foreach ($actionsets as $realm => $v)
 			{
-				\Module::loaded($module) or \Module::load($module);
-			}
-
-			// $locomo
-			if (
-				property_exists($controller, 'locomo') &&
-				$help_path = \Arr::get($controller::$locomo, 'help', false)
-			)
-			{
-				$help_path = realpath(APPPATH.'../'.$help_path);
-				$nicename = \Arr::get($controller::$locomo, 'nicename', '');
-			}
-		}
-
-		// help text from default
-		$help_texts = array();
-		if ($help_path)
-		{
-			$help_texts[] = \Arr::get(\Fuel::load($help_path), strtolower($action), '');
-		}
-
-		$body = '';
-		if (\Arr::get($help_texts, '0.title'))
-		{
-			$body.= \Markdown::parse('#'.$help_texts[0]['title']);
-			$body.= \Markdown::parse($help_texts[0]['body']);
-		}
-
-		// help text from database
-		$objs = \Help\Model_Help::find('all', array('where' => array(array('action', urlencode($locomo_path_raw)),), 'order_by' => array('seq' => 'asc'),));
-
-		foreach ($objs as $obj)
-		{
-			$link = html_tag('span', array('class' => "edit_help"), \Html::anchor(\Uri::create('/help/help/edit/'.$obj->id), '編集する'));
-			$title = html_tag('h2', array(), $obj->title.$link);
-			$body.= $title;
-			$body.= $obj->body;
-		}
-
-		// controller help index
-		if (empty($body))
-		{
-			$module = \Inflector::get_modulename($locomo_path);
-			$options = array();
-
-/*
-モジュールでなくコントローラを相手にしよう。
-この上の単位でコントローラ一覧を並べよう。それがトップ。
-でもって、aclもみるか？
-aclをみる場合はそもそもviewを表示するときにもaclすべきか？
-*/
-			if ($module)
-			{
-				\Module::loaded($module) or \Module::load($module);
-				foreach (\Module::get_controllers($module) as $kk => $vv)
+				if ($action)
 				{
-					if ( ! property_exists($kk, 'locomo')) continue;
-					$nicename = $kk::$locomo['nicename'];
-					$methods = \Arr::filter_prefixed(array_flip(get_class_methods($kk)), 'action_');
-					foreach ($methods as $kkk => $vvv)
+					$help.= \Arr::get($v, strtolower($action).'.action_name');
+					$help.= \Arr::get($v, strtolower($action).'.help');
+				}
+				else
+				{
+					foreach ($v as $kk => $vv)
 					{
-						$key = urlencode(\Inflector::ctrl_to_safestr($kk.DS.$kkk));
-						$options[$key] = $kkk;
+						$txt = \Arr::get($v, strtolower($kk).'.help');
+						if ($txt)
+						{
+							$help.= html_tag('h3', array(), \Arr::get($v, strtolower($kk).'.action_name'));
+							$help.= html_tag('div', array(), $txt);
+						}
 					}
 				}
 			}
-			else
-			{
-
-			}
 		}
+		$help = $help ?: 'この項目専用のヘルプは存在しません。' ;
+		$help = html_tag('div', array('class' => 'txt'), $help);
 
+		// additional help
+		$controller_safe = \Inflector::ctrl_to_safestr($controller);
+		$obj = \Help\Model_Help::find('first', array('where'=>array(array('ctrl', $controller_safe))));
 
-
-		// total help index
-		if (empty($body))
+		// link to add additional help
+		$add = '';
+		$add.= $action ? \Html::anchor(\Uri::create('/help/help/view?action='.$controller_safe), 'コントローラヘルプ') : '' ;
+		if ($obj)
 		{
+			$add.= html_tag('h2', array(), '加筆されたヘルプ') ;
+			$add.= \Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), '編集する');
+			$add.= html_tag('div', array('class' => 'add_body'), $obj->body) ;
+		}
+		else
+		{
+			$add.= ' | '.\Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), 'ヘルプを加筆する');
+		}
+		$help.= $add ;
 
+		// is_ajax
+		if (\Input::is_ajax())
+		{
+			echo $help;
+			exit;
 		}
 
-		// related help
+		// title
+		$title = $controller::$locomo['nicename'];
+		$title.= $action ? ' &gt; '.$action : '' ;
 
 		// assign
-		$content = \View::forge('index_admin');
+		$content = \View::forge('view');
 		$content->base_assign();
-		$content->set_global('title', $nicename.' &gt; '.$action);
-		$content->set_safe('content', $body);
-//		$this->template->content = $content;
-
-echo $content;
-exit;
+		$content->set_global('title', $title);
+		$content->set_safe('content', $help);
+		$this->template->content = $content;
 	}
 }

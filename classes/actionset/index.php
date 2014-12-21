@@ -37,6 +37,7 @@ class Actionset_Index extends Actionset
 			'show_at_top'  => false,
 			'explanation'  => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
 			'acl_exp'      => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
+			'help'         => '検索欄がある場合は、全文検索あるいは部分検索ができます。表組の表題部分をクリック（エンター）すると表示順を変更できます。表示順はクリック（エンター）するたびに切り替わり3回目で解除状態になります。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'index_admin',
@@ -56,8 +57,9 @@ class Actionset_Index extends Actionset
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '一覧（削除された項目）',
-			'explanation'  => '削除された項目一覧の権限です。',
+			'explanation'  => '削除された項目一覧です。',
 			'acl_exp'      => '削除された項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.DS.'index_deleted',
@@ -77,8 +79,9 @@ class Actionset_Index extends Actionset
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '一覧（予約項目）',
-			'explanation'  => '予約項目一覧の権限です。',
+			'explanation'  => '予約項目一覧です。',
 			'acl_exp'      => '予約項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.DS.'index_yet',
@@ -98,8 +101,9 @@ class Actionset_Index extends Actionset
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '一覧（期限切れ項目）',
-			'explanation'  => '期限切れ項目一覧の権限です。',
+			'explanation'  => '期限切れ項目一覧です。',
 			'acl_exp'      => '期限切れ項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
 			'order'        => 40,
 			'dependencies' => array(
 				$controller.DS.'index_expired',
@@ -119,8 +123,9 @@ class Actionset_Index extends Actionset
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '一覧（不可視項目）',
-			'explanation'  => '不可視項目一覧の権限です。',
+			'explanation'  => '不可視項目一覧です。',
 			'acl_exp'      => '不可視項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.DS.'index_invisible',
@@ -141,8 +146,9 @@ class Actionset_Index extends Actionset
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '削除を含む全項目一覧',
-			'explanation'  => '全項目項目一覧の権限です。',
+			'explanation'  => '全項目項目一覧です。',
 			'acl_exp'      => '全項目項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'index',

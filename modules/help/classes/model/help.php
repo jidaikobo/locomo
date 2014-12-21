@@ -9,20 +9,50 @@ class Model_Help extends \Locomo\Model_Base
 
 	protected static $_properties = array(
 		'id',
-		'title',
-		'action',
-		'body',
-		'updated_at',
-		'deleted_at',
-		'creator_id',
-		'updater_id',
-		'seq',
+		'title' => array(
+			'label' => '表題',
+			'form' => array(
+				'type' => 'hidden',
+			),
+			'validation' => array(
+				'required',
+				'max_length' => array(255),
+			),
+		),
+		'ctrl' =>array(
+			'label' => 'コントローラ',
+			'form' => array(
+				'type' => 'select',
+				'style' => 'width: 30%;',
+				'options' => array(),
+				'class' => 'varchar',
+			),
+			'validation' => array(
+				'required',
+				'max_length' => array(255),
+			),
+		),
+		'body' => array(
+			'label' => '本文',
+			'form' => array(
+				'type' => 'textarea',
+				'style' => 'width: 30%;',
+				'rows' => '7',
+				'class' => 'text tinymce',
+			),
+			'validation' => array(
+				'required',
+			),
+		),
+
+		'creator_id' => array('form' => array('type' => false), 'default' => -1),
+		'updater_id' => array('form' => array('type' => false), 'default' => -1),
+		'created_at' => array('form' => array('type' => false), 'default' => null),
+		'updated_at' => array('form' => array('type' => false), 'default' => null),
+		'deleted_at' => array('form' => array('type' => false), 'default' => null),
 	);
 
 	protected static $_depend_modules = array();
-
-	//$_option_options - see sample at \User\Model_Usergroup
-	public static $_option_options = array();
 
 	//observers
 	protected static $_soft_delete = array(
@@ -47,6 +77,35 @@ class Model_Help extends \Locomo\Model_Base
 	);
 
 	/**
+	 * override properties()
+	 * @return  array
+	 */
+	public static function properties()
+	{
+		$_properties = parent::properties();
+
+		// ctrl
+		$ctrl = urlencode(\Input::get('ctrl'));
+		$actions = array('all' => '共通ヘルプ');
+		$exceptions = array('\\Help\\Controller_Help', '\\Admin\\Controller_Admin', '\\Content\\Controller_Content');
+		$controllers = array();
+		foreach(\Util::get_mod_or_ctrl() as $k => $v):
+			if ( ! isset($v['nicename']) || ! isset($v['admin_home']) || in_array($k, $exceptions)) continue;
+			if ( ! property_exists($k, 'locomo')) continue;
+			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
+		endforeach;
+//		$selected = isset($obj->ctrl) && ! empty($obj->ctrl) ? $obj->ctrl : $ctrl;
+		\Arr::set($_properties, 'ctrl.form.options', $controllers);
+		\Arr::set($_properties, 'ctrl.default', $ctrl);
+
+		// title
+//		$title = \Arr::get($controllers, $selected, @$obj->title);
+
+
+		return $_properties;
+	}
+
+	/**
 	 * form_definition()
 	 *
 	 * @param str $factory
@@ -61,66 +120,39 @@ class Model_Help extends \Locomo\Model_Base
 		//forge
 		$form = \Fieldset::forge($factory, \Config::get('form'));
 
-		//title - 表題
-		$form->add(
-			'title',
-			'表題',
-			array('type' => 'text', 'size' => 30, 'class' => 'varchar')
-		)
-		->add_rule('required')
-		->add_rule('max_length', 255)
-		->set_value(@$obj->title);
-
-		// action - コントローラ
+		// action
 		$action = urlencode(\Input::get('action'));
+		$ctrl = \Inflector::words_to_upper(substr($action, 0, strpos($action, '%')));
 
-		// prepare options - ugly code...
+		// prepare options
 		$actions = array('all' => '共通ヘルプ');
-		$exceptions = array('\\Help\\Controller_Help', '\\Admin\\Controller_Admin', '\\Content\\Controller_Content');
+//		$exceptions = array('\\Help\\Controller_Help', '\\Admin\\Controller_Admin', '\\Content\\Controller_Content');
 		$controllers = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if ( ! isset($v['nicename']) || ! isset($v['admin_home']) || in_array($k, $exceptions)) continue;
-			$module = \Inflector::get_modulename($k);
-			if ($module)
-			{
-				if ( ! \Module::loaded($module)) \Module::load($module);
-				foreach (\Module::get_controllers($module) as $kk => $vv)
-				{
-					if ( ! property_exists($kk, 'locomo')) continue;
-					$nicename = $kk::$locomo['nicename'];
-					$methods = \Arr::filter_prefixed(array_flip(get_class_methods($kk)), 'action_');
-					$options = array();
-					foreach ($methods as $kkk => $vvv)
-					{
-						$key = urlencode(\Inflector::ctrl_to_safestr($kk.DS.$kkk));
-						$options[$key] = $kkk;
-					}
-					$actions[$nicename] = $options;
-				}
-			}
-			else
-			{
-				if ( ! property_exists($k, 'locomo')) continue;
-				$nicename = $k::$locomo['nicename'];
-				$methods = \Arr::filter_prefixed(array_flip(get_class_methods($k)), 'action_');
-				$options = array();
-				foreach ($methods as $kk => $vv)
-				{
-					$key = urlencode(\Inflector::ctrl_to_safestr($k.DS.$kk));
-					$options[$key] = $kk;
-				}
-				$actions[$nicename] = $options;
-			}
+			if ( ! isset($v['nicename']) || ! isset($v['admin_home'])) continue;
+			if ( ! property_exists($k, 'locomo')) continue;
+			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
 		endforeach;
-		$selected = isset($obj->action) && ! empty($obj->action) ? $obj->action : $action;
+		$selected = isset($obj->ctrl) && ! empty($obj->ctrl) ? $obj->ctrl : $ctrl;
 		$form->add(
-			'action',
+			'ctrl',
 			'アクション',
-			array('type' => 'select', 'style' => 'width: 30%;', 'options' => $actions, 'class' => 'varchar')
+			array('type' => 'select', 'style' => 'width: 30%;', 'options' => $controllers, 'class' => 'varchar')
 		)
 		->add_rule('required')
 		->add_rule('max_length', 255)
 		->set_value($selected);
+
+		//title - 表題
+		$title = \Arr::get($controllers, $selected, @$obj->title);
+		$form->add(
+			'title',
+			'表題',
+			array('type' => 'hidden', 'class' => 'varchar')
+		)
+		->add_rule('required')
+		->add_rule('max_length', 255)
+		->set_value($title);
 
 		//body - 本文
 		$form->add(
@@ -130,16 +162,6 @@ class Model_Help extends \Locomo\Model_Base
 		)
 		->add_rule('required')
 		->set_value(@$obj->body);
-
-		//order - 
-		$form->add(
-			'seq',
-			'表示順',
-			array('type' => 'text', 'size' => 5, 'class' => 'int[5]')
-		)
-		->add_rule('required')
-		->add_rule('max_length', 5)
-		->set_value(@$obj->seq ?: 10);
 
 		static::$_cache_form_definition = $form;
 		return $form;

@@ -1,34 +1,16 @@
-
-<h1>Viewing #<?php echo $item->id; ?></h1>
-
-<table class="tbl">
-<?php if ($item->title): ?>
-<tr>
-	<th>表題</th>
-	<td><?php echo $item->title; ?></td>
-</tr>
-
-<?php endif; ?>
-<?php if ($item->body): ?>
-<tr>
-	<th>本文</th>
-	<td><?php echo $item->body; ?></td>
-</tr>
-
-<?php endif; ?>
-<?php if ($item->updated_at): ?>
-<tr>
-	<th>更新日時</th>
-	<td><?php echo $item->updated_at; ?></td>
-</tr>
-
-<?php endif; ?>
-<?php if ($item->deleted_at): ?>
-<tr>
-	<th>削除日</th>
-	<td><?php echo $item->deleted_at; ?></td>
-</tr>
-<?php endif; ?>
-
-</table>
-
+<?php
+if ($content):
+	echo $content;
+else:
+?>
+		<table class="tbl">
+		<?php foreach($locomo['controllers'] as $k => $v): ?>
+		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>
+		<tr>
+			<th><a href="<?php echo \Uri::create('help/help/view?action=').\Inflector::ctrl_to_safestr($k) ?>"><?php echo $v['nicename'] ?></a></th>
+			<td><?php echo @$v['explanation'] ?></td>
+		</tr>
+		<?php endforeach; ?>
+		</table>
+<?php
+endif;
