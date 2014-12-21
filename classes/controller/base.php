@@ -4,6 +4,9 @@ class Controller_Base extends Controller_Core
 {
 	public $_content_template = null;
 
+	/**
+	 * before()
+	 */
 	public function before()
 	{
 		parent::before();
@@ -14,6 +17,17 @@ class Controller_Base extends Controller_Core
 		}
 	}
 
+	/**
+	 * action_admin()
+	 * this action is placeholder for actionset. Don't delete.
+	 */
+	public function action_admin()
+	{
+	}
+
+	/**
+	 * index_admin()
+	 */
 	protected function index_admin()
 	{
 		$model = $this->model_name;

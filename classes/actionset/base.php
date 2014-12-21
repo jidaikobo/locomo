@@ -16,7 +16,7 @@ class Actionset_Base extends Actionset
 			'show_at_top'  => true,
 			'explanation'  => '新しい項目を追加します。',
 			'help'         => '新しい項目を追加します。',
-			'acl_exp'      => '新規作成権限',
+			'acl_exp'      => '新規作成権限。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.DS.'index',
@@ -64,8 +64,8 @@ class Actionset_Base extends Actionset
 		$retvals = array(
 			'urls'         => $urls ,
 			'action_name'  => '編集（通常項目）',
-			'explanation'  => '通常項目の編集権限',
-			'acl_exp'      => '通常項目の編集権限',
+			'explanation'  => '通常項目の編集権限。',
+			'acl_exp'      => '通常項目の編集権限。',
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.DS.'view',
@@ -89,8 +89,8 @@ class Actionset_Base extends Actionset
 			'urls'         => $urls ,
 			'id_segment'   => '',
 			'action_name'  => '編集（すべての項目）',
-			'explanation'  => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限',
-			'acl_exp'      => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限',
+			'explanation'  => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限。',
+			'acl_exp'      => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限。',
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.DS.'view',

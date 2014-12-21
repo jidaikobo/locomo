@@ -55,6 +55,12 @@ class Actionset
 		$obj = is_object($obj) ? $obj : (object) array() ;
 		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
 
+		// get controllers actions
+		$act_methods = get_class_methods($controller);
+		$act_methods = array_flip($act_methods);
+		$act_methods = \Arr::filter_prefixed($act_methods, 'action_');
+		$act_methods = array_flip($act_methods);
+
 		// actionset_classes
 		$actions = array();
 		foreach(\Arr::get($locomo, 'actionset_classes', array()) as $realm => $class)
@@ -68,6 +74,9 @@ class Actionset
 
 			foreach($methods as $method)
 			{
+
+			// eliminate non exists action
+			if ( ! in_array($method, $act_methods)) continue;
 				$p_method = 'actionset_'.$method;
 				$as = $class::$p_method($controller, $obj, $id);
 				// require "urls" or "dependencies"
@@ -103,9 +112,10 @@ class Actionset
 			}
 			static::$actions[$controller][$realm] = $v;
 		}
+
 		if (empty(static::$actions[$controller])) return false;
 
-		// prepare override
+		// override and order
 		$overrides = array();
 		foreach (static::$actions[$controller] as $realm => $v)
 		{
@@ -116,6 +126,7 @@ class Actionset
 					$overrides = array_merge($overrides, $vv['overrides']);
 				}
 			}
+
 			// order
 			static::$actions[$controller][$realm] = \Arr::multisort(
 				static::$actions[$controller][$realm],
@@ -209,5 +220,23 @@ class Actionset
 		}
 
 		return \Html::ul($arr, $ul_attr);
+	}
+
+	/**
+	 * actionset_admin()
+	 */
+	public static function actionset_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = array(
+			'urls'         => $urls,
+			'action_name'  => '管理権限',
+			'show_at_top'  => false,
+			'acl_exp'      => $controller::$locomo['nicename'].'の管理権限です。すべての行為が許されます。',
+			'order'        => 0,
+			'dependencies' => array(
+				$controller.DS.'index',
+			)
+		);
+		return $retvals;
 	}
 }

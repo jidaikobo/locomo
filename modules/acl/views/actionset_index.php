@@ -28,7 +28,7 @@
 				echo '<label>'.\Form::checkbox("acls[{$controller}][{$realm}][{$action}]", 1, array($checked)).' '.$actionset['action_name'].'</label><br />';
 				?>
 			</th>
-			<td><?php echo @$actionset['explanation'] ?></td>
+			<td><?php echo @$actionset['acl_exp'] ?></td>
 		</tr>
 	<?php endforeach; ?>
 	</table>
