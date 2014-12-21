@@ -1,7 +1,7 @@
 <?php
 namespace Sample;
 \Module::load('bulk');
-class Controller_Sample extends \Locomo\Controller_Crud
+class Controller_Sample extends \Locomo\Controller_Base
 {
 	//locomo
 	public static $locomo = array(

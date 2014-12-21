@@ -1,6 +1,6 @@
 <?php
 namespace User;
-class Controller_User extends \Locomo\Controller_Crud
+class Controller_User extends \Locomo\Controller_Base
 {
 	//locomo
 	public static $locomo = array(
@@ -24,6 +24,7 @@ class Controller_User extends \Locomo\Controller_Crud
 
 	//trait
 	use \Locomo\Controller_Traits_Testdata;
+	use \Locomo\Controller_Traits_Crud;
 	use \Revision\Traits_Controller_Revision;
 	use \Bulk\Traits_Controller_Bulk;
 

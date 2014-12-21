@@ -84,10 +84,11 @@ class Inflector extends \Fuel\Core\Inflector
 
 		// search controller position
 		$class_pos = \Arr::search($paths, 'controller');
-		if ( ! $class_pos) throw new \InvalidArgumentException('controller not found.');
+		//if ( ! $class_pos) throw new \InvalidArgumentException('controller not found.');
 
 		// classify
-		$class = ucfirst(join('/', array_slice($paths, $class_pos)));
+		$class = join('/', array_slice($paths, $class_pos));
+		$class = \Inflector::words_to_upper(str_replace(LOCOMOPATH.'classes/', '', $class));
 		$class = \Inflector::words_to_upper(str_replace('/', '_', $module.$class));
 		return str_replace('.php', '', $class);
 	}

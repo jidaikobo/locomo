@@ -202,7 +202,7 @@ scaffoldを使った場合はコメントアウトされています。
 
 モデルでは、observerを足してください。
 
-		'Locomo\Observer_Revision' => array(
+		'Revision\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),
 		),
 

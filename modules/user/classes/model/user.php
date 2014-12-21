@@ -16,23 +16,62 @@ class Model_User extends \Locomo\Model_Base
 		'id',
 		'username' => array(
 			'label' => 'ユーザ名',
+			'form' => array('type' => 'text', 'size' => 20, 'class' => 'username'),
+			'validation' => array(
+				'required',
+				'max_length' => array(50),
+				'valid_string' => array(array('alpha','numeric','dot','dashes')),
+			),
 		),
-		'password',
-		'email',
+		'password' => array(
+			'label' => 'パスワード',
+			'form' => array('type' => 'password', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください'),
+			'validation' => array(
+				'min_length' => array(8),
+				'max_length' => array(50),
+				'match_field' => array('confirm_password'),
+				'valid_string' => array(array('alpha','numeric','dot','dashes')),
+			),
+			'default' => '',
+		),
 		'display_name' => array(
 			'label' => '表示名',
+			'form' => array('type' => 'text', 'size' => 20),
+			'validation' => array(
+				'required',
+				'max_length' => array(255),
+			),
+		),
+		'email' => array(
+			'label' => 'メールアドレス',
+			'form' => array('type' => 'text', 'size' => 20),
+			'validation' => array(
+				'required',
+				'valid_email',
+				'max_length' => array(255),
+			),
+		),
+		'is_visible' => array(
+			'label' => '可視属性',
+			'form' => array(
+				'type' => 'hidden',
+				'options' => array('0' => '不可視', '1' => '可視')
+			),
+			'default' => 1,
+			'validation' => array(
+				'required',
+			),
 		),
 		'last_login_at',
 		'login_hash',
 		'activation_key',
 		'profile_fields',
-		'is_visible',
-		'deleted_at',
-		'created_at',
-		'expired_at',
-		'updated_at',
-		'creator_id',
-		'updater_id',
+		'expired_at' => array('form' => array('type' => false), 'default' => null),
+		'creator_id' => array('form' => array('type' => false), 'default' => -1),
+		'updater_id' => array('form' => array('type' => false), 'default' => -1),
+		'created_at' => array('form' => array('type' => false), 'default' => null),
+		'updated_at' => array('form' => array('type' => false), 'default' => null),
+		'deleted_at' => array('form' => array('type' => false), 'default' => null),
 	);
 
 	/**
@@ -99,11 +138,11 @@ class Model_User extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory = 'user', $obj = null)
 	{
-		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
+//		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 		$id = isset($obj->id) ? $obj->id : '';
 
 		//forge
-		$form = \Fieldset::forge($factory, \Config::get('form'));
+		$form = parent::form_definition($factory, $obj);
 
 		// banned user names - same as administrators
 		$alladmins = unserialize(LOCOMO_ADMINS);
@@ -112,32 +151,11 @@ class Model_User extends \Locomo\Model_Base
 		$allnames  = array_unique(array_merge($roots, $admins));
 
 		//username
-		$form->add(
-				'username',
-				'ユーザ名',
-				array('type' => 'text', 'size' => 20, 'class' => 'username')
-			)
-			->set_value(@$obj->username)
-			->add_rule('required')
-			->add_rule('max_length', 50)
-			->add_rule('banned_string', $allnames)
-			->add_rule('valid_string', array('alpha','numeric','dot','dashes',))
+		$form->field('username')
 			->add_rule('unique', "users.username.{$id}");
 
-		//display_name
-		$form->add(
-				'display_name',
-				'表示名',
-				array('type' => 'text', 'size' => 20)
-			)
-			->set_value(@$obj->display_name)
-			->add_rule('required')
-			->add_rule('max_length', 255);
-
 		//usergroups
-	//	$opt = \User\Model_Usergroup::get_option_options('usergroup');
 		$options = \User\Model_Usergroup::get_options(array('where' => array(array('is_available', true))), 'name');
-
 		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
 		$form->add(
 				'usergroup',
@@ -146,9 +164,8 @@ class Model_User extends \Locomo\Model_Base
 			)
 			->set_value( array_keys($obj->usergroup));
 
-
-
-
+		// password
+		$form->field('password')->set_value('');
 
 		//管理者以外は旧パスワードを求める
 		if ( ! \Auth::is_admin()):
@@ -166,17 +183,8 @@ class Model_User extends \Locomo\Model_Base
 		endif;
 
 		//password
-		$form->add(
-				'password',
-				'パスワード',
-				array('type' => 'password', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください')
-			)
-			->set_value('')
-			->add_rule('require_once', "users.password.{$id}")
-			->add_rule('min_length', 8)
-			->add_rule('max_length', 50)
-			->add_rule('match_field', 'confirm_password')
-			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+		$form->field('password')
+			->add_rule('require_once', "users.password.{$id}");
 	
 		//confirm_password
 		$form->add(
@@ -188,55 +196,22 @@ class Model_User extends \Locomo\Model_Base
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 
 		//email
-		$form->add(
-				'email',
-				'メールアドレス',
-				array('type' => 'text', 'size' => 20)
-			)
-			->set_value(@$obj->email)
-			->add_rule('required')
-			->add_rule('valid_email')
-			->add_rule('max_length', 255)
+		$form->field('email')
 			->add_rule('unique', "users.email.{$id}");
 
 		//created_at
-		$form->add(
-				'created_at',
-				'作成日',
-				array('type' => 'text', 'size' => 20, 'placeholder' => date('Y-m-d H:i:s'), 'class' => 'datetime')
-			)
-			->set_value(@$obj->created_at)
+		$form->field('created_at')
+			->set_label('作成日')
+			->set_type('text')
+			->set_attribute('placeholder', date('Y-m-d H:i:s'))
 			->add_rule('non_zero_datetime');
-			//未来の日付を入れると、予約項目になります。
-
-		//deleted_at
-		$form->add(
-				'deleted_at',
-				'削除日',
-				array('type' => 'text', 'size' => 20)
-			)
-			->set_value(@$obj->deleted_at);
 
 		//is_visible
 		if (\Auth::is_admin()):
-			$form->add(
-					'is_visible',
-					'可視属性',
-					array('type' => 'select', 'options' => array('0' => '不可視', '1' => '可視'), 'default' => 1)
-				)
-				->add_rule('required')
-				->set_value(@$obj->is_visible);
-		else:
-			$form->add(
-					'is_visible',
-					'可視属性',
-					array('type' => 'hidden', 'default' => 1)
-				)
-				->add_rule('required')
-				->set_value(@$obj->is_visible);
+			$form->field('is_visible')->set_type('select');
 		endif;
 
-		static::$_cache_form_definition = $form;
+//		static::$_cache_form_definition = $form;
 		return $form;
 	}
 }

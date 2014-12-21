@@ -28,32 +28,45 @@ Autoloader::register();
 Autoloader::add_namespace('\\Locomo', LOCOMOPATH.'classes'.DS);
 Autoloader::add_core_namespace('\\Locomo');
 
-// add to core namespace
-Autoloader::add_classes(array(
-	'\\Locomo\\Actionset'              => LOCOMOPATH.'classes'.DS.'actionset.php',
-	'\\Locomo\\Actionset_Base'         => LOCOMOPATH.'classes'.DS.'actionset/base.php',
-	'\\Locomo\\Actionset_Owner'        => LOCOMOPATH.'classes'.DS.'actionset/owner.php',
-	'\\Locomo\\Actionset_Option'       => LOCOMOPATH.'classes'.DS.'actionset/option.php',
-	'\\Locomo\\Actionset_Index'        => LOCOMOPATH.'classes'.DS.'actionset/index.php',
-	'\\Locomo\\Util'                   => LOCOMOPATH.'classes'.DS.'util.php',
-	'\\Locomo\\Auth'                   => LOCOMOPATH.'classes'.DS.'auth.php',//package
-	'\\Locomo\\Auth_Login_Locomoauth'  => LOCOMOPATH.'classes'.DS.'auth/login/locomoauth.php',
-	'\\Locomo\\Auth_Group_Locomogroup' => LOCOMOPATH.'classes'.DS.'auth/group/locomogroup.php',
-	'\\Locomo\\Auth_Acl_Locomoacl'     => LOCOMOPATH.'classes'.DS.'auth/acl/locomoacl.php',
-));
-
-// core override class
-Autoloader::add_classes(array(
-	'\\Locomo\\Asset_Instance' => LOCOMOPATH.'classes'.DS.'asset/instance.php',
-	'\\Locomo\\Validation'     => LOCOMOPATH.'classes'.DS.'validation.php',
-	'\\Locomo\\Pagination'     => LOCOMOPATH.'classes'.DS.'pagination.php',
-	'\\Locomo\\Fieldset'       => LOCOMOPATH.'classes'.DS.'fieldset.php',
-	'\\Locomo\\Fieldset_Field' => LOCOMOPATH.'classes'.DS.'fieldset/field.php',
-	'\\Locomo\\Module'         => LOCOMOPATH.'classes'.DS.'module.php',
-	'\\Locomo\\Request'        => LOCOMOPATH.'classes'.DS.'request.php',
-	'\\Locomo\\View'           => LOCOMOPATH.'classes'.DS.'view.php',
-	'\\Locomo\\Inflector'      => LOCOMOPATH.'classes'.DS.'inflector.php',
-));
+$paths = array(
+	'\\Locomo\\Actionset_Traits_Option_Testdata' => 'actionset/traits/option/testdata.php',
+	'\\Locomo\\Actionset_Base' => 'actionset/base.php',
+	'\\Locomo\\Actionset_Index' => 'actionset/index.php',
+	'\\Locomo\\Actionset_Option' => 'actionset/option.php',
+	'\\Locomo\\Asset_Instance' => 'asset/instance.php',
+	'\\Locomo\\Auth_Acl_Locomoacl' => 'auth/acl/locomoacl.php',
+	'\\Locomo\\Auth_Group_Locomogroup' => 'auth/group/locomogroup.php',
+	'\\Locomo\\Auth_Login_Locomoauth' => 'auth/login/locomoauth.php',
+	'\\Locomo\\Controller_Traits_Testdata' => 'controller/traits/testdata.php',
+	'\\Locomo\\Controller_Base' => 'controller/base.php',
+	'\\Locomo\\Controller_Crud' => 'controller/crud.php',
+	'\\Locomo\\Controller_Welcome1' => 'controller/welcome1.php',
+	'\\Locomo\\Fieldset_Field' => 'fieldset/field.php',
+	'\\Locomo\\Model_Base' => 'model/base.php',
+	'\\Locomo\\Observer_Created' => 'observer/created.php',
+	'\\Locomo\\Observer_Expired' => 'observer/expired.php',
+	'\\Locomo\\Observer_Userids' => 'observer/userids.php',
+	'\\Locomo\\Actionset' => 'actionset.php',
+	'\\Locomo\\Auth' => 'auth.php',
+	'\\Locomo\\Bulk' => 'bulk.php',
+	'\\Locomo\\Fieldset' => 'fieldset.php',
+	'\\Locomo\\Inflector' => 'inflector.php',
+	'\\Locomo\\Module' => 'module.php',
+	'\\Locomo\\Pagination' => 'pagination.php',
+	'\\Locomo\\Request' => 'request.php',
+	'\\Locomo\\Util' => 'util.php',
+	'\\Locomo\\Validation' => 'validation.php',
+	'\\Locomo\\View' => 'view.php',
+);
+$classes = array();
+foreach ($paths as $class => $path)
+{
+	if ( ! file_exists(APPPATH.'/classes/'.$path))
+	{
+		$classes[$class] = LOCOMOPATH.'/classes/'.$path;
+	}
+}
+Autoloader::add_classes($classes);
 
 // always load module
 \Module::load('acl');

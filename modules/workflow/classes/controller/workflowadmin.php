@@ -1,7 +1,9 @@
 <?php
 namespace Workflow;
-class Controller_Workflowadmin extends \Locomo\Controller_Crud
+class Controller_Workflowadmin extends \Locomo\Controller_Base
 {
+	use \Locomo\Controller_Traits_Crud;
+
 	//locomo
 	public static $locomo = array(
 		'show_at_menu' => true,

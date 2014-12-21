@@ -37,7 +37,7 @@ class Validation extends \Fuel\Core\Validation
 	 * 
 	 * @return bool
 	 */
-	public static function _validation_unique($val, $options)
+	public function _validation_unique($val, $options)
 	{
 		//validate
 		list($table, $field, $id) = explode('.', $options);

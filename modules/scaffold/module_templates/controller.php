@@ -1,6 +1,6 @@
 <?php
 namespace XXX;
-class Controller_XXX extends \Locomo\Controller_Crud
+class Controller_XXX extends \Locomo\Controller_Base
 {
 	// locomo
 	public static $locomo = array(

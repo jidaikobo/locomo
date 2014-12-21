@@ -1,6 +1,6 @@
 <?php
 namespace User;
-class Controller_Auth extends \Locomo\Controller_Crud
+class Controller_Auth extends \Locomo\Controller_Base
 {
 	/**
 	 * action_login()
