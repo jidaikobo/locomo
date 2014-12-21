@@ -35,6 +35,7 @@ trait Traits_Actionset_Base_Revision
 				$controller.DS.'edit',
 				$controller.DS.'view_revision',
 				$controller.DS.'index_revision',
+				$controller.DS.'each_index_revision',
 			)
 		);
 		return $retvals;

@@ -74,9 +74,9 @@ class Actionset
 
 			foreach($methods as $method)
 			{
+				// eliminate non exists action
+				if ( ! in_array($method, $act_methods)) continue;
 
-			// eliminate non exists action
-			if ( ! in_array($method, $act_methods)) continue;
 				$p_method = 'actionset_'.$method;
 				$as = $class::$p_method($controller, $obj, $id);
 				// require "urls" or "dependencies"
@@ -233,9 +233,6 @@ class Actionset
 			'show_at_top'  => false,
 			'acl_exp'      => $controller::$locomo['nicename'].'の管理権限です。すべての行為が許されます。',
 			'order'        => 0,
-			'dependencies' => array(
-				$controller.DS.'index',
-			)
 		);
 		return $retvals;
 	}

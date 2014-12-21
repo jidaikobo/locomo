@@ -2,8 +2,6 @@
 namespace Help;
 class Model_Help extends \Locomo\Model_Base
 {
-//	use \Workflow\Traits_Model_Workflow;
-
 	protected static $_table_name = 'helps';
 	public static $_subject_field_name = 'title';
 
@@ -36,7 +34,7 @@ class Model_Help extends \Locomo\Model_Base
 			'label' => '本文',
 			'form' => array(
 				'type' => 'textarea',
-				'style' => 'width: 30%;',
+				'style' => 'width: 100%;',
 				'rows' => '7',
 				'class' => 'text tinymce',
 			),
@@ -68,42 +66,11 @@ class Model_Help extends \Locomo\Model_Base
 		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-//		'Workflow\Observer_Workflow' => array(
-//			'events' => array('before_insert', 'before_save','after_load'),
-//		),
 		'Revision\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save', 'before_delete'),
 		),
 	);
 
-	/**
-	 * override properties()
-	 * @return  array
-	 */
-	public static function properties()
-	{
-		$_properties = parent::properties();
-
-		// ctrl
-		$ctrl = urlencode(\Input::get('ctrl'));
-		$actions = array('all' => '共通ヘルプ');
-		$exceptions = array('\\Help\\Controller_Help', '\\Admin\\Controller_Admin', '\\Content\\Controller_Content');
-		$controllers = array();
-		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if ( ! isset($v['nicename']) || ! isset($v['admin_home']) || in_array($k, $exceptions)) continue;
-			if ( ! property_exists($k, 'locomo')) continue;
-			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
-		endforeach;
-//		$selected = isset($obj->ctrl) && ! empty($obj->ctrl) ? $obj->ctrl : $ctrl;
-		\Arr::set($_properties, 'ctrl.form.options', $controllers);
-		\Arr::set($_properties, 'ctrl.default', $ctrl);
-
-		// title
-//		$title = \Arr::get($controllers, $selected, @$obj->title);
-
-
-		return $_properties;
-	}
 
 	/**
 	 * form_definition()
@@ -115,10 +82,8 @@ class Model_Help extends \Locomo\Model_Base
 	 */
 	public static function form_definition($factory = 'help', $obj = NULL)
 	{
-		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
-
 		//forge
-		$form = \Fieldset::forge($factory, \Config::get('form'));
+		$form = parent::form_definition($factory, $obj);
 
 		// action
 		$action = urlencode(\Input::get('action'));
@@ -126,7 +91,6 @@ class Model_Help extends \Locomo\Model_Base
 
 		// prepare options
 		$actions = array('all' => '共通ヘルプ');
-//		$exceptions = array('\\Help\\Controller_Help', '\\Admin\\Controller_Admin', '\\Content\\Controller_Content');
 		$controllers = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
 			if ( ! isset($v['nicename']) || ! isset($v['admin_home'])) continue;
@@ -134,36 +98,15 @@ class Model_Help extends \Locomo\Model_Base
 			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
 		endforeach;
 		$selected = isset($obj->ctrl) && ! empty($obj->ctrl) ? $obj->ctrl : $ctrl;
-		$form->add(
-			'ctrl',
-			'アクション',
-			array('type' => 'select', 'style' => 'width: 30%;', 'options' => $controllers, 'class' => 'varchar')
-		)
-		->add_rule('required')
-		->add_rule('max_length', 255)
-		->set_value($selected);
+		$form->field('ctrl')
+			->set_options($controllers)
+			->set_value($selected);
 
-		//title - 表題
+		//title
 		$title = \Arr::get($controllers, $selected, @$obj->title);
-		$form->add(
-			'title',
-			'表題',
-			array('type' => 'hidden', 'class' => 'varchar')
-		)
-		->add_rule('required')
-		->add_rule('max_length', 255)
-		->set_value($title);
+		$form->field('title')
+			->set_value($title);
 
-		//body - 本文
-		$form->add(
-			'body',
-			'本文',
-			array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;', 'class' => 'text tinymce')
-		)
-		->add_rule('required')
-		->set_value(@$obj->body);
-
-		static::$_cache_form_definition = $form;
 		return $form;
 	}
 }

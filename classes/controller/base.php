@@ -184,9 +184,10 @@ class Controller_Base extends Controller_Core
 	/**
 	 * create()
 	 */
-	protected function create()
+	protected function create($redirect = null)
 	{
-		parent::edit_core(null);
+		$redirect = $redirect ?: \Request::main()->controller.DS.'edit';
+		parent::edit_core(null, $redirect);
 	}
 
 	/*
@@ -233,8 +234,7 @@ class Controller_Base extends Controller_Core
 						'success',
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
-					$action = \Request::main()->action == 'create' ? 'edit' : \Request::main()->action ;
-					$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.$action);
+					$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
 					$redirect = $redirect ?: $locomo_path.DS.$obj->id;
 					return \Response::redirect(\Uri::create($redirect));
 				}

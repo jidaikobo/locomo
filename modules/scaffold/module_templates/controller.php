@@ -6,7 +6,8 @@ class Controller_XXX extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
 		'order_at_menu' => 10,   // order of appearance
-		'is_for_admin' => false, // true: hide from admin bar
+		'is_for_admin' => false, // true: place it admin's menu instead of normal menu
+		'no_acl' => false, // true: admin's action. it will not appear at acl.
 		'admin_home' => '\\XXX\\Controller_XXX/index_admin', // module's top page
 		'admin_home_name' => '管理一覧', // name of module's top page
 		'admin_home_explanation' => '###nicename###のトップです。', // explanation of module's top page

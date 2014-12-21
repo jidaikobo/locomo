@@ -9,6 +9,7 @@ class Controller_Help extends \Locomo\Controller_Base
 		'is_for_admin' => false,
 		'admin_home' => '\\Help\\Controller_Help/view',
 		'nicename' => 'ヘルプ',
+		'admin_home_name' => 'ヘルプ',
 		'actionset_classes' =>array(
 			'base'   => '\\Help\\Actionset_Base_Help',
 		),
@@ -32,11 +33,13 @@ class Controller_Help extends \Locomo\Controller_Base
 	 */
 	public function action_edit($id = NULL)
 	{
-		$action = urlencode(\Input::get('action'));
+		$action = urlencode(\Input::param('action'));
 		$ctrl = \Inflector::words_to_upper(substr($action, 0, strpos($action, '%')));
 		$obj = \Help\Model_Help::find('first', array('where'=>array(array('ctrl', $ctrl))));
 		$id = @$obj->id ?: '';
-		parent::edit_core($id);
+		$redirect = '/help/help/edit?action='.$action;
+		parent::edit($id, $redirect);
+		$this->template->content->set('action', $action);
 	}
 
 	/**
@@ -116,12 +119,18 @@ $h->up();
 		if ($obj)
 		{
 			$add.= html_tag('h2', array(), '加筆されたヘルプ') ;
-			$add.= \Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), '編集する');
+			if (\Auth::instance()->has_access('\\Help\\Controller_Help/edit'))
+			{
+				$add.= \Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), '編集する');
+			}
 			$add.= html_tag('div', array('class' => 'add_body'), $obj->body) ;
 		}
 		else
 		{
-			$add.= ' | '.\Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), 'ヘルプを加筆する');
+			if (\Auth::instance()->has_access('\\Help\\Controller_Help/edit'))
+			{
+				$add.= ' | '.\Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), 'ヘルプを加筆する');
+			}
 		}
 		$help.= $add ;
 

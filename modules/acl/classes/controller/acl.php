@@ -7,6 +7,7 @@ class Controller_Acl extends \Locomo\Controller_Base
 		'show_at_menu' => true,
 		'order_at_menu' => 50,
 		'is_for_admin' => true,
+		'no_acl' => true,
 		'admin_home' => '\\Acl\\Controller_Acl/controller_index',
 		'nicename' => 'アクセス権',
 		'help'     => 'packages/locomo/modules/acl/help/acl.html',

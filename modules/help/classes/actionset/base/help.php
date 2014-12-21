@@ -2,6 +2,8 @@
 namespace Help;
 class Actionset_Base_Help extends \Actionset
 {
+	use \Revision\Traits_Actionset_Base_Revision;
+
 	/**
 	 * generate_qstr()
 	 */
@@ -30,6 +32,11 @@ class Actionset_Base_Help extends \Actionset
 		$retvals = array(
 			'urls'  => $urls,
 			'order' => 10,
+			'action_name' => '編集',
+			'acl_exp' => 'ヘルプの編集権限です。',
+			'dependencies' => array(
+				$controller.DS.'edit',
+			)
 		);
 
 		return $retvals;
