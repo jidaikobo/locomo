@@ -66,6 +66,10 @@ $h->up();
 			$action = strtolower($action);
 		}
 
+		// load module
+		$module = \Inflector::get_modulename($controller);
+		\Module::loaded($module) or \Module::load($module);
+
 		// controller is not exist
 		if( ! $controller)
 		{

@@ -68,6 +68,7 @@ foreach ($paths as $class => $path)
 Autoloader::add_classes($classes);
 
 // controllers - this must be called after first Autoloader::add_classes()
+/*
 foreach (\Inflector::dir_to_ctrl(LOCOMOPATH.'/classes/controller') as $class => $path)
 {
 	$app = str_replace(LOCOMOPATH, APPPATH, $path);
@@ -77,7 +78,7 @@ foreach (\Inflector::dir_to_ctrl(LOCOMOPATH.'/classes/controller') as $class => 
 	}
 }
 Autoloader::add_classes($classes);
-
+*/
 
 // always load module
 \Module::load('acl');
