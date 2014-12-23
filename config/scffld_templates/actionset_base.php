@@ -2,8 +2,8 @@
 namespace XXX;
 class Actionset_Base_XXX extends \Actionset_Base
 {
-//	use \Revision\Traits_Actionset_Base_Revision;
-//	use \Workflow\Traits_Actionset_Base_Workflow;
+//	use \Actionset_Traits_Base_Revision;
+//	use \Actionset_Traits_Base_Wrkflw;
 
 	/*
 	(arr)  urls          メニューに表示するリンク先

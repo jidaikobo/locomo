@@ -80,13 +80,6 @@ foreach ($target as $class => $path)
 }
 Autoloader::add_classes($classes);
 
-// always load module
-\Module::load('acl');
-\Module::load('user');
-\Module::load('revision');
-\Module::load('workflow');
-\Module::load('bulk');
-
 // always load package
 \Package::load('auth');
 

@@ -2,7 +2,7 @@
 namespace Locomo;
 class Actionset_Base_Hlp extends \Actionset
 {
-	use \Revision\Traits_Actionset_Base_Revision;
+	use \Actionset_Traits_Base_Revision;
 
 	/**
 	 * generate_qstr()

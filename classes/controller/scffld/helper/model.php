@@ -14,7 +14,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		$name = ucfirst($name);
 		$table_name = \Inflector::tableize($name);
 		$admins  = array('is_visible');
-		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'modifier_id');
+		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'updater_id');
 
 		//fieldset
 		$field_str = '';
@@ -117,20 +117,20 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 
 		//observers
 		$observers = '';
-		if (in_array('created_at', $cmd_mods)):
-			$observers.= "\t\t'Locomo\Observer_Created' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
-		endif;
 		if (in_array('updated_at', $cmd_mods)):
 			$observers.= "\t\t'Orm\Observer_UpdatedAt' => array(\n\t\t\t\t'events' => array('before_save'),\n\t\t\t\t'mysql_timestamp' => true,\n\t\t\t),\n";
+		endif;
+		if (in_array('created_at', $cmd_mods)):
+			$observers.= "\t\t'Locomo\Observer_Created' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
 		endif;
 		if (in_array('expired_at', $cmd_mods)):
 			$observers.= "\t\t'Locomo\Observer_Expired' => array(\n\t\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t\t'properties' => array('expired_at'),\n\t\t\t),\n";
 		endif;
-		if (in_array('creator_id', $cmd_mods) || in_array('modifier_id', $cmd_mods)):
-			$observers.= "\t\t'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
+		if (in_array('creator_id', $cmd_mods) || in_array('updater_id', $cmd_mods)):
+			$observers.= "\t\t't'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
 		endif;
-		$observers.= "//\t\t'Workflow\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
-		$observers.= "//\t\t'Revision\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
+		$observers.= "//\t\t't'Locomo\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
+		$observers.= "//\t\t't'Locomo\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
 
 		//admins
 		$frmdfn = '';

@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Model_Hlp extends \Locomo\Model_Base
+class Model_Hlp extends \Model_Base
 {
 	protected static $_table_name = 'lcm_hlps';
 	public static $_subject_field_name = 'title';
@@ -66,7 +66,7 @@ class Model_Hlp extends \Locomo\Model_Base
 		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Revision\Observer_Revision' => array(
+		'Locomo\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save', 'before_delete'),
 		),
 	);

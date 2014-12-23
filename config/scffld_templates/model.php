@@ -1,8 +1,8 @@
 <?php
 namespace XXX;
-class Model_XXX extends \Locomo\Model_Base
+class Model_XXX extends \Model_Base
 {
-//	use \Workflow\Traits_Model_Workflow;
+//	use \Model_Traits_Wrkflw;
 
 	protected static $_table_name = '###TABLE_NAME###';
 	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
@@ -14,7 +14,7 @@ class Model_XXX extends \Locomo\Model_Base
 
 	protected static $_depend_modules = array();
 
-	//$_option_options - see sample at \User\Model_Usergroup
+	//$_option_options - see sample at \User\Model_Usrgrp
 	public static $_option_options = array();
 
 /*
@@ -41,6 +41,7 @@ class Model_XXX extends \Locomo\Model_Base
 	//observers
 ###DLT_FLD###
 	protected static $_observers = array(
+		"Orm\Observer_Self" => array(),
 ###OBSRVR###
 	);
 

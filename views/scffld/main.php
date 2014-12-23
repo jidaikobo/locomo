@@ -26,7 +26,7 @@ expired_at(有効期日):datetime:null
 deleted_at(削除日):datetime:null
 is_visible(可視属性):int:null
 creator_id:int[5]
-modifier_id:int[5]
+updater_id:int[5]
 workflow_status:enum[before_progress,in_progress,finish]:null
 </textarea>
 

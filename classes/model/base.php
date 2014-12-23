@@ -38,7 +38,7 @@ class Model_Base extends \Orm\Model_Soft
 	);
 
 	/*
-	 * _option_options - see sample at \User\Model_Usergroup
+	 * _option_options - see sample at \User\Model_Usrgrp
 	 */
 	protected static $_option_options = array();
 
@@ -59,7 +59,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function add_authorize_methods()
 	{
-// see sample at \Workflow\Traits_Model_Workflow -マージでもいいか？
+// see sample at \Model_Traits_Wrkflw -マージでもいいか？
 //		if ( ! in_array('auth_sample', static::$_authorize_methods)):
 //			static::$_authorize_methods[] = 'auth_sample';
 //		endif;

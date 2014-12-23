@@ -9,7 +9,7 @@ class Controller_Scffld_Helper_Views_view extends Controller_Scffld_Helper
 	{
 		$cmds = explode(' ', $cmd_orig);
 		array_shift($cmds);//remove name
-		$banned = array('workflow_status', 'creator_id', 'modifier_id', 'is_visible');
+		$banned = array('workflow_status', 'creator_id', 'updater_id', 'is_visible');
 
 		$fields = '';
 

@@ -9,7 +9,7 @@ class Controller_Scffld_Helper_Views_edit extends Controller_Scffld_Helper
 	{
 		$hiddens = array('status');
 		$admins  = array('is_visible');
-		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'modifier_id');
+		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'updater_id');
 
 		$fields = '';
 		$admin_fields = '';

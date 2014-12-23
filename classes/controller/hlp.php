@@ -16,7 +16,7 @@ class Controller_Hlp extends \Controller_Base
 	);
 
 	// trait
-	use \Revision\Traits_Controller_Revision;
+	use \Controller_Traits_Revision;
 
 	/*
 	 * before()

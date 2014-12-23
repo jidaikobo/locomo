@@ -49,16 +49,39 @@ return array(
 	),
 
 	// no_home
-	'no_home' => true,
+	'no_home' => false,
+
+	// default_dashboard
+	'default_dashboard' => array(
+		array(
+			'name' => 'コントローラ一覧',
+			'action' => '\\Controller_Sys/admin',
+			'size' => 1,
+		),
+		array(
+			'name' => '現在時刻',
+			'action' => '\\Controller_Sys/clock',
+			'size' => 1,
+		),
+	),
 
 	// always guest allowed actions
 	// ex) '\\Modname\\Controller_Something/action'
 	'always_allowed' => array(
-		'\\User\\Controller_Auth/login/',
-		'\\User\\Controller_Auth/logout/',
-		'\\Content\\Controller_Content/home/',
-		'\\Content\\Controller_Content/403/',
-		'\\Content\\Controller_Content/404/',
-		'\\Content\\Controller_Content/fetch_view/',
+		'\\Controller_Auth/login',
+		'\\Controller_Auth/logout',
+		'\\Controller_Sys/home',
+		'\\Controller_Sys/403',
+		'\\Controller_Sys/404',
+		'\\Controller_Sys/fetch_view',
+	),
+
+	// always user allowed actions
+	'always_user_allowed' => array(
+		'\\Controller_Hlp/view',
+		'\\Controller_Sys/admin',
+		'\\Controller_Sys/dashboard',
+		'\\Controller_Sys/edit',
+		'\\Controller_Sys/clock',
 	),
 );

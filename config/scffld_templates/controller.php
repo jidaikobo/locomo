@@ -45,8 +45,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	);
 
 	// trait
-	use \Locomo\Controller_Traits_Testdata;
-//	use \Option\Traits_Controller_Option;
-//	use \Workflow\Traits_Controller_Workflow;
-//	use \Revision\Traits_Controller_Revision;
+	use \Controller_Traits_Testdata;
+//	use \Controller_Traits_Wrkflw;
+//	use \Controller_Traits_Revision;
 }
