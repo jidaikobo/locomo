@@ -33,7 +33,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public function before()
 	{
 		// Profiler
-		\Profiler::mark('Locomo\\Controller_Base::before() - Called');
+		\Profiler::mark('Locomo\\Controller_Core::before() - Called');
 
 		// parent
 		parent::before();
@@ -92,7 +92,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public function router($method, $params)
 	{
 		// Profiler
-		\Profiler::mark('Locomo\\Controller_Base::router() - Called');
+		\Profiler::mark('Locomo\\Controller_Core::router() - Called');
 
 		// fetch_view() can be executed without acl
 		if (

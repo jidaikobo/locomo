@@ -1,6 +1,6 @@
 <?php
-namespace Help;
-class Actionset_Base_Help extends \Actionset
+namespace Locomo;
+class Actionset_Base_Hlp extends \Actionset
 {
 	use \Revision\Traits_Actionset_Base_Revision;
 

@@ -1,6 +1,6 @@
 <?php
-namespace Scaffold;
-class Controller_Scaffold extends \Locomo\Controller_Base
+namespace Locomo;
+class Controller_Scffld extends \Controller_Base
 {
 	// locomo
 	public static $locomo = array(
@@ -8,10 +8,10 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 		'order_at_menu' => 150,
 		'is_for_admin' => true,
 		'no_acl' => true,
-		'admin_home' => '\\Scaffold\\Controller_Scaffold/main',
+		'admin_home' => '\\Controller_Scffld/main',
 		'nicename' => '足場組み',
 		'actionset_classes' =>array(
-			'base'   => '\\Scaffold\\Actionset_Base_Scaffold',
+			'base'   => '\\Actionset_Base_Scffld',
 		),
 	);
 
@@ -24,14 +24,14 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 //		if (\Fuel::$env != 'development') die();
 
 		//view
-		$view = \View::forge('main');
+		$view = \View::forge('scffld/main');
 
 		// scaffold
 		if (\Input::method() == 'POST'):
 
 			if ( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
-//				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+//				return \Response::redirect(\Uri::create('/scffld/scffld/main'));
 			endif;
 
 			// vals
@@ -39,12 +39,12 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw );
 			$cmd_orig = join(explode("\n", $cmd_orig),' ');
 			$cmd_orig = trim(preg_replace("/ +/", ' ', $cmd_orig ));
-			$cmd  = Helper::remove_nicename($cmd_orig);
+			$cmd  = \Controller_Scffld_Helper::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
 
 			if ( ! $cmd_orig):
 				\Session::set_flash('error', 'invalid value sent');
-				return \Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+				return \Response::redirect(\Uri::create('/scffld/main'));
 			endif;
 
 			// migration
@@ -53,48 +53,20 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$subjects   = array($table_name, $table_name);
 			$filename   = $name.'.php';
 
-			//add_core_namespace for logic
-			\Autoloader::add_core_namespace('Scaffold');
-			$helpers = array('migration', 'controller', 'actionset', 'model', 'config', 'index', 'view', 'edit');
-			foreach($helpers as $helper)
-			{
-				$helper_file = $helper.'.php';
-				$helper_class = ucfirst($helper);
-				//views
-				if (in_array($helper, array('index', 'view', 'edit')))
-				{
-					$helper_file = 'views/'.$helper.'.php';
-					$helper_class = 'Views_'.ucfirst($helper);
-				}
-				//add_class
-				if (file_exists(APPPATH.'classes/scaffold/helper/'.$helper_file))
-				{
-					\Autoloader::add_class(
-						'Scaffold\\Helper_'.$helper_class,
-						APPPATH.'classes/scaffold/helper/'.$helper_file
-					);
-				}else{
-					\Autoloader::add_class(
-						'Scaffold\\Helper_'.$helper_class,
-						dirname(__DIR__).'/helper/'.$helper_file
-					);
-				}
-			}
-
 			// molding - logic
-			$migration        = \Helper_Migration::generate($name, $subjects, $cmds);
-			$controller       = \Helper_Controller::generate($name, $cmd_orig);
-			$actionset_index  = \Helper_Actionset::generate($name, 'index');
-			$actionset_base   = \Helper_Actionset::generate($name, 'base');
-			$actionset_option = \Helper_Actionset::generate($name, 'option');
-			$model            = \Helper_Model::generate($name, $cmd_orig);
-			$config           = \Helper_Config::generate($name, $cmd_orig);
+			$migration        = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
+			$controller       = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig);
+			$actionset_index  = \Controller_Scffld_Helper_Actionset::generate($name, 'index');
+			$actionset_base   = \Controller_Scffld_Helper_Actionset::generate($name, 'base');
+			$actionset_option = \Controller_Scffld_Helper_Actionset::generate($name, 'option');
+			$model            = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig);
+			$config           = \Controller_Scffld_Helper_Config::generate($name, $cmd_orig);
 
 			// molding - view
-			$tpl_index        = \Helper_Views_Index::generate($name, $cmd_orig);
-			$tpl_index_admin  = \Helper_Views_Index::generate($name, $cmd_orig, true);
-			$tpl_view         = \Helper_Views_View::generate($name, $cmd_orig);
-			$tpl_edit         = \Helper_Views_Edit::generate($name, $cmds);
+			$tpl_index        = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig);
+			$tpl_index_admin  = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig, true);
+			$tpl_view         = \Controller_Scffld_Helper_Views_View::generate($name, $cmd_orig);
+			$tpl_edit         = \Controller_Scffld_Helper_Views_Edit::generate($name, $cmds);
 
 			// mkdir for module
 			$scfldpath = APPPATH.'modules/';
@@ -111,7 +83,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			{
 				$scfldpath = APPPATH;
 			}
-			$log_dir = APPPATH.'logs/scaffold/'.$name;
+			$log_dir = APPPATH.'logs/scffld/'.$name;
 
 			// put files
 			$name = strtolower($name);
@@ -223,7 +195,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			}
 
 			//log
-			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scaffold/'.$name);
+			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scffld/'.$name);
 			$latest = \Util::get_latestprefix($log_dir);
 			\File::update($log_dir, $latest.'_scaffold.txt', $cmd_raw);
 	
@@ -231,7 +203,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 			$messages[] = "{$log_dir}";
 			$messages[] = "にpostされた文字列を保存しています。";
 			\Session::set_flash('success', $messages);
-			\Response::redirect(\Uri::create('/scaffold/scaffold/main'));
+			\Response::redirect(\Uri::create('/scffld/main'));
 		endif;
 
 		//view

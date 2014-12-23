@@ -1,6 +1,6 @@
 <?php
-namespace Scaffold;
-class Actionset_Base_Scaffold extends \Actionset
+namespace Locomo;
+class Actionset_Base_Scffld extends \Actionset
 {
 	/**
 	 * actionset_controller_index()

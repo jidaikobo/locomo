@@ -1,6 +1,6 @@
 <?php
-namespace Scaffold;
-class Helper_Migration extends Helper
+namespace Locomo;
+class Controller_Scffld_Helper_Migration extends Controller_Scffld_Helper
 {
 	/**
 	* @var array $_default_constraints

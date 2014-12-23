@@ -1,8 +1,8 @@
 <?php
-namespace Help;
-class Model_Help extends \Locomo\Model_Base
+namespace Locomo;
+class Model_Hlp extends \Locomo\Model_Base
 {
-	protected static $_table_name = 'helps';
+	protected static $_table_name = 'lcm_hlps';
 	public static $_subject_field_name = 'title';
 
 	protected static $_properties = array(
@@ -80,7 +80,7 @@ class Model_Help extends \Locomo\Model_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form_definition($factory = 'help', $obj = NULL)
+	public static function form_definition($factory = 'hlp', $obj = NULL)
 	{
 		//forge
 		$form = parent::form_definition($factory, $obj);

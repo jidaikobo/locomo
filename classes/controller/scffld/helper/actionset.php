@@ -1,6 +1,6 @@
 <?php
-namespace Scaffold;
-class Helper_Actionset extends Helper
+namespace Locomo;
+class Controller_Scffld_Helper_Actionset extends Controller_Scffld_Helper
 {
 	/**
 	 * generate()

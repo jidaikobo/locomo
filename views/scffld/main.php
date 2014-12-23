@@ -41,7 +41,7 @@ workflow_status:enum[before_progress,in_progress,finish]:null
 <p>を実行した後、展開されたファイル群を削除してください。</p>
 
 <h3>オーバライド</h3>
-<p><code>LOCOMOPATH./modules/scaffold/classes/helper/</code>から、<code>APPPATH.classes/scaffold/helper/</code>に必要なファイルを移動すれば、処理をオーバライドできます。</p>
-<p><code>LOCOMOPATH./modules/scaffold/module_templates/</code>から、<code>APPPATH.locomo/modules/scaffold/module_templates/</code>に必要なファイルを移動すれば、基礎テンプレートのみを変更できます。</p>
+<p><code>LOCOMOPATH.classes/scffld/helper/</code>から、<code>APPPATH.classes/scffld/helper/</code>に必要なファイルを移動すれば、処理をオーバライドできます。</p>
+<p><code>LOCOMOPATH.config/scffld_templates/</code>から、<code>APPPATH.config/scffld_templates/</code>に必要なファイルを移動すれば、基礎テンプレートのみを変更できます。</p>
 
 

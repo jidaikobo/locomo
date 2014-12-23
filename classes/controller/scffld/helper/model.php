@@ -1,6 +1,6 @@
 <?php
-namespace Scaffold;
-class Helper_Model extends Helper
+namespace Locomo;
+class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 {
 	/**
 	 * generate()

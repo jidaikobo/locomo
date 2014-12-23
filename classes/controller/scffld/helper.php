@@ -1,14 +1,14 @@
 <?php
-namespace Scaffold;
-class Helper
+namespace Locomo;
+class Controller_Scffld_Helper
 {
 	/**
 	 * fetch_temlpate()
 	 */
 	public static function fetch_temlpate($template)
 	{
-		$default = dirname(__DIR__).'/module_templates/'.$template;
-		$override = APPPATH.'locomo/modules/scaffold/module_templates/'.$template;
+		$default = LOCOMOPATH.'config/scffld_templates/'.$template;
+		$override = APPPATH.'config/scffld_templates/'.$template;
 
 		if (file_exists($override))
 		{
