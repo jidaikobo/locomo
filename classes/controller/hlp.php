@@ -1,6 +1,6 @@
 <?php
-namespace Help;
-class Controller_Help extends \Locomo\Controller_Base
+namespace Locomo;
+class Controller_Hlp extends \Locomo\Controller_Base
 {
 	// locomo
 	public static $locomo = array(
@@ -66,14 +66,10 @@ $h->up();
 			$action = strtolower($action);
 		}
 
-		// load module
-		$module = \Inflector::get_modulename($controller);
-		\Module::loaded($module) or \Module::load($module);
-
 		// controller is not exist
 		if( ! $controller)
 		{
-			$content = \View::forge('view');
+			$content = \View::forge('hlp/view');
 			$content->base_assign();
 			$content->set_global('title', 'ヘルプインデクス');
 			$content->set_safe('content', '');

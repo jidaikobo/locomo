@@ -75,10 +75,11 @@ class Model_Acl extends \Orm\Model
 	{
 		$retvals = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if (\Arr::get($v, 'is_for_admin')) continue;
-			if ( ! \Arr::get($v, 'show_at_menu')) continue;
+			if (\Arr::get($v, 'no_acl')) continue;
 			$retvals[\Inflector::ctrl_to_safestr($k)] = \Arr::get($v, 'nicename');
 		endforeach;
+
+
 		return array('none' => '選択してください') + $retvals;
 	}
 

@@ -78,7 +78,7 @@ return array(
 
 	// always user allowed actions
 	'always_user_allowed' => array(
-		'\\Help\\Controller_Help/index_admin',
+		'\\Help\\Controller_Help/view',
 		'\\Admin\\Controller_Admin/home',
 		'\\Admin\\Controller_Admin/dashboard',
 		'\\Admin\\Controller_Admin/edit',

@@ -7,6 +7,7 @@ class Controller_Scaffold extends \Locomo\Controller_Base
 		'show_at_menu' => true,
 		'order_at_menu' => 150,
 		'is_for_admin' => true,
+		'no_acl' => true,
 		'admin_home' => '\\Scaffold\\Controller_Scaffold/main',
 		'nicename' => '足場組み',
 		'actionset_classes' =>array(

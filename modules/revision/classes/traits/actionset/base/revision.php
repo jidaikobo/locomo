@@ -3,9 +3,9 @@ namespace Revision;
 trait Traits_Actionset_Base_Revision
 {
 	/**
-	 * actionset_revisions()
+	 * actionset_index_revision()
 	 */
-	public static function actionset_revisions($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_index_revision($controller, $obj = null, $id = null, $urls = array())
 	{
 		if ($id && in_array(\Request::main()->action, array('edit','view'))):
 			$actions = array(array($controller.DS."each_index_revision/".$id, '編集履歴'));
@@ -35,6 +35,7 @@ trait Traits_Actionset_Base_Revision
 				$controller.DS.'edit',
 				$controller.DS.'view_revision',
 				$controller.DS.'index_revision',
+				$controller.DS.'each_index_revision',
 			)
 		);
 		return $retvals;

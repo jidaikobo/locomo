@@ -9,6 +9,7 @@ class Controller_Workflowadmin extends \Locomo\Controller_Base
 		'show_at_menu' => true,
 		'order_at_menu' => 100,
 		'is_for_admin' => true,
+		'no_acl' => true,
 		'admin_home' => '\\Workflow\\Controller_Workflowadmin/index_admin',
 		'admin_home_name' => '管理一覧',
 		'nicename' => 'ワークフロー',

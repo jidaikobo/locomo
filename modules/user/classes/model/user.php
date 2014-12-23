@@ -162,7 +162,7 @@ class Model_User extends \Locomo\Model_Base
 				'ユーザグループ',
 				array('type' => 'checkbox', 'options' => $options)
 			)
-			->set_value( array_keys($obj->usergroup));
+			->set_value(array_keys($obj->usergroup));
 
 		// password
 		$form->field('password')->set_value('');

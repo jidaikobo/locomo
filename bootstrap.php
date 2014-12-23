@@ -37,10 +37,6 @@ $paths = array(
 	'\\Locomo\\Auth_Acl_Locomoacl' => 'auth/acl/locomoacl.php',
 	'\\Locomo\\Auth_Group_Locomogroup' => 'auth/group/locomogroup.php',
 	'\\Locomo\\Auth_Login_Locomoauth' => 'auth/login/locomoauth.php',
-	'\\Locomo\\Controller_Traits_Testdata' => 'controller/traits/testdata.php',
-	'\\Locomo\\Controller_Base' => 'controller/base.php',
-	'\\Locomo\\Controller_Crud' => 'controller/crud.php',
-	'\\Locomo\\Controller_Welcome1' => 'controller/welcome1.php',
 	'\\Locomo\\Fieldset_Field' => 'fieldset/field.php',
 	'\\Locomo\\Model_Base' => 'model/base.php',
 	'\\Locomo\\Observer_Created' => 'observer/created.php',
@@ -57,6 +53,9 @@ $paths = array(
 	'\\Locomo\\Util' => 'util.php',
 	'\\Locomo\\Validation' => 'validation.php',
 	'\\Locomo\\View' => 'view.php',
+//	'\\Locomo\\Controller_Traits_Testdata' => 'controller/traits/testdata.php',
+//	'\\Locomo\\Controller_Base' => 'controller/base.php',
+//	'\\Locomo\\Controller_Crud' => 'controller/crud.php',
 );
 $classes = array();
 foreach ($paths as $class => $path)
@@ -67,6 +66,19 @@ foreach ($paths as $class => $path)
 	}
 }
 Autoloader::add_classes($classes);
+
+// controllers - this must be called after first Autoloader::add_classes()
+/*
+foreach (\Inflector::dir_to_ctrl(LOCOMOPATH.'/classes/controller') as $class => $path)
+{
+	$app = str_replace(LOCOMOPATH, APPPATH, $path);
+	if ( ! file_exists($app))
+	{
+		$classes['\\Locomo'.$class] = $path;
+	}
+}
+Autoloader::add_classes($classes);
+*/
 
 // always load module
 \Module::load('acl');

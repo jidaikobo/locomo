@@ -7,6 +7,7 @@ class Controller_Content extends \Locomo\Controller_Base
 		'show_at_menu' => false,
 		'order_at_menu' => 1000,
 		'is_for_admin' => false,
+		'no_acl' => true,
 		'nicename' => 'ホーム',
 		'admin_home' => '\\Content\\Controller_Content/home',
 	);

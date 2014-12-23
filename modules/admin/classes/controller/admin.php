@@ -7,6 +7,7 @@ class Controller_Admin extends \Locomo\Controller_Base
 		'show_at_menu' => false,
 		'order_at_menu' => 1000,
 		'is_for_admin' => false,
+		'no_acl' => true,
 		'admin_home' => '\\Admin\\Controller_Admin/home',
 		'nicename' => '管理トップ',
 		'actionset_classes' =>array(

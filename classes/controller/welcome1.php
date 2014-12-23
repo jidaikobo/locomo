@@ -8,7 +8,7 @@ class Controller_Welcome1 extends Controller_Base
 		'order_at_menu' => 1000,
 		'is_for_admin' => false,
 		'admin_home' => '\\Admin\\Controller_Admin/home',
-		'nicename' => '管理トップ',
+		'nicename' => 'welcome',
 	);
 
 	public function action_index()

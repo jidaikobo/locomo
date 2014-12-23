@@ -7,6 +7,7 @@ class Controller_Usergroup extends \Locomo\Controller_Base
 		'show_at_menu' => true,
 		'order_at_menu' => 20,
 		'is_for_admin' => false,
+		'no_acl' => true,
 		'admin_home' => '\\User\\Controller_Usergroup/index_admin',
 		'admin_home_name' => 'ユーザグループ管理',
 		'admin_home_explanation' => '既存のユーザグループの名称、表示順、使用可否などを編集します。',
