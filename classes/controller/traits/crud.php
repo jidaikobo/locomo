@@ -77,7 +77,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_create()
 	{
-		parent::edit_core(null);
+		parent::edit(null);
 	}
 
 	/**
@@ -85,7 +85,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_edit($id = null)
 	{
-		parent::edit_core($id);
+		parent::edit($id);
 	}
 
 	/**
