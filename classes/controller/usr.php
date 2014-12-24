@@ -33,7 +33,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 	 */
 	public function action_index()
 	{
-		return \Response::redirect(\Uri::create('user/index_admin'));
+		return \Response::redirect(\Uri::create('usr/index_admin'));
 	}
 
 	/**
