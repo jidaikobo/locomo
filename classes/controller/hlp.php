@@ -108,7 +108,7 @@ $h->up();
 			}
 		}
 		$help = $help ?: 'この項目専用のヘルプは存在しません。' ;
-		$help = html_tag('div', array('class' => 'txt'), $help);
+		$help = html_tag('div', array('class' => 'txt'), \Markdown::parse($help));
 
 		// additional help
 		$controller_safe = \Inflector::ctrl_to_safestr($controller);
