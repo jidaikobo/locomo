@@ -502,7 +502,7 @@ function confirm_beforeunload(){
 	});
 }
 
-if($('a:submit, input:submit')[0] && !$('body').hasClass('lcm_action_login')){
+if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')){
 	var datetime = $('.datetime');
 	datetime.each(function(){
 		var val = $(this).val();
@@ -519,7 +519,7 @@ if($('a:submit, input:submit')[0] && !$('body').hasClass('lcm_action_login')){
 			confirm_beforeunload();
 		}
 	});
-	if($('#alert_error')[0]){
+	if($('#alert_error').children('ul.list').length ){
 		confirm_beforeunload();
 	}
 }

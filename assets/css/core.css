@@ -866,7 +866,7 @@ h1#page_title {
 	height: 250px;
 	min-height: 1.25em;
 	width: 300px;
-	padding-bottom: 10px;
+	padding-bottom: 20px;
 	min-width: 200px;
 	overflow: hidden;
 	display: none;
@@ -887,15 +887,25 @@ h1#page_title {
 	box-sizing : border-box ;
 	height: 100%;
 	width: 100%;
-	padding: 10px 5px;
-	margin-bottom: 10px;
+	padding: 10px 15px 30px;
 	overflow: auto;
+	font-size: .9em;
 }
 #help_txt h2 {
-margin-top: 1em;
-font-size: 1.15em;
+	margin: 1.5em 0 .25em;
+	border-bottom: 1px solid #aaa;
+	text-shadow: 1px 1px 0 #fff;
+	box-shadow: 0 1px 0 #fff;
 }
-
+#help_txt h2:first-of-type {
+	margin-top: .5em;
+}
+#help_txt h3 {
+	margin-top: .5em;
+}
+#help_txt p {
+	margin-bottom: .5em;
+}
 .lcm_close_parent {
 	position: absolute;
 	top: 0;
