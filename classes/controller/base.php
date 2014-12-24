@@ -26,9 +26,9 @@ class Controller_Base extends Controller_Core
 	}
 
 	/**
-	 * index_admin()
+	 * index_core()
 	 */
-	protected function index_admin()
+	protected function index_core()
 	{
 		$model = $this->model_name;
 
@@ -55,16 +55,39 @@ class Controller_Base extends Controller_Core
 		}
 		else
 		{
-			$condition = $model::condition();
-			$options = $condition;
+			$options = $model::condition();
 		}
 		$model::$_conditions = array();
+//		$options = array('expired_at', '>', date('Y-m-d H:i:s'));
 
 		$content->set('items',  $model::paginated_find($options));
 
 		$this->base_assign();
-		$this->template->set_global('title', static::$nicename.'管理一覧');
 		$this->template->content = $content;
+	}
+
+	/**
+	 * index_admin()
+	 */
+	protected function index_admin()
+	{
+		$model = $this->model_name;
+
+		if (isset($model::properties()['created_at']))
+		{
+			$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d H:i:s'));
+		}
+		if (isset($model::properties()['expired_at']))
+		{
+			$model::$_conditions['where'][] = array('expired_at', 'is', null);
+		}
+		if (isset($model::properties()['is_visible']))
+		{
+			$model::$_conditions['where'][] = array('is_visible', '=', true);
+		}
+
+		static::index_core();//$options, $model, $deleted);
+		$this->template->set_global('title', static::$nicename.'管理一覧');
 	}
 
 	/**
@@ -73,7 +96,7 @@ class Controller_Base extends Controller_Core
 	protected function index()
 	{
 		$this->_content_template = 'index';
-		static::index_admin();//$options, $model, $deleted);
+		static::index_core();//$options, $model, $deleted);
 		$this->template->set_global('title', static::$nicename.'一覧');
 	}
 
@@ -88,10 +111,10 @@ class Controller_Base extends Controller_Core
 
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
-		$model::$_conditions['where'][] = array('created_at', '>=', date('Y-m-d'));
-		$model::$_conditions['where'][] = array('expired_at', '>=', date('Y-m-d'));
+		$model::$_conditions['where'][] = array('created_at', '>=', date('Y-m-d H:i:s'));
+		$model::$_conditions['where'][] = array('expired_at', '>=', date('Y-m-d H:i:s'));
 
-		static::index_admin();
+		static::index_core();
 		$this->template->set_global('title', static::$nicename . '予約項目');
 	}
 
@@ -103,10 +126,10 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
-		$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d'));
-		$model::$_conditions['where'][] = array('expired_at', '<=', date('Y-m-d'));
+//		$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d'));
+		$model::$_conditions['where'][] = array('expired_at', '<', date('Y-m-d H:i:s'));
 
-		static::index_admin();
+		static::index_core();
 		$this->template->set_global('title', static::$nicename . 'の期限切れ項目');
 	}
 
@@ -118,7 +141,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
 		$model::$_conditions['where'][] = array('is_visible', '=', 0);
-		static::index_admin();
+		static::index_core();
 		$this->template->set_global('title', static::$nicename . 'の不可視項目');
 	}
 
@@ -136,7 +159,7 @@ class Controller_Base extends Controller_Core
 		$model::disable_filter();
 		//static::enable_filter();
 
-		static::index_admin();
+		static::index_core();
 		$this->template->set_global('title', static::$nicename . 'の削除済み項目');
 	}
 
@@ -147,9 +170,8 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
-
 		$model::disable_filter();
-		static::index_admin();
+		static::index_core();
 		$this->template->set_global('title', static::$nicename . 'の全項目');
 	}
 

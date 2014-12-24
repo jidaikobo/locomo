@@ -167,8 +167,8 @@ class Model_Revision extends \Model_Base
 		$operation = $result['operation'];
 
 		//configからrevision間隔を取得
-		$config_path = LOCOMOPATH.'modules/revision/config/revision.php';
-		$config_path_default = APPPATH.'modules/revision/config/revision.php';
+		$config_path = APPPATH.'config/revision.php';
+		$config_path_default = LOCOMOPATH.'config/revision.php';
 		$config = file_exists($config_path) ? \Config::load($config_path) : \Config::load($config_path_default);
 
 		//operationが異なる場合は、絶対に保存する
