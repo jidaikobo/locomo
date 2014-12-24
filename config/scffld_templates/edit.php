@@ -13,7 +13,7 @@
 
 <?php
 	// revision memo template - optional
-	//echo render(LOCOMOPATH.'modules/revision/views/inc_revision_memo.php');
+	//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
 ?>
 
 <div class="submit_button">

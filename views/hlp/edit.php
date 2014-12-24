@@ -17,7 +17,7 @@
 	</table>
 </fieldset>
 
-<?php echo render(LOCOMOPATH.'modules/revision/views/inc_revision_memo.php'); ?>
+<?php echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php'); ?>
 
 <div class="submit_button">
 	<?php
