@@ -9,10 +9,10 @@ IE8,MacIE5,Opera9以下 html:first-child
 
 /*=== login ===*/
 
-body.login{
+body.lcm_action_login {
 	background-color: #dde7ee;
 }
-.login .container {
+.lcm_action_login .container {
 	min-height: inherit;
 	width: 23em;
 	min-width: 23em;
@@ -25,21 +25,21 @@ body.login{
 	text-align: center;
 	outline: none;
 }
-.login input[type="text"],
-.login input[type="password"] {
+.lcm_action_login input[type="text"],
+.lcm_action_login input[type="password"] {
 	width: 13em;
 }
-.login.home .container{
+.lcm_action_login.home .container{
 	height: 21.5em !important;
 }
-.login h1{
+.lcm_action_login h1{
 	position: absolute !important;
 	left: auto;
 	height: 0;
 	clip: rect(1px 1px 1px 1px);
 	clip: rect(1px, 1px, 1px, 1px);
 }
-.login .contents h2{
+.lcm_action_login .contents h2{
 	font-size: 2em !important;
 	color: #004896;
 	font-weight: normal;
@@ -47,27 +47,27 @@ body.login{
 	border: none;
 	margin: 0 0 .5em !important;
 }
-.login .contents h2 img{
+.lcm_action_login .contents h2 img{
 	display: block;
 	margin: .5em auto 0;
 	width: 1.5em;
 }
 
-.login .form_group {
+.lcm_action_login .form_group {
 	border: none;
 	padding: 0;
 	margin: .5em 0;
 	background-color: transparent;
 }
-.login input#form_submit {
+.lcm_action_login input#form_submit {
 	margin: 1.5em 0;
 	width: 100%;
 }
-.login a{
+.lcm_action_login a{
 	display: block;
 	font-size: .9em;
 }
-.login .flash_alert {
+.lcm_action_login .flash_alert {
 	position: absolute;
 	top: 4em;
 	left: 0;
@@ -127,6 +127,7 @@ body.login{
 }
 .contents .left_column {
 	margin-right: 10px;
+	width: 300px;
 }
 .contents .main_column {
 }
@@ -143,20 +144,6 @@ body.login{
 	display: table-cell;
 	vertical-align: top;
 	width: 100%;
-}
-
-.left_column .form_group {
-	text-align: center;
-	margin-right: 10px;
-}
-.left_column.form_group table {
-	margin-bottom: 1em;
-	font-size: .9em;
-}
-.form_group table tbody th {
-	text-align: left;
-	min-width: 5em;
-	background-color: transparent;	
 }
 
 /*=== adminbar ===*/
@@ -209,7 +196,7 @@ body.login{
 	background-repeat: no-repeat;
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
-	height: 2.5em;	
+	height: 2.5em;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -403,33 +390,51 @@ ul.holizonal_list {
 
 
 /* dashboard */
-
-/*
-	.dashboard .contents {
+/*あとでview側直書きの記述を削除*/
+.lcm_action_dashboard .contents {
 	margin-left: 0;
 	margin-right: -0.95%;
-	}
-	.size1 {
-	width: 30.975%;
-	}
-	.size2 {
-	width: 63.9%;
-	}
-	.size3 {
-	width: 96.95%;
-	}
-	.widget {
+}
+.widget {
+	box-sizing: border-box;
 	border: 1px #aaa solid;
 	float: left;
+	position: relative;
 	height: 220px;
 	overflow: auto;
-	box-sizing: border-box;
 	margin: 5px 1%;
+	font-size: .85em;
+}
+.size1 {
+	width: 30.975% !important;
 	}
+.size2 {
+	width: 63.9% !important;
+}
+.size3 {
+	width: 96.95% !important;
+}
+.widget_title{
+	height: 1.5em;
+	padding: 3px;
+	margin: 0 !important;
+	background-color: #eee;
+}
+/*幅の制御がむずかしいので、fixeでないほうがいいのかも。中身用にもdivを用意するとか
+.widget_title {
+	position: fixed;
+	height: 1.5em;
+	padding: 3px;
+	margin: 0 !important;
+	background-color: #eee;
+}
+.size1 .widget_title {
+}
+.size2 .widget_title {
+}
+.size3 .widget_title{
+}
 */
-
-
-
 /* button */
 .btn,
 .button {
@@ -664,11 +669,13 @@ div.form_tooltip{
 	padding: 5px 10px;
 }
 
-.pagination .active a {
-	font-weight: bold;
+.pagination .active a,
+.pagination a:hover {
 	background-color: #eee;
 }
-
+.pagination .active a{
+	font-weight: bold;
+}
 /*===  form  ===*/
 .form_group{
 	margin: 10px 0 20px;
@@ -678,6 +685,10 @@ div.form_tooltip{
 form tbody th{
 	text-align: left;
 	padding-right: 5px;
+}
+
+label {
+	display: inline-block;
 }
 .submit_button{
 	width: 100%;
@@ -701,6 +712,13 @@ a.disclosure.on{
 }
 a.show_item:hover{
 	text-decoration: underline;
+}
+
+a.asc:after {
+	content: ' ▼';
+}
+a.desc:after {
+	content: ' ▲';
 }
 
 /*===  table  ===*/
@@ -783,45 +801,174 @@ h1#page_title {
 	font-size: 1.1em;
 	margin: 1em 0 .25em;
 }
-
+.jslcm_tbl_wrapper{
+	position: relative;
+	overflow-y: hidden;
+	overflow-x: visible;
+	outline: 1px solid #aaa;
+	outline-offset: -1px;
+}
 .jslcm_tbl_wrapper table{
 	margin-top: 0;
 	margin-bottom: 0;
 }
-.jslcm_tbl_wrapper{
-	outline: 1px dotted red;
-	position: relative;
-	overflow-x: auto;
-}
-.jslcm_fixedheader{
-	position: absolute;
-	top: 0;
-	left: 0;
-}
 .jslcm_tbody_wrapper{
 	overflow-y: auto;
 }
+.jslcm_tbody_wrapper,
+.jslcm_fixed_thead,
+.jslcm_fixed_tfoot {
+	width: 100%;
+}
+.jslcm_tbody_wrapper{ 
+	overflow-x: hidden;
+}
+.jslcm_fixed_thead,
+.jslcm_fixed_tfoot {
+	overflow-x: visible;
+}
+.jslcm_fixed_thead,
+.jslcm_fixed_tfoot {
+	position: absolute;
+}
+.jslcm_fixed_thead{
+	top: 0;
+}
+.jslcm_fixed_tfoot{
+	bottom: 0;
+}
+.jslcm_fixed_thead,
+.jslcm_fixed_thead a,
+.jslcm_fixed_tfoot ,
+.jslcm_fixed_tfoot a{
+	z-index: 1;
+}
 
-/*=== contents ===*/
-h1#page_title {
-	margin: 0.25em 0;
-	font-size: 1.5em;
+#help_window {
+	background: rgb(250, 250, 250);
+	background: rgba(250, 250, 250, .95);
+	position: absolute;
+	z-index: 110;
+	top: 2.25em;
+	right: 5px;
+	box-shadow: 0 0 6px #aaa;
+	-moz-box-shadow: 0 0 6px #aaa;
+	-o-box-shadow: 0 0 6px #aaa;
+	-ms-box-shadow: 0 0 6px #aaa;
+	/* filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true),; */
+	progid: DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
+	 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+	 /*
+	 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
+	 */;
+	border: 1px solid #b9b9b9;
+	border-radius: 3px;
+	height: 250px;
+	min-height: 1.25em;
+	width: 300px;
+	padding-bottom: 10px;
+	min-width: 200px;
+	overflow: hidden;
+	display: none;
 }
-.contents h2 {
-	margin: 1em 0 .5em;
-	font-size: 1.25em;
-	border-bottom: 1px solid #aaa;
-	box-shadow: 0 1px 0 #fff;
+#help_title {
+	background-color: #0e3664;
+	background-image: url('../img/system/adminbar_bg.png');
+	background-position: center top;
+	background-repeat: no-repeat;
+	color: #fff !important;
+	text-shadow: 1px 1px 0 #333;
+	padding: 2px 7px;
+	cursor: move
 }
-.contents h2:first-of-type{
+#help_txt {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	height: 100%;
+	width: 100%;
+	padding: 10px 5px;
+	margin-bottom: 10px;
+	overflow: auto;
+}
+#help_txt h2 {
+margin-top: 1em;
+font-size: 1.15em;
+}
+
+.lcm_close_parent {
+	position: absolute;
+	top: 0;
+	right: 5px;
+}
+
+.menubar_icon {
+	width: 1.2em;
+}
+.mark_loading {
+	display: block;
+	margin: 50px auto;
+}
+
+/*=== itemindex ===*/
+.sub_column .index_list {
+	margin-top: 2.3em;
+	margin-right: 10px;
+	padding: 10px 10px 10px 26px;
+	border: 1px solid #aaa;
+}
+
+.sub_column .button.primary{
+	display: block;
+	margin: auto;
+}
+
+.sub_column .form_group {
+	text-align: center;
+	margin-top: 20px;
+	margin-right: 10px;
+}
+.sub_column .form_group input {
 	margin-bottom: 1em;
+	font-size: .9em;
 }
-.contents h3 {
-	font-size: 1.1em;
-	margin: 1em 0 .25em;
+.form_group table tbody th {
+	text-align: left;
+	min-width: 5em;
+	background-color: transparent;
 }
 
-
+.index_info {
+	margin: 0 0 .4em;
+	text-align: right;
+}
+.index_info p,
+.pagenation_info,
+.pagenation_info a {
+	display: inline-block;
+}
+*+html .index_info p,
+*+html .pagenation_info,
+*+html .pagenation_info a {
+	display: inline;
+	zoom: 1;
+}
+.pagenation_info a {
+	width: 1em;
+	margin-left: 3px;
+	border: 1px solid #ccc;
+	padding: .125em 3px;
+	text-align: center;
+	line-height: 1.25;
+	text-decoration: none;
+	border-radius: 2px;
+}
+.pagenation_info a:hover{
+	background-color: #eee;
+}
+.pagenation_info input {
+	margin-left: 3px;
+}
 /*=== for_screenreader ===*/
 span.add_bracket:before {
  content: '[';
@@ -881,7 +1028,9 @@ body .ui-datepicker select.ui-datepicker-month{
 	width: 39%;
 	margin-left: 4%;
 }
-
+body .ui-resizable-handle{
+	z-index: 100000 !important;
+}
 /*=== Tiny MCE ===*/
 .switch_mce{
 	padding: 4px 0 4px 18px;
@@ -963,8 +1112,8 @@ li.show_if_smalldisplay{
 		min-width: 100%;
 		margin: 0;
 	}
-	.login .account label,
-	.login .password label {
+	.lcm_action_login .account label,
+	.lcm_action_login .password label {
 		position: absolute !important;
 		left: auto;
 		height: 0;

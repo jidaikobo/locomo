@@ -60,7 +60,7 @@ if (\Auth::check()):
 				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'semimodal hidden_item boxshadow')) : false ;
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';
-					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"></span></a>";
+					$html.= "<a role=\"button\" href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"></span></a>";
 					$html.= $optmenu;
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
@@ -85,7 +85,7 @@ if (\Auth::check()):
 			endforeach;
 			if ($controller_menu):
 				$html.= '<div class="admin_menu">';
-				$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー</span></a>';
+				$html.= '<a role="button" href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー</span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
 				$html.= '<ul class="semimodal hidden_item boxshadow">';
 				$html.= $controller_menu;
@@ -107,7 +107,7 @@ if (\Auth::check()):
 			// admin option menu
 			if (\Auth::is_admin()):
 				$html.= '<div class="admin_option">';
-				$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_option.png\" alt=\"管理者設定\"></span></a>";
+				$html.= "<a role=\"button\" href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_option.png\" alt=\"管理者設定\"></span></a>";
 				$html.= '<ul class="semimodal menulist hidden_item">';
 					foreach($locomo['controllers'] as $k => $v):
 						if ($v['is_for_admin'] && $v['show_at_menu'])
@@ -126,7 +126,7 @@ if (\Auth::check()):
 		
 			// user menu
 			$html.= '<div class="adminbar_user">';
-			$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'</span></a>';
+			$html.= '<a role="button" href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログインしています"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."content/fetch_view/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'</span></a>';
 			$html.= '<ul class="semimodal menulist hidden_item">';
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
 			if ( ! \Auth::is_admin()):
@@ -155,4 +155,10 @@ endif;
 // is_user?
 ?>
 
-<div id="help_txt" style="position: absolute;z-index:10000;top:0;border:1px #333 solid;height:200px;width:200px;overflow: auto;background-color: #fff;display: none;"></div>
+<section id="help_window">
+	<h1 id="help_title"><a href="javascript: void(0);" tabindex="0" style="color: #fff; text-decoration: none; cursor: move;">ヘルプ</a></h1>
+	<div id="help_txt">
+		<img src="<?php echo \Uri::base() ;?>content/fetch_view/img/system/mark_loading_m.gif" class="mark_loading" alt="">
+	</div>
+	<a href="javascript: void(0);" role="button" accesskey="h" class="lcm_close_parent lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>content/fetch_view/img/system/adminbar_icon_close.png" alt="ヘルプウィンドウを閉じる"></a>
+</section>

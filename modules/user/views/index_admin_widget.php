@@ -1,5 +1,5 @@
 <?php if ($items): ?>
-<table class="tbl datatable">
+<table class="tbl datatable tbl_scrollable">
 	<thead>
 		<tr>
 			<th><?php echo \Pagination::sort('id', 'ID', false); ?></th>
