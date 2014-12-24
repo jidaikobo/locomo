@@ -81,7 +81,7 @@ class Model_Usr extends \Model_Base
 		'usergroup' => array(
 			'key_from' => 'id',
 			'key_through_from' => 'user_id',
-			'table_through' => 'lcm_usrs_usergrps',
+			'table_through' => 'lcm_usrs_usrgrps',
 			'key_through_to' => 'group_id',
 			'model_to' => '\Model_Usrgrp',
 			'key_to' => 'id',

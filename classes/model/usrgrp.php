@@ -18,7 +18,7 @@ class Model_Usrgrp extends \Model_Base
 		'user' => array(
 			'key_from' => 'id',
 			'key_through_from' => 'group_id',
-			'table_through' => 'lcm_usrs_usergrps',
+			'table_through' => 'lcm_usrs_usrgrps',
 			'key_through_to' => 'user_id',
 			'model_to' => 'Model_Usr',
 			'key_to' => 'id',
