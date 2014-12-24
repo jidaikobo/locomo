@@ -38,7 +38,7 @@ trait Controller_Traits_Wrkflw
 		$view->set('subject_field', $model::get_default_field_name('subject'));
 		$view->set('related', $related);
 		$view->set('not_related', $not_related);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -91,7 +91,7 @@ trait Controller_Traits_Wrkflw
 		$view->set('items', $items);
 		$view->set('route_id', $route_id);
 		$view->set('item_id', $id);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -133,7 +133,7 @@ trait Controller_Traits_Wrkflw
 		$view->set_global('title', '承認申請');
 		$view->set('button', '申請する');
 		$view->set('id', $id);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -183,7 +183,7 @@ trait Controller_Traits_Wrkflw
 		$view->set_global('title', '承認');
 		$view->set('button', '承認する');
 		$view->set('id', $id);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -243,7 +243,7 @@ trait Controller_Traits_Wrkflw
 		$view->set('button',       '差し戻す');
 		$view->set('target_steps', $target_steps);
 		$view->set('id',           $id);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -280,7 +280,7 @@ trait Controller_Traits_Wrkflw
 		$view->set_global('title', '却下の確認');
 		$view->set('button', '却下する');
 		$view->set('id', $id);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 }

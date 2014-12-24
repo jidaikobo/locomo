@@ -23,7 +23,7 @@ trait Controller_Traits_Revision
 		$view->set_global('title', static::$locomo['nicename'].'履歴一覧');
 		$view->set_global('base_url', $this->base_url);
 		$view->set_global('subject', $model::get_default_field_name('subject'));
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -88,7 +88,7 @@ trait Controller_Traits_Revision
 		$view->set_global('base_url', $this->base_url);
 		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $subject);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -129,7 +129,7 @@ trait Controller_Traits_Revision
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		// view
-		$content->base_assign();
+		$this->base_assign();
 		$this->template->content = $content;
 	}
 }

@@ -208,7 +208,7 @@ class Controller_Scffld extends \Controller_Base
 
 		//view
 		$view->set_global('title', '足場組み');
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 

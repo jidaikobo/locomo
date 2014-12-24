@@ -69,7 +69,7 @@ class Controller_Sample extends \Locomo\Controller_Base
 
 		$view->set_global('title', 'サンプルバルク');
 		$view->set_global('form', $form, false);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 

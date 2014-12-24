@@ -62,7 +62,7 @@ class Controller_Base extends Controller_Core
 
 		$content->set('items',  $model::paginated_find($options));
 
-		$content->base_assign();
+		$this->base_assign();
 		$this->template->set_global('title', static::$nicename.'管理一覧');
 		$this->template->content = $content;
 	}
@@ -180,7 +180,7 @@ class Controller_Base extends Controller_Core
 		$content->set('item', $item);
 		$content->set_global('title', self::$nicename.'閲覧');
 		$this->template->content = $content;
-		$content->base_assign($item);
+		$this->base_assign($item);
 	}
 
 	/**
@@ -278,7 +278,7 @@ class Controller_Base extends Controller_Core
 		$content->set_global('item', $obj, false);
 		$content->set_global('form', $form, false);
 		$this->template->content = $content;
-		$content->base_assign($obj);
+		$this->base_assign($obj);
 	}
 
 	/**
@@ -365,7 +365,7 @@ class Controller_Base extends Controller_Core
 
 		$this->template->set_global('title', self::$nicename.'消去');
 		$this->template->content = $content;
-		$content->base_assign($item);
+		$this->base_assign($item);
 	}
 
 	/**

@@ -105,7 +105,7 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 		$view->set('workflow_id', $workflow->id);
 		$view->set('workflow_name', $workflow->name);
 		$view->set_global('title', 'ワークフローの設定');
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 }

@@ -45,7 +45,7 @@ class Controller_Acl extends \Controller_Base
 		$view->set('mod_or_ctrl', $mod_or_ctrl);
 		$view->set('usergroups',  $usergroups);
 		$view->set('users',       $users);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -138,7 +138,7 @@ class Controller_Acl extends \Controller_Base
 		$view->set('hidden_user',       $user_id);
 		$view->set('actionsets',        $actionsets);
 		$view->set('aprvd_actionset',   $aprvd_actionset);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
