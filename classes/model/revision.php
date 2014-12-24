@@ -67,33 +67,33 @@ class Model_Revision extends \Model_Base
 
 		//リビジョンの一覧を取得
 		$q = \DB::select(
-			'revisions.model',
-			'revisions.pk_id',
+			'lcm_revisions.model',
+			'lcm_revisions.pk_id',
 			$subject,
-			'revisions.comment',
-			'revisions.operation',
-			'revisions.created_at',
-			'revisions.user_id'
+			'lcm_revisions.comment',
+			'lcm_revisions.operation',
+			'lcm_revisions.created_at',
+			'lcm_revisions.user_id'
 		);
-		$q->from('revisions');
+		$q->from('lcm_revisions');
 		$q->from($table);
-		$q->where('revisions.model', $model_str);
+		$q->where('lcm_revisions.model', $model_str);
 
 		//like
 		if ($likes):
-			$columns = \DB::list_columns('revisions');
+			$columns = \DB::list_columns('lcm_revisions');
 			$q->and_where_open();
 			foreach($columns as $field => $v):
-				$q->or_where('revisions.'.$field, 'like', '%'.$likes['all'].'%');
+				$q->or_where('lcm_revisions.'.$field, 'like', '%'.$likes['all'].'%');
 			endforeach;
 			$q->and_where_close();
 		endif;
 
 		//group by
-		$q->group_by('revisions.pk_id');
+		$q->group_by('lcm_revisions.pk_id');
 
 		//join
-		$q->where($pk, '=', \DB::Expr('`revisions`.pk_id'));
+		$q->where($pk, '=', \DB::Expr('`lcm_revisions`.pk_id'));
 
 		//opt
 		if ($range){
@@ -115,7 +115,7 @@ class Model_Revision extends \Model_Base
 				$q->order_by($order_by, $order);
 			endforeach;
 		}else{
-			$q->order_by('revisions.pk_id', 'ASC');
+			$q->order_by('lcm_revisions.pk_id', 'ASC');
 		}
 
 		//count
@@ -158,7 +158,7 @@ class Model_Revision extends \Model_Base
 	{
 		//当該コンテンツの最新データを取得
 		$q = \DB::select('created_at','operation');
-		$q->from('revisions');
+		$q->from('lcm_revisions');
 		$q->where('model', $this->model);
 		$q->where('pk_id', $this->pk_id);
 		$q->order_by('created_at', 'DESC');
