@@ -47,7 +47,7 @@
 	</tr>
 	<?php endif; ?>
 	</table>
-	<?php echo render(LOCOMOPATH.'modules/revision/views/inc_revision_memo.php'); ?>
+	<?php echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php'); ?>
 </div>
 <div class="submit_button">
 	<?php
