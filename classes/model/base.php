@@ -425,11 +425,11 @@ class Model_Base extends \Orm\Model_Soft
 			if (\Input::get('all')) {
 				foreach (static::$_properties as $k => $v) {
 					if (in_array($v, static::$_primary_key)) continue;
-					$options['or_where'][] = array($v, 'LIKE', '%'.\Input::get('all').'%');
+					$field = is_array($v) ? $k : $v;// properties sometimes only has key without value
+					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
 				}
 			}
 		}
-
 		$count_all = static::count();
 		$count = static::count($options);
 

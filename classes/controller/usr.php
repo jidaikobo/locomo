@@ -37,6 +37,16 @@ class Controller_Usr extends \Locomo\Controller_Base
 	}
 
 	/**
+	 * action_index_admin()
+	 */
+	public function action_index_admin()
+	{
+		if (\Input::get('from')) \Model_Usr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
+		if (\Input::get('to'))   \Model_Usr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
+		parent::index_admin();
+	}
+
+	/**
 	 * user_auth_find()
 	 */
 	public static function user_auth_find()

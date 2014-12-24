@@ -19,10 +19,10 @@
 <h3 class="skip">検索</h3>
 	<form style="text-align: left;">
 		<h4><label for="keyword">キーワード</label></h4>
-		<input type="text" name="keyword" id="keyword" size="20" value="" />
+		<input type="text" name="all" id="keyword" size="20" value="<?php echo \Input::get('all') ?>" />
 		<h4>登録日</label></h4>
-			<input type="date" name="nameStr" id="registration_date_start" />&nbsp;〜&nbsp;
-			<input type="date" name="nameStr" id="registration_date_end" />
+			<input type="date" name="from" id="registration_date_start" value="<?php echo \Input::get('from') ?>" />&nbsp;〜&nbsp;
+			<input type="date" name="to" id="registration_date_end" value="<?php echo \Input::get('to') ?>" />
 		<?php echo \Form::submit('submit', '検索', array('class' => 'button primary')); ?>
 	</form>
 </div><!-- /.form_group -->
