@@ -102,7 +102,6 @@ trait Controller_Traits_Testdata
 		else:
 			\Session::set_flash('success', 'added '.$num.' datas.');
 		endif;
-		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
-		return \Response::redirect($dir);
+		return \Response::redirect($this->base_url);
 	}
 }
