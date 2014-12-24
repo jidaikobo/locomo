@@ -146,7 +146,7 @@ class Actionset
 	/**
 	 * add_actionset()
 	 * use at controllers' business logic section
-	 * see sample at \Revision\Traits_Controller_Revision::action_each_index_revision
+	 * see sample at \Controller_Traits_Revision::action_each_index_revision
 	 *
 	 * @param string $controller controller full class name
 	 * @param string $realm	[base|option|index|ctrl|...]

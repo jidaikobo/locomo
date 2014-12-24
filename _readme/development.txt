@@ -177,7 +177,7 @@ expired_at:datetime:null
 表示期日です。過去の日付が入っていると表示終了になります。
 
 creator_id:int[5]
-modifier_id:int[5]
+updater_id:int[5]
 作成者idと編集者idが格納されます。
 
 workflow_status:varchar[50]
@@ -197,12 +197,12 @@ orderはいちおうMySQLの予約語なので、表示順を制御する際は�
 revisionを適用したいコントローラとアクションセットで、Traitを追加します。
 scaffoldを使った場合はコメントアウトされています。
 
-	use \Revision\Traits_Controller_Revision;
-	use \Revision\Traits_Actionset_Base_Revision;
+	use \Controller_Traits_Revision;
+	use \Actionset_Traits_Base_Revision;
 
 モデルでは、observerを足してください。
 
-		'Revision\Observer_Revision' => array(
+		'\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),
 		),
 
@@ -216,9 +216,9 @@ scaffoldを使った場合はコメントアウトされています。
 ワークフローを適用したいコントローラとモデルとアクションセットで、Traitを追加します。
 scaffoldを使った場合はコメントアウトされています。
 
-	use \Workflow\Traits_Controller_Workflow;
-	use \Workflow\Traits_Model_Workflow;
-	use \Workflow\Traits_Actionset_Base_Workflow;
+	use \Controller_Traits_Wrkflw;
+	use \Model_Traits_Wrkflw;
+	use \Actionset_Traits_Base_Wrkflw;
 
 対象モデルの$_propertiesにworkflow_statusを足します（enum('before_progress','in_progress','finish')かvarchar(20)で）。
 対象モデルにobserverを追加します。
@@ -232,14 +232,14 @@ scaffoldを使った場合はコメントアウトされています。
 // bulk edit
 
 バルク編集（複数項目の一括編集）をするためには、バルク編集用のアクションを作ります。
-バルク編集用のアクションでは、対象となるモデルを設定してください。以下の例はユーザモジュールのユーザグループです。モデルは、\User\Model_Usergroupとなっています。
+バルク編集用のアクションでは、対象となるモデルを設定してください。以下の例はユーザモジュールのユーザグループです。モデルは、\Model_Usrgrpとなっています。
 
 +quote start-----------------------------+
 	public function action_bulk($page_num = 1)
 	{
 		// bulk
-		\User\Model_Usergroup::disable_filter();
-		$form = $this->bulk(array(), array(), '\User\Model_Usergroup');
+		\Model_Usrgrp::disable_filter();
+		$form = $this->bulk(array(), array(), '\Model_Usrgrp');
 
 		//assin
 		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');

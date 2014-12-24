@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Model_Belongsto extends \Locomo\Model_Base
+class Model_Belongsto extends \Model_Base
 {
 	protected static $_table_name = 'belongsto';
 
@@ -11,7 +11,6 @@ class Model_Belongsto extends \Locomo\Model_Base
 		'expired_at',
 		'deleted_at',
 	);
-
 
 	/**
 	 * form_definition()

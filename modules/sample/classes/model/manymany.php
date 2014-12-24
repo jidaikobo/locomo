@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Model_Manymany extends \Locomo\Model_Base
+class Model_Manymany extends \Model_Base
 {
 	protected static $_table_name = 'manymany';
 

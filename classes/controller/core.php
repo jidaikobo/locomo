@@ -33,7 +33,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public function before()
 	{
 		// Profiler
-		\Profiler::mark('Locomo\\Controller_Base::before() - Called');
+		\Profiler::mark('Locomo\\Controller_Core::before() - Called');
 
 		// parent
 		parent::before();
@@ -92,7 +92,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public function router($method, $params)
 	{
 		// Profiler
-		\Profiler::mark('Locomo\\Controller_Base::router() - Called');
+		\Profiler::mark('Locomo\\Controller_Core::router() - Called');
 
 		// fetch_view() can be executed without acl
 		if (
@@ -108,13 +108,13 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		{
 			if (\Auth::check())
 			{
-				return \Response::redirect(\Uri::create('content/content/403'));
+				return \Response::redirect(\Uri::create('sys/403'));
 			}
 			else
 			{
 				$qstr = \Arr::get($_SERVER, 'QUERY_STRING') ;
 				$qstr = $qstr ? '?'.e($qstr) : '' ;
-				return \Response::redirect(\Uri::create('user/auth/login?ret='.\Uri::string().$qstr));
+				return \Response::redirect(\Uri::create('auth/login?ret='.\Uri::string().$qstr));
 			}
 		}
 
@@ -150,7 +150,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		if ( ! $is_allow)
 		{
-			$page = \Request::forge('content/content/403')->execute();
+			$page = \Request::forge('sys/403')->execute();
 			return new \Response($page, 403);
 		}
 
@@ -159,20 +159,20 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		if (
 			$no_home && // config
 			! \Auth::check() && // for guest
-			$this->request->module.DS.$method == 'content/home' // when toppage
+			$this->request->controller.DS.$method == 'Controller_Sys/home' // when toppage
 		)
 		{
-			return \Response::redirect(\Uri::create('user/auth/login'));
+			return \Response::redirect(\Uri::create('auth/login'));
 		}
 
 		// use dashboard as a loginned toppage
 		if (
 			$no_home && // config
 			\Auth::check() && // for users
-			$this->request->module.DS.$method == 'content/home' // when toppage
+			$this->request->controller.DS.$method == 'Controller_Sys/home' // when toppage
 		)
 		{
-			return \Response::redirect(\Uri::create('admin/admin/dashboard'));
+			return \Response::redirect(\Uri::create('sys/dashboard'));
 		}
 
 		return parent::router($method, $params);

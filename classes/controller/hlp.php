@@ -1,22 +1,22 @@
 <?php
 namespace Locomo;
-class Controller_Hlp extends \Locomo\Controller_Base
+class Controller_Hlp extends \Controller_Base
 {
 	// locomo
 	public static $locomo = array(
 		'show_at_menu' => false,
 		'order_at_menu' => 1000,
 		'is_for_admin' => false,
-		'admin_home' => '\\Help\\Controller_Help/view',
+		'admin_home' => '\\Controller_Hlp/view',
 		'nicename' => 'ヘルプ',
 		'admin_home_name' => 'ヘルプ',
 		'actionset_classes' =>array(
-			'base'   => '\\Help\\Actionset_Base_Help',
+			'base'   => '\\Actionset_Base_Hlp',
 		),
 	);
 
 	// trait
-	use \Revision\Traits_Controller_Revision;
+	use \Controller_Traits_Revision;
 
 	/*
 	 * before()
@@ -25,7 +25,7 @@ class Controller_Hlp extends \Locomo\Controller_Base
 	{
 		parent::before();
 		// revision use this
-		$this->model_name = '\\Help\\Model_Help';
+		$this->model_name = '\\Model_Hlp';
 	}
 
 	/*
@@ -35,9 +35,9 @@ class Controller_Hlp extends \Locomo\Controller_Base
 	{
 		$action = urlencode(\Input::param('action'));
 		$ctrl = \Inflector::words_to_upper(substr($action, 0, strpos($action, '%')));
-		$obj = \Help\Model_Help::find('first', array('where'=>array(array('ctrl', $ctrl))));
+		$obj = \Model_Hlp::find('first', array('where'=>array(array('ctrl', $ctrl))));
 		$id = @$obj->id ?: '';
-		$redirect = '/help/help/edit?action='.$action;
+		$redirect = '/hlp/edit?action='.$action;
 		parent::edit($id, $redirect);
 		$this->template->content->set('action', $action);
 	}
@@ -49,7 +49,8 @@ class Controller_Hlp extends \Locomo\Controller_Base
 	{
 /*
 include(LOCOMOPATH.'migrations/005_create_help.php');
-$h = new \Fuel\Migrations\Create_help();
+include(LOCOMOPATH.'migrations/006_create_hlp.php');
+$h = new \Fuel\Migrations\Create_hlp();
 $h->up();
 */
 		// set default help from actionset
@@ -111,25 +112,25 @@ $h->up();
 
 		// additional help
 		$controller_safe = \Inflector::ctrl_to_safestr($controller);
-		$obj = \Help\Model_Help::find('first', array('where'=>array(array('ctrl', $controller_safe))));
+		$obj = \Model_Hlp::find('first', array('where'=>array(array('ctrl', $controller_safe))));
 
 		// link to add additional help
 		$add = '';
-		$add.= $action ? \Html::anchor(\Uri::create('/help/help/view?action='.$controller_safe), 'コントローラヘルプ') : '' ;
+		$add.= $action ? \Html::anchor(\Uri::create('/hlp/view?action='.$controller_safe), 'コントローラヘルプ') : '' ;
 		if ($obj)
 		{
 			$add.= html_tag('h2', array(), '加筆されたヘルプ') ;
-			if (\Auth::instance()->has_access('\\Help\\Controller_Help/edit'))
+			if (\Auth::instance()->has_access('\\Controller_Hlp/edit'))
 			{
-				$add.= \Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), '編集する');
+				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($locomo_path_raw)), '編集する');
 			}
 			$add.= html_tag('div', array('class' => 'add_body'), $obj->body) ;
 		}
 		else
 		{
-			if (\Auth::instance()->has_access('\\Help\\Controller_Help/edit'))
+			if (\Auth::instance()->has_access('\\Help\\Controller_Hlp/edit'))
 			{
-				$add.= ' | '.\Html::anchor(\Uri::create('/help/help/edit?action='.urlencode($locomo_path_raw)), 'ヘルプを加筆する');
+				$add.= ' | '.\Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($locomo_path_raw)), 'ヘルプを加筆する');
 			}
 		}
 		$help.= $add ;
@@ -146,7 +147,7 @@ $h->up();
 		$title.= $action ? ' &gt; '.$action : '' ;
 
 		// assign
-		$content = \View::forge('view');
+		$content = \View::forge('hlp/view');
 		$content->base_assign();
 		$content->set_global('title', $title);
 		$content->set_safe('content', $help);

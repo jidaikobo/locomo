@@ -32,7 +32,8 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 
-		$this->_content_template = $this->_content_template ?: 'index_admin';
+		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+		$this->_content_template = $this->_content_template ?: $dir.'index_admin';
 		if (\Request::is_hmvc())
 		{
 			$this->_content_template.= '_widget';
@@ -173,7 +174,8 @@ class Controller_Base extends Controller_Core
 		endif;
 
 		//view
-		$content = \View::forge($this->_content_template ?: 'view');
+		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+		$content = \View::forge($this->_content_template ?: $dir.'view');
 		$content->set_safe('plain', $model::plain_definition('view', $item)->build_plain());
 		$content->set('item', $item);
 		$content->set_global('title', self::$nicename.'閲覧');
@@ -184,10 +186,11 @@ class Controller_Base extends Controller_Core
 	/**
 	 * create()
 	 */
-	protected function create($redirect = null)
+	protected function create($id = null, $redirect = null)
 	{
-		$redirect = $redirect ?: \Request::main()->controller.DS.'edit';
-		parent::edit_core(null, $redirect);
+		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+		$redirect = $redirect ?: $dir.'edit';
+		static::edit($id, $redirect);
 	}
 
 	/*
@@ -197,7 +200,8 @@ class Controller_Base extends Controller_Core
 	{
 		// vals
 		$model = $this->model_name ;
-		$content = \View::forge($this->_content_template ?: 'edit');
+		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+		$content = \View::forge($this->_content_template ?: $dir.'edit');
 
 		if ($id)
 		{
@@ -206,7 +210,7 @@ class Controller_Base extends Controller_Core
 			// not found
 			if ( ! $obj)
 			{
-				$page = \Request::forge('content/403')->execute();
+				$page = \Request::forge('sys/403')->execute();
 				return new \Response($page, 403);
 			}
 			$title = '#' . $id . ' ' . self::$nicename . '編集';
@@ -235,7 +239,7 @@ class Controller_Base extends Controller_Core
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
 					$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
-					$redirect = $redirect ?: $locomo_path.DS.$obj->id;
+					$redirect = $redirect ? $redirect.DS.$obj->id : $locomo_path.DS.$obj->id;
 					return \Response::redirect(\Uri::create($redirect));
 				}
 				else
@@ -349,7 +353,7 @@ class Controller_Base extends Controller_Core
 			throw new \HttpNotFoundException;
 		}
 
-		$content = \View::forge('purge');
+		$content = \View::forge($this->_content_template ?: 'purge');
 
 		$plain = $model::plain_definition('purge_confirm', $item);
 		$content->set_safe('plain', $plain->build_plain());

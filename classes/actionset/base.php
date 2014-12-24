@@ -19,7 +19,6 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '新規作成権限。',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.DS.'index',
 				$controller.DS.'view',
 				$controller.DS.'create',
 			)

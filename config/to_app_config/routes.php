@@ -1,5 +1,5 @@
 <?php
 return array(
-	'_root_'  => 'content/home',
-	'_404_'   => 'content/404',
+	'_root_'  => 'sys/home',
+	'_404_'   => 'sys/404',
 );

@@ -4,7 +4,7 @@ class Create_revision
 {
 	public function up()
 	{
-		\DBUtil::create_table('revisions', array(
+		\DBUtil::create_table('lcm_revisions', array(
 			'id'          => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'model'       => array('constraint' => 50, 'type' => 'varchar'),
 			'pk_id'       => array('constraint' => 11, 'type' => 'int'),
@@ -19,6 +19,6 @@ class Create_revision
 
 	public function down()
 	{
-		\DBUtil::drop_table('revisions');
+		\DBUtil::drop_table('lcm_revisions');
 	}
 }

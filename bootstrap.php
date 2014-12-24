@@ -29,22 +29,26 @@ Autoloader::add_namespace('\\Locomo', LOCOMOPATH.'classes'.DS);
 Autoloader::add_core_namespace('\\Locomo');
 
 $paths = array(
+/*
 	'\\Locomo\\Actionset_Traits_Option_Testdata' => 'actionset/traits/option/testdata.php',
 	'\\Locomo\\Actionset_Base' => 'actionset/base.php',
 	'\\Locomo\\Actionset_Index' => 'actionset/index.php',
 	'\\Locomo\\Actionset_Option' => 'actionset/option.php',
+	'\\Locomo\\Controller_Traits_Testdata' => 'controller/traits/testdata.php',
+	'\\Locomo\\Controller_Base' => 'controller/base.php',
+	'\\Locomo\\Model_Base' => 'model/base.php',
+	'\\Locomo\\Observer_Created' => 'observer/created.php',
+	'\\Locomo\\Observer_Expired' => 'observer/expired.php',
+	'\\Locomo\\Observer_Userids' => 'observer/userids.php',
+	'\\Locomo\\Bulk' => 'bulk.php',
+*/
 	'\\Locomo\\Asset_Instance' => 'asset/instance.php',
 	'\\Locomo\\Auth_Acl_Locomoacl' => 'auth/acl/locomoacl.php',
 	'\\Locomo\\Auth_Group_Locomogroup' => 'auth/group/locomogroup.php',
 	'\\Locomo\\Auth_Login_Locomoauth' => 'auth/login/locomoauth.php',
 	'\\Locomo\\Fieldset_Field' => 'fieldset/field.php',
-	'\\Locomo\\Model_Base' => 'model/base.php',
-	'\\Locomo\\Observer_Created' => 'observer/created.php',
-	'\\Locomo\\Observer_Expired' => 'observer/expired.php',
-	'\\Locomo\\Observer_Userids' => 'observer/userids.php',
 	'\\Locomo\\Actionset' => 'actionset.php',
 	'\\Locomo\\Auth' => 'auth.php',
-	'\\Locomo\\Bulk' => 'bulk.php',
 	'\\Locomo\\Fieldset' => 'fieldset.php',
 	'\\Locomo\\Inflector' => 'inflector.php',
 	'\\Locomo\\Module' => 'module.php',
@@ -53,9 +57,6 @@ $paths = array(
 	'\\Locomo\\Util' => 'util.php',
 	'\\Locomo\\Validation' => 'validation.php',
 	'\\Locomo\\View' => 'view.php',
-//	'\\Locomo\\Controller_Traits_Testdata' => 'controller/traits/testdata.php',
-//	'\\Locomo\\Controller_Base' => 'controller/base.php',
-//	'\\Locomo\\Controller_Crud' => 'controller/crud.php',
 );
 $classes = array();
 foreach ($paths as $class => $path)
@@ -67,9 +68,9 @@ foreach ($paths as $class => $path)
 }
 Autoloader::add_classes($classes);
 
-// controllers - this must be called after first Autoloader::add_classes()
-/*
-foreach (\Inflector::dir_to_ctrl(LOCOMOPATH.'/classes/controller') as $class => $path)
+// other classes - this must be called after first Autoloader::add_classes()
+$target = \Inflector::dir_to_ctrl(LOCOMOPATH.'/classes/');
+foreach ($target as $class => $path)
 {
 	$app = str_replace(LOCOMOPATH, APPPATH, $path);
 	if ( ! file_exists($app))
@@ -78,14 +79,6 @@ foreach (\Inflector::dir_to_ctrl(LOCOMOPATH.'/classes/controller') as $class => 
 	}
 }
 Autoloader::add_classes($classes);
-*/
-
-// always load module
-\Module::load('acl');
-\Module::load('user');
-\Module::load('revision');
-\Module::load('workflow');
-\Module::load('bulk');
 
 // always load package
 \Package::load('auth');

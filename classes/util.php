@@ -25,7 +25,7 @@ class Util
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			//モジュールディレクトリを走査し、$locomoのメンバ変数を持っている物を洗い出す
+			// モジュールディレクトリを走査し、$locomoのメンバ変数を持っているコントローラを洗い出す
 			$retvals = array();
 			foreach(array_keys(\Module::get_exists()) as $module)
 			{
@@ -50,8 +50,14 @@ class Util
 				}
 			}
 
-			//classディレクトリを走査し、$locomoのメンバ変数を持っている物を洗い出す
-			foreach(array_keys(\Inflector::dir_to_ctrl(APPPATH.'classes/controller')) as $ctrl):
+			// classディレクトリを走査し、$locomoのメンバ変数を持っているコントローラを洗い出す
+			$paths = array_merge(
+				\Inflector::dir_to_ctrl(APPPATH.'classes/controller'),
+				\Inflector::dir_to_ctrl(LOCOMOPATH.'classes/controller')
+			);
+
+			foreach(array_keys($paths) as $ctrl):
+				if (strpos($ctrl, 'Controller_Traits_') !== false) continue;
 				if ( ! property_exists($ctrl, 'locomo')) continue;
 				$retvals[$ctrl] = $ctrl::$locomo;
 				$retvals[$ctrl]['config'] = \Config::get($ctrl);
