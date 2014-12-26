@@ -50,7 +50,7 @@ class Controller_Sys extends \Controller_Base
 		// 描画
 		$view = \View::forge('sys/home');
 		$view->set_global('title', \Config::get('slogan'));
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -63,7 +63,7 @@ class Controller_Sys extends \Controller_Base
 		$this->_template = 'default';
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -75,7 +75,7 @@ class Controller_Sys extends \Controller_Base
 	{
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -196,7 +196,7 @@ class Controller_Sys extends \Controller_Base
 			$view->set('actionset', $actionset, false);
 			$view->set_global('title', $name.' トップ');
 		}
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -259,7 +259,7 @@ class Controller_Sys extends \Controller_Base
 		$view = \View::forge('sys/dashboard');
 		$view->set_global('title', 'ダッシュボード');
 		$view->set_safe('actions', $actions);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -281,7 +281,7 @@ class Controller_Sys extends \Controller_Base
 		// assign
 		$content= \View::forge('sys/edit_dashboard');
 		$content->set_global('title', 'ダッシュボードの設定');
-		$content->base_assign(); // to override add_actionset()
+		$this->base_assign(); // to override add_actionset()
 		$this->template->content = $content;
 	}
 
@@ -292,7 +292,7 @@ class Controller_Sys extends \Controller_Base
 	{
 		$view = \View::forge('sys/clock');
 		$view->set_global('title', 'アナログ時計');
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 }

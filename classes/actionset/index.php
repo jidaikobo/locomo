@@ -28,7 +28,32 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_admin", '管理一覧'));
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count)
+		{
+			$pk = $model::get_primary_keys('first');
+			$options = array();
+			$options[] = array($pk, 'is not' , null);
+			if (isset($model::properties()['created_at']))
+			{
+				$options[] = array('created_at', '<=', date('Y-m-d H:i:s'));
+			}
+			if (isset($model::properties()['expired_at']))
+			{
+				$options[] = array('expired_at', 'is', null);
+			}
+			if (isset($model::properties()['is_visible']))
+			{
+				$options[] = array('is_visible', '=', true);
+			}
+			$count = $model::count(array('where' => $options));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_admin", "管理一覧{$count}"));
 		$urls = static::generate_urls($controller.DS.'index_admin', $actions);
 
 		$retvals = array(
@@ -51,7 +76,18 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_deleted", 'ごみ箱'));
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['deleted_at']))
+		{
+			$model::disable_filter();
+			$count = $model::count(array('where' => array(array('deleted_at', 'is not' , NULL))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_deleted", "ごみ箱{$count}"));
 		$urls = static::generate_urls($controller.DS.'index_deleted', $actions);
 
 		$retvals = array(
@@ -73,7 +109,17 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_yet($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_yet", '予約項目'));
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['created_at']))
+		{
+			$count = $model::count(array('where' => array(array('created_at', '>' , date('Y-m-d H:i:s')))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_yet", "予約項目{$count}"));
 		$urls = static::generate_urls($controller.DS.'index_yet', $actions);
 
 		$retvals = array(
@@ -95,7 +141,17 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_expired", '期限切れ項目'));
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['expired_at']))
+		{
+			$count = $model::count(array('where' => array(array('expired_at', '<' , date('Y-m-d H:i:s')))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_expired", "期限切れ項目{$count}"));
 		$urls = static::generate_urls($controller.DS.'index_expired', $actions);
 
 		$retvals = array(
@@ -117,7 +173,17 @@ class Actionset_Index extends Actionset
 	 */
 	public static function actionset_index_invisible($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_invisible", '不可視項目'));
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['is_visible']))
+		{
+			$count = $model::count(array('where' => array(array('is_visible', '=' , false))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_invisible", "不可視項目{$count}"));
 		$urls = static::generate_urls($controller.DS.'index_invisible', $actions);
 
 		$retvals = array(
@@ -138,18 +204,30 @@ class Actionset_Index extends Actionset
 	 * index_all()
 	 * 開発中。一旦停止。
 	 */
-	public static function _actionset_index_all($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_index_all($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_all", 'すべて'));
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count)
+		{
+			$pk = $model::get_primary_keys('first');
+			$model::disable_filter();
+			$count = $model::count(array('where' => array(array($pk, 'is not' , null))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_all", "すべて{$count}"));
 		$urls = static::generate_urls($controller.DS.'index_all', $actions);
 
 		$retvals = array(
 			'urls'          => $urls ,
 			'action_name'  => '削除を含む全項目一覧',
 			'explanation'  => '全項目項目一覧です。',
-			'acl_exp'      => '全項目項目一覧の権限です。',
+			'acl_exp'      => '全項目項目一覧の権限です。この権限を許可するとすべてのインデクスへのアクセス権を付与されます。',
 			'help'         => self::actionset_index_admin($controller)['help'],
-			'order'        => 10,
+			'order'        => 100,
 			'dependencies' => array(
 				$controller.DS.'index',
 				$controller.DS.'index_admin',

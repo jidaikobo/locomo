@@ -245,7 +245,7 @@ scaffoldを使った場合はコメントアウトされています。
 		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 +-------------------------------quote end+

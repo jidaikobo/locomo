@@ -71,7 +71,7 @@ $h->up();
 		if( ! $controller)
 		{
 			$content = \View::forge('hlp/view');
-			$content->base_assign();
+			$this->base_assign();
 			$content->set_global('title', 'ヘルプインデクス');
 			$content->set_safe('content', '');
 			$this->template->content = $content;
@@ -108,7 +108,7 @@ $h->up();
 			}
 		}
 		$help = $help ?: 'この項目専用のヘルプは存在しません。' ;
-		$help = html_tag('div', array('class' => 'txt'), $help);
+		$help = html_tag('div', array('class' => 'txt'), \Markdown::parse($help));
 
 		// additional help
 		$controller_safe = \Inflector::ctrl_to_safestr($controller);
@@ -148,7 +148,7 @@ $h->up();
 
 		// assign
 		$content = \View::forge('hlp/view');
-		$content->base_assign();
+		$this->base_assign();
 		$content->set_global('title', $title);
 		$content->set_safe('content', $help);
 		$this->template->content = $content;

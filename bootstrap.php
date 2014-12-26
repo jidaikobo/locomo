@@ -56,7 +56,6 @@ $paths = array(
 	'\\Locomo\\Request' => 'request.php',
 	'\\Locomo\\Util' => 'util.php',
 	'\\Locomo\\Validation' => 'validation.php',
-	'\\Locomo\\View' => 'view.php',
 );
 $classes = array();
 foreach ($paths as $class => $path)

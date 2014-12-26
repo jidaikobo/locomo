@@ -206,6 +206,13 @@ class Model_Usr extends \Model_Base
 			->set_attribute('placeholder', date('Y-m-d H:i:s'))
 			->add_rule('non_zero_datetime');
 
+		//expired_at
+		$form->field('expired_at')
+			->set_label('有効期日')
+			->set_type('text')
+			->set_attribute('placeholder', date('Y-m-d H:i:s'))
+			->add_rule('non_zero_datetime');
+
 		//is_visible
 		if (\Auth::is_admin()):
 			$form->field('is_visible')->set_type('select');

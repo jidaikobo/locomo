@@ -35,7 +35,7 @@ trait Controller_Traits_Bulk
 
 		if (!$objects)
 		{
-			\Session::set_flash('error', '該当が 0 件でした');
+//			\Session::set_flash('error', '該当が 0 件でした');
 			return false;
 		}
 
@@ -75,7 +75,7 @@ trait Controller_Traits_Bulk
 					return \Response::redirect($url);
 				}
 
-				\Session::set_flash('success', self::$nicename . 'への変更を' .  count($ids) . '件保存しました');
+				\Session::set_flash('success', self::$nicename . 'への変更を' . count($ids) . '件保存しました');
 
 				$url = \Uri::create($this->base_url.$action, array(), array('ids' => $ids));
 				return \Response::redirect($url);

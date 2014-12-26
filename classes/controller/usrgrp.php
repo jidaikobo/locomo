@@ -59,7 +59,7 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 		$view = \View::forge('bulk/bulk');
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 }

@@ -9,7 +9,7 @@ trait Controller_Traits_Revision
 	{
 		// find_all_revisions
 		$model = $this->model_name;
-		$view = \View::forge('revision/index_revision.php');
+		$view = \View::forge('revision/index_revision');
 		$view = \Model_Revision::find_all_revisions($view, $model);
 		if ( ! $view)
 		{
@@ -23,7 +23,7 @@ trait Controller_Traits_Revision
 		$view->set_global('title', static::$locomo['nicename'].'履歴一覧');
 		$view->set_global('base_url', $this->base_url);
 		$view->set_global('subject', $model::get_default_field_name('subject'));
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -33,11 +33,12 @@ trait Controller_Traits_Revision
 	public function action_each_index_revision($id = null)
 	{
 		is_null($id) and \Response::redirect($this->base_url);
-
 		// paginated_find
-		$options['where'][]    = array('model', '=', \Inflector::add_head_backslash($this->model_name));
-		$options['where'][]    = array('pk_id', '=', $id);
-		$options['order_by'][] = array('created_at', 'DESC');
+		$options['where'][]     = array('model', \Inflector::add_head_backslash($this->model_name));
+		$options['where']['or'] = array('model', '\Locomo'.\Inflector::add_head_backslash($this->model_name));
+		$options['where'][]     = array('pk_id', '=', $id);
+		$options['order_by'][]  = array('created_at', 'DESC');
+
 		\Pagination::set_config('uri_segment', 5);
 		$items = \Model_Revision::paginated_find($options);
 		if ( ! $items):
@@ -83,12 +84,12 @@ trait Controller_Traits_Revision
 		if(empty($subject)) throw new \OutOfBoundsException($model.' doesn\'t have public static $_subject_field_name');
 
 		// view
-		$view = \View::forge('revision/each_index_revision.php');
+		$view = \View::forge('revision/each_index_revision');
 		$view->set_global('items', $items);
 		$view->set_global('base_url', $this->base_url);
 		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $subject);
-		$view->base_assign();
+		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -112,7 +113,7 @@ trait Controller_Traits_Revision
 		$plain = $model::plain_definition('revision', $obj);
 
 		// assign
-		$content = \View::forge('revision/view_revision.php');
+		$content = \View::forge('revision/view_revision');
 		$content->set_safe('plain', $plain->build_plain());
 		$content->set_global('item', $obj);
 		$content->set_global('title', '履歴個票');
@@ -129,7 +130,7 @@ trait Controller_Traits_Revision
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		// view
-		$content->base_assign();
+		$this->base_assign();
 		$this->template->content = $content;
 	}
 }
