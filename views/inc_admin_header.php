@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php if (1): ?><!--
 ++
-||--+ +-+
+||==+ +-+
  +o-o o-o
 Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERSION ?>
 

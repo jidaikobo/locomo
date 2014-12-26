@@ -22,6 +22,8 @@ body.lcm_action_login {
 	background-color: #fff;
 	border: 1px solid #ccc;
 	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
 	text-align: center;
 	outline: none;
 }
@@ -190,19 +192,21 @@ body.lcm_action_login {
 	width: 100%;
 }
 .adminbar_top {
+	height: 2.5em;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.lcmbar_top {
 	background-color: #0e3664;
 	background-image: url('../img/system/adminbar_bg.png');
 	background-position: center top;
 	background-repeat: no-repeat;
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
-	height: 2.5em;
-	position: absolute;
-	top: 0;
-	left: 0;
 	vertical-align: middle;
 }
-.adminbar_bottom {
+.lcmbar_bottom {
 	clear: both;
 	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #858c91;
@@ -216,9 +220,6 @@ body.lcm_action_login {
 	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
 	color: #333;
 	text-shadow: 1px 1px 0 #fff;
-
-}
-.adminbar_bottom {
 	box-shadow: 0 0 2px rgba(0,0,0,.2);
 }
 #adminbar_logo {
@@ -369,7 +370,9 @@ ul.holizonal_list {
 	white-space: nowrap;
 	padding: .25em 0;
 	border: 1px solid #b9b9b9;
-	border-radius: 2px ;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
 	background: rgb(250, 250, 250);
 	background: rgba(250, 250, 250, .95);
 }
@@ -398,12 +401,16 @@ ul.holizonal_list {
 .widget {
 	box-sizing: border-box;
 	border: 1px #aaa solid;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
 	float: left;
 	position: relative;
 	height: 220px;
-	overflow: auto;
-	margin: 5px 1%;
+	overflow: hidden;
+	margin: 10px 1%;
 	font-size: .85em;
+	
 }
 .size1 {
 	width: 30.975% !important;
@@ -414,27 +421,25 @@ ul.holizonal_list {
 .size3 {
 	width: 96.95% !important;
 }
-.widget_title{
+.lcmbar_top_title {
 	height: 1.5em;
 	padding: 3px;
 	margin: 0 !important;
-	background-color: #eee;
 }
-/*幅の制御がむずかしいので、fixeでないほうがいいのかも。中身用にもdivを用意するとか
-.widget_title {
-	position: fixed;
-	height: 1.5em;
-	padding: 3px;
-	margin: 0 !important;
-	background-color: #eee;
+.widget_content {
+	overflow: auto;
+	height: 100%;
+	webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box
 }
-.size1 .widget_title {
+.widget_content_fc {
+    display: block;
+    margin: auto;
 }
-.size2 .widget_title {
+.widget_content_fr {
+	text-align: right;
 }
-.size3 .widget_title{
-}
-*/
 /* button */
 .btn,
 .button {
@@ -722,6 +727,12 @@ a.desc:after {
 }
 
 /*===  table  ===*/
+th.adjustw,
+td.adjustw {
+	width: 1em;
+	white-space: nowrap;
+}
+
 .datatable{
 	background-color: #fefefe;
 }
@@ -863,23 +874,15 @@ h1#page_title {
 	 */;
 	border: 1px solid #b9b9b9;
 	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
 	height: 250px;
-	min-height: 1.25em;
+	min-height: 1.2em;
 	width: 300px;
-	padding-bottom: 20px;
+	padding-bottom: 10px;
 	min-width: 200px;
 	overflow: hidden;
 	display: none;
-}
-#help_title {
-	background-color: #0e3664;
-	background-image: url('../img/system/adminbar_bg.png');
-	background-position: center top;
-	background-repeat: no-repeat;
-	color: #fff !important;
-	text-shadow: 1px 1px 0 #333;
-	padding: 2px 7px;
-	cursor: move
 }
 #help_txt {
 	-webkit-box-sizing : border-box ;
@@ -887,7 +890,7 @@ h1#page_title {
 	box-sizing : border-box ;
 	height: 100%;
 	width: 100%;
-	padding: 10px 15px 30px;
+	padding: 10px 15px 20px;
 	overflow: auto;
 	font-size: .9em;
 }
@@ -918,6 +921,11 @@ h1#page_title {
 .mark_loading {
 	display: block;
 	margin: 50px auto;
+}
+.accesskey {
+	font-weight: normal;
+	font-size: .9em;
+	padding-left: .1em;
 }
 
 /*=== itemindex ===*/
@@ -972,6 +980,8 @@ h1#page_title {
 	line-height: 1.25;
 	text-decoration: none;
 	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
 }
 .pagenation_info a:hover{
 	background-color: #eee;

@@ -1,5 +1,5 @@
 <!--https://www.softel.co.jp/blogs/tech/archives/3914-->
-<canvas id="sample20130319" width="170" height="170"></canvas>
+<canvas id="sample20130319" class="widget_content_fc" width="170" height="170"></canvas>
 
 <script>
 function clock(id){

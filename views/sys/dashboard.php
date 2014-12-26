@@ -1,39 +1,8 @@
-<style type="text/css">
-.widget
-{
-	border: 1px #aaa solid;
-	float: left;
-	height: 220px;
-	overflow: auto;
-	margin-right: 10px;
-}
-
-.size1
-{
-	width: 30%;
-}
-
-.size2
-{
-	width: 60%;
-}
-
-.size3
-{
-	width: 100%;
-}
-
-.widget_title
-{
-	background-color: #eee;
-	margin-bottom: 10px;
-}
-
-</style>
-
 <?php foreach ($actions as $action): ?>
-<div class="widget size<?php echo $action['size'] ?>">
-<div class="widget_title"><?php echo $action['title'] ?></div>
-<?php echo $action['content']; ?>
-</div>
+<section class="widget size<?php echo $action['size'] ?>">
+	<h1 class="widget_title lcmbar_top lcmbar_top_title"><?php echo $action['title'] ?></h1>
+	<div class="widget_content">
+		<?php echo $action['content']; ?>
+	</div><!-- /.widget_content -->
+</section>
 <?php endforeach; ?>
