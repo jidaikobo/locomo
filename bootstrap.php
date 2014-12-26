@@ -61,15 +61,15 @@ $paths = array(
 $classes = array();
 foreach ($paths as $class => $path)
 {
-	if ( ! file_exists(APPPATH.'/classes/'.$path))
+	if ( ! file_exists(APPPATH.'classes/'.$path))
 	{
-		$classes[$class] = LOCOMOPATH.'/classes/'.$path;
+		$classes[$class] = LOCOMOPATH.'classes/'.$path;
 	}
 }
 Autoloader::add_classes($classes);
 
 // other classes - this must be called after first Autoloader::add_classes()
-$target = \Inflector::dir_to_ctrl(LOCOMOPATH.'/classes/');
+$target = \Inflector::dir_to_ctrl(LOCOMOPATH.'classes/');
 foreach ($target as $class => $path)
 {
 	$app = str_replace(LOCOMOPATH, APPPATH, $path);
