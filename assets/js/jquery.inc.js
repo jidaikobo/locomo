@@ -111,6 +111,7 @@ $('.lcm_close_parent').on('click', function(){
 	}
 });
 
+
 //要素の中央配置
 $.fn.set_center = function(){
 	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
@@ -123,6 +124,7 @@ $(window).resize(function(){
 		el.set_center();
 	}
 });
+
 
 //アクセスキーをもつ要素へのタイトル付与 //読み上げ要確認
 //accessKeyLabelが取得できないブラウザでは、accessKeyを表示する。できないブラウザのほうが多い？
@@ -244,7 +246,6 @@ if( !isNetReader && $('.tbl_scrollable')[0]){
 		parent_h = parseInt($(parent).height(), 10);
 		parent_t = parseInt($(parent).offset().top, 10);
 		overflow = t - parent_t + h - parent_h;
-		console.log();
 		min_h = $(tbl).find('thead').height()+$(tbl).find('tfoot').height()+($(tbl).find('tbody tr').height()*2);
 		if(overflow > 0){
 			h = (h - overflow) > min_h ? h - overflow : min_h;
@@ -373,8 +374,8 @@ $(document).click(function(e){
 
 //モーダル
 function close_modal(focus,t){
-	//modalを閉じる機能、で、semimodalと併用できるようにパラメータを考える
-	//現在のtabbableを取るなど。（ということはjqueryUIを使わずにtabbableを取得できる？focusable中のtabindexが-でないもの、で行ける？）
+	//modalを閉じる機能、で、semimodalと併用できるように考える
+	//現在のtabbableを取るなど。
 	focus.focus();
 	t.removeClass('on');
 	$(document).reset_tabindex();
@@ -502,7 +503,7 @@ $('.confirm').click(function(){
 //=== form ===
 
 //ページ遷移時の警告
-//エラー時には必ず。//フォームと無関係のエラーはどうする？
+//エラー時には必ず。//フォームと無関係のエラーは？
 //login画面とsubmitがない場合(編集履歴など)では出さない。編集履歴はむしろdisableにするほうがよい？
 //イベントを渡して.targetの値を見ることも可
 
@@ -538,7 +539,6 @@ if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')
 $('a:submit, input:submit').click(function(){
 	$(window).off('beforeunload');
 });
-
 
 //エラー時の、入力エリアから一覧へのナビゲーション
 $('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
@@ -629,7 +629,6 @@ $('input.time').timepicker({
 
 //tooltip
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
-//※要確認
 $('.validation_error :input').tooltip({
 	tooltipClass : 'form_tooltip',
 	show         : 200,
@@ -644,28 +643,67 @@ $('.validation_error :input').tooltip({
 		           }
 });
 
-
 //resizable
-$('#help_window, .resizable').resizable({
-//	'handles' : 'all',
+function set_fixed_position(el){
+		var l, r, w, dw ; //右端基準で固定したい
+		l  = parseInt(el.css( 'left' ));
+		w  = el.outerWidth();
+		dw = $(document).width();
+		r =  dw-l-w;
+		el.css({'position': 'fixed', 'left': 'auto', 'right': r})
+}
+$('#help_window').resizable({
+	'handles' : 'all',
 	'containment' : 'document',
-	/* 
-	//positionのrightとresizeしたときのleftの位置の兼ね合いで動作不良、なんとかしたい。rightがないとwindowをリサイズしたときにはみでる。どこであわせたものか。
-	stop : function(e, ui) {
-    var el = $(e.target);
-    var left = el.offset().left;
-    var top = el.attr("startTop");
-    console.log(left);
-    }
-    */
+	start:function(e, ui) {
+		if(!e){
+			e = event;
+		}
+		var el = $(e.target);
+		el.css( 'position','fixed');
+	},
+	stop:function(e, ui) {
+		if(!e){
+			e = event;
+		}
+		var el = $(e.target);
+		set_fixed_position(el);
+	}
+}).draggable({
+	'handle'      : '#help_title',
+	'containment' : 'document',
+	'scroll' : true,
+	stop:function(e, ui) {
+		if(!e){
+			e = event;
+		}
+		var el = $(e.target);
+		set_fixed_position(el);
+	}
 });
 
-//draggable
-$('#help_window').draggable({
-	'handle' : '#help_title',
-	'containment' : 'document',
-
+//window.resizeもそのうちまとめたい。リサイズ終了待ち（setTimeout()）と、随時処理されたいものをわける。
+//左端基準だけ？
+//モーダルウィンドウも同じことになる？
+$(window).resize(function(){
+	$(document).find('#help_window:visible').each(function(e){
+		var l, r, w, pw;
+		l  = parseInt(this.offsetLeft);
+		w  = parseInt($(this).width());
+		pw = $(document).width();
+		r  = pw-l-w;
+		if(r < 0){//右端が外にはみ出た場合
+			$(this).css({'right': 0});
+		}
+		if(l < 0){ //左端がはみ出た場合
+			$(this).css({'width': pw});
+		}
+	});
 });
+
+
+
+
 /*
 ////lowvision menuimg 
 function replacemenuimg(a){
