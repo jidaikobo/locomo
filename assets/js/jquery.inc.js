@@ -692,11 +692,12 @@ $(window).resize(function(){
 		w  = parseInt($(this).width());
 		pw = $(document).width();
 		r  = pw-l-w;
-		if(r < 0){//右端が外にはみ出た場合
+		if(r < 0){//右端がはみ出た場合
 			$(this).css({'right': 0});
 		}
-		if(l < 0){ //左端がはみ出た場合
+		if(l < 0 && r < 10){ //左端がはみ出た場合(右側が余ってる時はだめ)
 			$(this).css({'width': pw});
+			console.log(r);
 		}
 	});
 });
