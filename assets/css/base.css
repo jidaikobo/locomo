@@ -500,7 +500,8 @@ input[type="time"],
 input[type="datetime-local"],
 input[type="number"],
 textarea {
-	padding: 5px;
+	padding: 0 3px;
+	line-height: 1.5;
 	font-size: 110%;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -510,8 +511,25 @@ textarea {
 	max-width: 100%;
 	vertical-align: middle;
 }
+input[type="text"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="email"],
+input[type="datetime"],
+input[type="date"],
+input[type="month"],
+input[type="week"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="number"],
+textarea {
+	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+}
+
 .btn,
 .button {
+	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
 	vertical-align: middle;
 	padding: 5px 15px ;
 	margin: 0 5px;

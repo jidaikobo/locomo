@@ -2,7 +2,7 @@
 namespace Sample;
 class Actionset_Option_Sample extends \Locomo\Actionset_Option
 {
-	use \Locomo\Actionset_Traits_Testdata;
+	use \Actionset_Traits_Option_Testdata;
 
 	/**
 	 * actionset_sample()

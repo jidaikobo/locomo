@@ -8,7 +8,7 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 	public function render($group = null, $raw = false)
 	{
 		$retval = parent::render($group, $raw);
-		$replace = 'content/fetch_view/';
+		$replace = 'sys/fetch_view/';
 
 		if (strpos($retval, APPPATH) !== false)
 		{
@@ -16,7 +16,7 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 		}
 		else
 		{
-			//in case parent::render() fail to delete DOCROOT.
+			// in case parent::render() fail to delete DOCROOT.
 			$search = str_replace(DOCROOT, '', LOCOMOPATH).'assets/';
 			$retval = str_replace(DOCROOT, '', $retval);
 		}

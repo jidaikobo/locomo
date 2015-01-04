@@ -69,15 +69,15 @@ trait Controller_Traits_Crud
 	 */
 	public function action_view($id = null)
 	{
-		parent::view();
+		parent::view($id);
 	}
 
 	/**
 	 * action_create()
 	 */
-	public function action_create()
+	public function action_create($id = null)
 	{
-		parent::edit(null);
+		parent::create($id);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Model_Hasone extends \Locomo\Model_Base
+class Model_Hasone extends \Model_Base
 {
 	protected static $_table_name = 'hasone';
 
@@ -12,8 +12,6 @@ class Model_Hasone extends \Locomo\Model_Base
 		'expired_at',
 		'deleted_at',
 	);
-
-
 
 	/**
 	 * form_definition()

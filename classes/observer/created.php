@@ -36,6 +36,7 @@ class Observer_Created extends \Orm\Observer
 	public function __construct($class)
 	{
 		$props = $class::observers(get_class($this));
+
 		$this->_mysql_timestamp  = isset($props['mysql_timestamp']) ? $props['mysql_timestamp'] : static::$mysql_timestamp;
 		$this->_property         = isset($props['property']) ? $props['property'] : static::$property;
 		$this->_overwrite        = isset($props['overwrite']) ? $props['overwrite'] : false;

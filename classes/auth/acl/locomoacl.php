@@ -11,7 +11,7 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 
 	public function roles()
 	{
-		//Auth_Acl_Locomoaclではroleを使わない
+		// Auth_Acl_Locomoaclではroleを使わない
 		return static::$_valid_roles;
 	}
 

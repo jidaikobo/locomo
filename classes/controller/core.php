@@ -33,7 +33,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public function before()
 	{
 		// Profiler
-		\Profiler::mark('Locomo\\Controller_Base::before() - Called');
+		\Profiler::mark('Locomo\\Controller_Core::before() - Called');
 
 		// parent
 		parent::before();
@@ -92,7 +92,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public function router($method, $params)
 	{
 		// Profiler
-		\Profiler::mark('Locomo\\Controller_Base::router() - Called');
+		\Profiler::mark('Locomo\\Controller_Core::router() - Called');
 
 		// fetch_view() can be executed without acl
 		if (
@@ -108,13 +108,13 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		{
 			if (\Auth::check())
 			{
-				return \Response::redirect(\Uri::create('content/content/403'));
+				return \Response::redirect(\Uri::create('sys/403'));
 			}
 			else
 			{
 				$qstr = \Arr::get($_SERVER, 'QUERY_STRING') ;
 				$qstr = $qstr ? '?'.e($qstr) : '' ;
-				return \Response::redirect(\Uri::create('user/auth/login?ret='.\Uri::string().$qstr));
+				return \Response::redirect(\Uri::create('auth/login?ret='.\Uri::string().$qstr));
 			}
 		}
 
@@ -150,7 +150,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		if ( ! $is_allow)
 		{
-			$page = \Request::forge('content/content/403')->execute();
+			$page = \Request::forge('sys/403')->execute();
 			return new \Response($page, 403);
 		}
 
@@ -159,20 +159,20 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		if (
 			$no_home && // config
 			! \Auth::check() && // for guest
-			$this->request->module.DS.$method == 'content/home' // when toppage
+			$this->request->controller.DS.$method == 'Controller_Sys/home' // when toppage
 		)
 		{
-			return \Response::redirect(\Uri::create('user/auth/login'));
+			return \Response::redirect(\Uri::create('auth/login'));
 		}
 
 		// use dashboard as a loginned toppage
 		if (
 			$no_home && // config
 			\Auth::check() && // for users
-			$this->request->module.DS.$method == 'content/home' // when toppage
+			$this->request->controller.DS.$method == 'Controller_Sys/home' // when toppage
 		)
 		{
-			return \Response::redirect(\Uri::create('admin/admin/dashboard'));
+			return \Response::redirect(\Uri::create('sys/dashboard'));
 		}
 
 		return parent::router($method, $params);
@@ -274,5 +274,102 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// if ($name == 'template') return $this->template = \View::forge('default'); //var_dump($name); die();
 	}
 
+	/**
+	 * base_assign()
+	 * @param object $obj use for auth. Fuel\Model object
+	 */
+	public function base_assign($obj = null)
+	{
+		// Profiler
+		\Profiler::mark('Locomo\\Controller_Core::base_assign() - Called');
+
+		// module and controller
+		$module     = \Inflector::remove_head_backslash(\Request::main()->module);
+		$controller = \Inflector::add_head_backslash(\Request::main()->controller);
+		$action     = \Request::main()->action;
+
+		// logo
+		$logo = APPPATH.'locomo/system/img/logo.png';
+		if ( ! file_exists($logo))
+		{
+			$logo = \Asset::img();
+			$logo = LOCOMOPATH.'assets/img/system/logo.png';
+		}
+
+		// body_class
+		$class_arr = array(
+			'lcm_module_'.strtolower($module),
+			'lcm_ctrl_'.strtolower(\Inflector::ctrl_to_safestr($controller)),
+			'lcm_action_'.strtolower($action)
+		);
+		if ($action == 'login' && \Config::get('no_home'))
+		{
+			$class_arr[] = 'home';
+		}
+		if (\Auth::check())
+		{
+			$class_arr[] = 'loggedin';
+		}
+		$this->template->set_global('body_class', implode($class_arr, ' '));
+
+		// locomo - for logged in users'
+		$locomo = array();
+		if ( ! \Auth::check())
+		{
+			$this->template->set_global('locomo', $locomo);
+			return;
+		}
+
+		// locomo path
+		$locomo['locomo_path'] = $controller.DS.$action;
+
+		// current controller
+		$locomo['controller']['name'] = $controller;
+		$ctrl_home = \Arr::get($controller::$locomo, 'admin_home');
+		$locomo['controller']['ctrl_home'] = $ctrl_home;
+		$locomo['controller']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
+		$locomo['controller']['home_name'] = \Arr::get($controller::$locomo, 'admin_home_name');
+		$locomo['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
+
+		// current module
+		if ($module)
+		{
+			$config = \Config::load($module.'::'.$module, 'admin_bar', $reload = true);
+			if ( ! \Arr::get($config, 'main_controller'))
+			{
+				new \OutOfBoundsException('module\'s config must contain main_controller value.');
+			}
+
+			$locomo['module']['name'] = $module;
+			$ctrl_home = \Arr::get($config['main_controller']::$locomo, 'admin_home');
+			$locomo['module']['ctrl_home'] = $ctrl_home;
+			$locomo['module']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
+			$locomo['module']['nicename'] = $config['nicename'];
+			$locomo['module']['main_controller'] = $config['main_controller'];
+		}
+
+		// get accessible controller
+		\Profiler::mark('Locomo\\Controller_Core::base_assign() - get accessible controller');
+		$all_ctrls = \Util::get_mod_or_ctrl();
+		foreach($all_ctrls as $k => $v)
+		{
+			if ( ! \Auth::instance()->has_access(\Arr::get($v, 'admin_home')))
+			{
+				unset($all_ctrls[$k]);
+			}
+		}
+		$locomo['controllers'] = $all_ctrls;
+
+		$this->template->set_global('locomo', $locomo);
+
+		// actionset
+		\Profiler::mark('Locomo\\Controller_Core::base_assign() - actionset');
+		$default = ['index' => [], 'base' => [], 'ctrl' => []];
+		$actionset = \Actionset::get_actionset($controller, $obj, $default);
+		$this->template->set_global('actionset', $actionset, false);
+
+		// Profiler
+		\Profiler::mark('Locomo\\Controller_Core::base_assign() - done');
+	}
 }
 

@@ -1,22 +1,31 @@
 // ヘルプ呼び出し
-$(function(){
-	$('#lcm_help').click(function(e){
-		e.preventDefault();
-		var uri = $(this).data('uri');
-		$.ajax({
-			url: uri,
-			dataType: 'html',
-		})
-		.success(function(data) {
-			$("#help_txt").toggle();
-			$("#help_txt").html(data);
-		})
+var help_preparation = false;
+function show_help(e){
+	if(!e){
+		e = event;
+	}
+	if(e){
+		e.preventDefault(); //クリックイベント以外(アクセスキー等)の場合を除外
+	}
+	$(function(){
+		if(!help_preparation){
+			var uri = $('#lcm_help').data('uri');
+			$.ajax({
+				url: uri,
+				dataType: 'html',
+			})
+			.success(function(data) {
+				$("#help_txt").html(data);
+				help_preparation = true;
+			})
+		}
+		$("#help_window").show();
+		$("#help_title_anchor").focus();
 	});
+}
+$(function(){
+	$('#lcm_help').click(show_help);
 });
-
-//いろいろ未整理なので見ないでください＞＜
-
-
 
 //モーダル
 function modal(id){
@@ -35,7 +44,7 @@ function modal(id){
 			
 			$(event.target).addClass('modal_parent');
 			el.addClass('on')
-			//画面中央表示のためにbodyのはじめに移動、その前に元に戻す時のため#modal_wrapperを追加 戻す必要ある？appendのほうがよい？
+			//画面中央表示のためにbodyのはじめに移動、その前に元に戻す時のため#modal_wrapperを追加 戻す必要ある？appendのほうがよい？ 読み上げ的に冒頭にあったほうがよいのかなあ
 				.after(wrapper)
 				.prependTo(document.body)
 				.prepend(closelink);
@@ -49,19 +58,61 @@ function modal(id){
 }
 
 $(function(){
+//UA //php側は？
+var userAgent = window.navigator.userAgent;
+isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
 
+//JavaScript有効時に表示、無効時にはCSSで非表示
+$('.hide_if_no_js').removeClass("hide_if_no_js");
 
-$(document).find('#modal_wrapper').each(function(){
+//.show_if_no_js noscript的な扱い
+$(".show_if_no_js").remove();
 
+//ページ読み込み直後のフォーカス制御
+if($('.flash_alert')[0]){
+	var firstFocus = $('.flash_alert a.skip').first();
+}else if($('body').hasClass('lcm_action_login')){
+	var firstFocus = $('input:visible').first();
+}
+if(firstFocus){
+	set_focus(firstFocus);
+}
+function set_focus(t){
+	$(t).focus();
+	if($(t).is(':input') && !isNetReader){
+		$(t).select();
+	}
+}
 
-});
+//スクロールバーのサイズ取得
+var scrollbar_s = (function(){
+	var testdiv, rs;
+	testdiv = document.createElement('div');
+	testdiv.style.width = '100px';
+	testdiv.style.height = '100px';
+	testdiv.style.overflow = 'scroll';
+	document.body.appendChild(testdiv);
+	rs = testdiv.offsetWidth - testdiv.clientWidth;
+	$(testdiv).remove();
+	return rs;
+})();
 
-//モーダルの外制御 //キーボードのことを考えてdisabled制御をするならclickのほうの処理は不要？
+//モーダルの外制御 //キーボードのことを考えてdisabled制御をするならclick処理は重複？
 $('#modal_wrapper').on('click', function(){
 	return false;
 });
 
-//要素の中央配置（.set_center ウィンドウリサイズ時に追随）
+//親を閉じる
+$('.lcm_close_parent').on('click', function(){
+	var parent = $(this).parent();
+	parent.hide();
+	if($(this).hasClass('lcm_reset_style')){
+		parent.removeAttr('style').removeClass('on');
+	}
+});
+
+
+//要素の中央配置
 $.fn.set_center = function(){
 	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
 	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
@@ -73,6 +124,23 @@ $(window).resize(function(){
 		el.set_center();
 	}
 });
+
+
+//アクセスキーをもつ要素へのタイトル付与 //読み上げ要確認
+//accessKeyLabelが取得できないブラウザでは、accessKeyを表示する。できないブラウザのほうが多い？
+function add_accesskey_title(){
+	var str, txt, label;
+	label = this.accessKeyLabel;
+	label = label ? label : this.accessKey;
+	if(label){
+		txt = $(this).clone(false);
+		txt.find('.skip').remove();
+		str = ( $(this).attr('title') || txt.text() || $(this).children().attr('alt') );
+		$(this).attr('title',str+'['+label+']');
+	}
+}
+$(document).find('[accesskey]').each(add_accesskey_title);
+
 
 //tabindex制御
 $.fn.set_tabindex = function(){
@@ -95,142 +163,151 @@ $.fn.reset_tabindex = function(){
 }
 
 
-//UA
-var userAgent = window.navigator.userAgent;
-
-isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
-
-//JavaScript有効時に表示、無効時にはCSSで非表示
-$('.hide_if_no_js').removeClass("hide_if_no_js");
-
-//.show_if_no_js noscript的な扱い
-$(".show_if_no_js").remove();
-
-//ページ読み込み直後のフォーカス制御
-if($('.flash_alert')[0]){
-	var firstFocus = $('.flash_alert a.skip').first();
-}else if($('body').hasClass('login')){
-	var firstFocus = $('input:visible').first();
-}
-if(firstFocus){
-	set_focus(firstFocus);
-}
-function set_focus(t){
-	$(t).focus();
-	if($(t).is(':input') && !isNetReader){
-		$(t).select();
-	}
-}
 
 
+
+//表内スクロール - 各ブラウザでの挙動が怪しいのでもうちょっと
+if( !isNetReader && $('.tbl_scrollable')[0]){
 /*
-//tbl_scrollable
-if( !isNetReader){
-	$(document).find('.tbl_scrollable').each(tbl_scrollable); //theadやtfootがない場合にどうするか。
-}
-
-function tbl_scrollable(){
-	var thead = $(this).find('thead').clone();
-	if(thead.length){
-		var fixed_thead, tbl_wrapper, tbody_wrapper;
-		fixed_thead = document.createElement('table');
-		tbl_wrapper = document.createElement('div');
-		tbody_wrapper = document.createElement('div');
-
-		tbl_wrapper.className = 'jslcm_tbl_wrapper';
-		tbody_wrapper.className = 'jslcm_tbody_wrapper';
-		fixed_thead.className = $(this).attr('class')+' jslcm_fixedheader';
-		fixed_thead.setAttribute = 'aria-hidden','true';
-		$(fixed_thead).removeClass('tbl_scrollable').append(thead);
-		$(this).addClass('jslcm_tbl_scrollable').wrap(tbl_wrapper).before(fixed_thead).wrap(tbody_wrapper);
-		adjust_columns(this,fixed_thead);//このthisは.tbl_scrollable
-		
-		//その他、下に隠れるtheadのソートリンクを有効にしても大丈夫かどうか。
-	}
-}
-
-function adjust_columns(tbl, fixed_thead, ws){
-	var cols, len, fixed_thead_cols, w;
-		cols = $(tbl).children('thead').find('th, td');
-		len = cols.length;
-		fixed_thead_cols = $(fixed_thead).children().children().children('th, td'); //find的な取り方はできないか
-		for(i=0; i<len-1; i++){
-		if(ws){
-			w = ws[i];
-		}else{
-			w = $(cols[i]).width();
-		}
-		$(cols[i]).width(w);//あわせるために必要？
-		$(fixed_thead_cols[i]).width(w);
-	}
-}
-
-var api = $('.jslcm_tbl_scrollable thead th, .jslcm_tbl_scrollable thead td').exResize({
-	//api オブジェクトの返却を指定
-	api : true,
-	callback :function(){
-		var fixed_header, tbl, ws, i;
-		tbl = $(this).closest('table');
-		var index = $(document).find('.jslcm_tbl_scrollable').index(tbl);
-		fixed_header = $(document).find('.jslcm_fixedheader').eq(index);
-		ws = new Array();
-		i = 0;
-		api.each(function(){
-			ws[i] = this.getSize().width;
-			i++;
-		});
-		adjust_columns(tbl, fixed_header, ws);
-	}
-});
-/*
-$('table.scrollable thead').find('th,td').exResize(function(api){
-var size = api.getSize();
-console.log(size)
-}
-
-/*
-var api = $('table.scrollable thead th,table.scrollable thead td').exResize({
-	//api オブジェクトの返却を指定
-	api : true,
-	callback :function(){
-		var ws = new Array();
-		var i = 0;
-		api.each(function(){
-			ws[i] = this.getSize().width;
-			i++;
-		});
-		adjust_columns(ws);
-	}
-});
-/*
-$('table.scrollable thead').find('th,td').exResize(function(api){
-var size = api.getSize();
-console.log(size)
-//
-});
-
-
-function adjust_columns(col_ws){
-	var cols = $(table).children('thead').find('th,td');
-	var length = cols.length;
-	var fixedheader_cols = $('body').find('.fixedheader thead th,.fixedheader thead td');
-
-	for( i=0; i < length-1; i++){
-		if(col_ws){
-			var width = $(cols[i]).width();
-		}else{
-			var width = col_ws[i];
-		}
-		$(fixedheader_cols[i]).width(width);
-//		$(cols[i]).width(width);
-//これがあれば、いちどexResizeを動かすと、延々とリサイズされ続けてしまう
-	}
-
+//スクロールバーの幅ぶん調整したい
+//現状だと右端は最終列にかぶり、下端はスクロールバー分はみ出る（margin-bottm: -{スクロールバー};）
+//おなじく、ボーダーの幅
+//wrapperに枠を表示できる？
 */
-
+	$(document).find('.tbl_scrollable').each(tbl_scrollable);
+	
+	function tbl_scrollable(){
+		var thead, tfoot, h, tbl_wrapper, thead_wrapper, tbody_wrapper, tfoot_wrapper, fixed_thead, fixed_tfoot;
+		thead = $(this).find('thead').clone();
+		tfoot = $(this).find('tfoot').clone();
+		if(thead.length || tfoot.length){
+			tbl_wrapper = $('<div>').addClass('jslcm_tbl_wrapper');
+			tbody_wrapper = $('<div>').addClass('jslcm_tbody_wrapper');
+			if(thead.length){
+				thead_wrapper = $('<div>').addClass('jslcm_thead_wrapper');
+				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').attr('aria-hidden','true').append(thead);
+				$(fixed_thead).find(':tabbable').attr('tabindex', '-1');
+			}
+			if(tfoot.length){
+				tfoot_wrapper = $('<div>').addClass('jslcm_tfoot_wrapper');
+				fixed_tfoot = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_tfoot').removeClass('tbl_scrollable').attr('aria-hidden','true').append(tfoot);
+				$(fixed_tfoot).find(':tabbable').attr('tabindex', '-1');
+			}
+			$(this).addClass('jslcm_tbl_scrollable')
+				.wrap(tbl_wrapper)
+				.after(fixed_tfoot)
+				.after(fixed_thead)
+				.wrap(tbody_wrapper);
+			adjust_columns(this);
+		}
+	}
+	
+	function adjust_columns(tbl, ws){
+		//exresizeで変更を取得しているときには、そちらのサイズを使う……のでなければならなかったのかは、要確認。
+		//フォントサイズの変更はどうにか取れなかったかなあ……も要確認
+		//読み込み時に動いていないのも要確認
+		var thead, tfoot, fixed_thead, fixed_tfoot, thead_cols, tfoot_cols, fixed_thead_cols, fixed_tfoot_cols, thead_len, tfoot_len, w;
+		thead = $(tbl).find('thead');
+		tfoot = $(tbl).find('tfoot');
+		//重複を整理したい、というより一回でできる？
+		if(thead.length){
+			thead_cols = $(tbl).children('thead').find('th, td');
+			thead_len = thead_cols.length;
+			fixed_thead = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_thead');
+			fixed_thead_cols = $(fixed_thead).find('th, td');
+			set_colswidth(thead_cols, thead_len, fixed_thead_cols, ws);
+		}
+		if(tfoot.length){
+			tfoot_cols = $(tbl).children('tfoot').find('th, td');
+			tfoot_len = tfoot_cols.length;
+			fixed_tfoot = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_tfoot');
+			fixed_tfoot_cols = $(fixed_tfoot).find('th, td');
+			set_colswidth(tfoot_cols, tfoot_len, fixed_tfoot_cols, ws);
+		}
+	}
+	function set_colswidth(cols, len, fixed_cols, ws){
+		for(i=0; i<len-1; i++){
+			if(ws){
+				w = ws[i];
+			}else{
+				w = $(cols[i]).width();
+			}
+			$(fixed_cols[i]).width(w+1);//borderの太さを足す。とりあえず1pxで
+		}
+	}
+	
+	$.fn.el_overflow_y = function(){
+		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
+		//ウィジェットや指定の枠がある場合は親にする。自分より小さな祖先ブロック要素を見つけてあわせる、ほうがいいのかなあ
+		parent = $(this).closest('.widget, .parent_tbl_scrollable').length ? $(this).closest('.widget, .parent_tbl_scrollable')[0] : $('.container');
+		tbl = $(this).find('.jslcm_tbl_scrollable');
+		h = parseInt($(tbl)[0].scrollHeight, 10)+2;
+		t = parseInt($(tbl).offset().top, 10);
+		parent_h = parseInt($(parent).height(), 10);
+		parent_t = parseInt($(parent).offset().top, 10);
+		overflow = t - parent_t + h - parent_h;
+		min_h = $(tbl).find('thead').height()+$(tbl).find('tfoot').height()+($(tbl).find('tbody tr').height()*2);
+		if(overflow > 0){
+			h = (h - overflow) > min_h ? h - overflow : min_h;
+			$(tbl).height($(tbl).height()-scrollbar_s);//スクロールバー分引く
+		}else{
+		
+		}
+		$(this).height(h);
+		return overflow ;
+	}
+	
+	var resize_col = $('.jslcm_tbl_scrollable thead th, .jslcm_tbl_scrollable thead td, .jslcm_tbl_scrollable tfoot th .jslcm_tbl_scrollable tfoot td' ).exResize({
+		api : true,
+		callback :function(){
+			var fixed_thead, tbl, ws, i;
+			tbl = $(this).closest('table');
+			var index = $(document).find('.jslcm_tbl_scrollable').index(tbl);
+			fixed_thead = $(document).find('.jslcm_fixed_thead').eq(index);
+			ws = new Array();
+			i = 0;
+			resize_col.each(function(){
+				ws[i] = this.getSize().width;
+				i++;
+			});
+			adjust_columns(tbl, ws);
+		}
+	});
+	
+	if($('.jslcm_tbody_wrapper').length){
+		$('.jslcm_tbody_wrapper').el_overflow_y();	
+		//ウィンドウリサイズ時やフォントサイズ変更時に追随したい（exResizeの挙動を再確認）
+		//ブラウザによって、リサイズを捕捉できなかったりする？ ひとまず、Safariの拡大縮小要確認
+		$(window).resize(function(){
+			$('.jslcm_tbody_wrapper').el_overflow_y();
+		});
+		$('.jslcm_tbl_scrollable').exResize(function(){
+			is_resize = true;
+			$('.jslcm_tbody_wrapper').el_overflow_y(
+				$(this).closest('.widget , .parent_tbl_scrollable').length ? $(this).closest('.widget , .parent_tbl_scrollable') : null
+			);
+		});
+		$('.jslcm_tbl_wrapper').exResize(function(){
+		//この辺もふだんの幅あわせでやることなのかも
+			var tbl , tbody_wrapper, fixed_tbl, cols, fixed_cols, tbl_w, w;
+			tbl = $(this).find('.jslcm_tbl_scrollable');
+			tbody_wrapper = $(this).find('.jslcm_tbody_wrapper');
+			fixed_tbl = $(this).find('.jslcm_fixed_thead, .jslcm_fixed_tfoot');
+			if(tbl.width() - $('.jslcm_tbody_wrapper').width() > 0 ){
+				cols = $(tbl).find('thead th, thead td, tfoot th, tfoot td');
+				fixed_cols = $(fixed_tbl).find('th, td');
+				tbl_w = $(tbl).width();
+				$(fixed_tbl).css('min-width', tbl_w+scrollbar_s+'px');
+				$(tbody_wrapper).css('min-width', tbl_w+scrollbar_s+'px');
+				set_colswidth(cols, cols.length, fixed_cols);
+			}
+		});
+	}
+}
 
 //Focusまわりのテスト（NetReaderでFocus移動を検知したい）
 //setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
+//が、最新版のNetReaderはIEが7でなくなったので、古い環境の動作確認はできない(再インストール？)
 
 //管理バーの高さ+αのヘッダーの高さを確保
 var headerheight = 0;
@@ -251,11 +328,12 @@ if($('#adminbar')[0]){
 //ページ内リンク ヘッダー分位置調整とスムーズスクロール
 //html要素がスクロール対象であるか判定。
 //http://www.webdesignleaves.com/wp/jquery/573/
-var isHtmlScrollable = (function(){
-	var html = $('html'), top = html.scrollTop();
-	var el = $('<div/>').height(10000).prependTo('body');
+var is_html_scrollable = (function(){
+	var html, el, rs;
+	html = $('html'), top = html.scrollTop();
+	el = $('<div/>').height(10000).prependTo('body');
 	html.scrollTop(10000);
-	var rs = !!html.scrollTop();
+	rs = !!html.scrollTop();
 	html.scrollTop(top);
 	el.remove();
 	return rs;
@@ -266,7 +344,7 @@ $(document).on('click', 'a[href^=#]', function(){
 	var href= $(this).attr("href");
 	var t = $(href == '#' || href == '' ? 'html' : href);
 	var position = t.offset().top-headerheight-10;
-	$(isHtmlScrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+	$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
 	set_focus(t);
 	return false;
 });
@@ -296,8 +374,8 @@ $(document).click(function(e){
 
 //モーダル
 function close_modal(focus,t){
-	//modalを閉じる機能、で、semimodalと併用できるようにパラメータを考える
-	//現在のtabbableを取るなど。（ということはjqueryUIを使わずにtabbableを取得できる？focusable中のtabindexが-でないもの、で行ける？）
+	//modalを閉じる機能、で、semimodalと併用できるように考える
+	//現在のtabbableを取るなど。
 	focus.focus();
 	t.removeClass('on');
 	$(document).reset_tabindex();
@@ -361,7 +439,7 @@ $(document).on('keydown',function(e){
 	var k = e.which;
 	var modal = $(document).find('.modal.on, .semimodal.on')[0];
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
-	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン依存する？)
+	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
 	//モーダル周り モーダルの外に出た時のことを考えるとdocument全体のキーイベントを見るのがいいのか、それとも.modal.onや.semimodal.onだけを相手にするのがいいのか
 	if(modal){
 		var tabbable = $(document).find(':tabbable');
@@ -425,7 +503,7 @@ $('.confirm').click(function(){
 //=== form ===
 
 //ページ遷移時の警告
-//エラー時には必ず。
+//エラー時には必ず。//フォームと無関係のエラーは？
 //login画面とsubmitがない場合(編集履歴など)では出さない。編集履歴はむしろdisableにするほうがよい？
 //イベントを渡して.targetの値を見ることも可
 
@@ -435,7 +513,7 @@ function confirm_beforeunload(){
 	});
 }
 
-if($('a:submit, input:submit')[0] && !$('body').hasClass('login')){
+if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')){
 	var datetime = $('.datetime');
 	datetime.each(function(){
 		var val = $(this).val();
@@ -452,7 +530,7 @@ if($('a:submit, input:submit')[0] && !$('body').hasClass('login')){
 			confirm_beforeunload();
 		}
 	});
-	if($('#alert_error')[0]){
+	if($('#alert_error').children('ul.list').length ){
 		confirm_beforeunload();
 	}
 }
@@ -461,7 +539,6 @@ if($('a:submit, input:submit')[0] && !$('body').hasClass('login')){
 $('a:submit, input:submit').click(function(){
 	$(window).off('beforeunload');
 });
-
 
 //エラー時の、入力エリアから一覧へのナビゲーション
 $('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
@@ -546,14 +623,12 @@ $('input.time.min30').timepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 30
 });
-$('input.time').timepicker({timeFormat: 'HH:mm'});
-
-
-
+$('input.time').timepicker({
+	timeFormat: 'HH:mm'
+});
 
 //tooltip
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
-//※要確認
 $('.validation_error :input').tooltip({
 	tooltipClass : 'form_tooltip',
 	show         : 200,
@@ -568,17 +643,64 @@ $('.validation_error :input').tooltip({
 		           }
 });
 
-//login failed
-//そもそも直書きのほうがよいかも。
-/*
-if($('.login #alert_error')[0]){
-	$('body').animate({ paddingLeft: '-8px' }, 20)
-             .animate({ paddingLeft: '8px' }, 75)
-             .animate({ paddingLeft: '-8px' }, 75)
-             .animate({ paddingLeft: '8px' }, 75)
-             .animate({ paddingLeft: 0 }, 75);
+//resizable
+function set_fixed_position(el){
+		var l, r, w, dw ; //右端基準で固定したい
+		l  = parseInt(el.css( 'left' ));
+		w  = el.outerWidth();
+		dw = $(document).width();
+		r =  dw-l-w;
+		el.css({'position': 'fixed', 'left': 'auto', 'right': r})
 }
-*/
+$('#help_window').resizable({
+	'handles' : 'all',
+	'containment' : 'document',
+	start:function(e, ui) {
+		if(!e){
+			e = event;
+		}
+		var el = $(e.target);
+		el.css( 'position','fixed');
+	},
+	stop:function(e, ui) {
+		if(!e){
+			e = event;
+		}
+		var el = $(e.target);
+		set_fixed_position(el);
+	}
+}).draggable({
+	'handle'      : '#help_title',
+	'containment' : 'document',
+	'scroll' : true,
+	stop:function(e, ui) {
+		if(!e){
+			e = event;
+		}
+		var el = $(e.target);
+		set_fixed_position(el);
+	}
+});
+
+//window.resizeもそのうちまとめたい。リサイズ終了待ち（setTimeout()）と、随時処理されたいものをわける。
+//左端基準だけ？
+//モーダルウィンドウも同じことになる？
+$(window).resize(function(){
+	$(document).find('#help_window:visible').each(function(e){
+		var l, r, w, pw;
+		l  = parseInt(this.offsetLeft);
+		w  = parseInt($(this).width());
+		pw = $(document).width();
+		r  = pw-l-w;
+		if(r < 0){//右端がはみ出た場合
+			$(this).css({'right': 0});
+		}
+		if(l < 0 && r < 10){ //左端がはみ出た場合(右側が余ってる時はだめ)
+			$(this).css({'width': pw});
+			console.log(r);
+		}
+	});
+});
 
 
 
@@ -852,12 +974,8 @@ $('a#sm_options_btn').click(function(){
 	$('.close_menu_button').show() ;
 });
 
-});
-
 
 //lightbox
-//$(document).ready(function(){}); いらない？
-$(document).ready(function(){
 	$('a').filter(function(){
 		return /\.(jpe?g|png|gif)$/i.test(this.href);
 	}).colorbox({

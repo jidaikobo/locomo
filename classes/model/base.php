@@ -38,7 +38,7 @@ class Model_Base extends \Orm\Model_Soft
 	);
 
 	/*
-	 * _option_options - see sample at \User\Model_Usergroup
+	 * _option_options - see sample at \User\Model_Usrgrp
 	 */
 	protected static $_option_options = array();
 
@@ -59,7 +59,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function add_authorize_methods()
 	{
-// see sample at \Workflow\Traits_Model_Workflow -マージでもいいか？
+// see sample at \Model_Traits_Wrkflw -マージでもいいか？
 //		if ( ! in_array('auth_sample', static::$_authorize_methods)):
 //			static::$_authorize_methods[] = 'auth_sample';
 //		endif;
@@ -425,11 +425,11 @@ class Model_Base extends \Orm\Model_Soft
 			if (\Input::get('all')) {
 				foreach (static::$_properties as $k => $v) {
 					if (in_array($v, static::$_primary_key)) continue;
-					$options['or_where'][] = array($v, 'LIKE', '%'.\Input::get('all').'%');
+					$field = is_array($v) ? $k : $v;// properties sometimes only has key without value
+					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
 				}
 			}
 		}
-
 		$count_all = static::count();
 		$count = static::count($options);
 
