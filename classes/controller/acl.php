@@ -2,7 +2,7 @@
 namespace Locomo;
 class Controller_Acl extends \Controller_Base
 {
-	//locomo
+	// locomo
 	public static $locomo = array(
 		'show_at_menu' => true,
 		'order_at_menu' => 50,
@@ -10,8 +10,11 @@ class Controller_Acl extends \Controller_Base
 		'no_acl' => true,
 		'admin_home' => '\\Controller_Acl/controller_index',
 		'nicename' => 'アクセス権',
-		'actionset_method' =>array(
-			'base'   => 'actionset_controller_index',
+		'actionset_methods' =>array(
+			'base'   => array(
+				'actionset_controller_index',
+				'actionset_actionset_index'
+			),
 		),
 	);
 
@@ -30,16 +33,37 @@ class Controller_Acl extends \Controller_Base
 	}
 
 	/**
+	 * actionset_actionset_index()
+	 */
+	public static function actionset_actionset_index($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = array(
+			'urls'         => $urls ,
+			'show_at_top'  => false,
+			'action_name'  => 'アクセス権管理',
+			'help'         => '
+# 依存関係について
+依存した行為を許可すると、自動的にほかの行為が許可される場合があります。たとえば「項目を編集する権利」を持った人は、「通常項目を閲覧する権利」が自動的に許可されます。
+
+# ログインユーザ権限
+「ログインユーザすべて」に行為を許可している場合、個別にアクセス権を与えなくても、許可された状態になっていることがあります。
+',
+			'order'        => 1,
+		);
+		return $retvals;
+	}
+
+	/**
 	 * action_controller_index()
 	 */
 	public function action_controller_index()
 	{
-		//vals
+		// vals
 		$mod_or_ctrl = \Model_Acl::get_mod_or_ctrl();
 		$usergroups  = \Model_Acl::get_usergroups();
 		$users       = \Model_Acl::get_users();
 
-		//view
+		// view
 		$view = \View::forge('acl/controller_index');
 		$view->set_global('title', 'コントローラ選択');
 		$view->set('mod_or_ctrl', $mod_or_ctrl);
@@ -59,11 +83,11 @@ class Controller_Acl extends \Controller_Base
 		$module = \Inflector::get_modulename($ctrl);
 		if ($module)
 		{
-				$actionsets = \Actionset::get_module_actionset($module);
+			$actionsets = \Actionset::get_module_actionset($module);
 		}
 		else
 		{
-				$actionsets[$ctrl] = \Actionset::get_actionset($ctrl);
+			$actionsets[$ctrl] = \Actionset::get_actionset($ctrl);
 		}
 		if(empty($actionsets)) throw new \OutOfBoundsException('actionset not found');
 
@@ -88,45 +112,50 @@ class Controller_Acl extends \Controller_Base
 	 */
 	public function action_actionset_index()
 	{
-		//user requests
+		// user requests
 		$mod_or_ctrl  = \Input::param('mod_or_ctrl', null) ?: \Input::param('mod_or_ctrl') ;
 		$usergroup_id = is_numeric(\Input::param('usergroup')) ? \Input::param('usergroup') : null;
 		$user_id      = is_numeric(\Input::param('user')) ? \Input::param('user') : null;
 
-		if (($mod_or_ctrl == null) || ($usergroup_id == null && $user_id == null)):
+		if (($mod_or_ctrl == null) || ($usergroup_id == null && $user_id == null))
+		{
 			\Session::set_flash('error', '必要項目を選択してから「次へ」を押してください。');
 			return \Response::redirect(\Uri::create('/acl/controller_index/'));
-		endif;
+		}
 
-		//vals
+		// vals
 		$controllers = \Model_Acl::get_mod_or_ctrl();
 		$usergroups  = \Model_Acl::get_usergroups();
 		$users       = \Model_Acl::get_users();
 
-		//actionset
+		// actionset
 		$actionsets = static::get_actionset($mod_or_ctrl);
 
-		//check database
+		// check database
 		$q = \DB::select('slug');
-		$q->from('acls');
+		$q->from('lcm_acls');
 		$q->where('controller', 'IN', array_keys($actionsets));
 		if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
 		if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
+		$q->or_where('usergroup_id', '=', '-10');
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
-		foreach($actionsets as $controller => $each_actionsets):
-			foreach($each_actionsets as $realm => $actionset):
+		foreach($actionsets as $controller => $each_actionsets)
+		{
+			foreach($each_actionsets as $realm => $actionset)
+			{
 				$aprvd_actionset[$controller][$realm] = \Model_Acl::judge_set($results, $actionset);
-			endforeach;
-		endforeach;
+			}
+		}
 
-		//対象コントローラ文字列
+		// target controller name
 		$ctrl_strs = array();
-		foreach($actionsets as $controller => $each_actionsets):
+		foreach($actionsets as $controller => $each_actionsets)
+		{
 			$ctrl_strs[] = $controller::$locomo['nicename'];
-		endforeach;
+		}
 
-		//view
+		// view
 		$view = \View::forge('acl/actionset_index');
 		$view->set_global('title', 'アクション選択');
 		$view->set('ctrl_str',          join(', ',$ctrl_strs));
@@ -148,43 +177,50 @@ class Controller_Acl extends \Controller_Base
 	 */
 	public function action_update_acl()
 	{
-		//CSRF
+		// CSRF
 //		if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
-		//user requests
-		$mod_or_ctrl  = \Input::param('mod_or_ctrl') == 'none' ? null : \Input::param('mod_or_ctrl') ;
+		// user requests
+		$mod_or_ctrl  = \Input::param('mod_or_ctrl') == 'none' ? null : \Input::param('mod_or_ctrl');
 		$usergroup_id = is_numeric(\Input::post('usergroup')) ? \Input::post('usergroup') : null;
 		$user_id      = is_numeric(\Input::post('user')) ? \Input::post('user') : null;
 		$acls         = \Input::post('acls');
-		if ($mod_or_ctrl == null && ($usergroup_id == null || $user_id == null)):
+		if ($mod_or_ctrl == null && ($usergroup_id == null || $user_id == null))
+		{
 			\Response::redirect(\Uri::create('/acl/controller_index/'));
-		endif;
+		}
 
-		//actionsets
+		// actionsets
 		$actionsets = static::get_actionset($mod_or_ctrl);
 
-		//query build
-		if (\Input::method() == 'POST'):
-			//まずすべて削除
-			$q = \DB::delete('acls');
+		// query build
+		if (\Input::method() == 'POST')
+		{
+			// delete all at first
+			$q = \DB::delete('lcm_acls');
 			$q->where('controller', 'IN', array_keys($actionsets));
 			if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
 			if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
 			$q->execute();
 
-			//aclを更新
-			if (is_array(\Input::post('acls'))):
-				foreach($acls as $ctrl => $acl):
-					foreach($acl as $realm => $each_acls):
-						foreach($each_acls as $action => $v):
+			// update acl
+			if (is_array(\Input::post('acls')))
+			{
+				foreach($acls as $ctrl => $acl)
+				{
+					foreach($acl as $realm => $each_acls)
+					{
+						foreach($each_acls as $action => $v)
+						{
 							if ( ! \Arr::get($actionsets[$ctrl], $realm)) continue;
-							foreach($actionsets[$ctrl][$realm][$action]['dependencies'] as $each_action):
+							foreach($actionsets[$ctrl][$realm][$action]['dependencies'] as $each_action)
+							{
 								//format conditions
 								$conditions = \Auth_Acl_Locomoacl::_parse_conditions($each_action);
 								$condition = serialize($conditions);
 
 								//insert
-								$q = \DB::insert('acls');
+								$q = \DB::insert('lcm_acls');
 								$q->set(array(
 									'controller' => \Inflector::add_head_backslash($conditions['controller']),
 									'action' => $conditions['action'],
@@ -194,14 +230,14 @@ class Controller_Acl extends \Controller_Base
 									)
 								);
 								$q->execute();
-							endforeach;
-						endforeach;
-					endforeach;
-				endforeach;
-			endif;
-		endif;
+							}
+						}
+					}
+				}
+			}
+		}
 
-		//redirect
+		// redirect
 		$args = \input::all() ;
 		unset($args['submit']);
 		unset($args['acls']);

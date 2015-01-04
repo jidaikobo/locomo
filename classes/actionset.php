@@ -61,7 +61,7 @@ class Actionset
 		$act_methods = \Arr::filter_prefixed($act_methods, 'action_');
 		$act_methods = array_flip($act_methods);
 
-		// actionset_classes
+		// actionset by actionset classes
 		$actions = array();
 		foreach(\Arr::get($locomo, 'actionset_classes', array()) as $realm => $class)
 		{
@@ -87,18 +87,19 @@ class Actionset
 			}
 		}
 
-		// actionset not by actionset method
+		// actionset by actionset methods
 		foreach(\Arr::get($locomo, 'actionset_methods', array()) as $realm => $methods)
 		{
 			$as = array();
 			foreach($methods as $method)
 			{
-				$as[$method] = $controller::$method($controller, $obj, $id);
+				$k_method = substr($method, strlen('actionset_'));
+				$as[$k_method] = $controller::$method($controller, $obj, $id);
 			}
 			static::$actions[$controller][$realm] = $as;
 		}
 
-		// actionset not by actionset class
+		// actionset by actionset array
 		foreach(\Arr::get($locomo, 'actionset', array()) as $realm => $v)
 		{
 			foreach ($v as $k => $vv)
