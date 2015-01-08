@@ -231,6 +231,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			}
 		}
 
+		$this->base_assign();
 		return parent::after($response);
 	}
 
@@ -373,11 +374,16 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// actionset
 		\Profiler::mark('Locomo\\Controller_Core::base_assign() - actionset');
 		$default = ['index' => [], 'base' => [], 'ctrl' => []];
-		$actionset = \Actionset::get_actionset($controller, $obj, $default);
+		$actionset = \Actionset::get_actionset($controller, static::$obj, $default);
 		$this->template->set_global('actionset', $actionset, false);
 
 		// Profiler
 		\Profiler::mark('Locomo\\Controller_Core::base_assign() - done');
+	}
+
+	protected static $obj = null;
+	public static function set_object($obj) {
+		static::$obj = $obj;
 	}
 }
 
