@@ -344,17 +344,23 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		if ($module)
 		{
 			$config = \Config::load($module.'::'.$module, 'admin_bar', $reload = true);
-			if ( ! \Arr::get($config, 'main_controller'))
-			{
-				new \OutOfBoundsException('module\'s config must contain main_controller value.');
-			}
 
 			$locomo['module']['name'] = $module;
-			$ctrl_home = \Arr::get($config['main_controller']::$locomo, 'admin_home');
-			$locomo['module']['ctrl_home'] = $ctrl_home;
-			$locomo['module']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
-			$locomo['module']['nicename'] = $config['nicename'];
-			$locomo['module']['main_controller'] = $config['main_controller'];
+			if (\Arr::get($config, 'main_controller'))
+			{
+				$ctrl_home = \Arr::get($config['main_controller']::$locomo, 'admin_home');
+				$locomo['module']['ctrl_home'] = $ctrl_home;
+				$locomo['module']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
+				$locomo['module']['nicename'] = $config['nicename'];
+				$locomo['module']['main_controller'] = $config['main_controller'];
+			}
+			else
+			{
+				$locomo['module']['ctrl_home'] = false;
+				$locomo['module']['home'] = false;
+				$locomo['module']['nicename'] = $module;
+				$locomo['module']['main_controller'] = false;
+			}
 		}
 
 		// get accessible controller
