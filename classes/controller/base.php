@@ -33,10 +33,12 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
-		$this->_content_template = $this->_content_template ?: $dir.'index_admin';
-		if (\Request::is_hmvc())
-		{
-			$this->_content_template.= '_widget';
+		if (!$this->_content_template) {
+			if (!\Request::is_hmvc()) {
+				$this->_content_template = $dir.'index_admin';
+			} else {
+				$this->_content_template = $dir.'index_admin_widget';
+			}
 		}
 		$content = \View::forge($this->_content_template);
 
@@ -62,7 +64,6 @@ class Controller_Base extends Controller_Core
 
 		$content->set('items',  $model::paginated_find($options));
 
-		$this->base_assign();
 		$this->template->content = $content;
 	}
 
@@ -202,7 +203,7 @@ class Controller_Base extends Controller_Core
 		$content->set('item', $item);
 		$content->set_global('title', self::$nicename.'閲覧');
 		$this->template->content = $content;
-		$this->base_assign($item);
+		static::set_object($item);
 	}
 
 	/**
@@ -300,7 +301,7 @@ class Controller_Base extends Controller_Core
 		$content->set_global('item', $obj, false);
 		$content->set_global('form', $form, false);
 		$this->template->content = $content;
-		$this->base_assign($obj);
+		static::set_object($obj);
 	}
 
 	/**
@@ -387,7 +388,7 @@ class Controller_Base extends Controller_Core
 
 		$this->template->set_global('title', self::$nicename.'消去');
 		$this->template->content = $content;
-		$this->base_assign($item);
+		static::set_object($item);
 	}
 
 	/**
