@@ -30,6 +30,6 @@ dbの設定後、oilコマンドで基礎モジュールのmigrationを実行し
 
 php oil refine migrate --packages=locomo --version=100
 
-パッケージのバージョンダウンは以下の通り。ただし、ここではバージョン指定が効かないので、複数回行う必要がある。
+パッケージのバージョンダウンは以下の通り。
 
-php oil refine migrate:down --packages=locomo
+php oil refine migrate --packages=locomo --version=0

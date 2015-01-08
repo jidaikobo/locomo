@@ -6,8 +6,6 @@
 <?php endif; ?>
 対象コントローラ：<code><?php echo $ctrl_str ?></code></p>
 
-<p>依存した行為を許可すると、自動的にほかの行為が許可される場合があります。たとえば「項目を編集する権利」を持った人は、「通常項目を閲覧する権利」が自動的に許可されます。</p>
-
 <?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_acl/')); ?>
 <h2>設定（ユーザグループ単位）</h2>
 

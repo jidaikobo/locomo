@@ -107,6 +107,7 @@ $h->up();
 				}
 			}
 		}
+
 		$help = $help ?: 'この項目専用のヘルプは存在しません。' ;
 		$help = html_tag('div', array('class' => 'txt'), \Markdown::parse($help));
 

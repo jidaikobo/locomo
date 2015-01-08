@@ -26,13 +26,15 @@ class Model_Acl extends \Orm\Model
 		//アクションセットの条件を満たすものを抽出
 		$results = array();
 
-		foreach($actionsets as $actionset_name => $v){
+		foreach($actionsets as $actionset_name => $v)
+		{
 			if ( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
 			$dependencies = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $v['dependencies']);
 			$dependencies = array_map('serialize', $dependencies);
-			if ( ! array_diff($dependencies, $actions)){
+			if ( ! array_diff($dependencies, $actions))
+			{
 				$results[] = $actionset_name;
-			};
+			}
 		}
 		return $results;
 	}
@@ -74,11 +76,11 @@ class Model_Acl extends \Orm\Model
 	public static function get_mod_or_ctrl()
 	{
 		$retvals = array();
-		foreach(\Util::get_mod_or_ctrl() as $k => $v):
+		foreach(\Util::get_mod_or_ctrl() as $k => $v)
+		{
 			if (\Arr::get($v, 'no_acl')) continue;
 			$retvals[\Inflector::ctrl_to_safestr($k)] = \Arr::get($v, 'nicename');
-		endforeach;
-
+		}
 
 		return array('none' => '選択してください') + $retvals;
 	}
