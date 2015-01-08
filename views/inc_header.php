@@ -28,7 +28,7 @@
 	<![endif]-->
 
 </head>
-<body class="<?php echo $body_class ;?>">
+<body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
 <?php 
 	echo (\Auth::check()) ? '<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
 ?>

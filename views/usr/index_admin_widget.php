@@ -1,8 +1,8 @@
 <?php if ($items): ?>
-<table class="tbl datatable tbl_scrollable">
+<table class="tbl datatable tbl_scrollable lcm_focus">
 	<thead>
 		<tr>
-			<th><?php echo \Pagination::sort('id', 'ID', false); ?></th>
+			<th>ID</th>
 			<th><?php echo \Model_Usr::property('username')['label']; ?></th>
 		</tr>
 	</thead>

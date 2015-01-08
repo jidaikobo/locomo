@@ -229,7 +229,7 @@ body.lcm_action_login {
 	height: 2.5em;
 	vertical-align: middle;
 	background-color: #fff;/* adminbarの背景色と合わせる */
-	padding: 0 .25em;
+	padding: 0;
 }
 .adminbar_main,
 .adminbar_sub {
@@ -382,6 +382,14 @@ ul.holizonal_list {
 #adminbar .on li {
 	display: block;
 }
+
+#adminbar li .label{
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 6em;
+}
 #adminbar .on li a {
 	display: block;
 	padding: 1px 20px;
@@ -425,16 +433,16 @@ ul.holizonal_list {
 	width: 96.95% !important;
 }
 .lcmbar_top_title {
-	height: 1.5em;
+	height: 20px;
 	padding: 3px;
 	margin: 0 !important;
 }
 .widget_content {
 	overflow: auto;
-	height: 100%;
+	height: 194px;
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
-	box-sizing: border-box
+	box-sizing: border-box;
 }
 .widget_content_fc {
     display: block;
@@ -667,7 +675,6 @@ div.form_tooltip{
 }
 
 
-
 /* pagenation */
 .pagination {
 	padding: 10px;
@@ -860,11 +867,10 @@ h1#page_title {
 
 #help_window {
 	background: rgb(250, 250, 250);
-	background: rgba(250, 250, 250, .95);
 	position: fixed;
 	z-index: 110;
 	top: 2.25em;
-	right: 5px;
+	right: 0;
 	box-shadow: 0 0 6px #aaa;
 	-moz-box-shadow: 0 0 6px #aaa;
 	-o-box-shadow: 0 0 6px #aaa;
@@ -920,6 +926,12 @@ h1#page_title {
 	top: 0;
 	right: 5px;
 }
+
+/*=== lcm_focus ===*/
+.tabbable{
+	box-shadow: 0 0 5px gold,inset 0 0 10px gold;
+}
+
 
 .menubar_icon {
 	width: 1.2em;
@@ -1115,7 +1127,6 @@ li.show_if_smalldisplay{
 		text-shadow: none;
 		font-weight: bold;
 		padding:0 20px;
-		white-space: normal;
 	}
 	#render_info{
 		position: fixed;

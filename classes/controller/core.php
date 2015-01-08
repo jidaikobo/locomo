@@ -295,7 +295,12 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			$logo = \Asset::img();
 			$logo = LOCOMOPATH.'assets/img/system/logo.png';
 		}
-
+		$logo_s = APPPATH.'locomo/system/img/logo_s.png';
+		if ( ! file_exists($logo_s))
+		{
+			$logo_s = \Asset::img();
+			$logo_s = LOCOMOPATH.'assets/img/system/logo_s.png';
+		}
 		// body_class
 		$class_arr = array(
 			'lcm_module_'.strtolower($module),
@@ -312,6 +317,9 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		}
 		$this->template->set_global('body_class', implode($class_arr, ' '));
 
+		// data-uri
+		$this->template->set_global('body_data', 'data-uri='.\Uri::base(false));
+		
 		// locomo - for logged in users'
 		$locomo = array();
 		if ( ! \Auth::check())
@@ -319,7 +327,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			$this->template->set_global('locomo', $locomo);
 			return;
 		}
-
+		
 		// locomo path
 		$locomo['locomo_path'] = $controller.DS.$action;
 

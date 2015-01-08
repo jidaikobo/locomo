@@ -1,12 +1,8 @@
 // ヘルプ呼び出し
 var help_preparation = false;
 function show_help(e){
-	if(!e){
-		e = event;
-	}
-	if(e){
-		e.preventDefault(); //クリックイベント以外(アクセスキー等)の場合を除外
-	}
+	e = e ? e : event;
+	if(e) e.preventDefault(); //クリックイベント以外(アクセスキー等)の場合を除外
 	$(function(){
 		if(!help_preparation){
 			var uri = $('#lcm_help').data('uri');
@@ -15,12 +11,12 @@ function show_help(e){
 				dataType: 'html',
 			})
 			.success(function(data) {
-				$("#help_txt").html(data);
+				$('#help_txt').html(data);
 				help_preparation = true;
 			})
 		}
-		$("#help_window").show();
-		$("#help_title_anchor").focus();
+		$('#help_window').show();
+		$('#help_title_anchor').focus();
 	});
 }
 $(function(){
@@ -29,12 +25,13 @@ $(function(){
 
 //モーダル
 function modal(id){
-	var el = document.getElementById(id);
+	var el, wrapper, closelink;
+	el = document.getElementById(id);
 	if(el){
 		$(function(){
-			var el = $('#'+id);
-			var wrapper = document.createElement('div');
-			var closelink = document.createElement('a');
+			el = $('#'+id);
+			wrapper = document.createElement('div');
+			closelink = document.createElement('a');
 			wrapper.id = 'modal_wrapper';
 			wrapper.dataset.modalid = id;
 			closelink.id = 'close_modal';
@@ -58,31 +55,10 @@ function modal(id){
 }
 
 $(function(){
+
 //UA //php側は？
 var userAgent = window.navigator.userAgent;
 isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
-
-//JavaScript有効時に表示、無効時にはCSSで非表示
-$('.hide_if_no_js').removeClass("hide_if_no_js");
-
-//.show_if_no_js noscript的な扱い
-$(".show_if_no_js").remove();
-
-//ページ読み込み直後のフォーカス制御
-if($('.flash_alert')[0]){
-	var firstFocus = $('.flash_alert a.skip').first();
-}else if($('body').hasClass('lcm_action_login')){
-	var firstFocus = $('input:visible').first();
-}
-if(firstFocus){
-	set_focus(firstFocus);
-}
-function set_focus(t){
-	$(t).focus();
-	if($(t).is(':input') && !isNetReader){
-		$(t).select();
-	}
-}
 
 //スクロールバーのサイズ取得
 var scrollbar_s = (function(){
@@ -96,6 +72,59 @@ var scrollbar_s = (function(){
 	$(testdiv).remove();
 	return rs;
 })();
+
+//JavaScript有効時に表示、無効時にはCSSで非表示
+$('.hide_if_no_js').removeClass('hide_if_no_js');
+
+//.show_if_no_js noscript的な扱い?
+$('.show_if_no_js').remove();
+
+//フォーカスするついでに場合によってはセレクトもする
+function set_focus(t){
+	$(t).focus();
+	if($(t).is(':input') && !isNetReader){
+		$(t).select();
+	}
+}
+
+//要素の中央配置
+$.fn.set_center = function(){
+	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
+	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
+	this.css({'left': left, 'top': top});
+}
+$(window).resize(function(){
+	var el = $('.set_center, .modal.on');
+	if(el){
+		el.set_center();
+	}
+});
+
+//ページ読み込み直後のフォーカス
+if($('.flash_alert').length){
+	var firstFocus = $('.flash_alert a.skip').first();
+}else if($('body').hasClass('lcm_action_login')){
+	var firstFocus = $('input:visible').first();
+}
+if(firstFocus){
+	set_focus(firstFocus);
+}
+
+//管理バーの高さ+αのヘッダーの高さを確保
+var headerheight = 0;
+function add_body_padding(headerheight){
+	$('body').css('padding-top', headerheight+'px' );
+}
+var bar = $('#adminbar');
+if(bar.length){
+	headerheight = bar.outerHeight();
+	add_body_padding(headerheight);
+
+	bar.exResize(function(){
+		headerheight = $(this).outerHeight();
+		add_body_padding(headerheight);
+	});
+}
 
 //モーダルの外制御 //キーボードのことを考えてdisabled制御をするならclick処理は重複？
 $('#modal_wrapper').on('click', function(){
@@ -112,22 +141,8 @@ $('.lcm_close_parent').on('click', function(){
 });
 
 
-//要素の中央配置
-$.fn.set_center = function(){
-	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
-	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
-	this.css({'left': left, 'top': top});
-}
-$(window).resize(function(){
-	var el = $('.set_center, .modal.on');
-	if(el){
-		el.set_center();
-	}
-});
-
-
 //アクセスキーをもつ要素へのタイトル付与 //読み上げ要確認
-//accessKeyLabelが取得できないブラウザでは、accessKeyを表示する。できないブラウザのほうが多い？
+//accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
 function add_accesskey_title(){
 	var str, txt, label;
 	label = this.accessKeyLabel;
@@ -163,11 +178,8 @@ $.fn.reset_tabindex = function(){
 }
 
 
-
-
-
 //表内スクロール - 各ブラウザでの挙動が怪しいのでもうちょっと
-if( !isNetReader && $('.tbl_scrollable')[0]){
+if( !isNetReader && $('.tbl_scrollable').length){
 /*
 //スクロールバーの幅ぶん調整したい
 //現状だと右端は最終列にかぶり、下端はスクロールバー分はみ出る（margin-bottm: -{スクロールバー};）
@@ -309,21 +321,6 @@ if( !isNetReader && $('.tbl_scrollable')[0]){
 //setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
 //が、最新版のNetReaderはIEが7でなくなったので、古い環境の動作確認はできない(再インストール？)
 
-//管理バーの高さ+αのヘッダーの高さを確保
-var headerheight = 0;
-function add_body_padding(headerheight){
-	$('body').css('padding-top', headerheight+'px' );
-}
-if($('#adminbar')[0]){
-	var bar = '#adminbar';
-	headerheight = $(bar).outerHeight();
-	add_body_padding(headerheight);
-	
-	$(bar).exResize(function(){
-	headerheight = $(this).outerHeight();
-		add_body_padding(headerheight);
-	});
-}
 
 //ページ内リンク ヘッダー分位置調整とスムーズスクロール
 //html要素がスクロール対象であるか判定。
@@ -331,7 +328,7 @@ if($('#adminbar')[0]){
 var is_html_scrollable = (function(){
 	var html, el, rs;
 	html = $('html'), top = html.scrollTop();
-	el = $('<div/>').height(10000).prependTo('body');
+	el = $('<div>').height(10000).prependTo('body');
 	html.scrollTop(10000);
 	rs = !!html.scrollTop();
 	html.scrollTop(top);
@@ -343,138 +340,148 @@ $(document).on('click', 'a[href^=#]', function(){
 	$(window).off('beforeunload'); //ページ内リンクでは画面遷移の警告をキャンセル
 	var href= $(this).attr("href");
 	var t = $(href == '#' || href == '' ? 'html' : href);
-	var position = t.offset().top-headerheight-10;
+	var position = t.offset().top - headerheight - 10;
 	$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
 	set_focus(t);
 	return false;
 });
 
 
-//非表示
+//非表示の要素の設定
 $('.hidden_item').each(function(){
 	if( $(this).is(':input') && $(this).val() ){ //hidden_itemでも中に値がある場合は表示
-		var index  = $('.hidden_item').index(this);
-		var trigger = $('.toggle_item').eq(index);
-		$(this).show().addClass('on');
+		var trigger = $('.toggle_item').eq($('.hidden_item').index(this));
+		$(this).addClass('on').show();
 		trigger.addClass('on');
 	}
 });
 
-
-//クリックイベント
 $(document).click(function(e){
-	if(!e){
-		e = event;
-	}
+	e = e ? e : event;
 	var t = e.target;
 //リストの開け閉め
 	close_semimodal(t);
+	replace_info();//開く・閉じる説明文切り替え
 } );
-
 
 //モーダル
 function close_modal(focus,t){
 	//modalを閉じる機能、で、semimodalと併用できるように考える
-	//現在のtabbableを取るなど。
+	//現在のtabbableを取る？
 	focus.focus();
 	t.removeClass('on');
 	$(document).reset_tabindex();
 }
 
 function close_semimodal(el){
-	var t = $(document).find('.semimodal.on');
-	if($(t)[0]){
-		var index = $(document).find('.hidden_item').index(t);
-		var trigger = $('.toggle_item').eq(index);
-		var focus = ($(el).is(':input')) ? el : trigger;
+	var t, trigger, focus;
+	t = $(document).find('.semimodal.on');
+	if(t.length){
+		trigger = $('.toggle_item').eq($(document).find('.hidden_item').index(t));
+		focus = ($(el).is(':input')) ? el : trigger;
 		trigger.removeClass('on');
 		close_modal(focus,t);
 	}
 	return false;
 }
 $(document).on('click', '#close_modal' ,function(){
-	close_modal($('.modal_parent'),$('.modal_on'));
+	close_modal($('.modal_parent'), $('.modal_on'));
 });
 $(document).on('click', '.semimodal.on, modal.on', function(e){
-	if(!e){
-		e = event;
-	}
+	e = e ? e : event;
 	e.stopPropagation();
 });
 
 //表示・非表示切り替え
 $(document).on('click', '.toggle_item', function(e){
-	if(!e){
-		e = event;
-	}
-	var index = $('.toggle_item').index(this);
-	var t = $('.hidden_item').eq(index);		//切り替える相手
-	if($('.semimodal.on')[0] ){	//モーダルが開いている場合モーダルを消す
-		var itself = t.is('.semimodal.on');		//開いているのはそのモーダルか
+	e = e ? e : event;
+	var t = $('.hidden_item').eq($('.toggle_item').index(this));//切り替えの相手
+	
+	if($('.semimodal.on').length ){ //モーダルが開いている場合は閉じる
+		var itself = t.is('.semimodal.on');
 		close_semimodal();
-		if(itself){	//モーダルが自分ならそこでおわり
-			return false;
-		}
+		replace_info();//開く・閉じる説明文切り替え
+		if(itself) return false; //モーダルが自分ならそこでおわり
 	}
-	$(t).toggleClass('on');
+	t.toggleClass('on');
 	$(this).toggleClass('on').focus();
 
-	if(t.is('.semimodal.on')){ //ここまででsemimodalが開いている場合、tabindexの制御を行う
+	if(t.is('.semimodal.on')){ //tabindex制御
 		t.set_tabindex();
-		//targetの中とtoggleの要素だけtabindexを元に。//data('tabindex')を見る？ tabindex=0にする？
+		//targetの中とtoggleの要素だけtabindexを元に。//data('tabindex')を見る？
 		$(this).removeAttr('tabindex');
 	}
+	replace_info();//開く・閉じる説明文切り替え
+	
 	e.stopPropagation();
 	return false;
 });
 
-//キーボード操作の制御 prevent
-//NetReaderでうまく取得できないので、なにか考える
+function replace_info(){
+	$(document).find('.toggle_item').each(function(){
+		var title, skip;
+		title = $(this).attr('title');
+		skip = $(this).find('.skip').text();
+		if($(this).hasClass('on')){
+			title = title ? title.replace('開く', '閉じる') : null;
+			skip  = skip  ? skip.replace('開きます', '閉じます') : null;
+		}else{
+			title = title ? title.replace('閉じる', '開く') : null;
+			skip  = skip  ? skip.replace('閉じます', '開きます') : null;
+		}
+		if(title) $(this).attr('title', title);
+		if(skip)  $(this).find('.skip').text(skip);
+	});
+}
 
+
+//キーボード操作の制御
+//NetReaderでうまく取得できないので、なにか考える
 $(document).on('keydown',function(e){
-	if(!e){
-		e = event;
-	}
-	var t = e.target;
-	var k = e.which;
-	var modal = $(document).find('.modal.on, .semimodal.on')[0];
+	e = e ? e : event;
+	var t, k, modal, tabbable, first, last, index;
+	t = e.target;
+	k = e.which;
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
-	//モーダル周り モーダルの外に出た時のことを考えるとdocument全体のキーイベントを見るのがいいのか、それとも.modal.onや.semimodal.onだけを相手にするのがいいのか
+	index = null;
+	modal = $(document).find('.modal.on, .semimodal.on')[0];
 	if(modal){
-		var tabbable = $(document).find(':tabbable');
-		var first    = tabbable.first()[0];
-		var last     = tabbable.last()[0];
-		var index    = null;
-		
+		tabbable = $(document).find(':tabbable');
+		first    = tabbable.first()[0];
+		last     = tabbable.last()[0];
 		switch( e.keyCode ){
-		case $.ui.keyCode.LEFT:
-			return false;
+			case $.ui.keyCode.TAB:
+				if( t === last && ! e.shiftKey){
+					index = 0;
+				}else if( t === first && e.shiftKey){
+					index = -1;
+				}
 			break;
-		case $.ui.keyCode.RIGHT:
-			return false;
-			break;
-		case $.ui.keyCode.DOWN:
-			var index = tabbable.index($(':focus'))+1;
-			if( t === last){
-				var index = 0;
-			}
-			break;
-		case $.ui.keyCode.UP:
-			var index = tabbable.index($(':focus'))-1;
-			break;
-		case $.ui.keyCode.TAB:
-			if( t === last && ! e.shiftKey){
-				var index = 0;
-			}else if( t === first && e.shiftKey){
-				var index = -1;
-			}
-			break;
-		case $.ui.keyCode.ESCAPE:
-			close_semimodal();
+			case $.ui.keyCode.ESCAPE:
+				close_semimodal();
 			break;
 		}
-			if(index!==null){
+		if($(modal).hasClass('menulist')){//.menulistではカーソルの制御も行う
+			switch( e.keyCode ){
+				case $.ui.keyCode.LEFT:
+					return false;
+				break;
+				case $.ui.keyCode.RIGHT:
+					return false;
+				break;
+				case $.ui.keyCode.DOWN:
+					index = tabbable.index($(':focus'))+1;
+					if( t === last){
+						var index = 0;
+					}
+				break;
+				case $.ui.keyCode.UP:
+					index = tabbable.index($(':focus'))-1;
+				break;
+			}
+		}
+		if(index !== null){
 			tabbable.eq(index).focus();
 			return false;
 		}
@@ -500,13 +507,13 @@ $('.confirm').click(function(){
 	}
 });
 
+
 //=== form ===
 
 //ページ遷移時の警告
 //エラー時には必ず。//フォームと無関係のエラーは？
 //login画面とsubmitがない場合(編集履歴など)では出さない。編集履歴はむしろdisableにするほうがよい？
 //イベントを渡して.targetの値を見ることも可
-
 function confirm_beforeunload(){
 	$(window).on('beforeunload', function(){
 		return '変更内容は保存されていません。';
@@ -520,9 +527,7 @@ if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')
 		$(this).data('val',val);
 	});
 	$('form').change( function(e){
-	if(!e){
-		e = event;
-	}
+		e = e ? e : event;
 		var t = e.target;
 		if($(t).hasClass('datetime') && $(t).val() == $(t).data('val') ){
 			return false;
@@ -537,38 +542,13 @@ if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')
 
 //ページ遷移警告抑止
 $('a:submit, input:submit').click(function(){
-	$(window).off('beforeunload');
+	if(!$(this).hasClass('confirm')){
+		$(window).off('beforeunload');
+	}
 });
 
-//エラー時の、入力エリアから一覧へのナビゲーション
+//エラー時の入力エリアから一覧へのナビゲーション
 $('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
-
-
-//=== rollover ===
-$('.bt a:has(img)').hover(function(){
-	var imgsrc = $(this).find('img').attr('src');
-	if( ! $(this).hasClass("on") && imgsrc.indexOf('_ro.') == -1){
-		var imgsrc = imgsrc.replace(/\.(gif|png|jpg|jpeg)$/i,'_ro\.$1');
-		$(this).find('img').attr('src',imgsrc);
-	}
-},function(){
-	if(! $(this).hasClass("on")){
-		var imgsrc = $(this).find('img').attr('src').replace(/_ro\.(gif|png|jpg|jpeg)$/i,'\.$1');
-		$(this).find('img').attr('src',imgsrc);
-	}
-});
-
-//input.bt
-$('input.bt').hover(function(){
-	var imgsrc = $(this).attr('src');
-	if(imgsrc.indexOf('_ro.') == -1){
-		var imgsrc = imgsrc.replace(/\.(gif|png|jpg|jpeg)$/i,'_ro\.$1');
-		$(this).attr('src',imgsrc);
-	}
-},function(){
-	var imgsrc = $(this).attr('src').replace(/_ro\.(gif|png|jpg|jpeg)$/i,'\.$1');
-	$(this).attr('src',imgsrc);
-});
 
 
 /* Tiny MCE  */
@@ -598,7 +578,6 @@ $(document).on('click', '.switch_mce', function(){
 /* jQuery UI */
 
 //calendar
-
 $('input.date , input[type=date]').datepicker({
 	dateFormat: 'yy-mm-dd',
 	changeMonth: true,
@@ -656,16 +635,12 @@ $('#help_window').resizable({
 	'handles' : 'all',
 	'containment' : 'document',
 	start:function(e, ui) {
-		if(!e){
-			e = event;
-		}
+		e = e ? e : event;
 		var el = $(e.target);
 		el.css( 'position','fixed');
 	},
 	stop:function(e, ui) {
-		if(!e){
-			e = event;
-		}
+		e = e ? e : event;
 		var el = $(e.target);
 		set_fixed_position(el);
 	}
@@ -674,9 +649,7 @@ $('#help_window').resizable({
 	'containment' : 'document',
 	'scroll' : true,
 	stop:function(e, ui) {
-		if(!e){
-			e = event;
-		}
+		e = e ? e : event;
 		var el = $(e.target);
 		set_fixed_position(el);
 	}
@@ -694,16 +667,43 @@ $(window).resize(function(){
 		r  = pw-l-w;
 		if(r < 0){//右端がはみ出た場合
 			$(this).css({'right': 0});
-		}
-		if(l < 0 && r < 10){ //左端がはみ出た場合(右側が余ってる時はだめ)
+		}else
+		if(l <= 0 && r > 0){
+			$(this).css({'right': r+l});
+		}else
+		if(l < 0){
 			$(this).css({'width': pw});
-			console.log(r);
-		}
+		}//min-widthより小さくなったときの挙動と、window.resizeでとれない変化(最大化ウィンドウを縮小した時など)の挙動が怪しい。 bodyのサイズが100%越えている時の挙動もあやしい(テーブルがはみ出ている時など).draggableのほう？
 	});
 });
 
 
 
+//=== rollover ===
+$('.bt a:has(img)').hover(function(){
+	var imgsrc = $(this).find('img').attr('src');
+	if( ! $(this).hasClass("on") && imgsrc.indexOf('_ro.') == -1){
+		var imgsrc = imgsrc.replace(/\.(gif|png|jpg|jpeg)$/i,'_ro\.$1');
+		$(this).find('img').attr('src',imgsrc);
+	}
+},function(){
+	if(! $(this).hasClass("on")){
+		var imgsrc = $(this).find('img').attr('src').replace(/_ro\.(gif|png|jpg|jpeg)$/i,'\.$1');
+		$(this).find('img').attr('src',imgsrc);
+	}
+});
+
+//input.bt
+$('input.bt').hover(function(){
+	var imgsrc = $(this).attr('src');
+	if(imgsrc.indexOf('_ro.') == -1){
+		var imgsrc = imgsrc.replace(/\.(gif|png|jpg|jpeg)$/i,'_ro\.$1');
+		$(this).attr('src',imgsrc);
+	}
+},function(){
+	var imgsrc = $(this).attr('src').replace(/_ro\.(gif|png|jpg|jpeg)$/i,'\.$1');
+	$(this).attr('src',imgsrc);
+});
 
 /*
 ////lowvision menuimg 
