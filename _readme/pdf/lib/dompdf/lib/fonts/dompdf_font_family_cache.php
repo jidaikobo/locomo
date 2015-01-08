@@ -115,4 +115,32 @@
     'italic' => DOMPDF_FONT_DIR . 'ipagp',
     'bold_italic' => DOMPDF_FONT_DIR . 'ipagp',
   ),
+  'ipam' => 
+  array (
+    'normal' => DOMPDF_FONT_DIR . 'ipam',
+    'bold' => DOMPDF_FONT_DIR . 'ipam',
+    'italic' => DOMPDF_FONT_DIR . 'ipam',
+    'bold_italic' => DOMPDF_FONT_DIR . 'ipam',
+  ),
+  'ipamp' => 
+  array (
+    'normal' => DOMPDF_FONT_DIR . 'ipamp',
+    'bold' => DOMPDF_FONT_DIR . 'ipamp',
+    'italic' => DOMPDF_FONT_DIR . 'ipamp',
+    'bold_italic' => DOMPDF_FONT_DIR . 'ipamp',
+  ),
+  'ipaexm' => 
+  array (
+    'normal' => DOMPDF_FONT_DIR . 'ipaexm',
+    'bold' => DOMPDF_FONT_DIR . 'ipaexm',
+    'italic' => DOMPDF_FONT_DIR . 'ipaexm',
+    'bold_italic' => DOMPDF_FONT_DIR . 'ipaexm',
+  ),
+  'ipaexg' => 
+  array (
+    'normal' => DOMPDF_FONT_DIR . 'ipaexg',
+    'bold' => DOMPDF_FONT_DIR . 'ipaexg',
+    'italic' => DOMPDF_FONT_DIR . 'ipaexg',
+    'bold_italic' => DOMPDF_FONT_DIR . 'ipaexg',
+  ),
 ) ?>
