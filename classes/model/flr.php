@@ -1,11 +1,11 @@
 <?php
 namespace Locomo;
-class Model_Usr extends Model_Base
+class Model_Flr extends \Model_Base
 {
 	/**
 	 * vals
 	 */
-	protected static $_table_name = 'lcm_usrs';
+	protected static $_table_name = 'lcm_flrs';
 	public static $_subject_field_name = 'username';
 	public static $_creator_field_name = 'id';
 

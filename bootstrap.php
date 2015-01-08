@@ -36,12 +36,19 @@ $paths = array(
 	'\\Locomo\\Actionset_Option' => 'actionset/option.php',
 	'\\Locomo\\Controller_Traits_Testdata' => 'controller/traits/testdata.php',
 	'\\Locomo\\Controller_Base' => 'controller/base.php',
-	'\\Locomo\\Model_Base' => 'model/base.php',
 	'\\Locomo\\Observer_Created' => 'observer/created.php',
 	'\\Locomo\\Observer_Expired' => 'observer/expired.php',
 	'\\Locomo\\Observer_Userids' => 'observer/userids.php',
 	'\\Locomo\\Bulk' => 'bulk.php',
 */
+
+	// these models are called by \Auth::is_root() at \Inflector::dir_to_ctrl() 
+	'\\Locomo\\Model_Base' => 'model/base.php',
+	'\\Locomo\\Model_Usr' => 'model/usr.php',
+	'\\Locomo\\Model_Usrgrp' => 'model/usrgrp.php',
+	'\\Locomo\\Model_Acl' => 'model/acl.php',
+
+	// basic classes
 	'\\Locomo\\Asset_Instance' => 'asset/instance.php',
 	'\\Locomo\\Auth_Acl_Locomoacl' => 'auth/acl/locomoacl.php',
 	'\\Locomo\\Auth_Group_Locomogroup' => 'auth/group/locomogroup.php',

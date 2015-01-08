@@ -44,8 +44,9 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			$this->_template = 'widget';
 		}
 
-		// show profile to user_id == 1 only
-		\Fuel::$profiling = \Auth::get('id') == 1 ?: false ;
+		// show profile to development only
+		\Fuel::$profiling = \Fuel::$env == 'development' ?: false ;
+		\Fuel::$profiling = \Input::get('no_prof') ? false : \Fuel::$profiling ;
 
 		// template path
 		$request = \Request::active();
