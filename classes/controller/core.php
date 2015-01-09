@@ -335,11 +335,21 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// current controller
 		$locomo['controller']['name'] = $controller;
-		$ctrl_home = \Arr::get($controller::$locomo, 'admin_home');
-		$locomo['controller']['ctrl_home'] = $ctrl_home;
-		$locomo['controller']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
-		$locomo['controller']['home_name'] = \Arr::get($controller::$locomo, 'admin_home_name');
-		$locomo['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
+		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'admin_home'))
+		{
+			$ctrl_home = \Arr::get($controller::$locomo, 'admin_home');
+			$locomo['controller']['ctrl_home'] = $ctrl_home;
+			$locomo['controller']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
+			$locomo['controller']['home_name'] = \Arr::get($controller::$locomo, 'admin_home_name');
+			$locomo['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
+		}
+		else
+		{
+			$locomo['controller']['ctrl_home'] = false;
+			$locomo['controller']['home'] = false;
+			$locomo['controller']['home_name'] = false;
+			$locomo['controller']['nicename'] = false;
+		}
 
 		// current module
 		if ($module)

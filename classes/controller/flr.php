@@ -5,7 +5,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 	//locomo
 	public static $locomo = array(
 		'show_at_menu' => true,
-		'order_at_menu' => 10,
+		'order_at_menu' => 30,
 		'is_for_admin' => true,
 		'admin_home' => '\\Controller_Flr/index_admin',
 		'admin_home_name' => 'ファイル一覧',
