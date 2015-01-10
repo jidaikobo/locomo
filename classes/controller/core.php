@@ -129,11 +129,11 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		{
 			if (property_exists($called_class, 'locomo'))
 			{
-				$admin_home = \Arr::get($called_class::$locomo, 'admin_home');
-				$admin_home = $admin_home ? \Inflector::ctrl_to_dir($admin_home) : '';
-				if ($admin_home)
+				$main_action = \Arr::get($called_class::$locomo, 'main_action');
+				$main_action = $main_action ? \Inflector::ctrl_to_dir($called_class.DS.$main_action) : '';
+				if ($main_action)
 				{
-					return \Response::redirect($admin_home);
+					return \Response::redirect($main_action);
 				}
 			}
 		}

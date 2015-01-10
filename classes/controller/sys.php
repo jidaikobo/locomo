@@ -138,7 +138,7 @@ class Controller_Sys extends \Controller_Base
 			{
 				// module
 				$actionset = \Actionset::get_module_actionset($module);
-				$config = \Config::load($module.'::'.$module, 'action_home', true);
+				$config = \Config::load($module.'::'.$module, 'action_admin', true);
 				if ( ! \Arr::get($config, 'nicename') || ! \Arr::get($config, 'main_contoller'))
 				{
 					new \OutOfBoundsException('module\'s config must contain main_controller value.');
