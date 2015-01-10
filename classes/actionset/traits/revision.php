@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-trait Actionset_Traits_Base_Revision
+trait Actionset_Traits_Revision
 {
 	/**
 	 * actionset_index_revision()

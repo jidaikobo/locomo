@@ -1,11 +1,13 @@
 <?php
 namespace XXX;
-class Actionset_Base_XXX extends \Actionset_Base
+class Actionset_XXX extends \Actionset_Base
 {
-//	use \Actionset_Traits_Base_Revision;
-//	use \Actionset_Traits_Base_Wrkflw;
+//	use \Actionset_Traits_Revision;
+//	use \Actionset_Traits_Wrkflw;
+//	use \Actionset_Traits_Testdata;
 
 	/*
+	(str)  realm         メニューの表示位置。デフォルトはbase
 	(arr)  urls          メニューに表示するリンク先
 	(arr)  overrides     urlをオーバライドする際に設定。ユーザグループのActionset_Optionにサンプルがある
 	(bool) show_at_top   モジュール／コントローラトップに表示するかどうか

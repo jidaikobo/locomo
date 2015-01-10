@@ -7,6 +7,7 @@ if ( ! isset($is_admin_home)):
 			$html.= '<h2>'.$k::$locomo['nicename'].'</h2>';
 			$html.= '<table class="tbl2">';
 			foreach($v as $kk => $vv):
+			if ($kk == 'order') continue;
 				foreach($vv as $kkk => $vvv):
 					if (\Arr::get($vvv, 'show_at_top') == false) continue;
 					if (\Arr::get($vvv, 'urls') == false) continue;
@@ -34,7 +35,7 @@ else:
 		<?php endforeach; ?>
 		</ul>
 	<?php else: ?>
-		<table class="tbl">
+		<table class="tbl2">
 		<?php foreach($locomo['controllers'] as $k => $v): ?>
 		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>
 		<tr>

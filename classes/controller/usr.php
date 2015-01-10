@@ -2,30 +2,27 @@
 namespace Locomo;
 class Controller_Usr extends \Locomo\Controller_Base
 {
-	//locomo
+	// traits
+	use \Controller_Traits_Testdata;
+	use \Controller_Traits_Crud;
+	use \Controller_Traits_Revision;
+	use \Controller_Traits_Bulk;
+
+	// locomo
 	public static $locomo = array(
-		'show_at_menu' => true,
-		'order_at_menu' => 10,
-		'is_for_admin' => true,
-		'admin_home' => '\\Controller_Usr/index_admin',
-		'admin_home_name' => '管理一覧',
-		'nicename' => 'ユーザ',
-		'actionset_classes' =>array(
-			'base'   => '\\Actionset_Base_Usr',
-			'index'  => '\\Actionset_Index_Usr',
-			'option' => '\\Actionset_Option_Usr',
-		),
+		'nicename'     => 'ユーザ', // for human's name
+		'explanation'  => 'システムを利用するユーザの新規作成、編集、削除等を行います。',
+		'main_action'  => 'index_admin', // main action
+		'main_action_name' => 'ユーザ管理', // main action's name
+		'main_action_explanation' => '既存ユーザの一覧です。', // explanation of top page
+		'show_at_menu' => true, // true: show at admin bar and admin/home
+		'is_for_admin' => true, // true: hide from admin bar
+		'order'        => 1010, // order of appearance
 		'widgets' =>array(
 			array('name' => '新規ユーザ一覧', 'uri' => '\\Controller_Usr/index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
 			array('name' => '新規ユーザ登録', 'uri' => '\\Controller_Usr/create'),
 		),
 	);
-
-	//trait
-	use \Controller_Traits_Testdata;
-	use \Controller_Traits_Crud;
-	use \Controller_Traits_Revision;
-	use \Controller_Traits_Bulk;
 
 	/**
 	 * action_index()

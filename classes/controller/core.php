@@ -303,6 +303,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			$logo_s = \Asset::img();
 			$logo_s = LOCOMOPATH.'assets/img/system/logo_s.png';
 		}
+
 		// body_class
 		$class_arr = array(
 			'lcm_module_'.strtolower($module),
@@ -335,12 +336,12 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// current controller
 		$locomo['controller']['name'] = $controller;
-		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'admin_home'))
+		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'main_action'))
 		{
-			$ctrl_home = \Arr::get($controller::$locomo, 'admin_home');
+			$ctrl_home = \Arr::get($controller::$locomo, 'main_action');
 			$locomo['controller']['ctrl_home'] = $ctrl_home;
-			$locomo['controller']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
-			$locomo['controller']['home_name'] = \Arr::get($controller::$locomo, 'admin_home_name');
+			$locomo['controller']['home'] = \Uri::create(\Inflector::ctrl_to_dir($controller.DS.$ctrl_home));
+			$locomo['controller']['home_name'] = \Arr::get($controller::$locomo, 'main_action_name');
 			$locomo['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
 		}
 		else
@@ -359,9 +360,9 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			$locomo['module']['name'] = $module;
 			if (\Arr::get($config, 'main_controller'))
 			{
-				$ctrl_home = \Arr::get($config['main_controller']::$locomo, 'admin_home');
-				$locomo['module']['ctrl_home'] = $ctrl_home;
-				$locomo['module']['home'] = \Uri::create(\Inflector::ctrl_to_dir($ctrl_home));
+				$main_action = \Arr::get($config['main_controller']::$locomo, 'main_action');
+				$locomo['module']['ctrl_home'] = $main_action;
+				$locomo['module']['home'] = \Uri::create(\Inflector::ctrl_to_dir($main_action));
 				$locomo['module']['nicename'] = $config['nicename'];
 				$locomo['module']['main_controller'] = $config['main_controller'];
 			}

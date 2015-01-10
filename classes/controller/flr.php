@@ -2,28 +2,25 @@
 namespace Locomo;
 class Controller_Flr extends \Locomo\Controller_Base
 {
-	//locomo
-	public static $locomo = array(
-		'show_at_menu' => true,
-		'order_at_menu' => 30,
-		'is_for_admin' => true,
-		'admin_home' => '\\Controller_Flr/index_admin',
-		'admin_home_name' => 'ファイル一覧',
-		'nicename' => 'ファイル管理',
-		'actionset_classes' =>array(
-			'base'   => '\\Actionset_Base_Usr',
-			'index'  => '\\Actionset_Index_Usr',
-			'option' => '\\Actionset_Option_Usr',
-		),
-		'widgets' =>array(
-		),
-	);
-
-	//trait
+	// traits
 	use \Controller_Traits_Testdata;
 	use \Controller_Traits_Crud;
 	use \Controller_Traits_Revision;
 	use \Controller_Traits_Bulk;
+
+	// locomo
+	public static $locomo = array(
+		'nicename'     => 'ファイル', // for human's name
+		'explanation'  => 'ファイルの閲覧やアップロードを行います。', // for human's explanation
+		'main_action'  => 'index_admin', // main action
+		'main_action_name' => 'ファイル管理', // main action's name
+		'main_action_explanation' => 'アップロードされたファイルの閲覧を行います。', // explanation of top page
+		'show_at_menu' => true, // true: show at admin bar and admin/home
+		'is_for_admin' => true, // true: hide from admin bar
+		'order'        => 1030, // order of appearance
+		'widgets' =>array(
+		),
+	);
 
 	/**
 	 * action_index()

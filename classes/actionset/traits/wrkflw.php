@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-trait Actionset_Traits_Base_Wrkflw
+trait Actionset_Traits_Wrkflw
 {
 	/**
 	 * actionset_index_workflow()

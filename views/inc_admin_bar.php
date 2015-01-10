@@ -86,6 +86,7 @@ if (\Auth::check()):
 			$html.= '<h3 class="skip">ここからメインメニューです</h3>';
 			// controller menu
 			$controller_menu = '';
+
 			foreach($locomo['controllers'] as $k => $v):
 				if ( ! $v['is_for_admin'] && $v['show_at_menu'])
 				{

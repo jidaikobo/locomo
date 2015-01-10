@@ -11,6 +11,7 @@ class Actionset_Base extends Actionset
 		$urls = static::generate_urls($controller.DS.'create', $actions, ['create']);
 
 		$retvals = array(
+			'realm'        => 'base',
 			'urls'         => $urls,
 			'action_name'  => '新規作成',
 			'show_at_top'  => true,
@@ -38,6 +39,7 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
+			'realm'        => 'base',
 			'urls'         => $urls ,
 			'action_name'  => '閲覧（通常項目）',
 			'explanation'  => '通常項目の個票の閲覧権限です。',
@@ -61,6 +63,7 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
+			'realm'        => 'base',
 			'urls'         => $urls ,
 			'action_name'  => '編集（通常項目）',
 			'explanation'  => '通常項目の編集権限。',
@@ -75,33 +78,6 @@ class Actionset_Base extends Actionset
 	}
 
 	/**
-	 * edit_anyway()
-	 */
-	public static function actionset_edit_anyway($controller, $obj = null, $id = null, $urls = array())
-	{
-		if (\Request::main()->action == 'view' && $id):
-			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_urls($controller.DS.'edit_anyway', $actions, ['edit','create']);
-		endif;
-
-		$retvals = array(
-			'urls'         => $urls ,
-			'id_segment'   => '',
-			'action_name'  => '編集（すべての項目）',
-			'explanation'  => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限。',
-			'acl_exp'      => 'すべての項目（ごみ箱、不可視、期限切れ等々）の編集権限。',
-			'order'        => 30,
-			'dependencies' => array(
-				$controller.DS.'view',
-				$controller.DS.'view_anyway',
-				$controller.DS.'edit',
-				$controller.DS.'edit_anyway',
-			)
-		);
-		return $retvals;
-	}
-		
-	/**
 	 * edit_deleted()
 	 */
 	public static function actionset_edit_deleted($controller, $obj = null, $id = null, $urls = array())
@@ -112,7 +88,8 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
-			'urls'         => $urls,
+			'realm'        => 'base',
+			'urls'         => $urls ,
 			'action_name'  => '削除された項目の編集',
 			'explanation'  => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
 			'acl_exp'      => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
@@ -138,6 +115,7 @@ class Actionset_Base extends Actionset
 
 		//retval
 		$retvals = array(
+			'realm'        => 'base',
 			'urls'         => $urls ,
 			'action_name'  => '項目の削除',
 			'explanation'  => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
@@ -165,6 +143,7 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
+			'realm'        => 'base',
 			'urls'         => $urls ,
 			'action_name'  => '項目の復活',
 			'explanation'  => '削除された項目を復活する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
@@ -192,7 +171,8 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
-			'urls'         => $urls,
+			'realm'        => 'base',
+			'urls'         => $urls ,
 			'action_name'  => '項目の完全な削除',
 			'explanation'  => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'acl_exp'      => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
@@ -218,7 +198,8 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
-			'urls'         => $urls,
+			'realm'        => 'base',
+			'urls'         => $urls ,
 			'action_name'  => '閲覧（削除された項目）',
 			'explanation'  => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
 			'acl_exp'      => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
@@ -241,7 +222,8 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
-			'urls'         => $urls,
+			'realm'        => 'base',
+			'urls'         => $urls ,
 			'action_name'  => '閲覧（期限切れ）',
 			'explanation'  => '期限切れ項目の閲覧権限です。',
 			'acl_exp'      => '期限切れ項目の閲覧権限です。',
@@ -264,7 +246,8 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
-			'urls'         => $urls,
+			'realm'        => 'base',
+			'urls'         => $urls ,
 			'action_name'  => '閲覧（予約項目）',
 			'explanation'  => '予約項目の閲覧権限です。',
 			'acl_exp'      => '予約項目の閲覧権限です。',
@@ -288,7 +271,8 @@ class Actionset_Base extends Actionset
 		endif;
 
 		$retvals = array(
-			'urls'         => $urls,
+			'realm'        => 'base',
+			'urls'         => $urls ,
 			'action_name'  => '閲覧（不可視項目）',
 			'explanation'  => '不可視項目の閲覧権限',
 			'acl_exp'      => '不可視項目の閲覧権限',
@@ -301,4 +285,248 @@ class Actionset_Base extends Actionset
 		return $retvals;
 	}
 
+	/**
+	 * index()
+	 */
+	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
+	{
+		$actions = array(array($controller.DS."index", '公開一覧'));
+		$urls = static::generate_urls($controller.DS.'index', $actions);
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '一覧（通常項目）',
+			'explanation'  => '通常項目の一覧の閲覧権限です。',
+			'acl_exp'      => '通常項目の一覧の閲覧権限です。',
+			'order'        => 100,
+			'dependencies' => array(
+				$controller.DS.'index',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * index_admin()
+	 */
+	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count)
+		{
+			$pk = $model::get_primary_keys('first');
+			$options = array();
+			$options[] = array($pk, 'is not' , null);
+			if (isset($model::properties()['created_at']))
+			{
+				$options[] = array('created_at', '<=', date('Y-m-d H:i:s'));
+			}
+			if (isset($model::properties()['expired_at']))
+			{
+				$options[] = array('expired_at', 'is', null);
+			}
+			if (isset($model::properties()['is_visible']))
+			{
+				$options[] = array('is_visible', '=', true);
+			}
+			$count = $model::count(array('where' => $options));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_admin", "管理一覧{$count}"));
+		$urls = static::generate_urls($controller.DS.'index_admin', $actions);
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '管理者向け一覧（通常項目）',
+			'show_at_top'  => false,
+			'explanation'  => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
+			'acl_exp'      => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
+			'help'         => '検索欄がある場合は、全文検索あるいは部分検索ができます。表組の表題部分をクリック（エンター）すると表示順を変更できます。表示順はクリック（エンター）するたびに切り替わり3回目で解除状態になります。',
+			'order'        => 10,
+			'dependencies' => array(
+				$controller.DS.'index_admin',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * index_deleted()
+	 */
+	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
+	{
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['deleted_at']))
+		{
+			$model::disable_filter();
+			$count = $model::count(array('where' => array(array('deleted_at', 'is not' , NULL))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_deleted", "ごみ箱{$count}"));
+		$urls = static::generate_urls($controller.DS.'index_deleted', $actions);
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '一覧（削除された項目）',
+			'explanation'  => '削除された項目一覧です。',
+			'acl_exp'      => '削除された項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
+			'order'        => 20,
+			'dependencies' => array(
+				$controller.DS.'index_deleted',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * index_yet()
+	 */
+	public static function actionset_index_yet($controller, $obj = null, $id = null, $urls = array())
+	{
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['created_at']))
+		{
+			$count = $model::count(array('where' => array(array('created_at', '>' , date('Y-m-d H:i:s')))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_yet", "予約項目{$count}"));
+		$urls = static::generate_urls($controller.DS.'index_yet', $actions);
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '一覧（予約項目）',
+			'explanation'  => '予約項目一覧です。',
+			'acl_exp'      => '予約項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
+			'order'        => 30,
+			'dependencies' => array(
+				$controller.DS.'index_yet',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * index_expired()
+	 */
+	public static function actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
+	{
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['expired_at']))
+		{
+			$count = $model::count(array('where' => array(array('expired_at', '<' , date('Y-m-d H:i:s')))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_expired", "期限切れ項目{$count}"));
+		$urls = static::generate_urls($controller.DS.'index_expired', $actions);
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '一覧（期限切れ項目）',
+			'explanation'  => '期限切れ項目一覧です。',
+			'acl_exp'      => '期限切れ項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
+			'order'        => 40,
+			'dependencies' => array(
+				$controller.DS.'index_expired',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * index_invisible()
+	 */
+	public static function actionset_index_invisible($controller, $obj = null, $id = null, $urls = array())
+	{
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['is_visible']))
+		{
+			$count = $model::count(array('where' => array(array('is_visible', '=' , false))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_invisible", "不可視項目{$count}"));
+		$urls = static::generate_urls($controller.DS.'index_invisible', $actions);
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '一覧（不可視項目）',
+			'explanation'  => '不可視項目一覧です。',
+			'acl_exp'      => '不可視項目一覧の権限です。',
+			'help'         => self::actionset_index_admin($controller)['help'],
+			'order'        => 50,
+			'dependencies' => array(
+				$controller.DS.'index_invisible',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * index_all()
+	 */
+	public static function actionset_index_all($controller, $obj = null, $id = null, $urls = array())
+	{
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count)
+		{
+			$pk = $model::get_primary_keys('first');
+			$model::disable_filter();
+			$count = $model::count(array('where' => array(array($pk, 'is not' , null))));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_all", "すべて{$count}"));
+		$urls = static::generate_urls($controller.DS.'index_all', $actions);
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '削除を含む全項目一覧',
+			'explanation'  => '全項目項目一覧です。',
+			'acl_exp'      => '全項目項目一覧の権限です。この権限を許可するとすべてのインデクスへのアクセス権を付与されます。',
+			'help'         => self::actionset_index_admin($controller)['help'],
+			'order'        => 100,
+			'dependencies' => array(
+				$controller.DS.'index',
+				$controller.DS.'index_admin',
+				$controller.DS.'index_deleted',
+				$controller.DS.'index_expired',
+				$controller.DS.'index_yet',
+				$controller.DS.'index_invisible',
+				$controller.DS.'index_all',
+			)
+		);
+		return $retvals;
+	}
 }

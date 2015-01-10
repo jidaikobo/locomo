@@ -13,7 +13,7 @@
 			<td><?php echo $item->id; ?></td>
 			<td style="min-width: 6em;" ><div class="col_scrollable"tabindex="-1">
 			<?php 
-					echo Html::anchor('user/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));
+					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));
 			?>
 			</div></td>
 		</tr>

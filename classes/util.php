@@ -25,29 +25,29 @@ class Util
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			// モジュールディレクトリを走査し、$locomoのメンバ変数を持っているコントローラを洗い出す
+			// モジュールディレクトリを走査し、メインコントローラを探す
 			$retvals = array();
 			foreach(array_keys(\Module::get_exists()) as $module)
 			{
 				if ( ! $controllers = \Module::get_controllers($module)) continue;// module without controllers
 				\Module::loaded($module) or \Module::load($module);
 
-				foreach($controllers as $controller)
-				{
-					$mod_ctrl = \Inflector::path_to_ctrl($controller);
+				// load config
+				$config = \Config::load($module.'::'.$module, 'util', true, true);
+				if( ! is_array($config)) continue;
+				if( ! $ctrl = \Arr::get($config, 'main_controller')) continue; // check main controller
+				if ( ! property_exists($ctrl, 'locomo')) continue; // main controller has no $locomo
+				if (array_key_exists($ctrl, $retvals)) continue; // already exists
 
-					if ( ! property_exists($mod_ctrl, 'locomo')) continue;
-
-					$config = \Config::load($module.'::'.$module, 'util', true, true);
-
-					if( ! is_array($config)) continue;
-					if( ! $main_controller = \Arr::get($config, 'main_controller')) continue;
-					if (array_key_exists($main_controller, $retvals)) continue; // already exists
-
-					$retvals[$main_controller] = $mod_ctrl::$locomo ; 
-					$retvals[$main_controller]['config'] = $config;
-					$retvals[$main_controller]['is_module'] = true;
-				}
+				// update retvals
+				$retvals[$ctrl]['is_module'] = true;
+				$retvals[$ctrl]['nicename'] = \Arr::get($config, 'nicename', $module);
+				$retvals[$ctrl]['explanation'] = \Arr::get($config, 'explanation', '') ;
+				$main_action = \Arr::get($ctrl::$locomo, 'main_action', '');
+				$retvals[$ctrl]['admin_home'] = $main_action ? $ctrl.'/'.$main_action : '' ;
+				$retvals[$ctrl]['show_at_menu'] = \Arr::get($config, 'show_at_menu', true) ;
+				$retvals[$ctrl]['is_for_admin'] = \Arr::get($config, 'is_for_admin', false) ;
+				$retvals[$ctrl]['order'] = \Arr::get($config, 'order', 100) ;
 			}
 
 			// classディレクトリを走査し、$locomoのメンバ変数を持っているコントローラを洗い出す
@@ -59,12 +59,18 @@ class Util
 			foreach(array_keys($paths) as $ctrl):
 				if (strpos($ctrl, 'Controller_Traits_') !== false) continue;
 				if ( ! property_exists($ctrl, 'locomo')) continue;
-				$retvals[$ctrl] = $ctrl::$locomo;
-				$retvals[$ctrl]['config'] = \Config::get($ctrl);
+				$retvals[$ctrl]['is_module'] = false;
+				$retvals[$ctrl]['nicename'] = \Arr::get($ctrl::$locomo, 'nicename', $ctrl);
+				$retvals[$ctrl]['explanation'] = \Arr::get($ctrl::$locomo, 'explanation', '') ;
+				$main_action = \Arr::get($ctrl::$locomo, 'main_action', '');
+				$retvals[$ctrl]['admin_home'] = $main_action ? $ctrl.'/'.$main_action : '' ;
+				$retvals[$ctrl]['show_at_menu'] = \Arr::get($ctrl::$locomo, 'show_at_menu', true) ;
+				$retvals[$ctrl]['is_for_admin'] = \Arr::get($ctrl::$locomo, 'is_for_admin', false) ;
+				$retvals[$ctrl]['order'] = \Arr::get($ctrl::$locomo, 'order', 100) ;
 			endforeach;
 	
 			// order
-			$retvals = \Arr::multisort($retvals, array('order_at_menu' => SORT_ASC,));
+			$retvals = \Arr::multisort($retvals, array('order' => SORT_ASC,));
 
 			// static cache
 			$cache = $retvals;

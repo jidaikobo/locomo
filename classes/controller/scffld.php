@@ -4,15 +4,15 @@ class Controller_Scffld extends \Controller_Base
 {
 	// locomo
 	public static $locomo = array(
-		'show_at_menu' => true,
-		'order_at_menu' => 150,
-		'is_for_admin' => true,
-		'no_acl' => true,
-		'admin_home' => '\\Controller_Scffld/main',
-		'nicename' => '足場組み',
-		'actionset_classes' =>array(
-			'base'   => '\\Actionset_Base_Scffld',
-		),
+		'nicename'     => '足場組み', // for human's name
+		'explanation'  => 'モジュールやコントローラの基礎を構築します。', // for human's explanation
+		'main_action'  => 'main', // main action
+		'main_action_name' => '足場組み', // main action's name
+		'main_action_explanation' => 'モジュールやコントローラの基礎を構築します。', // explanation of top page
+		'show_at_menu' => true, // true: show at admin bar and admin/home
+		'is_for_admin' => true, // true: hide from admin bar
+		'order'        => 1150, // order of appearance
+		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 	);
 
 	/**
@@ -54,13 +54,11 @@ class Controller_Scffld extends \Controller_Base
 			$filename   = $name.'.php';
 
 			// molding - logic
-			$migration        = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
-			$controller       = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig);
-			$actionset_index  = \Controller_Scffld_Helper_Actionset::generate($name, 'index');
-			$actionset_base   = \Controller_Scffld_Helper_Actionset::generate($name, 'base');
-			$actionset_option = \Controller_Scffld_Helper_Actionset::generate($name, 'option');
-			$model            = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig);
-			$config           = \Controller_Scffld_Helper_Config::generate($name, $cmd_orig);
+			$migration  = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
+			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig);
+			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name);
+			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig);
+			$config     = \Controller_Scffld_Helper_Config::generate($name, $cmd_orig);
 
 			// molding - view
 			$tpl_index        = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig);
@@ -144,12 +142,7 @@ class Controller_Scffld extends \Controller_Base
 				//actionset
 				$actionsetpath = $classpath.'/actionset';
 				if ( ! file_exists($actionsetpath)) \File::create_dir($scfldpath, 'classes/actionset');
-				if ( ! file_exists($actionsetpath.'/index')) \File::create_dir($actionsetpath, 'index');
-				if ( ! file_exists($actionsetpath.'/base')) \File::create_dir($actionsetpath, 'base');
-				if ( ! file_exists($actionsetpath.'/option')) \File::create_dir($actionsetpath, 'option');
-				\File::update($actionsetpath.'/index', $filename, $actionset_index);
-				\File::update($actionsetpath.'/base', $filename, $actionset_base);
-				\File::update($actionsetpath.'/option', $filename, $actionset_option);
+				\File::update($actionsetpath.DS, $filename, $actionset);
 
 				//model
 				if ( ! file_exists($classpath.'/model')) \File::create_dir($classpath, 'model');

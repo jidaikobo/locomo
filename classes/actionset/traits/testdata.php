@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-trait Actionset_Traits_Option_Testdata
+trait Actionset_Traits_Testdata
 {
 	/**
 	 * actionset_add_testdata()
@@ -19,6 +19,7 @@ trait Actionset_Traits_Option_Testdata
 //		$url = (substr(\Uri::string(), -12) == '/index_admin') ? $url : '';
 
 		$retvals = array(
+			'realm'        => 'option',
 			'urls'         => array($url),
 			'show_at_top'  => true,
 			'explanation'  => 'ランダムな値のテストデータを10件作成します（root管理者のみ）。',
