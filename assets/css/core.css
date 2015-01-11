@@ -637,6 +637,9 @@ div.flash_alert.alert_error {
 .flash_alert ul.link a:hover{
 	text-decoration: underline;
 }
+.link_alert_error:focus {
+	position: relative !important;
+}
 
 /* tooltip */
 div.form_tooltip {
@@ -737,15 +740,12 @@ a.desc:after {
 }
 
 /*===  table  ===*/
-th.adjustw,
-td.adjustw {
+th.minimum,
+td.minimum {
 	width: 1em;
 	white-space: nowrap;
 }
 
-.datatable{
-	background-color: #fefefe;
-}
 /* tbl datatable */
 *>table.datatable thead th,
 *>table.datatable thead td,
@@ -754,8 +754,9 @@ td.adjustw {
 	padding:.25em .5em;
 }
 .datatable{
-	font-size: .9em;
 	border-bottom:1px solid #bbb;
+	background-color: #fefefe;
+	font-size: .9em;
 }
 .datatable tbody th{
 	font-weight: normal;
@@ -804,6 +805,32 @@ table.datatable td{
 	text-align: left;
 }
 
+table.calendar {
+	table-layout: fixed;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	border-spacing: 0px;
+	border-top: 1px #bbb solid;
+	border-left: 1px #bbb solid;
+}
+
+.calendar th,
+.calendar td {
+	padding: 3px 3px 2px;
+	border-bottom: 1px #bbb solid;
+	border-right: 1px #bbb solid;
+	width: 8em;
+}
+.calendar td {
+	vertical-align: top;
+}
+.widget .calendar{
+	margin: 3px;
+}
+.widget.size1 .calendar{
+	font-size: 85%;
+}
 /*=== contents ===*/
 h1#page_title {
 	margin: 0.25em 0;

@@ -284,6 +284,7 @@ var is_html_scrollable = (function(){
 	el.remove();
 	return rs;
 })();
+
 //スクロール
 $(document).on('click', 'a[href^=#]', function(e){
 	e = e ? e : event;
@@ -648,7 +649,7 @@ $('a:submit, input:submit').click(function(){
 });
 
 //エラー時の入力エリアから一覧へのナビゲーション
-$('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus">エラー一覧にもどる</a>');
+$('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus link_alert_error">エラー一覧にもどる</a>');
 
 
 /* Tiny MCE  */
@@ -706,7 +707,7 @@ $('input.time').timepicker({
 	timeFormat: 'HH:mm'
 });
 
-//tooltip
+//tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
 $('.validation_error :input').tooltip({
 	tooltipClass : 'form_tooltip',
