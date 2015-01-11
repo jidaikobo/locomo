@@ -250,6 +250,9 @@ body.lcm_action_login {
 .adminbar_top .adminbar_sub {
 	height: 2.5em;
 }
+.adminbar_bottom .adminbar_main {
+	padding: .25em 33px .25em 10px;
+}
 .adminbar_bottom .adminbar_sub {
 	padding-top: 0;
 	padding-bottom: 0;
@@ -402,7 +405,11 @@ ul.holizonal_list {
 	margin-right: 10px;
 }
 
-
+.adminbar_sub .admin_module_option {
+	position: absolute;
+	top: 0;
+	right: 9px;
+}
 /* dashboard */
 /*あとでview側直書きの記述を削除*/
 .lcm_action_dashboard .contents {
