@@ -1,5 +1,5 @@
 <div class="index_wrapper">
-<div class="left_column sub_column" style="width: 260px;"><!-- 各インデックスのサブカラムは適宜幅を与える。初期値は300px -->
+<div class="left_column sub_column" style="width: 260px;"><!-- 各インデックスのサブカラムは適宜幅を与える。設定しなければ300px -->
 <?php /*
 	// search form
 	echo \Form::open(array('method' => 'get', 'class' => 'index_search_form'));
@@ -17,7 +17,7 @@
 </div>
 <div class="form_group lcm_focus">
 <h3 class="skip">検索</h3>
-	<form style="text-align: left;">
+	<form class="search">
 		<h4><label for="keyword">キーワード</label></h4>
 		<input type="text" name="all" id="keyword" size="20" value="<?php echo \Input::get('all') ?>" />
 		<h4>登録日</label></h4>
@@ -40,7 +40,7 @@
 		echo '<div class="index_info lcm_focus">';
 		echo '<p class="sort_info">'.\Pagination::sort_info('\Model_Usr');
 		echo '<span class="add_bracket" style="margin-right: .5em;"> ○〜○件 / 全'.\Pagination::get('total_items').'件 </span></p>';
-		echo '<p class="pagenation_info"><a href="" class="start_page" title="先頭のページへ">«<span class="skip">先頭のページへ</span></a><a href="" class="prev_page" title="前のページへ">‹<span class="skip">前のページへ</span></a><input type="text" size="2"> / 10ページ<a href="" class="next_page" title="次のページへ">›<span class="skip">次のページへ</span></a><a href="" class="last_page" title="最後のページへ">»<span class="skip">最後のページへ</span></a></p>';
+		echo '<p class="pagenation_info"><a href="" class="start_page" title="先頭のページへ">&laquo;<span class="skip">先頭のページへ</span></a><a href="" class="prev_page" title="前のページへ">&lsaquo;<span class="skip">前のページへ</span></a><input type="text" size="2"> / 10ページ<a href="" class="next_page" title="次のページへ">&rsaquo;<span class="skip">次のページへ</span></a><a href="" class="last_page" title="最後のページへ">&raquo;<span class="skip">最後のページへ</span></a></p>';
 		echo '</div>';
 	endif;
 ?>

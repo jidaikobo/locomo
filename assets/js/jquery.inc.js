@@ -456,8 +456,6 @@ if( !isNetReader && $('.tbl_scrollable').length){
 //おなじく、ボーダーの幅
 //wrapperに枠を表示できる？
 */
-	$(document).find('.tbl_scrollable').each(tbl_scrollable);
-	
 	function tbl_scrollable(){
 		var thead, tfoot, h, tbl_wrapper, thead_wrapper, tbody_wrapper, tfoot_wrapper, fixed_thead, fixed_tfoot;
 		thead = $(this).find('thead').clone();
@@ -517,6 +515,8 @@ if( !isNetReader && $('.tbl_scrollable').length){
 			$(fixed_cols[i]).width(w+1);//borderの太さを足す。とりあえず1pxで
 		}
 	}
+	
+	$(document).find('.tbl_scrollable').each(tbl_scrollable);
 	
 	$.fn.el_overflow_y = function(){
 		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
@@ -588,7 +588,7 @@ if( !isNetReader && $('.tbl_scrollable').length){
 }
 
 
-//確認ウィンドウ
+//確認メッセージ
 $('.confirm').click(function(){
 	var msg = $(this).data('jslcmMsg');
 	if(msg){
@@ -626,7 +626,7 @@ if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')
 		var val = $(this).val();
 		$(this).data('val',val);
 	});
-	$('form').change( function(e){
+	$('form:not(".search")').change( function(e){//form.searchは除外
 		e = e ? e : event;
 		var t = e.target;
 		if($(t).hasClass('datetime') && $(t).val() == $(t).data('val') ){

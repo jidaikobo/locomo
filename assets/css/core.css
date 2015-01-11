@@ -964,6 +964,9 @@ h1#page_title {
 	margin-top: 20px;
 	margin-right: 10px;
 }
+.sub_column form{
+	text-align: left;
+}
 .sub_column .form_group input {
 	margin-bottom: 1em;
 	font-size: .9em;

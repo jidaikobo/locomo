@@ -80,7 +80,7 @@ if (\Auth::check()):
 
 		// adminbar_top  -- logo(sitetop), mainmenu, renderinfo, option, user
 		$html.= '<div class="adminbar_top lcmbar_top">'; 
-			$html.= "<img src=\"".\Uri::base()."sys/fetch_view/img/system/logo_s.png\" id=\"adminbar_logo\" alt=\"".\Config::get('site_title')."\" title=\"".\Config::get('site_title')."トップへ\">" ;
+			$html.= "<img src=\"".\Uri::base()."sys/fetch_view/img/system/logo_s.png\" id=\"adminbar_logo\" alt=\"\">" ;
 			$html.= '<div class="adminbar_main">';
 			$html.= \Config::get('no_home') ? '' : '<a href="'.\Uri::base().'" title="ホーム"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_home.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ホーム</span></a>';
 			$html.= '<a href="'.\Uri::base().'sys/dashboard/" title="ダッシュボード"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_dashboard.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ダッシュボード</span></a>';

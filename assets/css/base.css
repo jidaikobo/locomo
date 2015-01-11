@@ -804,7 +804,7 @@ table.tbl2.even tbody tr:nth-child(odd) td {
 }
 table.tbl2.odd tbody tr:nth-child(odd),
 table.tbl2.odd tbody tr:nth-child(odd) th,
-table.tbl2.odd tbody tr:nth-child(odd)td {
+table.tbl2.odd tbody tr:nth-child(odd) td {
 	background: #fff;
 }
 table.tbl2.odd tbody tr:nth-child(even),
