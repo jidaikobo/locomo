@@ -98,12 +98,12 @@ class Inflector extends \Fuel\Core\Inflector
 	 * @param string [\MODNAME\]Controller_CTRL
 	 * @return string [MODNAME|false]
 	 */
-	public static function get_modulename($str = null)
+	public static function get_modulename($str = null, $default = false)
 	{
 		$module = static::get_namespace($str) ?: false;
 		$module = strtolower(substr($module, 0, -1));
 		if( ! $module) return false;
-		return \Module::exists($module) ? $module : false;
+		return \Module::exists($module) ? $module : $default;
 	}
 
 	/**

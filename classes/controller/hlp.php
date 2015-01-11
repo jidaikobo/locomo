@@ -2,21 +2,18 @@
 namespace Locomo;
 class Controller_Hlp extends \Controller_Base
 {
+	// traits
+	use \Controller_Traits_Revision;
+
 	// locomo
 	public static $locomo = array(
-		'show_at_menu' => false,
-		'order_at_menu' => 1000,
-		'is_for_admin' => false,
-		'admin_home' => '\\Controller_Hlp/view',
-		'nicename' => 'ヘルプ',
-		'admin_home_name' => 'ヘルプ',
-		'actionset_classes' =>array(
-			'base'   => '\\Actionset_Base_Hlp',
-		),
+		'nicename'     => 'ヘルプ', // for human's name
+		'main_action'  => 'view', // main action
+		'show_at_menu' => false, // true: show at admin bar and admin/home
+		'is_for_admin' => false, // true: hide from admin bar
+		'order'        => 1000, // order of appearance
+		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 	);
-
-	// trait
-	use \Controller_Traits_Revision;
 
 	/*
 	 * before()

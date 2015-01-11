@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Actionset_Base_Scffld extends \Actionset
+class Actionset_Scffld extends \Actionset
 {
 	/**
 	 * actionset_controller_index()

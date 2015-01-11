@@ -4,18 +4,12 @@ class Controller_Sys extends \Controller_Base
 {
 	// locomo
 	public static $locomo = array(
-		'show_at_menu' => false,
-		'order_at_menu' => 0,
-		'no_acl' => true,
-		'is_for_admin' => false,
-		'admin_home' => '\\Controller_Sys/admin',
-		'admin_home_name' => 'システム',
-		'nicename' => 'システム',
-		'actionset_methods' => array(
-			'option' => array(
-				'actionset_edit_dashboard',
-			)
-		),
+		'nicename'     => 'システム', // for human's name
+		'main_action'  => 'admin', // main action
+		'show_at_menu' => false, // true: show at admin bar and admin/home
+		'is_for_admin' => false, // true: hide from admin bar
+		'order'        => 0, // order of appearance
+		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 		'widgets' =>array(
 			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys/admin'),
 			array('name' => '現在時刻', 'uri' => '\\Controller_Sys/clock'),
@@ -50,7 +44,6 @@ class Controller_Sys extends \Controller_Base
 		// 描画
 		$view = \View::forge('sys/home');
 		$view->set_global('title', \Config::get('slogan'));
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -63,7 +56,6 @@ class Controller_Sys extends \Controller_Base
 		$this->_template = 'default';
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -75,7 +67,6 @@ class Controller_Sys extends \Controller_Base
 	{
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -124,7 +115,7 @@ class Controller_Sys extends \Controller_Base
 
 	/**
 	* action_admin()
-	* toppgae
+	* controller menu
 	*/
 	public function action_admin($ctrl = null)
 	{
@@ -147,13 +138,12 @@ class Controller_Sys extends \Controller_Base
 			{
 				// module
 				$actionset = \Actionset::get_module_actionset($module);
-				$config = \Config::load($module.'::'.$module, 'action_home', true);
-				if ( ! \Arr::get($config, 'nicename') ||  ! \Arr::get($config, 'main_contoller'))
+				$config = \Config::load($module.'::'.$module, 'action_admin', true);
+				if ( ! \Arr::get($config, 'nicename') || ! \Arr::get($config, 'main_contoller'))
 				{
 					new \OutOfBoundsException('module\'s config must contain main_controller value.');
 				}
-				$main_contoller = \Arr::get($config, 'main_contoller');
-				$name = \Arr::get($config, 'nicename', '') ;
+				$name = \Arr::get($config, 'nicename', $module) ;
 			}
 			else
 			{
@@ -176,27 +166,29 @@ class Controller_Sys extends \Controller_Base
 			{
 				foreach ($actionset as $k => $v)
 				{
-					$locomo = $k::$locomo;
-					$home      = \Arr::get($locomo, 'admin_home');
-					$home_name = \Arr::get($locomo, 'admin_home_name', $name);
-					$home_exp  = \Arr::get($locomo, 'admin_home_explanation', $name.'のトップです。');
+					$home      = \Arr::get($k::$locomo, 'main_action');
+					$home_name = \Arr::get($k::$locomo, 'main_action_name', $name);
+					$home_exp  = \Arr::get($k::$locomo, 'main_action_explanation', $name.'のトップです。');
+					$actionset[$k]['order'] = \Arr::get($k::$locomo, 'order', 10);
 					if ($home)
 					{
+						$url       = $k.'/'.$home;
 						$args = array(
-							'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($home), $home_name)),
+							'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($url), $home_name)),
 							'show_at_top' => true,
 							'explanation' => $home_exp
 						);
-						array_unshift($actionset[$k]['base'], $args);
+						array_unshift($actionset[$k]['base'], $args); // add main action to top of base realm
 					}
 				}
+				// order
+				$actionset = \Arr::multisort($actionset, array('order' => SORT_ASC));
 			}
 
 			// assign
 			$view->set('actionset', $actionset, false);
 			$view->set_global('title', $name.' トップ');
 		}
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -259,7 +251,6 @@ class Controller_Sys extends \Controller_Base
 		$view = \View::forge('sys/dashboard');
 		$view->set_global('title', 'ダッシュボード');
 		$view->set_safe('actions', $actions);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -292,7 +283,6 @@ class Controller_Sys extends \Controller_Base
 	{
 		$view = \View::forge('sys/clock');
 		$view->set_global('title', 'アナログ時計');
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 }

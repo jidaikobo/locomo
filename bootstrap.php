@@ -48,6 +48,9 @@ $paths = array(
 	'\\Locomo\\Model_Usrgrp' => 'model/usrgrp.php',
 	'\\Locomo\\Model_Acl' => 'model/acl.php',
 
+	// some observer uses this
+	'\\Locomo\\Model_Revision' => 'model/revision.php',
+
 	// basic classes
 	'\\Locomo\\Asset_Instance' => 'asset/instance.php',
 	'\\Locomo\\Auth_Acl_Locomoacl' => 'auth/acl/locomoacl.php',

@@ -2,21 +2,20 @@
 namespace Locomo;
 class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 {
+	// traits
 	use \Controller_Traits_Crud;
 
-	//locomo
+	// locomo
 	public static $locomo = array(
-		'show_at_menu' => true,
-		'order_at_menu' => 100,
-		'is_for_admin' => true,
-		'no_acl' => true,
-		'admin_home' => '\\Workflow\\Controller_Workflowadmin/index_admin',
-		'admin_home_name' => '管理一覧',
-		'nicename' => 'ワークフロー',
-		'actionset_classes' =>array(
-			'base'   => '\\Actionset_Base_Wrkflwadmin',
-			'index'  => '\\Actionset_Index_Wrkflwadmin',
-		),
+		'nicename'     => 'ワークフロー', // for human's name
+		'explanation'  => 'ワークフロー経路の作成や編集を行います。',
+		'main_action'  => 'index_admin', // main action
+		'main_action_name' => 'ワークフロー管理', // main action's name
+		'main_action_explanation' => 'ワークフロー経路の作成や編集を行います。', // explanation of top page
+		'show_at_menu' => true, // true: show at admin bar and admin/home
+		'is_for_admin' => true, // true: hide from admin bar
+		'order'        => 1100, // order of appearance
+		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 	);
 
 	/**

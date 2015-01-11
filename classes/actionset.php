@@ -48,6 +48,85 @@ class Actionset
 	{
 		// controller
 		$controller = \Inflector::add_head_backslash($controller);
+
+		// search actionset - remove 'Controller_'
+		$name = strtolower(substr(\Inflector::denamespace($controller), 11));
+		$module = \Inflector::get_modulename($controller, $default = '');
+		if ($module) \Module::loaded($module) or \Module::load($module);
+		$paths = array(
+			APPPATH.'classes',
+			APPPATH.'modules/'.$module.'/classes',
+			LOCOMOPATH.'classes',
+			LOCOMOPATH.'modules/'.$module.'/classes',
+		);
+		$finder = \Finder::forge($paths);
+		$actionset = $finder->locate('actionset', $name);
+		if ( ! $actionset) return;
+
+		// actionset class
+		$class = str_replace('Controller_', 'Actionset_', $controller);
+		if ( ! class_exists($class)) return;
+
+		// primary key
+		$obj = is_object($obj) ? $obj : (object) array() ;
+		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
+
+		// get controllers actions - search prefixed 'action_'
+		$act_methods = get_class_methods($controller);
+		$act_methods = array_flip($act_methods);
+		$act_methods = \Arr::filter_prefixed($act_methods, 'action_');
+		$act_methods = array_flip($act_methods);
+
+		// methods - search prefixed 'actionset_'
+		$methods = get_class_methods($class);
+		if (! is_array($methods)) return;
+		$methods = array_flip($methods);
+		$methods = \Arr::filter_prefixed($methods, 'actionset_');
+		$methods = array_flip($methods);
+
+		foreach($methods as $method)
+		{
+			// eliminate non exists action
+			if ( ! in_array($method, $act_methods)) continue;
+
+			$p_method = 'actionset_'.$method;
+			$as = $class::$p_method($controller, $obj, $id);
+			// require "urls" or "dependencies"
+			if (\Arr::get($as, 'urls.0') || \Arr::get($as, 'dependencies.0'))
+			{
+				$realm = \Arr::get($as, 'realm', 'base');
+				static::$actions[$controller][$realm][$method] = $as;
+			}
+		}
+		if (empty(static::$actions[$controller])) return false;
+
+		// override and order
+		$overrides = array();
+		foreach (static::$actions[$controller] as $realm => $v)
+		{
+			foreach ($v as $kk => $vv)
+			{
+				if (isset($vv['overrides']))
+				{
+					$overrides = array_merge($overrides, $vv['overrides']);
+				}
+			}
+
+			// order
+			static::$actions[$controller][$realm] = \Arr::multisort(
+				static::$actions[$controller][$realm],
+				array('order' => SORT_ASC,)
+			);
+		}
+
+		// override
+		foreach($overrides as $realm => $urls)
+		{
+			static::$actions[$controller][$realm]['override_url'] = $urls;
+		}
+
+		return true;
+/*
 		if ( ! property_exists($controller, 'locomo')) return false;
 		$locomo = $controller::$locomo;
 
@@ -142,6 +221,7 @@ class Actionset
 		}
 
 		return true;
+*/
 	}
 
 	/**

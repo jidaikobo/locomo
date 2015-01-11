@@ -2,41 +2,21 @@
 namespace Locomo;
 class Controller_Usrgrp extends \Locomo\Controller_Base
 {
-	// locomo
-	public static $locomo = array(
-		'show_at_menu' => true,
-		'order_at_menu' => 20,
-		'is_for_admin' => true,
-		'no_acl' => true,
-		'admin_home' => '\\Controller_Usrgrp/index_admin',
-		'admin_home_name' => 'ユーザグループ管理',
-		'admin_home_explanation' => '既存のユーザグループの名称、表示順、使用可否などを編集します。',
-		'nicename' => 'ユーザグループ',
-		'actionset' =>array(
-			'base' => array(
-				array(
-					'show_at_top' => true,
-					'explanation' => 'ユーザグループを新規作成します。',
-					'urls' => array(
-						'\\Controller_Usrgrp/index_admin?create=1' => '新規作成',
-					),
-					'order' => 10,
-				),
-				array(
-					'show_at_top' => true,
-					'explanation' => 'ユーザグループの編集履歴です。',
-					'urls' => array(
-						'\\Controller_Usrgrp/index_revision' => '履歴',
-					),
-					'order' => 15,
-				),
-			),
-		),
-	);
-
-	// trait
+	// traits
 	use \Controller_Traits_Revision;
 	use \Controller_Traits_Bulk;
+
+	// locomo
+	public static $locomo = array(
+		'nicename'     => 'ユーザグループ', // for human's name
+		'explanation'  => '既存のユーザグループの名称、表示順、使用可否などを編集します。',
+		'main_action'  => 'index_admin', // main action
+		'main_action_name' => 'ユーザグループ管理', // main action's name
+		'main_action_explanation' => '既存のユーザグループの名称、表示順、使用可否などを編集します。', // explanation of top page
+		'show_at_menu' => true, // true: show at admin bar and admin/home
+		'is_for_admin' => true, // true: hide from admin bar
+		'order'        => 1020, // order of appearance
+	);
 
 	/**
 	 * action_index_admin()

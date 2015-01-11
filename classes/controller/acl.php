@@ -4,54 +4,16 @@ class Controller_Acl extends \Controller_Base
 {
 	// locomo
 	public static $locomo = array(
-		'show_at_menu' => true,
-		'order_at_menu' => 50,
-		'is_for_admin' => true,
-		'no_acl' => true,
-		'admin_home' => '\\Controller_Acl/controller_index',
-		'nicename' => 'アクセス権',
-		'actionset_methods' =>array(
-			'base'   => array(
-				'actionset_controller_index',
-				'actionset_actionset_index'
-			),
-		),
+		'nicename'     => 'アクセス権', // for human's name
+		'explanation'  => 'ユーザやユーザグループにコントローラへのアクセス権を付与します。',
+		'main_action'  => 'controller_index', // main action
+		'main_action_name' => 'アクセス権管理', // main action's name
+		'main_action_explanation' => 'ユーザやユーザグループにコントローラへのアクセス権を付与します。', // explanation of top page
+		'show_at_menu' => true, // true: show at admin bar and admin/home
+		'is_for_admin' => true, // true: hide from admin bar
+		'order'        => 1050, // order of appearance
+		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 	);
-
-	/**
-	 * actionset_controller_index()
-	 */
-	public static function actionset_controller_index($controller, $obj = null, $id = null, $urls = array())
-	{
-		$retvals = array(
-			'urls'         => $urls ,
-			'action_name'  => 'アクセス権管理',
-			'show_at_top'  => true,
-			'order'        => 1,
-		);
-		return $retvals;
-	}
-
-	/**
-	 * actionset_actionset_index()
-	 */
-	public static function actionset_actionset_index($controller, $obj = null, $id = null, $urls = array())
-	{
-		$retvals = array(
-			'urls'         => $urls ,
-			'show_at_top'  => false,
-			'action_name'  => 'アクセス権管理',
-			'help'         => '
-# 依存関係について
-依存した行為を許可すると、自動的にほかの行為が許可される場合があります。たとえば「項目を編集する権利」を持った人は、「通常項目を閲覧する権利」が自動的に許可されます。
-
-# ログインユーザ権限
-「ログインユーザすべて」に行為を許可している場合、個別にアクセス権を与えなくても、許可された状態になっていることがあります。
-',
-			'order'        => 1,
-		);
-		return $retvals;
-	}
 
 	/**
 	 * action_controller_index()
