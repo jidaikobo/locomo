@@ -150,13 +150,6 @@ body.lcm_action_login {
 	vertical-align: top;
 	width: 100%;
 }
-.sub_column form h2 {
-	font-size: 100%;
-	border: none;
-	box-shadow: none;
-	margin: 0;
-	padding: 0;
-}
 
 /*=== adminbar ===*/
 #adminbar {
@@ -703,7 +696,7 @@ div.form_tooltip{
 }
 /*===  form  ===*/
 .form_group{
-	margin: 10px 0 20px;
+	margin: 5px 0 20px;
 	padding: 10px;
 	background-color: #eee;
 }
@@ -714,7 +707,6 @@ form tbody th{
 
 label {
 	display: inline-block;
-	word-break: break-all;
 }
 .submit_button{
 	width: 100%;
@@ -983,33 +975,29 @@ h1#page_title {
 
 /*=== itemindex ===*/
 .sub_column .index_list {
-	margin-top: 2.3em;
-	margin-right: 10px;
+	margin: 2.3em 10px 20px 0;
 	padding: 10px 10px 10px 26px;
 	border: 1px solid #aaa;
 }
-
 .sub_column .button.primary{
 	display: block;
-	margin: 1em auto;
+	margin: auto;
 }
 
 .sub_column .form_group {
-	text-align: center;
-	margin-top: 20px;
 	margin-right: 10px;
 }
-.sub_column form{
-	text-align: left;
-}
-.sub_column form h2:first-of-type {
-	margin: 0;
-}
-.sub_column form h2 {
+.sub_column h2 {
+	font-size: 100%;
+	border: none;
+	box-shadow: none;
 	margin-top: .75em;
 }
+.sub_column h2:first-of-type {
+	margin: 0;
+}
 .sub_column .form_group input {
-	margin-bottom: 0.25em;
+	margin-bottom: .25em;
 	font-size: .9em;
 }
 .form_group table tbody th {
@@ -1017,8 +1005,8 @@ h1#page_title {
 	min-width: 5em;
 	background-color: transparent;
 }
-.sub_column input[type="submit"] {
-	margin-top: 1em;
+section.search {
+	margin-bottom: 1em;
 }
 .index_info {
 	margin: 0 0 .4em;
