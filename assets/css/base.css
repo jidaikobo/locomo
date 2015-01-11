@@ -486,6 +486,12 @@ fieldset {
 }
 
 /* === forms - buttons === */
+input ,
+select ,
+label {
+	max-width: 100%;
+}
+
 input[type="text"],
 input[type="search"],
 input[type="tel"],
