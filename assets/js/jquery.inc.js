@@ -2,7 +2,7 @@
 var help_preparation = false;
 function show_help(e){
 	e = e ? e : event;
-	if(e) e.preventDefault(); //クリックイベント以外(アクセスキー等)の場合を除外
+	if(e) e.preventDefault();//クリックイベント以外(アクセスキー等)の場合を除外
 	$(function(){
 		if(!help_preparation){
 			var uri = $('#lcm_help').data('uri');
@@ -46,8 +46,7 @@ function modal(id){
 				.prependTo(document.body)
 				.prepend(closelink);
 			$(document).find('#close_modal').focus();
-			$(el).set_center();
-			$(el).set_tabindex();
+			$(el).set_center().set_tabindex();
 		});
 	}
 	event.stopPropagation();
@@ -56,9 +55,10 @@ function modal(id){
 
 $(function(){
 
-//UA //php側は？
+//UA//php側は？
 var userAgent = window.navigator.userAgent;
 isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
+tabindexCtrl = userAgent.indexOf('NetReader') > 0 ? true : false;//この条件は増えたり減ったりするのかも。
 
 //スクロールバーのサイズ取得
 var scrollbar_s = (function(){
@@ -92,6 +92,7 @@ $.fn.set_center = function(){
 	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
 	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
 	this.css({'left': left, 'top': top});
+	return this;
 }
 $(window).resize(function(){
 	var el = $('.set_center, .modal.on');
@@ -126,7 +127,7 @@ if(bar.length){
 	});
 }
 
-//モーダルの外制御 //キーボードのことを考えてdisabled制御をするならclick処理は重複？
+//モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
 $('#modal_wrapper').on('click', function(){
 	return false;
 });
@@ -141,7 +142,7 @@ $('.lcm_close_parent').on('click', function(){
 });
 
 
-//アクセスキーをもつ要素へのタイトル付与 //読み上げ要確認
+//アクセスキーをもつ要素へのタイトル付与//読み上げ要確認
 //accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
 function add_accesskey_title(){
 	var str, txt, label;
@@ -158,24 +159,293 @@ $(document).find('[accesskey]').each(add_accesskey_title);
 
 
 //tabindex制御
-$.fn.set_tabindex = function(){
+$.fn.set_tabindex = function(){//focusableな要素のtabindexを一旦dataに保存し、現在の要素のみtabindex制御をリセットする。tabindexがある場合はそのまま
 	$(document).find(':focusable').each(function(){
-	if($(this).attr('tabindex')){
-		$(this).data('tabindex',$(this).attr('tabindex'));
-	}
-	$(this).attr('tabindex','-1');
+		var tabindex, dataTabindex;
+		tabindex = $(this).attr('tabindex');
+		dataTabindex = $(this).data('tabindex');
+		if( tabindex && !dataTabindex){//tabindexがあって、dataにまだない場合
+			$(this).data('tabindex',tabindex);
+		}else if(!tabindex){ //tabindexがない場合、ないままにしておけないかなあ
+			$(this).data('tabindex', 'no');
+		}
+		$(this).attr('tabindex','-1');
 	});
 	$(this).find(':focusable').removeAttr('tabindex');
+	return this;
 }
-$.fn.reset_tabindex = function(){
+$.fn.reset_tabindex = function(){//tabindexを元に戻す
 	$(document).find(':focusable').each(function(){
-		if($(this).data('tabindex')){
-			$(this).attr('tabindex', $(this).data('tabindex'))
+		var dataTabindex = $(this).data('tabindex');
+		if(dataTabindex && dataTabindex !== 'no'){
+			$(this).attr('tabindex', dataTabindex);
 		}else{
 			$(this).removeAttr('tabindex');
 		}
 	});
+	return this;
 }
+
+//フォーカス枠の設定//NetReaderなどフォーカス制御がむずかしいブラウザは対象外にしたほうがよいのかも
+if($('.lcm_focus.calendar').length) var each_date = $('.each_date:has(a)').addClass('lcm_focus');
+var lcm_focus = $('.lcm_focus');
+
+if(lcm_focus.length && !tabindexCtrl){
+	function set_lcm_focus(target){
+		var t = target ? target.find('.lcm_focus') : lcm_focus;
+		if(target && target.hasClass('calendar')){
+			t = target.find(each_date);
+		}
+		t.attr('tabindex', '0');
+		t.find(':tabbable').attr('tabindex', '-1')
+	}
+	function escape_focus(e){
+		e = e ? e : event;
+		var t, parent, grandparent;
+		t = $(e.target);
+		parent = t.closest('.currentfocus');
+		grandparent = t.closest('.focusparent');
+		if(parent.length){
+			parent.set_tabindex().focus();
+		}
+		$(document).find('.currentfocus').removeClass('currentfocus');
+		$('#escape_focus').remove();
+		$(document).reset_tabindex();
+		set_lcm_focus();
+		if(grandparent.length){
+			$(document).reset_tabindex();
+			grandparent.removeClass('focusparent').addClass('currentfocus').set_tabindex().append(esc);
+			set_lcm_focus(grandparent);
+		}
+	}
+
+	
+	set_lcm_focus()//lcm_focusが入れ子になっていてもここで一旦-1
+	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip">抜ける</a>';//抜けるリンクの準備
+	
+	lcm_focus.on('keydown', function(e){
+		e = e ? e : event;
+		var t, k, parent;
+		t = $(e.target);
+		k = e.which;
+//もうちょっとまとめる formのなかみにフォーカスした時のことを考えたり
+//エラー一覧にもどるリンクをウィジェットで呼び出した時の表示位置(position: absolute; で画面外にいる)のことを考える
+		if( k == 13 ){
+			if(! $(this).hasClass('currentfocus') && ! t.is('#escape_focus')){//現在の枠上でのEnterは無視。
+				parent = $(this).closest('.currentfocus'); //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+				if(parent.length){
+					parent.removeClass('currentfocus').addClass('focusparent');
+					$('#escape_focus').remove();
+				}
+				$(this).addClass('currentfocus').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
+				set_lcm_focus($(this));
+			}
+			e.stopPropagation();
+		}
+	});
+	$(document).on('keydown', function(e){//他のセミモーダルなどの閉じるESCと組み合わせるとへんな動きになる
+		e = e ? e : event;
+		var t, k;
+		t = $(e.target);
+		k = e.which;
+		if( !t.is(':input') && k == 27 ){
+			escape_focus();
+			e.stopPropagation();
+		}
+	});
+	$(document).on('click', '#escape_focus',escape_focus);
+	$(document).on('focus', ':input',function(e){
+		e = e ? e : event;
+		var t, parent;
+		t = $(e.target);
+		parent = t.closest('.lcm_focus');
+		if(parent.length){
+			parent.set_tabindex();
+		}
+	});
+}
+
+
+//Focusまわりのテスト（NetReaderでFocus移動を検知したい）
+//setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
+//が、最新版のNetReaderはIEが7でなくなったので、古い環境の動作確認はできない(再インストール？)
+
+
+//ページ内リンク ヘッダー分位置調整とスムーズスクロール
+//html要素がスクロール対象であるか判定。
+//http://www.webdesignleaves.com/wp/jquery/573/
+var is_html_scrollable = (function(){
+	var html, el, rs;
+	html = $('html'), top = html.scrollTop();
+	el = $('<div>').height(10000).prependTo('body');
+	html.scrollTop(10000);
+	rs = !!html.scrollTop();
+	html.scrollTop(top);
+	el.remove();
+	return rs;
+})();
+//スクロール
+$(document).on('click', 'a[href^=#]', function(e){
+	e = e ? e : event;
+	var href, t, position;
+	$(window).off('beforeunload');//ページ内リンクでは画面遷移の警告をキャンセル
+
+	href= $(this).attr("href");
+	if(href != '#'){
+		t = $(href == '' ? 'html' : href);
+		position = t.offset().top - headerheight - 10;
+		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+		set_focus(t);
+		return false;
+	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？？？
+		e.preventDefault();
+	}
+});
+
+
+//非表示の要素の設定
+$('.hidden_item').each(function(){
+	if( $(this).is(':input') && $(this).val() ){//hidden_itemでも中に値がある場合は表示
+		var trigger = $('.toggle_item').eq($('.hidden_item').index(this));
+		$(this).addClass('on').show();
+		trigger.addClass('on');
+	}
+});
+
+$(document).click(function(e){
+	e = e ? e : event;
+	var t = e.target;
+//リストの開け閉め
+	close_semimodal(t);
+	replace_info();//開く・閉じる説明文切り替え
+} );
+
+//モーダル
+function close_modal(focus,t){
+	//modalを閉じる機能、で、semimodalと併用できるように考える
+	//現在のtabbableを取る？
+	focus.focus();
+	t.removeClass('on');
+	$(document).reset_tabindex();
+}
+
+function close_semimodal(el){
+	var t, trigger, focus;
+	t = $(document).find('.semimodal.on');
+	if(t.length){
+		trigger = $('.toggle_item').eq($(document).find('.hidden_item').index(t));
+		focus = ($(el).is(':input')) ? el : trigger;
+		trigger.removeClass('on');
+		close_modal(focus,t);
+	}
+	return false;
+}
+$(document).on('click', '#close_modal' ,function(){
+	close_modal($('.modal_parent'), $('.modal_on'));
+});
+$(document).on('click', '.semimodal.on, modal.on', function(e){
+	e = e ? e : event;
+	e.stopPropagation();
+});
+
+//表示・非表示切り替え
+$(document).on('click', '.toggle_item', function(e){
+	e = e ? e : event;
+	var t = $('.hidden_item').eq($('.toggle_item').index(this));//切り替えの相手
+	
+	if($('.semimodal.on').length ){//モーダルが開いている場合は閉じる
+		var itself = t.is('.semimodal.on');
+		close_semimodal();
+		replace_info();//開く・閉じる説明文切り替え
+		if(itself) return false;//モーダルが自分ならそこでおわり
+	}
+	t.toggleClass('on');
+	$(this).toggleClass('on').focus();
+
+	if(t.is('.semimodal.on')){//tabindex制御
+		t.set_tabindex();
+		//targetの中とtoggleの要素だけtabindexを元に。//data('tabindex')を見る？
+		$(this).removeAttr('tabindex');
+	}
+	replace_info();//開く・閉じる説明文切り替え
+	
+	e.stopPropagation();
+	return false;
+});
+
+function replace_info(){
+	$(document).find('.toggle_item').each(function(){
+		var title, skip;
+		title = $(this).attr('title');
+		skip = $(this).find('.skip').text();
+		if($(this).hasClass('on')){
+			title = title ? title.replace('開く', '閉じる') : null;
+			skip  = skip  ? skip.replace('開きます', '閉じます') : null;
+		}else{
+			title = title ? title.replace('閉じる', '開く') : null;
+			skip  = skip  ? skip.replace('閉じます', '開きます') : null;
+		}
+		if(title) $(this).attr('title', title);
+		if(skip)  $(this).find('.skip').text(skip);
+	});
+}
+
+
+//キーボード操作の制御
+//NetReaderでうまく取得できないので、なにか考える
+//.lcm_focusのようにまず枠にフォーカスを当てる場合のShift+Tabの動作のことも
+$(document).on('keydown',function(e){
+	e = e ? e : event;
+	var t, k, modal, tabbable, first, last, index;
+	t = e.target;
+	k = e.which;
+	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
+	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
+	index = null;
+	modal = $(document).find('.modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？　とすると？
+	if(modal){
+		tabbable = $(document).find(':tabbable');
+		first    = tabbable.first()[0];
+		last     = tabbable.last()[0];
+		switch( e.keyCode ){
+			case $.ui.keyCode.TAB:
+				if( t === last && ! e.shiftKey){
+					index = 0;
+				}else if( t === first && e.shiftKey){
+					index = -1;
+				}
+			break;
+			case $.ui.keyCode.ESCAPE:
+				close_semimodal();
+			break;
+		}
+		if($(modal).hasClass('menulist')){//.menulistではカーソルの制御も行う
+			switch( e.keyCode ){
+				case $.ui.keyCode.LEFT:
+					return false;
+				break;
+				case $.ui.keyCode.RIGHT:
+					return false;
+				break;
+				case $.ui.keyCode.DOWN:
+					index = tabbable.index($(':focus'))+1;
+					if( t === last){
+						var index = 0;
+					}
+				break;
+				case $.ui.keyCode.UP:
+					index = tabbable.index($(':focus'))-1;
+				break;
+			}
+		}
+		if(index !== null){
+			tabbable.eq(index).focus();
+			return false;
+		}
+	}
+});
+
+
 
 
 //表内スクロール - 各ブラウザでの挙動が怪しいのでもうちょっと
@@ -197,12 +467,12 @@ if( !isNetReader && $('.tbl_scrollable').length){
 			tbody_wrapper = $('<div>').addClass('jslcm_tbody_wrapper');
 			if(thead.length){
 				thead_wrapper = $('<div>').addClass('jslcm_thead_wrapper');
-				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').attr('aria-hidden','true').append(thead);
+				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(thead);
 				$(fixed_thead).find(':tabbable').attr('tabindex', '-1');
 			}
 			if(tfoot.length){
 				tfoot_wrapper = $('<div>').addClass('jslcm_tfoot_wrapper');
-				fixed_tfoot = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_tfoot').removeClass('tbl_scrollable').attr('aria-hidden','true').append(tfoot);
+				fixed_tfoot = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_tfoot').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(tfoot);
 				$(fixed_tfoot).find(':tabbable').attr('tabindex', '-1');
 			}
 			$(this).addClass('jslcm_tbl_scrollable')
@@ -317,176 +587,6 @@ if( !isNetReader && $('.tbl_scrollable').length){
 	}
 }
 
-//Focusまわりのテスト（NetReaderでFocus移動を検知したい）
-//setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
-//が、最新版のNetReaderはIEが7でなくなったので、古い環境の動作確認はできない(再インストール？)
-
-
-//ページ内リンク ヘッダー分位置調整とスムーズスクロール
-//html要素がスクロール対象であるか判定。
-//http://www.webdesignleaves.com/wp/jquery/573/
-var is_html_scrollable = (function(){
-	var html, el, rs;
-	html = $('html'), top = html.scrollTop();
-	el = $('<div>').height(10000).prependTo('body');
-	html.scrollTop(10000);
-	rs = !!html.scrollTop();
-	html.scrollTop(top);
-	el.remove();
-	return rs;
-})();
-//スクロール
-$(document).on('click', 'a[href^=#]', function(){
-	$(window).off('beforeunload'); //ページ内リンクでは画面遷移の警告をキャンセル
-	var href= $(this).attr("href");
-	var t = $(href == '#' || href == '' ? 'html' : href);
-	var position = t.offset().top - headerheight - 10;
-	$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
-	set_focus(t);
-	return false;
-});
-
-
-//非表示の要素の設定
-$('.hidden_item').each(function(){
-	if( $(this).is(':input') && $(this).val() ){ //hidden_itemでも中に値がある場合は表示
-		var trigger = $('.toggle_item').eq($('.hidden_item').index(this));
-		$(this).addClass('on').show();
-		trigger.addClass('on');
-	}
-});
-
-$(document).click(function(e){
-	e = e ? e : event;
-	var t = e.target;
-//リストの開け閉め
-	close_semimodal(t);
-	replace_info();//開く・閉じる説明文切り替え
-} );
-
-//モーダル
-function close_modal(focus,t){
-	//modalを閉じる機能、で、semimodalと併用できるように考える
-	//現在のtabbableを取る？
-	focus.focus();
-	t.removeClass('on');
-	$(document).reset_tabindex();
-}
-
-function close_semimodal(el){
-	var t, trigger, focus;
-	t = $(document).find('.semimodal.on');
-	if(t.length){
-		trigger = $('.toggle_item').eq($(document).find('.hidden_item').index(t));
-		focus = ($(el).is(':input')) ? el : trigger;
-		trigger.removeClass('on');
-		close_modal(focus,t);
-	}
-	return false;
-}
-$(document).on('click', '#close_modal' ,function(){
-	close_modal($('.modal_parent'), $('.modal_on'));
-});
-$(document).on('click', '.semimodal.on, modal.on', function(e){
-	e = e ? e : event;
-	e.stopPropagation();
-});
-
-//表示・非表示切り替え
-$(document).on('click', '.toggle_item', function(e){
-	e = e ? e : event;
-	var t = $('.hidden_item').eq($('.toggle_item').index(this));//切り替えの相手
-	
-	if($('.semimodal.on').length ){ //モーダルが開いている場合は閉じる
-		var itself = t.is('.semimodal.on');
-		close_semimodal();
-		replace_info();//開く・閉じる説明文切り替え
-		if(itself) return false; //モーダルが自分ならそこでおわり
-	}
-	t.toggleClass('on');
-	$(this).toggleClass('on').focus();
-
-	if(t.is('.semimodal.on')){ //tabindex制御
-		t.set_tabindex();
-		//targetの中とtoggleの要素だけtabindexを元に。//data('tabindex')を見る？
-		$(this).removeAttr('tabindex');
-	}
-	replace_info();//開く・閉じる説明文切り替え
-	
-	e.stopPropagation();
-	return false;
-});
-
-function replace_info(){
-	$(document).find('.toggle_item').each(function(){
-		var title, skip;
-		title = $(this).attr('title');
-		skip = $(this).find('.skip').text();
-		if($(this).hasClass('on')){
-			title = title ? title.replace('開く', '閉じる') : null;
-			skip  = skip  ? skip.replace('開きます', '閉じます') : null;
-		}else{
-			title = title ? title.replace('閉じる', '開く') : null;
-			skip  = skip  ? skip.replace('閉じます', '開きます') : null;
-		}
-		if(title) $(this).attr('title', title);
-		if(skip)  $(this).find('.skip').text(skip);
-	});
-}
-
-
-//キーボード操作の制御
-//NetReaderでうまく取得できないので、なにか考える
-$(document).on('keydown',function(e){
-	e = e ? e : event;
-	var t, k, modal, tabbable, first, last, index;
-	t = e.target;
-	k = e.which;
-	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
-	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
-	index = null;
-	modal = $(document).find('.modal.on, .semimodal.on')[0];
-	if(modal){
-		tabbable = $(document).find(':tabbable');
-		first    = tabbable.first()[0];
-		last     = tabbable.last()[0];
-		switch( e.keyCode ){
-			case $.ui.keyCode.TAB:
-				if( t === last && ! e.shiftKey){
-					index = 0;
-				}else if( t === first && e.shiftKey){
-					index = -1;
-				}
-			break;
-			case $.ui.keyCode.ESCAPE:
-				close_semimodal();
-			break;
-		}
-		if($(modal).hasClass('menulist')){//.menulistではカーソルの制御も行う
-			switch( e.keyCode ){
-				case $.ui.keyCode.LEFT:
-					return false;
-				break;
-				case $.ui.keyCode.RIGHT:
-					return false;
-				break;
-				case $.ui.keyCode.DOWN:
-					index = tabbable.index($(':focus'))+1;
-					if( t === last){
-						var index = 0;
-					}
-				break;
-				case $.ui.keyCode.UP:
-					index = tabbable.index($(':focus'))-1;
-				break;
-			}
-		}
-		if(index !== null){
-			tabbable.eq(index).focus();
-			return false;
-		}
-	}
-});
 
 //確認ウィンドウ
 $('.confirm').click(function(){
@@ -624,7 +724,7 @@ $('.validation_error :input').tooltip({
 
 //resizable
 function set_fixed_position(el){
-		var l, r, w, dw ; //右端基準で固定したい
+		var l, r, w, dw ;//右端基準で固定したい
 		l  = parseInt(el.css( 'left' ));
 		w  = el.outerWidth();
 		dw = $(document).width();
