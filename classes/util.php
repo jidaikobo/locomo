@@ -48,6 +48,7 @@ class Util
 				$retvals[$ctrl]['show_at_menu'] = \Arr::get($config, 'show_at_menu', true) ;
 				$retvals[$ctrl]['is_for_admin'] = \Arr::get($config, 'is_for_admin', false) ;
 				$retvals[$ctrl]['no_acl'] = \Arr::get($config, 'no_acl', false) ;
+				$retvals[$ctrl]['widgets'] = \Arr::get($config, 'widgets') ;
 				$retvals[$ctrl]['order'] = \Arr::get($config, 'order', 100) ;
 			}
 
@@ -68,6 +69,7 @@ class Util
 				$retvals[$ctrl]['show_at_menu'] = \Arr::get($ctrl::$locomo, 'show_at_menu', true) ;
 				$retvals[$ctrl]['is_for_admin'] = \Arr::get($ctrl::$locomo, 'is_for_admin', false) ;
 				$retvals[$ctrl]['no_acl'] = \Arr::get($ctrl::$locomo, 'no_acl', false) ;
+				$retvals[$ctrl]['widgets'] = \Arr::get($ctrl::$locomo, 'widgets') ;
 				$retvals[$ctrl]['order'] = \Arr::get($ctrl::$locomo, 'order', 100) ;
 			endforeach;
 	
