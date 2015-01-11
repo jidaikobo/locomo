@@ -55,6 +55,14 @@ if (\Auth::check()):
 					$html.= \Actionset::generate_menu_html($bases, array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
+
+				$indexes = \Arr::get($actionset, 'index', array());
+				if ($indexes):
+					$html.= '<div class="locomo_indexes">';
+					$html.= \Actionset::generate_menu_html($indexes, array('class'=>'holizonal_list'));
+					$html.= '</div><!-- .locomo_indexes -->';
+				endif;
+
 			$html.= '</div><!-- .adminbar_main -->';
 
 			// context menu2
