@@ -67,6 +67,7 @@ if (\Auth::check()):
 			
 				// option menu
 				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'semimodal hidden_item boxshadow')) : false ;
+
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".\Config::get('nicename')."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_module_option.png\" alt=\"".\Config::get('nicename')."の設定\"><span class=\"skip\">エンターでメニューを開きます</span></span></a>";
