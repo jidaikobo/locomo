@@ -419,7 +419,7 @@ ul.holizonal_list {
 	position: relative;
 	height: 220px;
 	overflow: hidden;
-	margin: 10px 1%;
+	margin: 5px 1%;
 	font-size: .85em;
 	
 }
@@ -928,8 +928,8 @@ h1#page_title {
 }
 
 /*=== lcm_focus ===*/
-.tabbable{
-	box-shadow: 0 0 5px gold,inset 0 0 10px gold;
+#escape_focus{
+	position: absolute;
 }
 
 

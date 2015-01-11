@@ -96,7 +96,7 @@ if (\Auth::check()):
 				$html.= '<div class="admin_menu">';
 				$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー<span class="skip">エンターでメニューを開きます</span></span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
-				$html.= '<ul class="semimodal hidden_item boxshadow">';
+				$html.= '<ul class="semimodal hidden_item menulist">';
 				$html.= $controller_menu;
 				$html.= '</ul>';
 				$html.= '</div><!-- /.admin_menu -->';
