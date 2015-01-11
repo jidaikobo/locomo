@@ -131,6 +131,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			{
 				$main_action = \Arr::get($called_class::$locomo, 'main_action');
 				$main_action = $main_action ? \Inflector::ctrl_to_dir($called_class.DS.$main_action) : '';
+				
+				// Locomo is no module
+				$main_action = str_replace('locomo/', '' , $main_action);
+
 				if ($main_action)
 				{
 					return \Response::redirect($main_action);

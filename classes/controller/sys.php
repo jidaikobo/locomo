@@ -18,19 +18,6 @@ class Controller_Sys extends \Controller_Base
 	);
 
 	/**
-	 * actionset_edit_dashboard()
-	 * @return  array
-	 */
-	public static function actionset_edit_dashboard($controller, $obj = null, $id = null, $urls = array())
-	{
-		$retvals = array(
-			'urls'  => array(\Html::anchor('/sys/edit/'.\Auth::get('id'), 'ダッシュボードの編集')) ,
-			'order' => 10,
-		);
-		return $retvals;
-	}
-
-	/**
 	* action_home()
 	* toppgae
 	*/

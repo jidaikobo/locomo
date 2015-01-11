@@ -291,7 +291,7 @@ class Controller_Base extends Controller_Core
 		if (\Auth::has_access($this->request->controller.DS.'index_admin'))
 		{
 			$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
-			$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
+			$action['urls'][] = \Html::anchor($ctrl_url.DS,'一覧へ');
 			$action['order'] = 10;
 			\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 		}
