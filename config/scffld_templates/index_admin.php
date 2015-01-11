@@ -1,6 +1,4 @@
 <?php
-	// index menu
-	echo \Actionset::generate_menu_html($actionset['index'], array('class'=>'holizonal_list'));
 	// index information
 	echo '<p class="index_info">';
 	echo \Pagination::sort_info('\User\Model_XXX');
