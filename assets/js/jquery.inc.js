@@ -55,7 +55,7 @@ function modal(id){
 
 $(function(){
 
-//UA//php側は？
+//UA //php側は？
 var userAgent = window.navigator.userAgent;
 isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
 tabindexCtrl = userAgent.indexOf('NetReader') > 0 ? true : false;//この条件は増えたり減ったりするのかも。
@@ -112,16 +112,15 @@ if(firstFocus){
 }
 
 //管理バーの高さ+αのヘッダーの高さを確保
-var headerheight = 0;
 function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );
 }
-var bar = $('#adminbar');
-if(bar.length){
-	headerheight = bar.outerHeight();
+var adminbarbar = $('#adminbar');
+if(adminbarbar.length){
+	headerheight = adminbarbar.outerHeight();
 	add_body_padding(headerheight);
 
-	bar.exResize(function(){
+	adminbarbar.exResize(function(){
 		headerheight = $(this).outerHeight();
 		add_body_padding(headerheight);
 	});
@@ -166,18 +165,18 @@ $.fn.set_tabindex = function(){//focusableな要素のtabindexを一旦dataに�
 		dataTabindex = $(this).data('tabindex');
 		if( tabindex && !dataTabindex){//tabindexがあって、dataにまだない場合
 			$(this).data('tabindex',tabindex);
-		}else if(!tabindex){ //tabindexがない場合、ないままにしておけないかなあ
-			$(this).data('tabindex', 'no');
+		}else if(!tabindex){ 
+			$(this).data('tabindex', 'none');
 		}
 		$(this).attr('tabindex','-1');
 	});
 	$(this).find(':focusable').removeAttr('tabindex');
 	return this;
 }
-$.fn.reset_tabindex = function(){//tabindexを元に戻す
+$.fn.reset_tabindex = function(){
 	$(document).find(':focusable').each(function(){
 		var dataTabindex = $(this).data('tabindex');
-		if(dataTabindex && dataTabindex !== 'no'){
+		if(dataTabindex && dataTabindex !== 'none'){
 			$(this).attr('tabindex', dataTabindex);
 		}else{
 			$(this).removeAttr('tabindex');
@@ -186,12 +185,13 @@ $.fn.reset_tabindex = function(){//tabindexを元に戻す
 	return this;
 }
 
-//フォーカス枠の設定//NetReaderなどフォーカス制御がむずかしいブラウザは対象外にしたほうがよいのかも
-if($('.lcm_focus.calendar').length) var each_date = $('.each_date:has(a)').addClass('lcm_focus');
+//フォーカス枠の設定//NetReaderなどフォーカス制御がむずかしいブラウザは対象外にする
+if($('.lcm_focus.calendar').length) var each_date = $('.each_date:has(a)').addClass('lcm_focus');//カレンダーのテーブルの中身を設定
+
 var lcm_focus = $('.lcm_focus');
 
 if(lcm_focus.length && !tabindexCtrl){
-	function set_lcm_focus(target){
+	var set_lcm_focus = function(target){
 		var t = target ? target.find('.lcm_focus') : lcm_focus;
 		if(target && target.hasClass('calendar')){
 			t = target.find(each_date);
@@ -199,7 +199,7 @@ if(lcm_focus.length && !tabindexCtrl){
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1')
 	}
-	function escape_focus(e){
+	var escape_focus = function(e){
 		e = e ? e : event;
 		var t, parent, grandparent;
 		t = $(e.target);
@@ -220,7 +220,7 @@ if(lcm_focus.length && !tabindexCtrl){
 	}
 
 	
-	set_lcm_focus()//lcm_focusが入れ子になっていてもここで一旦-1
+	set_lcm_focus();//lcm_focusが入れ子になっていてもここで一旦-1
 	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip">抜ける</a>';//抜けるリンクの準備
 	
 	lcm_focus.on('keydown', function(e){
@@ -249,7 +249,7 @@ if(lcm_focus.length && !tabindexCtrl){
 		t = $(e.target);
 		k = e.which;
 		if( !t.is(':input') && k == 27 ){
-			escape_focus();
+			escape_focus(t);
 			e.stopPropagation();
 		}
 	});
@@ -358,7 +358,7 @@ $(document).on('click', '.toggle_item', function(e){
 		var itself = t.is('.semimodal.on');
 		close_semimodal();
 		replace_info();//開く・閉じる説明文切り替え
-		if(itself) return false;//モーダルが自分ならそこでおわり
+		if(itself) return;//モーダルが自分ならそこでおわり
 	}
 	t.toggleClass('on');
 	$(this).toggleClass('on').focus();
@@ -395,6 +395,16 @@ function replace_info(){
 //キーボード操作の制御
 //NetReaderでうまく取得できないので、なにか考える
 //.lcm_focusのようにまず枠にフォーカスを当てる場合のShift+Tabの動作のことも
+//フォーカス枠のある時の表示位置の調整もかんがえる(ページ内リンクのスクロールと同じ)
+$(document).on('keyup',function(e){
+	if($(':focus').attr('tabindex')){
+		console.log($(':focus')[0] + ': ' + $(':focus').attr('tabindex'));
+	}else{
+		console.log($(':focus').is(':tabbable'));
+
+	}
+});
+
 $(document).on('keydown',function(e){
 	e = e ? e : event;
 	var t, k, modal, tabbable, first, last, index;
@@ -457,7 +467,7 @@ if( !isNetReader && $('.tbl_scrollable').length){
 //おなじく、ボーダーの幅
 //wrapperに枠を表示できる？
 */
-	function tbl_scrollable(){
+	var tbl_scrollable = function(){
 		var thead, tfoot, h, tbl_wrapper, thead_wrapper, tbody_wrapper, tfoot_wrapper, fixed_thead, fixed_tfoot;
 		thead = $(this).find('thead').clone();
 		tfoot = $(this).find('tfoot').clone();
@@ -483,7 +493,7 @@ if( !isNetReader && $('.tbl_scrollable').length){
 		}
 	}
 	
-	function adjust_columns(tbl, ws){
+	var  adjust_columns = function(tbl, ws){
 		//exresizeで変更を取得しているときには、そちらのサイズを使う……のでなければならなかったのかは、要確認。
 		//フォントサイズの変更はどうにか取れなかったかなあ……も要確認
 		//読み込み時に動いていないのも要確認
@@ -506,7 +516,7 @@ if( !isNetReader && $('.tbl_scrollable').length){
 			set_colswidth(tfoot_cols, tfoot_len, fixed_tfoot_cols, ws);
 		}
 	}
-	function set_colswidth(cols, len, fixed_cols, ws){
+	var  set_colswidth = function(cols, len, fixed_cols, ws){
 		for(i=0; i<len-1; i++){
 			if(ws){
 				w = ws[i];
@@ -724,11 +734,11 @@ $('.validation_error :input').tooltip({
 });
 
 //resizable
-function set_fixed_position(el){
+var set_fixed_position = function(el){
 		var l, r, w, dw ;//右端基準で固定したい
 		l  = parseInt(el.css( 'left' ));
 		w  = el.outerWidth();
-		dw = $(document).width();
+		dw = $('body').width();
 		r =  dw-l-w;
 		el.css({'position': 'fixed', 'left': 'auto', 'right': r})
 }
