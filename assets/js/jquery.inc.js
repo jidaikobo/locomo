@@ -115,16 +115,59 @@ if(firstFocus){
 function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );
 }
-var adminbarbar = $('#adminbar');
-if(adminbarbar.length){
-	headerheight = adminbarbar.outerHeight();
+var adminbar = $('#adminbar');
+if(adminbar.length){
+	headerheight = adminbar.outerHeight();
 	add_body_padding(headerheight);
 
-	adminbarbar.exResize(function(){
+	adminbar.exResize(function(){
 		headerheight = $(this).outerHeight();
 		add_body_padding(headerheight);
 	});
 }
+
+//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行うけれど、確実にサイト内に表示されている要素でサイズが変化するもの、がいいなあ
+//
+var fontsize_h, fontsize_ratio, window_resized;
+fontsize_h =  adminbar.height();
+var font_resize = setInterval(function(){
+	if(!window_resized && fontsize_h != adminbar.height()){
+		 fontsize_ratio = adminbar.height()/fontsize_h;
+		 fontsize_h = adminbar.height();
+//		 console.log(fontsize_ratio);
+		if(fontsize_ratio != 1 && !window_resized){
+//			console.log('フォントリサイズされたで')
+		}
+		window_resized = false;
+	}else
+	if(window_resized){
+//		console.log('ウィンドウのリサイズかもやで');
+	}
+}, 200);
+//window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
+//モーダルウィンドウも同じことになる？
+var resize_timer = false;
+$(window).resize(function(){
+	if (resize_timer !== false) clearTimeout(resize_timer);
+	resize_timer = setTimeout(function(){
+	//リサイズ終了待ちの処理
+	
+	}, 200);
+	$(document).find('#help_window:visible').each(function(e){
+		var pw, w, l, r;
+		w  = parseInt($(this).width());
+		pw = $(document).width();
+		l  = parseInt(this.offsetLeft);
+		r  = pw-l-w;
+		if(pw < w){
+			console.log('pw < w');
+			$(this).css({'width': pw, 'left' : 0});
+		}
+	});
+	window_resize = true;
+});
+
+
 
 //モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
 $('#modal_wrapper').on('click', function(){
@@ -398,9 +441,9 @@ function replace_info(){
 //フォーカス枠のある時の表示位置の調整もかんがえる(ページ内リンクのスクロールと同じ)
 $(document).on('keyup',function(e){
 	if($(':focus').attr('tabindex')){
-		console.log($(':focus')[0] + ': ' + $(':focus').attr('tabindex'));
+//		console.log($(':focus')[0] + ': ' + $(':focus').attr('tabindex'));
 	}else{
-		console.log($(':focus').is(':tabbable'));
+//		console.log($(':focus').is(':tabbable'));
 
 	}
 });
@@ -631,15 +674,18 @@ function confirm_beforeunload(){
 	});
 }
 
-if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')){
+var btn_submit = $('a:submit, input:submit');
+if(btn_submit.length && !$('body').hasClass('lcm_action_login')){
 	var datetime = $('.datetime');
 	datetime.each(function(){
 		var val = $(this).val();
 		$(this).data('val',val);
 	});
+//	$('form:not(".search")').find(btn_submit).attr('disabled', 'disabled');;
 	$('form:not(".search")').change( function(e){//form.searchは除外
 		e = e ? e : event;
 		var t = e.target;
+//		$(this).find(btn_submit).removeAttr('disabled');
 		if($(t).hasClass('datetime') && $(t).val() == $(t).data('val') ){
 			return false;
 		}else{
@@ -650,7 +696,6 @@ if($('a:submit, input:submit').length && !$('body').hasClass('lcm_action_login')
 		confirm_beforeunload();
 	}
 }
-
 //ページ遷移警告抑止
 $('a:submit, input:submit').click(function(){
 	if(!$(this).hasClass('confirm')){
@@ -738,7 +783,7 @@ var set_fixed_position = function(el){
 		var l, r, w, dw ;//右端基準で固定したい
 		l  = parseInt(el.css( 'left' ));
 		w  = el.outerWidth();
-		dw = $('body').width();
+		dw = $(window).width();//documentはbodyからoverflowした要素があると×。
 		r =  dw-l-w;
 		el.css({'position': 'fixed', 'left': 'auto', 'right': r})
 }
@@ -753,7 +798,7 @@ $('#help_window').resizable({
 	stop:function(e, ui) {
 		e = e ? e : event;
 		var el = $(e.target);
-		set_fixed_position(el);
+//		set_fixed_position(el);
 	}
 }).draggable({
 	'handle'      : '#help_title',
@@ -762,32 +807,9 @@ $('#help_window').resizable({
 	stop:function(e, ui) {
 		e = e ? e : event;
 		var el = $(e.target);
-		set_fixed_position(el);
+//		set_fixed_position(el);
 	}
 });
-
-//window.resizeもそのうちまとめたい。リサイズ終了待ち（setTimeout()）と、随時処理されたいものをわける。
-//左端基準だけ？
-//モーダルウィンドウも同じことになる？
-$(window).resize(function(){
-	$(document).find('#help_window:visible').each(function(e){
-		var l, r, w, pw;
-		l  = parseInt(this.offsetLeft);
-		w  = parseInt($(this).width());
-		pw = $(document).width();
-		r  = pw-l-w;
-		if(r < 0){//右端がはみ出た場合
-			$(this).css({'right': 0});
-		}else
-		if(l <= 0 && r > 0){
-			$(this).css({'right': r+l});
-		}else
-		if(l < 0){
-			$(this).css({'width': pw});
-		}//min-widthより小さくなったときの挙動と、window.resizeでとれない変化(最大化ウィンドウを縮小した時など)の挙動が怪しい。 bodyのサイズが100%越えている時の挙動もあやしい(テーブルがはみ出ている時など).draggableのほう？
-	});
-});
-
 
 
 //=== rollover ===

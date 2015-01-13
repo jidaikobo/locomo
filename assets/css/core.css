@@ -592,7 +592,7 @@ fieldset[disabled] a.button {
 input[disabled],
 select[disabled],
 textarea[disabled] {
-	background-color: #eee !important;
+	background-color: #eee ;
 	box-shadow:none;
 }
 .btn_group{
