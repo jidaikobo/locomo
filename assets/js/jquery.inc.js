@@ -240,7 +240,7 @@ if(lcm_focus.length && !tabindexCtrl){
 			t = target.find(each_date);
 		}
 		t.attr('tabindex', '0');
-		t.find(':tabbable').attr('tabindex', '-1')
+		t.find(':tabbable').attr('tabindex', '-1');
 	}
 	var escape_focus = function(e){
 		e = e ? e : event;
@@ -262,8 +262,9 @@ if(lcm_focus.length && !tabindexCtrl){
 		}
 	}
 
-	
-	set_lcm_focus();//lcm_focusが入れ子になっていてもここで一旦-1
+	setTimeout(function(){//他のイベント実行後に動かしたいのだけれど……
+		set_lcm_focus();//lcm_focusが入れ子になっていてもここで一旦-1
+	}, 100);
 	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip">抜ける</a>';//抜けるリンクの準備
 	
 	lcm_focus.on('keydown', function(e){
@@ -520,7 +521,7 @@ if( !isNetReader && $('.tbl_scrollable').length){
 			if(thead.length){
 				thead_wrapper = $('<div>').addClass('jslcm_thead_wrapper');
 				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(thead);
-				$(fixed_thead).find(':tabbable').attr('tabindex', '-1');
+				$(fixed_thead).find('a, button').attr('tabindex', '-1');
 			}
 			if(tfoot.length){
 				tfoot_wrapper = $('<div>').addClass('jslcm_tfoot_wrapper');
@@ -682,11 +683,11 @@ if(btn_submit.length && !$('body').hasClass('lcm_action_login')){
 		$(this).data('val',val);
 	});
 //	$('form:not(".search")').find(btn_submit).attr('disabled', 'disabled');;
-	$('form:not(".search")').change( function(e){//form.searchは除外
+	$('form').change( function(e){
 		e = e ? e : event;
-		var t = e.target;
+		var t = $(e.target);
 //		$(this).find(btn_submit).removeAttr('disabled');
-		if($(t).hasClass('datetime') && $(t).val() == $(t).data('val') ){
+		if( t.closest('section.search').length || t.hasClass('datetime') && t.val() == t.data('val') ){//.search form内やdatetimepickerでは除外
 			return false;
 		}else{
 			confirm_beforeunload();
