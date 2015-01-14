@@ -392,7 +392,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function paginated_find($options = array(), $use_get_query = true)
 	{
-
+		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
 		if ($use_get_query) {
 			$input_get = \Input::get();
 		} else {
