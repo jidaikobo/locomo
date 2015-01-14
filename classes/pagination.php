@@ -88,5 +88,60 @@ class Pagination extends \Fuel\Core\Pagination {
 
 	}
 
+	public static function __callStatic($name, $arguments)
+	{
+		if ($name == 'create_nav') {
+			if ($instance = static::instance() and method_exists($instance, 'render_nav'))
+			{
+				return call_fuel_func_array(array($instance, 'render_nav'), $arguments);
+			}
+		}
+
+		return parent::__callStatic($name, $arguments);
+	}
+
+	public function render_nav($raw = false)
+	{
+		var_dump($this->current_page);
+		// no links if we only have one page
+		if ($this->config['total_pages'] == 1)
+		{
+			return $raw ? array() : '';
+		}
+
+		$this->raw_results = array();
+
+		$total_strlen = strlen((string)$this->total_items);
+		$input = $this->input ?: \Form::input('paged', '', array('id' => 'pagination_input', 'size' => $total_strlen));
+
+
+		$form_open = $form_close = $wrap_start = $wrap_end = '';
+		// if (is_string($this->uri_segment)) {
+		if (true) {
+			$form_open  = \Form::open(array('action' => \Uri::create(\Uri::current()), 'method' => 'get', 'class' => "search"));
+			$form_close = \Form::close();
+		} else {
+			// $wrap_start = '<div class="pagination_wrap">';
+		}
+
+		var_dump($this->first());
+
+
+		$html = $wrap_start;
+		$html .= str_replace(
+			'{pagination}',
+			$form_open
+			.$this->first().$this->previous().$input.'/'.$this->total_pages.$this->next().$this->last()
+			.$form_close,
+			$this->template['wrapper']
+		);
+		$html .= $wrap_end;
+
+
+		return $raw ? $this->raw_results : $html;
+	}
+
+
+
 }
 

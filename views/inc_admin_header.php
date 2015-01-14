@@ -29,6 +29,7 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/i18n/jquery.ui.datepicker-ja.js"></script>
 	<script src="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
 	<script src="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js"></script>
+	<script src="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
 	<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
 	<?php echo \Asset::render('js'); ?>
 	<!--[if lt IE 9]>

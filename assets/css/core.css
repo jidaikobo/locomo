@@ -352,7 +352,7 @@ ul.holizonal_list {
 	padding-left: 0;
 }
 .holizonal_list li {
-	padding: 0 6px 0 0;
+	padding: .25em 6px .25em 0;
 }
 #adminbar ul.holizonal_list a {
 	display: inline;
@@ -592,7 +592,7 @@ fieldset[disabled] a.button {
 input[disabled],
 select[disabled],
 textarea[disabled] {
-	background-color: #eee !important;
+	background-color: #eee ;
 	box-shadow:none;
 }
 .btn_group{
@@ -749,7 +749,7 @@ a.desc:after {
 /*===  table  ===*/
 th.minimum,
 td.minimum {
-	width: 1em;
+	width: 1px;
 	white-space: nowrap;
 }
 
@@ -828,9 +828,33 @@ table.calendar {
 	border-bottom: 1px #bbb solid;
 	border-right: 1px #bbb solid;
 	width: 8em;
+	background-color: transparent;
+}
+.calendar th.week6 {
+	color: darkcyan;
+}
+.calendar th.week0 {
+	color: indianred;
 }
 .calendar td {
 	vertical-align: top;
+	padding: 0;
+}
+/* あとでkesu */
+.calendar .each_date {
+	min-height: 3.5em;
+}
+.calendar .title {
+	display: block;
+/*	background-color: #eee;*/
+	font-weight: bold;
+	text-decoration: none;
+}
+.week6 .title {
+	background-color: #aliceblue;
+}
+.week0 .title {
+	background-color: #pink;
 }
 .widget .calendar{
 	margin: 3px;
@@ -1003,7 +1027,8 @@ h1#page_title {
 .sub_column h2:first-of-type {
 	margin: 0;
 }
-.sub_column .form_group input {
+.sub_column input,
+.sub_column select {
 	margin-bottom: .25em;
 	font-size: .9em;
 }
