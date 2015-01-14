@@ -14,13 +14,12 @@ class Model_Flr extends \Model_Base
 	 */
 	protected static $_properties = array(
 		'id',
-		'username' => array(
-			'label' => 'ユーザ名',
-			'form' => array('type' => 'text', 'size' => 20, 'class' => 'username'),
+		'name' => array(
+			'label' => 'ファイル名',
+			'form' => array('type' => 'text', 'size' => 20, 'class' => 'name'),
 			'validation' => array(
 				'required',
-				'max_length' => array(50),
-				'valid_string' => array(array('alpha','numeric','dot','dashes')),
+				'max_length' => array(255)
 			),
 		),
 		'password' => array(
@@ -34,22 +33,9 @@ class Model_Flr extends \Model_Base
 			),
 			'default' => '',
 		),
-		'display_name' => array(
-			'label' => '表示名',
+		'path' => array(
+			'label' => '物理パス',
 			'form' => array('type' => 'text', 'size' => 20),
-			'validation' => array(
-				'required',
-				'max_length' => array(255),
-			),
-		),
-		'email' => array(
-			'label' => 'メールアドレス',
-			'form' => array('type' => 'text', 'size' => 20),
-			'validation' => array(
-				'required',
-				'valid_email',
-				'max_length' => array(255),
-			),
 		),
 		'is_visible' => array(
 			'label' => '可視属性',
@@ -62,10 +48,6 @@ class Model_Flr extends \Model_Base
 				'required',
 			),
 		),
-		'last_login_at',
-		'login_hash',
-		'activation_key',
-		'profile_fields',
 		'expired_at' => array('form' => array('type' => false), 'default' => null),
 		'creator_id' => array('form' => array('type' => false), 'default' => -1),
 		'updater_id' => array('form' => array('type' => false), 'default' => -1),
@@ -75,16 +57,20 @@ class Model_Flr extends \Model_Base
 	);
 
 	/**
-	 * $_many_many
+	 * $_has_many
 	 */
-	protected static $_many_many = array(
-		'usergroup' => array(
+	protected static $_has_many = array(
+		'permission_usergroup' => array(
 			'key_from' => 'id',
-			'key_through_from' => 'user_id',
-			'table_through' => 'lcm_usrs_usrgrps',
-			'key_through_to' => 'group_id',
-			'model_to' => '\Model_Usrgrp',
-			'key_to' => 'id',
+			'model_to' => '\Model_Flr_Usergroup',
+			'key_to' => 'flr_id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		),
+		'permission_user' => array(
+			'key_from' => 'id',
+			'model_to' => '\Model_Flr_User',
+			'key_to' => 'flr_id',
 			'cascade_save' => false,
 			'cascade_delete' => false,
 		)
@@ -114,111 +100,82 @@ class Model_Flr extends \Model_Base
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Locomo\Observer_Userids' => array(
-			'events' => array('before_insert', 'before_save'),
-		),
 		'Locomo\Observer_Password' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
 		'Locomo\Observer_Users' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Locomo\Observer_Revision' => array(
-			'events' => array('after_insert', 'after_save', 'before_delete'),
-		),
 	);
 
 	/**
-	 * form_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
+	 * form_definition_edit_dir()
 	 */
-	public static function form_definition($factory = 'user', $obj = null)
+	public static function form_definition_edit_dir($factory = 'form', $obj = null)
+	{
+		$id = isset($obj->id) ? $obj->id : '';
+
+		// forge
+		$form = parent::form_definition($factory, $obj);
+
+		// list of upload directories - for choose parent dir.
+		$paths = \File::read_dir(LOCOMOUPLADPATH);
+//$paths = \Arr::flatten($paths, '/');
+		//$paths = \Arr::flatten(\Arr::flatten($paths, '/'));
+
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
+var_dump( $paths ) ;
+echo '</textarea>' ;
+die();
+
+
+		return $form;
+	}
+
+	/**
+	 * form_definition()
+	 */
+	public static function form_definition($factory = 'form', $obj = null)
 	{
 //		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 		$id = isset($obj->id) ? $obj->id : '';
 
 		//forge
 		$form = parent::form_definition($factory, $obj);
-
-		// banned user names - same as administrators
-		$alladmins = unserialize(LOCOMO_ADMINS);
-		$roots     = array_keys(\Arr::get($alladmins, 'root', array()));
-		$admins    = array_keys(\Arr::get($alladmins, 'admin', array()));
-		$allnames  = array_unique(array_merge($roots, $admins));
-
-		//username
-		$form->field('username')
-			->add_rule('unique', "lcm_usrs.username.{$id}");
-
-		//usergroups
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
-		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
-		$form->add(
-				'usergroup',
-				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $options)
-			)
-			->set_value(array_keys($obj->usergroup));
-
-		// password
 		$form->field('password')->set_value('');
-
-		//管理者以外は旧パスワードを求める
-		if ( ! \Auth::is_admin()):
-			$form->add(
-					'old_password',
-					'旧パスワード',
-					array('type' => 'password', 'size' => 20, 'placeholder'=>'旧パスワードを入れてください')
-				)
-				->set_value('')
-				->add_rule('required')
-				->add_rule('min_length', 8)
-				->add_rule('max_length', 50)
-				->add_rule('match_password', "lcm_usrs.password.{$id}")
-				->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
-		endif;
-
-		//password
-		$form->field('password')
-			->add_rule('require_once', "lcm_usrs.password.{$id}");
-	
-		//confirm_password
-		$form->add(
-				'confirm_password',
-				'確認用パスワード',
-				array('type' => 'password', 'size' => 20)
+		$form
+			->add_after(
+				'upload',
+				'アップロード',
+				array('type' => 'file'),
+				array(),
+				'is_visible'
 			)
-			->set_value('')
-			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+			->set_template(
+				'<tr><th>{label}</th><td>{field}</td></tr></table><h2>パーミッション</h2><table>'
+			);
 
-		//email
-		$form->field('email')
-			->add_rule('unique', "lcm_usrs.email.{$id}");
+		// usergroup_id
+		$options = array(''=>'選択してください') + \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
+			'type' => 'select',
+			'options' => $options,
+			'class' => 'varchar usergroup',
+		);
+		$usergroup_id = \Fieldset::forge('permission_usergroup')->set_tabular_form_blank('\Model_Flr_Usergroup', 'permission_usergroup', $obj, 2);
+		$form->add($usergroup_id);
 
-		//created_at
-		$form->field('created_at')
-			->set_label('作成日')
-			->set_type('text')
-			->set_attribute('placeholder', date('Y-m-d H:i:s'))
-			->add_rule('non_zero_datetime');
+		// user_id
+		$options = array(''=>'選択してください') + \Model_Usr::get_options(array(), 'display_name');
+		\Model_Flr_User::$_properties['user_id']['form'] = array(
+			'type' => 'select',
+			'options' => $options,
+			'class' => 'varchar user',
+		);
+		$user_id = \Fieldset::forge('permission_user')->set_tabular_form_blank('\Model_Flr_User', 'permission_user', $obj, 2);
+		$form->add($user_id);
 
-		//expired_at
-		$form->field('expired_at')
-			->set_label('有効期日')
-			->set_type('text')
-			->set_attribute('placeholder', date('Y-m-d H:i:s'))
-			->add_rule('non_zero_datetime');
-
-		//is_visible
-		if (\Auth::is_admin()):
-			$form->field('is_visible')->set_type('select');
-		endif;
-
-//		static::$_cache_form_definition = $form;
 		return $form;
 	}
 }
