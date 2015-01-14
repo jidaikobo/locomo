@@ -55,6 +55,14 @@ if (\Auth::check()):
 					$html.= \Actionset::generate_menu_html($bases, array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
+
+				$indexes = \Arr::get($actionset, 'index', array());
+				if ($indexes):
+					$html.= '<div class="locomo_indexes">';
+					$html.= \Actionset::generate_menu_html($indexes, array('class'=>'holizonal_list'));
+					$html.= '</div><!-- .locomo_indexes -->';
+				endif;
+
 			$html.= '</div><!-- .adminbar_main -->';
 
 			// context menu2
@@ -112,7 +120,7 @@ if (\Auth::check()):
 			// help
 			$help_uri = \Uri::base().'hlp/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
 			$html.= '<div class="admin_help">';
-			$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'</span></a>';
+			$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'<span class="skip">エンターでヘルプを開きます</span></span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 
 			// admin option menu

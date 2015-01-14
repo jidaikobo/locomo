@@ -229,6 +229,9 @@ class Controller_Sys extends \Controller_Base
 			if ( ! method_exists($ctrl_act['controller'], 'action_'.$ctrl_act['action'])) continue;
 
 			// hmvc
+/*
+hmvcにサイズを渡すと、widget側でサイズごとの表示を返すことができるようなので、そのような措置を考える。
+*/
 			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute(array($qstr));
 			$actions[$k]['size'] = $obj->size ?: 1 ;// default small
 			$actions[$k]['title'] = array_search($act, $widget_names);

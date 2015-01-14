@@ -1100,11 +1100,20 @@ a.noicon:before,
 /* === align right (.cite , .sig , .cf) === */
 .cite,
 .sig,
-.cf {
+.cf,
+.ar {
 	text-align: right;
 	list-style: none;
 	clear: both;
 }
+
+/* === align left === */
+.al{
+	text-align: left;
+	list-style: none;
+	clear: both;
+}
+
 
 /* === span.subtitle === */
 span.subtitle {
@@ -1187,6 +1196,11 @@ a.edit_link span span {
 .formobile,
 .forsp {
 	display: none;
+}
+
+span.nowrap,
+span.nobr {
+	display: inline-block;
 }
 
 .nowrap,

@@ -39,6 +39,7 @@ scaffoldを使うとモジュールが生成されますが、APPPATH/classes/co
 
 モジュールの場合は、Locomoは、モジュール名と同名のconfigが存在することを期待します。configでは、最低限、一つの項目、main_controllerを持っている必要があります。configのnicename、explanation、orderは推奨項目です。
 なお、モジュールがconfigを持っていない場合、\Locomo\Controller_Baseを継承していても、モジュールは管理画面のコントローラリストやアクセス権限管理コントローラの対象になりません。しかし、\Locomo\Controller_Baseを継承するとアクセス権限チェックは行われるので、別途アクセス権限管理を実装する必要があります。
+モジュールの場合は、widgetsは、configに書きます。
 
 +quote start-----------------------------+
 return array(
@@ -46,6 +47,7 @@ return array(
 	'nicename'        => 'MODULE NICENAME',
 	'explanation'     => 'XXを行います。',
 	'order'           => 10,
+	'widgets'         => array(),
 );
 +-------------------------------quote end+
 

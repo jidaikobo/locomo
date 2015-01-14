@@ -150,13 +150,6 @@ body.lcm_action_login {
 	vertical-align: top;
 	width: 100%;
 }
-.sub_column form h2 {
-	font-size: 100%;
-	border: none;
-	box-shadow: none;
-	margin: 0;
-	padding: 0;
-}
 
 /*=== adminbar ===*/
 #adminbar {
@@ -257,6 +250,9 @@ body.lcm_action_login {
 .adminbar_top .adminbar_sub {
 	height: 2.5em;
 }
+.adminbar_bottom .adminbar_main {
+	padding: .25em 33px .25em 10px;
+}
 .adminbar_bottom .adminbar_sub {
 	padding-top: 0;
 	padding-bottom: 0;
@@ -356,7 +352,7 @@ ul.holizonal_list {
 	padding-left: 0;
 }
 .holizonal_list li {
-	padding: 0 6px 0 0;
+	padding: .25em 6px .25em 0;
 }
 #adminbar ul.holizonal_list a {
 	display: inline;
@@ -409,7 +405,11 @@ ul.holizonal_list {
 	margin-right: 10px;
 }
 
-
+.adminbar_sub .admin_module_option {
+	position: absolute;
+	top: 0;
+	right: 9px;
+}
 /* dashboard */
 /*あとでview側直書きの記述を削除*/
 .lcm_action_dashboard .contents {
@@ -592,7 +592,7 @@ fieldset[disabled] a.button {
 input[disabled],
 select[disabled],
 textarea[disabled] {
-	background-color: #eee !important;
+	background-color: #eee ;
 	box-shadow:none;
 }
 .btn_group{
@@ -643,6 +643,9 @@ div.flash_alert.alert_error {
 }
 .flash_alert ul.link a:hover{
 	text-decoration: underline;
+}
+.link_alert_error:focus {
+	position: relative !important;
 }
 
 /* tooltip */
@@ -700,7 +703,7 @@ div.form_tooltip{
 }
 /*===  form  ===*/
 .form_group{
-	margin: 10px 0 20px;
+	margin: 5px 0 20px;
 	padding: 10px;
 	background-color: #eee;
 }
@@ -711,7 +714,6 @@ form tbody th{
 
 label {
 	display: inline-block;
-	word-break: break-all;
 }
 .submit_button{
 	width: 100%;
@@ -745,15 +747,12 @@ a.desc:after {
 }
 
 /*===  table  ===*/
-th.adjustw,
-td.adjustw {
-	width: 1em;
+th.minimum,
+td.minimum {
+	width: 1px;
 	white-space: nowrap;
 }
 
-.datatable{
-	background-color: #fefefe;
-}
 /* tbl datatable */
 *>table.datatable thead th,
 *>table.datatable thead td,
@@ -762,8 +761,9 @@ td.adjustw {
 	padding:.25em .5em;
 }
 .datatable{
-	font-size: .9em;
 	border-bottom:1px solid #bbb;
+	background-color: #fefefe;
+	font-size: .9em;
 }
 .datatable tbody th{
 	font-weight: normal;
@@ -812,6 +812,56 @@ table.datatable td{
 	text-align: left;
 }
 
+table.calendar {
+	table-layout: fixed;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	border-spacing: 0px;
+	border-top: 1px #bbb solid;
+	border-left: 1px #bbb solid;
+}
+
+.calendar th,
+.calendar td {
+	padding: 3px 3px 2px;
+	border-bottom: 1px #bbb solid;
+	border-right: 1px #bbb solid;
+	width: 8em;
+	background-color: transparent;
+}
+.calendar th.week6 {
+	color: darkcyan;
+}
+.calendar th.week0 {
+	color: indianred;
+}
+.calendar td {
+	vertical-align: top;
+	padding: 0;
+}
+/* あとでkesu */
+.calendar .each_date {
+	min-height: 3.5em;
+}
+.calendar .title {
+	display: block;
+/*	background-color: #eee;*/
+	font-weight: bold;
+	text-decoration: none;
+}
+.week6 .title {
+	background-color: #aliceblue;
+}
+.week0 .title {
+	background-color: #pink;
+}
+.widget .calendar{
+	margin: 3px;
+}
+.widget.size1 .calendar{
+	font-size: 85%;
+}
 /*=== contents ===*/
 h1#page_title {
 	margin: 0.25em 0;
@@ -956,33 +1006,30 @@ h1#page_title {
 
 /*=== itemindex ===*/
 .sub_column .index_list {
-	margin-top: 2.3em;
-	margin-right: 10px;
+	margin: 2.3em 10px 20px 0;
 	padding: 10px 10px 10px 26px;
 	border: 1px solid #aaa;
 }
-
 .sub_column .button.primary{
 	display: block;
-	margin: 1em auto;
+	margin: auto;
 }
 
 .sub_column .form_group {
-	text-align: center;
-	margin-top: 20px;
 	margin-right: 10px;
 }
-.sub_column form{
-	text-align: left;
-}
-.sub_column form h2:first-of-type {
-	margin: 0;
-}
-.sub_column form h2 {
+.sub_column h2 {
+	font-size: 100%;
+	border: none;
+	box-shadow: none;
 	margin-top: .75em;
 }
-.sub_column .form_group input {
-	margin-bottom: 0.25em;
+.sub_column h2:first-of-type {
+	margin: 0;
+}
+.sub_column input,
+.sub_column select {
+	margin-bottom: .25em;
 	font-size: .9em;
 }
 .form_group table tbody th {
@@ -990,8 +1037,8 @@ h1#page_title {
 	min-width: 5em;
 	background-color: transparent;
 }
-.sub_column input[type="submit"] {
-	margin-top: 1em;
+section.search {
+	margin-bottom: 1em;
 }
 .index_info {
 	margin: 0 0 .4em;
