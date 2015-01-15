@@ -18,9 +18,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	protected $model_name = '';
 
 	/*
-	 * @var string base_url
+	 * @var string urls
 	 */
 	protected $base_url = '';
+	protected $main_url = '';
 
 	/**
 	 * @var string config
@@ -75,8 +76,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// base_url and main_url
 		$this->base_url = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
-		$this->main_url = $this->base_url.\Arr::get(static::$locomo, 'main_action') ?: '' ;
-
+		if (property_exists($this, 'locomo'))
+		{
+			$this->main_url = $this->base_url.\Arr::get(static::$locomo, 'main_action') ?: '' ;
+		}
 
 		// nicename
 		$called_class = get_called_class();

@@ -119,8 +119,15 @@ class Model_Flr extends \Model_Base
 		$form = parent::form_definition($factory, $obj);
 
 		// list of upload directories - for choose parent dir.
-		$paths = \File::read_dir(LOCOMOUPLADPATH);
-//$paths = \Arr::flatten($paths, '/');
+//		$paths = \File::read_dir(LOCOMOUPLADPATH);
+		$paths = \Util::getFileList(LOCOMOUPLADPATH);
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
+var_dump( $paths ) ;
+echo '</textarea>' ;
+
+//"/f/d/4/f.jpg"
+$paths = \Util::flatten_each($paths);
 		//$paths = \Arr::flatten(\Arr::flatten($paths, '/'));
 
 
