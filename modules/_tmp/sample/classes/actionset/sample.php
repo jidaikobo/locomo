@@ -1,6 +1,6 @@
 <?php
 namespace Sample;
-class Actionset_Option_Sample extends \Locomo\Actionset_Option
+class Actionset_Sample extends \Actionset_Base
 {
 	use \Actionset_Traits_Testdata;
 
@@ -13,6 +13,7 @@ class Actionset_Option_Sample extends \Locomo\Actionset_Option
 		$urls = static::generate_urls($controller.DS.'create', $actions);
 
 		$retvals = array(
+			'realm'        => 'option',
 			'urls'         => $urls,
 			'action_name'  => 'オプション',
 			'explanation'  => 'オプションの設定権限です。',
@@ -23,4 +24,5 @@ class Actionset_Option_Sample extends \Locomo\Actionset_Option
 		);
 		return $retvals;
 	}
+
 }

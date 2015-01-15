@@ -3,9 +3,6 @@ namespace Locomo;
 class Controller_Flr extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Testdata;
-	use \Controller_Traits_Crud;
-	use \Controller_Traits_Revision;
 	use \Controller_Traits_Bulk;
 
 	// locomo
@@ -39,6 +36,53 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if (\Input::get('from')) \Model_Usr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
 		if (\Input::get('to'))   \Model_Usr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
 		parent::index_admin();
+	}
+
+	/**
+	 * sync()
+	 */
+	protected function sync()
+	{
+//ディレクトリの状況をデータベースに反映
+	}
+
+	/**
+	 * action_edit_dir()
+	 */
+	public function action_edit_dir()
+	{
+		$model = $this->model_name ;
+		$obj = $model::forge();
+		$form = $model::form_definition_edit_dir('edit', $obj);
+
+		$content = \View::forge('flr/edit');
+		$content->set_global('form', $form, false);
+		$this->template->content = $content;
+		$this->template->set_global('title', 'ファイルアップロード');
+	}
+
+	/**
+	 * action_upload()
+	 */
+	public function action_upload($id = null)
+	{
+		$model = $this->model_name ;
+		$obj = $model::forge();
+		$form = $model::form_definition('edit', $obj);
+
+// パーミッションをいじることができるのは、ディレクトリとファイル
+// ディレクトリを編集しているときには、ディレクトリの新規作成、削除、パーミッションの変更ができる。ディレクトリの付け替えもできる？
+
+// postがあるときのロジック
+// postがあるときには、物理パスか$_FILESのいずれかが存在する
+// 物理パスは、変更できるようにする。ディレクトリを選択できるように。
+
+		$content = \View::forge('flr/edit');
+		$content->set_global('form', $form, false);
+		$this->template->content = $content;
+		$this->template->set_global('title', 'ファイルアップロード');
+
+
 	}
 
 	/**
