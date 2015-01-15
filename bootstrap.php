@@ -23,6 +23,9 @@ if ( ! \Config::load('locomo'))
 	\Config::load('packageconfig');
 }
 
+// upload
+define('LOCOMOUPLADPATH', \Config::get('upload_path'));
+
 // Autoloader::register()
 Autoloader::register();
 Autoloader::add_namespace('\\Locomo', LOCOMOPATH.'classes'.DS);

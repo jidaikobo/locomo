@@ -43,7 +43,7 @@ trait Controller_Traits_Revision
 		$items = \Model_Revision::paginated_find($options);
 		if ( ! $items):
 			\Session::set_flash('error', '履歴を取得できませんでした');
-			$ret = method_exists(__CLASS__, 'action_view') ? $this->base_url.'view/'.$id : $this->base_url;
+			$ret = method_exists(__CLASS__, 'action_view') ? $this->base_url.'view/'.$id : $this->main_url;
 			return \Response::redirect($ret);
 		endif;
 
@@ -93,7 +93,9 @@ trait Controller_Traits_Revision
 		$this->template->content = $view;
 	}
 
-
+	/**
+	 * action_view_revision()
+	 */
 	public function action_view_revision($revision_id = null)
 	{
 		is_null($revision_id) and \Response::redirect($this->base_url);

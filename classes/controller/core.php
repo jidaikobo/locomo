@@ -18,9 +18,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	protected $model_name = '';
 
 	/*
-	 * @var string base_url
+	 * @var string urls
 	 */
 	protected $base_url = '';
+	protected $main_url = '';
 
 	/**
 	 * @var string config
@@ -52,9 +53,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		$request = \Request::active();
 		$request->add_path(APPPATH.'views'.DS.\Request::main()->module.DS, true);
 
-		// base_url
-		$this->base_url = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
-
 		// load config and set model_name
 		$controller = substr(ucfirst(\Inflector::denamespace(\Request::active()->controller)), 11);
 		$current_module = \Request::main()->module;
@@ -75,6 +73,13 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			static::$config = \Config::load(strtolower($controller));
 		}
 		static::$config = static::$config ?: array();
+
+		// base_url and main_url
+		$this->base_url = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
+		if (property_exists($this, 'locomo'))
+		{
+			$this->main_url = $this->base_url.\Arr::get(static::$locomo, 'main_action') ?: '' ;
+		}
 
 		// nicename
 		$called_class = get_called_class();
@@ -213,7 +218,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public function after($response)
 	{
-		if (!isset($this->template->title)) throw new \Exception("template に title を設定して下さい。<br>\$this->template->set_global('title', TITLE_VALUE')");
+		if (!isset($this->template->title)) throw new \Exception("template に title を設定して下さい。\$this->template->set_global('title', 'TITLE_VALUE');");
 
 		// return the template if no response is present and this isn't a RESTful call
 		if ( ! $this->is_restful())

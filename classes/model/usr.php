@@ -128,6 +128,11 @@ class Model_Usr extends Model_Base
 		),
 	);
 
+	//$_conditions
+	public static $_conditions = array(
+		'order_by' => array('id' => 'asc'),
+	);
+
 	/**
 	 * form_definition()
 	 *

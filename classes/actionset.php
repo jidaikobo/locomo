@@ -114,10 +114,13 @@ class Actionset
 			}
 
 			// order
+			$override = \Arr::get(static::$actions[$controller][$realm], 'override_url');
+			if ($override) unset(static::$actions[$controller][$realm]['override_url']);// evacuate
 			static::$actions[$controller][$realm] = \Arr::multisort(
 				static::$actions[$controller][$realm],
 				array('order' => SORT_ASC,)
 			);
+			if ($override) static::$actions[$controller][$realm]['override_url'] = $override;// evacuate
 		}
 
 		// override
@@ -127,102 +130,6 @@ class Actionset
 		}
 
 		return true;
-/*
-		if ( ! property_exists($controller, 'locomo')) return false;
-		$locomo = $controller::$locomo;
-
-		// primary key
-		$obj = is_object($obj) ? $obj : (object) array() ;
-		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
-
-		// get controllers actions
-		$act_methods = get_class_methods($controller);
-		$act_methods = array_flip($act_methods);
-		$act_methods = \Arr::filter_prefixed($act_methods, 'action_');
-		$act_methods = array_flip($act_methods);
-
-		// actionset by actionset classes
-		$actions = array();
-		foreach(\Arr::get($locomo, 'actionset_classes', array()) as $realm => $class)
-		{
-			// methods - search prefixed 'actionset_'
-			$methods = get_class_methods($class);
-			if (! is_array($methods)) continue;
-			$methods = array_flip($methods);
-			$methods = \Arr::filter_prefixed($methods, 'actionset_');
-			$methods = array_flip($methods);
-
-			foreach($methods as $method)
-			{
-				// eliminate non exists action
-				if ( ! in_array($method, $act_methods)) continue;
-
-				$p_method = 'actionset_'.$method;
-				$as = $class::$p_method($controller, $obj, $id);
-				// require "urls" or "dependencies"
-				if (\Arr::get($as, 'urls.0') || \Arr::get($as, 'dependencies.0'))
-				{
-					static::$actions[$controller][$realm][$method] = $as;
-				}
-			}
-		}
-
-		// actionset by actionset methods
-		foreach(\Arr::get($locomo, 'actionset_methods', array()) as $realm => $methods)
-		{
-			$as = array();
-			foreach($methods as $method)
-			{
-				$k_method = substr($method, strlen('actionset_'));
-				$as[$k_method] = $controller::$method($controller, $obj, $id);
-			}
-			static::$actions[$controller][$realm] = $as;
-		}
-
-		// actionset by actionset array
-		foreach(\Arr::get($locomo, 'actionset', array()) as $realm => $v)
-		{
-			foreach ($v as $k => $vv)
-			{
-				$links = array();
-				foreach ($vv["urls"] as $uri => $str)
-				{
-					$links[] = \Html::anchor(\Uri::create(\Inflector::ctrl_to_dir($uri)), $str);
-				}
-				$v[$k]['urls'] = $links;
-			}
-			static::$actions[$controller][$realm] = $v;
-		}
-
-		if (empty(static::$actions[$controller])) return false;
-
-		// override and order
-		$overrides = array();
-		foreach (static::$actions[$controller] as $realm => $v)
-		{
-			foreach ($v as $kk => $vv)
-			{
-				if (isset($vv['overrides']))
-				{
-					$overrides = array_merge($overrides, $vv['overrides']);
-				}
-			}
-
-			// order
-			static::$actions[$controller][$realm] = \Arr::multisort(
-				static::$actions[$controller][$realm],
-				array('order' => SORT_ASC,)
-			);
-		}
-
-		// override
-		foreach($overrides as $realm => $urls)
-		{
-			static::$actions[$controller][$realm]['override_url'] = $urls;
-		}
-
-		return true;
-*/
 	}
 
 	/**

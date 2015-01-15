@@ -262,7 +262,6 @@ hmvcにサイズを渡すと、widget側でサイズごとの表示を返すこ�
 		// assign
 		$content= \View::forge('sys/edit_dashboard');
 		$content->set_global('title', 'ダッシュボードの設定');
-		$this->base_assign(); // to override add_actionset()
 		$this->template->content = $content;
 	}
 

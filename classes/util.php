@@ -102,28 +102,71 @@ class Util
 		return $latest_prefix;
 	}
 
-
 	/*
 	 * 年度の期間を between 句で返す
 	 * todo 4月のみ対応しているので、後々変える
 	 * @return where between 句
 	 */
-	public static function get_fiscal($date = null) {
-
-		
+	public static function get_fiscal($date = null)
+	{
 		if (preg_match('/^([0-9]{4})$/', $date)) $date = date('Y-n-d', strtotime($date . '-04-01'));
 		//var_dump(date('Y-n', strtotime($date))); die();
 		!$date and $date = date('Y-m-d');
 
-		if (date('n', strtotime($date)) < 4) {
+		if (date('n', strtotime($date)) < 4)
+		{
 			$year = date('Y', strtotime($date)) - 1;
-		} else {
+		}
+		else
+		{
 			$year = date('Y', strtotime($date));
 		}
 
 		return \DB::expr('"' . $year . '-04-01 00:00:00"' . ' and ' . '"' . ($year+1) . '-03-31 23:59:59"');
 	}
 
+	/*
+	 * flatten_each()
+	 * 連想配列をキー一つずつに一つの配列を持った一次元配列に変える
+	 */
+	public static function flatten_each($arr, $dir = '')
+	{
+		static $retvals = array();
+		static $dir = '';
+		static $depth = 0;
+		$current_depth = $depth;
 
+		if (is_array($arr))
+		{
+			$tmp = array();
+			foreach ($arr as $k => $v)
+			{
+				if($current_depth != count(explode('/', $dir))-1)
+				{
+					$depth++;
+					if (count($v) == 0)
+					{
+						if(is_array($v)){
+							$dir = $k;
+						}else{
+							$dir = $v;
+						}
 
+					}else{
+						$dir = $dir;
+					}
+				}else{
+					$dir.= $k;
+				}
+				$retvals[] = $dir;
+				$tmp = static::flatten_each($v, $dir);
+			}
+			return $tmp;
+		}
+		else
+		{
+			$retvals[] = $dir.DS.$arr;
+			return $retvals;
+		}
+	}
 }
