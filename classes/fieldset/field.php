@@ -125,6 +125,17 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 
 
 
+	/*
+	 * 暗黙的ラベル用にオーバーライド
+	 */
+	public function build() {
+		$form = $this->fieldset()->form();
+		if ($this->error() and $form->get_config('error_alert_link')) {
+			$this->set_attribute('data-jslcm-tooltip',"{error_msg}");
+		}
+
+		return parent::build();
+	}
 
 	/*
 	 * 暗黙的ラベル用にオーバーライド
@@ -185,7 +196,8 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 				}
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description), $template);
+
+				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description), $template); // 変更
 
 				return $template;
 			}
@@ -213,8 +225,14 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		 */
 
 
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id),
+		 // 追加 3
+		$error_alert_link = $this->error() ? $form->get_config('error_alert_link') : '';
+
+		// $build_field->set_attribute('data-jslcm-tooltip', $error_msg);
+
+		// 変更 error_alert_link を足した
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}', '{error_alert_link}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id , $error_alert_link),
 			$template);
 
 		return $template;

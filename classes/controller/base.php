@@ -355,7 +355,7 @@ class Controller_Base extends Controller_Core
 				'success',
 				sprintf('%1$sの #%2$d を復活しました', self::$nicename, $id)
 			);
-			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()));
+			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class(). '/index_admin'));
 		}
 
 		\Session::set_flash('error', sprintf('項目の復活中にエラーが発生しました'));
@@ -397,13 +397,15 @@ class Controller_Base extends Controller_Core
 	protected function purge($id = null)
 	{
 		$model = $this->model_name;
+
+		$model::disable_filter();
 		if (\Auth::is_root()
-			and \Input::post()
-			and \Security::check_token()
+			//and \Input::post()
+			//and \Security::check_token()
 			and $obj = $model::find($id)) {
 
 			try {
-				// 現状 Cascading deleteの恩恵を受けられない？ 要実装 
+				// 現状 Cascading deleteの恩恵を受けられない？ 要実装
 				$obj->purge(null, true);
 			}
 			catch (\Exception $e) {
@@ -413,7 +415,7 @@ class Controller_Base extends Controller_Core
 
 			\Session::set_flash('success', sprintf('%1$sの #%2$d を完全に削除しました', self::$nicename, $id));
 
-			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()));
+			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class() . '/index_deleted'));
 		}
 
 		\Session::set_flash('error', sprintf('項目の完全削除中にエラーが発生しました'));

@@ -11,7 +11,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_index_admin()
 	{
-		parent::index_admin();
+		static::index_admin();
 	}
 
 	/**
@@ -19,7 +19,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_index()
 	{
-		parent::index_admin();
+		static::index_admin();
 	}
 
 	/**
@@ -29,7 +29,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_index_yet()
 	{
-		parent::index_yet();
+		static::index_yet();
 	}
 
 	/**
@@ -37,7 +37,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_index_expired()
 	{
-		parent::index_expired();
+		static::index_expired();
 	}
 
 	/**
@@ -45,7 +45,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_index_invisible()
 	{
-		parent::index_invisible();
+		static::index_invisible();
 	}
 
 	/**
@@ -53,7 +53,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_index_deleted()
 	{
-		parent::index_deleted();
+		static::index_deleted();
 	}
 
 	/*
@@ -61,7 +61,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_index_all()
 	{
-		parent::index_all();
+		static::index_all();
 	}
 
 	/**
@@ -69,7 +69,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_view($id = null)
 	{
-		parent::view($id);
+		static::view($id);
 	}
 
 	/**
@@ -77,7 +77,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_create($id = null)
 	{
-		parent::create($id);
+		static::create($id);
 	}
 
 	/**
@@ -85,7 +85,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_edit($id = null)
 	{
-		parent::edit($id);
+		static::edit($id);
 	}
 
 	/**
@@ -95,7 +95,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_delete($id = null)
 	{
-		parent::delete($id);
+		static::delete($id);
 	}
 
 	/**
@@ -103,7 +103,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_undelete($id = null)
 	{
-		parent::undelete($id);
+		static::undelete($id);
 	}
 
 	/**
@@ -111,7 +111,7 @@ trait Controller_Traits_Crud
 	 */
 	public function action_purge_confirm ($id = null)
 	{
-		parent::purge_confirm($id);
+		static::purge_confirm($id);
 	}
 
 	/**
@@ -119,6 +119,6 @@ trait Controller_Traits_Crud
 	 */
 	public function action_purge($id = null)
 	{
-		parent::purge($id);
+		static::purge($id);
 	}
 }
