@@ -21,16 +21,16 @@
 	if ( ! \Auth::is_admin()): ?>
 	<tr class="<?php echo $form->field('old_password')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('old_password')->set_template('{label}{required}'); ?></th>
-		<td><?php echo $form->field('old_password')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
+		<td><?php echo $form->field('old_password')->set_template('<em class="aria_nd" hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
 	</tr>
 	<?php endif; ?>
 	<tr class="<?php echo $form->field('password')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('password')->set_template('{label}{required}'); ?></th>
-		<td><?php echo $form->field('password')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
+		<td><?php echo $form->field('password')->set_template('<em class="aria_nd" hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
 	</tr>
 	<tr class="<?php echo $form->field('confirm_password')->set_template('{error_class}'); ?>">
 		<th class="ctrl"><?php echo $form->field('confirm_password')->set_template('{label}{required}'); ?></th>
-		<td><?php echo $form->field('confirm_password')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
+		<td><?php echo $form->field('confirm_password')->set_template('<em class="aria_nd" hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
 	</tr>
 	<tr class="<?php echo $form->field('email')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('email')->set_template('{label}{required}'); ?></th>
@@ -38,17 +38,17 @@
 	</tr>
 	<tr class="<?php echo $form->field('created_at')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('created_at')->set_template('{label}{required}'); ?></th>
-		<td><?php echo $form->field('created_at')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
+		<td><?php echo $form->field('created_at')->set_template('<em class="aria_nd" hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
 	</tr>
 	</tr>
 	<tr class="<?php echo $form->field('expired_at')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('expired_at')->set_template('{label}{required}'); ?></th>
-		<td><?php echo $form->field('expired_at')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
+		<td><?php echo $form->field('expired_at')->set_template('<em class="aria_nd" hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
 	</tr>
 	<?php if (\Auth::is_admin()): ?>
 	<tr class="<?php echo $form->field('is_visible')->set_template('{error_class}'); ?>">
 		<th><?php echo $form->field('is_visible')->set_template('{label}{required}'); ?></th>
-		<td><?php echo $form->field('is_visible')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
+		<td><?php echo $form->field('is_visible')->set_template('<em class="aria_nd" hidden="true">{error_msg}</em>{field}')->set_attribute('data-jslcm-tooltip',"{error_msg}"); ?></td>
 	</tr>
 	<?php endif; ?>
 	</table>

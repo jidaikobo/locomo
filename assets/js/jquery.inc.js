@@ -1,5 +1,19 @@
+//チェックボックス全選択
+$(function() {
+	$('.check_all').on('click', function(e) {
+		e.preventDefault();
+		$('.checkbox_binded').prop('checked', true);
+	});
+	$('.uncheck_all').on('click', function(e) {
+		e.preventDefault();
+		$('.checkbox_binded').prop('checked', false);
+	});
+
+});
+
+
 // ヘルプ呼び出し
-var help_preparation = false;
+var help_preparation = false;//なにかしら、読込済かどうかわかるようにしておく
 function show_help(e){
 	e = e ? e : event;
 	if(e) e.preventDefault();//クリックイベント以外(アクセスキー等)の場合を除外
@@ -24,7 +38,10 @@ $(function(){
 });
 
 //モーダル
-function modal(id){
+//書き直す。
+//modalを呼ぶ側にdata-jslcm-modal-id?を書き、相手を指定する。モーダル表示中はフォーカスを制御し、それ以外の部分については操作不可とする。
+//例えばNetReaderで制御を抜けた時はどうするの、とか、考えておくとよいのかも。(NetReader側では一時的にmodal外をdisplay: none;にするとか？　その場合、うまくイベントを抜けられなかったときが不安)
+function lcm_modal(id){
 	var el, wrapper, closelink;
 	el = document.getElementById(id);
 	if(el){
@@ -59,6 +76,8 @@ $(function(){
 var userAgent = window.navigator.userAgent;
 isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
 tabindexCtrl = userAgent.indexOf('NetReader') > 0 ? true : false;//この条件は増えたり減ったりするのかも。
+if(isNetReader) $('body').addClass('netreader');
+
 
 //スクロールバーのサイズ取得
 var scrollbar_s = (function(){
@@ -160,8 +179,10 @@ $(window).resize(function(){
 		l  = parseInt(this.offsetLeft);
 		r  = pw-l-w;
 		if(pw < w){
-			console.log('pw < w');
+//			console.log('pw < w');
 			$(this).css({'width': pw, 'left' : 0});
+		}else if(r < 0){
+			$(this).css({'left' : pw-w});
 		}
 	});
 	window_resize = true;
@@ -208,7 +229,7 @@ $.fn.set_tabindex = function(){//focusableな要素のtabindexを一旦dataに�
 		dataTabindex = $(this).data('tabindex');
 		if( tabindex && !dataTabindex){//tabindexがあって、dataにまだない場合
 			$(this).data('tabindex',tabindex);
-		}else if(!tabindex){ 
+		}else if(!tabindex){
 			$(this).data('tabindex', 'none');
 		}
 		$(this).attr('tabindex','-1');
@@ -229,9 +250,9 @@ $.fn.reset_tabindex = function(){
 }
 
 //フォーカス枠の設定//NetReaderなどフォーカス制御がむずかしいブラウザは対象外にする
-if($('.lcm_focus.calendar').length) var each_date = $('.each_date:has(a)').addClass('lcm_focus');//カレンダーのテーブルの中身を設定
-
 var lcm_focus = $('.lcm_focus');
+var lcm_calendar = $('.lcm_focus.calendar');
+if(lcm_calendar.length) var each_date = $('.each_date:has(a)').addClass('lcm_focus');//カレンダーのテーブルの中身を設定
 
 if(lcm_focus.length && !tabindexCtrl){
 	var set_lcm_focus = function(target){
@@ -240,7 +261,7 @@ if(lcm_focus.length && !tabindexCtrl){
 			t = target.find(each_date);
 		}
 		t.attr('tabindex', '0');
-		t.find(':tabbable').attr('tabindex', '-1')
+		t.find(':tabbable').attr('tabindex', '-1');
 	}
 	var escape_focus = function(e){
 		e = e ? e : event;
@@ -262,8 +283,9 @@ if(lcm_focus.length && !tabindexCtrl){
 		}
 	}
 
-	
-	set_lcm_focus();//lcm_focusが入れ子になっていてもここで一旦-1
+	setTimeout(function(){//他のイベント実行後に動かしたいなあ
+		set_lcm_focus();//lcm_focusが入れ子になっていてもここで一旦-1
+	}, 100);
 	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip">抜ける</a>';//抜けるリンクの準備
 	
 	lcm_focus.on('keydown', function(e){
@@ -286,12 +308,13 @@ if(lcm_focus.length && !tabindexCtrl){
 			e.stopPropagation();
 		}
 	});
-	$(document).on('keydown', function(e){//他のセミモーダルなどの閉じるESCと組み合わせるとへんな動きになる
+	$(document).on('keydown', function(e){//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
 		e = e ? e : event;
 		var t, k;
 		t = $(e.target);
 		k = e.which;
-		if( !t.is(':input') && k == 27 ){
+//		console.log($('.modal.on, .semimodal.on'));
+		if( !t.is(':input') && !$('.modal.on, .semimodal.on').length && k == 27 ){
 			escape_focus(t);
 			e.stopPropagation();
 		}
@@ -503,7 +526,14 @@ $(document).on('keydown',function(e){
 
 
 //表内スクロール - 各ブラウザでの挙動が怪しいのでもうちょっと
-if( !isNetReader && $('.tbl_scrollable').length){
+
+if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを考える。
+//ここで、対象内のrowspan・colspanの有無を判定して、なければdisplay:block等を設定する方法に分岐してみる？ それ用のクラスを与える。
+//ということは、そもそも簡単な表ではそのクラスを与えてもらうようにするとよい？
+//……rosplan・colspanがあってscrollableでなければいけない表は少なそう。
+//…………ということは、デフォルトのcssのはtbl_scrollableに対して設定してしまって、jslcmで分岐した際にclass名を変更するのがよいのかも。
+//noscript環境のことを考えておく
+
 /*
 //スクロールバーの幅ぶん調整したい
 //現状だと右端は最終列にかぶり、下端はスクロールバー分はみ出る（margin-bottm: -{スクロールバー};）
@@ -520,7 +550,7 @@ if( !isNetReader && $('.tbl_scrollable').length){
 			if(thead.length){
 				thead_wrapper = $('<div>').addClass('jslcm_thead_wrapper');
 				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(thead);
-				$(fixed_thead).find(':tabbable').attr('tabindex', '-1');
+				$(fixed_thead).find('a, button').attr('tabindex', '-1');
 			}
 			if(tfoot.length){
 				tfoot_wrapper = $('<div>').addClass('jslcm_tfoot_wrapper');
@@ -569,8 +599,15 @@ if( !isNetReader && $('.tbl_scrollable').length){
 			$(fixed_cols[i]).width(w+1);//borderの太さを足す。とりあえず1pxで
 		}
 	}
-	
-	$(document).find('.tbl_scrollable').each(tbl_scrollable);
+/*
+	if($('.tbl_scrollable').find('th[rowspan], th[colspan], td[rowspan], td[colspan]')){
+		//colspan_rowspanの分岐。なんにしても中身の幅を指定する必要がありそうなので、元の値を見るadjust的な振る舞いは必要。その後addClassする。
+		//要素が少なくなる分ちょっと軽かったり、フォーカス周りの処置が楽になる、といいなあ
+		//でも、ヘッダ・フッタとボディのレイアウトが分かれてしまうので、セルの幅を取るのがむずかしくなる可能性あり。とくにリサイズ時注意
+		adjust_columns($('.tbl_scrollable'));
+		$('.tbl_scrollable').addClass('nocelspan');
+	}else{
+*/	$(document).find('.tbl_scrollable').each(tbl_scrollable);
 	
 	$.fn.el_overflow_y = function(){
 		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
@@ -639,6 +676,7 @@ if( !isNetReader && $('.tbl_scrollable').length){
 			}
 		});
 	}
+//	}//colspan, rowspan分岐終わり
 }
 
 
@@ -682,11 +720,11 @@ if(btn_submit.length && !$('body').hasClass('lcm_action_login')){
 		$(this).data('val',val);
 	});
 //	$('form:not(".search")').find(btn_submit).attr('disabled', 'disabled');;
-	$('form:not(".search")').change( function(e){//form.searchは除外
+	$('form').change( function(e){
 		e = e ? e : event;
-		var t = e.target;
+		var t = $(e.target);
 //		$(this).find(btn_submit).removeAttr('disabled');
-		if($(t).hasClass('datetime') && $(t).val() == $(t).data('val') ){
+		if( t.closest('section.search').length || t.hasClass('datetime') && t.val() == t.data('val') ){//.search form内やdatetimepickerは除外
 			return false;
 		}else{
 			confirm_beforeunload();

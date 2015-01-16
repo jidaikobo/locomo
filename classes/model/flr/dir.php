@@ -1,13 +1,11 @@
 <?php
 namespace Locomo;
-class Model_Flr extends \Model_Base
+class Model_Flr_Dir extends \Model_Base
 {
 	/**
 	 * vals
 	 */
 	protected static $_table_name = 'lcm_flrs';
-	public static $_subject_field_name = 'username';
-	public static $_creator_field_name = 'id';
 
 	/**
 	 * $_properties
@@ -15,16 +13,17 @@ class Model_Flr extends \Model_Base
 	protected static $_properties = array(
 		'id',
 		'name' => array(
-			'label' => 'ファイル名',
+			'label' => 'ディレクトリ名',
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'name'),
 			'validation' => array(
 				'required',
-				'max_length' => array(255)
+				'max_length' => array(255),
+				'valid_string' => array(array('alpha','numeric','dot','dashes')),
 			),
 		),
 		'path' => array(
 			'label' => '物理パス',
-			'form' => array('type' => 'text', 'size' => 20),
+			'form' => array('type' => 'hidden'),
 		),
 		'is_visible' => array(
 			'label' => '可視属性',
@@ -89,31 +88,7 @@ class Model_Flr extends \Model_Base
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-		'Locomo\Observer_Password' => array(
-			'events' => array('before_insert', 'before_save'),
-		),
-		'Locomo\Observer_Users' => array(
-			'events' => array('before_insert', 'before_save'),
-		),
 	);
-
-	/**
-	 * form_definition_edit_dir()
-	 */
-	public static function form_definition_edit_dir($factory = 'form', $obj = null)
-	{
-		$id = isset($obj->id) ? $obj->id : '';
-
-		// forge
-		$form = parent::form_definition($factory, $obj);
-
-		// list of upload directories - for choose parent dir.
-		$paths = \Util::get_file_list(LOCOMOUPLADPATH);
-
-
-
-		return $form;
-	}
 
 	/**
 	 * form_definition()
@@ -125,26 +100,79 @@ class Model_Flr extends \Model_Base
 		// forge
 		$form = parent::form_definition($factory, $obj);
 
-		// set fields
-		$form->add_after(
-				'upload',
-				'アップロード',
-				array('type' => 'file'),
-				array(),
-				'is_visible'
-			)
-			->set_template(
-				'<tr><th>{label}</th><td>{field}</td></tr></table><h2>パーミッション</h2><table>'
-			);
+		// create or move
+		if (in_array(\Request::active()->action, array('create_dir', 'move_dir')))
+		{
+			$form = static::directory_list($form, $obj);
+		}
 
+		// create or rename
+		if (in_array(\Request::active()->action, array('create_dir', 'rename_dir')))
+		{
+
+		}
+
+		// permission
+		if (in_array(\Request::active()->action, array('permission_dir')))
+		{
+			$form = static::permission($form, $obj);
+		}
+
+
+
+		return $form;
+	}
+
+	/**
+	 * directory_list()
+	 */
+	public static function directory_list($form, $obj)
+	{
+		// list of upload directories - for choose parent dir.
+		$current_dir = @$obj->path ?: '';
+		$current_dir = $current_dir ? rtrim($current_dir, '/').DS : '';
+		$selected = $current_dir ? dirname($current_dir).DS : '' ;
+		$dirs = \Util::get_file_list(LOCOMOUPLADPATH, $type = 'dir');
+		$options = array();
+		foreach ($dirs as $dir)
+		{
+			// is exist on database
+			if( ! \Model_Flr::find('first', array('where' => array(array('path', $dir)))) && $dir != LOCOMOUPLADPATH) continue;
+
+			// cannot choose myself and children
+			if ($current_dir && substr($dir, 0, strlen($current_dir)) == $current_dir) continue;
+		
+			// check auth
+			if ( ! \Controller_Flr::check_auth($dir)) continue;
+
+			$options[$dir] = substr($dir, strlen(LOCOMOUPLADPATH) - 1);
+		}
+		$form->add_after(
+				'parent',
+				'親ディレクトリ',
+				array('type' => 'select', 'options' => $options, 'style' => 'width: 10em;'),
+				array(),
+				'name'
+			)
+			->set_value($selected);
+
+		return $form;
+	}
+
+	/**
+	 * permission()
+	 */
+	public static function permission($form, $obj)
+	{
 		// usergroup_id
-		$options = array(''=>'選択してください') + \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$options = array(''=>'選択してください', '0' => 'ゲスト') + $options;
 		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
 			'type' => 'select',
 			'options' => $options,
 			'class' => 'varchar usergroup',
 		);
-		$usergroup_id = \Fieldset::forge('permission_usergroup')->set_tabular_form_blank('\Model_Flr_Usergroup', 'permission_usergroup', $obj, 2);
+		$usergroup_id = \Fieldset::forge('permission_usergroup')->set_tabular_form('\Model_Flr_Usergroup', 'permission_usergroup', $obj, 2);
 		$form->add($usergroup_id);
 
 		// user_id
@@ -154,7 +182,7 @@ class Model_Flr extends \Model_Base
 			'options' => $options,
 			'class' => 'varchar user',
 		);
-		$user_id = \Fieldset::forge('permission_user')->set_tabular_form_blank('\Model_Flr_User', 'permission_user', $obj, 2);
+		$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
 		$form->add($user_id);
 
 		return $form;

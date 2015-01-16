@@ -60,7 +60,7 @@ class Observer_Password extends \Orm\Observer
 		else:
 			//$objをvar_dump()すると、_originalが見えるので、きっとここ、リファクタリングできる
 			$originals = $obj->get_original_values();
-			$obj->{$this->_property} = $originals[$this->_property];
+			$obj->{$this->_property} = @$originals[$this->_property];
 		endif;
 	}
 }
