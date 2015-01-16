@@ -225,6 +225,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name ;
 		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
 		$content = \View::forge($this->_content_template ?: $dir.'edit');
+		$flag = true;
 
 		if ($id)
 		{
@@ -261,9 +262,13 @@ class Controller_Base extends Controller_Core
 						'success',
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
+
+					// redirect
 					$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
 					$redirect = $redirect ? $redirect.DS.$obj->id : $locomo_path.DS.$obj->id;
-					return \Response::redirect(\Uri::create($redirect));
+					static::$redirect = $redirect;
+
+					return $obj;
 				}
 				else
 				{
@@ -283,6 +288,7 @@ class Controller_Base extends Controller_Core
 					// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
 					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
 					\Session::set_flash('error', $errors);
+					$flag = false;
 				}
 			}
 		}
@@ -302,6 +308,8 @@ class Controller_Base extends Controller_Core
 		$content->set_global('form', $form, false);
 		$this->template->content = $content;
 		static::set_object($obj);
+
+		return $flag;
 	}
 
 	/**

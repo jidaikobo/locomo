@@ -6,12 +6,11 @@ class Create_flrs
 	{
 		// lcm_flrs
 		\DBUtil::create_table('lcm_flrs', array(
-			'id'         => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'id'         => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'       => array('constraint' => 255, 'type' => 'varchar'),
-			'password'   => array('constraint' => 255, 'type' => 'varchar'),
 			'path'       => array('constraint' => 255, 'type' => 'varchar'),
-			'seq'        => array('constraint' => 11, 'type' => 'int', 'null' => true),
-			'is_visible' => array('constraint' => 5, 'type' => 'int'),
+			'seq'        => array('constraint' => 11,  'type' => 'int', 'null' => true),
+			'is_visible' => array('constraint' => 5,   'type' => 'int'),
 			'deleted_at' => array('type' => 'datetime', 'null' => true),
 			'created_at' => array('type' => 'datetime', 'null' => true),
 			'expired_at' => array('type' => 'datetime', 'null' => true),
@@ -25,8 +24,10 @@ class Create_flrs
 		\DBUtil::create_table('lcm_flr_permissions', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'flr_id'       => array('constraint' => 11, 'type' => 'int'),
-			'user_id'      => array('constraint' => 11, 'type' => 'int'),
-			'usergroup_id' => array('constraint' => 11, 'type' => 'int'),
+			'is_writable'  => array('constraint' => 5,  'type' => 'int', 'null' => true),
+			'user_id'      => array('constraint' => 11, 'type' => 'int', 'null' => true),
+			'usergroup_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
+			'deleted_at' => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 		\DBUtil::create_index('lcm_flr_permissions', array('flr_id','user_id'), 'flrs_perm_uid');
 		\DBUtil::create_index('lcm_flr_permissions', array('flr_id','usergroup_id'), 'flrs_perm_gid');

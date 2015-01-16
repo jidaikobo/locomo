@@ -125,48 +125,29 @@ class Util
 		return \DB::expr('"' . $year . '-04-01 00:00:00"' . ' and ' . '"' . ($year+1) . '-03-31 23:59:59"');
 	}
 
-	/*
-	 * flatten_each()
-	 * 連想配列をキー一つずつに一つの配列を持った一次元配列に変える
+	/**
+	 * get_file_list
 	 */
-	public static function flatten_each($arr, $dir = '')
+	public static function get_file_list($dir, $type = 'all')
 	{
-		static $retvals = array();
-		static $dir = '';
-		static $depth = 0;
-		$current_depth = $depth;
+		$iterator = new \RecursiveDirectoryIterator($dir);
+		$iterator = new \RecursiveIteratorIterator($iterator);
 
-		if (is_array($arr))
+		$list = array();
+		// $fileinfo is SplFiIeInfo Object
+		foreach ($iterator as $fileinfo)
 		{
-			$tmp = array();
-			foreach ($arr as $k => $v)
-			{
-				if($current_depth != count(explode('/', $dir))-1)
-				{
-					$depth++;
-					if (count($v) == 0)
-					{
-						if(is_array($v)){
-							$dir = $k;
-						}else{
-							$dir = $v;
-						}
+//			if ($type == 'all'  && ! $fileinfo->isFile() && ! $fileinfo->isDir()) continue;
+			if ($type == 'file' && ! $fileinfo->isFile()) continue;
+			if ($type == 'dir'  && ! $fileinfo->isDir()) continue;
 
-					}else{
-						$dir = $dir;
-					}
-				}else{
-					$dir.= $k;
-				}
-				$retvals[] = $dir;
-				$tmp = static::flatten_each($v, $dir);
-			}
-			return $tmp;
+			$path = $fileinfo->getPathname();
+			$basename = basename($path);
+			if (substr($basename, 0, 2) == '..') continue;
+			$path = substr($basename, 0, 1) == '.' ? substr($path, 0, -1) : $path ;
+			$list[] = $path;
 		}
-		else
-		{
-			$retvals[] = $dir.DS.$arr;
-			return $retvals;
-		}
+		
+		return $list;
 	}
 }

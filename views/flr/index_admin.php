@@ -50,23 +50,17 @@
 		<tr>
 			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
 			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
-			<th><?php echo \Pagination::sort('username', 'User name'); ?></th>
-			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
-			<th><?php echo \Pagination::sort('last_login_at', 'Last login'); ?></th>
-			<th>Delete date</th>
+			<th><?php echo \Pagination::sort('name', 'name'); ?></th>
 			<th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
-		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
+		<tr tabindex="-1">
 			<td style="text-align: center;"><input type="checkbox"></td>
 			<td><?php echo $item->id; ?></td>
 			<td style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1"><?php 
-					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div></td>
-			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
-			<td><?php echo $item->last_login_at; ?></td>
-			<td><?php echo $item->deleted_at; ?></td>
+					echo Html::anchor('flr/view'.'/'.$item->id, $item->name, array('class' => 'view'));?></div></td>
 			<td>
 				<div class="btn_group">
 					<?php

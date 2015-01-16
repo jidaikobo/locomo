@@ -23,6 +23,12 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	protected $base_url = '';
 	protected $main_url = '';
 
+
+	/*
+	 * @var string redirect
+	 */
+	protected static $redirect = '';
+
 	/**
 	 * @var string config
 	 */
@@ -218,6 +224,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public function after($response)
 	{
+		// redirect
+		if(static::$redirect) \Response::redirect(\Uri::create(static::$redirect));
+
+		// error
 		if (!isset($this->template->title)) throw new \Exception("template に title を設定して下さい。\$this->template->set_global('title', 'TITLE_VALUE');");
 
 		// return the template if no response is present and this isn't a RESTful call
