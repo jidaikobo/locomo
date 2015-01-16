@@ -880,6 +880,23 @@ h1#page_title {
 	font-size: 1.1em;
 	margin: 1em 0 .25em;
 }
+
+/*=== tbl_scrollable ===*/
+/*.nocelspan */
+.tbl_scrollable.nocelspan thead tr {
+	float: left;
+	width: 100%;
+}
+.tbl_scrollable.nocelspan tbody {
+	float: left;
+	width: 100%;
+	height: 400px;
+	overflow: auto;
+}
+
+
+
+/*  */
 .jslcm_tbl_wrapper{
 	position: relative;
 	overflow-y: hidden;
@@ -1135,6 +1152,13 @@ body .ui-datepicker select.ui-datepicker-month{
 body .ui-resizable-handle{
 	z-index: 100000 !important;
 }
+
+
+/*=== for NetReader ===*/
+.netreader .ui-tooltip{
+	display: none !important;
+}
+
 /*=== Tiny MCE ===*/
 .switch_mce{
 	padding: 4px 0 4px 18px;
