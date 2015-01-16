@@ -6,7 +6,6 @@ class Controller_Usr extends \Locomo\Controller_Base
 	use \Controller_Traits_Testdata;
 	use \Controller_Traits_Crud;
 	use \Controller_Traits_Revision;
-	use \Controller_Traits_Bulk;
 
 	// locomo
 	public static $locomo = array(

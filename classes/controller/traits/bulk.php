@@ -5,7 +5,7 @@ trait Controller_Traits_Bulk
 	/*
 	 * @return Fieldset object
 	 */
-	public function bulk($options = array(), $pagination_config = array(), $model = null)
+	public function bulk($options = array(), $model = null, $create = null)
 	{
 		if (!$model) $model = $this->model_name;
 		$action = \Request::main()->action;
@@ -28,6 +28,13 @@ trait Controller_Traits_Bulk
 			}
 		}
 		// edit
+		elseif ($create)
+		{
+			for ($i = 0; $i < $create; $i++)
+			{
+				$objects[] = $model::forge();
+			}
+		}
 		else
 		{
 			$objects = $model::paginated_find($options);
