@@ -64,7 +64,9 @@
 			<td>
 				<div class="btn_group">
 					<?php
-					echo Html::anchor('usr/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
+					echo Html::anchor('flr/move_dir'.'/'.$item->id, '移動', array('class' => 'edit'));
+					echo Html::anchor('flr/rename_dir'.'/'.$item->id, 'リネーム', array('class' => 'edit'));
+					echo Html::anchor('flr/permission_dir'.'/'.$item->id, '権限', array('class' => 'edit'));
 					?>
 				</div>
 			</td>

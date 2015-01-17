@@ -108,7 +108,7 @@ class Model_Flr extends \Model_Base
 		$form = parent::form_definition($factory, $obj);
 
 		// list of upload directories - for choose parent dir.
-		$paths = \Util::get_file_list(LOCOMOUPLADPATH);
+		$paths = \Util::get_file_list(LOCOMOUPLOADPATH);
 
 
 

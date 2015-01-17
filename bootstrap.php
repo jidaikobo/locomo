@@ -24,7 +24,7 @@ if ( ! \Config::load('locomo'))
 }
 
 // upload
-define('LOCOMOUPLADPATH', \Config::get('upload_path'));
+define('LOCOMOUPLOADPATH', \Config::get('upload_path'));
 
 // Autoloader::register()
 Autoloader::register();

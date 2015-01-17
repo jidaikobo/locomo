@@ -46,7 +46,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// create dir
 		if (\Input::post())
 		{
-			$parent =  \Input::post('parent', LOCOMOUPLADPATH);
+			$parent =  \Input::post('parent', LOCOMOUPLOADPATH);
 			$dirnname = \Input::post('name');
 
 			if (file_exists($parent.$dirnname))
@@ -60,20 +60,24 @@ class Controller_Flr extends \Locomo\Controller_Base
 		}
 
 		// parent::edit()
-		if ( ! \Input::post() || (\Input::post() && ! $errors))
+		$obj = parent::edit();
+
+		// new path
+		if (\Input::post() && ! $errors)
 		{
-			$obj = parent::edit();
-			// path
-			if (\Input::post() && $obj)
-			{
-				$obj->path = dirname($obj->path).DS.$dirnname;
-				$obj->save();
-				static::$redirect = 'flr/rename_dir/'.$obj->id;
-			}
+			$obj->path = $parent.$dirnname;
+			$obj->save();
 		}
 
 		// error
 		if($errors) \Session::set_flash('error', $errors);
+
+		// rewrite message
+		$success = \Session::get_flash('success');
+		if ($success)
+		{
+			\Session::set_flash('success', "ディレクトリを新規作成しました。");
+		}
 
 		// assign
 		$this->template->set_global('title', 'ディレクトリ作成');
@@ -94,34 +98,106 @@ class Controller_Flr extends \Locomo\Controller_Base
 		{
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
 			$prev_name = $obj->name;
-			$parent =  \Input::post('parent', LOCOMOUPLADPATH);
+			$parent = dirname($obj->path).DS;
 			$dirnname = \Input::post('name');
 
 			// rename
 			if ($prev_name != $dirnname)
 			{
-				\File::rename($obj->path, dirname($obj->path).DS.$dirnname);
+				if( ! \File::rename($obj->path, $parent.$dirnname))
+				{
+					$errors[] = 'ディレクトリのリネームに失敗しました。';
+				}
 			}
 		}
 
 		// parent::edit()
-		if ( ! \Input::post() || (\Input::post() && ! $errors))
-		{
-			parent::edit();
+		$obj = parent::edit($id);
 
-			// new path
-			if (\Input::post())
-			{
-				$obj->path = dirname($obj->path).DS.$dirnname;
-				$obj->save();
-			}
+		// new path
+		if (\Input::post() && ! $errors)
+		{
+			$obj->path = $parent.$dirnname;
+			$obj->save();
 		}
 
 		// error
 		if($errors) \Session::set_flash('error', $errors);
 
+		// rewrite message
+		$success = \Session::get_flash('success');
+		if ($success)
+		{
+			\Session::set_flash('success', "ディレクトリをリネームしました。");
+		}
+
 		// assign
-		$this->template->set_global('title', 'ディレクトリ作成');
+		$this->template->set_global('title', 'ディレクトリリネーム');
+	}
+
+	/**
+	 * action_move_dir()
+	 * ディレクトリの移動
+	 */
+	public function action_move_dir($id = null)
+	{
+		$this->model_name = '\Model_Flr_Dir' ;
+		$model = $this->model_name;
+		$errors = array();
+
+		// rename dir
+		if (\Input::post())
+		{
+			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
+			$parent = \Input::post('parent');
+			$dirnname = \Input::post('name');
+
+			// move
+			if ($obj->path != $parent.$dirnname)
+			{
+				$flag = \File::copy_dir($obj->path, $parent.$dirnname);
+				if ( ! $flag)
+				{
+					$flag = \File::delete_dir($obj->path, $recursive = true);
+				}
+				else
+				{
+					$errors[] = 'ディレクトリの移動（作成）に失敗しました。';
+				}
+
+				if( ! $flag)
+				{
+					$errors[] = 'ディレクトリの移動（削除）に失敗しました。';
+				}
+			}
+			else
+			{
+				$errors[] = '移動先が同じ場所なので移動しませんでした。';
+			}
+		}
+
+		// parent::edit()
+		$obj = parent::edit($id);
+
+		// new path
+		if (\Input::post() && ! $errors)
+		{
+			$obj->path = $parent.$dirnname;
+			$obj->save();
+		}
+
+		// error
+		if($errors) \Session::set_flash('error', $errors);
+
+		// rewrite message
+		$success = \Session::get_flash('success');
+		if ($success)
+		{
+			\Session::set_flash('success', "ディレクトリを移動しました。");
+		}
+
+		// assign
+		$this->template->set_global('title', 'ディレクトリの移動');
 	}
 
 	/**
@@ -168,7 +244,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 				$errors = array();
 				$is_operation_done = true;
 				$dirnname = \Input::post('name');
-				$parent =  \Input::post('parent', LOCOMOUPLADPATH);
+				$parent =  \Input::post('parent', LOCOMOUPLOADPATH);
 
 				// create Directory
 				if(\Input::post('is_create'))

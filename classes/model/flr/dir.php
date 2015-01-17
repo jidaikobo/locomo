@@ -106,19 +106,25 @@ class Model_Flr_Dir extends \Model_Base
 			$form = static::directory_list($form, $obj);
 		}
 
-		// create or rename
-		if (in_array(\Request::active()->action, array('create_dir', 'rename_dir')))
+		// move
+		if (in_array(\Request::active()->action, array('move_dir')))
 		{
+			$form->field('name')->set_type('hidden');
+			$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
+		}
 
+		// rename
+		if (in_array(\Request::active()->action, array('rename_dir')))
+		{
+			$form = static::parent_dir($form, $obj);
 		}
 
 		// permission
 		if (in_array(\Request::active()->action, array('permission_dir')))
 		{
+			$form = static::rename_dir($form, $obj);
 			$form = static::permission($form, $obj);
 		}
-
-
 
 		return $form;
 	}
@@ -132,12 +138,12 @@ class Model_Flr_Dir extends \Model_Base
 		$current_dir = @$obj->path ?: '';
 		$current_dir = $current_dir ? rtrim($current_dir, '/').DS : '';
 		$selected = $current_dir ? dirname($current_dir).DS : '' ;
-		$dirs = \Util::get_file_list(LOCOMOUPLADPATH, $type = 'dir');
+		$dirs = \Util::get_file_list(LOCOMOUPLOADPATH, $type = 'dir');
 		$options = array();
 		foreach ($dirs as $dir)
 		{
 			// is exist on database
-			if( ! \Model_Flr::find('first', array('where' => array(array('path', $dir)))) && $dir != LOCOMOUPLADPATH) continue;
+			if( ! \Model_Flr::find('first', array('where' => array(array('path', $dir)))) && $dir != LOCOMOUPLOADPATH) continue;
 
 			// cannot choose myself and children
 			if ($current_dir && substr($dir, 0, strlen($current_dir)) == $current_dir) continue;
@@ -145,7 +151,7 @@ class Model_Flr_Dir extends \Model_Base
 			// check auth
 			if ( ! \Controller_Flr::check_auth($dir)) continue;
 
-			$options[$dir] = substr($dir, strlen(LOCOMOUPLADPATH) - 1);
+			$options[$dir] = substr($dir, strlen(LOCOMOUPLOADPATH) - 1);
 		}
 		$form->add_after(
 				'parent',
@@ -155,6 +161,27 @@ class Model_Flr_Dir extends \Model_Base
 				'name'
 			)
 			->set_value($selected);
+
+		return $form;
+	}
+
+	/**
+	 * parent_dir()
+	 */
+	public static function parent_dir($form, $obj)
+	{
+		$current_dir = @$obj->path ?: '';
+		$current_dir = $current_dir ? rtrim(dirname($current_dir), '/').DS : '';
+		$current_dir = $current_dir ? substr($current_dir, strlen(LOCOMOUPLOADPATH) - 1) : '';
+
+		$form->add_after(
+				'parent',
+				'親ディレクトリ',
+				array('type' => 'text', 'disabled' => 'disabled', 'style' => 'width:100%;'),
+				array(),
+				'name'
+			)
+			->set_value($current_dir);
 
 		return $form;
 	}
