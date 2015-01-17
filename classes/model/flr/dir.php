@@ -106,11 +106,10 @@ class Model_Flr_Dir extends \Model_Base
 			$form = static::directory_list($form, $obj);
 		}
 
-		// move
-		if (in_array(\Request::active()->action, array('move_dir')))
+		// move or delete
+		if (in_array(\Request::active()->action, array('move_dir', 'purge_dir', 'permission_dir')))
 		{
-			$form->field('name')->set_type('hidden');
-			$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
+			$form = static::hide_currentname($form, $obj);
 		}
 
 		// rename
@@ -122,10 +121,19 @@ class Model_Flr_Dir extends \Model_Base
 		// permission
 		if (in_array(\Request::active()->action, array('permission_dir')))
 		{
-			$form = static::rename_dir($form, $obj);
 			$form = static::permission($form, $obj);
 		}
 
+		return $form;
+	}
+
+	/**
+	 * hide_currentname()
+	 */
+	public static function hide_currentname($form, $obj)
+	{
+		$form->field('name')->set_type('hidden');
+		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
 		return $form;
 	}
 
@@ -147,12 +155,13 @@ class Model_Flr_Dir extends \Model_Base
 
 			// cannot choose myself and children
 			if ($current_dir && substr($dir, 0, strlen($current_dir)) == $current_dir) continue;
-		
+
 			// check auth
 			if ( ! \Controller_Flr::check_auth($dir)) continue;
 
 			$options[$dir] = substr($dir, strlen(LOCOMOUPLOADPATH) - 1);
 		}
+
 		$form->add_after(
 				'parent',
 				'親ディレクトリ',

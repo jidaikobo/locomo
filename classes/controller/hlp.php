@@ -30,13 +30,16 @@ class Controller_Hlp extends \Controller_Base
 	 */
 	public function action_edit($id = NULL)
 	{
-		$action = urlencode(\Input::param('action'));
+		$action = \Input::param('action');
 		$ctrl = \Inflector::words_to_upper(substr($action, 0, strpos($action, '%')));
 		$obj = \Model_Hlp::find('first', array('where'=>array(array('ctrl', $ctrl))));
-		$id = @$obj->id ?: '';
-		$redirect = '/hlp/edit?action='.$action;
-		parent::edit($id, $redirect);
-		$this->template->content->set('action', $action);
+		$id = @$obj->id ?: $id;
+		$obj = parent::edit($id);
+		if ($obj)
+		{
+			static::$redirect = '/hlp/edit/'.$obj->id;
+		}
+///		$this->template->content->set('action', $action);
 	}
 
 	/**

@@ -39,7 +39,7 @@ class Model_Hlp extends \Model_Base
 				'class' => 'text tinymce',
 			),
 			'validation' => array(
-				'required',
+//				'required',
 			),
 		),
 

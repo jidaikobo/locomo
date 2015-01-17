@@ -18,7 +18,7 @@ trait Actionset_Traits_Revision
 		if(in_array(\Request::main()->action, $arr))
 		{
 			$overrides_urls = array(
-				array($controller.DS, $controller::$locomo['admin_home_name']),
+				array($controller.DS, $controller::$locomo['main_action']),
 			);
 			$overrides['base'] = static::generate_urls($controller.DS.'edit', $overrides_urls, [], 'option');
 		}

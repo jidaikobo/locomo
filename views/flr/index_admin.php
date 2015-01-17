@@ -48,25 +48,27 @@
 <table class="tbl datatable tbl_scrollable lcm_focus">
 	<thead>
 		<tr>
-			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
-			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
-			<th><?php echo \Pagination::sort('name', 'name'); ?></th>
-			<th>&nbsp;</th>
+			<th>ディレクトリ名</th>
+			<th>相談</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1">
-			<td style="text-align: center;"><input type="checkbox"></td>
-			<td><?php echo $item->id; ?></td>
-			<td style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1"><?php 
-					echo Html::anchor('flr/view'.'/'.$item->id, $item->name, array('class' => 'view'));?></div></td>
+			<td style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1">
+			<?php
+				$dirname = substr(dirname($item->path), strlen(LOCOMOUPLOADPATH) - 1).DS;
+				echo Html::anchor('flr/index_files'.'/'.$item->id, $dirname.$item->name, array('class' => 'view'));
+			?>
+			</div></td>
 			<td>
 				<div class="btn_group">
 					<?php
+					echo Html::anchor('flr/upload'.'/'.$item->id, 'アップロード', array('class' => 'edit'));
 					echo Html::anchor('flr/move_dir'.'/'.$item->id, '移動', array('class' => 'edit'));
 					echo Html::anchor('flr/rename_dir'.'/'.$item->id, 'リネーム', array('class' => 'edit'));
 					echo Html::anchor('flr/permission_dir'.'/'.$item->id, '権限', array('class' => 'edit'));
+					echo Html::anchor('flr/purge_dir'.'/'.$item->id, '削除', array('class' => 'edit'));
 					?>
 				</div>
 			</td>

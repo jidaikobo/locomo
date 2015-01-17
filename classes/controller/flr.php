@@ -21,8 +21,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_index_admin()
 	{
-		if (\Input::get('from')) \Model_Usr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
-		if (\Input::get('to'))   \Model_Usr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
+		if (\Input::get('from')) \Model_Flr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
+		if (\Input::get('to'))   \Model_Flr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
+		\Model_Flr::$_conditions['order_by'][] = array('name', 'ASC');
 		parent::index_admin();
 	}
 
@@ -65,7 +66,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// new path
 		if (\Input::post() && ! $errors)
 		{
-			$obj->path = $parent.$dirnname;
+			$obj->path = rtrim($parent.$dirnname, DS).DS;
 			$obj->save();
 		}
 
@@ -77,6 +78,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if ($success)
 		{
 			\Session::set_flash('success', "ディレクトリを新規作成しました。");
+			static::$redirect = 'flr/create/';
 		}
 
 		// assign
@@ -201,146 +203,71 @@ class Controller_Flr extends \Locomo\Controller_Base
 	}
 
 	/**
-	 * action_edit_dir()
-	 * ディレクトリの作成、移動、パージ、パーミッション設定
+	 * action_permission_dir()
+	 * ディレクトリの権限
 	 */
-	public function action_edit_dir($id = null)
+	public function action_permission_dir($id = null)
 	{
-		$model = '\Model_Flr_Dir' ;
-		$is_create = false;
+		$this->model_name = '\Model_Flr_Dir' ;
+		$model = $this->model_name;
+		$errors = array();
 
-		if ($id)
+		// parent::edit()
+		$obj = parent::edit($id);
+
+		// rewrite message
+		$success = \Session::get_flash('success');
+		if ($success)
 		{
-			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
-
-			// not found
-			if ( ! $obj)
-			{
-				$page = \Request::forge('sys/403')->execute();
-				return new \Response($page, 403);
-			}
-
-			$prev_name = $obj->name;
-			$prev_path = $obj->path;
-			$title = $obj->name . '編集';
+			\Session::set_flash('success', "ディレクトリの権限を変更しました。");
 		}
-		else
-		{
-			$obj = $model::forge();
-			$title = 'ディレクトリ新規作成';
-			$is_create = true;
-		}
-		$form = $model::form_definition('edit', $obj);
 
-		// save
+		// assign
+		$this->template->set_global('title', 'ディレクト権限');
+	}
+
+	/**
+	 * action_purge_dir()
+	 * ディレクトリの削除
+	 */
+	public function action_purge_dir($id = null)
+	{
+		$this->model_name = '\Model_Flr_Dir' ;
+		$errors = array();
+
+		// create dir
 		if (\Input::post())
 		{
-			if (
-				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
-				 \Security::check_token()
-			)
+			$path = \Input::post('path');
+
+			if ( ! file_exists($parent.$dirnname))
 			{
-
-				$errors = array();
-				$is_operation_done = true;
-				$dirnname = \Input::post('name');
-				$parent =  \Input::post('parent', LOCOMOUPLOADPATH);
-
-				// create Directory
-				if(\Input::post('is_create'))
-				{
-					if (file_exists($parent.$dirnname))
-					{
-						$errors[] = 'そのディレクトリは既に存在します。';
-						$is_operation_done = false;
-					}
-					elseif ( ! \File::create_dir($parent, \Input::post('name')))
-					{
-						$errors[] = 'ディレクトリの新規作成に失敗しました。';
-						$is_operation_done = false;
-					}
-				}
-
-				// edit Directory
-				if( ! \Input::post('is_create'))
-				{
-					// rename
-					if ($prev_name != $dirnname)
-					{
-						\File::rename($obj->path, dirname($obj->path).DS.$dirnname);
-						$new_path = dirname($obj->path).DS.$dirnname;
-					}
-/*
-ここから
-リネームとムーブを一緒にする場合、リネーム内に入れるべきかちょっと考える。
-*/
-					// move
-					if ($obj->path != $parent.$dirnname)
-					{
-						\File::copy_dir($obj->path, $parent.$dirnname);
-						\File::delete_dir($obj->path, $recursive = true);
-					}
-				}
-
-
-				// file operation done
-				if ($is_operation_done)
-				{
-					// path
-					$obj->path = rtrim($parent.$dirnname, '/').DS;
-
-					//save
-					if ($obj->save(null, true))
-					{
-							// success
-							\Session::set_flash(
-								'success',
-								sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
-							);
-		
-							// redirect
-							$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
-							return \Response::redirect(\Uri::create($locomo_path.DS.$obj->id));
-					}
-					else
-					{
-						//save failed
-						\Session::set_flash(
-							'error',
-							sprintf('%1$sの #%2$d を更新できませんでした', self::$nicename, $id)
-						);
-					}
-				}
-				// file operation failed
-				else
-				{
-					array_unshift($errors, 'ファイルオペレーションに失敗しました。');
-					$errors[] = 'どうしてもうまくいかないときにはパーミッションを確認してください。';
-					//save failed
-					\Session::set_flash('error', $errors);
-				}
+				$errors[] = '削除すべきディレクトリが存在しません';
 			}
-			else
+			elseif ( ! \File::delete_dir($path, $recursive = true))
 			{
-				//edit view or validation failed of CSRF suspected
-				if (\Input::method() == 'POST')
-				{
-					$errors = $form->error();
-					// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
-					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
-					\Session::set_flash('error', $errors);
-				}
+				$errors[] = 'ディレクトリの削除に失敗しました。';
+			}
+
+			// error
+			if($errors)
+			{
+				$obj = parent::purge($id);
+				\Session::set_flash('error', $errors);
+			}
+			// rewrite message
+			$success = \Session::get_flash('success');
+			if ($success)
+			{
+				\Session::set_flash('success', "ディレクトリを削除しました。");
 			}
 		}
 
-		
+		// parent::edit()
+		$obj = parent::edit($id);
 
-
-		$content = \View::forge('flr/edit');
-		$content->set_global('is_create', $is_create);
-		$content->set_global('form', $form, false);
-		$this->template->content = $content;
-		$this->template->set_global('title', 'ディレクトリ操作');
+		// assign
+		$this->template->set_global('title', 'ディレクトリ削除');
 	}
 
 	/**

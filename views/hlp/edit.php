@@ -22,7 +22,7 @@
 <div class="submit_button">
 	<?php
 		echo $form->field('title')->set_template('{field}');
-		echo \Form::hidden('action', $action);
+//		echo \Form::hidden('action', $action);
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 	?>

@@ -225,16 +225,16 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name ;
 		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
 		$content = \View::forge($this->_content_template ?: $dir.'edit');
-		$flag = true;
+		$flag = false;
 
 		if ($id)
 		{
 			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
-
 			// not found
 			if ( ! $obj)
 			{
 				$page = \Request::forge('sys/403')->execute();
+				$this->template->set_safe('content', $page);
 				return new \Response($page, 403);
 			}
 			$title = '#' . $id . ' ' . self::$nicename . '編集';

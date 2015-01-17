@@ -11,6 +11,7 @@ class Create_flrs
 			'path'       => array('constraint' => 255, 'type' => 'varchar'),
 			'seq'        => array('constraint' => 11,  'type' => 'int', 'null' => true),
 			'is_visible' => array('constraint' => 5,   'type' => 'int'),
+			'is_sticky'  => array('constraint' => 5,   'type' => 'int'),
 			'deleted_at' => array('type' => 'datetime', 'null' => true),
 			'created_at' => array('type' => 'datetime', 'null' => true),
 			'expired_at' => array('type' => 'datetime', 'null' => true),
