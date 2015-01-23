@@ -393,7 +393,7 @@ $(document).click(function(e){
 	replace_info();//開く・閉じる説明文切り替え
 } );
 
-//モーダル
+//モーダル あとで。まだ使ってない
 function close_modal(focus,t){
 	//modalを閉じる機能、で、semimodalと併用できるように考える
 	//現在のtabbableを取る？
@@ -482,8 +482,8 @@ $(document).on('keydown',function(e){
 	var t, k, modal, tabbable, first, last, index;
 	t = e.target;
 	k = e.which;
-	console.log(e);
-	console.log(':'+k);
+//	console.log(e);
+//	console.log(':'+k);
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
 	index = null;
