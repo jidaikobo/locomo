@@ -23,19 +23,6 @@ namespace Locomo;
  */
 class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 {
-	public function get_value()
-	{
-		return $this->value;
-	}
-
-	public function get_name() {
-		return $this->name;
-	}
-
-	public function set_name($name) {
-		$this->name = $name;
-	}
-
 
 	/*
 	 * alike a build method
@@ -134,108 +121,23 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 			$this->set_attribute('data-jslcm-tooltip',"{error_msg}");
 		}
 
-		return parent::build();
-	}
-
-	/*
-	 * 暗黙的ラベル用にオーバーライド
-	 */
-	protected function template($build_field)
-	{
-		$form = $this->fieldset()->form();
-
-		$required_mark = $this->get_attribute('required', null) ? $form->get_config('required_mark', null) : null;
-		$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', null), 'class' => $form->get_config('label_class', null))) : '';
-		$error_template = $form->get_config('error_template', '');
-		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
-		$error_class = $this->error() ? $form->get_config('error_class') : '';
-
-		if (is_array($build_field))
-		{
-			$label = $this->label ? str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>')) : '';
-			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
-			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
-			{
-				$build_fields = '';
-				foreach ($build_field as $lbl => $bf)
-				{
-
-					// 追加 1 ここから
-					if ((bool)$form->get_config('implicit_label', false) and $this->type == 'radio') {
-
-						if (strpos($match[1], 'field') < strpos($match[1], 'label')) { // field が前
-
-							$lbl = str_replace('</label>', '', $lbl);
-
-							$lbl_text = substr( $lbl, strrpos($lbl, '>')+1, mb_strlen($lbl) );
-							$lbl = str_replace($lbl_text, '', $lbl);
-							$bf_temp = str_replace('{field}', $lbl, $match[1]);
-							$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
-							$bf_temp = str_replace('{label}', $bf . $lbl_text . '</label>', $bf_temp);
-
-						} elseif (strpos($match[1], 'field') > strpos($match[1], 'label')) { // label が前
-
-							$lbl = str_replace('</label>', '', $lbl);
-
-							$bf_temp = str_replace('{label}', $lbl, $match[1]);
-							$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
-							$bf_temp = str_replace('{field}', $bf . '</label>', $bf_temp);
-
-						}
-
-					} else {
-					// 追加 1 ここまで
-
-						$bf_temp = str_replace('{label}', $lbl, $match[1]);
-						$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
-						$bf_temp = str_replace('{field}', $bf, $bf_temp);
-					}
-
-					$build_fields .= $bf_temp;
-
+		if ($this->type == "text"
+			or $this->type == "testarea"
+		) {
+		// var_dump( $this->type);
+			if ($title_contained = $form->get_config('title_contained')) {
+				if (!$this->get_attribute('title')) {
+					$title_inner = '';
+						$title_inner .= (string)$this->label . ' ';
+						$title_inner .= (string)$this->error() . ' ';
+						$title_inner .= (string)$this->description . ' ';
+					$this->set_attribute('title', $title_inner);
 				}
-
-				$template = str_replace($match[0], '{fields}', $template);
-
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description), $template); // 変更
-
-				return $template;
 			}
-
-			// still here? wasn't a multi field template available, try the normal one with imploded $build_field
-			$build_field = implode(' ', $build_field);
 		}
+		// var_dump($this->get_attribute('title'));
 
-		// determine the field_id, which allows us to identify the field for CSS purposes
-		$field_id = 'col_'.$this->name;
-		if ($parent = $this->fieldset()->parent())
-		{
-			$parent->get_tabular_form() and $field_id = $parent->get_tabular_form().'_col_'.$this->basename;
-		}
-
-		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n");
-
-		/*
-		// 追加 2 ここから
-		if ((bool)$form->get_config('implicit_label', false) and $this->type == 'checkbox') {
-			$label = str_replace('</label>', '', $label);
-			$build_field .= '</label>';
-		}
-		// 追加 2 ここまで
-		 */
-
-
-		 // 追加 3
-		$error_alert_link = $this->error() ? $form->get_config('error_alert_link') : '';
-
-		// $build_field->set_attribute('data-jslcm-tooltip', $error_msg);
-
-		// 変更 error_alert_link を足した
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}', '{error_alert_link}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id , $error_alert_link),
-			$template);
-
-		return $template;
+		return parent::build();
 	}
 
 
