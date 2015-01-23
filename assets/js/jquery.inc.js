@@ -98,6 +98,11 @@ $('.hide_if_no_js').removeClass('hide_if_no_js');
 //.show_if_no_js noscript的な扱い?
 $('.show_if_no_js').remove();
 
+
+//for NetReader
+//.hidden_itemをインラインスタイルでdisplay: none;
+$('.hidden_item').hide();
+
 //フォーカスするついでに場合によってはセレクトもする
 function set_focus(t){
 	$(t).focus();
@@ -341,8 +346,9 @@ if(lcm_focus.length && !tabindexCtrl){
 //html要素がスクロール対象であるか判定。
 //http://www.webdesignleaves.com/wp/jquery/573/
 var is_html_scrollable = (function(){
-	var html, el, rs;
-	html = $('html'), top = html.scrollTop();
+	var html, el, rs, top;
+	html = $('html');
+	top = html.scrollTop();
 	el = $('<div>').height(10000).prependTo('body');
 	html.scrollTop(10000);
 	rs = !!html.scrollTop();
@@ -364,7 +370,7 @@ $(document).on('click', 'a[href^=#]', function(e){
 		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
 		set_focus(t);
 		return false;
-	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？？？
+	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ return？？ 
 		e.preventDefault();
 	}
 });
@@ -476,6 +482,8 @@ $(document).on('keydown',function(e){
 	var t, k, modal, tabbable, first, last, index;
 	t = e.target;
 	k = e.which;
+	console.log(e);
+	console.log(':'+k);
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
 	index = null;
@@ -811,9 +819,9 @@ $('.validation_error :input').tooltip({
 		             at : 'left top'
 		            },
 	items        : '[data-jslcm-tooltip]',
-	content      : function(){
+/*	content      : function(){
 	                 return $(this).data('jslcmTooltip')
-		           }
+		           }*/
 });
 
 //resizable

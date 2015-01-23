@@ -486,8 +486,8 @@ fieldset {
 }
 
 /* === forms - buttons === */
-input ,
-select ,
+input,
+select,
 label {
 	max-width: 100%;
 }
@@ -529,6 +529,7 @@ input[type="week"],
 input[type="time"],
 input[type="datetime-local"],
 input[type="number"],
+/* input[type="password"], 環境によりマスク文字が小さく表示されるため除外 */
 textarea {
 	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
 }

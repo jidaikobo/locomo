@@ -404,12 +404,13 @@ ul.holizonal_list {
 .admin_controller{
 	margin-right: 10px;
 }
-
+/* あとで考える。オプションの歯車と戻る画面のリンクリストがあるので、管理バーしたの領域のレイアウトは要再考。
 .adminbar_sub .admin_module_option {
 	position: absolute;
 	top: 0;
 	right: 9px;
 }
+*/
 /* dashboard */
 /*あとでview側直書きの記述を削除*/
 .lcm_action_dashboard .contents {
@@ -613,7 +614,7 @@ a.delete{
 	display: none;
 }
 .hidden_item.on{
-	display: block;
+	display: block !important;
 }
 
 /* alert */
@@ -701,17 +702,28 @@ div.form_tooltip{
 .pagination .active a{
 	font-weight: bold;
 }
+
 /*===  form  ===*/
 .form_group{
 	margin: 5px 0 20px;
 	padding: 10px;
-	background-color: #eee;
+	background-color: #efefef;
 }
 form tbody th{
 	text-align: left;
 	padding-right: 5px;
 }
-
+.input_group .multiple_button {
+	display: inline-block;
+	height: 100%;
+	width: 5em;
+	text-align: center;
+	line-height: 2.5em;
+	vertical-align: middle;
+}
+.imput_group.multiple select:before {
+	content: attr(title);
+}
 label {
 	display: inline-block;
 }
@@ -720,7 +732,14 @@ label {
 	text-align: right;
 	margin: 1em 0 .5em;
 }
-
+.label_reqired {
+	font-size: .85em;
+	padding: .2em .25em .125em;
+	color: #fff;
+	background-color: #f07070;
+	border-radius: 3px;
+	margin-left: .5em;
+}
 a.disclosure{
 	color: #333;
 	font-size: .9em;
