@@ -73,8 +73,11 @@ $paths = array(
 $classes = array();
 foreach ($paths as $class => $path)
 {
-	if ( ! file_exists(APPPATH.'classes/'.$path))
+	// if ( ! file_exists(APPPATH.'classes/'.$path))
+	if ( file_exists(APPPATH.'classes/'.$path))
 	{
+		require(APPPATH.'classes/'.$path);
+	} else {
 		$classes[$class] = LOCOMOPATH.'classes/'.$path;
 	}
 }

@@ -197,8 +197,19 @@ class Controller_Base extends Controller_Core
 		endif;
 
 		//view
-		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
-		$content = \View::forge($this->_content_template ?: $dir.'view');
+		// $dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+		// $content = \View::forge($this->_content_template ?: $dir.'view');
+
+		if ($this->_content_template) {
+			$content = \View::forge($this->_content_template);
+		} else {
+			$tmp = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS.'/view';
+			// var_dump(\Finder::search('views', $tmp)); die();
+			$content = \View::forge(
+				\Finder::search('views', $tmp) ? $tmp : 'defaults/view'
+			);
+		}
+
 		$content->set_safe('plain', $model::plain_definition('view', $item)->build_plain());
 		$content->set('item', $item);
 		$content->set_global('title', self::$nicename.'閲覧');
@@ -223,9 +234,16 @@ class Controller_Base extends Controller_Core
 	{
 		// vals
 		$model = $this->model_name ;
-		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
-		$content = \View::forge($this->_content_template ?: $dir.'edit');
-		$flag = false;
+
+		if ($this->_content_template) {
+			$content = \View::forge($this->_content_template);
+		} else {
+			$tmp = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS.'/edit';
+			// var_dump(\Finder::search('views', $tmp)); die();
+			$content = \View::forge(
+				\Finder::search('views', $tmp) ? $tmp : 'defaults/edit'
+			);
+		}
 
 		if ($id)
 		{
@@ -288,7 +306,6 @@ class Controller_Base extends Controller_Core
 					// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
 					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
 					\Session::set_flash('error', $errors);
-					$flag = false;
 				}
 			}
 		}
@@ -309,7 +326,7 @@ class Controller_Base extends Controller_Core
 		$this->template->content = $content;
 		static::set_object($obj);
 
-		return $flag;
+		return false;
 	}
 
 	/**
