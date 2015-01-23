@@ -23,19 +23,6 @@ namespace Locomo;
  */
 class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 {
-	public function get_value()
-	{
-		return $this->value;
-	}
-
-	public function get_name() {
-		return $this->name;
-	}
-
-	public function set_name($name) {
-		$this->name = $name;
-	}
-
 
 	/*
 	 * alike a build method
@@ -133,6 +120,22 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		if ($this->error() and $form->get_config('error_alert_link')) {
 			$this->set_attribute('data-jslcm-tooltip',"{error_msg}");
 		}
+
+		if ($this->type == "text"
+			or $this->type == "testarea"
+		) {
+		// var_dump( $this->type);
+			if ($title_contained = $form->get_config('title_contained')) {
+				if (!$this->get_attribute('title')) {
+					$title_inner = '';
+						$title_inner .= (string)$this->label . ' ';
+						$title_inner .= (string)$this->error() . ' ';
+						$title_inner .= (string)$this->description . ' ';
+					$this->set_attribute('title', $title_inner);
+				}
+			}
+		}
+		// var_dump($this->get_attribute('title'));
 
 		return parent::build();
 	}

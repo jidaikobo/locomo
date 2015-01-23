@@ -22,6 +22,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_cache_form_definition;
 
+	// todo 不要
 	/*
 	 * _depend_modules
 	 */
@@ -37,11 +38,13 @@ class Model_Base extends \Orm\Model_Soft
 		'auth_visibility',
 	);
 
+	// todo 不要
 	/*
 	 * _option_options - see sample at \User\Model_Usrgrp
 	 */
 	protected static $_option_options = array();
 
+	// todo 不要
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
 	{
 		//depend_modules
@@ -54,6 +57,7 @@ class Model_Base extends \Orm\Model_Soft
 		static::add_authorize_methods();
 	}
 
+	// todo 不要
 	/**
 	 * add_authorize_methods()
 	 */
@@ -95,7 +99,8 @@ class Model_Base extends \Orm\Model_Soft
 		return false;
 	}
 
-	/**
+	// todo 不要
+	/*
 	 * get_table_name()
 	 */
 	public static function get_table_name()
@@ -103,6 +108,7 @@ class Model_Base extends \Orm\Model_Soft
 		return static::$_table_name;
 	}
 
+	// todo 不要? get_pk かどちらか一方で良い
 	/**
 	 * get_primary_keys()
 	 */
@@ -114,6 +120,8 @@ class Model_Base extends \Orm\Model_Soft
 		return static::$_primary_key;
 	}
 
+
+	// todo 不要 ./packages/locomo/classes/actionset.php:
 	/**
 	 * get_pk()
 	 */
@@ -227,23 +235,12 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 
-
-	/*
-	 * $_delete_unseted_tabular_row
-	 * has many 特に tabular form で、postされたデータ以外のものを削除するか
-	 */
-	protected static $_unset_tabular_row_delete = false;
-
-	public static function set_unset_tabular_row_delete(bool $bool) {
-		static::$_unset_tabular_row_delete = $bool;
-	}
-
 	/*
 	 * @param   array     $input_post
 	 * @param   Fieldset  $form (for validation)
 	 * @param   bool      $repopulate populate input value
-	 * @param   bool      $repopulate populate input value
-	 * @param   bool      $repopulate populate input value
+	 * @param   bool      $validation validate
+	 * @param   bool      $delete_else unset value delete all in has_many relation
 	 * @return  bool      whether validation succeeded
 	 *
 	 * @important   \Response::redirect() after save() or Regenerate Fieldset instance
@@ -306,8 +303,6 @@ class Model_Base extends \Orm\Model_Soft
 						unset($this->{$k}[$kk]);
 					} elseif (isset($input_post[$k][$kk]['_delete'])){ // _deleted
 						unset($this->{$k}[$kk]);
-					} elseif (!isset($input_post[$k][$kk])) {
-						if (static::$_unset_tabular_row_delete) unset($this->{$k}[$kk]);
 					} else {
 						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
 						!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
@@ -333,6 +328,7 @@ class Model_Base extends \Orm\Model_Soft
 			// many_many
 			// また、cascade_save は予期せぬ動作をする事から対応していない為 false のみに対応している true の際は別で設定する
 			// 関係テーブルはcascadeに関係なく依存する
+			// todo cascade_save,cascade_delete が true のとき throw error
 			} elseif (!static::relations()[$k]->cascade_save and static::relations()[$k] instanceof \Orm\ManyMany) {
 
 				if (isset($input_post[$k])) {
@@ -373,7 +369,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * get_options()
 	 */
-	public static function get_options($options, $label)
+	public static function get_options($options = array(), $label = 'name')
 	{
 		$primary_key = reset(self::$_primary_key);
 		$items = self::find('all', $options);
