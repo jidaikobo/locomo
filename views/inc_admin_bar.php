@@ -39,7 +39,7 @@ if (\Auth::check()):
 					$action_name = $title ? $title : '';
 					if (isset($locomo['controller']['home'])):
 						$home_name = \Arr::get($locomo, 'controller.home_name') ?: 'トップ';
-						if(\Auth::has_access($locomo['controller']['ctrl_home'])):
+						if(\Auth::has_access($locomo['controller']['name'].DS.$locomo['controller']['ctrl_home'])):
 							$ctrl_index = \Html::anchor($locomo['controller']['home'], $home_name);
 						endif;
 					endif;
@@ -124,18 +124,18 @@ if (\Auth::check()):
 			$html.= '</div><!-- /.admin_help -->';
 
 			// admin option menu
-			if (\Auth::is_admin()):
+			$admin_menu = '';
+			foreach($locomo['controllers'] as $k => $v):
+				if ($v['is_for_admin'] && $v['show_at_menu'])
+					{
+						$url = \Inflector::ctrl_to_dir($v['admin_home']);
+						$admin_menu.= '<li><a href="'.\Uri::create($url).'">'.$v['nicename'].'</a></li>';
+					}
+			endforeach;
+			if ($admin_menu):
 				$html.= '<div class="admin_option">';
 				$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_option.png\" alt=\"管理者設定\"><span class=\"skip\">エンターでメニューを開きます</span></span></a>";
-				$html.= '<ul class="semimodal menulist hidden_item">';
-					foreach($locomo['controllers'] as $k => $v):
-						if ($v['is_for_admin'] && $v['show_at_menu'])
-							{
-									$url = \Inflector::ctrl_to_dir($v['admin_home']);
-								$html.= '<li><a href="'.\Uri::create($url).'">'.$v['nicename'].'</a></li>';
-							}
-					endforeach;
-					$html.= '</ul>';
+				$html.= '<ul class="semimodal menulist hidden_item">'.$admin_menu.'</ul>';
 				$html.= '</div><!-- /.admin_option -->';
 			endif;
 
