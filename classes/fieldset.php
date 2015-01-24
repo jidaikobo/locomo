@@ -33,6 +33,42 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 
 	/*
+	 * delete
+	 */
+	public function delete($field) {
+		// tabular_form の delete
+		// 先に set_tabular_form が thead を描画するため、不可
+		/*
+		if ($this->tabular_form_relation) {
+			$model = $this->tabular_form_model;
+			if (is_array($field) ) {
+				foreach($field as $f) {
+					// unset($this->fields[$f]);
+						//unset($model::$_properties[$f]);
+					unset($model::$_properties[$f]); // 'model の $_properites を public にして下さい
+				}
+			} elseif (is_string($field)) {
+				unset($model::$_properties[$field]);
+				// unset($this->fields[$field]);
+			}
+			$this->set_tabular_form_template("<!-- unset -->", $field);
+			return $this;
+		}
+		 */
+
+		if (is_array($field) ) {
+			foreach($field as $f) {
+				unset($this->fields[$f]);
+			}
+		} elseif (is_string($field)) {
+			unset($this->fields[$field]);
+		}
+		return $this;
+	}
+
+
+
+	/*
 	 * tabular_form のテンプレートをフィールド毎に設定する
 	 * 本来 set_template は Fieldset_Field クラスのメソッド。まとめて指定する為にこちらで定義する
 	 * todo フィールド名を指定しない時の振る舞いを実装する
@@ -48,7 +84,13 @@ class Fieldset extends \Fuel\Core\Fieldset
 				//var_dump($v);
 				if ($f) $f->set_template($template);
 			} elseif (is_array($field)) {
-				// todo 複数のfieldの処理
+				foreach ($field as $f_key => $f_val) {
+					$f = $v->field(str_replace('_row_', '[', $k) . '][' . $f_val . ']');
+					// 新規列に対応
+					if (!$f) $f = $v->field(str_replace('_new_', '_new[', $k) . '][' . $f_val . ']');
+					//var_dump($v);
+					if ($f) $f->set_template($template);
+				}
 			} else {
 				// todo デフォルトで全てのフィールドに適用する
 				// 不具合懸念有り
@@ -173,12 +215,23 @@ class Fieldset extends \Fuel\Core\Fieldset
 	/*
 	 * alike a build method
 	 * input タグ を出力しない
-	 * @param bool|array  $build_field array('form_name' => array(output values)))
+	 * @param bool|array  $action array('form_name' => array(output values)))
 	 * @param str         $date_format
 	 * @return  string
 	 */
-	public function build_plain($build_field = false, $date_format = null)
+	public function build_plain($action = false, $date_format = null)
 	{
+		$attributes = $this->get_config('form_attributes');
+		if ($action and ($this->fieldset_tag == 'form' or empty($this->fieldset_tag)))
+		{
+			$attributes['action'] = $action;
+		}
+
+		/*
+		$open = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
+			? $this->form()->open($attributes).PHP_EOL
+			: $this->form()->{$this->fieldset_tag.'_open'}($attributes);
+		 */
 
 		$fields_output = '';
 
@@ -211,95 +264,50 @@ class Fieldset extends \Fuel\Core\Fieldset
 			// todo mm のセレクトなど
 			if ($f instanceof \Fieldset_Field) {
 
-				if (is_array($build_field) and isset($build_field[$this->name])) {
+				if (is_array($action) and isset($action[$this->name])) {
 					// var_dump($this->name);
-						if (in_array($f->name, $build_field[$this->name])) {
+						if (in_array($f->name, $action[$this->name])) {
 							if (!$f->type or $f->type == 'hidden') continue;
-							!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($build_field, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
+							!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($action, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
 					}
 
-				} elseif (!$build_field or !is_array($bild_field[$this->name])) {
+				} elseif (!$action or !is_array($bild_field[$this->name])) {
 					if (!$f->type or $f->type == 'hidden') continue;
-					!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($build_field, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
+					!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($action, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
 				}
 
+			} else {
+				in_array($f->name, $this->disabled) or $fields_output .= $f->build_plain().PHP_EOL;
 			}
 		}
 
 		/*
-		$close = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
-			? $this->form()->close($attributes).PHP_EOL
-			: $this->form()->{$this->fieldset_tag.'_close'}($attributes);
-		 */
-
 		$template = $this->form()->get_config('form_template_plain', "\n\t\t<table class=''>\n{fields}\n\t\t</table>\n");
 
 		$output = str_replace(array('{fields}'), array($fields_output), $template);
+		 */
 
-		return $output;
+		$close = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
+			? $this->form()->close($attributes).PHP_EOL
+			: $this->form()->{$this->fieldset_tag.'_close'}($attributes);
+
+		$template = $this->form()->get_config((empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
+			"\n\t\t{open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{close}\n");
+
+		$template = str_replace(array('{form_open}', '{open}', '{fields}', '{form_close}', '{close}'),
+			array('', '', $fields_output, '', ''),
+			$template);
+
+
+
+		return $template;
 	}
 
 
-
-	public function set_tabular_form_plain($model, $relation, $parent)
+	public function set_tabular_form($model, $relation, $parent, $blanks = 1)
 	{
-		if ( ! $parent instanceOf \Orm\Model) throw new \RuntimeException('Parent passed to set_tabular_form() is not an ORM model object.');
-		$relations = call_user_func(array($parent, 'relations'));
-		if ( ! array_key_exists($relation, $relations)) throw new \RuntimeException('Relation passed to set_tabular_form() is not a valid relation of the ORM parent model object.');
-
-		// check for compound primary keys
-		try
-		{
-			// fetch the relations of the parent model
-			$primary_key = call_user_func($model.'::primary_key');
-
-			// we don't support compound primary keys
-			if (count($primary_key) !== 1) throw new \RuntimeException('set_tabular_form() does not supports models with compound primary keys.');
-
-			$primary_key = reset($primary_key);
-		}
-		catch (\Exception $e)
-		{
-			throw new \RuntimeException('Unable to fetch the models primary key information.');
-		}
-
-		// store the tabular form class name
-		$this->tabular_form_model = $model;
-
-		// and the relation on which we model the rows
-		$this->tabular_form_relation = $relation;
-
-		\Config::load('form', true);
-
-		$this->set_config(array(
-			'form_template_plain' => \Config::get('form.tabular_form_template_plain', "<table>{fields}</table>\n"),
-			'field_template_plain' => \Config::get('form.tabular_field_template_plain', "{field}")
-		));
-
-		// add the rows to the tabular form fieldset
-		foreach ($parent->{$relation} as $row)
-		{
-			$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_row_'.$row->{$primary_key}));
-
-			$fieldset->add_model($model, $row)->set_fieldset_tag(false);
-			$fieldset->set_config(array(
-				'form_template_plain' => \Config::get('form.tabular_row_template_plain', "<table>{fields}</table>\n"),
-				'field_template_plain' => \Config::get('form.tabular_row_field_template_plain', "{field}")
-			));
-		}
-
-		return $this;
-	}
-
-	public function delete($field) {
-		if (is_array($field) ) {
-			foreach($field as $f) {
-				unset($this->fields[$f]);
-			}
-		} elseif (is_string($field)) {
-			unset($this->fields[$field]);
-		}
-		return $this;
+		if (\Request::main()->action == 'view') $blanks = 0;
+		return parent::set_tabular_form($model, $relation, $parent, $blanks);
 	}
 
 

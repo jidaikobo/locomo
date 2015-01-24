@@ -39,8 +39,11 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_option_options = array();
 
+	// todo 不要
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
 	{
+		//depend_modules
+		parent::__construct($data, $new, $view, $cache);
 
 		//add_authorize_methods
 		static::add_authorize_methods();
@@ -88,6 +91,14 @@ class Model_Base extends \Orm\Model_Soft
 		return false;
 	}
 
+	// todo 不要
+	/*
+	 * get_table_name()
+	 */
+	public static function get_table_name()
+	{
+		return static::$_table_name;
+	}
 
 	// todo 不要? get_pk かどちらか一方で良い
 	/**
@@ -432,19 +443,9 @@ class Model_Base extends \Orm\Model_Soft
 
 		$form = \Fieldset::forge($factory);
 
-		/*
-		$form->add('id', 'ID', array('type' => 'hidden'))
-			->set_value($obj->id);
-		 */
-
 		$form->add_model($obj)->populate($obj, true);
-		
-//		if ($factory == 'form') {
-			$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
-				->set_value(\Security::fetch_token());
 
-			$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'));
-//		}
+		$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');;
 
 		return $form;
 	}
