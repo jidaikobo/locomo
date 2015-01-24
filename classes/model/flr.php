@@ -72,14 +72,14 @@ class Model_Flr extends \Model_Base
 			'model_to' => '\Model_Flr_Usergroup',
 			'key_to' => 'flr_id',
 			'cascade_save' => true,
-			'cascade_delete' => false,
+			'cascade_delete' => true,
 		),
 		'permission_user' => array(
 			'key_from' => 'id',
 			'model_to' => '\Model_Flr_User',
 			'key_to' => 'flr_id',
 			'cascade_save' => true,
-			'cascade_delete' => false,
+			'cascade_delete' => true,
 		)
 	);
 
@@ -122,11 +122,10 @@ class Model_Flr extends \Model_Base
 	*/
 	public function _event_after_insert()
 	{
-		// it is depend on \Input::post().
-		// sync doesn't have \Input::post() but sync already define $this->path
+		// this observer is depend on \Input::post().
+		// Controller_Flr::sync() doesn't have \Input::post() but Controller_Flr::sync() already define $this->path
 		$this->path = $this->path ?: \Input::post('parent').\Input::post('name');
 		$this->save();
-		static::embed_hidden_info($this);
 	}
 
 	/**
@@ -138,16 +137,10 @@ class Model_Flr extends \Model_Base
 		$this->disable_event('after_update');
 
 		// put .LOCOMO_DIR_INFO
-		if ( ! file_exists($new_path.'.LOCOMO_DIR_INFO'))
+		$path = $this->genre == 'dir' ? LOCOMOUPLOADPATH.$this->path : LOCOMOUPLOADPATH.dirname($this->path).DS ;
+		if ( ! file_exists($path.'.LOCOMO_DIR_INFO'))
 		{
 			static::embed_hidden_info($this);
-		}
-
-		// permission - put it in .LOCOMO_DIR_INFO
-		if ($this->permission_usergroup)
-		{
-// \Fileでappendする？ なければput
-// あとで、unserializeする？
 		}
 
 		// children
@@ -188,14 +181,121 @@ class Model_Flr extends \Model_Base
 				$child->save();
 
 				// embed($path)
-				static::embed_hidden_info($child);
+				//static::embed_hidden_info($child);
 			}
 		}
 
 		// itself
-		$this->path = $new_path;
-		$this->save();
-		static::embed_hidden_info($this);
+//		$this->path = $new_path;
+//		$this->save();
+	}
+
+	/**
+	 * _event_before_save()
+	*/
+	public function _event_before_save()
+	{
+		// prevent loop at inside of this observer
+		$this->disable_event('before_save');
+
+		// check permission
+		if ($this->permission_usergroup && $this->path != '/')
+		{
+			$parent = static::get_parent($this);
+
+			$parent_permissions  = static::get_relation_as_array($parent, 'permission_usergroup');
+			$parent_permissions  = static::transform_permission_to_intersect_arr($parent_permissions);
+
+			$current_permissions = static::get_relation_as_array($this, 'permission_usergroup');
+			$current_permissions = static::transform_permission_to_intersect_arr($current_permissions);
+
+			$group_intersects = array_intersect($parent_permissions, $current_permissions);
+
+			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
+			unset($this->permission_usergroup);
+
+			if ($group_intersects)
+			{
+				foreach ($group_intersects as $group_intersect)
+				{
+					list($id, $right) = explode('/', $group_intersect);
+					$vals = array(
+						'flr_id'       => $this->id,
+						'usergroup_id' => $id,
+						'is_writable'  => $right,
+					);
+					$this->permission_usergroup[] = \Model_Flr_Usergroup::forge()->set($vals);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * get_relation_as_array()
+	*/
+	public static function get_relation_as_array($obj, $relation)
+	{
+		if ( ! $obj instanceof Model_Flr) return array();
+		$retvals = array();
+		if ($obj->$relation)
+		{
+			foreach ($obj->$relation as $id => $v)
+			{
+				eval('$relations = '.var_export($v->_data, true).';');
+			//	if ($relations) $retvals[$v->_data['id']] = $relations;
+				if ($relations) $retvals[$id] = $relations;
+			}
+		}
+		return $retvals;
+	}
+
+	/**
+	 * transform_permission_to_intersect_arr()
+	*/
+	public static function transform_permission_to_intersect_arr($permissions)
+	{
+		$tmps = array();
+		foreach ($permissions as $v)
+		{
+			$tmps[] = $v['usergroup_id'].DS.$v['is_writable'];
+			// writable なら自動的に閲覧可能とする
+			if ($v['is_writable'] == 1) $tmps[] = $v['usergroup_id'].DS.'0';
+		}
+		return $tmps;
+	}
+
+	/**
+	 * get_parent()
+	 */
+	public static function get_parent($obj)
+	{
+		if ( ! $obj instanceof Model_Flr) return array();
+		$p_path = rtrim(dirname($obj->path), DS).DS;
+		$option = array(
+			'where' => array(
+				array('path', '=', $p_path),
+			)
+		);
+		return static::find('first', \Model_Flr::authorized_option($option, 'index_files'));
+	}
+
+	/**
+	 * get_children()
+	 */
+	public static function get_children($obj)
+	{
+		if ( ! $obj instanceof Model_Flr) return array();
+
+		// current children
+		$option = array(
+			'where' => array(
+				array('path', 'like', $obj->path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+			)
+		);
+		return static::find('all', \Model_Flr::authorized_option($option, 'index_files'));
 	}
 
 	/**
@@ -203,6 +303,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function embed_hidden_info($obj)
 	{
+return;
 		// current
 		$current = static::fetch_hidden_info(LOCOMOUPLOADPATH.$obj->path);
 
@@ -223,9 +324,13 @@ class Model_Flr extends \Model_Base
 
 				// var_export() to use Model's __to_string() and eval() it
 				eval('$data = '.var_export($val->_data, true).';');
-				eval('$relations = '.var_export($val->_data_relations, true).';');
 				\Arr::set($current, $key.'.data'     , $data);
-				\Arr::set($current, $key.'.relations', $relations);
+
+				// relations
+				$usergroups = static::get_relation_as_array($val, 'permission_usergroup');
+				\Arr::set($current, $key.'.permission_usergroup', $usergroups);
+				$users = static::get_relation_as_array($val, 'permission_user');
+				\Arr::set($current, $key.'.permission_user', $users);
 			}
 		}
 
@@ -321,6 +426,29 @@ class Model_Flr extends \Model_Base
 		{
 			$form = static::purge_file($form, $obj);
 		}
+
+		return $form;
+	}
+
+	/**
+	 * sync_definition()
+	 */
+	public static function sync_definition($factory = 'form', $obj = null)
+	{
+		$form = \Fieldset::forge($factory);
+
+		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
+			->set_value(\Security::fetch_token());
+
+		$form->add('submit', '', array('type' => 'submit', 'value' => '同期する', 'class' => 'button primary'))
+			->set_template('<div class="submit_button">{field}</div>');
+
+		$messages = array(
+			'ファイルやディレクトリの実際の状況とデータベースの内容に矛盾が生じているようでしたら、これを実行してください。',
+			'ファイルやディレクトリの数によっては時間がかかることがあります。',
+			'この処理は、時々自動的に行われますので、原則、明示的な実行は不要です。',
+		);
+		\Session::set_flash('message', $messages);
 
 		return $form;
 	}
@@ -439,7 +567,7 @@ class Model_Flr extends \Model_Base
 			'class' => 'varchar user',
 		);
 		$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
-		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'is_sticky');
+		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
 
 		return $form;
 	}
@@ -449,7 +577,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function purge_dir($form, $obj)
 	{
-		\Session::set_flash('error', 'ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。この削除は取り消しができません。注意してください。');
+		\Session::set_flash('message', 'ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。この削除は取り消しができません。注意してください。');
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');
@@ -475,7 +603,6 @@ class Model_Flr extends \Model_Base
 		)
 		->add_rule(array('valid_string' => array('alpha','numeric','dot','dashes')));
 
-//		$form->field('submit')->set_label('完全に削除する');
 		$form->field('submit')->set_value('アップロード');
 		return $form;
 	}
@@ -485,7 +612,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function purge_file($form, $obj)
 	{
-		\Session::set_flash('error', 'ファイルの削除は取り消しできませんので、ご注意ください。');
+		\Session::set_flash('message', 'ファイルの削除は取り消しできませんので、ご注意ください。');
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');

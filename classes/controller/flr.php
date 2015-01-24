@@ -8,7 +8,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		'explanation'  => 'ファイルの閲覧やアップロードを行います。', // for human's explanation
 		'main_action'  => 'index_files', // main action
 		'main_action_name' => 'ファイル管理', // main action's name
-		'main_action_explanation' => 'アップロードされたファイルの閲覧を行います。', // explanation of top page
+		'main_action_explanation' => 'ファイルのアップロードや、アップロードされたファイルの閲覧を行います。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home
 		'is_for_admin' => true, // true: hide from admin bar
 		'order'        => 1030, // order of appearance
@@ -33,14 +33,17 @@ class Controller_Flr extends \Locomo\Controller_Base
 		$items = \Util::get_file_list(LOCOMOUPLOADPATH);
 		$basepath_len = strlen(LOCOMOUPLOADPATH);
 
-		// tmp - clone table
-		if (\DBUtil::table_exists('lcm_flrs_tmp'))
-		{
-			\DBUtil::drop_table('lcm_flrs_tmp');
-		}
+		// tmp - clone flr table
+		if (\DBUtil::table_exists('lcm_flrs_tmp')) \DBUtil::drop_table('lcm_flrs_tmp');
 		\DB::query('CREATE TABLE lcm_flrs_tmp like lcm_flrs;')->execute();
 		\DB::query('INSERT INTO lcm_flrs_tmp SELECT * FROM lcm_flrs;')->execute();
 		\DBUtil::truncate_table('lcm_flrs');
+
+		// tmp - clone flr_permissions table
+		if (\DBUtil::table_exists('lcm_flr_permissions_tmp')) \DBUtil::drop_table('lcm_flr_permissions_tmp');
+		\DB::query('CREATE TABLE lcm_flr_permissions_tmp like lcm_flr_permissions;')->execute();
+		\DB::query('INSERT INTO lcm_flr_permissions_tmp SELECT * FROM lcm_flr_permissions;')->execute();
+		\DBUtil::truncate_table('lcm_flr_permissions');
 
 		// save
 		foreach ($items as $fullpath)
@@ -63,6 +66,19 @@ class Controller_Flr extends \Locomo\Controller_Base
 			$obj->path        = $path;
 			$obj->created_at  = date('Y-m-d H:i:s', \File::get_time($fullpath, 'created'));
 			$obj->updated_at  = date('Y-m-d H:i:s', \File::get_time($fullpath, 'modified'));
+
+			// relations
+			$usergroups = \Arr::get($current, md5($path).'.permission_usergroup', array());
+			foreach ($usergroups as $id => $usergroup)
+			{
+				$obj->permission_usergroup[$id] = \Model_Flr_Usergroup::forge()->set($usergroup);
+			}
+			$users = \Arr::get($current, md5($path).'.permission_user', array());
+			foreach ($users as $id => $user)
+			{
+				$obj->permission_user[$id] = \Model_Flr_User::forge()->set($user);
+			}
+
 			$obj->save();
 		}
 
@@ -78,33 +94,17 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if ($obj->count() == count($items))
 		{
 			\DBUtil::drop_table('lcm_flrs_tmp');
+			\DBUtil::drop_table('lcm_flr_permissions_tmp');
 			return true;
 		}
 		else
 		{
 			\DBUtil::drop_table('lcm_flrs');
+			\DBUtil::drop_table('lcm_flr_permissions');
 			\DBUtil::rename_table('lcm_flrs_tmp', 'lcm_flrs');
-			\Session::set_flash('error', "データベースとディレクトリの同期に失敗しました。");
+			\DBUtil::rename_table('lcm_flr_permissions_tmp', 'lcm_flr_permissions');
 			return false;
 		}
-	}
-
-	/**
-	 * get_children()
-	 */
-	protected static function get_children($obj)
-	{
-		if ( ! $obj instanceof Model_Flr) return array();
-
-		// current children
-		$option = array(
-			'where' => array(
-				array('path', 'like', $obj->path.'%'),
-				array('depth', '=', $obj->depth + 1),
-				array('id', '<>', $obj->id),
-			)
-		);
-		return \Model_Flr::find('all', \Model_Flr::authorized_option($option, 'index_files'));
 	}
 
 	/**
@@ -112,15 +112,13 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_index_files($id = 1)
 	{
-//		static::sync();die();
-
 		// current dir
 		$current_obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'index_files'));
 
 		if ($current_obj)
 		{
 			// children
-			$objs = static::get_children($current_obj);
+			$objs = \Model_Flr::get_children($current_obj);
 		}
 		else
 		{
@@ -154,36 +152,28 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 	/**
 	 * action_sync()
-	 * 現状のディレクトリと同期。データベースは現状のディレクトリにあわせて刷新する。
+	 * 現状のディレクトリと同期。データベースは現状のディレクトリにあわせて刷新される
 	 */
 	public function action_sync($id = null)
 	{
-		$model = $this->model_name;
-		$errors = array();
-
-		// rename dir
+		// sync
 		if (\Input::post())
 		{
-
+			if (static::sync())
+			{
+				\Session::set_flash('success', "データベースとディレクトリを同期しました。");
+			} else {
+				\Session::set_flash('error', "データベースとディレクトリの同期に失敗しました。");
+			}
 		}
 
-		// parent::edit()
-		$obj = parent::edit($id);
-
-		// error
-		if($errors) \Session::set_flash('error', $errors);
-
-		// rewrite message
-		$success = \Session::get_flash('success');
-		if ($success)
-		{
-			\Session::set_flash('success', "データベースとディレクトリを同期しました。");
-		}
-
-		// assign
-		$this->template->set_global('title', 'データベースとディレクトリを同期');
+		// view
+		$form = \Model_Flr::sync_definition();
+		$content = \View::forge('flr/edit');
+		$content->set_safe('form', $form);
+		$this->template->content = $content;
+		$this->template->set_global('title', '同期');
 	}
-
 
 	/**
 	 * action_create_dir()
@@ -218,7 +208,6 @@ class Controller_Flr extends \Locomo\Controller_Base
 		{
 			static::sync();
 			\Session::set_flash('success', "ディレクトリを新規作成しました。");
-//			static::$redirect = 'flr/rename_dir/'.$obj->id;
 			static::$redirect = 'flr/create_dir/'.$obj->id;
 		}
 
@@ -343,19 +332,14 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_permission_dir($id = null)
 	{
-		$model = $this->model_name;
-		$errors = array();
-
 		// parent::edit()
 		$obj = parent::edit($id);
-
-//observerで.LOCOMO_DIR_INFOをupdateする。このパス以下のディレクトリをDBで探し、foreachでディレクトリ実体に対して、いまのパーミッションを書く。
-
 
 		// rewrite message
 		$success = \Session::get_flash('success');
 		if ($success)
 		{
+//			static::sync();
 			\Session::set_flash('success', "ディレクトリの権限を変更しました。");
 		}
 
