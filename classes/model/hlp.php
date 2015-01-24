@@ -50,7 +50,7 @@ class Model_Hlp extends \Model_Base
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
 	);
 
-	protected static $_depend_modules = array();
+
 
 	//observers
 	protected static $_soft_delete = array(

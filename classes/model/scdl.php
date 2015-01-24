@@ -366,7 +366,7 @@ class Model_Scdl extends \Model_Base
 		),
 	) ;
 
-	protected static $_depend_modules = array();
+
 
 	//$_option_options - see sample at \Model_Usrgrp
 	public static $_option_options = array();

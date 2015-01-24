@@ -119,22 +119,64 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		$form = $this->fieldset()->form();
 		if ($this->error() and $form->get_config('error_alert_link')) {
 			$this->set_attribute('data-jslcm-tooltip',"{error_msg}");
+		} else {
+			// todo template 書き換え
+			$this->template('data-jslcm-tooltip',"{error_msg}");
 		}
 
-		if ($this->type == "text"
-			or $this->type == "testarea"
-		) {
-		// var_dump( $this->type);
-			if ($title_contained = $form->get_config('title_contained')) {
+		// title 要素に label 説明文 エラー を表示
+		if ($title_contained = $form->get_config('title_contents')) {
+			if ($this->type == "text"
+				or $this->type == "testarea"
+			) {
 				if (!$this->get_attribute('title')) {
-					$title_inner = '';
-						$title_inner .= (string)$this->label . ' ';
+					$title_inner = ''; // タイトル 説明文 エラー
+					if (is_array($title_contained)) {
+						foreach ($title_contained as $tc) {
+							if ($tc == 'error') {
+								$title_inner .= (string)$this->error() . ' ';
+							} elseif($tc == 'description') {
+								$title_inner .= (string)$this->description . ' ';
+							} else {
+								$title_inner .= (string)$this->get_attribute($tc) . ' ';
+							}
+						}
+					} else {
+						$title_inner .= (string)$this->get_attribute('label') . ' ';
 						$title_inner .= (string)$this->error() . ' ';
 						$title_inner .= (string)$this->description . ' ';
+					}
 					$this->set_attribute('title', $title_inner);
 				}
+			} elseif (
+				$this->type == "checkbox"
+				or $this->type == "radio") {
+				$template = $this->template ?: $form->get_config('multi_field_template');
+				if (!$template) throw new \RuntimeException('title_contents を設定する時は title="{title_contents}" と class="example {type}" を含めた multi_field_template を config from.php で設定して下さい');
+					$title_inner = ''; // タイトル 説明文 エラー
+					if (is_array($title_contained)) {
+						foreach ($title_contained as $tc) {
+						foreach ($title_contained as $tc) {
+							if ($tc == 'error') {
+								$title_inner .= (string)$this->error() . ' ';
+							} elseif($tc == 'description') {
+								$title_inner .= (string)$this->description . ' ';
+							} else {
+								$title_inner .= (string)$this->get_attribute($tc) . ' ';
+							}
+						}
+						}
+					} else {
+						$title_inner .= (string)$this->get_attribute('label') . ' ';
+						$title_inner .= (string)$this->error() . ' ';
+						$title_inner .= (string)$this->get_attribute('description') . ' ';
+					}
+					$this->set_template(str_replace(
+						array('{title_contents}', '{type}'),
+						array($title_inner, $this->type),
+					$template));
 			}
-		}
+		} 
 		// var_dump($this->get_attribute('title'));
 
 		return parent::build();

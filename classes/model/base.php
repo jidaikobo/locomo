@@ -22,11 +22,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_cache_form_definition;
 
-	// todo 不要
-	/*
-	 * _depend_modules
-	 */
-	protected static $_depend_modules = array();
 
 	/*
 	 * default authorize options
@@ -44,14 +39,8 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_option_options = array();
 
-	// todo 不要
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
 	{
-		//depend_modules
-		parent::__construct($data, $new, $view, $cache);
-		foreach (static::$_depend_modules as $module) {
-			\Module::load($module);
-		}
 
 		//add_authorize_methods
 		static::add_authorize_methods();
@@ -99,14 +88,6 @@ class Model_Base extends \Orm\Model_Soft
 		return false;
 	}
 
-	// todo 不要
-	/*
-	 * get_table_name()
-	 */
-	public static function get_table_name()
-	{
-		return static::$_table_name;
-	}
 
 	// todo 不要? get_pk かどちらか一方で良い
 	/**
