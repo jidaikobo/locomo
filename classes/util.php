@@ -144,7 +144,8 @@ class Util
 			$path = $fileinfo->getPathname();
 			$basename = basename($path);
 			if (substr($basename, 0, 2) == '..') continue;
-			$path = substr($basename, 0, 1) == '.' ? substr($path, 0, -1) : $path ;
+			$path = \Str::ends_with($basename, '.') ? substr($path, 0, -1) : $path; // current dir
+			if ( ! \Str::ends_with($basename, '.') && substr($basename, 0, 1) == '.') continue; // invisible file
 			$list[] = $path;
 		}
 		

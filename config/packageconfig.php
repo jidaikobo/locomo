@@ -18,8 +18,8 @@ return array(
 	'site_title' => 'Locomo',
 	'slogan' => 'Accessible Web System Package for FuelPHP',
 
-	// upload path
-	'upload_path' => APPPATH.'locomo/uploads/',
+	// upload path *not* terminated with /
+	'upload_path' => APPPATH.'locomo/uploads',
 
 	// identity
 	'identity' => array(
