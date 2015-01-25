@@ -36,7 +36,7 @@ class Model_Flr extends \Model_Base
 				'type' => 'select',
 				'options' => array('0' => '表示しない', '1' => '表示する')
 			),
-			'default' => 1,
+			'default' => 0,
 			'validation' => array(
 				'required',
 			),
@@ -126,33 +126,46 @@ class Model_Flr extends \Model_Base
 		$this->disable_event('before_save');
 
 		// to solve contradiction compare permission between parent and current dir.
-//		if ($this->path != '/') // not for root dir.
-		if (1==0)
+		// パーミッションの矛盾を直情の親を見て解決。親以下にする。
+		if ($this->path != '/') // not for root dir.
 		{
 			$p_obj = static::get_parent($this);
 
 			// usergroup
-			$parent  = static::get_relation_as_array($p_obj, 'usergroup');
-			$parent  = static::transform_permission_to_intersect_arr($parent, 'usergroup');
+			$parent_g  = static::get_relation_as_array($p_obj, 'usergroup');
+			$parent_g  = static::transform_permission_to_intersect_arr($parent_g, 'usergroup');
 			$current = static::get_relation_as_array($this, 'usergroup');
 			$current = static::transform_permission_to_intersect_arr($current, 'usergroup');
-			$group_intersects = array_intersect($parent, $current);
+			$group_intersects = array_intersect($parent_g, $current);
 
 			// user
-			$parent  = static::get_relation_as_array($p_obj, 'user');
-			$parent  = static::transform_permission_to_intersect_arr($parent, 'user');
+			$parent_u  = static::get_relation_as_array($p_obj, 'user');
+			$parent_u  = static::transform_permission_to_intersect_arr($parent_u, 'user');
 			$current = static::get_relation_as_array($this, 'user');
 			$current = static::transform_permission_to_intersect_arr($current, 'user');
-			$user_intersects = array_intersect($parent, $current);
+			$user_intersects = array_intersect($parent_u, $current);
 
 			// initialize permission - overhead but for test purpose, it must be place here
 			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
 			unset($this->permission_usergroup);
 			unset($this->permission_user);
 
-			// update permissions
+		// update permissions
+		if ( ! $current)
+		{
+			// default permission is same as parent permission
+			// 現在のパーミッションが空だったら親のパーミッションと同じにする
+			static::update_permission_by_intersects($this, $parent_g, 'usergroup');
+			static::update_permission_by_intersects($this, $parent_u, 'user');
+		}
+		else
+		{
+			// update permission by intersects
+			// 現在のパーミッションを親以下にする
 			static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
 			static::update_permission_by_intersects($this, $user_intersects, 'user');
+		}
+
 		}
 
 		// tidy up order of permissions at root dir
@@ -365,7 +378,7 @@ class Model_Flr extends \Model_Base
 
 		// target
 		$path = LOCOMOUPLOADPATH.$obj->path;
-		$target = is_dir($path) ? $path : dirname($path).DS ;
+		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
 
 		// get myself and children
 		$vals = Model_Flr::find('all', array('where' => array(array('path', 'like', $obj->path.'%'))));

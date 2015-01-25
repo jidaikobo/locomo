@@ -186,11 +186,17 @@ class Controller_Flr extends \Locomo\Controller_Base
 		{
 			$parent =  \Input::post('parent');
 			$dirnname = \Input::post('name');
+			$path = $parent.$dirnname;
+			$tmp_obj = Model_Flr::find('first', array('where' => array(array('path', $path))));
 
-			if (file_exists(LOCOMOUPLOADPATH.$parent.$dirnname))
+			if ($tmp_obj && file_exists(LOCOMOUPLOADPATH.$parent.$dirnname))
 			{
 				\Session::set_flash('error', 'そのディレクトリは既に存在します。');
 				\Response::redirect(\Uri::create('flr/create_dir/'.$id));
+			}
+			elseif ( ! $tmp_obj && file_exists(LOCOMOUPLOADPATH.$parent.$dirnname))
+			{
+				\Session::set_flash('error', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 			}
 			elseif ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, $dirnname))
 			{
@@ -208,7 +214,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		{
 			static::sync();
 			\Session::set_flash('success', "ディレクトリを新規作成しました。");
-			static::$redirect = 'flr/create_dir/'.$obj->id;
+			static::$redirect = 'flr/permission_dir/'.$obj->id;
 		}
 
 		// assign
@@ -345,10 +351,10 @@ class Controller_Flr extends \Locomo\Controller_Base
 		}
 
 		// rewrite message
+		// ディレクトリを新規作成すると権限設定に来るので、そのときにはメッセージを上書きしない。
 		$success = \Session::get_flash('success');
-		if ($success)
+		if ($success && strpos(\Input::referrer(), 'permission_dir') !== false)
 		{
-//			static::sync();
 			\Session::set_flash('success', "ディレクトリの権限を変更しました。");
 		}
 
