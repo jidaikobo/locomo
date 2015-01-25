@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Model_Flr_User extends \Model_Base
+class Model_Flr_User extends \Orm\Model
 {
 	/**
 	 * vals
@@ -26,7 +26,7 @@ class Model_Flr_User extends \Model_Base
 			'label' => '書き込み／削除権限',
 			'form' => array(
 				'type' => 'select',
-				'options' => array('0' => '閲覧権限のみ', '1' => '書き込み／削除権限')
+				'options' => array('' => '権限を選択してください', '0' => '閲覧権限', '1' => '書き込み／削除権限')
 			),
 			'default' => 0,
 		),

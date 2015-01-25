@@ -36,7 +36,7 @@ class Model_Flr extends \Model_Base
 				'type' => 'select',
 				'options' => array('0' => '表示しない', '1' => '表示する')
 			),
-			'default' => 1,
+			'default' => 0,
 			'validation' => array(
 				'required',
 			),
@@ -72,14 +72,14 @@ class Model_Flr extends \Model_Base
 			'model_to' => '\Model_Flr_Usergroup',
 			'key_to' => 'flr_id',
 			'cascade_save' => true,
-			'cascade_delete' => false,
+			'cascade_delete' => true,
 		),
 		'permission_user' => array(
 			'key_from' => 'id',
 			'model_to' => '\Model_Flr_User',
 			'key_to' => 'flr_id',
 			'cascade_save' => true,
-			'cascade_delete' => false,
+			'cascade_delete' => true,
 		)
 	);
 
@@ -118,19 +118,89 @@ class Model_Flr extends \Model_Base
 	);
 
 	/**
+	 * _event_before_save()
+	 */
+	public function _event_before_save()
+	{
+		// prevent loop at inside of this observer
+		$this->disable_event('before_save');
+
+		// to solve contradiction compare permission between parent and current dir.
+		// パーミッションの矛盾を直情の親を見て解決。親以下にする。
+		if ($this->path != '/') // not for root dir.
+		{
+			$p_obj = static::get_parent($this);
+
+			// usergroup
+			$parent_g  = static::get_relation_as_array($p_obj, 'usergroup');
+			$parent_g  = static::transform_permission_to_intersect_arr($parent_g, 'usergroup');
+			$current = static::get_relation_as_array($this, 'usergroup');
+			$current = static::transform_permission_to_intersect_arr($current, 'usergroup');
+			$group_intersects = array_intersect($parent_g, $current);
+
+			// user
+			$parent_u  = static::get_relation_as_array($p_obj, 'user');
+			$parent_u  = static::transform_permission_to_intersect_arr($parent_u, 'user');
+			$current = static::get_relation_as_array($this, 'user');
+			$current = static::transform_permission_to_intersect_arr($current, 'user');
+			$user_intersects = array_intersect($parent_u, $current);
+
+			// initialize permission - overhead but for test purpose, it must be place here
+			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
+			unset($this->permission_usergroup);
+			unset($this->permission_user);
+
+		// update permissions
+		if ( ! $current)
+		{
+			// default permission is same as parent permission
+			// 現在のパーミッションが空だったら親のパーミッションと同じにする
+			static::update_permission_by_intersects($this, $parent_g, 'usergroup');
+			static::update_permission_by_intersects($this, $parent_u, 'user');
+		}
+		else
+		{
+			// update permission by intersects
+			// 現在のパーミッションを親以下にする
+			static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
+			static::update_permission_by_intersects($this, $user_intersects, 'user');
+		}
+
+		}
+
+		// tidy up order of permissions at root dir
+		if ($this->path == '/')
+		{
+			// preserve and sort
+			$usergroup = static::get_relation_as_array($this, 'usergroup');
+			$user = static::get_relation_as_array($this, 'user');
+
+			// initialize permission - overhead but for test purpose, it must be place here
+			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
+			unset($this->permission_usergroup);
+			unset($this->permission_user);
+
+			// update permissions
+			static::update_permission($this, $usergroup, 'usergroup');
+			static::update_permission($this, $user, 'user');
+		}
+	}
+
+	/**
 	 * _event_after_insert()
 	*/
 	public function _event_after_insert()
 	{
-		// it is depend on \Input::post().
-		// sync doesn't have \Input::post() but sync already define $this->path
+		// this observer is depend on \Input::post().
+		// Controller_Flr::sync() doesn't have \Input::post() but Controller_Flr::sync() already define $this->path
 		$this->path = $this->path ?: \Input::post('parent').\Input::post('name');
 		$this->save();
-		static::embed_hidden_info($this);
 	}
 
 	/**
 	 * _event_after_update()
+	 * it calls static::embed_hidden_info().
+	 * static::embed_hidden_info() は、確実にデータベースをアップデートしたあとに呼びたいので、ここに設置する。しかし、関係テーブルしかアップデートしないaction_permission_dir()は、これを呼び出さないので、処理のためだけにaction_permission_dir()でupdated_atフィールドを改変しているが、要検討。
 	*/
 	public function _event_after_update()
 	{
@@ -138,16 +208,10 @@ class Model_Flr extends \Model_Base
 		$this->disable_event('after_update');
 
 		// put .LOCOMO_DIR_INFO
-		if ( ! file_exists($new_path.'.LOCOMO_DIR_INFO'))
+		$path = $this->genre == 'dir' ? LOCOMOUPLOADPATH.$this->path : LOCOMOUPLOADPATH.dirname($this->path).DS ;
+		if ( ! file_exists($path.'.LOCOMO_DIR_INFO'))
 		{
 			static::embed_hidden_info($this);
-		}
-
-		// permission - put it in .LOCOMO_DIR_INFO
-		if ($this->permission_usergroup)
-		{
-// \Fileでappendする？ なければput
-// あとで、unserializeする？
 		}
 
 		// children
@@ -188,14 +252,120 @@ class Model_Flr extends \Model_Base
 				$child->save();
 
 				// embed($path)
-				static::embed_hidden_info($child);
+				//static::embed_hidden_info($child);
 			}
 		}
 
 		// itself
-		$this->path = $new_path;
-		$this->save();
-		static::embed_hidden_info($this);
+//		$this->path = $new_path;
+//		$this->save();
+			static::embed_hidden_info($this);
+	}
+
+	/**
+	 * update_permission()
+	*/
+	public static function update_permission($obj, $arrs, $relation)
+	{
+		$relation_name = 'permission_'.$relation;
+		$model_name = '\Model_Flr_'.ucfirst($relation);
+		foreach ($arrs as $arr)
+		{
+			$obj->{$relation_name}[] = $model_name::forge()->set($arr);
+		}
+	}
+
+	/**
+	 * update_permission_by_intersects()
+	*/
+	public static function update_permission_by_intersects($obj, $intersects, $relation)
+	{
+		$relation_name = 'permission_'.$relation;
+		$model_name = '\Model_Flr_'.ucfirst($relation);
+		$arrs = array();
+		foreach ($intersects as $intersect)
+		{
+			list($id, $right) = explode('/', $intersect);
+			$arrs[] = array(
+				'flr_id'       => $obj->id,
+				$relation.'_id' => $id,
+				'is_writable'  => $right,
+			);
+		}
+		static::update_permission($obj, $arrs, $relation);
+	}
+
+	/**
+	 * get_relation_as_array()
+	*/
+	public static function get_relation_as_array($obj, $relation)
+	{
+		if ( ! $obj instanceof Model_Flr) return array();
+		$relation_name = 'permission_'.$relation;
+		$retvals = array();
+		if ($obj->$relation_name)
+		{
+			foreach ($obj->$relation_name as $id => $v)
+			{
+				eval('$relations = '.var_export($v->_data, true).';');
+				if ($relations)
+				{
+					$retvals[$id] = $relations;
+					$retvals[$id]['flr_id'] = $obj->id;
+					unset($retvals[$id]['id']);
+				}
+			}
+		}
+		$retvals = \Arr::multisort($retvals, array($relation.'_id' => SORT_ASC));
+		return $retvals;
+	}
+
+	/**
+	 * transform_permission_to_intersect_arr()
+	*/
+	public static function transform_permission_to_intersect_arr($permissions, $relation)
+	{
+		$tmps = array();
+		foreach ($permissions as $v)
+		{
+			$tmps[] = $v[$relation.'_id'].DS.$v['is_writable'];
+			// writable なら自動的に閲覧可能とする
+			if ($v['is_writable'] == 1) $tmps[] = $v[$relation.'_id'].DS.'0';
+		}
+		return $tmps;
+	}
+
+	/**
+	 * get_parent()
+	 */
+	public static function get_parent($obj)
+	{
+		if ( ! $obj instanceof Model_Flr) return array();
+		$p_path = rtrim(dirname($obj->path), DS).DS;
+		$option = array(
+			'where' => array(
+				array('path', '=', $p_path),
+			)
+		);
+		return static::find('first', \Model_Flr::authorized_option($option, 'index_files'));
+	}
+
+	/**
+	 * get_children()
+	 */
+	public static function get_children($obj)
+	{
+		if ( ! $obj instanceof Model_Flr) return array();
+
+		// current children
+		$option = array(
+			'where' => array(
+				array('path', 'like', $obj->path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+			)
+		);
+		return static::find('all', \Model_Flr::authorized_option($option, 'index_files'));
 	}
 
 	/**
@@ -208,12 +378,12 @@ class Model_Flr extends \Model_Base
 
 		// target
 		$path = LOCOMOUPLOADPATH.$obj->path;
-		$target = is_dir($path) ? $path : dirname($path).DS ;
+		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
 
 		// get myself and children
 		$vals = Model_Flr::find('all', array('where' => array(array('path', 'like', $obj->path.'%'))));
 
-		// update current
+		// update myself and children 
 		if ($vals)
 		{
 			foreach ($vals as $val)
@@ -223,9 +393,13 @@ class Model_Flr extends \Model_Base
 
 				// var_export() to use Model's __to_string() and eval() it
 				eval('$data = '.var_export($val->_data, true).';');
-				eval('$relations = '.var_export($val->_data_relations, true).';');
 				\Arr::set($current, $key.'.data'     , $data);
-				\Arr::set($current, $key.'.relations', $relations);
+
+				// relations
+				$usergroups = static::get_relation_as_array($val, 'usergroup');
+				\Arr::set($current, $key.'.permission_usergroup', $usergroups);
+				$users = static::get_relation_as_array($val, 'user');
+				\Arr::set($current, $key.'.permission_user', $users);
 			}
 		}
 
@@ -292,10 +466,10 @@ class Model_Flr extends \Model_Base
 			$form = static::parent_dir($form, $obj);
 		}
 
-		// permission
+		// permission_dir
 		if (in_array(\Request::active()->action, array('permission_dir')))
 		{
-			$form = static::permission($form, $obj);
+			$form = static::permission_dir($form, $obj);
 		}
 
 		// purge_dir
@@ -321,6 +495,29 @@ class Model_Flr extends \Model_Base
 		{
 			$form = static::purge_file($form, $obj);
 		}
+
+		return $form;
+	}
+
+	/**
+	 * sync_definition()
+	 */
+	public static function sync_definition($factory = 'form', $obj = null)
+	{
+		$form = \Fieldset::forge($factory);
+
+		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
+			->set_value(\Security::fetch_token());
+
+		$form->add('submit', '', array('type' => 'submit', 'value' => '同期する', 'class' => 'button primary'))
+			->set_template('<div class="submit_button">{field}</div>');
+
+		$messages = array(
+			'ファイルやディレクトリの実際の状況とデータベースの内容に矛盾が生じているようでしたら、これを実行してください。',
+			'ファイルやディレクトリの数によっては時間がかかることがあります。',
+			'この処理は、時々自動的に行われますので、原則、明示的な実行は不要です。',
+		);
+		\Session::set_flash('message', $messages);
 
 		return $form;
 	}
@@ -413,16 +610,16 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * permission()
+	 * permission_dir()
 	 */
-	public static function permission($form, $obj)
+	public static function permission_dir($form, $obj)
 	{
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');
 
 		// usergroup_id
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
-		$options = array(''=>'選択してください', '0' => 'ゲスト') + $options;
+		$options = array(''=>'選択してください', '-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
 		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
 			'type' => 'select',
 			'options' => $options,
@@ -439,7 +636,7 @@ class Model_Flr extends \Model_Base
 			'class' => 'varchar user',
 		);
 		$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
-		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'is_sticky');
+		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
 
 		return $form;
 	}
@@ -449,7 +646,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function purge_dir($form, $obj)
 	{
-		\Session::set_flash('error', 'ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。この削除は取り消しができません。注意してください。');
+		\Session::set_flash('message', 'ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。この削除は取り消しができません。注意してください。');
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');
@@ -475,7 +672,6 @@ class Model_Flr extends \Model_Base
 		)
 		->add_rule(array('valid_string' => array('alpha','numeric','dot','dashes')));
 
-//		$form->field('submit')->set_label('完全に削除する');
 		$form->field('submit')->set_value('アップロード');
 		return $form;
 	}
@@ -485,7 +681,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function purge_file($form, $obj)
 	{
-		\Session::set_flash('error', 'ファイルの削除は取り消しできませんので、ご注意ください。');
+		\Session::set_flash('message', 'ファイルの削除は取り消しできませんので、ご注意ください。');
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');

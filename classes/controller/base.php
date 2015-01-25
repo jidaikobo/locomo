@@ -269,7 +269,7 @@ class Controller_Base extends Controller_Core
 		{
 			if (
 				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
-				 \Security::check_token()
+				$check_token = \Security::check_token()
 			)
 			{
 				//save
@@ -304,7 +304,7 @@ class Controller_Base extends Controller_Core
 				{
 					$errors = $form->error();
 					// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
-					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
+					if ( ! $check_token) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
 					\Session::set_flash('error', $errors);
 				}
 			}

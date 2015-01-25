@@ -46,6 +46,14 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 ?>
 	<div class="container">
 		<h1 id="page_title" class="skip" tabindex="-1"><?php echo $title; ?></h1>
+<?php if (Session::get_flash('message')): ?>
+		<div id="alert_success" class="flash_alert alert_success" tabindex="0">
+			<a id="anchor_alert_message" class="skip" tabindex="1" id="alert_message">インフォメーション:メッセージが次の行にあります</a>
+			<p>
+			<?php echo implode('</p><p>', e((array) Session::get_flash('message'))); ?>
+			</p>
+		</div>
+<?php endif; ?>
 <?php if (Session::get_flash('success')): ?>
 		<div id="alert_success" class="flash_alert alert_success" tabindex="-1">
 			<a id="anchor_alert_success" class="skip" tabindex="1" id="alert_success">インフォメーション:メッセージが次の行にあります</a>

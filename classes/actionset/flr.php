@@ -3,21 +3,6 @@ namespace Locomo;
 class Actionset_Flr extends \Actionset_Base
 {
 	/**
-	 * get_parent()
-	 */
-	protected static function get_parent($obj)
-	{
-		if ( ! $obj instanceof Model_Flr) return array();
-		$p_path = rtrim(dirname($obj->path), DS).DS;
-		$option = array(
-			'where' => array(
-				array('path', '=', $p_path),
-			)
-		);
-		return \Model_Flr::find('first', \Model_Flr::authorized_option($option, 'index_files'));
-	}
-
-	/**
 	 * actionset_index_admin()
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
@@ -26,11 +11,35 @@ class Actionset_Flr extends \Actionset_Base
 	}
 
 	/**
+	 * actionset_sync()
+	 */
+	public static function actionset_sync($controller, $obj = null, $id = null, $urls = array())
+	{
+		$actions = array(array($controller.DS."sync", '同期'));
+		$urls = static::generate_urls($controller.DS.'sync', $actions);
+
+		$retvals = array(
+			'realm'        => 'option',
+			'urls'         => $urls,
+			'action_name'  => '同期',
+			'show_at_top'  => false,
+			'explanation'  => 'ディレクトリとデータベースの内容を同期します。',
+			'help'         => 'ディレクトリとデータベースの内容を同期します。ファイルやディレクトリの実際の状況とデータベースの内容に矛盾が生じているようでしたら、これを実行してください。この処理はファイルやディレクトリの量によっては時間がかかることがあります。',
+			'acl_exp'      => 'ディレクトリとデータベースの内容を同期する権限です。',
+			'order'        => 100,
+			'dependencies' => array(
+				$controller.DS.'sync',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
 	 * actionset_index_files()
 	 */
 	public static function actionset_index_files($controller, $obj = null, $id = null, $urls = array())
 	{
-		$parent = static::get_parent($obj);
+		$parent = \Model_Flr::get_parent($obj);
 		if ($parent && $obj->id != 1)
 		{
 			if ($obj->genre == 'dir')
@@ -55,7 +64,7 @@ class Actionset_Flr extends \Actionset_Base
 	 */
 	public static function actionset_upload($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($obj->genre == 'dir')
+		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."upload/".$obj->id, '新規アップロード'));
 			$urls = static::generate_urls($controller.DS.'upload', $actions);
@@ -64,7 +73,7 @@ class Actionset_Flr extends \Actionset_Base
 			'realm'        => 'base',
 			'urls'         => $urls,
 			'action_name'  => '新規作成',
-			'show_at_top'  => true,
+			'show_at_top'  => false,
 			'explanation'  => '新しい項目を追加します。',
 			'help'         => '新しい項目を追加します。',
 			'acl_exp'      => '新規アップロード権限。',
@@ -83,7 +92,7 @@ class Actionset_Flr extends \Actionset_Base
 	 */
 	public static function actionset_create_dir($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($obj->genre == 'dir')
+		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."create_dir/".$obj->id, '<!--ディレクトリ-->作成'));
 			$urls = static::generate_urls($controller.DS.'upload', $actions);
@@ -117,7 +126,7 @@ class Actionset_Flr extends \Actionset_Base
 	 */
 	public static function actionset_move_dir($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($obj->genre == 'dir')
+		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."move_dir/".$obj->id, '<!--ディレクトリ-->移動'));
 			$urls = static::generate_urls($controller.DS.'move_dir', $actions);
@@ -135,7 +144,7 @@ class Actionset_Flr extends \Actionset_Base
 	 */
 	public static function actionset_rename_dir($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($obj->genre == 'dir')
+		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."rename_dir/".$obj->id, '<!--ディレクトリ-->名称変更'));
 			$urls = static::generate_urls($controller.DS.'rename_dir', $actions);
@@ -153,7 +162,7 @@ class Actionset_Flr extends \Actionset_Base
 	 */
 	public static function actionset_permission_dir($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($obj->genre == 'dir')
+		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."permission_dir/".$obj->id, '<!--ディレクトリ-->権限設定'));
 			$urls = static::generate_urls($controller.DS.'permission_dir', $actions);
@@ -171,7 +180,7 @@ class Actionset_Flr extends \Actionset_Base
 	 */
 	public static function actionset_purge_dir($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($obj->genre == 'dir')
+		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."purge_dir/".$obj->id, '<!--ディレクトリ-->削除'));
 			$urls = static::generate_urls($controller.DS.'purge_dir', $actions);

@@ -296,9 +296,15 @@ class Model_Base extends \Orm\Model_Soft
 					} elseif (isset($input_post[$k][$kk]['_delete'])){ // _deleted
 						unset($this->{$k}[$kk]);
 					} else {
-						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
-						!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
-						$repopulate and $form->field($k)->field($k.'_row_'.$kk)->populate($input_post[$k][$kk]);
+//						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
+						if (isset($input_post[$k][$kk])) {
+							$vv->set($input_post[$k][$kk]);
+							!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
+							$repopulate and $form->field($k)->field($k.'_row_'.$kk)->populate($input_post[$k][$kk]);
+						} else {
+							// observerでの追加など、何らかの理由で$thisに新規列がきている場合は無視して何もしない。
+							// たぶん下の新規列で処理されているが、忘れそうなので、明示的にここにコメントを残す。
+						}
 					}
 				}
 
@@ -307,7 +313,10 @@ class Model_Base extends \Orm\Model_Soft
 					$hm_model = static::relations()[$k]->model_to;
 					if (!is_null($input_post[$k.'_new'])) {
 						foreach ($input_post[$k.'_new'] as $kk => $vv) {
-							$vv = array_filter($vv);
+//							$vv = array_filter($vv);
+							// array_filter()だと配列の値がゼロと空白で構成された妥当なデータをfalseと見なすので、明示的空白のみで構成された配列をfilterする。
+							$vv = array_filter($vv, function($k) {return ! ($k === '');});
+
 							if (!empty($vv)) { // array_filter で引数が全て空なら 空の配列が返る -> 新規の保存なし
 								$this->{$k}[] = $hm_model::forge()->set($vv);
 								!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_new_'.$kk)->validation()->run($input_post[$k.'_new'][$kk]);
