@@ -25,6 +25,34 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 {
 
 
+	public function __set($name, $value) {
+		if ($name == 'name') $this->name = $value;
+	}
+
+	// バグ
+	public function delete_rule($callback, $set_attr = true)
+	{
+		foreach($this->rules as $index => $rule)
+		{
+			if ($rule[0] === $callback)
+			{
+				unset($this->rules[$index]);
+				break;
+			}
+		}
+
+		if ($callback === 'required' or $callback === 'required_with')
+		{
+			unset($this->attributes[$callback]);
+		}
+
+		return $this;
+	}
+
+
+
+
+
 	/*
 	 * 暗黙的ラベル用にオーバーライド
 	 */
@@ -116,7 +144,11 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		if (is_array($build_field))
 		{
 			$label = $this->label ? str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>')) : '';
-			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
+			$template = $this->template ?: $form->get_config('multi_field_template_plain',
+				$form->get_config(
+					'multi_field_template',
+					"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n")
+			);
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
@@ -211,24 +243,25 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 
 
 
-/* ==============================
+/* ========================================
  * 以下 build plain
- ============================== */
+ ======================================== */
 	/*
 	 * alike a build method
 	 * input タグ を出力しない
-	 * @param 無視する $dispose_build_plain
 	 */
-	public function build_plain($dispose_build_plain = null, $date_format = null) {
+	public function build_plain() {
 		$form = $this->fieldset()->form();
 
 		// Add IDs when auto-id is on
 		if ($form->get_config('auto_id', false) === true and $this->get_attribute('id') == '')
 		{
-			$auto_id = $form->get_config('auto_id_prefix', '')
+			$auto_id = $form->get_config('auto_id_prefix_plain', $form->get_config('auto_id_prefix', ''))
 				.str_replace(array('[', ']'), array('-', ''), $this->name);
 			$this->set_attribute('id', $auto_id);
 		}
+
+
 
 		switch( ! empty($this->attributes['tag']) ? $this->attributes['tag'] : $this->type)
 		{
@@ -294,7 +327,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 
 			case 'hidden':
 			case false:
-				$build_field = '';
+				return '';
 			break;
 
 			default:
@@ -302,33 +335,38 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 			break;
 		}
 
-		if (empty($build_field) or $this->type == 'hidden')
+		// if (empty($build_field)) var_dump ($this->name) ;
+		if ($this->type == 'hidden')
 		{
 			return $build_field;
 		}
 
-		// var_dump($build_field);
-		return $this->template_plain($build_field);
-
-
-
-		// default
-		if (substr($this->name, -2) == 'at' and !is_null($date_format)) {
+		// _at を $date_format の形に
+		if (substr($this->name, -2) == 'at') {
 			// 時間の表記を含む なおかつ 00:00:00
+
+			$date_format = $form->get_config('date_format_plain', 'Y-m-d H:i:s');
 			if (\Arr::filter_keys( array_flip(str_split($date_format)), str_split('aABgGhHisur')) and
-				strtotime(substr($this->value, -8)) == strtotime('00:00:00')
+				date('His', strtotime($this->value)) == date('His', strtotime('00:00:00'))
 			) {
 				foreach (str_split('aABgGhHisur') as $s) { 
 					if (strpos($date_format, $s)) $str_pos[] = strpos($date_format, $s);
 				}
 				$date_format = substr($date_format, 0, min($str_pos));
 			}
-			if ($this->value != '0000-00-00 00:00:00'){
-				return $this->template_plain(date($date_format, strtotime($this->value)));
+			if ($this->value != '0000-00-00 00:00:00' and $this->value != '0000-00-00'){
+				$build_field = date($date_format, strtotime($this->value));
 			} else {
-				return $this->template_plain('');
+				$build_field = '';
 			}
 		}
+
+		$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', null), 'class' => $form->get_config('label_class', null))) : '';
+		// var_dump($label);
+		return $this->template_plain($build_field, $label);
+
+
+
 
 		if (!empty($this->options)) {
 			!is_array($this->value) and $this->value = array($this->value);
@@ -393,21 +431,27 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		return $template;
 	}
 	 */
-	protected function template_plain($build_field)
+	protected function template_plain($build_field, $label)
 	{
 		$form = $this->fieldset()->form();
 
 		$required_mark = '';
-		$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', null), 'class' => $form->get_config('label_class', null))) : '';
+		if ($label) {
+		   	$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', null), 'class' => $form->get_config('label_class', null))) : '';
+		}
 		$error_template = '';
 		$error_msg = '';
 		$error_class = '';
 
-		// array 来ないように
 		if (is_array($build_field))
 		{
 			$label = $this->label ? str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>')) : '';
-			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
+			$template = $this->template ?: $form->get_config('multi_field_template_plain',
+				 $form->get_config(
+					'multi_field_template',
+					"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
+				)
+			);
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				/*
@@ -425,7 +469,11 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 				$build_fields = implode($val, ', ');
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}', '{error_alert_link}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description, ''), $template);
+				$template = str_replace(
+					array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}', '{error_alert_link}'),
+					array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description, ''),
+					$template
+				);
 
 				return $template;
 			}
@@ -436,20 +484,25 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 
 		// determine the field_id, which allows us to identify the field for CSS purposes
 		$field_id = 'col_'.$this->name;
+		$field_template_plain = 'field_template_plain'; // 追加
 		if ($parent = $this->fieldset()->parent())
 		{
 			$parent->get_tabular_form() and $field_id = $parent->get_tabular_form().'_col_'.$this->basename;
+			$parent->get_tabular_form() and $field_template_plain = 'field_template'; // 追加
 		}
 
-		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}', '{error_alert_link}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class, '', $field_id, ''),
+		$template = $this->template ?: $form->get_config($field_template_plain,
+			$form->get_config(
+				'field_template',
+				"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n"
+			)
+		);
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}', '{error_alert_link}', '{auto_id}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class, '', $field_id, '', $this->get_attribute('id')),
 			$template);
 
 		return $template;
 	}
-
-
 
 
 

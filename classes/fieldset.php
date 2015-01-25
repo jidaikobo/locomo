@@ -37,21 +37,10 @@ class Fieldset extends \Fuel\Core\Fieldset
 	 */
 	public function delete($field) {
 		// tabular_form の delete
-		// 先に set_tabular_form が thead を描画するため、不可
+		// 先に set_tabular_form が thead を描画するため、使えない
 		/*
 		if ($this->tabular_form_relation) {
-			$model = $this->tabular_form_model;
-			if (is_array($field) ) {
-				foreach($field as $f) {
-					// unset($this->fields[$f]);
-						//unset($model::$_properties[$f]);
-					unset($model::$_properties[$f]); // 'model の $_properites を public にして下さい
-				}
-			} elseif (is_string($field)) {
-				unset($model::$_properties[$field]);
-				// unset($this->fields[$field]);
-			}
-			$this->set_tabular_form_template("<!-- unset -->", $field);
+			$this->delete_tabular($field);
 			return $this;
 		}
 		 */
@@ -108,7 +97,7 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 		if (!$str) $str = $this->name;
 		foreach ($this->field() as $f) {
-			if ($f instanceof \Fieldset_Field) $f->set_name($str . '[' . $f->get_name() . ']');
+			if ($f instanceof \Fieldset_Field) $f->name = $str . '[' . $f->name . ']';
 		}
 	}
 
@@ -132,6 +121,7 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 	/*
 	 * 全リフレッシュ用の tabular
+	 * 全て _new_ で set するため、delete と併用する
 	 */
 	public function set_tabular_form_blank($model, $relation, $parent, $blanks = 1)
 	{
@@ -195,8 +185,8 @@ class Fieldset extends \Fuel\Core\Fieldset
 				$fieldset->add_model($model)->set_fieldset_tag(false);
 			}
 			$fieldset->set_config(array(
-				'form_template' => \Config::get('form.tabular_row_template', \Config::get('form.tabular_row_template_blank', "<tr class=\"{$this->tabular_form_relation}{$i}\">{fields}</tr>")),
-				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
+				'form_template' => \Config::get('form.tabular_row_template_blank', \Config::get('form.tabular_row_template', "<tr class=\"{$this->tabular_form_relation}{$i}\">{fields}</tr>")),
+				'field_template' => \Config::get('form.tabular_row_field_template_blank', \Config::get('form.tabular_row_field_template', "{field}"))
 			));
 			$fieldset->add($this->tabular_form_relation.'_new['.$i.'][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
 
@@ -215,29 +205,31 @@ class Fieldset extends \Fuel\Core\Fieldset
 	/*
 	 * alike a build method
 	 * input タグ を出力しない
-	 * @param bool|array  $action array('form_name' => array(output values)))
-	 * @param str         $date_format
 	 * @return  string
 	 */
-	public function build_plain($action = false, $date_format = null)
+	public function build_plain()
 	{
 		$attributes = $this->get_config('form_attributes');
-		if ($action and ($this->fieldset_tag == 'form' or empty($this->fieldset_tag)))
-		{
-			$attributes['action'] = $action;
-		}
-
-		/*
-		$open = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
-			? $this->form()->open($attributes).PHP_EOL
-			: $this->form()->{$this->fieldset_tag.'_open'}($attributes);
-		 */
 
 		$fields_output = '';
 
 		// construct the tabular form table header
 		if ($this->tabular_form_relation)
 		{
+
+			// _delete フィールドを削除
+			$tabular_name = $this->name;
+			foreach ($this->children() as $v) {
+				if (strpos($v->name, '_row_') > 0) {
+					$field_name = str_replace('_row_', '[', $v->name) . '][_delete]';
+					unset($v->fields[$field_name]);
+				} else {
+					$field_name = str_replace('_new_', '_new[', $v->name) . '][_delete]';
+					unset($v->fields[$field_name]);
+				}
+			}
+
+
 			$properties = call_user_func($this->tabular_form_model.'::properties');
 			$primary_keys = call_user_func($this->tabular_form_model.'::primary_key');
 			$fields_output .= '<thead><tr>'.PHP_EOL;
@@ -252,14 +244,18 @@ class Fieldset extends \Fuel\Core\Fieldset
 					continue;
 				}
 				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label'])?\Lang::get($settings['label'], array(), $settings['label']):'').'</th>'.PHP_EOL;
+
 			}
+
 
 			$fields_output .= '</tr></thead>'.PHP_EOL;
 		}
 
 		foreach ($this->field() as $f)
 		{
+			in_array($f->name, $this->disabled) or $fields_output .= $f->build_plain().PHP_EOL;
 
+			/*
 			// リレーションされたフィールド
 			// todo mm のセレクトなど
 			if ($f instanceof \Fieldset_Field) {
@@ -268,17 +264,18 @@ class Fieldset extends \Fuel\Core\Fieldset
 					// var_dump($this->name);
 						if (in_array($f->name, $action[$this->name])) {
 							if (!$f->type or $f->type == 'hidden') continue;
-							!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($action, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
+							!in_array($f->name, $this->disabled) and $fields_output .= (string)$f->build_plain($action, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
 					}
 
 				} elseif (!$action or !is_array($bild_field[$this->name])) {
 					if (!$f->type or $f->type == 'hidden') continue;
-					!in_array($f->name, $this->disabled) and $fields_output .= $f->build_plain($action, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
+					!in_array($f->name, $this->disabled) and $fields_output .= (string)$f->build_plain($action, $date_format).PHP_EOL; // Fieldset->build_plain or Fieldset_field->build_plain()
 				}
 
 			} else {
-				in_array($f->name, $this->disabled) or $fields_output .= $f->build_plain().PHP_EOL;
+				in_array($f->name, $this->disabled) or $fields_output .= (string)$f->build_plain().PHP_EOL;
 			}
+			 */
 		}
 
 		/*
@@ -287,12 +284,12 @@ class Fieldset extends \Fuel\Core\Fieldset
 		$output = str_replace(array('{fields}'), array($fields_output), $template);
 		 */
 
-		$close = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
-			? $this->form()->close($attributes).PHP_EOL
-			: $this->form()->{$this->fieldset_tag.'_close'}($attributes);
-
-		$template = $this->form()->get_config((empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
-			"\n\t\t{open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{close}\n");
+		$template = $this->form()->get_config((empty($this->fieldset_tag) ? 'form_plain' : $this->fieldset_tag).'_template_plain',
+			$this->form()->get_config(
+				(empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
+				"\n\t\t{fields}\n"
+			)
+		);
 
 		$template = str_replace(array('{form_open}', '{open}', '{fields}', '{form_close}', '{close}'),
 			array('', '', $fields_output, '', ''),
@@ -307,8 +304,73 @@ class Fieldset extends \Fuel\Core\Fieldset
 	public function set_tabular_form($model, $relation, $parent, $blanks = 1)
 	{
 		if (\Request::main()->action == 'view') $blanks = 0;
-		return parent::set_tabular_form($model, $relation, $parent, $blanks);
+		$tabular =  parent::set_tabular_form($model, $relation, $parent, $blanks);
+
+
+		$_deletes = $tabular->tabular_field('_delete');
+		$delete_label = \Config::get('form.tabular_delete_label_field', \Config::get('form.tabular_delete_label', 'Delete?'));
+		foreach ($_deletes as $_delete) {
+			if ($_delete) $_delete->set_options(array(1 => $delete_label));
+		}
+		foreach ($tabular->children() as $child) {
+			foreach ($child->field() as $f) {
+				if ( ($f->type == 'checkbox' or $f->type == 'radio') and $f->options ) {
+					$template = $this->form()->get_config('multi_field_template_tabular',
+						 $this->get_config(
+							'multi_field_template',
+							"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
+						)
+					);
+
+					$f->set_template($template);
+				}
+			}
+		}
+
+		return $tabular;
 	}
+
+	/*
+	 * @return array
+	 */
+	public function tabular_field($name = null) {
+		if (!$this->tabular_form_relation) return false;
+
+		$tabular_name = $this->name;
+		$return = array();
+		foreach ($this->children() as $v) {
+			if (strpos($v->name, '_row_') > 0) {
+				$field_name = str_replace('_row_', '[', $v->name) . '][' . $name . ']';
+			} else {
+				$field_name = str_replace('_new_', '_new[', $v->name) . '][' . $name . ']';
+			}
+			$return[] = $v->field($field_name);
+		}
+
+		return $return;
+	}
+
+	// 先に set_tabular_form が thead を描画するため、使えない
+	/*
+	public function delete_tabular($field = null) {
+		if (!$this->tabular_form_relation) return false;
+		if (!is_array($field)) $field = array($field);
+		foreach($field as $f) {
+			$tabular_name = $this->name;
+			foreach ($this->children() as $v) {
+				if (strpos($v->name, '_row_') > 0) {
+					$field_name = str_replace('_row_', '[', $v->name) . '][' . $f . ']';
+					unset($v->fields[$field_name]);
+				} else {
+					$field_name = str_replace('_new_', '_new[', $v->name) . '][' . $f . ']';
+					unset($v->fields[$field_name]);
+				}
+			}
+		}
+		return $this;
+	}
+	 */
+
 
 
 }
