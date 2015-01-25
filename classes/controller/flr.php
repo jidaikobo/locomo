@@ -335,6 +335,15 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// parent::edit()
 		$obj = parent::edit($id);
 
+		// to load \Model_Flr::_event_after_update() and \Model_Flr::embed_hidden_info().
+		// no update cause no load observer_after_update
+		if (\Input::post())
+		{
+			$obj = $obj ? $obj : \Model_Flr::find($id);
+			$obj->updated_at = date('Y-m-d H:i:s');
+			$obj->save();
+		}
+
 		// rewrite message
 		$success = \Session::get_flash('success');
 		if ($success)

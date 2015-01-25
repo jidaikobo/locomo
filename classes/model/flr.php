@@ -125,55 +125,52 @@ class Model_Flr extends \Model_Base
 		// prevent loop at inside of this observer
 		$this->disable_event('before_save');
 
-		// compare permission between parent and current dir.
-		if ($this->path != '/') // not for root dir.
+		// to solve contradiction compare permission between parent and current dir.
+//		if ($this->path != '/') // not for root dir.
+		if (1==0)
 		{
-			$parent = static::get_parent($this);
+			$p_obj = static::get_parent($this);
 
 			// usergroup
-			$parent_permissions  = static::get_relation_as_array($parent, 'permission_usergroup');
-			$parent_permissions  = static::transform_permission_to_intersect_arr($parent_permissions, 'usergroup');
-			$current_permissions = static::get_relation_as_array($this, 'permission_usergroup');
-			$current_permissions = static::transform_permission_to_intersect_arr($current_permissions, 'usergroup');
-			$group_intersects = array_intersect($parent_permissions, $current_permissions);
+			$parent  = static::get_relation_as_array($p_obj, 'usergroup');
+			$parent  = static::transform_permission_to_intersect_arr($parent, 'usergroup');
+			$current = static::get_relation_as_array($this, 'usergroup');
+			$current = static::transform_permission_to_intersect_arr($current, 'usergroup');
+			$group_intersects = array_intersect($parent, $current);
 
 			// user
-			$parent_permissions  = static::get_relation_as_array($parent, 'permission_user');
-			$parent_permissions  = static::transform_permission_to_intersect_arr($parent_permissions, 'user');
-			$current_permissions = static::get_relation_as_array($this, 'permission_user');
-			$current_permissions = static::transform_permission_to_intersect_arr($current_permissions, 'user');
-			$user_intersects = array_intersect($parent_permissions, $current_permissions);
+			$parent  = static::get_relation_as_array($p_obj, 'user');
+			$parent  = static::transform_permission_to_intersect_arr($parent, 'user');
+			$current = static::get_relation_as_array($this, 'user');
+			$current = static::transform_permission_to_intersect_arr($current, 'user');
+			$user_intersects = array_intersect($parent, $current);
 
-			// initialize
+			// initialize permission - overhead but for test purpose, it must be place here
 			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
 			unset($this->permission_usergroup);
 			unset($this->permission_user);
 
-			// update usergroup permission
-			foreach ($group_intersects as $group_intersect)
-			{
-				list($id, $right) = explode('/', $group_intersect);
-				$vals = array(
-					'flr_id'       => $this->id,
-					'usergroup_id' => $id,
-					'is_writable'  => $right,
-				);
-				$this->permission_usergroup[] = \Model_Flr_Usergroup::forge()->set($vals);
-			}
-
-			// update usergroup permission
-			foreach ($user_intersects as $user_intersect)
-			{
-				list($id, $right) = explode('/', $user_intersect);
-				$vals = array(
-					'flr_id'       => $this->id,
-					'user_id' => $id,
-					'is_writable'  => $right,
-				);
-				$this->permission_user[] = \Model_Flr_User::forge()->set($vals);
-			}
+			// update permissions
+			static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
+			static::update_permission_by_intersects($this, $user_intersects, 'user');
 		}
 
+		// tidy up order of permissions at root dir
+		if ($this->path == '/')
+		{
+			// preserve and sort
+			$usergroup = static::get_relation_as_array($this, 'usergroup');
+			$user = static::get_relation_as_array($this, 'user');
+
+			// initialize permission - overhead but for test purpose, it must be place here
+			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
+			unset($this->permission_usergroup);
+			unset($this->permission_user);
+
+			// update permissions
+			static::update_permission($this, $usergroup, 'usergroup');
+			static::update_permission($this, $user, 'user');
+		}
 	}
 
 	/**
@@ -189,6 +186,8 @@ class Model_Flr extends \Model_Base
 
 	/**
 	 * _event_after_update()
+	 * it calls static::embed_hidden_info().
+	 * static::embed_hidden_info() は、確実にデータベースをアップデートしたあとに呼びたいので、ここに設置する。しかし、関係テーブルしかアップデートしないaction_permission_dir()は、これを呼び出さないので、処理のためだけにaction_permission_dir()でupdated_atフィールドを改変しているが、要検討。
 	*/
 	public function _event_after_update()
 	{
@@ -247,6 +246,40 @@ class Model_Flr extends \Model_Base
 		// itself
 //		$this->path = $new_path;
 //		$this->save();
+			static::embed_hidden_info($this);
+	}
+
+	/**
+	 * update_permission()
+	*/
+	public static function update_permission($obj, $arrs, $relation)
+	{
+		$relation_name = 'permission_'.$relation;
+		$model_name = '\Model_Flr_'.ucfirst($relation);
+		foreach ($arrs as $arr)
+		{
+			$obj->{$relation_name}[] = $model_name::forge()->set($arr);
+		}
+	}
+
+	/**
+	 * update_permission_by_intersects()
+	*/
+	public static function update_permission_by_intersects($obj, $intersects, $relation)
+	{
+		$relation_name = 'permission_'.$relation;
+		$model_name = '\Model_Flr_'.ucfirst($relation);
+		$arrs = array();
+		foreach ($intersects as $intersect)
+		{
+			list($id, $right) = explode('/', $intersect);
+			$arrs[] = array(
+				'flr_id'       => $obj->id,
+				$relation.'_id' => $id,
+				'is_writable'  => $right,
+			);
+		}
+		static::update_permission($obj, $arrs, $relation);
 	}
 
 	/**
@@ -255,16 +288,22 @@ class Model_Flr extends \Model_Base
 	public static function get_relation_as_array($obj, $relation)
 	{
 		if ( ! $obj instanceof Model_Flr) return array();
+		$relation_name = 'permission_'.$relation;
 		$retvals = array();
-		if ($obj->$relation)
+		if ($obj->$relation_name)
 		{
-			foreach ($obj->$relation as $id => $v)
+			foreach ($obj->$relation_name as $id => $v)
 			{
 				eval('$relations = '.var_export($v->_data, true).';');
-			//	if ($relations) $retvals[$v->_data['id']] = $relations;
-				if ($relations) $retvals[$id] = $relations;
+				if ($relations)
+				{
+					$retvals[$id] = $relations;
+					$retvals[$id]['flr_id'] = $obj->id;
+					unset($retvals[$id]['id']);
+				}
 			}
 		}
+		$retvals = \Arr::multisort($retvals, array($relation.'_id' => SORT_ASC));
 		return $retvals;
 	}
 
@@ -321,7 +360,6 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function embed_hidden_info($obj)
 	{
-return;
 		// current
 		$current = static::fetch_hidden_info(LOCOMOUPLOADPATH.$obj->path);
 
@@ -332,7 +370,7 @@ return;
 		// get myself and children
 		$vals = Model_Flr::find('all', array('where' => array(array('path', 'like', $obj->path.'%'))));
 
-		// update current
+		// update myself and children 
 		if ($vals)
 		{
 			foreach ($vals as $val)
@@ -345,9 +383,9 @@ return;
 				\Arr::set($current, $key.'.data'     , $data);
 
 				// relations
-				$usergroups = static::get_relation_as_array($val, 'permission_usergroup');
+				$usergroups = static::get_relation_as_array($val, 'usergroup');
 				\Arr::set($current, $key.'.permission_usergroup', $usergroups);
-				$users = static::get_relation_as_array($val, 'permission_user');
+				$users = static::get_relation_as_array($val, 'user');
 				\Arr::set($current, $key.'.permission_user', $users);
 			}
 		}
@@ -568,7 +606,7 @@ return;
 
 		// usergroup_id
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
-		$options = array(''=>'選択してください', '0' => 'ゲスト', '-10' => 'ログインユーザすべて') + $options;
+		$options = array(''=>'選択してください', '-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
 		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
 			'type' => 'select',
 			'options' => $options,
