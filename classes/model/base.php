@@ -307,7 +307,10 @@ class Model_Base extends \Orm\Model_Soft
 					$hm_model = static::relations()[$k]->model_to;
 					if (!is_null($input_post[$k.'_new'])) {
 						foreach ($input_post[$k.'_new'] as $kk => $vv) {
-							$vv = array_filter($vv);
+//							$vv = array_filter($vv);
+							// array_filter()だと配列の値がゼロと空白で構成された妥当なデータをfalseと見なすので、明示的空白のみをfilterする。
+							$vv = array_filter($vv, function($k) {return ! ($k === '');});
+
 							if (!empty($vv)) { // array_filter で引数が全て空なら 空の配列が返る -> 新規の保存なし
 								$this->{$k}[] = $hm_model::forge()->set($vv);
 								!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_new_'.$kk)->validation()->run($input_post[$k.'_new'][$kk]);

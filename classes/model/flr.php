@@ -118,6 +118,65 @@ class Model_Flr extends \Model_Base
 	);
 
 	/**
+	 * _event_before_save()
+	 */
+	public function _event_before_save()
+	{
+		// prevent loop at inside of this observer
+		$this->disable_event('before_save');
+
+		// compare permission between parent and current dir.
+		if ($this->path != '/') // not for root dir.
+		{
+			$parent = static::get_parent($this);
+
+			// usergroup
+			$parent_permissions  = static::get_relation_as_array($parent, 'permission_usergroup');
+			$parent_permissions  = static::transform_permission_to_intersect_arr($parent_permissions, 'usergroup');
+			$current_permissions = static::get_relation_as_array($this, 'permission_usergroup');
+			$current_permissions = static::transform_permission_to_intersect_arr($current_permissions, 'usergroup');
+			$group_intersects = array_intersect($parent_permissions, $current_permissions);
+
+			// user
+			$parent_permissions  = static::get_relation_as_array($parent, 'permission_user');
+			$parent_permissions  = static::transform_permission_to_intersect_arr($parent_permissions, 'user');
+			$current_permissions = static::get_relation_as_array($this, 'permission_user');
+			$current_permissions = static::transform_permission_to_intersect_arr($current_permissions, 'user');
+			$user_intersects = array_intersect($parent_permissions, $current_permissions);
+
+			// initialize
+			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
+			unset($this->permission_usergroup);
+			unset($this->permission_user);
+
+			// update usergroup permission
+			foreach ($group_intersects as $group_intersect)
+			{
+				list($id, $right) = explode('/', $group_intersect);
+				$vals = array(
+					'flr_id'       => $this->id,
+					'usergroup_id' => $id,
+					'is_writable'  => $right,
+				);
+				$this->permission_usergroup[] = \Model_Flr_Usergroup::forge()->set($vals);
+			}
+
+			// update usergroup permission
+			foreach ($user_intersects as $user_intersect)
+			{
+				list($id, $right) = explode('/', $user_intersect);
+				$vals = array(
+					'flr_id'       => $this->id,
+					'user_id' => $id,
+					'is_writable'  => $right,
+				);
+				$this->permission_user[] = \Model_Flr_User::forge()->set($vals);
+			}
+		}
+
+	}
+
+	/**
 	 * _event_after_insert()
 	*/
 	public function _event_after_insert()
@@ -191,47 +250,6 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * _event_before_save()
-	*/
-	public function _event_before_save()
-	{
-		// prevent loop at inside of this observer
-		$this->disable_event('before_save');
-
-		// check permission
-		if ($this->permission_usergroup && $this->path != '/')
-		{
-			$parent = static::get_parent($this);
-
-			$parent_permissions  = static::get_relation_as_array($parent, 'permission_usergroup');
-			$parent_permissions  = static::transform_permission_to_intersect_arr($parent_permissions);
-
-			$current_permissions = static::get_relation_as_array($this, 'permission_usergroup');
-			$current_permissions = static::transform_permission_to_intersect_arr($current_permissions);
-
-			$group_intersects = array_intersect($parent_permissions, $current_permissions);
-
-			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
-			unset($this->permission_usergroup);
-
-			if ($group_intersects)
-			{
-				foreach ($group_intersects as $group_intersect)
-				{
-					list($id, $right) = explode('/', $group_intersect);
-					$vals = array(
-						'flr_id'       => $this->id,
-						'usergroup_id' => $id,
-						'is_writable'  => $right,
-					);
-					$this->permission_usergroup[] = \Model_Flr_Usergroup::forge()->set($vals);
-				}
-			}
-		}
-
-	}
-
-	/**
 	 * get_relation_as_array()
 	*/
 	public static function get_relation_as_array($obj, $relation)
@@ -253,14 +271,14 @@ class Model_Flr extends \Model_Base
 	/**
 	 * transform_permission_to_intersect_arr()
 	*/
-	public static function transform_permission_to_intersect_arr($permissions)
+	public static function transform_permission_to_intersect_arr($permissions, $relation)
 	{
 		$tmps = array();
 		foreach ($permissions as $v)
 		{
-			$tmps[] = $v['usergroup_id'].DS.$v['is_writable'];
+			$tmps[] = $v[$relation.'_id'].DS.$v['is_writable'];
 			// writable なら自動的に閲覧可能とする
-			if ($v['is_writable'] == 1) $tmps[] = $v['usergroup_id'].DS.'0';
+			if ($v['is_writable'] == 1) $tmps[] = $v[$relation.'_id'].DS.'0';
 		}
 		return $tmps;
 	}
@@ -397,10 +415,10 @@ return;
 			$form = static::parent_dir($form, $obj);
 		}
 
-		// permission
+		// permission_dir
 		if (in_array(\Request::active()->action, array('permission_dir')))
 		{
-			$form = static::permission($form, $obj);
+			$form = static::permission_dir($form, $obj);
 		}
 
 		// purge_dir
@@ -541,16 +559,16 @@ return;
 	}
 
 	/**
-	 * permission()
+	 * permission_dir()
 	 */
-	public static function permission($form, $obj)
+	public static function permission_dir($form, $obj)
 	{
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');
 
 		// usergroup_id
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
-		$options = array(''=>'選択してください', '0' => 'ゲスト') + $options;
+		$options = array(''=>'選択してください', '0' => 'ゲスト', '-10' => 'ログインユーザすべて') + $options;
 		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
 			'type' => 'select',
 			'options' => $options,
