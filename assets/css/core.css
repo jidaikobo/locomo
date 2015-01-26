@@ -759,10 +759,10 @@ a.show_item:hover{
 }
 
 a.asc:after {
-	content: ' ▼';
+	content: ' ▲';
 }
 a.desc:after {
-	content: ' ▲';
+	content: ' ▼';
 }
 
 /*===  table  ===*/
