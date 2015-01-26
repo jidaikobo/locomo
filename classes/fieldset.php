@@ -309,7 +309,6 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 		$_deletes = $tabular->tabular_field('_delete');
 		$delete_label = \Config::get('form.tabular_delete_label_field', \Config::get('form.tabular_delete_label', 'Delete?'));
-		var_dump($delete_label);
 		foreach ($_deletes as $_delete) {
 			if ($delete_label) $_delete->set_label($delete_label);
 		}
