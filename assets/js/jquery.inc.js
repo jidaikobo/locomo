@@ -482,8 +482,8 @@ $(document).on('keydown',function(e){
 	var t, k, modal, tabbable, first, last, index;
 	t = e.target;
 	k = e.which;
-//	console.log(e);
-//	console.log(':'+k);
+	console.log(e);
+	console.log(':'+k);
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
 	index = null;
@@ -500,7 +500,7 @@ $(document).on('keydown',function(e){
 					index = -1;
 				}
 			break;
-			case $.ui.keyCode.ESCAPE:
+			case k == 37:
 				close_semimodal();
 			break;
 		}
