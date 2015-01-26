@@ -309,15 +309,16 @@ class Fieldset extends \Fuel\Core\Fieldset
 
 		$_deletes = $tabular->tabular_field('_delete');
 		$delete_label = \Config::get('form.tabular_delete_label_field', \Config::get('form.tabular_delete_label', 'Delete?'));
+		var_dump($delete_label);
 		foreach ($_deletes as $_delete) {
-			if ($_delete) $_delete->set_options(array(1 => $delete_label));
+			if ($delete_label) $_delete->set_label($delete_label);
 		}
 		foreach ($tabular->children() as $child) {
 			foreach ($child->field() as $f) {
 				if ( ($f->type == 'checkbox' or $f->type == 'radio') and $f->options ) {
 					$template = $this->form()->get_config('multi_field_template_tabular',
 						 $this->get_config(
-							'multi_field_template',
+							'form.multi_field_template',
 							"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
 						)
 					);
