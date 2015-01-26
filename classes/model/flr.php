@@ -7,6 +7,7 @@ class Model_Flr extends \Model_Base
 	 */
 //	protected static $_table_name = 'lcm_flrs';
 	public static $_table_name = 'lcm_flrs';
+	public static $is_renamed = false;
 
 	/**
 	 * $_properties
@@ -19,7 +20,6 @@ class Model_Flr extends \Model_Base
 			'validation' => array(
 				'required',
 				'max_length' => array(255),
-				'valid_string' => array(array('alpha','numeric','dots','dashes')),
 			),
 		),
 		'explanation' => array(
@@ -125,65 +125,98 @@ class Model_Flr extends \Model_Base
 		// prevent loop at inside of this observer
 		$this->disable_event('before_save');
 
-		// to solve contradiction compare permission between parent and current dir.
-		// パーミッションの矛盾を直情の親を見て解決。親以下にする。
-		if ($this->path != '/') // not for root dir.
+		// modify path
+		if ( ! $this->path && \Input::post('parent'))
 		{
-			$p_obj = static::get_parent($this);
+			// action_create_dir
+			$this->path = \Input::post('parent', DS).\Input::post('name');
+			if ($this->genre == 'dir')
+			{
+				$this->path = rtrim($this->path, DS).DS;
+			}
+		}
+		$this->path = static::enc_url($this->path);
 
-			// usergroup
-			$parent_g  = static::get_relation_as_array($p_obj, 'usergroup');
-			$parent_g  = static::transform_permission_to_intersect_arr($parent_g, 'usergroup');
-			$current = static::get_relation_as_array($this, 'usergroup');
-			$current = static::transform_permission_to_intersect_arr($current, 'usergroup');
-			$group_intersects = array_intersect($parent_g, $current);
-
-			// user
-			$parent_u  = static::get_relation_as_array($p_obj, 'user');
-			$parent_u  = static::transform_permission_to_intersect_arr($parent_u, 'user');
-			$current = static::get_relation_as_array($this, 'user');
-			$current = static::transform_permission_to_intersect_arr($current, 'user');
-			$user_intersects = array_intersect($parent_u, $current);
-
-			// initialize permission - overhead but for test purpose, it must be place here
-			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
-			unset($this->permission_usergroup);
-			unset($this->permission_user);
-
-		// update permissions
-		if ( ! $current)
+		// modify name
+		$old_name = \Arr::get($this->_original, 'name', $this->name);
+		$new_name = \Input::post('name', $this->name);
+		 // rename flag to use at _event_after_update
+		if ($old_name != $new_name)
 		{
-			// default permission is same as parent permission
-			// 現在のパーミッションが空だったら親のパーミッションと同じにする
-			static::update_permission_by_intersects($this, $parent_g, 'usergroup');
-			static::update_permission_by_intersects($this, $parent_u, 'user');
+			static::$is_renamed = true;
+			$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
 		}
-		else
+		$this->name = $new_name;
+		$this->name = urldecode($this->name);
+
+		// modify depth
+		$num = is_dir(LOCOMOUPLOADPATH.$this->path) ? 2 : 1;
+		$depth = count(explode('/', $this->path)) - $num;
+		$this->depth = $depth;
+
+		// permission
+		if ($this->genre == 'dir')
 		{
-			// update permission by intersects
-			// 現在のパーミッションを親以下にする
-			static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
-			static::update_permission_by_intersects($this, $user_intersects, 'user');
-		}
+			// to solve contradiction compare permission between parent and current dir.
+			// パーミッションの矛盾を直情の親を見て解決。親以下にする。
+			if ($this->path != '/') // not for root dir.
+			{
+				$p_obj = static::get_parent($this);
+	
+				// usergroup
+				$parent_g  = static::get_relation_as_array($p_obj, 'usergroup');
+				$parent_g  = static::transform_permission_to_intersect_arr($parent_g, 'usergroup');
+				$current = static::get_relation_as_array($this, 'usergroup');
+				$current = static::transform_permission_to_intersect_arr($current, 'usergroup');
+				$group_intersects = array_intersect($parent_g, $current);
+	
+				// user
+				$parent_u  = static::get_relation_as_array($p_obj, 'user');
+				$parent_u  = static::transform_permission_to_intersect_arr($parent_u, 'user');
+				$current = static::get_relation_as_array($this, 'user');
+				$current = static::transform_permission_to_intersect_arr($current, 'user');
+				$user_intersects = array_intersect($parent_u, $current);
+	
+				// initialize permission - overhead but for test purpose, it must be place here
+				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
+				unset($this->permission_usergroup);
+				unset($this->permission_user);
+	
+				// update permissions
+				if ( ! $current)
+				{
+					// default permission is same as parent permission
+					// 現在のパーミッションが空だったら親のパーミッションと同じにする
+					static::update_permission_by_intersects($this, $parent_g, 'usergroup');
+					static::update_permission_by_intersects($this, $parent_u, 'user');
+				}
+				else
+				{
+					// update permission by intersects
+					// 現在のパーミッションを親以下にする
+					static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
+					static::update_permission_by_intersects($this, $user_intersects, 'user');
+				}
 
-		}
-
-		// tidy up order of permissions at root dir
-		if ($this->path == '/')
-		{
-			// preserve and sort
-			$usergroup = static::get_relation_as_array($this, 'usergroup');
-			$user = static::get_relation_as_array($this, 'user');
-
-			// initialize permission - overhead but for test purpose, it must be place here
-			\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
-			unset($this->permission_usergroup);
-			unset($this->permission_user);
-
-			// update permissions
-			static::update_permission($this, $usergroup, 'usergroup');
-			static::update_permission($this, $user, 'user');
-		}
+			}
+	
+			// tidy up order of permissions at root dir
+			if ($this->path == '/')
+			{
+				// preserve and sort
+				$usergroup = static::get_relation_as_array($this, 'usergroup');
+				$user = static::get_relation_as_array($this, 'user');
+	
+				// initialize permission - overhead but for test purpose, it must be place here
+				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
+				unset($this->permission_usergroup);
+				unset($this->permission_user);
+	
+				// update permissions
+				static::update_permission($this, $usergroup, 'usergroup');
+				static::update_permission($this, $user, 'user');
+			}
+		} // is_dir until here.
 	}
 
 	/**
@@ -207,59 +240,53 @@ class Model_Flr extends \Model_Base
 		// prevent loop at inside of this observer
 		$this->disable_event('after_update');
 
-		// put .LOCOMO_DIR_INFO
-		$path = $this->genre == 'dir' ? LOCOMOUPLOADPATH.$this->path : LOCOMOUPLOADPATH.dirname($this->path).DS ;
-		if ( ! file_exists($path.'.LOCOMO_DIR_INFO'))
-		{
-			static::embed_hidden_info($this);
-		}
-
-		// children
-		$children = \Model_Flr::find('all', array('where' => array(array('path', 'like', $this->path.'%'))));
-
-		if ($children)
-		{
-			foreach ($children as $child)
-			{
-				// don't run at itself.
-				if ($child->path == $this->path) continue;
-
-				// permission
 /*
-				// オブザーバでの他モデルの書き換え事例として面白いので削除しないが、子供のディレクトリを全部親と同じにしてしまうので、見直し。
-				$child->permission_usergroup = array();
-				foreach ($this->permission_usergroup as $k => $v)
-				{
-					$new = \Model_Flr_Usergroup::forge();
-					$arr = $v->to_array();
-					unset($arr['id']);
-					$new->set($arr);
-					$child->permission_usergroup[] = $new;
-				}
-*/
+		// ここでヘンな再起処理のようになってうまく行かないので、dir rename時はコントローラでsync()してつじつまを合わせることにする。
+		// remame dirs of children
+		// ディレクトリ改名時は子供のディレクトリ名をアップデートする
+		if (static::$is_renamed && $this->genre == 'dir')
+		{
+			$old_path = \Arr::get($this->_original, 'path', $this->path);
+			$options = array(
+				'where' => array(
+					array('path', 'like', $old_path.'%'),
+					array('id', '<>', $this->id)
+				)
+			);
+			$children = \Model_Flr::find('all', $options);
 
-				// rename
-				if (in_array(\Request::active()->action, array('rename_dir')))
+			if ($children)
+			{
+				foreach ($children as $child)
 				{
-					$old_path_str = LOCOMOUPLOADPATH.DS.trim($this->path, DS).DS;
-					$new_path_str = LOCOMOUPLOADPATH.DS.trim($new_path, DS).DS;
-					$new_child_str = LOCOMOUPLOADPATH.DS.trim($child->path, DS).DS;
+//				オブザーバでの他モデルの書き換え事例として面白いので削除しないが、子供のディレクトリを全部親と同じにしてしまうので、見直し。
+//				$child->permission_usergroup = array();
+//				foreach ($this->permission_usergroup as $k => $v)
+//				{
+//					$new = \Model_Flr_Usergroup::forge();
+//					$arr = $v->to_array();
+//					unset($arr['id']);
+//					$new->set($arr);
+//					$child->permission_usergroup[] = $new;
+//				}
+
+					// rename
+					$old_path_str = LOCOMOUPLOADPATH.DS.trim($old_path, DS).DS;
+					$new_path_str = LOCOMOUPLOADPATH.DS.trim($this->path, DS).DS;
+					$child_str    = LOCOMOUPLOADPATH.DS.trim($child->path, DS).DS;
+					$new_child_str = str_replace($old_path_str, $new_path_str, $child_str);
+					$new_child_str = substr($new_child_str, strlen(LOCOMOUPLOADPATH));
+					$child->save();
 	
-					$new_child_str = str_replace($old_path_str, $new_path_str, $new_child_str);
-					$child->path = substr($new_child_str, strlen(LOCOMOUPLOADPATH));
+					// embed($path)
+					static::embed_hidden_info($child);
+					// after rename, sync()
 				}
-
-				$child->save();
-
-				// embed($path)
-				//static::embed_hidden_info($child);
 			}
 		}
-
-		// itself
-//		$this->path = $new_path;
-//		$this->save();
-			static::embed_hidden_info($this);
+*/
+		// embed hidden file
+		static::embed_hidden_info($this);
 	}
 
 	/**
@@ -276,23 +303,41 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
+	 * enc_url()
+	 * 
+	*/
+	public static function enc_url($path)
+	{
+		return str_replace('%2F', '/', urlencode(urldecode($path)));
+	}
+
+	/**
 	 * update_permission_by_intersects()
 	*/
 	public static function update_permission_by_intersects($obj, $intersects, $relation)
 	{
 		$relation_name = 'permission_'.$relation;
 		$model_name = '\Model_Flr_'.ucfirst($relation);
+		$arrs = static::modify_intersects_arr_to_modellike_arr($intersects, $relation);
+		static::update_permission($obj, $arrs, $relation);
+	}
+
+	/**
+	 * modify_intersects_arr_to_modellike_arr()
+	*/
+	public static function modify_intersects_arr_to_modellike_arr($intersects, $relation)
+	{
 		$arrs = array();
 		foreach ($intersects as $intersect)
 		{
 			list($id, $right) = explode('/', $intersect);
 			$arrs[] = array(
-				'flr_id'       => $obj->id,
+				'flr_id'        => @$obj->id ?: 1, // Controller_Flr::before() doesn't have $obj
 				$relation.'_id' => $id,
-				'is_writable'  => $right,
+				'access_level'   => $right,
 			);
 		}
-		static::update_permission($obj, $arrs, $relation);
+		return $arrs;
 	}
 
 	/**
@@ -328,9 +373,7 @@ class Model_Flr extends \Model_Base
 		$tmps = array();
 		foreach ($permissions as $v)
 		{
-			$tmps[] = $v[$relation.'_id'].DS.$v['is_writable'];
-			// writable なら自動的に閲覧可能とする
-			if ($v['is_writable'] == 1) $tmps[] = $v[$relation.'_id'].DS.'0';
+			$tmps[] = $v[$relation.'_id'].DS.$v['access_level'];
 		}
 		return $tmps;
 	}
@@ -374,6 +417,7 @@ class Model_Flr extends \Model_Base
 	public static function embed_hidden_info($obj)
 	{
 		// current
+		if ( ! $obj) return false;
 		$current = static::fetch_hidden_info(LOCOMOUPLOADPATH.$obj->path);
 
 		// target
@@ -431,7 +475,7 @@ class Model_Flr extends \Model_Base
 
 		try
 		{
-			$retval = unserialize($content);
+			$retval = unserialize($content) ?: array();
 		} catch (Exception $e) {
 			$retval = array();
 		}
@@ -463,7 +507,7 @@ class Model_Flr extends \Model_Base
 		// rename
 		if (in_array(\Request::active()->action, array('rename_dir')))
 		{
-			$form = static::parent_dir($form, $obj);
+			$form = static::rename_dir($form, $obj);
 		}
 
 		// permission_dir
@@ -514,6 +558,7 @@ class Model_Flr extends \Model_Base
 
 		$messages = array(
 			'ファイルやディレクトリの実際の状況とデータベースの内容に矛盾が生じているようでしたら、これを実行してください。',
+			'また、この同期によって、ファイルシステム上にある不正なファイル名（全角文字等）が修正されます。',
 			'ファイルやディレクトリの数によっては時間がかかることがあります。',
 			'この処理は、時々自動的に行われますので、原則、明示的な実行は不要です。',
 		);
@@ -571,9 +616,9 @@ class Model_Flr extends \Model_Base
 			if ($current_dir && substr($dir, 0, strlen($current_dir)) == $current_dir) continue;
 
 			// check auth
-			if ( ! \Controller_Flr::check_auth($dir)) continue;
+			if ( ! \Controller_Flr::check_auth($dir, 'create_dir')) continue;
 
-			$options[$dir] = $dir;
+			$options[$dir] = urldecode($dir);
 		}
 
 		$form->add_after(
@@ -589,13 +634,18 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * parent_dir()
+	 * rename_dir()
 	 */
-	public static function parent_dir($form, $obj)
+	public static function rename_dir($form, $obj)
 	{
+		//$tpl = \Config::get('form')['field_template'];
+		$form->field('name')->set_description('現在の名前：'.$obj->name);
+		$form->delete('explanation');
+		$form->delete('is_sticky');
+
+		// parent dir
 		$current_dir = @$obj->path ?: '';
 		$current_dir = $current_dir ? rtrim(dirname($current_dir), '/').DS : '';
-		$current_dir = $current_dir ? substr($current_dir, strlen(LOCOMOUPLOADPATH) - 1) : '';
 
 		$form->add_after(
 				'parent',
@@ -604,7 +654,9 @@ class Model_Flr extends \Model_Base
 				array(),
 				'name'
 			)
-			->set_value($current_dir);
+			->set_value(urldecode($current_dir));
+
+		return $form;
 
 		return $form;
 	}
