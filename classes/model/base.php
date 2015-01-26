@@ -397,12 +397,23 @@ class Model_Base extends \Orm\Model_Soft
 		}
 		if ($use_get_query and \Input::get()) {
 			if (\Input::get('orders')) {
+
 				$orders = array();
 				foreach (\Input::get('orders') as $k => $v) {
-					if ( ! in_array($k, array_keys(static::properties()))) continue;
-					$orders[$k] = $v;
+					if (($dot_pos = strpos($k, '.')) > 0) {
+						$model = static::relations( substr($k, 0, $dot_pos) )->model_to;
+						$relate = substr($k, 0, $dot_pos);
+						$k = substr($k, $dot_pos+1);
+						if ( ! in_array($k, array_keys($model::properties()))) continue;
+						$options['related'][$relate]['where'][] = array('id', '!=', 0);
+						$options['related'][$relate]['order_by'][$k] = $v;
+						// var_dump($options); die();
+					} else {
+						if ( ! in_array($k, array_keys(static::properties()))) continue;
+						$orders[$k] = $v;
+						$options['order_by'] = $orders;
+					}
 				}
-				$options['order_by'] = $orders;
 			}
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {

@@ -13,6 +13,10 @@ namespace Locomo;
 
 class Pagination extends \Fuel\Core\Pagination {
 
+	/*
+	 * @param $field フィールド名 もしくは リレーション .フィールド名( alias.field_name )
+	 * @param $reset ページネーションを 1ページ目に戻すかどうか
+	 */
 	public static function sort($field, $label, $reset = true) {
 
 		$input_get = \Input::get();
@@ -61,6 +65,7 @@ class Pagination extends \Fuel\Core\Pagination {
 			return \Html::anchor($url, $label ?: $field, array('class' => $class));
 	}
 
+
 	public static function sort_info($model) {
 		if ( is_null( \Input::get('orders')) ) {
 			return null;
@@ -69,10 +74,16 @@ class Pagination extends \Fuel\Core\Pagination {
 		$field = array_keys( \Input::get('orders'))[0];
 		$sort = \Input::get('orders')[$field];
 
+		if (($dot_pos = strpos($field, '.')) > 0) {
+			$model = $model::relations( substr($field, 0, $dot_pos) )->model_to;
+			$field = substr($field, $dot_pos+1);
+		}
+		// if ($dot_pos = strpos($field, '.') > 0) var_dump($model::relations( substr($field, $dot_pos) )->model_to);
 		if ($model::primary_key()[0] == $field) {
 			$label = 'ID';
 		} else {
 
+		//	var_dump($model::properties());
 			if (isset($model::properties()[$field]['label'])) {
 				$label = $model::properties()[$field]['label'];
 			} else {
@@ -81,9 +92,9 @@ class Pagination extends \Fuel\Core\Pagination {
 		}
 
 		if ($sort == 'asc') {
-			return $label . 'を昇順で並べ替えています。';
+			return $label . ' を 昇順 で並べ替えています。';
 		} else {
-			return $label . 'を降順で並べ替えています。';
+			return $label . ' を 降順 で並べ替えています。';
 		}
 
 	}
