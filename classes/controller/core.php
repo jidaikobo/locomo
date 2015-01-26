@@ -32,7 +32,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	/**
 	 * @var string config
 	 */
-	protected static $config = '';
+	protected static $config = array();
 
 	/**
 	 * before()
@@ -299,7 +299,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 * base_assign()
 	 * @param object $obj use for auth. Fuel\Model object
 	 */
-	public function base_assign($obj = null)
+	public function base_assign()
 	{
 		// Profiler
 		\Profiler::mark('Locomo\\Controller_Core::base_assign() - Called');
@@ -412,6 +412,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		\Profiler::mark('Locomo\\Controller_Core::base_assign() - actionset');
 		$default = ['index' => [], 'base' => [], 'ctrl' => []];
 		$actionset = \Actionset::get_actionset($controller, static::$obj, $default);
+		$actionset['index'] = \Arr::get($actionset, 'index', array());
 		$this->template->set_global('actionset', $actionset, false);
 
 		// Profiler

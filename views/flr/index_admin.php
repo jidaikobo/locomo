@@ -49,7 +49,7 @@
 	<thead>
 		<tr>
 			<th>ディレクトリ名</th>
-			<th>相談</th>
+			<th>操作</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -62,15 +62,23 @@
 			?>
 			</div></td>
 			<td>
+			<?php if (\Controller_Flr::check_auth($item->path)): ?>
 				<div class="btn_group">
 					<?php
-					echo Html::anchor('flr/upload'.'/'.$item->id, 'アップロード', array('class' => 'edit'));
-					echo Html::anchor('flr/move_dir'.'/'.$item->id, '移動', array('class' => 'edit'));
-					echo Html::anchor('flr/rename_dir'.'/'.$item->id, 'リネーム', array('class' => 'edit'));
-					echo Html::anchor('flr/permission_dir'.'/'.$item->id, '権限', array('class' => 'edit'));
-					echo Html::anchor('flr/purge_dir'.'/'.$item->id, '削除', array('class' => 'edit'));
+					if (\Controller_Flr::check_auth($item->path)):
+						echo Html::anchor('flr/upload'.'/'.$item->id, 'アップロード', array('class' => 'edit'));
+					endif;
+					if (\Controller_Flr::check_auth($item->path, $writable = true)):
+						echo Html::anchor('flr/move_dir'.'/'.$item->id, '移動', array('class' => 'edit'));
+						echo Html::anchor('flr/rename_dir'.'/'.$item->id, 'リネーム', array('class' => 'edit'));
+						echo Html::anchor('flr/permission_dir'.'/'.$item->id, '権限', array('class' => 'edit'));
+						echo Html::anchor('flr/purge_dir'.'/'.$item->id, '削除', array('class' => 'edit'));
+					endif;
 					?>
 				</div>
+			<?php else: ?>
+				<div>このディレクトリを操作する権限がありません。</div>
+			<?php endif; ?>
 			</td>
 		</tr><?php endforeach; ?>
 	</tbody>

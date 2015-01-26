@@ -22,11 +22,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_cache_form_definition;
 
-	// todo 不要
-	/*
-	 * _depend_modules
-	 */
-	protected static $_depend_modules = array();
 
 	/*
 	 * default authorize options
@@ -49,9 +44,6 @@ class Model_Base extends \Orm\Model_Soft
 	{
 		//depend_modules
 		parent::__construct($data, $new, $view, $cache);
-		foreach (static::$_depend_modules as $module) {
-			\Module::load($module);
-		}
 
 		//add_authorize_methods
 		static::add_authorize_methods();
@@ -304,9 +296,15 @@ class Model_Base extends \Orm\Model_Soft
 					} elseif (isset($input_post[$k][$kk]['_delete'])){ // _deleted
 						unset($this->{$k}[$kk]);
 					} else {
-						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
-						!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
-						$repopulate and $form->field($k)->field($k.'_row_'.$kk)->populate($input_post[$k][$kk]);
+//						isset($input_post[$k][$kk]) and $vv->set($input_post[$k][$kk]);
+						if (isset($input_post[$k][$kk])) {
+							$vv->set($input_post[$k][$kk]);
+							!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_row_'.$kk)->validation()->run($input_post[$k][$kk]);
+							$repopulate and $form->field($k)->field($k.'_row_'.$kk)->populate($input_post[$k][$kk]);
+						} else {
+							// observerでの追加など、何らかの理由で$thisに新規列がきている場合は無視して何もしない。
+							// たぶん下の新規列で処理されているが、忘れそうなので、明示的にここにコメントを残す。
+						}
 					}
 				}
 
@@ -315,7 +313,10 @@ class Model_Base extends \Orm\Model_Soft
 					$hm_model = static::relations()[$k]->model_to;
 					if (!is_null($input_post[$k.'_new'])) {
 						foreach ($input_post[$k.'_new'] as $kk => $vv) {
-							$vv = array_filter($vv);
+//							$vv = array_filter($vv);
+							// array_filter()だと配列の値がゼロと空白で構成された妥当なデータをfalseと見なすので、明示的空白のみで構成された配列をfilterする。
+							$vv = array_filter($vv, function($k) {return ! ($k === '');});
+
 							if (!empty($vv)) { // array_filter で引数が全て空なら 空の配列が返る -> 新規の保存なし
 								$this->{$k}[] = $hm_model::forge()->set($vv);
 								!is_null($form) and $validation and $validated[] = $form->field($k)->field($k.'_new_'.$kk)->validation()->run($input_post[$k.'_new'][$kk]);
@@ -396,12 +397,23 @@ class Model_Base extends \Orm\Model_Soft
 		}
 		if ($use_get_query and \Input::get()) {
 			if (\Input::get('orders')) {
+
 				$orders = array();
 				foreach (\Input::get('orders') as $k => $v) {
-					if ( ! in_array($k, array_keys(static::properties()))) continue;
-					$orders[$k] = $v;
+					if (($dot_pos = strpos($k, '.')) > 0) {
+						$model = static::relations( substr($k, 0, $dot_pos) )->model_to;
+						$relate = substr($k, 0, $dot_pos);
+						$k = substr($k, $dot_pos+1);
+						if ( ! in_array($k, array_keys($model::properties()))) continue;
+						$options['related'][$relate]['where'][] = array('id', '!=', 0);
+						$options['related'][$relate]['order_by'][$k] = $v;
+						// var_dump($options); die();
+					} else {
+						if ( ! in_array($k, array_keys(static::properties()))) continue;
+						$orders[$k] = $v;
+						$options['order_by'] = $orders;
+					}
 				}
-				$options['order_by'] = $orders;
 			}
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {
@@ -451,19 +463,9 @@ class Model_Base extends \Orm\Model_Soft
 
 		$form = \Fieldset::forge($factory);
 
-		/*
-		$form->add('id', 'ID', array('type' => 'hidden'))
-			->set_value($obj->id);
-		 */
-
 		$form->add_model($obj)->populate($obj, true);
-		
-//		if ($factory == 'form') {
-			$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
-				->set_value(\Security::fetch_token());
 
-			$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'));
-//		}
+		$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');;
 
 		return $form;
 	}

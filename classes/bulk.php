@@ -36,6 +36,7 @@ class Bulk {
 				$this->forms[$key] = $model->{static::$_define_function}($key, $model);
 			} elseif (method_exists($model, 'bulk_definition')) {
 				$this->forms[$key] = $model::bulk_definition($key, $model);
+				// if ($this->forms[$key]->field('submit')) $this->forms[$key]->delete('submit');
 			} elseif (method_exists($model, 'form_definition')) {
 				$this->forms[$key] = $model::form_definition($key, $model);
 			} else {
@@ -87,7 +88,7 @@ class Bulk {
 
 		$fst_obj = reset($this->forms);
 		foreach ($fst_obj->field() as $f) {
-			if ($f->type === false  OR $f->type === 'hidden') continue;
+			if ($f->type === false  OR $f->type === 'hidden' OR $f->type === 'submit') continue;
 			if (is_null ($f->template)) {
 				$output .=  '<th>' . $f->label . '</th>';
 			} else {
@@ -102,16 +103,18 @@ class Bulk {
 
 		foreach($this->forms as $form) {
 
-
 			$form->set_config('form_template', "\t\t\t<tr>\n{fields}\n\t\t\t</tr>\n");
 			foreach ($form->field() as $field) {
+				if ($field->type === 'submit') {
+					$form->delete('submit');
+				}
 				if ($field->type == 'checkbox') {
 					is_null($field->template) and $field->set_template("\t\t\t\t<td>{fields}\n\t\t\t\t{field} {label}<br />\n{fields}{error_msg}\n\t\t\t</td>");
 				} else {
 					is_null($field->template) and $field->set_template("\t\t\t\t<td>{field}{error_msg}</td>");
 				}
-			// no required rules on this row
-			$field->delete_rule('required', false)->delete_rule('required_with', false);
+				// no required rules on this row
+				$field->delete_rule('required', false)->delete_rule('required_with', false);
 
 			}
 

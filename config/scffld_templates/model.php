@@ -11,7 +11,7 @@ class Model_XXX extends \Model_Base
 	protected static $_properties =
 ###FIELD_STR### ;
 
-	protected static $_depend_modules = array();
+
 
 	//$_conditions
 	public static $_conditions = array();
