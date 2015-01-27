@@ -278,6 +278,16 @@ function set_lcm_focus(){
 		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
 		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
 		//フォーカスを掘っていく場合も、ここにあるとよさそう
+		
+/*
+	parent = $(this).closest('.currentfocus');
+	if(parent.length){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+		parent.removeClass('currentfocus').addClass('focusparent');
+		$('#escape_focus').remove();
+	}
+	$(this).addClass('currentfocus').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
+*/
+		
 		var t = target ? target.find('.lcm_focus') : lcm_focus;
 		if(target && target.hasClass('calendar')){
 			t = target.find(each_date);
@@ -325,16 +335,9 @@ function set_lcm_focus(){
 
 		if( k == 13 ){//enter
 			if($(this).hasClass('currentfocus') || t.is('#escape_focus')){//currentfocus上と抜けるリンクは除外
-				console.log('じぶんやで');
 				e.stopPropagation();
 				return;
 			}
-			parent = $(this).closest('.currentfocus'); //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
-			if(parent.length){
-				parent.removeClass('currentfocus').addClass('focusparent');
-				$('#escape_focus').remove();
-			}
-			$(this).addClass('currentfocus').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
 			set_focus($(this));
 		}
 	});

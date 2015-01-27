@@ -9,6 +9,12 @@ IE8,MacIE5,Opera9以下 html:first-child
 
 /*=== login ===*/
 
+/* default */
+
+.default_logo .site_title {
+    display: none;
+}
+
 body.lcm_action_login {
 	background-color: #dde7ee;
 }
@@ -32,7 +38,7 @@ body.lcm_action_login {
 	width: 13em;
 }
 .lcm_action_login.home .container {
-	height: 21.5em !important;
+	height: 23em !important;
 }
 .lcm_action_login h1 {
 	position: absolute !important;
@@ -778,7 +784,6 @@ a.disclosure.on {
 a.show_item:hover {
 	text-decoration: underline;
 }
-
 a.asc:after {
 	content: ' ▲';
 }
