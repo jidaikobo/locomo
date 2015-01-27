@@ -327,6 +327,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 
 			case 'hidden':
 			case false:
+			case 'submit':
 				return '';
 			break;
 
@@ -354,7 +355,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 				}
 				$date_format = substr($date_format, 0, min($str_pos));
 			}
-			if ($this->value != '0000-00-00 00:00:00' and $this->value != '0000-00-00'){
+			if ($this->value != false and $this->value != '0000-00-00 00:00:00' and $this->value != '0000-00-00'){
 				$build_field = date($date_format, strtotime($this->value));
 			} else {
 				$build_field = '';

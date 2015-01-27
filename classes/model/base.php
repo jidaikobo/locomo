@@ -459,6 +459,59 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 
+	/*
+	 * csv 用関数
+	 * @param $options     find の時に使った options
+	 * @param $glue       string length 1~2
+	 * @param $paren
+	 */
+	public function to_csv($options = array(), $rel_names = array(), $glue = ',', $paren = '()', $glue_key_val = ':', $implode = false) {
+
+		$options = array_merge(static::condition(), $options);
+		$properties = static::properties();
+
+		$r_arr = array(); // return
+
+		foreach($this->_data as $kk => $vv) {
+			if ($options['select'] and !in_array($kk, $options['select'])) continue;
+
+			// if (array_key_exists($kk, $properties) and isset($properties[$kk]['label'])) var_dump($properties[$kk]['label']); die();
+			array_key_exists($kk, $properties) and isset($properties[$kk]['label']) ? $key = $properties[$kk]['label'] : $key = $kk;
+			$r_arr[$key] = $vv;
+		}
+
+		if ($this->_data_relations) {
+			foreach ($this->_data_relations as $rel_name => $dr) {
+				$rel_options = isset($options['related'][$rel_name]) ? $options['related'][$rel_name] : array();
+				if (array_key_exists($rel_name, $rel_names)) $rel_name = $rel_names[$rel_name];
+				if (is_array($dr)) {
+				   foreach($dr as $dr_val) {
+						$r_arr[$rel_name] = $dr_val->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
+				   }
+				} else {
+					$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
+				}
+			}
+		}
+
+		if ($implode) {
+			$str = substr($paren, 0 ,1);
+			foreach($r_arr as $k => $v) {
+				$r_arr[$k] = $k . $glue_key_val . $v;
+			}
+			$str .= implode($glue, $r_arr);
+			$str = $str . substr($paren, 1 ,2) ?: substr($paren, 0 ,1);
+			return $str;
+		}
+		return $r_arr;
+	}
+
+
+
+
+
+
+
 	public static function form_definition($factory = 'form', $obj = null) {
 
 		$form = \Fieldset::forge($factory);
