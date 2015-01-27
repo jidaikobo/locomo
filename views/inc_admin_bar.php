@@ -47,20 +47,20 @@ if (\Auth::check()):
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
 				$html.= '</div><!-- /.admin_controller -->';
 
+				$idxmenu = \Arr::get($actionset, 'index') ? \Actionset::generate_menu_html($actionset['index'], array('class'=>'semimodal hidden_item boxshadow')) : false ;
+				if ($idxmenu):
+					$html.= '<div class="admin_index_list">';
+					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".$current_nicename."の設定を開く\">インデクス<span class=\"skip\">エンターでメニューを開きます</span></a>";
+					$html.= $idxmenu;
+					$html.= '</div><!-- .admin_index_list -->';
+				endif;
+
 				$bases = \Arr::get($actionset, 'base', array());
 				$ctrl_index and array_unshift($bases, array('urls' => array($ctrl_index)));
-
 				if ($bases):
 					$html.= '<div class="admin_context">';
 					$html.= \Actionset::generate_menu_html($bases, array('class'=>'holizonal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
-				endif;
-
-				$indexes = \Arr::get($actionset, 'index', array());
-				if ($indexes):
-					$html.= '<div class="locomo_indexes">';
-					$html.= \Actionset::generate_menu_html($indexes, array('class'=>'holizonal_list'));
-					$html.= '</div><!-- .locomo_indexes -->';
 				endif;
 
 			$html.= '</div><!-- .adminbar_main -->';

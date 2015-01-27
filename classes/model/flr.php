@@ -504,6 +504,12 @@ class Model_Flr extends \Model_Base
 			$form = static::hide_current_name($form, $obj);
 		}
 
+		// edit
+		if (in_array(\Request::active()->action, array('edit_dir')))
+		{
+			$form = static::hide_current_name($form, $obj);
+		}
+
 		// rename
 		if (in_array(\Request::active()->action, array('rename_dir')))
 		{
@@ -657,8 +663,6 @@ class Model_Flr extends \Model_Base
 			->set_value(urldecode($current_dir));
 
 		return $form;
-
-		return $form;
 	}
 
 	/**
@@ -698,7 +702,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function purge_dir($form, $obj)
 	{
-		\Session::set_flash('message', 'ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。この削除は取り消しができません。注意してください。');
+		\Session::set_flash('message', ['ディレクトリの完全削除です。','ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。','この削除は取り消しができません。注意してください。']);
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');

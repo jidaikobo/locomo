@@ -94,7 +94,10 @@ class Actionset_Flr extends \Actionset_Base
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(array($controller.DS."create_dir/".$obj->id, '<!--ディレクトリ-->作成'));
+			$actions = array(
+				array($controller.DS."create_dir/".$obj->id, '<!--ディレクトリ-->作成'),
+				array($controller.DS."edit_dir/".$obj->id, '編集')
+			);
 			$urls = static::generate_urls($controller.DS.'upload', $actions);
 		}
 		$retvals = array(
@@ -112,6 +115,7 @@ class Actionset_Flr extends \Actionset_Base
 				$controller.DS.'upload',
 				$controller.DS.'index_admin',
 				$controller.DS.'create_dir',
+				$controller.DS.'edit_dir',
 				$controller.DS.'rename_dir',
 				$controller.DS.'move_dir',
 				$controller.DS.'permission_dir',
@@ -123,8 +127,9 @@ class Actionset_Flr extends \Actionset_Base
 
 	/**
 	 * actionset_move_dir()
+	 * pending. 実装検討中。
 	 */
-	public static function actionset_move_dir($controller, $obj = null, $id = null, $urls = array())
+	public static function _actionset_move_dir($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (@$obj->genre == 'dir')
 		{

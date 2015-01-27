@@ -150,7 +150,6 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '削除された項目を復活する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
-				$controller.DS.'index',
 				$controller.DS.'view',
 				$controller.DS.'view_deleted',
 				$controller.DS.'index_deleted',
@@ -518,7 +517,6 @@ class Actionset_Base extends Actionset
 			'help'         => self::actionset_index_admin($controller)['help'],
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.DS.'index',
 				$controller.DS.'index_admin',
 				$controller.DS.'index_deleted',
 				$controller.DS.'index_expired',

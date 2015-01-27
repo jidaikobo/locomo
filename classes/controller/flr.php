@@ -184,20 +184,33 @@ class Controller_Flr extends \Locomo\Controller_Base
 		{
 			// children
 			$objs = \Model_Flr::get_children($current_obj);
-		}
-		else
-		{
-			static::sync();
-			\Response::redirect(\Uri::create('flr/index_files/'));
+
+			// dir validation
+			$not_found = false;
+			if ($current_obj->path != '/' && $objs)
+			{
+				foreach ($objs as $obj)
+				{
+					$path = LOCOMOUPLOADPATH.$obj->path;
+					if ( ! file_exists($path))
+					{
+						$not_found = true;
+						break;
+					}
+				}
+			}
 		}
 
-		// sync 1%
-		srand();
-		$sync_mark = '';
-		if (rand(1, 100) == 1)
+		// force sync
+		if ( ! $current_obj || $not_found)
 		{
-			static::sync();
-			$sync_mark = '*';
+			if (static::sync())
+			{
+				\Session::set_flash('success', "データベースとファイルの状況に矛盾が見つかったので、強制同期をかけました。");
+			} else {
+				\Session::set_flash('error', "データベースとファイルの矛盾解消のため、強制同期をかけましたが失敗しました。矛盾は解消されていません。物理ファイルの状況を確認してください。");
+			}
+			\Response::redirect(\Uri::create('flr/index_files/'));
 		}
 
 		// view
@@ -206,7 +219,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		$content->set_global('current', $current_obj);
 		$content->set('items', $objs);
 		$this->template->content = $content;
-		$this->template->set_global('title', 'ファイル一覧'.$sync_mark);
+		$this->template->set_global('title', 'ファイル一覧');
 	}
 
 	/**
@@ -228,7 +241,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 * action_sync()
 	 * 現状のディレクトリと同期。データベースは現状のディレクトリにあわせて刷新される
 	 */
-	public function action_sync($id = null)
+	public function action_sync()
 	{
 		// sync
 		if (\Input::post())
@@ -237,7 +250,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			{
 				\Session::set_flash('success', "データベースとディレクトリを同期しました。");
 			} else {
-				\Session::set_flash('error', "データベースとディレクトリの同期に失敗しました。");
+				\Session::set_flash('error', "データベースとディレクトリの同期に失敗しました。物理ファイルの状況を確認してください。");
 			}
 		}
 
@@ -295,8 +308,25 @@ class Controller_Flr extends \Locomo\Controller_Base
 	}
 
 	/**
+	 * action_edit_dir()
+	 * ディレクトリのメモ欄の編集
+	 */
+	public function action_edit_dir($id = null)
+	{
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'create_dir'))
+		{
+			\Session::set_flash('error', "ディレクトリの編集をする権利がありません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
+		$obj = parent::edit($id);
+		$this->template->set_global('title', 'ディレクトリの編集');
+	}
+
+	/**
 	 * action_rename_dir()
-	 * ディレクトリのリネーム
+	 * ディレクトリのリネーム／メモの編集
 	 */
 	public function action_rename_dir($id = null)
 	{
@@ -305,7 +335,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// root directory
 		if (LOCOMOUPLOADPATH.$obj->path == LOCOMOUPLOADPATH.DS)
 		{
-			\Session::set_flash('error', "このディレクトリは名称変更できません。");
+			\Session::set_flash('error', "基底ディレクトリは名称変更できません。");
 			\Response::redirect(\Uri::create('flr/index_files/'));
 		}
 
@@ -363,9 +393,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 	/**
 	 * action_move_dir()
-	 * ディレクトリの移動
+	 * ディレクトリの移動。pending. 実装検討中
 	 */
-	public function action_move_dir($id = null)
+	public function _action_move_dir($id = null)
 	{
 		$model = $this->model_name;
 		$errors = array();
@@ -431,6 +461,13 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_permission_dir($id = null)
 	{
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'create_dir'))
+		{
+			\Session::set_flash('error', "ディレクトリの権限を変更する権利がありません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		// parent::edit()
 		$obj = parent::edit($id);
 
@@ -461,36 +498,43 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_purge_dir($id = null)
 	{
-		$errors = array();
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'purge_dir'))
+		{
+			\Session::set_flash('error', "ディレクトリを削除する権利がありません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
 
 		// create dir
 		if (\Input::post())
 		{
-			$path = \Input::post('path');
+			$is_error = false;
+			$path = LOCOMOUPLOADPATH.\Input::post('path');
+			$target = \Model_Flr::find($id);
+			$parent = \Model_Flr::get_parent($target);
 
-			if ( ! file_exists($parent.$dirnname))
+			if ( ! file_exists($path))
 			{
-				\Session::set_flash('error', '削除すべきディレクトリが存在しません。こういったディレクトリは時々行われる自動同期で修正されます。');
-				\Response::redirect(\Uri::create('flr/purge_dir/'.$id));
+				$is_error = true;
+				\Session::set_flash('error', '削除すべきディレクトリが存在しません。');
 			}
 			elseif ( ! \File::delete_dir($path, $recursive = true))
 			{
-				\Session::set_flash('error', 'ディレクトリの削除に失敗しました。こういったディレクトリは時々行われる自動同期で修正されます。');
-				\Response::redirect(\Uri::create('flr/purge_dir/'.$id));
+				$is_error = true;
+				\Session::set_flash('error', 'ディレクトリの削除に失敗しました。');
 			}
 
-			// error
-			if($errors)
+			// purge
+			if ( ! $is_error)
 			{
-				$obj = parent::purge($id);
-				\Session::set_flash('error', $errors);
+				if ($target->purge())
+				{
+					\Session::set_flash('success', "ディレクトリを削除しました。");
+				} else {
+					\Session::set_flash('error', "ディレクトリの削除に失敗しました。");
+				}
 			}
-			// rewrite message
-			$success = \Session::get_flash('success');
-			if ($success)
-			{
-				\Session::set_flash('success', "ディレクトリを削除しました。");
-			}
+			\Response::redirect(\Uri::create('flr/index_files/'.$parent->id));
 		}
 
 		// parent::edit()
@@ -505,6 +549,13 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_upload($id = null)
 	{
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'upload'))
+		{
+			\Session::set_flash('error', "ファイルアップロードの権利がありません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		// get object
 		$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'upload'));
 		if ( ! $obj)
@@ -596,6 +647,13 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_view_file($id = null)
 	{
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'read'))
+		{
+			\Session::set_flash('error', "ファイル閲覧の権利がありません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		$obj = \Model_Flr::find($id);
 		$plain = \Model_Flr::plain_definition('view_file', $obj);
 

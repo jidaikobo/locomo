@@ -63,10 +63,12 @@ class Actionset
 		$actionset = $finder->locate('actionset', $name);
 		if ( ! $actionset) return;
 
-
 		// actionset class
 		$class = str_replace('Controller_', 'Actionset_', $controller);
 		if ( ! class_exists($class)) return;
+
+		// cli cannot use Request
+		if ( ! \Request::main()) return false;
 
 		// primary key
 		$obj = is_object($obj) ? $obj : (object) array() ;
