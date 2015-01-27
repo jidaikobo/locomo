@@ -83,13 +83,13 @@
 				<div class="btn_group">
 					<?php
 					if (\Auth::has_access('\Controller_Usr/view')):
-						echo Html::anchor('usr/view'.'/'.$item->id, '閲覧', array('class' => 'view'));
+						echo Html::anchor('usr/view/'.$item->id, '閲覧', array('class' => 'view'));
 					endif;
 					if (\Auth::has_access('\Controller_Usr/edit')):
-						echo Html::anchor('usr/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
+						echo Html::anchor('usr/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
 					if (\Auth::has_access('\Controller_Usr/delete')):
-						echo Html::anchor('usr/delete'.'/'.$item->id, '削除', array('class' => 'delete confirm'));
+						echo Html::anchor('usr/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
 					endif;
 					?>
 				</div>

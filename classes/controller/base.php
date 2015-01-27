@@ -310,15 +310,6 @@ class Controller_Base extends Controller_Core
 			}
 		}
 
-		//add_actionset - back to index at edit
-		if (\Auth::has_access($this->request->controller.DS.'index_admin'))
-		{
-			$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
-			$action['urls'][] = \Html::anchor($ctrl_url.DS,'一覧へ');
-			$action['order'] = 10;
-			\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
-		}
-
 		//view
 		$this->template->set_global('title', $title);
 		$content->set_global('item', $obj, false);
