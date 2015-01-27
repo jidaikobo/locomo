@@ -71,13 +71,11 @@
 		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
 <!--			<td style="text-align: center;"><input type="checkbox"></td>-->
 			<td><?php echo $item->id; ?></td>
-			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php 
-					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div>
-			</td>
+			<th style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->display_name; ?></div></th>
 			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->username; ?></div>
 			</td>
 			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
-			<td><?php echo $item->last_login_at; ?></td>
+			<td><?php echo $item->last_login_at != '0000-00-00 00:00:00' ? $item->last_login_at : ''; ?></td>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<td><?php echo $item->deleted_at; ?></td>
 			<?php endif; ?>
