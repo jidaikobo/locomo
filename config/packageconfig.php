@@ -77,6 +77,7 @@ return array(
 		'\\Controller_Sys/403',
 		'\\Controller_Sys/404',
 		'\\Controller_Sys/fetch_view',
+		'\\Controller_Flr/dl',
 	),
 
 	// always user allowed actions

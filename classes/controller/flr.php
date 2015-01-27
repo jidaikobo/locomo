@@ -13,6 +13,8 @@ class Controller_Flr extends \Locomo\Controller_Base
 		'is_for_admin' => true, // true: hide from admin bar
 		'order'        => 1030, // order of appearance
 		'widgets' =>array(
+			array('name' => '共有ダウンロードファイル', 'uri' => '\\Controller_Flr/common_files'),
+			array('name' => 'ギャラリー', 'uri' => '\\Controller_Flr/gallery'),
 		),
 	);
 
@@ -123,6 +125,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			$basename = basename($fullpath);
 			$obj->name        = $basename;
 			$obj->ext         = is_dir($fullpath) ? '' : substr($basename, strrpos($basename, '.') + 1) ;
+			$obj->mimetype    = is_dir($fullpath) ? '' : \File::file_info($fullpath)['mimetype'] ;
 			$obj->genre       = is_dir($fullpath) ? 'dir' : \Locomo\File::get_file_genre($basename);
 			$obj->explanation = \Arr::get($current, md5($path).'.data.explanation', '');
 			$obj->is_visible  = \Arr::get($current, md5($path).'.data.is_visible', 1);
@@ -170,6 +173,61 @@ class Controller_Flr extends \Locomo\Controller_Base
 			\DBUtil::rename_table('lcm_flr_permissions_tmp', 'lcm_flr_permissions');
 			return false;
 		}
+	}
+
+	/**
+	 * action_common_files()
+	 */
+	public function action_common_files()
+	{
+		// hmvc(widget) only
+		if ( ! \Request::is_hmvc())
+		{
+			$page = \Request::forge('sys/404')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 404);
+		}
+
+		// current dir
+		$option = array(
+			'where' => array(
+				array('is_sticky', 1),
+				array('genre', '<>','image'),
+			),
+/*
+			'order_by' => array(
+				array('seq', 'ASC'),
+			),
+*/
+		);
+		$objs = \Model_Flr::find('all', $option);
+
+		// view
+		$content = \View::forge('flr/common_files');
+		$content->set('items', $objs);
+		$this->template->content = $content;
+		$this->template->set_global('title', 'ファイル一覧');
+	}
+
+	/**
+	 * action_gallery()
+	 */
+	public function action_gallery()
+	{
+		// current dir
+		$option = array(
+			'where' => array(
+				array('is_sticky', 1),
+				array('genre', 'image'),
+			),
+		);
+		$objs = \Model_Flr::find('all', $option);
+
+		// view
+		$content = \View::forge('flr/gallery');
+		$content->set('items', $objs);
+		$this->template->content = $content;
+		$this->template->set_global('title', 'ファイル一覧');
 	}
 
 	/**
@@ -313,6 +371,15 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_edit_dir($id = null)
 	{
+		$obj = \Model_Flr::find($id);
+
+		// existence
+		if ( ! $obj)
+		{
+			\Session::set_flash('error', "ファイル／ディレクトリが見つかりませんでした");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'create_dir'))
 		{
@@ -461,6 +528,8 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_permission_dir($id = null)
 	{
+		$obj = \Model_Flr::find($id);
+
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'create_dir'))
 		{
@@ -494,10 +563,19 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 	/**
 	 * action_purge_dir()
-	 * ディレクトリの削除
+	 * ファイル／ディレクトリの削除
 	 */
 	public function action_purge_dir($id = null)
 	{
+		$obj = \Model_Flr::find($id);
+
+		// existence
+		if ( ! $obj)
+		{
+			\Session::set_flash('error', "ファイル／ディレクトリが見つかりませんでした");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'purge_dir'))
 		{
@@ -516,12 +594,16 @@ class Controller_Flr extends \Locomo\Controller_Base
 			if ( ! file_exists($path))
 			{
 				$is_error = true;
-				\Session::set_flash('error', '削除すべきディレクトリが存在しません。');
+				\Session::set_flash('error', '削除すべきファイル／ディレクトリが存在しません。');
 			}
-			elseif ( ! \File::delete_dir($path, $recursive = true))
+
+			if (is_dir($path) && ! \File::delete_dir($path, $recursive = true))
 			{
 				$is_error = true;
 				\Session::set_flash('error', 'ディレクトリの削除に失敗しました。');
+			} elseif ( ! \File::delete($path)) {
+				$is_error = true;
+				\Session::set_flash('error', 'ファイルの削除に失敗しました。');
 			}
 
 			// purge
@@ -529,9 +611,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 			{
 				if ($target->purge())
 				{
-					\Session::set_flash('success', "ディレクトリを削除しました。");
+					\Session::set_flash('success', "ファイル／ディレクトリを削除しました。");
 				} else {
-					\Session::set_flash('error', "ディレクトリの削除に失敗しました。");
+					\Session::set_flash('error', "ファイル／ディレクトリの削除に失敗しました。");
 				}
 			}
 			\Response::redirect(\Uri::create('flr/index_files/'.$parent->id));
@@ -549,18 +631,12 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_upload($id = null)
 	{
-		// check_auth
-		if ( ! static::check_auth($obj->path, 'upload'))
-		{
-			\Session::set_flash('error', "ファイルアップロードの権利がありません。");
-			\Response::redirect(\Uri::create('flr/index_files/'));
-		}
+		$obj = \Model_Flr::find($id);
 
-		// get object
-		$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'upload'));
+		// existence
 		if ( ! $obj)
 		{
-			\Session::set_flash('error', "ディレクトリが存在しません。");
+			\Session::set_flash('error', "ディレクトリが見つかりませんでした");
 			\Response::redirect(\Uri::create('flr/index_files/'));
 		}
 
@@ -647,6 +723,15 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_view_file($id = null)
 	{
+		$obj = \Model_Flr::find($id);
+
+		// existence
+		if ( ! $obj)
+		{
+			\Session::set_flash('error', "ファイル／ディレクトリが見つかりませんでした");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'read'))
 		{
@@ -654,8 +739,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			\Response::redirect(\Uri::create('flr/index_files/'));
 		}
 
-		$obj = \Model_Flr::find($id);
-		$plain = \Model_Flr::plain_definition('view_file', $obj);
+		$plain = \Model_Flr::plain_definition('view_file', $obj)->build_plain();
 
 		// view
 		$this->set_object($obj);
@@ -676,9 +760,10 @@ class Controller_Flr extends \Locomo\Controller_Base
 	}
 
 	/**
-	 * action_move_file()
+	 * _action_move_file()
+	 * 実装見合わせ
 	 */
-	public function action_move_file($id = null)
+	public function _action_move_file($id = null)
 	{
 		$obj = parent::edit($id);
 		$this->template->set_global('title', 'ファイル移動');
@@ -689,8 +774,56 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_purge_file($id = null)
 	{
-		$obj = parent::edit($id);
+		$this->action_purge_dir($id);
 		$this->template->set_global('title', 'ファイル削除');
+	}
+
+	/**
+	 * action_dl()
+	 * at default, this action is opened to guest!
+	 */
+	public function action_dl()
+	{
+		// path
+		$path = \Model_Flr::enc_url(\Input::get('p'));
+		$obj = Model_Flr::find('first', array('where' => array(array('path', $path))));
+
+		// 404
+		$page = \Request::forge('sys/404')->execute();
+		$this->template->set_safe('content', $page);
+		if ( ! $obj)
+		{
+			return new \Response($page, 404);
+		}
+
+		// check_auth
+		// for security, always return 404
+		// 厳密には403を返すべきかもしれないが、ファイル実体があることを判別させてしまうので、404を返す
+		if ( ! static::check_auth($obj->path, 'read'))
+		{
+			return new \Response($page, 404);
+		}
+
+		// Download or view
+		$fullpath = LOCOMOUPLOADPATH.$obj->path;
+		if (\Locomo\File::get_file_genre($fullpath) != 'image' || \Input::get('dl'))
+		{
+			try
+			{
+				\File::download($fullpath, $obj->name);
+			} catch (\Fuel\Core\InvalidPathException $e) {
+				return new \Response($page, 404);
+			}
+		} else {
+			try
+			{
+				\File::download($fullpath, null, $obj->mimetype, null, false, 'inline');
+			} catch (\Fuel\Core\InvalidPathException $e) {
+				return new \Response($page, 404);
+			}
+		}
+
+		exit();
 	}
 
 	/**
@@ -714,6 +847,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// always true
 		if (in_array('-1', $usergroups) || in_array('-2', $usergroups) ) return true;
 
+		// when file, check parent dir
+		$fullpath = LOCOMOUPLOADPATH.$path;
+		$path = is_dir($fullpath) ? $path : rtrim(dirname($path),DS).DS;
 		$obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
 		if ( ! $obj) return false;
 

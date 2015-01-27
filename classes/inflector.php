@@ -130,6 +130,18 @@ class Inflector extends \Fuel\Core\Inflector
 	}
 
 	/**
+	 * get_root_relative_path()
+	 * @param string http://exmple.com/root_dir/ctrl/action
+	 * @return string /root_dir/ctrl/action
+	 */
+	public static function get_root_relative_path($url = '')
+	{
+		$http_host = \Input::server('HTTP_HOST');
+		$pos = strpos(\Uri::base(false), $http_host) + strlen($http_host);
+		return substr($url, $pos);
+	}
+
+	/**
 	 * remove_head_backslash()
 	 * @param string [\\]str
 	 * @return string str

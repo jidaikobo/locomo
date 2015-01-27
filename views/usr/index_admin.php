@@ -79,7 +79,7 @@
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<td><?php echo $item->deleted_at; ?></td>
 			<?php endif; ?>
-			<td>
+			<td class="minimum">
 				<div class="btn_group">
 					<?php
 					if (\Auth::has_access('\Controller_Usr/view')):
