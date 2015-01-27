@@ -33,7 +33,7 @@ class Create_flrs
 			'access_level' => array('constraint' => 5,  'type' => 'int', 'null' => true),
 			'user_id'      => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'usergroup_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
-//			'deleted_at' => array('type' => 'datetime', 'null' => true),
+			'deleted_at'   => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 		\DBUtil::create_index('lcm_flr_permissions', array('flr_id','user_id'), 'flrs_perm_uid');
 		\DBUtil::create_index('lcm_flr_permissions', array('flr_id','usergroup_id'), 'flrs_perm_gid');

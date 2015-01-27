@@ -37,7 +37,7 @@ class Actionset_Scdl extends \Actionset_Base
 			'show_at_top'  => true,
 			'acl_exp'      => '編集',
 			'explanation'  => '編集',
-			'help'         => \Help_Scdl::$txt['edit'],
+			'help'         => '',
 			'order'        => 10
 		);
 		return $retvals;
@@ -63,7 +63,7 @@ class Actionset_Scdl extends \Actionset_Base
 			'show_at_top'  => true,
 			'acl_exp'      => 'コピー',
 			'explanation'  => 'コピー',
-			'help'         => \Help_Scdl::$txt['copy'],
+			'help'         => '',
 			'order'        => 10
 		);
 		return $retvals;
@@ -95,7 +95,7 @@ class Actionset_Scdl extends \Actionset_Base
 			'show_at_top'  => true,
 			'acl_exp'      => '出席するかどうかを確認',
 			'explanation'  => '出席するかどうかを確認',
-			'help'         => \Help_Scdl::$txt['attend'],
+			'help'         => '',
 			'order'        => 10
 		);
 		return $retvals;
@@ -111,7 +111,7 @@ class Actionset_Scdl extends \Actionset_Base
 			'show_at_top'  => true,
 			'acl_exp'      => '',
 			'explanation'  => '',
-			'help'         => \Help_Scdl::$txt['view'],
+			'help'         => '',
 			'order'        => 10
 		);
 		return $retvals;

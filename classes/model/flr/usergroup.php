@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Model_Flr_Usergroup extends \Orm\Model
+class Model_Flr_Usergroup extends \Model_Base
 {
 	/**
 	 * vals
