@@ -94,13 +94,13 @@ body.lcm_action_login {
 
 #adminbar div,
 .adminbar_icon,
-.holizonal_list ul,
-.holizonal_list li {
+.horizontal_list ul,
+.horizontal_list li {
 	display: inline-block;
 }
 *+html #adminbar div,
-*+html .holizonal_list ul,
-*+html .holizonal_list li {
+*+html .horizontal_list ul,
+*+html .horizontal_list li {
 	display: inline;
 	zoom: 1;
 }
@@ -240,6 +240,9 @@ body.lcm_action_login {
 	position: relative;
 	vertical-align: middle;
 }
+.adminbar_main > div {
+	margin-right: 15px;
+}
 .adminbar_top .adminbar_main,
 .adminbar_top .adminbar_sub {
 	vertical-align: middle;
@@ -347,11 +350,11 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 	-webkit-border-radius: 0;
 	-moz-border-radius: 0;
 }
-ul.holizonal_list {
+ul.horizontal_list {
 	line-height: 1.25;
 	padding-left: 0;
 }
-.holizonal_list li {
+.horizontal_list li {
 	padding: .25em 6px .25em 0;
 }
 #adminbar ul.horizontal_list a {
@@ -401,11 +404,9 @@ ul.holizonal_list {
 	left:4px;
 	top: 4px;
 }
-.admin_controller {
-	margin-right: 10px;
-}
+
 /* あとで考える。オプションの歯車と戻る画面のリンクリストがあるので、管理バーしたの領域のレイアウトは要再考。
-.adminbar_sub .admin_module_option {
+.adminbar_sub .admin_controller_option {
 	position: absolute;
 	top: 0;
 	right: 9px;

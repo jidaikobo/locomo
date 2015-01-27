@@ -50,7 +50,7 @@ if (\Auth::check()):
 				$idxmenu = \Arr::get($actionset, 'index') ? \Actionset::generate_menu_html($actionset['index'], array('class'=>'semimodal hidden_item boxshadow')) : false ;
 				if ($idxmenu):
 					$html.= '<div class="admin_index_list">';
-					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".$current_nicename."の設定を開く\">インデクス<span class=\"skip\">エンターでメニューを開きます</span></a>";
+					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"インデクス一覧を開く\">インデクス<span class=\"skip\">エンターでメニューを開きます</span></a>";
 					$html.= $idxmenu;
 					$html.= '</div><!-- .admin_index_list -->';
 				endif;
@@ -59,7 +59,7 @@ if (\Auth::check()):
 				$ctrl_index and array_unshift($bases, array('urls' => array($ctrl_index)));
 				if ($bases):
 					$html.= '<div class="admin_context">';
-					$html.= \Actionset::generate_menu_html($bases, array('class'=>'holizonal_list'));
+					$html.= \Actionset::generate_menu_html($bases, array('class'=>'horizontal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 
@@ -69,7 +69,7 @@ if (\Auth::check()):
 			$html.= '<div class="adminbar_sub">';			
 			if (@$actionset['ctrl']):
 				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-				$html.= \Actionset::generate_menu_html($actionset['ctrl'], array('class'=>'holizonal_list'));
+				$html.= \Actionset::generate_menu_html($actionset['ctrl'], array('class'=>'horizontal_list'));
 				$html.='</div><!-- /.admin_ctrl -->';
 			endif;
 			
