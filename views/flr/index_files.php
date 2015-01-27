@@ -1,3 +1,4 @@
+<h1>現在のディレクトリ：<?php echo $current->name ?></h1>
 <?php if ($items): ?>
 <table class="tbl datatable tbl_scrollable lcm_focus">
 	<thead>

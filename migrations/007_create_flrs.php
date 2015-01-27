@@ -9,7 +9,7 @@ class Create_flrs
 			'id'           => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'         => array('constraint' => 255, 'type' => 'varchar'),
 			'explanation'  => array('type' => 'text'),
-			'path'         => array('constraint' => 255, 'type' => 'varchar'),
+			'path'         => array('constraint' => 255, 'type' => 'varchar', 'unique' => true),
 			'depth'        => array('constraint' => 5,   'type' => 'int'),
 			'is_visible'   => array('constraint' => 5,   'type' => 'int'),
 			'is_sticky'    => array('constraint' => 5,   'type' => 'int'),
@@ -28,7 +28,9 @@ class Create_flrs
 		\DBUtil::create_table('lcm_flr_permissions', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'flr_id'       => array('constraint' => 11, 'type' => 'int'),
-			'is_writable'  => array('constraint' => 5,  'type' => 'int', 'null' => true),
+			// access level
+			// 1:reab+download 2:upload (rename file, purge file) 3:create dir 4:rename dir + move dir 5:purge dir
+			'access_level' => array('constraint' => 5,  'type' => 'int', 'null' => true),
 			'user_id'      => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'usergroup_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 //			'deleted_at' => array('type' => 'datetime', 'null' => true),

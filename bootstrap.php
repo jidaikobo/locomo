@@ -23,8 +23,12 @@ if ( ! \Config::load('locomo'))
 	\Config::load('packageconfig');
 }
 
-// upload
+// path
+define('LOCOMOAPPPATH', APPPATH.'locomo/');
 define('LOCOMOUPLOADPATH', \Config::get('upload_path'));
+
+// prepare locomo dir.
+if ( ! file_exists(LOCOMOAPPPATH)) throw new \Exception("LOCOMOAPPPATH not found. create '".LOCOMOAPPPATH."'");
 
 // Autoloader::register()
 Autoloader::register();

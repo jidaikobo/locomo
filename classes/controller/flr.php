@@ -22,7 +22,42 @@ class Controller_Flr extends \Locomo\Controller_Base
 	public function before()
 	{
 		parent::before();
+
+		// check env.
+		// ディレクトリの存在確認
+		if ( ! file_exists(LOCOMOUPLOADPATH)) throw new \Exception("LOCOMOUPLOADPATH not found. create '".LOCOMOUPLOADPATH."'");
 		if (\Str::ends_with(LOCOMOUPLOADPATH, DS)) throw new \Exception("LOCOMOUPLOADPATH must not be terminated with '/'");
+
+		// check permission and set default permission
+		// ディレクトリパーミッションの確認と、デフォルトパーミッションの設定
+		if ( ! file_exists(LOCOMOUPLOADPATH.DS.'.LOCOMO_DIR_INFO'))
+		{
+			// get default permission from config
+			$config = \Config::load('upload');
+			$default_permission = \Arr::get($config, 'default_permission', array());
+
+			// readble arr to machine-like arr.
+			$group = \Model_Flr::modify_intersects_arr_to_modellike_arr($default_permission['usergroup'], 'usergroup');
+			$user = \Model_Flr::modify_intersects_arr_to_modellike_arr($default_permission['user'], 'user');
+
+			// prepare array
+			$key = md5('/'); // root array key
+			$arr = array(
+				$key => array(
+					'data' => array(),
+					'permission_usergroup' => $group,
+					'permission_user' => $user,
+				),
+			);
+
+			// put file
+			try
+			{
+				\File::create(LOCOMOUPLOADPATH.DS, '.LOCOMO_DIR_INFO', serialize($arr));
+			} catch (\Fuel\Core\InvalidPathException $e) {
+				throw new \Fuel\Core\InvalidPathException("'".LOCOMOUPLOADPATH."', cannot create file at this location. アップロードディレクトリの書き込み権限かファイルオーナを確認してください。");
+			}
+		}
 	}
 
 	/**
@@ -44,6 +79,36 @@ class Controller_Flr extends \Locomo\Controller_Base
 		\DB::query('CREATE TABLE lcm_flr_permissions_tmp like lcm_flr_permissions;')->execute();
 		\DB::query('INSERT INTO lcm_flr_permissions_tmp SELECT * FROM lcm_flr_permissions;')->execute();
 		\DBUtil::truncate_table('lcm_flr_permissions');
+
+		// eliminate invalid filenames
+		foreach ($items as $k => $fullpath)
+		{
+			if ($fullpath == LOCOMOUPLOADPATH.DS) continue;
+			$enc_name = \Model_Flr::enc_url($fullpath);
+
+			// if same name exists
+			// エンコード名が改名後と同じときにはエラーを返す
+			if (file_exists($enc_name) && ! preg_match("/^[%a-zA-Z0-9\._-]+/", basename($fullpath)))
+			{
+				$errors = array(
+					'同期は不完全に終わりました。',
+					"'".urldecode(basename($fullpath))."'は、エンコード後の名前が同じものがあるので、名称を変更してください。",
+				);
+				\Session::set_flash('error', $errors);
+				\Response::redirect(\Uri::create('flr/sync/'));
+			}
+
+			// if not exist. it maybe already enced.
+			// ファイルが存在しない場合はすでにエンコードされているので、エンコードする
+			if ( ! file_exists($fullpath))
+			{
+				$fullpath = \Model_Flr::enc_url(dirname($fullpath)).DS.basename($fullpath);
+			}
+
+			\File::rename($fullpath, $enc_name);
+		}
+		// reload
+		$items = \Util::get_file_list(LOCOMOUPLOADPATH);
 
 		// save
 		foreach ($items as $fullpath)
@@ -126,13 +191,22 @@ class Controller_Flr extends \Locomo\Controller_Base
 			\Response::redirect(\Uri::create('flr/index_files/'));
 		}
 
+		// sync 1%
+		srand();
+		$sync_mark = '';
+		if (rand(1, 100) == 1)
+		{
+			static::sync();
+			$sync_mark = '*';
+		}
+
 		// view
 		$this->set_object($current_obj);
 		$content = \View::forge('flr/index_files');
 		$content->set_global('current', $current_obj);
 		$content->set('items', $objs);
 		$this->template->content = $content;
-		$this->template->set_global('title', 'ファイル一覧');
+		$this->template->set_global('title', 'ファイル一覧'.$sync_mark);
 	}
 
 	/**
@@ -184,9 +258,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// create dir
 		if (\Input::post())
 		{
-			$parent =  \Input::post('parent');
+			$parent =  \Input::post('parent', '/');
 			$dirnname = \Input::post('name');
-			$path = $parent.$dirnname;
+			$path = \Model_Flr::enc_url($parent.$dirnname);
 			$tmp_obj = Model_Flr::find('first', array('where' => array(array('path', $path))));
 
 			if ($tmp_obj && file_exists(LOCOMOUPLOADPATH.$parent.$dirnname))
@@ -198,7 +272,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			{
 				\Session::set_flash('error', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 			}
-			elseif ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, $dirnname))
+			elseif ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
 			{
 				\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
 				\Response::redirect(\Uri::create('flr/create_dir/'.$id));
@@ -212,7 +286,6 @@ class Controller_Flr extends \Locomo\Controller_Base
 		$success = \Session::get_flash('success');
 		if ($success && $obj)
 		{
-			static::sync();
 			\Session::set_flash('success', "ディレクトリを新規作成しました。");
 			static::$redirect = 'flr/permission_dir/'.$obj->id;
 		}
@@ -227,40 +300,60 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_rename_dir($id = null)
 	{
-		$model = $this->model_name;
-		$errors = array();
+		$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'edit'));
+
+		// root directory
+		if (LOCOMOUPLOADPATH.$obj->path == LOCOMOUPLOADPATH.DS)
+		{
+			\Session::set_flash('error', "このディレクトリは名称変更できません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
+		// not exist
+		if ( ! $obj)
+		{
+			\Session::set_flash('error', "ディレクトリが存在しません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'rename_dir'))
+		{
+			\Session::set_flash('error', "ディレクトリの名称を変更する権利がありません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
 
 		// rename dir
 		if (\Input::post())
 		{
-/*
-			$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'edit'));
 			$prev_name = $obj->name;
 			$new_name = \Input::post('name');
-			$parent = dirname($obj->path).DS;
+			$parent = LOCOMOUPLOADPATH.dirname($obj->path).DS;
 
 			// rename
 			if ($prev_name != $new_name)
 			{
-				if( ! \File::rename_dir($parent.$prev_name, $parent.$new_name))
+				$prev = \Model_Flr::enc_url($parent.$prev_name);
+				$new  = \Model_Flr::enc_url($parent.$new_name);
+				if( ! \File::rename_dir($prev, $new))
 				{
-					$errors[] = 'ディレクトリのリネームに失敗しました。';
+					\Session::set_flash('error', "ディレクトリのリネームに失敗しました。");
+					\Response::redirect(\Uri::create('flr/rename_dir/'.$obj->id));
 				}
+			} else {
+				\Session::set_flash('error', "変更前の名称と同じ名称なので変更しませんでした。");
+				\Response::redirect(\Uri::create('flr/rename_dir/'.$obj->id));
 			}
-*/
 		}
 
 		// parent::edit()
 		$obj = parent::edit($id);
 
-		// error
-		if($errors) \Session::set_flash('error', $errors);
-
 		// rewrite message
 		$success = \Session::get_flash('success');
 		if ($success)
 		{
-			static::sync();
+			static::sync(); //important!
 			\Session::set_flash('success', "ディレクトリをリネームしました。");
 		}
 
@@ -412,37 +505,68 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public function action_upload($id = null)
 	{
-		$errors = array();
+		// get object
+		$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'upload'));
+		if ( ! $obj)
+		{
+			\Session::set_flash('error', "ディレクトリが存在しません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'upload'))
+		{
+			\Session::set_flash('error', "ディレクトリに対するアップロード権限がありません。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
 
 		// upload
+		$errors = array();
 		if (\Input::post())
 		{
 			if (\Input::file())
 			{
-				$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'edit'));
-
+				// upload
+				$fullpath = LOCOMOUPLOADPATH.$obj->path;
 				$config = array(
-					'path' => $obj->path,
+					'path' => $fullpath,
 				);
-				
 				\Upload::process($config);
+				\Upload::register('before', array($this, 'modify_filename'));
+				if (\Upload::is_valid())
+				{
+					\Upload::save();
+				}
 
-if (\Upload::is_valid())
-{
-\Upload::save();
-//  Model_Uploads::add(Upload::get_files());
-}
+				// and process any errors
+				foreach (\Upload::get_errors() as $file)
+				{
+					$errors[] = $file['errors'];
+					$errors[] = 'アップロードに失敗をしました。';
+				}
 
-// and process any errors
-foreach (\Upload::get_errors() as $file)
-{
-	$errors[] = $file;
-    // $file is an array with all file information,
-    // $file['errors'] contains an array of all error occurred
-    // each array element is an an array containing 'error' and 'message'
-//					$errors[] = 'アップロードに失敗をしました。';
-}
+				// upload succeed
+				if ( ! $errors)
+				{
+					$obj_file = \Model_Flr::forge();
+					$name = \Arr::get(\Input::file(), 'upload.name');
+					$obj_file->name        = urldecode($name);
+					$obj_file->path        = $obj->path.$name;
+					$obj_file->is_sticky   = \Input::post('is_sticky');
+					$obj_file->ext         = substr($name, strrpos($name, '.') + 1);
+					$obj_file->genre       = \Locomo\File::get_file_genre($name);
+					$obj_file->is_visible  = \Input::post('is_visible', 1);
+					$obj_file->explanation = \Input::post('explanation');
+					if ($obj_file->save())
+					{
+						\Session::set_flash('success', "ファイルをアップロードしました。");
+						\Response::redirect(\Uri::create('flr/view_file/'.$obj_file->id));
+					} else {
+						$errors[] = 'アップロードに失敗をしました。';
+						\File::delete($fullpath);
+					}
 
+				}
 			}
 			else
 			{
@@ -453,24 +577,18 @@ foreach (\Upload::get_errors() as $file)
 		// parent::edit()
 		$obj = parent::edit($id);
 
-		// new path
-		if (\Input::post() && ! $errors)
-		{
-			$obj->path = $parent.$dirnname;
-			$obj->save();
-		}
-
 		// error
 		if($errors) \Session::set_flash('error', $errors);
 
-		// rewrite message
-		$success = \Session::get_flash('success');
-		if ($success)
-		{
-			\Session::set_flash('success', "ファイルをアップロードしました。");
-		}
-
 		$this->template->set_global('title', 'ファイルアップロード');
+	}
+
+	/**
+	 * modify_filename()
+	 */
+	public static function modify_filename(&$file)
+	{
+		$file['filename'] = urlencode($file['filename']);
 	}
 
 	/**
@@ -520,8 +638,18 @@ foreach (\Upload::get_errors() as $file)
 	/**
 	 * check_auth()
 	 */
-	public static function check_auth($path, $writable = false)
+	public static function check_auth($path, $level = 'read')
 	{
+		// rights
+		$rights = array(
+		 'read'       => 1,
+		 'upload'     => 2,
+		 'create_dir' => 3,
+		 'rename_dir' => 4,
+		 'purge_dir'  => 5,
+		);
+		if ( ! array_key_exists($level, $rights)) return false;
+
 		// usergroups
 		$usergroups = \Auth::get_groups();
 
@@ -535,7 +663,7 @@ foreach (\Upload::get_errors() as $file)
 		$allowed_groups = array();
 		foreach ($obj->permission_usergroup as $v)
 		{
-			if ($writable && ! $v->is_writable) continue;
+			if ($v->access_level < $rights[$level]) continue;
 			$allowed_groups[] = $v->usergroup_id;
 		}
 		$is_allowed = false;
@@ -553,7 +681,7 @@ foreach (\Upload::get_errors() as $file)
 		$allowed_users = array();
 		foreach ($obj->permission_user as $v)
 		{
-			if ($writable && ! $v->is_writable) continue;
+			if ($v->access_level < $rights[$level]) continue;
 			$allowed_users[] = $v->user_id;
 		}
 		$uid = \Auth::get('id');

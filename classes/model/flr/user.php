@@ -22,11 +22,18 @@ class Model_Flr_User extends \Orm\Model
 			'data_type' => 'int',
 			'form' => array (), // override by \Locomo\Model_Flr::form_definition() & Model_Flr_Dir::form_definition()
 		),
-		'is_writable' => array(
-			'label' => '書き込み／削除権限',
+		'access_level' => array(
+			'label' => 'ディレクトリの権限',
 			'form' => array(
 				'type' => 'select',
-				'options' => array('' => '権限を選択してください', '0' => '閲覧権限', '1' => '書き込み／削除権限')
+				'options' => array(
+					''  => '権限を選択してください',
+					'1' => '閲覧／ダウンロード権限',
+					'2' => 'アップロード／ファイル削除権限',
+					'3' => 'ディレクトリ作成権限',
+					'4' => 'ディレクトリ名称変更／移動権限',
+					'5' => 'ディレクトリ削除権限',
+				),
 			),
 			'default' => 0,
 		),

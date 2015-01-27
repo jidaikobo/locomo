@@ -500,7 +500,7 @@ $(document).on('keydown',function(e){
 					index = -1;
 				}
 			break;
-			case $.ui.keyCode.ESCAPE:
+			case k == 37:
 				close_semimodal();
 			break;
 		}
