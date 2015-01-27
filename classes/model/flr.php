@@ -392,7 +392,8 @@ class Model_Flr extends \Model_Base
 		{
 			foreach ($obj->$relation_name as $id => $v)
 			{
-				eval('$relations = '.var_export($v->_data, true).';');
+//				eval('$relations = '.var_export($v->_data, true).';');
+				$relations = $v->to_array();
 				if ($relations)
 				{
 					$retvals[$id] = $relations;
@@ -413,7 +414,10 @@ class Model_Flr extends \Model_Base
 		$tmps = array();
 		foreach ($permissions as $v)
 		{
-			$tmps[] = $v[$relation.'_id'].DS.$v['access_level'];
+			for ($n = 1; $n <= $v['access_level']; $n++)
+			{
+				$tmps[] = $v[$relation.'_id'].DS.$n;
+			}
 		}
 		return $tmps;
 	}
@@ -781,10 +785,31 @@ class Model_Flr extends \Model_Base
 	{
 		$form->field('explanation')->set_type('hidden');
 
-		\Session::set_flash('message', ['親以上の権限は選択しても有効になりません。','親以上の権限を設定しようとすると、自動的に親以下の権限に調整されます。']);
+		\Session::set_flash('message', ['親以上の権限は選択しても有効になりません。',
+			'親以上の権限を設定しようとすると、自動的に親以下の権限に調整されます。',
+			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
+		]);
 
 		// usergroup_id
+		// 親のパーミッションを取るがlazyloadや、リレーション先のモデルに尋ねると$_propertiesが壊れるので、SQLで取得する。
+		$parent = static::get_parent($obj);
+		$items = \DB::select('lcm_flr_permissions.usergroup_id','lcm_usrgrps.name')
+			->from('lcm_flr_permissions')
+			->join('lcm_usrgrps')
+			->on('lcm_usrgrps.id', '=', 'lcm_flr_permissions.usergroup_id')
+			->where('lcm_flr_permissions.flr_id', $parent->id)
+			->where('lcm_flr_permissions.usergroup_id', 'is not', null)
+			->execute()
+			->as_array();
+		$g_permissions = array();
+		foreach ($items as $v)
+		{
+			$g_permissions[$v['usergroup_id']] = $v['name'];
+		}
+
+		// get_options
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$options = array_intersect($g_permissions, $options);
 		$options = array(''=>'選択してください', '-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
 		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
 			'type' => 'select',
@@ -795,14 +820,34 @@ class Model_Flr extends \Model_Base
 		$form->add_after($usergroup_id, 'ユーザグループ権限', array(), array(), 'explanation');
 
 		// user_id
+		$parent = static::get_parent($obj);
+		$items = \DB::select('lcm_flr_permissions.user_id','lcm_usrs.username')
+			->from('lcm_flr_permissions')
+			->join('lcm_usrs')
+			->on('lcm_usrs.id', '=', 'lcm_flr_permissions.user_id')
+			->where('lcm_flr_permissions.flr_id', $parent->id)
+			->where('lcm_flr_permissions.user_id', 'is not', null)
+			->execute()
+			->as_array();
+		$u_permissions = array();
+		foreach ($items as $v)
+		{
+			$u_permissions[$v['user_id']] = $v['username'];
+		}
+
+		// get_options
 		$options = array(''=>'選択してください') + \Model_Usr::get_options(array(), 'display_name');
-		\Model_Flr_User::$_properties['user_id']['form'] = array(
-			'type' => 'select',
-			'options' => $options,
-			'class' => 'varchar user',
-		);
-		$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
-		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
+		$options = array_intersect($u_permissions, $options);
+		if ($options)
+		{
+			\Model_Flr_User::$_properties['user_id']['form'] = array(
+				'type' => 'select',
+				'options' => $options,
+				'class' => 'varchar user',
+			);
+			$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
+			$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
+		}
 
 		return $form;
 	}
