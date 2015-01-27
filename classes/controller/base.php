@@ -357,7 +357,7 @@ class Controller_Base extends Controller_Core
 			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()) . '/index_deleted');
 		}
 
-		\Session::set_flash('error', sprintf('完全削除中にエラーが発生しました'));
+		\Session::set_flash('error', sprintf('削除中にエラーが発生しました'));
 		throw new \HttpNotFoundException;
 	}
 

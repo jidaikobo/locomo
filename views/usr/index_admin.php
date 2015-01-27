@@ -91,7 +91,7 @@
 						echo Html::anchor('usr/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
 					if (\Auth::has_access('\Controller_Usr/delete')):
-						echo Html::anchor('usr/delete'.'/'.$item->id, '削除', array('class' => 'delete'));
+						echo Html::anchor('usr/delete'.'/'.$item->id, '削除', array('class' => 'delete confirm'));
 					endif;
 					?>
 				</div>

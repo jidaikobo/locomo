@@ -8,9 +8,12 @@ class Inflector extends \Fuel\Core\Inflector
 	 * @param string \Mod\Controller_Foo_Bar[/action]
 	 * @return string "path/to/class[/action]"
 	 */
-	public static function ctrl_to_dir($controller = null)
+	public static function ctrl_to_dir($controller = null, $delete_locomo = true)
 	{
 		if ( ! $controller) throw new \InvalidArgumentException('argument must not be null or empty');
+
+		$controller = static::add_head_backslash($controller);
+		$controller = $delete_locomo ? str_replace('\Locomo', '', $controller) : $controller;
 
 		// if slash exists
 		$strs = explode('/', $controller);
