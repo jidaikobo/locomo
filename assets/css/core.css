@@ -837,7 +837,18 @@ table.datatable td {
 	margin: -.25em -6px -.25em -.5em;
 	padding: 0 .5em;
 }
-
+.l2 .col_scrollable {
+	height: 3.1em;
+}
+.l3 .col_scrollable {
+	height: 4.5em;
+}
+.l4 .col_scrollable {
+	height: 6em;
+}
+.l5 .col_scrollable {
+	height: 7.5em;
+}
 .formtable {
 	border-spacing: 0px;
 	width: 100%;
