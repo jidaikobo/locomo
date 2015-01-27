@@ -1,5 +1,6 @@
 <div class="index_wrapper">
-<div class="left_column sub_column" style="width: 260px;"><!-- 各インデックスのサブカラムは適宜幅を与える。設定しなければ300px -->
+<div class="left_column sub_column" style="width: 260px;">
+<!-- 各インデックスのサブカラムは適宜幅を与える。設定しなければ300px -->
 <?php /*
 	// search form
 	echo \Form::open(array('method' => 'get', 'class' => 'index_search_form'));
@@ -8,6 +9,8 @@
 	echo \Form::close();
 	*/
 ?>
+
+<!--
 <div class="lcm_focus">
 	<h3 class="skip">インデックス</h3>
 	<?php
@@ -15,6 +18,7 @@
 	echo \Actionset::generate_menu_html($actionset['index'], array('class'=>'index_list'));
 	?>
 </div>
+-->
 <div class="form_group lcm_focus">
 <h3 class="skip">検索</h3>
 	<form class="search">
@@ -45,40 +49,56 @@
 	endif;
 ?>
 <?php if ($items): ?>
-<div class="tbl_wrapper">
-	<table class="tbl datatable tbl_scrollable lcm_focus">
-		<thead>
-			<tr>
-				<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
-				<th class="minimum"><?php echo \Pagination::sort('id', 'ID', false);?></th>
-				<th style="width:7em;"><?php echo \Pagination::sort('username', 'User name'); ?></th>
-				<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
-				<th><?php echo \Pagination::sort('last_login_at', 'Last login'); ?></th>
-				<th>Delete date</th>
-				<th>&nbsp;</th>
-			</tr>
-		</thead>
-		<tbody>
-	<?php foreach ($items as $item): ?>
-			<tr tabindex="-1" title="<?php echo $item->display_name ?>">
-				<td style="text-align: center;"><input type="checkbox"></td>
-				<td><?php echo $item->id; ?></td>
-				<td style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1"><?php 
-						echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div></td>
-				<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
-				<td><?php echo $item->last_login_at; ?></td>
+<table class="tbl datatable tbl_scrollable lcm_focus">
+	<thead>
+		<tr>
+			<!--
+			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
+			-->
+			<th class="minimum"><?php echo \Pagination::sort('id', 'ID', false);?></th>
+			<th style="width:7em;"><?php echo \Pagination::sort('username', 'ユーザ名', false);?></th>
+			<th style="width:7em;"><?php echo \Pagination::sort('username', '表示名'); ?></th>
+			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
+			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
+			<?php if (\Request::main()->action == 'index_deleted'): ?>
+				<th>削除された日</th>
+			<?php endif; ?>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php foreach ($items as $item): ?>
+		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
+<!--			<td style="text-align: center;"><input type="checkbox"></td>-->
+			<td><?php echo $item->id; ?></td>
+			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php 
+					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div>
+			</td>
+			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->username; ?></div>
+			</td>
+			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
+			<td><?php echo $item->last_login_at; ?></td>
+			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<td><?php echo $item->deleted_at; ?></td>
-				<td>
-					<div class="btn_group">
-						<?php
+			<?php endif; ?>
+			<td>
+				<div class="btn_group">
+					<?php
+					if (\Auth::has_access('\Controller_Usr/view')):
+						echo Html::anchor('usr/view'.'/'.$item->id, '閲覧', array('class' => 'view'));
+					endif;
+					if (\Auth::has_access('\Controller_Usr/edit')):
 						echo Html::anchor('usr/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
-						?>
-					</div>
-				</td>
-			</tr><?php endforeach; ?>
-		</tbody>
-	</table>
-</div><!-- /.tbl_wrapper -->
+					endif;
+					if (\Auth::has_access('\Controller_Usr/delete')):
+						echo Html::anchor('usr/delete'.'/'.$item->id, '削除', array('class' => 'delete'));
+					endif;
+					?>
+				</div>
+			</td>
+		</tr><?php endforeach; ?>
+	</tbody>
+</table>
 <?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>

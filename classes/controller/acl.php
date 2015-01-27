@@ -179,7 +179,7 @@ class Controller_Acl extends \Controller_Base
 							{
 								//format conditions
 								$conditions = \Auth_Acl_Locomoacl::_parse_conditions($each_action);
-								$condition = serialize($conditions);
+								$condition = \Model_Acl::to_authstr($conditions);
 
 								//insert
 								$q = \DB::insert('lcm_acls');
