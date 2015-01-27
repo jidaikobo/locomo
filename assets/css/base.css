@@ -618,9 +618,14 @@ form em.explanation {
 	white-space:nowrap;
 	padding: 2px 1px;
 }
+
 .label_fb label:hover {
 	background-color: #e8e8e8;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
 }
+
 .disabled label {
 	opacity: 0.5;
 }
@@ -1102,7 +1107,9 @@ a.noicon:before,
 .cite,
 .sig,
 .cf,
-.ar {
+.ar,
+table.tbl th.ar,
+table.tbl td.ar {
 	text-align: right;
 	list-style: none;
 	clear: both;
@@ -1114,7 +1121,12 @@ a.noicon:before,
 	list-style: none;
 	clear: both;
 }
-
+/* === align center === */
+.ac,
+table.tbl th.ac,
+table.tbl td.ac {
+	text-align: center;
+}
 
 /* === span.subtitle === */
 span.subtitle {
