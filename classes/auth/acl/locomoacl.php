@@ -57,7 +57,7 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 
 		// parse condition to serialize
 		$conditions = static::_parse_conditions($condition);
-		$condition = serialize($conditions);
+		$condition = \Model_Acl::to_authstr($conditions);
 
 		return in_array($condition, \Auth::get('allowed'));
 	}

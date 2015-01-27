@@ -475,7 +475,8 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	public function modify_locomopaths($locomo_paths = array())
 	{
 		$arr = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $locomo_paths);
-		return array_map('serialize', $arr);
+//		return array_map('serialize', $arr);
+		return array_map(array('\\Model_Acl', 'to_authstr'), $arr);
 	}
 
 	/**
