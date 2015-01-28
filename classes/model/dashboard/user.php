@@ -2,6 +2,7 @@
 namespace Locomo;
 class Model_Dashboard_User extends Model_Base
 {
+	protected static $_table_name = 'lcm_usrs';
 	protected static $_properties = array(
 		'id'
 	);
@@ -43,8 +44,6 @@ class Model_Dashboard_User extends Model_Base
 	 */
 	public static function form_definition($factory = 'user', $obj = null)
 	{
-		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
-
 		// parent
 		$form = parent::form_definition($factory, $obj);
 
@@ -77,9 +76,8 @@ class Model_Dashboard_User extends Model_Base
 		$fieldset = \Fieldset::forge('dashboard');
 		$fieldset->set_tabular_form('Model_Dashboard', 'dashboard', $obj, 3);
 
-		$form->add($fieldset);
+		$form->add_before($fieldset, 'ダッシュボードウィジェット', array(), array(), 'submit');
 
-		static::$_cache_form_definition = $form;
 		return $form;
 	}
 }

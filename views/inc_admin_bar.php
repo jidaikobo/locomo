@@ -156,6 +156,7 @@ if (\Auth::check()):
 			if($usergroups):
 				$html.= '<li>所属ユーザグループ<ul>';
 				foreach ($usergroups as $usergroup):
+					if ( ! property_exists($usergroup, 'name')) continue; // usergroup -10: logged in users
 					$html.= "<li>{$usergroup->name}</li>";
 				endforeach;
 				$html.= '</ul></li>';

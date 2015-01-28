@@ -52,6 +52,7 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_403()
 	{
+		$this->_template = 'default';
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
 		$this->template->content = $view;
@@ -252,7 +253,7 @@ hmvcにサイズを渡すと、widget側でサイズごとの表示を返すこ�
 	{
 		// get workflow name
 		$this->model_name = \Auth::is_admin() ? '\\Model_Dashboard_Admin' : '\\Model_Dashboard_User';
-		parent::edit(\Auth::get('id'));
+		$obj = parent::edit(\Auth::get('id'));
 
 		// add_actionset - back to index at edit
 		$action['urls'][] = \Html::anchor('/sys/dashboard/','ダッシュボードへ');
@@ -260,9 +261,10 @@ hmvcにサイズを渡すと、widget側でサイズごとの表示を返すこ�
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		// assign
-		$content= \View::forge('sys/edit_dashboard');
-		$content->set_global('title', 'ダッシュボードの設定');
-		$this->template->content = $content;
+//		$content= \View::forge('sys/edit_dashboard');
+//		$content->set_global('title', 'ダッシュボードの設定');
+//		$this->template->content = $content;
+		$this->template->set_global('title', 'ダッシュボードの設定');
 	}
 
 	/**

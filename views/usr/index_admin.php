@@ -64,28 +64,26 @@
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
 <!--			<td style="text-align: center;"><input type="checkbox"></td>-->
-			<td class="num"><?php echo $item->id; ?></td>
-			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php 
-					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div>
-			</td>
+			<td class="ar"><?php echo $item->id; ?></td>
+			<th style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->display_name; ?></div></th>
 			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->username; ?></div>
 			</td>
 			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
-			<td><?php echo $item->last_login_at; ?></td>
+			<td><?php echo $item->last_login_at != '0000-00-00 00:00:00' ? $item->last_login_at : ''; ?></td>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<td><?php echo $item->deleted_at; ?></td>
 			<?php endif; ?>
-			<td>
+			<td class="minimum">
 				<div class="btn_group">
 					<?php
 					if (\Auth::has_access('\Controller_Usr/view')):
-						echo Html::anchor('usr/view'.'/'.$item->id, '閲覧', array('class' => 'view'));
+						echo Html::anchor('usr/view/'.$item->id, '閲覧', array('class' => 'view'));
 					endif;
 					if (\Auth::has_access('\Controller_Usr/edit')):
-						echo Html::anchor('usr/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
+						echo Html::anchor('usr/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
 					if (\Auth::has_access('\Controller_Usr/delete')):
-						echo Html::anchor('usr/delete'.'/'.$item->id, '削除', array('class' => 'delete'));
+						echo Html::anchor('usr/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
 					endif;
 					?>
 				</div>

@@ -8,9 +8,12 @@ class Inflector extends \Fuel\Core\Inflector
 	 * @param string \Mod\Controller_Foo_Bar[/action]
 	 * @return string "path/to/class[/action]"
 	 */
-	public static function ctrl_to_dir($controller = null)
+	public static function ctrl_to_dir($controller = null, $delete_locomo = true)
 	{
 		if ( ! $controller) throw new \InvalidArgumentException('argument must not be null or empty');
+
+		$controller = static::add_head_backslash($controller);
+		$controller = $delete_locomo ? str_replace('\Locomo', '', $controller) : $controller;
 
 		// if slash exists
 		$strs = explode('/', $controller);
@@ -124,6 +127,18 @@ class Inflector extends \Fuel\Core\Inflector
 	public static function safestr_to_ctrl($str = null)
 	{
 		return static::words_to_upper(str_replace('-', '\\', $str));
+	}
+
+	/**
+	 * get_root_relative_path()
+	 * @param string http://exmple.com/root_dir/ctrl/action
+	 * @return string /root_dir/ctrl/action
+	 */
+	public static function get_root_relative_path($url = '')
+	{
+		$http_host = \Input::server('HTTP_HOST');
+		$pos = strpos(\Uri::base(false), $http_host) + strlen($http_host);
+		return substr($url, $pos);
 	}
 
 	/**

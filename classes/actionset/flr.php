@@ -3,6 +3,35 @@ namespace Locomo;
 class Actionset_Flr extends \Actionset_Base
 {
 	/**
+	 * actionset_admin()
+	 */
+	public static function actionset_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = parent::actionset_admin($controller, $obj, $id);
+		$actions = array(
+				$controller.DS.'create_dir',
+				$controller.DS.'edit',
+				$controller.DS.'edit_dir',
+				$controller.DS.'edit_file',
+				$controller.DS.'index_admin',
+//				$controller.DS.'move_dir',
+				$controller.DS.'permission_dir',
+				$controller.DS.'purge_file',
+				$controller.DS.'rename_dir',
+				$controller.DS.'upload',
+				$controller.DS.'view',
+				$controller.DS.'view_file',
+				$controller.DS.'common_files',
+				$controller.DS.'index_files',
+				$controller.DS.'gallery',
+		);
+		\Arr::set($retvals, 'dependencies', $actions);
+		\Arr::set($retvals, 'action_name', 'ファイラへのアクセス権');
+		\Arr::set($retvals, 'acl_exp', 'ファイラの個別のアクセス権は、ファイルがアップロードされるディレクトリごとに設定します。ここで管理権限を設定しても、ディレクトリで設定された権限が優先します。');
+		return $retvals;
+	}
+
+	/**
 	 * actionset_index_admin()
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
@@ -78,11 +107,6 @@ class Actionset_Flr extends \Actionset_Base
 			'help'         => '新しい項目を追加します。',
 			'acl_exp'      => '新規アップロード権限。',
 			'order'        => 20,
-			'dependencies' => array(
-				$controller.DS.'edit_file',
-				$controller.DS.'view_file',
-				$controller.DS.'upload',
-			)
 		);
 		return $retvals;
 	}
@@ -109,17 +133,6 @@ class Actionset_Flr extends \Actionset_Base
 			'help'         => '新しいディレクトリを追加します。',
 			'acl_exp'      => 'ディレクトリ作成、編集、削除権限。',
 			'order'        => 30,
-			'dependencies' => array(
-				$controller.DS.'edit',
-				$controller.DS.'view',
-				$controller.DS.'upload',
-				$controller.DS.'index_admin',
-				$controller.DS.'create_dir',
-				$controller.DS.'edit_dir',
-				$controller.DS.'rename_dir',
-				$controller.DS.'move_dir',
-				$controller.DS.'permission_dir',
-			)
 		);
 
 		return $retvals;
@@ -218,11 +231,6 @@ class Actionset_Flr extends \Actionset_Base
 			'help'         => '既存ファイルの編集',
 			'acl_exp'      => 'ファイル編集（名称変更等）権限。',
 			'order'        => 50,
-			'dependencies' => array(
-				$controller.DS.'edit_file',
-				$controller.DS.'view_file',
-				$controller.DS.'upload',
-			)
 		);
 
 		return $retvals;
@@ -248,11 +256,6 @@ class Actionset_Flr extends \Actionset_Base
 			'help'         => '既存ファイルの詳細情報',
 			'acl_exp'      => 'ファイル詳細閲覧権限。',
 			'order'        => 50,
-			'dependencies' => array(
-				$controller.DS.'edit_file',
-				$controller.DS.'view_file',
-				$controller.DS.'upload',
-			)
 		);
 
 		return $retvals;
@@ -278,12 +281,6 @@ class Actionset_Flr extends \Actionset_Base
 			'help'         => '既存ファイルの削除',
 			'acl_exp'      => 'ファイル削除権限。',
 			'order'        => 60,
-			'dependencies' => array(
-				$controller.DS.'purge_file',
-				$controller.DS.'edit_file',
-				$controller.DS.'view_file',
-				$controller.DS.'upload',
-			)
 		);
 
 		return $retvals;
