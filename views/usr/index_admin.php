@@ -1,14 +1,26 @@
-<div class="index_wrapper">
-<div class="left_column sub_column" style="width: 260px;">
-<!-- 各インデックスのサブカラムは適宜幅を与える。設定しなければ300px -->
-<?php /*
-	// search form
-	echo \Form::open(array('method' => 'get', 'class' => 'index_search_form'));
-	echo \Form::input(array('name' => 'all', 'type' => 'text', 'value' => \Input::get('all') ?: '',));
-	echo \Form::submit('submit', '検索', array('class' => 'button primary'));
-	echo \Form::close();
-	*/
-?>
+<h2><a href="javascript: void(0);" class="toggle_item disclosure">
+	<!--<span style="float: right; font-weight: normal; font-size: .85em;" aria-hidden="true" role="presentation">[ 検索 ]</span>-->
+	<span class="icon fr" aria-hidden="true" role="presentation"><img src="<?php echo \Uri::base() ?>sys/fetch_view/img/system/mark_search.png" alt=\"">検索</span>
+	項目一覧 (<?php echo \Pagination::get('total_items') ?>)<span class="skip">エンターで検索条件を開きます</span>
+	<span class="sort_info"><?php echo \Pagination::sort_info('\Model_Usr'); ?> ○〜○件 / 全<?php echo \Pagination::get('total_items') ?>件 </span>
+</a></h2>
+<section class="form_group lcm_focus hidden_item">
+<h1 class="skip">検索</h1>
+	<form class="search">
+		<div class="input_group">
+			<h2><label for="keyword">キーワード</label></h2>
+			<input type="text" name="all" id="keyword" size="20" value="<?php echo \Input::get('all') ?>" title="キーワード">
+		</div>
+		<div class="input_group">
+			<h2>登録日</h2>
+			<input type="text" name="from" id="registration_date_start" value="<?php echo \Input::get('from') ?>" placeholder="YY-MM-DD" title="登録日 開始">&nbsp;〜&nbsp;
+			<input type="text" name="to" id="registration_date_end" value="<?php echo \Input::get('to') ?>" placeholder="YY-MM-DD" title="登録日 終了">
+		</div>
+		<div class="submit_button">
+			<?php echo \Form::submit('submit', '検索', array('class' => 'button primary')); ?>
+		</div>
+	</form>
+</section><!-- /.form_group -->
 
 <!--
 <div class="lcm_focus">
@@ -19,31 +31,13 @@
 	?>
 </div>
 -->
-<div class="form_group lcm_focus">
-<h3 class="skip">検索</h3>
-	<form class="search">
-		<h4><label for="keyword">キーワード</label></h4>
-		<input type="text" name="all" id="keyword" size="20" value="<?php echo \Input::get('all') ?>" />
-		<h4>登録日</label></h4>
-			<input type="date" name="from" id="registration_date_start" value="<?php echo \Input::get('from') ?>" />&nbsp;〜&nbsp;
-			<input type="date" name="to" id="registration_date_end" value="<?php echo \Input::get('to') ?>" />
-		<?php echo \Form::submit('submit', '検索', array('class' => 'button primary')); ?>
-	</form>
-</div><!-- /.form_group -->
-</div><!-- /.left_column -->
-
-<?php 
-//ここまで検索フォームとりあえず
- ?>
-
-<!-- .right_column -->
-<div class="right_column main_column index_table">
+<div class="main_column index_table">
 <?php
 	// index information
 	if((\Pagination::get('total_items') != 0)):
 		echo '<div class="index_info lcm_focus">';
-		echo '<p class="sort_info">'.\Pagination::sort_info('\Model_Usr');
-		echo '<span class="add_bracket" style="margin-right: .5em;"> ○〜○件 / 全'.\Pagination::get('total_items').'件 </span></p>';
+//		echo '<p class="sort_info">'.\Pagination::sort_info('\Model_Usr');
+//		echo '<span class="add_bracket" style="margin-right: .5em;"> ○〜○件 / 全'.\Pagination::get('total_items').'件 </span></p>';
 		echo '<p class="pagenation_info"><a href="" class="start_page" title="先頭のページへ">&laquo;<span class="skip">先頭のページへ</span></a><a href="" class="prev_page" title="前のページへ">&lsaquo;<span class="skip">前のページへ</span></a><input type="text" size="2"> / 10ページ<a href="" class="next_page" title="次のページへ">&rsaquo;<span class="skip">次のページへ</span></a><a href="" class="last_page" title="最後のページへ">&raquo;<span class="skip">最後のページへ</span></a></p>';
 		echo '</div>';
 	endif;
@@ -70,7 +64,7 @@
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
 <!--			<td style="text-align: center;"><input type="checkbox"></td>-->
-			<td><?php echo $item->id; ?></td>
+			<td class="num"><?php echo $item->id; ?></td>
 			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1"><?php 
 					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));?></div>
 			</td>
@@ -105,6 +99,4 @@
 <p>ユーザが存在しません。</p>
 
 <?php endif; ?>
-</div><!-- /.right_column -->
-
-</div><!-- /.index_wrapper -->
+</div><!-- /.main_column -->

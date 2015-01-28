@@ -408,11 +408,15 @@ $(document).on('click', 'a[href^=#]', function(e){
 
 //非表示の要素の設定
 $('.hidden_item').each(function(){
-	if( $(this).is(':input') && $(this).val() ){//hidden_itemでも中に値がある場合は表示
-		var trigger = $('.toggle_item').eq($('.hidden_item').index(this));
-		$(this).addClass('on').show();
-		trigger.addClass('on');
+	var trigger, contain; 
+	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
+	if(!($(this).is(':input') && $(this).val())){
+		contain = $(this).find('input').val();
+		if(!contain) return;
 	}
+	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
+	$(this).addClass('on').show();
+	trigger.addClass('on');
 });
 
 //全体に対するクリックイベント。
@@ -456,6 +460,10 @@ $(document).on('click', '.semimodal.on, modal.on', function(e){
 $(document).on('click', '.toggle_item', function(e){
 	e = e ? e : event;
 	var t = $('.hidden_item').eq($('.toggle_item').index(this));//切り替えの相手
+	
+	if($(this).hasClass('disclosure')){//ディスクロージャならスライド
+		t.slideToggle(125);//ここでターゲットにフォーカスする？
+	}
 	
 	if($('.semimodal.on').length ){//モーダルが開いている場合は閉じる
 		var itself = t.is('.semimodal.on');

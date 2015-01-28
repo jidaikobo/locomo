@@ -10,8 +10,20 @@ IE8,MacIE5,Opera9以下 html:first-child
 /*=== login ===*/
 
 /* default */
-
-.default_logo .site_title {
+body.default_logo {
+    background-color: #eee;
+}
+body.default_logo.lcm_action_login {
+	   background-color: #ddd;
+}
+body.default_logo.lcm_action_login .container{
+	   height: 26.5em !important;
+}
+.default_logo.lcm_action_login #logo {
+    margin: -0.5em auto 0.5em;
+    width: 6em;
+}
+.default_logo.lcm_action_login .site_title {
     display: none;
 }
 
@@ -438,13 +450,13 @@ ul.horizontal_list {
 	font-size: .85em;
 	
 }
-.size1 {
+.widget .size1 {
 	width: 30.975% !important;
 	}
-.size2 {
+.widget .size2 {
 	width: 63.9% !important;
 }
-.size3 {
+.widget .size3 {
 	width: 96.95% !important;
 }
 .lcmbar_top_title {
@@ -617,9 +629,11 @@ a.delete {
 }
 
 /* hidden_item */
+/*
 .hidden_item {
 	display: none;
 }
+*/
 .hidden_item.on {
 	display: block !important;
 }
@@ -728,6 +742,7 @@ div.form_tooltip {
 .contents form h2:first-child{
 	border-top: none;
 	box-shadow: none;
+	margin-top: 0;
 	margin-bottom: .5em;
 }
 form tbody th {
@@ -745,16 +760,20 @@ form tbody th {
 label {
 	display: inline-block;
 }
+html:first-child label {
+	display: none;
+}
 input,
 select,
 textarea {
 	margin-bottom: .25em;
 }
-.submit_button {
+div.submit_button {
 	width: 100%;
 	text-align: right;
 	margin: 1em 0 .5em;
 }
+
 .label_reqired {
 	font-weight: normal;
 	font-size: .75em;
@@ -768,18 +787,52 @@ textarea {
 	border-radius: 3px;
 }
 a.disclosure {
+	display: block;
+	position: relative;
 	color: #333;
 	font-size: .9em;
 	text-decoration: none;
 	background-image: url('../img/system/mark_disclose.png');
-	background-position: 3px center;
+	background-position: 4px center;
 	background-repeat: no-repeat;
 	padding-right: 0;
 	padding-left: 15px;
 }
+a.disclosure:hover {
+	background-color: #e8e8e8;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
 a.disclosure.on {
-	background-image: url('../img/system/mark_listopen_bk.png');
+	background-image: url('../img/system/mark_disclose_on.png');
 	background-position-x: 0;
+}
+a.disclosure.on span.icon {
+	opacity: .25;
+}
+span.icon {
+	margin-right: 5px;
+	display: inline-block;
+	font-size: .85em;
+	height: 1.25em;
+	font-weight: normal;
+}
+span.icon img {
+	width: 1.5em;
+	margin: 0 .125em 0 .25em;
+}
+
+.form_group.hidden_item {
+	margin-top: -1.25em;
+	padding-left: 0;
+}
+.hidden_item form .input_group {
+	display: inline-block;
+	margin-left: 1em;
+}
+.hidden_item form h2 {
+	display: inline;
 }
 a.show_item:hover {
 	text-decoration: underline;
@@ -792,6 +845,8 @@ a.desc:after {
 }
 
 /*===  table  ===*/
+th.min,
+td.min,
 th.minimum,
 td.minimum {
 	width: 1px;
@@ -932,8 +987,9 @@ h1#page_title {
 	border-bottom: 1px solid #aaa;
 	box-shadow: 0 1px 0 #fff;
 }
-.contents h2:first-of-type {
+.contents h2:first-child {
 	margin-bottom: 1em;
+	margin-top: 0;
 }
 .contents h3 {
 	font-size: 1.1em;
@@ -1081,10 +1137,15 @@ h1#page_title {
 }
 
 /*=== itemindex ===*/
-.sub_column .index_list {
+/*.sub_column .index_list {
 	margin: 2.3em 10px 20px 0;
 	padding: 10px 10px 10px 26px;
 	border: 1px solid #aaa;
+}
+*/
+.sub_column div {
+	margin: 2.3em 10px 20px 0 !important;
+
 }
 .sub_column .button.primary {
 	display: block;
@@ -1115,6 +1176,12 @@ h1#page_title {
 section.search {
 	margin-bottom: 1em;
 }
+.disclosure .sort_info {
+	font-weight: normal;
+	font-size: .85em;
+	margin-left: .5em;
+}
+
 .index_info {
 	margin: 0 0 .4em;
 	text-align: right;

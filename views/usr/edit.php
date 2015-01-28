@@ -33,7 +33,7 @@
 		<td><?php echo $form->field('confirm_password')->set_template('<em class="aria_nd" hidden="true">{error_msg}</em>{field}')->set_attribute('title',"{error_msg}"); ?></td>
 	</tr>
 	<tr class="<?php echo $form->field('email')->set_template('{error_class}'); ?>">
-		<th><?php echo $form->field('email')->set_template('{label}{required}'); ?></th>
+		<th class="min"><?php echo $form->field('email')->set_template('{label}{required}'); ?></th>
 		<td><?php echo $form->field('email')->set_template('<em class="aria_nd"   hidden="true">{error_msg}</em>{field}')->set_attribute('title',"{error_msg}"); ?></td>
 	</tr>
 	<tr class="<?php echo $form->field('created_at')->set_template('{error_class}'); ?>">

@@ -11,13 +11,13 @@
 <!-- username or mail -->
 <div class="form_group account">
 	<?php echo \Form::label('アカウント', 'username'); ?>
-	<?php echo '<span class="skip">ユーザ名かメールアドレス</span>'.\Form::input('username', Input::post('username', isset($item) ? $item->username : ''), array('placeholder'=>'ユーザ名かメールアドレス','aria-describedby'=>'desc1','size'=>'17')); ?>
+	<?php echo \Form::input('username', Input::post('username', isset($item) ? $item->username : ''), array('placeholder'=>'ユーザ名かメールアドレス','title'=>'アカウント ユーザ名かメールアドレスを入力してください', 'size'=>'20')); ?>
 </div>
 
 <!-- password -->
 <div class="form_group password">
 	<?php echo \Form::label('パスワード', 'password'); ?>
-	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('placeholder'=>'パスワード','size'=>'17')); ?>
+	<?php echo \Form::password('password', Input::post('password', isset($item) ? $item->password : ''), array('placeholder'=>'パスワード','title'=>'パスワード', 'size'=>'20')); ?>
 </div>
 <!--remember me-->
 <div class="form_group remember">
