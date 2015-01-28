@@ -34,16 +34,6 @@
 
 <!-- .right_column -->
 <div class="right_column main_column index_table">
-<?php
-	// index information
-	if((\Pagination::get('total_items') != 0)):
-		echo '<div class="index_info lcm_focus">';
-		echo '<p class="sort_info">'.\Pagination::sort_info('\Model_Usr');
-		echo '<span class="add_bracket" style="margin-right: .5em;"> ○〜○件 / 全'.\Pagination::get('total_items').'件 </span></p>';
-		echo '<p class="pagenation_info"><a href="" class="start_page" title="先頭のページへ">«<span class="skip">先頭のページへ</span></a><a href="" class="prev_page" title="前のページへ">‹<span class="skip">前のページへ</span></a><input type="text" size="2"> / 10ページ<a href="" class="next_page" title="次のページへ">›<span class="skip">次のページへ</span></a><a href="" class="last_page" title="最後のページへ">»<span class="skip">最後のページへ</span></a></p>';
-		echo '</div>';
-	endif;
-?>
 <?php if ($items): ?>
 <table class="tbl datatable tbl_scrollable lcm_focus">
 	<thead>

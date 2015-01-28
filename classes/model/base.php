@@ -454,8 +454,10 @@ class Model_Base extends \Orm\Model_Soft
 			$options['related'][] = $ref;
 		}
  */
+		$objs = static::find('all', $options);
+		\Pagination::$refined_items = count($objs);
 
-		return static::find('all', $options);
+		return $objs;
 	}
 
 
@@ -511,7 +513,9 @@ class Model_Base extends \Orm\Model_Soft
 
 
 
-
+	/**
+	 * form_definition()
+	 */
 	public static function form_definition($factory = 'form', $obj = null) {
 
 		$form = \Fieldset::forge($factory);
@@ -523,6 +527,64 @@ class Model_Base extends \Orm\Model_Soft
 		return $form;
 	}
 
+	/**
+	 * search_form()
+	 */
+	public static function search_form($factory = 'form', $obj = null, $title = '項目一覧')
+	{
+		// forge
+		$config = \Config::load('form_search');
+		$form = \Fieldset::forge('form', $config);
+
+		// submit
+		$form
+			->add('submit','',array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'))
+			->set_template('
+				{field}
+				</div>
+				</form>
+			</section><!-- /.form_group -->'
+			);
+
+		// add clear button before submit
+		$form
+			->add_before('unrefine', '', array('type' => 'text'), array(), 'submit')
+			->set_template('
+				<div class="submit_button">'.\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button'])
+			);
+
+		// add opener before unrefine
+		$sortinfo     = \Pagination::sort_info(get_called_class());
+		$total        = \Pagination::get("total_items");
+		$current_page = \Pagination::get("current_page");
+		$per_page     = \Pagination::get("per_page");
+		$refined      = \Pagination::$refined_items;
+		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
+		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;
+
+		$form
+			->add_before('opener', '', array('type' => 'text'), array(), 'unrefine')
+			->set_template('
+				<h2>
+					<a href="javascript: void(0);" class="toggle_item disclosure">
+					<!--<span style="float: right; font-weight: normal; font-size: .85em;" aria-hidden="true" role="presentation">[ 検索 ]</span>-->
+					<span class="icon fr" aria-hidden="true" role="presentation"><img src="'.\Uri::base().'sys/fetch_view/img/system/mark_search.png" alt="">検索</span>
+					'.$title.'
+					<span class="skip">エンターで検索条件を開きます</span>
+					<span class="sort_info">'.\Pagination::sort_info("\Model_Usr").' '.$from.'〜'.$to.'件 / 全'.$total.'件 </span>
+					</a>
+				</h2>
+				<section class="form_group lcm_focus hidden_item">
+				<h1 class="skip">検索</h1>
+					<form class="search">
+			');
+
+		return $form;
+	}
+
+	/**
+	 * plain_definition()
+	 */
 	public static function plain_definition($factory = 'plain', $obj = null) {
 		return static::form_definition($factory, $obj);
 	}

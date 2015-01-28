@@ -238,4 +238,56 @@ class Model_Usr extends Model_Base
 
 		return $form;
 	}
+
+	/**
+	 * search_form()
+	*/
+	public static function search_form($factory = 'user', $obj = null, $title = '')
+	{
+		$form = parent::search_form($factory, $obj, 'ユーザ一覧');
+
+		// 検索
+		$form
+			->add_after('all', '検索', array('type' => 'text','value' => \Input::get('all')), array(), 'opener');
+
+		// 登録日 - 開始
+		$form
+			->add_after(
+				'from',
+				'登録日',
+				array(
+					'type' => 'text',
+					'value' => \Input::get('from'),
+					'id' => 'registration_date_start',
+					'placeholder' => date('Y-n-j', time() - 86400 * 365),
+				),
+				array(),
+				'all'
+			)
+			->set_template('
+				<div class="input_group">
+				<h2>登録日</h2>
+				{field}&nbsp;〜&nbsp;
+			');
+
+		// 登録日 - ここまで
+		$form
+			->add_after(
+				'to',
+				'登録日',
+				array(
+					'type' => 'text',
+					'value' => \Input::get('to'),
+					'id' => 'registration_date_end',
+					'placeholder' => date('Y-n-j'),
+				),
+				array(),
+				'from'
+			)
+			->set_template('
+				{field}</div>
+			');
+
+		return $form;
+	}
 }

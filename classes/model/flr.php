@@ -37,9 +37,6 @@ class Model_Flr extends \Model_Base
 				'options' => array('0' => '表示しない', '1' => '表示する')
 			),
 			'default' => 0,
-			'validation' => array(
-				'required',
-			),
 		),
 		'is_visible' => array(
 			'label' => '可視属性',

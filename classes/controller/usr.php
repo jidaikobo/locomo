@@ -40,6 +40,8 @@ class Controller_Usr extends \Locomo\Controller_Base
 		if (\Input::get('from')) \Model_Usr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
 		if (\Input::get('to'))   \Model_Usr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
 		parent::index_admin();
+		$search_form = \Model_Usr::search_form();
+		$this->template->content->set_safe('search_form', $search_form);
 	}
 
 	/**
