@@ -450,13 +450,13 @@ ul.horizontal_list {
 	font-size: .85em;
 	
 }
-.widget .size1 {
+.widget.size1 {
 	width: 30.975% !important;
 	}
-.widget .size2 {
+.widget.size2 {
 	width: 63.9% !important;
 }
-.widget .size3 {
+.widget.size3 {
 	width: 96.95% !important;
 }
 .lcmbar_top_title {

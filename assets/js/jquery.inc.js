@@ -657,7 +657,8 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 		adjust_columns($('.tbl_scrollable'));
 		$('.tbl_scrollable').addClass('nocelspan');
 	}else{
-*/	$(document).find('.tbl_scrollable').each(tbl_scrollable);
+*/
+//	$(document).find('.tbl_scrollable').each(tbl_scrollable);
 	
 	$.fn.el_overflow_y = function(){
 		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
