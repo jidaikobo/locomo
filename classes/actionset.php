@@ -162,9 +162,10 @@ class Actionset
 
 		list($controller, $action) = explode('/', $locomo_path);
 
-		$urls = array();
 		// check $exceptions
-		if (\Request::main()->controller == $controller && in_array(\Request::main()->action, $exceptions))
+		$urls = array();
+		$current_controller = \Inflector::add_head_backslash(\Request::main()->controller);
+		if ($current_controller == $controller && in_array(\Request::main()->action, $exceptions))
 		{
 			return $urls;
 		}
