@@ -528,13 +528,12 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
-	 * search_form()
+	 * search_form_base()
 	 */
-	public static function search_form($factory = 'form', $obj = null, $title = '項目一覧')
+	public static function search_form_base($title = '項目一覧')
 	{
 		// forge
-		$config = \Config::load('form_search');
-		$form = \Fieldset::forge('form', $config);
+		$form = \Fieldset::forge('search_form_base');
 
 		// add opener before unrefine
 		$sortinfo     = \Pagination::sort_info(get_called_class());
@@ -567,7 +566,6 @@ class Model_Base extends \Orm\Model_Soft
 					<h1 class="skip">検索</h1>
 					<form class="search">
 			');
-
 
 		// submit	
 		$form
