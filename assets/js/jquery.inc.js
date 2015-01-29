@@ -73,6 +73,7 @@ function lcm_modal(id){
 
 //大きなくくり。あとでバラス
 $(function(){
+/*=== 環境の取得 ===*/
 
 //UA //php側は？
 var userAgent = window.navigator.userAgent;
@@ -94,12 +95,13 @@ var scrollbar_s = (function(){
 	return rs;
 })();
 
+
+/*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
 $('.hide_if_no_js').removeClass('hide_if_no_js');
 
 //.show_if_no_js noscript的な扱い?
 $('.show_if_no_js').remove();
-
 
 //for NetReader
 //NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
@@ -112,20 +114,6 @@ function set_focus(t){
 		$(t).select();
 	}
 }
-
-//要素の中央配置
-$.fn.set_center = function(){
-	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
-	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
-	this.css({'left': left, 'top': top});
-	return this;
-}
-$(window).resize(function(){
-	var el = $('.set_center, .modal.on');
-	if(el){
-		el.set_center();
-	}
-});
 
 //ページ読み込み直後のフォーカス
 if($('.flash_alert').length){
@@ -152,63 +140,6 @@ if(adminbar.length){
 	});
 }
 
-//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行うけれど、確実にサイト内に表示されている要素でサイズが変化するもの、がいいなあ
-//
-var fontsize_h, fontsize_ratio, window_resized;
-fontsize_h =  adminbar.height();
-var font_resize = setInterval(function(){
-	if(!window_resized && fontsize_h != adminbar.height()){
-		 fontsize_ratio = adminbar.height()/fontsize_h;
-		 fontsize_h = adminbar.height();
-//		 console.log(fontsize_ratio);
-		if(fontsize_ratio != 1 && !window_resized){
-//			console.log('フォントリサイズされたで')
-		}
-		window_resized = false;
-	}else
-	if(window_resized){
-//		console.log('ウィンドウのリサイズかもやで');
-	}
-}, 200);
-//window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
-//モーダルウィンドウも同じことになる？
-var resize_timer = false;
-$(window).resize(function(){
-	if (resize_timer !== false) clearTimeout(resize_timer);
-	resize_timer = setTimeout(function(){
-	//リサイズ終了待ちの処理
-	
-	}, 200);
-	$(document).find('#help_window:visible').each(function(e){
-		var pw, w, l, r;
-		w  = parseInt($(this).width());
-		pw = $(document).width();
-		l  = parseInt(this.offsetLeft);
-		r  = pw-l-w;
-		if(pw < w){
-//			console.log('pw < w');
-			$(this).css({'width': pw, 'left' : 0});
-		}else if(r < 0){
-			$(this).css({'left' : pw-w});
-		}
-	});
-	window_resize = true;
-});
-
-//モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
-$('#modal_wrapper').on('click', function(){
-	return false;
-});
-
-//親を閉じる
-$('.lcm_close_parent').on('click', function(){
-	var parent = $(this).parent();
-	parent.hide();
-	if($(this).hasClass('lcm_reset_style')){
-		parent.removeAttr('style').removeClass('on');
-	}
-});
-
 
 //アクセスキーをもつ要素へのタイトル付与//読み上げ要確認
 //accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
@@ -224,6 +155,25 @@ function add_accesskey_title(){
 	}
 }
 $(document).find('[accesskey]').each(add_accesskey_title);
+
+
+//非表示の要素の設定
+$('.hidden_item').each(function(){
+	var trigger, contain, v; 
+	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
+	if(!($(this).is(':input') && $(this).val())){
+		contain = 0;
+		$(this).find(':input').each(function(){
+			v = $(this).val();
+			if( !v || $(this).closest('.submit_button')[0]) return;
+			contain += $(this).val();
+		});
+		if(!contain) return;
+	}
+	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
+	$(this).addClass('on').show();
+	trigger.addClass('on');
+});
 
 
 /*================================▼▼▼===============================*/
@@ -251,7 +201,7 @@ $.fn.set_tabindex = function(){
 	return this;
 }
 $.fn.reset_tabindex = function(){
-	//data-tabindexの値を見つつ、tabindexをリセットする,¥
+	//data-tabindexの値を見つつ、tabindexをリセットする
 	$(document).find(':focusable').each(function(){
 		var dataTabindex = $(this).data('tabindex');
 		if(dataTabindex && dataTabindex !== 'none'){
@@ -266,19 +216,24 @@ $.fn.reset_tabindex = function(){
 
 //.lcm_focusに基づくフォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする
 if(tabindexCtrl) set_lcm_focus();
-function set_lcm_focus(){
+
+function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 	var lcm_focus, lcm_calender, each_date;
 	lcm_focus    = $('.lcm_focus');
 	if(!lcm_focus.length) return; //lcm_focusがなければおしまい
 
 	lcm_calendar = $('.lcm_focus.calendar');
-	each_date    = lcm_calendar.length ? $('.each_date:has(a)').addClass('lcm_focus') : null;//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
+	each_date    = lcm_calendar.length ? $('.each_date:has(a)').addClass('lcm_focus') : null;
+	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
+
+	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
+	//抜けるリンクの準備。絶対に一つだけ。ウィジェットで呼び出した時のエラーの表示位置がずれるので対策
 	
 	var set_focus = function(target){
 		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
 		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
 		//フォーカスを掘っていく場合も、ここにあるとよさそう
-		
+		var parent, t; 
 /*
 	parent = $(this).closest('.currentfocus');
 	if(parent.length){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
@@ -286,9 +241,15 @@ function set_lcm_focus(){
 		$('#escape_focus').remove();
 	}
 	$(this).addClass('currentfocus').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
-*/
-		
-		var t = target ? target.find('.lcm_focus') : lcm_focus;
+	*/
+//		if(!this.isWindow)console.log($(this).isWindow);
+		parent = $(this).closest('.currentfocus');
+		if(parent.length){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+			parent.removeClass('currentfocus').addClass('focusparent');
+			$('#escape_focus').remove();
+		}
+		$(this).addClass('currentfocus').set_tabindex()/*.append(esc)*/;
+		t = target ? target.find('.lcm_focus') : lcm_focus;
 		if(target && target.hasClass('calendar')){
 			t = target.find(each_date);
 		}
@@ -318,8 +279,6 @@ function set_lcm_focus(){
 		}
 	}
 
-	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
-	//抜けるリンクの準備。絶対に一つだけ。ウィジェットで呼び出した時のエラーの表示位置がずれるので対策
 
 	//ひとまず実行 //他のイベント実行後に動かしたいなあ
 	setTimeout(function(){
@@ -367,6 +326,87 @@ function set_lcm_focus(){
 /*================================▲▲▲===============================*/
 
 
+
+
+
+//要素の中央配置
+$.fn.set_center = function(){
+	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
+	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
+	this.css({'left': left, 'top': top});
+	return this;
+}
+$(window).resize(function(){
+	var el = $('.set_center, .modal.on');
+	if(el){
+		el.set_center();
+	}
+});
+
+
+/*
+//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行うけれど、確実にサイト内に表示されている要素でサイズが変化するもの、がいいなあ
+//
+var fontsize_h, fontsize_ratio, window_resized;
+fontsize_h =  adminbar.height();
+var font_resize = setInterval(function(){
+	if(!window_resized && fontsize_h != adminbar.height()){
+		 fontsize_ratio = adminbar.height()/fontsize_h;
+		 fontsize_h = adminbar.height();
+//		 console.log(fontsize_ratio);
+		if(fontsize_ratio != 1 && !window_resized){
+//			console.log('フォントリサイズされたで')
+		}
+		window_resized = false;
+	}else
+	if(window_resized){
+//		console.log('ウィンドウのリサイズかもやで');
+	}
+}, 200);
+//window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
+//モーダルウィンドウも同じことになる？
+var resize_timer = false;
+$(window).resize(function(){
+	if (resize_timer !== false) clearTimeout(resize_timer);
+	resize_timer = setTimeout(function(){
+	//リサイズ終了待ちの処理
+	
+	}, 200);
+	$(document).find('#help_window:visible').each(function(e){
+		var pw, w, l, r;
+		w  = parseInt($(this).width());
+		pw = $(document).width();
+		l  = parseInt(this.offsetLeft);
+		r  = pw-l-w;
+		if(pw < w){
+//			console.log('pw < w');
+			$(this).css({'width': pw, 'left' : 0});
+		}else if(r < 0){
+			$(this).css({'left' : pw-w});
+		}
+	});
+	window_resize = true;
+});
+
+*/
+
+
+//モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
+$('#modal_wrapper').on('click', function(){
+	return false;
+});
+
+//親を閉じる
+$('.lcm_close_parent').on('click', function(){
+	var parent = $(this).parent();
+	parent.hide();
+	if($(this).hasClass('lcm_reset_style')){
+		parent.removeAttr('style').removeClass('on');
+	}
+});
+
+
+
 //Focusまわりのテスト（NetReaderでFocus移動を検知したい）
 //setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
 //が、最新版のNetReaderはIEが7でなくなったので、古い環境の動作確認はできない(再インストール？)
@@ -405,19 +445,6 @@ $(document).on('click', 'a[href^=#]', function(e){
 	}
 });
 
-
-//非表示の要素の設定
-$('.hidden_item').each(function(){
-	var trigger, contain; 
-	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
-	if(!($(this).is(':input') && $(this).val())){
-		contain = $(this).find('input').val();
-		if(!contain) return;
-	}
-	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
-	$(this).addClass('on').show();
-	trigger.addClass('on');
-});
 
 //全体に対するクリックイベント。
 $(document).click(function(e){
