@@ -62,7 +62,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		$pdf = $this->pdf;
 		$pdf->SetMargins(0, 0, 0);
 		if (\Input::get('test')) {
-			$pdf->setSourceFile(APPPATH.'locomo/assets/pdftemplate/output/addressee1.pdf');
+			$pdf->setSourceFile(APPPATH.'locomo/assets/pdftemplate/output/' . \Input::get('test'));
 			$t_page = $pdf->importPage(1);
 		}
 

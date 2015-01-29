@@ -222,8 +222,8 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function create($id = null, $redirect = null)
 	{
-		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
-		$redirect = $redirect ?: $dir.'edit';
+		$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
+		$redirect = $redirect ?: str_replace('create', 'edit', $locomo_path);
 		static::edit($id, $redirect);
 	}
 
@@ -268,8 +268,8 @@ class Controller_Base extends Controller_Core
 		if (\Input::post())
 		{
 			if (
-				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
-				$check_token = \Security::check_token()
+				($check_token = \Security::check_token()) &&
+				$obj->cascade_set(\Input::post(), $form, $repopulate = true)
 			)
 			{
 				//save

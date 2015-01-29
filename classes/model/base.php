@@ -477,6 +477,9 @@ class Model_Base extends \Orm\Model_Soft
 
 			// if (array_key_exists($kk, $properties) and isset($properties[$kk]['label'])) var_dump($properties[$kk]['label']); die();
 			array_key_exists($kk, $properties) and isset($properties[$kk]['label']) ? $key = $properties[$kk]['label'] : $key = $kk;
+			if(isset($properties[$kk]['form']['options'][$vv])) {
+				$vv = $properties[$kk]['form']['options'][$vv];
+			}
 			$r_arr[$key] = $vv;
 		}
 
@@ -489,7 +492,10 @@ class Model_Base extends \Orm\Model_Soft
 						$r_arr[$rel_name] = $dr_val->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
 				   }
 				} else {
-					$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
+					//$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
+
+					// var_dump($dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
+					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
 				}
 			}
 		}

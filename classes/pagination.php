@@ -66,7 +66,7 @@ class Pagination extends \Fuel\Core\Pagination {
 	}
 
 
-	public static function sort_info($model) {
+	public static function sort_info($model, $labels = array()) {
 		if ( is_null( \Input::get('orders')) ) {
 			return null;
 		}
@@ -83,8 +83,9 @@ class Pagination extends \Fuel\Core\Pagination {
 			$label = 'ID';
 		} else {
 
-		//	var_dump($model::properties());
-			if (isset($model::properties()[$field]['label'])) {
+			if (isset($labels[$field])) {
+				$label = $labels[$field];
+			} elseif (isset($model::properties()[$field]['label'])) {
 				$label = $model::properties()[$field]['label'];
 			} else {
 				$label = $field;
@@ -113,7 +114,6 @@ class Pagination extends \Fuel\Core\Pagination {
 
 	public function render_nav($raw = false)
 	{
-		var_dump($this->current_page);
 		// no links if we only have one page
 		if ($this->config['total_pages'] == 1)
 		{
@@ -134,9 +134,6 @@ class Pagination extends \Fuel\Core\Pagination {
 		} else {
 			// $wrap_start = '<div class="pagination_wrap">';
 		}
-
-		var_dump($this->first());
-
 
 		$html = $wrap_start;
 		$html .= str_replace(
