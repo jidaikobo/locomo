@@ -102,13 +102,14 @@ trait Controller_Traits_Wrkflw
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$controller = get_called_class();
+		$model_name = str_replace('Controller', 'Model', $controller);
 		$model = $model_name::forge();
 
 		//postがあったら申請処理をして、編集画面に戻る
 		if (\Input::method() == 'POST'):
 			$comment = \Input::post('comment');
-			$model::add_log('approve', null, $this->request->controller, $id, $comment);
+			$model::add_log('approve', null, $controller, $id, $comment);
 			\Session::set_flash('success', '申請しました');
 
 			//項目のworkflow_statusをin_progressにする（編集できないようにする）
@@ -116,18 +117,18 @@ trait Controller_Traits_Wrkflw
 			$obj = $target_model::find($id);
 			$obj->workflow_status = 'in_progress';
 			$obj->save();
-
-			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
+			$redirect = \Inflector::ctrl_to_dir($controller);
+			return \Response::redirect(\Uri::create($redirect.'/view/'.$id));
 		endif;
 
 		//コメント入力viewを表示
 		$view = \View::forge('wrkflw/comment');
 
 		//add_actionset - back to edit
-		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
+		$ctrl_url = \Inflector::ctrl_to_dir($controller);
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'edit/'.$id,'戻る');
 		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
+		\Actionset::add_actionset($controller, 'ctrl', $action);
 
 		//assign
 		$view->set_global('title', '承認申請');

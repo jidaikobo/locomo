@@ -1,40 +1,4 @@
 <?php echo $search_form; ?>
-<?php /* ?>
-<h2 class="content_title clearfix">
-	項目一覧 
-	<span class="sort_info">
-	<?php if(\Pagination::get('total_items') != 0): ?>
-	<?php echo \Pagination::sort_info('\Model_Usr'); ?> ○〜○件 / 全<?php echo \Pagination::get('total_items') ?>件
-	<?php else: ?>
-	項目がありません
-	<?php endif; ?>
-	</span>
-	
-	<span class="icon fr"><a href="javascript: void(0);" class="toggle_item disclosure"><img src="<?php echo \Uri::base() ?>sys/fetch_view/img/system/mark_search.png" alt=\""><span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">絞り込み条件</span><span class="skip">エンターで検索条件を開きます</span></a></span>
-</h2>
-
-<div class="form_group lcm_focus hidden_item">
-
-<h1 class="skip">検索</h1>
-	<form class="search">
-		<div class="input_group">
-			<h2><label for="keyword">キーワード</label></h2>
-			<input type="text" name="all" id="keyword" size="20" value="<?php echo \Input::get('all') ?>" title="キーワード">
-		</div>
-		<div class="input_group" title="登録日">
-			<h2>登録日</h2>
-			<input type="text" name="from" id="registration_date_start" class="date" value="<?php echo \Input::get('from') ?>" placeholder="YYYY-MM-DD" title="登録日 開始">&nbsp;〜&nbsp;
-			<input type="text" name="to" id="registration_date_end" class="date" value="<?php echo \Input::get('to') ?>" placeholder="YYYY-MM-DD" title="登録日 終了">
-		</div>
-		<div class="submit_button">
-		
-			<a class="button" href="./">絞り込み解除</a>
-			<?php echo \Form::submit('submit', '検索', array('class' => 'button primary')); ?>
-		</div>
-	</form>
-</div><!-- /.form_group -->
-<?php */?>
-
 
 <div class="main_column index_table">
 <!--

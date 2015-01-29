@@ -228,7 +228,18 @@ scaffoldを使った場合はコメントアウトされています。
 	use \Model_Traits_Wrkflw;
 	use \Actionset_Traits_Wrkflw;
 
-対象モデルの$_propertiesにworkflow_statusを足します（enum('before_progress','in_progress','finish')かvarchar(20)で）。
+最初からワークフロー想定の場合は、migrationに追加する。
+
+'workflow_status' => array('constraint' => '"init","in_progress","before_progress","finish"', 'type' => 'enum', 'null' => true),
+
+なければ、MySQLで直接足す。
+
+ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_progress', 'finish');
+
+対象モデルの$_propertiesにworkflow_statusを足します。
+
+		'workflow_status' => array ('form' => array ('type' => false,),),
+
 対象モデルにobserverを追加します。
 
 		'Workflow\Observer_Workflow' => array(
