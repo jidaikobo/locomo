@@ -11,7 +11,10 @@
 
 namespace Locomo;
 
-class Pagination extends \Fuel\Core\Pagination {
+class Pagination extends \Fuel\Core\Pagination
+{
+	// 絞り込まれたページあたりの項目数
+	public static $refined_items = 0;
 
 	/*
 	 * @param $field フィールド名 もしくは リレーション .フィールド名( alias.field_name )
@@ -151,8 +154,5 @@ class Pagination extends \Fuel\Core\Pagination {
 
 		return $raw ? $this->raw_results : $html;
 	}
-
-
-
 }
 

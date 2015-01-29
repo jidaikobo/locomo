@@ -828,7 +828,7 @@ span.icon img {
 	width: 1.5em;
 	margin: 0 .125em 0 .25em;
 }
-.form_group.hidden_item {
+#page_title + .hidden_item {
 	margin-top: -.65em;
 	padding-left: 0;
 }
@@ -984,8 +984,10 @@ table.calendar {
 }
 /*=== contents ===*/
 h1#page_title {
-	margin: 0.25em 0;
-	font-size: 1.5em;
+	margin: 0 0 .5em;
+	font-size: 1.25em;
+	border-bottom: 1px solid #aaa;
+	box-shadow: 0 1px 0 #fff;
 }
 .contents h2 {
 	margin: 1em 0 .5em;
@@ -1184,7 +1186,8 @@ form_group table tbody th {
 section.search {
 	margin-bottom: 1em;
 }
-h2 .sort_info {
+h1 .sort_info {
+	display: inline-block;
 	font-weight: normal;
 	font-size: .75em;
 	margin-left: .5em;

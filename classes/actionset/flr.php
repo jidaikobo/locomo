@@ -96,7 +96,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."upload/".$obj->id, '新規アップロード'));
-			$urls = static::generate_urls($controller.DS.'upload', $actions);
+			$urls = static::generate_urls($controller.DS.'upload', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -122,7 +122,7 @@ class Actionset_Flr extends \Actionset_Base
 				array($controller.DS."create_dir/".$obj->id, '<!--ディレクトリ-->作成'),
 				array($controller.DS."edit_dir/".$obj->id, '編集')
 			);
-			$urls = static::generate_urls($controller.DS.'upload', $actions);
+			$urls = static::generate_urls($controller.DS.'upload', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -147,7 +147,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."move_dir/".$obj->id, '<!--ディレクトリ-->移動'));
-			$urls = static::generate_urls($controller.DS.'move_dir', $actions);
+			$urls = static::generate_urls($controller.DS.'move_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -165,7 +165,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."rename_dir/".$obj->id, '<!--ディレクトリ-->名称変更'));
-			$urls = static::generate_urls($controller.DS.'rename_dir', $actions);
+			$urls = static::generate_urls($controller.DS.'rename_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -183,7 +183,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."permission_dir/".$obj->id, '<!--ディレクトリ-->権限設定'));
-			$urls = static::generate_urls($controller.DS.'permission_dir', $actions);
+			$urls = static::generate_urls($controller.DS.'permission_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -201,7 +201,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."purge_dir/".$obj->id, '<!--ディレクトリ-->削除'));
-			$urls = static::generate_urls($controller.DS.'purge_dir', $actions);
+			$urls = static::generate_urls($controller.DS.'purge_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',

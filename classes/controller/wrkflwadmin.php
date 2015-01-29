@@ -19,20 +19,22 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 	);
 
 	/**
-	 * action_index()
-	 */
-	public function action_index()
-	{
-		return \Response::redirect('/wrkflwadmin/index_admin');
-	}
-
-	/**
 	 * action_setup()
 	 */
 	public function before()
 	{
 		parent::before();
 		$this->model_name = '\\Model_Wrkflwadmin';
+	}
+
+	/**
+	 * action_index_admin()
+	 */
+	public function action_index_admin()
+	{
+		parent::index_admin();
+		$search_form = \Model_Wrkflwadmin::search_form();
+		$this->template->content->set_safe('search_form', $search_form);
 	}
 
 	/**

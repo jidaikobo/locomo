@@ -238,4 +238,60 @@ class Model_Usr extends Model_Base
 
 		return $form;
 	}
+
+	/**
+	 * search_form()
+	*/
+	public static function search_form($factory = 'user', $obj = null, $title = '')
+	{
+		$form = parent::search_form($factory, $obj, 'ユーザ一覧');
+
+		// 検索
+		$form
+			->add_after('all', 'フリーワード', array('type' => 'text','value' => \Input::get('all'), ), array(), 'opener');
+
+		// 登録日 - 開始
+		$form
+			->add_after(
+				'from',
+				'登録日',
+				array(
+					'type'        => 'text',
+					'value'       => \Input::get('from'),
+					'id'          => 'registration_date_start',
+					'class'       => 'date',
+					'placeholder' => date('Y-n-j', time() - 86400 * 365),
+					'title'       => '登録日 開始 ハイフン区切りで入力してください',
+				),
+				array(),
+				'all'
+			)
+			->set_template('
+				<div class="input_group">
+				<h2>登録日</h2>
+				{field}&nbsp;から
+			');
+
+		// 登録日 - ここまで
+		$form
+			->add_after(
+				'to',
+				'登録日',
+				array(
+					'type'        => 'text',
+					'value'       => \Input::get('to'),
+					'id'          => 'registration_date_end',
+					'class'       => 'date',
+					'placeholder' => date('Y-n-j'),
+					'title'       => '登録日 ここまで ハイフン区切りで入力してください',
+				),
+				array(),
+				'from'
+			)
+			->set_template('
+				{field}</div><!--/.input_group-->
+			');
+
+		return $form;
+	}
 }

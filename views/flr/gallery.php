@@ -1,9 +1,6 @@
-
-
 <?php if ($items): ?>
 
 <script>
-
 $(window).on('load',function(){
 var parentbox = $('.lcm_flr_slideblock');
 
@@ -30,7 +27,6 @@ window.requestAnimationFrame = (function(){
 })();
 
 });
-
 </script>
 
 <div class="lcm_flr_slideblock" style="

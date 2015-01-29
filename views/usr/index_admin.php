@@ -1,3 +1,5 @@
+<?php echo $search_form; ?>
+<?php /* ?>
 <h2 class="content_title clearfix">
 	項目一覧 
 	<span class="sort_info">
@@ -12,6 +14,7 @@
 </h2>
 
 <div class="form_group lcm_focus hidden_item">
+
 <h1 class="skip">検索</h1>
 	<form class="search">
 		<div class="input_group">
@@ -30,17 +33,11 @@
 		</div>
 	</form>
 </div><!-- /.form_group -->
+<?php */?>
 
-<!--
-<div class="lcm_focus">
-	<h3 class="skip">インデックス</h3>
-	<?php
-		// index menu
-	echo \Actionset::generate_menu_html($actionset['index'], array('class'=>'index_list'));
-	?>
-</div>
--->
+
 <div class="main_column index_table">
+<!--
 <?php
 /*
 	// index information
@@ -53,6 +50,7 @@
 	endif;
 */
 ?>
+-->
 <?php if ($items): ?>
 <table class="tbl datatable tbl_scrollable lcm_focus">
 	<thead>
