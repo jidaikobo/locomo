@@ -7,15 +7,41 @@ trait Actionset_Traits_Wrkflw
 	 */
 	public static function actionset_index_workflow($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index_workflow", '承認項目一覧'));
-		$urls = static::generate_urls($controller.DS.'index_workflow', $actions, ['index_workflow']);
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count)
+		{
+			$pk = $model::get_primary_keys('first');
+			$options = array();
+			$options[] = array($pk, 'is not' , null);
+			if (isset($model::properties()['created_at']))
+			{
+				$options[] = array('created_at', '<=', date('Y-m-d H:i:s'));
+			}
+			if (isset($model::properties()['expired_at']))
+			{
+				$options[] = array('expired_at', 'is', null);
+			}
+			if (isset($model::properties()['is_visible']))
+			{
+				$options[] = array('is_visible', '=', true);
+			}
+			$count = count($model::get_related_current_items($controller, $model));
+		}
+
+		// urls
+		$count = " ({$count})";
+		$actions = array(array($controller.DS."index_workflow", "承認項目一覧{$count}"));
+		$urls = static::generate_urls($controller.DS.'index_workflow', $actions);
 
 		$retvals = array(
+			'realm'        => 'index',
 			'urls'         => $urls,
 			'action_name'  => 'ワークフロー承認項目一覧',
 			'explanation'  => '現在承認すべき項目の一覧です。',
 			'acl_exp'      => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
-			'order'        => 10,
+			'order'        => 100,
 			'dependencies' => array(
 				$controller.DS.'index_workflow',
 			)
