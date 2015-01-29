@@ -242,7 +242,7 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 
 対象モデルにobserverを追加します。
 
-		'Workflow\Observer_Workflow' => array(
+		'Locomo\Observer_Wrkflw' => array(
 			'events' => array('before_insert', 'before_save','after_load'),
 		),
 
