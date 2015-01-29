@@ -536,23 +536,6 @@ class Model_Base extends \Orm\Model_Soft
 		$config = \Config::load('form_search');
 		$form = \Fieldset::forge('form', $config);
 
-		// submit
-		$form
-			->add('submit','',array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'))
-			->set_template('
-				{field}
-				</div>
-				</form>
-			</section><!-- /.form_group -->'
-			);
-
-		// add clear button before submit
-		$form
-			->add_before('unrefine', '', array('type' => 'text'), array(), 'submit')
-			->set_template('
-				<div class="submit_button">'.\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button'])
-			);
-
 		// add opener before unrefine
 		$sortinfo     = \Pagination::sort_info(get_called_class());
 		$total        = \Pagination::get("total_items");
@@ -562,22 +545,42 @@ class Model_Base extends \Orm\Model_Soft
 		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
 		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;
 
+		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$from}から{$to}件 / 全{$total}件</span>";
+		$sortinfo = $total ? $sortinfo_txt : '項目がありません' ;
+
 		$form
-			->add_before('opener', '', array('type' => 'text'), array(), 'unrefine')
+			->add('opener','',array('type' => 'text'))
 			->set_template('
-				<h2>
-					<a href="javascript: void(0);" class="toggle_item disclosure">
-					<!--<span style="float: right; font-weight: normal; font-size: .85em;" aria-hidden="true" role="presentation">[ 検索 ]</span>-->
-					<span class="icon fr" aria-hidden="true" role="presentation"><img src="'.\Uri::base().'sys/fetch_view/img/system/mark_search.png" alt="">検索</span>
+				<h1 id="page_title" class="clearfix">
 					'.$title.'
-					<span class="skip">エンターで検索条件を開きます</span>
-					<span class="sort_info">'.\Pagination::sort_info("\Model_Usr").' '.$from.'〜'.$to.'件 / 全'.$total.'件 </span>
-					</a>
-				</h2>
-				<section class="form_group lcm_focus hidden_item">
-				<h1 class="skip">検索</h1>
+					<span class="sort_info">'.$sortinfo.'</span>
+					<span class="icon fr">
+						<a href="javascript: void(0);" class="toggle_item disclosure">
+							<img src="'.\Uri::base().'sys/fetch_view/img/system/mark_search.png" alt="">
+							<span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">検索</span>
+							<span class="skip"> エンターで検索条件を開きます</span>
+						</a>
+					</span>
+				</h1>
+				<div class="hidden_item">
+				<section class="form_group">
+					<h1 class="skip">検索</h1>
 					<form class="search">
 			');
+
+
+		// submit	
+		$form
+			->add_after('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'), array(), 'opener')
+			->set_template('
+				<div class="submit_button">'.
+				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).'
+				{field}
+				</div><!--/.submit_button-->
+				</form>
+			</section><!-- /.form_group -->
+			</div><!-- /.hidden_item -->'
+			);
 
 		return $form;
 	}

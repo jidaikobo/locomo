@@ -629,11 +629,9 @@ a.delete {
 }
 
 /* hidden_item */
-/*
 .hidden_item {
 	display: none;
 }
-*/
 .hidden_item.on {
 	display: block !important;
 }
@@ -739,12 +737,14 @@ div.form_tooltip {
 	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
+/*
 .contents form h2:first-child{
 	border-top: none;
 	box-shadow: none;
 	margin-top: 0;
 	margin-bottom: .5em;
 }
+*/
 form tbody th {
 	text-align: left;
 	padding-right: 5px;
@@ -795,8 +795,12 @@ a.disclosure {
 	background-image: url('../img/system/mark_disclose.png');
 	background-position: 4px center;
 	background-repeat: no-repeat;
-	padding-right: 0;
-	padding-left: 15px;
+	padding: .125em 5px .125em 15px;
+	margin: 0;
+	width: 100%;
+	webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 a.disclosure:hover {
 	background-color: #e8e8e8;
@@ -808,23 +812,24 @@ a.disclosure.on {
 	background-image: url('../img/system/mark_disclose_on.png');
 	background-position-x: 0;
 }
-a.disclosure.on span.icon {
-	opacity: .25;
-}
 span.icon {
-	margin-right: 5px;
 	display: inline-block;
-	font-size: .85em;
 	height: 1.25em;
 	font-weight: normal;
+}
+span.icon.fr {
+	margin-bottom: 0;
+}
+span.icon a {
+	margin-top: .12em;
+	font-size: .75em;
 }
 span.icon img {
 	width: 1.5em;
 	margin: 0 .125em 0 .25em;
 }
-
-.form_group.hidden_item {
-	margin-top: -1.25em;
+#page_title + .hidden_item {
+	margin-top: -.65em;
 	padding-left: 0;
 }
 .hidden_item form .input_group {
@@ -833,6 +838,8 @@ span.icon img {
 }
 .hidden_item form h2 {
 	display: inline;
+	border: none;
+	box-shadow: none;
 }
 a.show_item:hover {
 	text-decoration: underline;
@@ -852,7 +859,6 @@ td.minimum {
 	width: 1px;
 	white-space: nowrap;
 }
-
 .tbl_wrapper {
 	overflow-x: auto;
 }
@@ -978,8 +984,10 @@ table.calendar {
 }
 /*=== contents ===*/
 h1#page_title {
-	margin: 0.25em 0;
-	font-size: 1.5em;
+	margin: 0 0 .5em;
+	font-size: 1.25em;
+	border-bottom: 1px solid #aaa;
+	box-shadow: 0 1px 0 #fff;
 }
 .contents h2 {
 	margin: 1em 0 .5em;
@@ -987,10 +995,12 @@ h1#page_title {
 	border-bottom: 1px solid #aaa;
 	box-shadow: 0 1px 0 #fff;
 }
+/* あとで。ページタイトル的なh2は明示的にクラスを与えて管理するほうが良さそう
 .contents h2:first-child {
 	margin-bottom: 1em;
 	margin-top: 0;
 }
+*/
 .contents h3 {
 	font-size: 1.1em;
 	margin: 1em 0 .25em;
@@ -1168,7 +1178,7 @@ h1#page_title {
 .sub_column select {
 	font-size: .9em;
 }
-.form_group table tbody th {
+form_group table tbody th {
 	text-align: left;
 	min-width: 5em;
 	background-color: transparent;
@@ -1176,9 +1186,10 @@ h1#page_title {
 section.search {
 	margin-bottom: 1em;
 }
-.disclosure .sort_info {
+h1 .sort_info {
+	display: inline-block;
 	font-weight: normal;
-	font-size: .85em;
+	font-size: .75em;
 	margin-left: .5em;
 }
 
@@ -1325,17 +1336,17 @@ li.show_if_smalldisplay {
 	#adminbar .adminbar_bottom .horizontal_list li {
 		margin-left: -.25em;
 	}
-	#adminbar .hide_if_smalldisplay {
+	.hide_if_smalldisplay {
 		position: absolute !important;
 		left: auto;
 		height: 0;
 		clip: rect(1px 1px 1px 1px);
 		clip: rect(1px, 1px, 1px, 1px);
 	}
-	#adminbar li.show_if_smalldisplay {
+	li.show_if_smalldisplay {
 		display: list-item !important;
 	}
-	#adminbar li.show_if_smalldisplay .label {
+	li.show_if_smalldisplay .label {
 		position: relative !important;
 		height: auto;
 		color: #333 !important;

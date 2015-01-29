@@ -248,7 +248,7 @@ class Model_Usr extends Model_Base
 
 		// 検索
 		$form
-			->add_after('all', '検索', array('type' => 'text','value' => \Input::get('all')), array(), 'opener');
+			->add_after('all', 'フリーワード', array('type' => 'text','value' => \Input::get('all'), ), array(), 'opener');
 
 		// 登録日 - 開始
 		$form
@@ -256,10 +256,12 @@ class Model_Usr extends Model_Base
 				'from',
 				'登録日',
 				array(
-					'type' => 'text',
-					'value' => \Input::get('from'),
-					'id' => 'registration_date_start',
+					'type'        => 'text',
+					'value'       => \Input::get('from'),
+					'id'          => 'registration_date_start',
+					'class'       => 'date',
 					'placeholder' => date('Y-n-j', time() - 86400 * 365),
+					'title'       => '登録日 開始 ハイフン区切りで入力してください',
 				),
 				array(),
 				'all'
@@ -267,7 +269,7 @@ class Model_Usr extends Model_Base
 			->set_template('
 				<div class="input_group">
 				<h2>登録日</h2>
-				{field}&nbsp;〜&nbsp;
+				{field}&nbsp;から
 			');
 
 		// 登録日 - ここまで
@@ -276,16 +278,18 @@ class Model_Usr extends Model_Base
 				'to',
 				'登録日',
 				array(
-					'type' => 'text',
-					'value' => \Input::get('to'),
-					'id' => 'registration_date_end',
+					'type'        => 'text',
+					'value'       => \Input::get('to'),
+					'id'          => 'registration_date_end',
+					'class'       => 'date',
 					'placeholder' => date('Y-n-j'),
+					'title'       => '登録日 ここまで ハイフン区切りで入力してください',
 				),
 				array(),
 				'from'
 			)
 			->set_template('
-				{field}</div>
+				{field}</div><!--/.input_group-->
 			');
 
 		return $form;

@@ -78,7 +78,7 @@ if (\Auth::check()):
 
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';
-					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".$current_nicename."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_module_option.png\" alt=\"".$current_nicename."の設定\"><span class=\"skip\">エンターでメニューを開きます</span></span></a>";
+					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".$current_nicename."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_module_option.png\" alt=\"\"><span class=\"skip\">".$current_nicename."の設定 エンターでメニューを開きます</span></span></a>";
 					$html.= $optmenu;
 					$html.= '</div><!-- .admin_module_option -->';
 				endif;
@@ -104,7 +104,7 @@ if (\Auth::check()):
 			endforeach;
 			if ($controller_menu):
 				$html.= '<div class="admin_menu">';
-				$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー<span class="skip">エンターでメニューを開きます</span></span></a>';
+				$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー<span class="skip"> エンターでメニューを開きます</span></span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
 				$html.= '<ul class="semimodal hidden_item menulist">';
 				$html.= $controller_menu;
@@ -120,7 +120,7 @@ if (\Auth::check()):
 			// help
 			$help_uri = \Uri::base().'hlp/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
 			$html.= '<div class="admin_help">';
-			$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_help.png\" alt=\"ヘルプ\">".'<span class="skip">エンターでヘルプを開きます</span></span></a>';
+			$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_help.png\" alt=\"\">".'<span class="skip">ヘルプ エンターでヘルプを開きます</span></span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 
 			// admin option menu
@@ -134,7 +134,7 @@ if (\Auth::check()):
 			endforeach;
 			if ($admin_menu):
 				$html.= '<div class="admin_option">';
-				$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_option.png\" alt=\"管理者設定\"><span class=\"skip\">エンターでメニューを開きます</span></span></a>";
+				$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_option.png\" alt=\"\"><span class=\"skip\">管理者設定 エンターでメニューを開きます</span></span></a>";
 				$html.= '<ul class="semimodal menulist hidden_item">'.$admin_menu.'</ul>';
 				$html.= '</div><!-- /.admin_option -->';
 			endif;
@@ -145,7 +145,7 @@ if (\Auth::check()):
 		
 			// user menu
 			$html.= '<div class="adminbar_user">';
-			$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログイン中"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'<span class="skip">エンターでメニューを開きます</span></span></a>';
+			$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログイン中"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."sys/fetch_view/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'<span class="skip"> エンターでメニューを開きます</span></span></a>';
 			$html.= '<ul class="semimodal menulist hidden_item">';
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
 			if ( ! \Auth::is_admin()):

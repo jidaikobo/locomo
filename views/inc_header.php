@@ -40,6 +40,5 @@
 	echo (\Auth::check()) ? '<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
 ?>
 	<div class="container">
-		<h1 class="page_title skip"><?php echo $title; ?></h1>
 <?php echo render('inc_messages'); ?>
 		<div class="contents">
