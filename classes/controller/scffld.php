@@ -29,6 +29,7 @@ class Controller_Scffld extends \Controller_Base
 		// scaffold
 		if (\Input::method() == 'POST'):
 
+			// repoplateを配慮するように書き換える
 			if ( ! \Security::check_token()):
 				\Session::set_flash('error', 'please check token');
 				return \Response::redirect(\Uri::create('scffld/main'));

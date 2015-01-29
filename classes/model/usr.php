@@ -130,7 +130,7 @@ class Model_Usr extends Model_Base
 
 	// $_conditions
 	public static $_conditions = array(
-		'order_by' => array('id' => 'asc'),
+		'order_by' => array('id' => 'desc'),
 	);
 
 	/**
@@ -244,15 +244,18 @@ class Model_Usr extends Model_Base
 	*/
 	public static function search_form($factory = 'user', $obj = null, $title = '')
 	{
-		$form = parent::search_form($factory, $obj, 'ユーザ一覧');
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('user', $config);
 
 		// 検索
-		$form
-			->add_after('all', 'フリーワード', array('type' => 'text','value' => \Input::get('all'), ), array(), 'opener');
+		$form->add(
+			'all',
+			'フリーワード',
+			array('type' => 'text', 'value' => \Input::get('all'))
+		);
 
 		// 登録日 - 開始
-		$form
-			->add_after(
+		$form->add(
 				'from',
 				'登録日',
 				array(
@@ -262,9 +265,7 @@ class Model_Usr extends Model_Base
 					'class'       => 'date',
 					'placeholder' => date('Y-n-j', time() - 86400 * 365),
 					'title'       => '登録日 開始 ハイフン区切りで入力してください',
-				),
-				array(),
-				'all'
+				)
 			)
 			->set_template('
 				<div class="input_group">
@@ -273,8 +274,7 @@ class Model_Usr extends Model_Base
 			');
 
 		// 登録日 - ここまで
-		$form
-			->add_after(
+		$form->add(
 				'to',
 				'登録日',
 				array(
@@ -284,14 +284,16 @@ class Model_Usr extends Model_Base
 					'class'       => 'date',
 					'placeholder' => date('Y-n-j'),
 					'title'       => '登録日 ここまで ハイフン区切りで入力してください',
-				),
-				array(),
-				'from'
+				)
 			)
 			->set_template('
 				{field}</div><!--/.input_group-->
 			');
 
-		return $form;
+		// wrap
+		$parent = parent::search_form_base('ユーザ一覧');
+		$parent->add_after($form, 'customer', array(), array(), 'opener');
+
+		return $parent;
 	}
 }

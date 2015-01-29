@@ -18,9 +18,10 @@ trait Actionset_Traits_Revision
 		if(in_array(\Request::main()->action, $arr))
 		{
 			$overrides_urls = array(
-				array($controller.DS, $controller::$locomo['main_action']),
+				array($controller.DS, $controller::$locomo['main_action_name']),
 			);
-			$overrides['base'] = static::generate_urls($controller.DS.'edit', $overrides_urls, [], 'option');
+			// ここstaticにしたくなるけど、\Actionsetのままでないと、履歴を呼べないコントローラがあるので、注意。
+			$overrides['base'] = \Actionset::generate_urls($controller.DS.'edit', $overrides_urls, [], 'option');
 		}
 
 		$retvals = array(
