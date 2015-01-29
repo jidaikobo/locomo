@@ -767,6 +767,8 @@ input,
 select,
 textarea {
 	margin-bottom: .25em;
+	margin-left: .33em;
+
 }
 div.submit_button {
 	width: 100%;
@@ -832,9 +834,11 @@ span.icon img {
 	margin-top: -.65em;
 	padding-left: 0;
 }
-.hidden_item form .input_group {
+form.search .input_group {
 	display: inline-block;
 	margin-left: 1em;
+	vertical-align: top;
+	outline: 1px dotted red;
 }
 .hidden_item form h2 {
 	display: inline;

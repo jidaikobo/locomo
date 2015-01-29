@@ -542,10 +542,13 @@ class Model_Base extends \Orm\Model_Soft
 		$current_page = \Pagination::get("current_page");
 		$per_page     = \Pagination::get("per_page");
 		$refined      = \Pagination::$refined_items;
+		
+
 		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
 		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;
 
-		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$from}から{$to}件 / 全{$total}件</span>";
+		$pagenate_txt = ($per_page < $total) ? $from.'から'.$to.'件 / ' : '';
+		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$pagenate_txt}全{$total}件</span>";
 		$sortinfo = $total ? $sortinfo_txt : '項目がありません' ;
 
 		$form
@@ -568,8 +571,7 @@ class Model_Base extends \Orm\Model_Soft
 					<form class="search">
 			');
 
-
-		// submit	
+		// submit
 		$form
 			->add_after('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'), array(), 'opener')
 			->set_template('
