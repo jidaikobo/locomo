@@ -31,7 +31,8 @@ if (\Auth::check()):
 						$top_link = '管理トップ';
 					endif;
 				else:
-					if(\Auth::has_access(\Request::main()->controller.DS.'sys/admin')):
+//					if(\Auth::has_access(\Request::main()->controller.DS.'sys/admin')):
+					if(\Auth::has_access(\Request::main()->controller.DS.\Arr::get($locomo, 'controller.ctrl_home'))):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'.$current_name), $current_nicename).' ';
 					else:
 						$top_link = $current_nicename;
@@ -56,7 +57,10 @@ if (\Auth::check()):
 				endif;
 
 				$bases = \Arr::get($actionset, 'base', array());
-				$ctrl_index and array_unshift($bases, array('urls' => array($ctrl_index)));
+				// indexがない場合は、$ctrl_indexを表示
+				if ($ctrl_index && ! $idxmenu):
+					array_unshift($bases, array('urls' => array($ctrl_index)));
+				endif;
 				if ($bases):
 					$html.= '<div class="admin_context">';
 					$html.= \Actionset::generate_menu_html($bases, array('class'=>'horizontal_list'));
