@@ -73,6 +73,7 @@ class Model_Wrkflwadmin extends \Model_Base
 
 		// allowers
 		$n = 1;
+		$retvals['allowers'] = array();
 		foreach($steps as $k => $step)
 		{
 			$retvals['allowers'][$n] = $step;
@@ -207,7 +208,6 @@ class Model_Wrkflwadmin extends \Model_Base
 				'condition'   => $arg['condition'],
 				'seq'         => $order,
 				'action'      => $arg['action'],
-				'is_writer'   => false,
 			);
 
 			if ($step_id)

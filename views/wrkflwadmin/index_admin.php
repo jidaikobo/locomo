@@ -17,8 +17,9 @@
 			<td>
 				<div class="btn_group">
 					<?php
-					echo Html::anchor('wrkflwadmin/view'.'/'.$item->id, '表示', array('class' => 'view'));
+//					echo Html::anchor('wrkflwadmin/view'.'/'.$item->id, '表示', array('class' => 'view'));
 					if ( ! $item->deleted_at):
+						echo '<span class="skip">ワークフロー</span>';
 						echo Html::anchor('wrkflwadmin/setup'.'/'.$item->id, '設定', array('class' => 'edit'));
 					endif;
 					echo Html::anchor('wrkflwadmin/edit'.'/'.$item->id, '編集', array('class' => 'edit'));

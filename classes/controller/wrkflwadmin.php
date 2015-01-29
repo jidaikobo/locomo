@@ -58,6 +58,11 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 		$steps = \Input::post('steps') ?: $steps;
 		if (\Input::post('steps'))
 		{
+			if ( ! \Security::check_token()):
+				\Session::set_flash('error', 'please check token');
+				return \Response::redirect(\Uri::create('wrkflwadmin/setup/'.$id));
+			endif;
+
 			// unset empty values to tidt up
 			foreach($steps['allowers'] as $key => $step)
 			{
@@ -99,7 +104,7 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		//assign
-		$view = \View::forge('setup');
+		$view = \View::forge('wrkflwadmin/setup');
 		$view->set('stepnum', $stepnum);
 		$view->set('allstep', $allstep);
 		$view->set('steps', $steps);
