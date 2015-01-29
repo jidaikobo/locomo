@@ -52,12 +52,12 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		//no rights for no condition
 		if ( ! $condition) return false;
 
-		// admins are all allowed
+		// admins are all allowed even if class and method is not exist.
 		if (in_array(\Auth::get('id'), array(-1, -2))) return true;
 
 		// parse condition to serialize
 		$conditions = static::_parse_conditions($condition);
-		$condition = serialize($conditions);
+		$condition = \Model_Acl::to_authstr($conditions);
 
 		return in_array($condition, \Auth::get('allowed'));
 	}

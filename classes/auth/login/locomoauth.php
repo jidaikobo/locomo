@@ -124,6 +124,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			{
 				$usergroups = array(-10); // logged in usergroup
 				$usergroups = array_merge($usergroups, array_keys($this->user->usergroup));
+				$this->user->usergroup[-10] = (object) array();
 
 				$acl_tmp = \Model_Acl::find('all',
 					array(
@@ -475,7 +476,8 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	public function modify_locomopaths($locomo_paths = array())
 	{
 		$arr = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $locomo_paths);
-		return array_map('serialize', $arr);
+//		return array_map('serialize', $arr);
+		return array_map(array('\\Model_Acl', 'to_authstr'), $arr);
 	}
 
 	/**

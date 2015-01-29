@@ -128,7 +128,7 @@ class Model_Usr extends Model_Base
 		),
 	);
 
-	//$_conditions
+	// $_conditions
 	public static $_conditions = array(
 		'order_by' => array('id' => 'asc'),
 	);
@@ -143,10 +143,9 @@ class Model_Usr extends Model_Base
 	 */
 	public static function form_definition($factory = 'user', $obj = null)
 	{
-//		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 		$id = isset($obj->id) ? $obj->id : '';
 
-		//forge
+		// forge
 		$form = parent::form_definition($factory, $obj);
 
 		// banned user names - same as administrators
@@ -155,24 +154,32 @@ class Model_Usr extends Model_Base
 		$admins    = array_keys(\Arr::get($alladmins, 'admin', array()));
 		$allnames  = array_unique(array_merge($roots, $admins));
 
-		//username
+		// disabled
+		$form->delete('activation_key');
+		$form->delete('last_login_at');
+		$form->delete('login_hash');
+		$form->delete('profile_fields');
+
+		// username
 		$form->field('username')
 			->add_rule('unique', "lcm_usrs.username.{$id}");
 
-		//usergroups
+		// usergroups
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
-		$form->add(
+		$form->add_after(
 				'usergroup',
 				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $options)
+				array('type' => 'checkbox', 'options' => $options),
+				array(),
+				'username'
 			)
 			->set_value(array_keys($obj->usergroup));
 
 		// password
 		$form->field('password')->set_value('');
 
-		//管理者以外は旧パスワードを求める
+		// 管理者以外は旧パスワードを求める
 		if ( ! \Auth::is_admin()):
 			$form->add(
 					'old_password',
@@ -187,43 +194,104 @@ class Model_Usr extends Model_Base
 				->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 		endif;
 
-		//password
+		// password
 		$form->field('password')
 			->add_rule('require_once', "lcm_usrs.password.{$id}");
 	
-		//confirm_password
-		$form->add(
+		// confirm_password
+		$form->add_after(
 				'confirm_password',
 				'確認用パスワード',
-				array('type' => 'password', 'size' => 20)
+				array('type' => 'password', 'size' => 20),
+				array(),
+				'password'
 			)
 			->set_value('')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 
-		//email
+		// email
 		$form->field('email')
 			->add_rule('unique', "lcm_usrs.email.{$id}");
 
-		//created_at
+		// created_at
 		$form->field('created_at')
 			->set_label('作成日')
 			->set_type('text')
 			->set_attribute('placeholder', date('Y-m-d H:i:s'))
 			->add_rule('non_zero_datetime');
 
-		//expired_at
+		// expired_at
 		$form->field('expired_at')
 			->set_label('有効期日')
 			->set_type('text')
 			->set_attribute('placeholder', date('Y-m-d H:i:s'))
 			->add_rule('non_zero_datetime');
 
-		//is_visible
-		if (\Auth::is_admin()):
+		// is_visible and created_at
+		if (\Auth::is_admin())
+		{
 			$form->field('is_visible')->set_type('select');
-		endif;
+		} else {
+			$form->delete('expired_at');
+			$form->delete('created_at');
+		}
 
-//		static::$_cache_form_definition = $form;
+		return $form;
+	}
+
+	/**
+	 * search_form()
+	*/
+	public static function search_form($factory = 'user', $obj = null, $title = '')
+	{
+		$form = parent::search_form($factory, $obj, 'ユーザ一覧');
+
+		// 検索
+		$form
+			->add_after('all', 'フリーワード', array('type' => 'text','value' => \Input::get('all'), ), array(), 'opener');
+
+		// 登録日 - 開始
+		$form
+			->add_after(
+				'from',
+				'登録日',
+				array(
+					'type'        => 'text',
+					'value'       => \Input::get('from'),
+					'id'          => 'registration_date_start',
+					'class'       => 'date',
+					'placeholder' => date('Y-n-j', time() - 86400 * 365),
+					'title'       => '登録日 開始 ハイフン区切りで入力してください',
+				),
+				array(),
+				'all'
+			)
+			->set_template('
+				<div class="input_group">
+				<h2>登録日</h2>
+				{field}&nbsp;から
+			');
+
+		// 登録日 - ここまで
+		$form
+			->add_after(
+				'to',
+				'登録日',
+				array(
+					'type'        => 'text',
+					'value'       => \Input::get('to'),
+					'id'          => 'registration_date_end',
+					'class'       => 'date',
+					'placeholder' => date('Y-n-j'),
+					'title'       => '登録日 ここまで ハイフン区切りで入力してください',
+				),
+				array(),
+				'from'
+			)
+			->set_template('
+				{field}</div><!--/.input_group-->
+			');
+
 		return $form;
 	}
 }

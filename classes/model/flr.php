@@ -23,7 +23,7 @@ class Model_Flr extends \Model_Base
 			),
 		),
 		'explanation' => array(
-			'label' => 'メモ',
+			'label' => '備考',
 			'form' => array('type' => 'textarea', 'rows' => '3', 'cols' => '50', 'class' => 'textarea'),
 		),
 		'path' => array(
@@ -37,9 +37,6 @@ class Model_Flr extends \Model_Base
 				'options' => array('0' => '表示しない', '1' => '表示する')
 			),
 			'default' => 0,
-			'validation' => array(
-				'required',
-			),
 		),
 		'is_visible' => array(
 			'label' => '可視属性',
@@ -52,9 +49,22 @@ class Model_Flr extends \Model_Base
 				'required',
 			),
 		),
-		'depth' => array('form' => array('type' => false), 'default' => 0),
-		'ext' => array('form' => array('type' => false), 'default' => 'etc'), // variable things
-		'genre' => array('form' => array('type' => false), 'default' => 'dir'), // enum: dir, file, txt, image, audio, movie, braille, doc, xls, ppt
+		'depth' => array(
+			'form' => array('type' => false),
+			'default' => 0
+		),
+		'ext' => array(
+			'form' => array('type' => false),
+			'default' => 'etc'
+		), // variable things
+		'mimetype' => array(
+			'form' => array('type' => false),
+			'default' => 'text/plain'
+		), // variable things
+		'genre' => array(
+			'form' => array('type' => false),
+			'default' => 'dir'
+		), // enum: dir, file, txt, image, audio, movie, braille, doc, xls, ppt
 		'expired_at' => array('form' => array('type' => false), 'default' => null),
 		'creator_id' => array('form' => array('type' => false), 'default' => -1),
 		'updater_id' => array('form' => array('type' => false), 'default' => -1),
@@ -126,6 +136,7 @@ class Model_Flr extends \Model_Base
 		$this->disable_event('before_save');
 
 		// modify path
+		// パスの確定
 		if ( ! $this->path && \Input::post('parent'))
 		{
 			// action_create_dir
@@ -136,25 +147,40 @@ class Model_Flr extends \Model_Base
 			}
 		}
 		$this->path = static::enc_url($this->path);
+		$fullpath = LOCOMOUPLOADPATH.$this->path;
 
-		// modify name
-		$old_name = \Arr::get($this->_original, 'name', $this->name);
-		$new_name = \Input::post('name', $this->name);
-		 // rename flag to use at _event_after_update
-		if ($old_name != $new_name)
-		{
-			static::$is_renamed = true;
-			$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
+		// modify name - currently directory only
+		// 名称変更。今のところディレクトリのみ
+		if (is_dir($fullpath)){
+			$old_name = \Arr::get($this->_original, 'name', $this->name);
+			$new_name = \Input::post('name', $this->name);
+			 // rename flag to use at _event_after_update
+			if ($old_name != $new_name)
+			{
+				static::$is_renamed = true;
+				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
+			}
+			$this->name = $new_name;
 		}
-		$this->name = $new_name;
 		$this->name = urldecode($this->name);
 
 		// modify depth
-		$num = is_dir(LOCOMOUPLOADPATH.$this->path) ? 2 : 1;
+		// 深さ
+		$num = is_dir($fullpath) ? 2 : 1;
 		$depth = count(explode('/', $this->path)) - $num;
 		$this->depth = $depth;
 
+		// modify fileinfo
+		// 拡張子やmimetypeを修正
+		if ( ! is_dir($fullpath))
+		{
+			$this->ext         = substr($this->name, strrpos($this->name, '.') + 1) ;
+			$this->mimetype    = \File::file_info($fullpath)['mimetype'] ;
+			$this->genre       = \Locomo\File::get_file_genre($this->name);
+		}
+
 		// permission
+		// ディレクトリパーミッションの修正
 		if ($this->genre == 'dir')
 		{
 			// to solve contradiction compare permission between parent and current dir.
@@ -166,35 +192,40 @@ class Model_Flr extends \Model_Base
 				// usergroup
 				$parent_g  = static::get_relation_as_array($p_obj, 'usergroup');
 				$parent_g  = static::transform_permission_to_intersect_arr($parent_g, 'usergroup');
-				$current = static::get_relation_as_array($this, 'usergroup');
-				$current = static::transform_permission_to_intersect_arr($current, 'usergroup');
-				$group_intersects = array_intersect($parent_g, $current);
+				$current_g = static::get_relation_as_array($this, 'usergroup');
+				$current_g = static::transform_permission_to_intersect_arr($current_g, 'usergroup');
+				$group_intersects = array_intersect($parent_g, $current_g);
 	
 				// user
 				$parent_u  = static::get_relation_as_array($p_obj, 'user');
 				$parent_u  = static::transform_permission_to_intersect_arr($parent_u, 'user');
-				$current = static::get_relation_as_array($this, 'user');
-				$current = static::transform_permission_to_intersect_arr($current, 'user');
-				$user_intersects = array_intersect($parent_u, $current);
+				$current_u = static::get_relation_as_array($this, 'user');
+				$current_u = static::transform_permission_to_intersect_arr($current_u, 'user');
+				$user_intersects = array_intersect($parent_u, $current_u);
 	
 				// initialize permission - overhead but for test purpose, it must be place here
+				// データベースを初期化。
 				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
 				unset($this->permission_usergroup);
 				unset($this->permission_user);
 	
-				// update permissions
-				if ( ! $current)
+				// update permissions - group
+				if ( ! $current_g)
 				{
 					// default permission is same as parent permission
 					// 現在のパーミッションが空だったら親のパーミッションと同じにする
 					static::update_permission_by_intersects($this, $parent_g, 'usergroup');
-					static::update_permission_by_intersects($this, $parent_u, 'user');
-				}
-				else
-				{
+				} else {
 					// update permission by intersects
 					// 現在のパーミッションを親以下にする
 					static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
+				}
+
+				// update permissions - user
+				if ( ! $current_u)
+				{
+					static::update_permission_by_intersects($this, $parent_u, 'user');
+				} else {
 					static::update_permission_by_intersects($this, $user_intersects, 'user');
 				}
 
@@ -217,6 +248,7 @@ class Model_Flr extends \Model_Base
 				static::update_permission($this, $user, 'user');
 			}
 		} // is_dir until here.
+
 	}
 
 	/**
@@ -306,9 +338,14 @@ class Model_Flr extends \Model_Base
 	 * enc_url()
 	 * 
 	*/
-	public static function enc_url($path)
+	public static function enc_url($path, $enc_slash = false)
 	{
-		return str_replace('%2F', '/', urlencode(urldecode($path)));
+		if($enc_slash)
+		{
+			return urlencode(urldecode($path));
+		} else {
+			return str_replace('%2F', '/', urlencode(urldecode($path)));
+		}
 	}
 
 	/**
@@ -352,7 +389,8 @@ class Model_Flr extends \Model_Base
 		{
 			foreach ($obj->$relation_name as $id => $v)
 			{
-				eval('$relations = '.var_export($v->_data, true).';');
+//				eval('$relations = '.var_export($v->_data, true).';');
+				$relations = $v->to_array();
 				if ($relations)
 				{
 					$retvals[$id] = $relations;
@@ -373,7 +411,10 @@ class Model_Flr extends \Model_Base
 		$tmps = array();
 		foreach ($permissions as $v)
 		{
-			$tmps[] = $v[$relation.'_id'].DS.$v['access_level'];
+			for ($n = 1; $n <= $v['access_level']; $n++)
+			{
+				$tmps[] = $v[$relation.'_id'].DS.$n;
+			}
 		}
 		return $tmps;
 	}
@@ -496,12 +537,21 @@ class Model_Flr extends \Model_Base
 		if (in_array(\Request::active()->action, array('create_dir', 'move_dir')))
 		{
 			$form = static::directory_list($form, $obj);
+			$form->delete('is_sticky');
 		}
 
 		// move or delete
 		if (in_array(\Request::active()->action, array('move_dir', 'purge_dir', 'permission_dir')))
 		{
 			$form = static::hide_current_name($form, $obj);
+			$form->delete('is_sticky');
+		}
+
+		// edit
+		if (in_array(\Request::active()->action, array('edit_dir')))
+		{
+			$form = static::hide_current_name($form, $obj);
+			$form->delete('is_sticky');
 		}
 
 		// rename
@@ -529,9 +579,10 @@ class Model_Flr extends \Model_Base
 		}
 
 		// modify_name
-		if (in_array(\Request::active()->action, array('view_file', 'edit_file')))
+		if (in_array(\Request::active()->action, array('edit_file')))
 		{
 			$form = static::modify_name($form, $obj);
+			$form->field('is_sticky')->set_description('画像の場合はダッシュボードの「ギャラリー」に表示されます。');
 		}
 
 		// purge_file
@@ -568,11 +619,76 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
+	 * plain_definition()
+	 * for view and download.
+	 */
+	public static function plain_definition($factory = 'form', $obj = null)
+	{
+		$form = parent::plain_definition($factory, $obj);
+
+		// uri
+		$url  = \Uri::create('flr/dl/?p='.static::enc_url($obj->path, true));
+		$url = \Inflector::get_root_relative_path($url);
+
+		// html
+		$html = '';
+		if (\Locomo\File::get_file_genre($url) == 'image')
+		{
+			// name add image
+			$html = '<a href="'.$url.'" class="lb">'.$obj->name.'</a>';
+			$html2show = '<a href="'.$url.'" class="lb" style="
+				display: block;
+				height: 150px;
+				width: 150px;
+				border: 1px #eee solid;
+				background-image: url(\''.$url.'\');
+				background-repeat: no-repeat;
+				background-color: #fff;
+			"><span class="skip">'.$obj->name.'を拡大</span></a><a href="'.$url.'&dl=1">'.$obj->name.'をダウンロード</a>';
+
+			$tpl = \Config::get('form')['field_template'];
+			$tpl.= $html2show;
+			$form->field('name')->set_template($tpl);
+		} else {
+			// name add download link
+			$html = '<a href="'.$url.'">'.$obj->name.'</a>';
+			$tpl = \Config::get('form')['field_template'];
+			$tpl = str_replace('{field}', '<a href="'.$url.'">{field}</a>', $tpl);
+			$form->field('name')->set_template($tpl);
+		}
+		$html = htmlspecialchars($html);
+
+		// download_url
+		$form->add_after(
+			'download_url',
+			'ダウンロードURL用文字列',
+			array('type' => 'text'),
+			array(),
+			'name'
+		)
+		->set_value('<textarea class="textarea" id="download_str" style="height:5em;font-family:monospace;">'.$url.'</textarea><!--<div class="ar"><a href="">クリップボードにコピーする</a></div>-->');
+
+		// download_html
+		$form->add_after(
+			'download_html',
+			'HTML',
+			array('type' => 'text'),
+			array(),
+			'download_url'
+		)
+		->set_value('<textarea class="textarea" style="height:5em;font-family:monospace;">'.$html.'</textarea><!--<div class="ar"><a href="">クリップボードにコピーする</a></div>-->');
+
+		return $form;
+	}
+
+	/**
 	 * modify_name()
 	 */
 	public static function modify_name($form, $obj)
 	{
-		$form->field('name')->set_label('ファイル名');
+		$form->field('name')->set_type('hidden');
+		$form->add_after('display_file_name', 'ファイル名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name)->set_description('ファイル名を変更したい場合はアップし直してください。');
+//		$form->field('name')->set_label('ファイル名');
 		return $form;
 	}
 
@@ -657,8 +773,6 @@ class Model_Flr extends \Model_Base
 			->set_value(urldecode($current_dir));
 
 		return $form;
-
-		return $form;
 	}
 
 	/**
@@ -667,10 +781,32 @@ class Model_Flr extends \Model_Base
 	public static function permission_dir($form, $obj)
 	{
 		$form->field('explanation')->set_type('hidden');
-		$form->field('is_sticky')->set_type('hidden');
+
+		\Session::set_flash('message', ['親以上の権限は選択しても有効になりません。',
+			'親以上の権限を設定しようとすると、自動的に親以下の権限に調整されます。',
+			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
+		]);
 
 		// usergroup_id
+		// 親のパーミッションを取るがlazyloadや、リレーション先のモデルに尋ねると$_propertiesが壊れるので、SQLで取得する。
+		$parent = static::get_parent($obj);
+		$items = \DB::select('lcm_flr_permissions.usergroup_id','lcm_usrgrps.name')
+			->from('lcm_flr_permissions')
+			->join('lcm_usrgrps')
+			->on('lcm_usrgrps.id', '=', 'lcm_flr_permissions.usergroup_id')
+			->where('lcm_flr_permissions.flr_id', $parent->id)
+			->where('lcm_flr_permissions.usergroup_id', 'is not', null)
+			->execute()
+			->as_array();
+		$g_permissions = array();
+		foreach ($items as $v)
+		{
+			$g_permissions[$v['usergroup_id']] = $v['name'];
+		}
+
+		// get_options
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$options = array_intersect($g_permissions, $options);
 		$options = array(''=>'選択してください', '-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
 		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
 			'type' => 'select',
@@ -678,17 +814,37 @@ class Model_Flr extends \Model_Base
 			'class' => 'varchar usergroup',
 		);
 		$usergroup_id = \Fieldset::forge('permission_usergroup')->set_tabular_form('\Model_Flr_Usergroup', 'permission_usergroup', $obj, 2);
-		$form->add_after($usergroup_id, 'ユーザグループ権限', array(), array(), 'is_sticky');
+		$form->add_after($usergroup_id, 'ユーザグループ権限', array(), array(), 'explanation');
 
 		// user_id
+		$parent = static::get_parent($obj);
+		$items = \DB::select('lcm_flr_permissions.user_id','lcm_usrs.username')
+			->from('lcm_flr_permissions')
+			->join('lcm_usrs')
+			->on('lcm_usrs.id', '=', 'lcm_flr_permissions.user_id')
+			->where('lcm_flr_permissions.flr_id', $parent->id)
+			->where('lcm_flr_permissions.user_id', 'is not', null)
+			->execute()
+			->as_array();
+		$u_permissions = array();
+		foreach ($items as $v)
+		{
+			$u_permissions[$v['user_id']] = $v['username'];
+		}
+
+		// get_options
 		$options = array(''=>'選択してください') + \Model_Usr::get_options(array(), 'display_name');
-		\Model_Flr_User::$_properties['user_id']['form'] = array(
-			'type' => 'select',
-			'options' => $options,
-			'class' => 'varchar user',
-		);
-		$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
-		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
+		$options = array_intersect($u_permissions, $options);
+		if ($options)
+		{
+			\Model_Flr_User::$_properties['user_id']['form'] = array(
+				'type' => 'select',
+				'options' => $options,
+				'class' => 'varchar user',
+			);
+			$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
+			$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
+		}
 
 		return $form;
 	}
@@ -698,7 +854,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function purge_dir($form, $obj)
 	{
-		\Session::set_flash('message', 'ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。この削除は取り消しができません。注意してください。');
+		\Session::set_flash('message', ['ディレクトリの完全削除です。','ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。','この削除は取り消しができません。注意してください。']);
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');
@@ -720,7 +876,7 @@ class Model_Flr extends \Model_Base
 			'アップロード',
 			array('type' => 'file'),
 			array(),
-			'is_visible'
+			'display_name'
 		)
 		->add_rule(array('valid_string' => array('alpha','numeric','dot','dashes')));
 

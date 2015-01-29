@@ -309,19 +309,11 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		$controller = \Inflector::add_head_backslash(\Request::main()->controller);
 		$action     = \Request::main()->action;
 
-		// logo
-		$logo = APPPATH.'locomo/system/img/logo.png';
-		if ( ! file_exists($logo))
-		{
-			$logo = \Asset::img();
-			$logo = LOCOMOPATH.'assets/img/system/logo.png';
-		}
-		$logo_s = APPPATH.'locomo/system/img/logo_s.png';
-		if ( ! file_exists($logo_s))
-		{
-			$logo_s = \Asset::img();
-			$logo_s = LOCOMOPATH.'assets/img/system/logo_s.png';
-		}
+		// custom icon and background
+		$idty_class = '';
+		$idty_class.=  ! file_exists(APPPATH.'locomo/assets/img/system/logo.png') ? ' default_logo' : '';
+		$idty_class.=  ! file_exists(APPPATH.'locomo/assets/img/system/logo_s.png') ? ' default_logo_s' : '';
+		$idty_class.=  ! file_exists(APPPATH.'locomo/assets/img/system/adminbar_bg.png') ? ' default_bg' : '';
 
 		// body_class
 		$class_arr = array(
@@ -337,7 +329,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		{
 			$class_arr[] = 'loggedin';
 		}
-		$this->template->set_global('body_class', implode($class_arr, ' '));
+		$this->template->set_global('body_class', implode($class_arr, ' ').$idty_class);
 
 		// data-uri
 		$this->template->set_global('body_data', 'data-uri='.\Uri::base(false));

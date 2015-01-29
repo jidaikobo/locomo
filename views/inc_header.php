@@ -2,7 +2,14 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title><?php echo \Config::get('site_title').' - '.$title; ?></title>
+	<?php
+		if (\Uri::current() == \Uri::base()):
+			$title = \Config::get('site_title').' - '.$title;
+		else:
+			$title = $title.' - '.\Config::get('site_title');
+		endif;
+	?>
+	<title><?php echo $title; ?></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	
 	<!--stylesheet-->
@@ -33,6 +40,5 @@
 	echo (\Auth::check()) ? '<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
 ?>
 	<div class="container">
-		<h1 class="page_title skip"><?php echo $title; ?></h1>
 <?php echo render('inc_messages'); ?>
 		<div class="contents">

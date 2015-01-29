@@ -70,13 +70,16 @@ function lcm_modal(id){
 	return false;
 }
 
+
+//大きなくくり。あとでバラス
 $(function(){
+/*=== 環境の取得 ===*/
 
 //UA //php側は？
 var userAgent = window.navigator.userAgent;
 isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
-tabindexCtrl = userAgent.indexOf('NetReader') > 0 ? true : false;//この条件は増えたり減ったりするのかも。
-if(isNetReader) $('body').addClass('netreader');
+tabindexCtrl = isNetReader ? false : true;//この条件は増えたり減ったりするのかも。
+$('body').addClass(isNetReader ? 'netreader' : '');
 
 
 //スクロールバーのサイズ取得
@@ -92,15 +95,16 @@ var scrollbar_s = (function(){
 	return rs;
 })();
 
+
+/*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
 $('.hide_if_no_js').removeClass('hide_if_no_js');
 
 //.show_if_no_js noscript的な扱い?
 $('.show_if_no_js').remove();
 
-
 //for NetReader
-//.hidden_itemをインラインスタイルでdisplay: none;
+//NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
 $('.hidden_item').hide();
 
 //フォーカスするついでに場合によってはセレクトもする
@@ -110,20 +114,6 @@ function set_focus(t){
 		$(t).select();
 	}
 }
-
-//要素の中央配置
-$.fn.set_center = function(){
-	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
-	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
-	this.css({'left': left, 'top': top});
-	return this;
-}
-$(window).resize(function(){
-	var el = $('.set_center, .modal.on');
-	if(el){
-		el.set_center();
-	}
-});
 
 //ページ読み込み直後のフォーカス
 if($('.flash_alert').length){
@@ -150,6 +140,211 @@ if(adminbar.length){
 	});
 }
 
+
+//アクセスキーをもつ要素へのタイトル付与//読み上げ要確認
+//accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
+function add_accesskey_title(){
+	var str, txt, label;
+	label = this.accessKeyLabel;
+	label = label ? label : this.accessKey;
+	if(label){
+		txt = $(this).clone(false);
+		txt.find('.skip').remove();
+		str = ( $(this).attr('title') || txt.text() || $(this).children().attr('alt') );
+		$(this).attr('title',str+'['+label+']');
+	}
+}
+$(document).find('[accesskey]').each(add_accesskey_title);
+
+
+//非表示の要素の設定
+$('.hidden_item').each(function(){
+	var trigger, contain, v; 
+	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
+	if(!($(this).is(':input') && $(this).val())){
+		contain = 0;
+		$(this).find(':input').each(function(){
+			v = $(this).val();
+			if( !v || $(this).closest('.submit_button')[0]) return;
+			contain += $(this).val();
+		});
+		if(!contain) return;
+	}
+	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
+	$(this).addClass('on').show();
+	trigger.addClass('on');
+});
+
+
+/*================================▼▼▼===============================*/
+
+//tabindex制御
+//focusableな要素が動的に追加・変更されている場合に対応することを考えると、毎回.findしないといけない？重い？
+//var tabindex_preparation = false;
+
+$.fn.set_tabindex = function(){
+	//tabindexを一旦dataに格納し、現在の要素のみtabindex制御をリセットする。
+	$(document).find(':focusable').each(function(){
+		var tabindex, dataTabindex;
+		dataTabindex = $(this).data('tabindex');
+		if(!dataTabindex){//すでにdataに格納している場合はおしまい
+			tabindex = $(this).attr('tabindex');
+			if( tabindex ){//tabindexがあるばあい
+				$(this).data('tabindex',tabindex);
+			}else{
+				$(this).data('tabindex', 'none');
+			}
+		}
+		$(this).attr('tabindex','-1');
+	});
+	$(this).find(':focusable').removeAttr('tabindex');//set_tabindexを実行した要素の中だけtabindexをリセット
+	return this;
+}
+$.fn.reset_tabindex = function(){
+	//data-tabindexの値を見つつ、tabindexをリセットする
+	$(document).find(':focusable').each(function(){
+		var dataTabindex = $(this).data('tabindex');
+		if(dataTabindex && dataTabindex !== 'none'){
+			$(this).attr('tabindex', dataTabindex);
+		}else{
+			$(this).removeAttr('tabindex');
+		}
+	});
+	return this;
+}
+
+
+//.lcm_focusに基づくフォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする
+if(tabindexCtrl) set_lcm_focus();
+
+function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
+	var lcm_focus, lcm_calender, each_date;
+	lcm_focus    = $('.lcm_focus');
+	if(!lcm_focus.length) return; //lcm_focusがなければおしまい
+
+	lcm_calendar = $('.lcm_focus.calendar');
+	each_date    = lcm_calendar.length ? $('.each_date:has(a)').addClass('lcm_focus') : null;
+	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
+
+	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
+	//抜けるリンクの準備。絶対に一つだけ。ウィジェットで呼び出した時のエラーの表示位置がずれるので対策
+	
+	var set_focus = function(target){
+		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
+		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
+		//フォーカスを掘っていく場合も、ここにあるとよさそう
+		var parent, t; 
+/*
+	parent = $(this).closest('.currentfocus');
+	if(parent.length){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+		parent.removeClass('currentfocus').addClass('focusparent');
+		$('#escape_focus').remove();
+	}
+	$(this).addClass('currentfocus').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
+	*/
+//		if(!this.isWindow)console.log($(this).isWindow);
+		parent = $(this).closest('.currentfocus');
+		if(parent.length){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+			parent.removeClass('currentfocus').addClass('focusparent');
+			$('#escape_focus').remove();
+		}
+		$(this).addClass('currentfocus').set_tabindex()/*.append(esc)*/;
+		t = target ? target.find('.lcm_focus') : lcm_focus;
+		if(target && target.hasClass('calendar')){
+			t = target.find(each_date);
+		}
+		t.attr('tabindex', '0');
+		t.find(':tabbable').attr('tabindex', '-1');
+	}
+	var escape_focus = function(e){
+		//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
+		//多重のフォーカスは、親や祖先のフォーカスを見ながら戻していく。
+		//必ず相手がいる
+		e = e ? e : event;
+		var t, parent, grandparent;
+		t = $(e.target);
+		parent = t.closest('.currentfocus');
+		grandparent = t.closest('.focusparent');
+		if(parent.length){
+			parent.set_tabindex().focus();
+		}
+		$(document).find('.currentfocus').removeClass('currentfocus');
+		$('#escape_focus').remove();
+		$(document).reset_tabindex();
+		set_focus();
+		if(grandparent.length){
+			$(document).reset_tabindex();
+			grandparent.removeClass('focusparent').addClass('currentfocus').set_tabindex().append(esc);
+			set_focus(grandparent);
+		}
+	}
+
+
+	//ひとまず実行 //他のイベント実行後に動かしたいなあ
+	setTimeout(function(){
+		set_focus();//lcm_focusが入れ子になっていてもここで一旦-1
+	}, 100);
+
+	//lcm_focus上でのキーボードイベント。
+	lcm_focus.on('keydown', function(e){
+		e = e ? e : event;
+		var t, k, parent;
+		t = $(e.target);
+		k = e.which;
+
+		if( k == 13 ){//enter
+			if($(this).hasClass('currentfocus') || t.is('#escape_focus')){//currentfocus上と抜けるリンクは除外
+				e.stopPropagation();
+				return;
+			}
+			set_focus($(this));
+		}
+	});
+	$(document).on('keydown', function(e){//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
+		e = e ? e : event;
+		var t, k;
+		t = $(e.target);
+		k = e.which;
+//		console.log($('.modal.on, .semimodal.on'));
+		if( !t.is(':input') && !$('.modal.on, .semimodal.on').length && k == 27 ){
+			escape_focus(t);
+			e.stopPropagation();
+		}
+	});
+	$(document).on('click', '#escape_focus',escape_focus);
+	$(document).on('focus', ':input',function(e){
+		e = e ? e : event;
+		var t, parent;
+		t = $(e.target);
+		parent = t.closest('.lcm_focus');
+		if(parent.length){
+			parent.set_tabindex();
+		}
+	});
+}
+
+/*================================▲▲▲===============================*/
+
+
+
+
+
+//要素の中央配置
+$.fn.set_center = function(){
+	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
+	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
+	this.css({'left': left, 'top': top});
+	return this;
+}
+$(window).resize(function(){
+	var el = $('.set_center, .modal.on');
+	if(el){
+		el.set_center();
+	}
+});
+
+
+/*
 //リサイズの検知(フォント基準) //ひとまずadminbarを対象に行うけれど、確実にサイト内に表示されている要素でサイズが変化するもの、がいいなあ
 //
 var fontsize_h, fontsize_ratio, window_resized;
@@ -193,6 +388,7 @@ $(window).resize(function(){
 	window_resize = true;
 });
 
+*/
 
 
 //モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
@@ -209,132 +405,6 @@ $('.lcm_close_parent').on('click', function(){
 	}
 });
 
-
-//アクセスキーをもつ要素へのタイトル付与//読み上げ要確認
-//accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
-function add_accesskey_title(){
-	var str, txt, label;
-	label = this.accessKeyLabel;
-	label = label ? label : this.accessKey;
-	if(label){
-		txt = $(this).clone(false);
-		txt.find('.skip').remove();
-		str = ( $(this).attr('title') || txt.text() || $(this).children().attr('alt') );
-		$(this).attr('title',str+'['+label+']');
-	}
-}
-$(document).find('[accesskey]').each(add_accesskey_title);
-
-
-//tabindex制御
-$.fn.set_tabindex = function(){//focusableな要素のtabindexを一旦dataに保存し、現在の要素のみtabindex制御をリセットする。tabindexがある場合はそのまま
-	$(document).find(':focusable').each(function(){
-		var tabindex, dataTabindex;
-		tabindex = $(this).attr('tabindex');
-		dataTabindex = $(this).data('tabindex');
-		if( tabindex && !dataTabindex){//tabindexがあって、dataにまだない場合
-			$(this).data('tabindex',tabindex);
-		}else if(!tabindex){
-			$(this).data('tabindex', 'none');
-		}
-		$(this).attr('tabindex','-1');
-	});
-	$(this).find(':focusable').removeAttr('tabindex');
-	return this;
-}
-$.fn.reset_tabindex = function(){
-	$(document).find(':focusable').each(function(){
-		var dataTabindex = $(this).data('tabindex');
-		if(dataTabindex && dataTabindex !== 'none'){
-			$(this).attr('tabindex', dataTabindex);
-		}else{
-			$(this).removeAttr('tabindex');
-		}
-	});
-	return this;
-}
-
-//フォーカス枠の設定//NetReaderなどフォーカス制御がむずかしいブラウザは対象外にする
-var lcm_focus = $('.lcm_focus');
-var lcm_calendar = $('.lcm_focus.calendar');
-if(lcm_calendar.length) var each_date = $('.each_date:has(a)').addClass('lcm_focus');//カレンダーのテーブルの中身を設定
-
-if(lcm_focus.length && !tabindexCtrl){
-	var set_lcm_focus = function(target){
-		var t = target ? target.find('.lcm_focus') : lcm_focus;
-		if(target && target.hasClass('calendar')){
-			t = target.find(each_date);
-		}
-		t.attr('tabindex', '0');
-		t.find(':tabbable').attr('tabindex', '-1');
-	}
-	var escape_focus = function(e){
-		e = e ? e : event;
-		var t, parent, grandparent;
-		t = $(e.target);
-		parent = t.closest('.currentfocus');
-		grandparent = t.closest('.focusparent');
-		if(parent.length){
-			parent.set_tabindex().focus();
-		}
-		$(document).find('.currentfocus').removeClass('currentfocus');
-		$('#escape_focus').remove();
-		$(document).reset_tabindex();
-		set_lcm_focus();
-		if(grandparent.length){
-			$(document).reset_tabindex();
-			grandparent.removeClass('focusparent').addClass('currentfocus').set_tabindex().append(esc);
-			set_lcm_focus(grandparent);
-		}
-	}
-
-	setTimeout(function(){//他のイベント実行後に動かしたいなあ
-		set_lcm_focus();//lcm_focusが入れ子になっていてもここで一旦-1
-	}, 100);
-	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip">抜ける</a>';//抜けるリンクの準備
-	
-	lcm_focus.on('keydown', function(e){
-		e = e ? e : event;
-		var t, k, parent;
-		t = $(e.target);
-		k = e.which;
-//もうちょっとまとめる formのなかみにフォーカスした時のことを考えたり
-//エラー一覧にもどるリンクをウィジェットで呼び出した時の表示位置(position: absolute; で画面外にいる)のことを考える
-		if( k == 13 ){
-			if(! $(this).hasClass('currentfocus') && ! t.is('#escape_focus')){//現在の枠上でのEnterは無視。
-				parent = $(this).closest('.currentfocus'); //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
-				if(parent.length){
-					parent.removeClass('currentfocus').addClass('focusparent');
-					$('#escape_focus').remove();
-				}
-				$(this).addClass('currentfocus').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
-				set_lcm_focus($(this));
-			}
-			e.stopPropagation();
-		}
-	});
-	$(document).on('keydown', function(e){//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
-		e = e ? e : event;
-		var t, k;
-		t = $(e.target);
-		k = e.which;
-//		console.log($('.modal.on, .semimodal.on'));
-		if( !t.is(':input') && !$('.modal.on, .semimodal.on').length && k == 27 ){
-			escape_focus(t);
-			e.stopPropagation();
-		}
-	});
-	$(document).on('click', '#escape_focus',escape_focus);
-	$(document).on('focus', ':input',function(e){
-		e = e ? e : event;
-		var t, parent;
-		t = $(e.target);
-		parent = t.closest('.lcm_focus');
-		if(parent.length){
-			parent.set_tabindex();
-		}
-	});
-}
 
 
 //Focusまわりのテスト（NetReaderでFocus移動を検知したい）
@@ -376,15 +446,7 @@ $(document).on('click', 'a[href^=#]', function(e){
 });
 
 
-//非表示の要素の設定
-$('.hidden_item').each(function(){
-	if( $(this).is(':input') && $(this).val() ){//hidden_itemでも中に値がある場合は表示
-		var trigger = $('.toggle_item').eq($('.hidden_item').index(this));
-		$(this).addClass('on').show();
-		trigger.addClass('on');
-	}
-});
-
+//全体に対するクリックイベント。
 $(document).click(function(e){
 	e = e ? e : event;
 	var t = e.target;
@@ -426,6 +488,10 @@ $(document).on('click', '.toggle_item', function(e){
 	e = e ? e : event;
 	var t = $('.hidden_item').eq($('.toggle_item').index(this));//切り替えの相手
 	
+	if($(this).hasClass('disclosure')){//ディスクロージャならスライド
+		t.slideToggle(125);//ここでターゲットにフォーカスする？
+	}
+	
 	if($('.semimodal.on').length ){//モーダルが開いている場合は閉じる
 		var itself = t.is('.semimodal.on');
 		close_semimodal();
@@ -465,60 +531,63 @@ function replace_info(){
 
 
 //キーボード操作の制御
+
 //NetReaderでうまく取得できないので、なにか考える
 //.lcm_focusのようにまず枠にフォーカスを当てる場合のShift+Tabの動作のことも
 //フォーカス枠のある時の表示位置の調整もかんがえる(ページ内リンクのスクロールと同じ)
+/*
 $(document).on('keyup',function(e){
-	if($(':focus').attr('tabindex')){
-//		console.log($(':focus')[0] + ': ' + $(':focus').attr('tabindex'));
-	}else{
-//		console.log($(':focus').is(':tabbable'));
-
-	}
+	console.log(e.which);
+	if(e.which == 27) $('<p>').text('up_esc').prependTo('.container');
 });
+$(document).on('keydown',function(e){
+	console.log(e.which);
+	if(e.which == 27) $('<p>').text('down_esc').prependTo('.container');
+});
+$(document).on('keypress',function(e){
+	console.log(e.which);
+	if(e.which == 27) $('<p>').text('press_esc').prependTo('.container');
+});
+*/
+
 
 $(document).on('keydown',function(e){
 	e = e ? e : event;
-	var t, k, modal, tabbable, first, last, index;
+	var t, k, index, modal, tabbable, first, last;
 	t = e.target;
 	k = e.which;
-//	console.log(e);
-//	console.log(':'+k);
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
-	// TAB,ENTER,SHIFT,ESCAPE,RIGHT,UP,DOWN,RIGHT,(矢印系は、ALLOWをつけるようになる、らしい。バージョン？)
 	index = null;
+	
 	modal = $(document).find('.modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？　とすると？
 	if(modal){
 		tabbable = $(document).find(':tabbable');
 		first    = tabbable.first()[0];
 		last     = tabbable.last()[0];
-		switch( e.keyCode ){
-			case $.ui.keyCode.TAB:
+		switch(k){
+			case 9://tab
 				if( t === last && ! e.shiftKey){
 					index = 0;
 				}else if( t === first && e.shiftKey){
 					index = -1;
 				}
 			break;
-			case k == 37:
+			case 27://esc
 				close_semimodal();
 			break;
 		}
-		if($(modal).hasClass('menulist')){//.menulistではカーソルの制御も行う
-			switch( e.keyCode ){
-				case $.ui.keyCode.LEFT:
+		if($(modal).hasClass('menulist')){//.menulistでのカーソルのふるまい
+			switch(k){
+				case 37 || 39://左右 //スクリーンリーダのことを考えるとShiftを除く他キーとの組み合わせは排除できたほうがいい？
 					return false;
 				break;
-				case $.ui.keyCode.RIGHT:
-					return false;
-				break;
-				case $.ui.keyCode.DOWN:
+				case 40://下
 					index = tabbable.index($(':focus'))+1;
 					if( t === last){
 						var index = 0;
 					}
 				break;
-				case $.ui.keyCode.UP:
+				case 38://上
 					index = tabbable.index($(':focus'))-1;
 				break;
 			}
@@ -615,7 +684,8 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 		adjust_columns($('.tbl_scrollable'));
 		$('.tbl_scrollable').addClass('nocelspan');
 	}else{
-*/	$(document).find('.tbl_scrollable').each(tbl_scrollable);
+*/
+//	$(document).find('.tbl_scrollable').each(tbl_scrollable);
 	
 	$.fn.el_overflow_y = function(){
 		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
@@ -824,15 +894,7 @@ $('.validation_error :input').tooltip({
 		           }*/
 });
 
-//resizable
-var set_fixed_position = function(el){
-		var l, r, w, dw ;//右端基準で固定したい
-		l  = parseInt(el.css( 'left' ));
-		w  = el.outerWidth();
-		dw = $(window).width();//documentはbodyからoverflowした要素があると×。
-		r =  dw-l-w;
-		el.css({'position': 'fixed', 'left': 'auto', 'right': r})
-}
+//resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい
 $('#help_window').resizable({
 	'handles' : 'all',
 	'containment' : 'document',
@@ -844,7 +906,6 @@ $('#help_window').resizable({
 	stop:function(e, ui) {
 		e = e ? e : event;
 		var el = $(e.target);
-//		set_fixed_position(el);
 	}
 }).draggable({
 	'handle'      : '#help_title',
@@ -853,7 +914,6 @@ $('#help_window').resizable({
 	stop:function(e, ui) {
 		e = e ? e : event;
 		var el = $(e.target);
-//		set_fixed_position(el);
 	}
 });
 
@@ -861,7 +921,7 @@ $('#help_window').resizable({
 //=== rollover ===
 $('.bt a:has(img)').hover(function(){
 	var imgsrc = $(this).find('img').attr('src');
-	if( ! $(this).hasClass("on") && imgsrc.indexOf('_ro.') == -1){
+	if(! $(this).hasClass("on") && imgsrc.indexOf('_ro.') == -1){
 		var imgsrc = imgsrc.replace(/\.(gif|png|jpg|jpeg)$/i,'_ro\.$1');
 		$(this).find('img').attr('src',imgsrc);
 	}

@@ -6,8 +6,14 @@ class Model_Wrkflwadmin extends \Model_Base
 
 	protected static $_properties = array(
 		'id',
-		'name',
-		'deleted_at',
+		'name' => array(
+			'label' => 'ワークフロー名',
+			'form' => array('type' => 'text', 'class' => 'text'),
+			'validation' => array(
+				'required',
+			),
+		),
+		'deleted_at' => array('form' => array('type' => false), 'default' => null),
 	);
 
 	protected static $_soft_delete = array(
@@ -18,34 +24,29 @@ class Model_Wrkflwadmin extends \Model_Base
 	/**
 	 * form_definition()
 	*/
-	/**
-	 * form_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
-	 */
 	public static function form_definition($factory = 'user', $obj = null)
 	{
-		if (static::$_cache_form_definition && $obj == null) return static::$_cache_form_definition;
 		$id = isset($obj->id) ? $obj->id : '';
 
 		//forge
-		$form = \Fieldset::forge('form', \Config::get('form'));
+		$form = parent::form_definition($factory, $obj);
 
-		//user_name
-		$form->add(
-				'name',
-				'ルート名',
-				array('type' => 'text', 'size' => 255)
-			)
-			->set_value(@$obj->name)
-			->add_rule('required')
-			->add_rule('max_length', 255)
-			->add_rule('unique', "workflows.name.{$id}");
+		//name
+		$form->field('name')->add_rule('unique', "lcm_wrkflws.name.{$id}");
 
-		static::$_cache_form_definition = $form;
+		return $form;
+	}
+
+	/**
+	 * search_form()
+	*/
+	public static function search_form($factory = 'wkflwadmin', $obj = null, $title = '')
+	{
+		$form = parent::search_form($factory, $obj, 'ワークフロー一覧');
+
+		$form
+			->add_after('all', '検索', array('type' => 'text','value' => \Input::get('all')), array(), 'opener');
+
 		return $form;
 	}
 
@@ -72,6 +73,7 @@ class Model_Wrkflwadmin extends \Model_Base
 
 		// allowers
 		$n = 1;
+		$retvals['allowers'] = array();
 		foreach($steps as $k => $step)
 		{
 			$retvals['allowers'][$n] = $step;
@@ -206,7 +208,6 @@ class Model_Wrkflwadmin extends \Model_Base
 				'condition'   => $arg['condition'],
 				'seq'         => $order,
 				'action'      => $arg['action'],
-				'is_writer'   => false,
 			);
 
 			if ($step_id)

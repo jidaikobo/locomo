@@ -63,10 +63,12 @@ class Actionset
 		$actionset = $finder->locate('actionset', $name);
 		if ( ! $actionset) return;
 
-
 		// actionset class
 		$class = str_replace('Controller_', 'Actionset_', $controller);
 		if ( ! class_exists($class)) return;
+
+		// cli cannot use Request
+		if ( ! \Request::main()) return false;
 
 		// primary key
 		$obj = is_object($obj) ? $obj : (object) array() ;
@@ -160,9 +162,10 @@ class Actionset
 
 		list($controller, $action) = explode('/', $locomo_path);
 
-		$urls = array();
 		// check $exceptions
-		if (\Request::main()->controller == $controller && in_array(\Request::main()->action, $exceptions))
+		$urls = array();
+		$current_controller = \Inflector::add_head_backslash(\Request::main()->controller);
+		if ($current_controller == $controller && in_array(\Request::main()->action, $exceptions))
 		{
 			return $urls;
 		}

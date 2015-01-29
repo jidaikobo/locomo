@@ -454,8 +454,10 @@ class Model_Base extends \Orm\Model_Soft
 			$options['related'][] = $ref;
 		}
  */
+		$objs = static::find('all', $options);
+		\Pagination::$refined_items = count($objs);
 
-		return static::find('all', $options);
+		return $objs;
 	}
 
 
@@ -517,7 +519,9 @@ class Model_Base extends \Orm\Model_Soft
 
 
 
-
+	/**
+	 * form_definition()
+	 */
 	public static function form_definition($factory = 'form', $obj = null) {
 
 		$form = \Fieldset::forge($factory);
@@ -529,6 +533,67 @@ class Model_Base extends \Orm\Model_Soft
 		return $form;
 	}
 
+	/**
+	 * search_form()
+	 */
+	public static function search_form($factory = 'form', $obj = null, $title = '項目一覧')
+	{
+		// forge
+		$config = \Config::load('form_search');
+		$form = \Fieldset::forge('form', $config);
+
+		// add opener before unrefine
+		$sortinfo     = \Pagination::sort_info(get_called_class());
+		$total        = \Pagination::get("total_items");
+		$current_page = \Pagination::get("current_page");
+		$per_page     = \Pagination::get("per_page");
+		$refined      = \Pagination::$refined_items;
+		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
+		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;
+
+		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$from}から{$to}件 / 全{$total}件</span>";
+		$sortinfo = $total ? $sortinfo_txt : '項目がありません' ;
+
+		$form
+			->add('opener','',array('type' => 'text'))
+			->set_template('
+				<h1 id="page_title" class="clearfix">
+					'.$title.'
+					<span class="sort_info">'.$sortinfo.'</span>
+					<span class="icon fr">
+						<a href="javascript: void(0);" class="toggle_item disclosure">
+							<img src="'.\Uri::base().'sys/fetch_view/img/system/mark_search.png" alt="">
+							<span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">検索</span>
+							<span class="skip"> エンターで検索条件を開きます</span>
+						</a>
+					</span>
+				</h1>
+				<div class="hidden_item">
+				<section class="form_group">
+					<h1 class="skip">検索</h1>
+					<form class="search">
+			');
+
+
+		// submit	
+		$form
+			->add_after('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'), array(), 'opener')
+			->set_template('
+				<div class="submit_button">'.
+				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).'
+				{field}
+				</div><!--/.submit_button-->
+				</form>
+			</section><!-- /.form_group -->
+			</div><!-- /.hidden_item -->'
+			);
+
+		return $form;
+	}
+
+	/**
+	 * plain_definition()
+	 */
 	public static function plain_definition($factory = 'plain', $obj = null) {
 		return static::form_definition($factory, $obj);
 	}
