@@ -33,6 +33,22 @@
 			<th>操作</th>
 		</tr>
 	</thead>
+	<tfoot class="thead">
+		<tr>
+			<!--
+			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
+			-->
+			<th class="minimum"><?php echo \Pagination::sort('id', 'ID', false);?></th>
+			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名', false);?></th>
+			<th style="width:8em;"><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
+			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
+			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
+			<?php if (\Request::main()->action == 'index_deleted'): ?>
+				<th>削除された日</th>
+			<?php endif; ?>
+			<th>操作</th>
+		</tr>
+	</tfoot>
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
