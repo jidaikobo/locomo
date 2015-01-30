@@ -770,6 +770,12 @@ textarea {
 	margin-left: .33em;
 
 }
+select {
+	height: 1.75em;
+}
+select[size]{
+	height: auto;
+}
 div.submit_button {
 	width: 100%;
 	text-align: right;
@@ -834,16 +840,33 @@ span.icon img {
 	margin-top: -.65em;
 	padding-left: 0;
 }
+form.search {
+	margin-left: -1em;
+}
 form.search .input_group {
 	display: inline-block;
-	margin-left: 1em;
-	vertical-align: top;
-	outline: 1px dotted red;
 }
-.hidden_item form h2 {
-	display: inline;
+form.search > .input_group {
+	display: block;
+	margin-left: 1em;
+	margin-bottom: .25em;
+}
+form.search .input_group *{
+	vertical-align: top;
+}
+form.search h2 {
+	display: inline-block;
+	float: left;
+	height: 1.75em;
+	width: 8em;
+	margin-top: 0;
+	padding: 0;
+	text-align: right;
 	border: none;
 	box-shadow: none;
+}
+form.search select {
+	max-width: 10em;
 }
 a.show_item:hover {
 	text-decoration: underline;
@@ -1365,6 +1388,11 @@ li.show_if_smalldisplay {
 		color: #333;
 		text-shadow: none;
 		line-height: 1;
+	}
+	form.search h2 {
+		display: block;
+		float: none;
+		text-align: left;
 	}
 
 }

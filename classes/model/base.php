@@ -546,8 +546,8 @@ class Model_Base extends \Orm\Model_Soft
 		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
 		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;
 
-		$pagenate_txt = ($per_page < $total) ? $from.'から'.$to.'件 / ' : '';
-		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$pagenate_txt}全{$total}件</span>";
+		$pagenate_txt = ($per_page < $total) ? number_format($from).'から'.number_format($to).'件 / ' : '';
+		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$pagenate_txt}全".number_format($total)."件</span>";
 		$sortinfo = $total ? $sortinfo_txt : '項目がありません' ;
 
 		$form
@@ -571,11 +571,20 @@ class Model_Base extends \Orm\Model_Soft
 			');
 
 		// submit
+		$options = array(
+			10 => 10,
+			25 => 25,
+			50 => 50,
+			100 => 100,
+			250 => 250,
+		);
+		
 		$form
 			->add_after('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'), array(), 'opener')
 			->set_template('
 				<div class="submit_button">'.
-				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).'
+				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).
+				\Form::select('limit', \Input::get('limit', 25), $options, $attributes = array('title'=>'表示件数')).'件&nbsp;
 				{field}
 				</div><!--/.submit_button-->
 				</form>
