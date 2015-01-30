@@ -250,7 +250,10 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 	 * alike a build method
 	 * input タグ を出力しない
 	 */
-	public function build_plain() {
+	public function build_plain($show_empty_value = true) {
+		if (!$show_empty_value and !$this->value) {
+			return '';
+		}
 		$form = $this->fieldset()->form();
 
 		// Add IDs when auto-id is on
@@ -363,7 +366,6 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		}
 
 		$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', null), 'class' => $form->get_config('label_class', null))) : '';
-		// var_dump($label);
 		return $this->template_plain($build_field, $label);
 
 
@@ -437,9 +439,6 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		$form = $this->fieldset()->form();
 
 		$required_mark = '';
-		if ($label) {
-		   	$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', null), 'class' => $form->get_config('label_class', null))) : '';
-		}
 		$error_template = '';
 		$error_msg = '';
 		$error_class = '';

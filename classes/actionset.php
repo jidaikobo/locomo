@@ -17,7 +17,7 @@ class Actionset
 		$controller = \Inflector::add_head_backslash($controller);
 // do not turn below on. add_actionset() generate static member variable first
 //		if ( ! empty(static::$actions[$controller])) return static::$actions[$controller];
-		return static::set_actionset($controller, $obj) ? static::$actions[$controller] : $default;
+	return static::set_actionset($controller, $obj) ? static::$actions[$controller] : $default;
 	}
 
 	/**
@@ -182,10 +182,12 @@ class Actionset
 			$url  = \Inflector::ctrl_to_dir(\Arr::get($v, 0, false));
 			$str  = \Arr::get($v, 1, false);
 			$attr = \Arr::get($v, 2, array());
-			if (! $url || ! $str || in_array($url, \Arr::get($exists, $realm, array()))) continue;
-			$exists[$realm][] = $url;
+//			if (! $url || ! $str || in_array($url, \Arr::get($exists, $realm, array()))) continue;
+//			$exists[$realm][] = $url;
+			if (! $url || ! $str) continue;
 			$urls[] = \Html::anchor($url, $str, $attr);
 		}
+		$urls = array_unique($urls);
 
 		return $urls;
 	}

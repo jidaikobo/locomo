@@ -62,7 +62,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		$pdf = $this->pdf;
 		$pdf->SetMargins(0, 0, 0);
 		if (\Input::get('test')) {
-			$pdf->setSourceFile(APPPATH.'locomo/assets/pdftemplate/output/addressee1.pdf');
+			$pdf->setSourceFile(APPPATH.'locomo/assets/pdftemplate/output/' . \Input::get('test'));
 			$t_page = $pdf->importPage(1);
 		}
 
@@ -104,6 +104,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 
 			// field name
 			$name = '';
+
 			if (is_array($field_format['name'])) {
 				$sp_flg = false;
 				foreach ($field_format['name'] as $key => $val) {
@@ -114,7 +115,8 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			} elseif ( is_string($field_format['name']) ) {
 				$name = $customer->{$field_format['name']};
 			}
-			$name .= isset($customer->title) ? "　" . $customer->title : "　様";
+
+			$name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
 
 			// output customer id
 			$fs = min($width / 24 / MM_PER_POINT, 11);
@@ -244,8 +246,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 				$name = $customer->{$field_format['name']};
 			}
 
-
-			$name .= isset($customer->title) ? "　" . $customer->title : "　様";
+			$name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
 
 
 			// output zip & address

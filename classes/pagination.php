@@ -16,6 +16,8 @@ class Pagination extends \Fuel\Core\Pagination
 	// 絞り込まれたページあたりの項目数
 	public static $refined_items = 0;
 
+	protected static $_sort_info_label = array();
+
 	/*
 	 * @param $field フィールド名 もしくは リレーション .フィールド名( alias.field_name )
 	 * @param $reset ページネーションを 1ページ目に戻すかどうか
@@ -64,33 +66,35 @@ class Pagination extends \Fuel\Core\Pagination
 				unset($input_get[$p_seg]);
 			}
 		}
-			$url = \Uri::create(\Uri::current(), array(), $input_get);
-			return \Html::anchor($url, $label ?: $field, array('class' => $class));
+		$url = \Uri::create(\Uri::current(), array(), $input_get);
+		return \Html::anchor($url, $label ?: $field, array('class' => $class));
 	}
 
 
-	public static function sort_info($model) {
+	public function render_sort_info($model) {
 		if ( is_null( \Input::get('orders')) ) {
 			return null;
 		}
 
 		$field = array_keys( \Input::get('orders'))[0];
 		$sort = \Input::get('orders')[$field];
+		if (isset(static::$_sort_info_label[$field])) $label = static::$_sort_info_label[$field];
 
 		if (($dot_pos = strpos($field, '.')) > 0) {
+			// var_dump($model::relations( substr($field, 0, $dot_pos) )->model_to); die();
 			$model = $model::relations( substr($field, 0, $dot_pos) )->model_to;
 			$field = substr($field, $dot_pos+1);
 		}
-		// if ($dot_pos = strpos($field, '.') > 0) var_dump($model::relations( substr($field, $dot_pos) )->model_to);
-		if ($model::primary_key()[0] == $field) {
-			$label = 'ID';
-		} else {
 
-		//	var_dump($model::properties());
-			if (isset($model::properties()[$field]['label'])) {
-				$label = $model::properties()[$field]['label'];
+		if (!isset($label)) {
+			if ($model::primary_key()[0] == $field) {
+				$label = 'ID';
 			} else {
-				$label = $field;
+				if (isset($model::properties()[$field]['label'])) {
+					$label = $model::properties()[$field]['label'];
+				} else {
+					$label = $field;
+				}
 			}
 		}
 
@@ -102,12 +106,25 @@ class Pagination extends \Fuel\Core\Pagination
 
 	}
 
+
+	public function __set($name, $value = null) {
+		if ($name == 'sort_info_label') {
+			is_array($value) and static::$_sort_info_label = $value;
+		} else {
+			parent::__set($name, $value);
+		}
+	}
+
 	public static function __callStatic($name, $arguments)
 	{
 		if ($name == 'create_nav') {
 			if ($instance = static::instance() and method_exists($instance, 'render_nav'))
 			{
 				return call_fuel_func_array(array($instance, 'render_nav'), $arguments);
+			}
+		} elseif ($name == 'sort_info') {
+			if ($instance = static::instance() and method_exists($instance, 'render_sort_info')) {
+				return call_fuel_func_array(array($instance, 'render_sort_info'), $arguments);
 			}
 		}
 
@@ -116,7 +133,6 @@ class Pagination extends \Fuel\Core\Pagination
 
 	public function render_nav($raw = false)
 	{
-		var_dump($this->current_page);
 		// no links if we only have one page
 		if ($this->config['total_pages'] == 1)
 		{
@@ -137,9 +153,6 @@ class Pagination extends \Fuel\Core\Pagination
 		} else {
 			// $wrap_start = '<div class="pagination_wrap">';
 		}
-
-		var_dump($this->first());
-
 
 		$html = $wrap_start;
 		$html .= str_replace(

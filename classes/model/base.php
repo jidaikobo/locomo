@@ -400,14 +400,15 @@ class Model_Base extends \Orm\Model_Soft
 
 				$orders = array();
 				foreach (\Input::get('orders') as $k => $v) {
-					if (($dot_pos = strpos($k, '.')) > 0) {
+					if (($dot_pos = strpos($k, '.')) > 0) { // リレーションを見る
 						$model = static::relations( substr($k, 0, $dot_pos) )->model_to;
 						$relate = substr($k, 0, $dot_pos);
 						$k = substr($k, $dot_pos+1);
 						if ( ! in_array($k, array_keys($model::properties()))) continue;
 						$options['related'][$relate]['where'][] = array('id', '!=', 0);
 						$options['related'][$relate]['order_by'][$k] = $v;
-						// var_dump($options); die();
+						// 既存の conditions の order_by を キャンセル
+						$options['order_by'] = $orders;
 					} else {
 						if ( ! in_array($k, array_keys(static::properties()))) continue;
 						$orders[$k] = $v;
@@ -437,11 +438,14 @@ class Model_Base extends \Orm\Model_Soft
 					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
 				}
 			}
+
 		}
+
 		$count_all = static::count();
 		$count = static::count($options);
 
 		\Pagination::set('total_items', $count);
+
 
 		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
 		$options['rows_limit'] = \Pagination::get('per_page');
@@ -479,6 +483,9 @@ class Model_Base extends \Orm\Model_Soft
 
 			// if (array_key_exists($kk, $properties) and isset($properties[$kk]['label'])) var_dump($properties[$kk]['label']); die();
 			array_key_exists($kk, $properties) and isset($properties[$kk]['label']) ? $key = $properties[$kk]['label'] : $key = $kk;
+			if(isset($properties[$kk]['form']['options'][$vv])) {
+				$vv = $properties[$kk]['form']['options'][$vv];
+			}
 			$r_arr[$key] = $vv;
 		}
 
@@ -491,7 +498,10 @@ class Model_Base extends \Orm\Model_Soft
 						$r_arr[$rel_name] = $dr_val->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
 				   }
 				} else {
-					$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
+					//$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
+
+					// var_dump($dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
+					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
 				}
 			}
 		}

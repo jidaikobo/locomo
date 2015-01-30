@@ -23,7 +23,7 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($controller) || is_null($controller_id)) return false;
 
-		//コントローラとidから最新のlcm_wrkflw_logs取得
+		// コントローラとidから最新のlcm_wrkflw_logs取得
 		$q = \DB::select('id','workflow_id','current_step');
 		$q->from('lcm_wrkflw_logs');
 		$q->where('controller', $controller);
@@ -31,7 +31,7 @@ trait Model_Traits_Wrkflw
 		$q->order_by('created_at', 'DESC');
 		$log = $q->execute()->current();
 
-		//logが存在していない場合は経路設定前コンテンツなので、-2を返す
+		// logが存在していない場合は経路設定前コンテンツなので、-2を返す
 		return ($log) ? intval($log['current_step']) : -2;
 	}
 
@@ -42,7 +42,7 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($workflow_id) || is_null($step)) return false;
 
-		//workflow_idとstepからstep_idを取得
+		// workflow_idとstepからstep_idを取得
 		$q = \DB::select('id');
 		$q->from('lcm_wrkflw_steps');
 		$q->where('workflow_id', $workflow_id);
@@ -69,7 +69,7 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($controller) || is_null($controller_id)) return false;
 
-		//ワークフローidを得る
+		// ワークフローidを得る
 		$q = \DB::select('workflow_id');
 		$q->from('lcm_wrkflw_logs');
 		$q->where('controller', $controller);
@@ -86,7 +86,7 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 
-		//ログidを得る
+		// ログidを得る
 		$q = \DB::select('id');
 		$q->from('lcm_wrkflw_logs');
 		$q->where('controller', $controller);
@@ -103,7 +103,7 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($workflow_id)) return false;
 
-		//ワークフローの全体のステップを取得
+		// ワークフローの全体のステップを取得
 		$q = \DB::select(\DB::expr('count(id)'));
 		$q->from('lcm_wrkflw_steps');
 		$q->where('workflow_id', $workflow_id);
@@ -132,7 +132,7 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($workflow_id)) \Response::redirect(\Uri::base());
 
-		//このルートに存在するすべてのユーザの取得
+		// このルートに存在するすべてのユーザの取得
 		$q = \DB::select('lcm_wrkflw_allowers.user_id');
 		$q->from('lcm_wrkflw_allowers');
 		$q->join('lcm_wrkflw_steps');
@@ -162,12 +162,12 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($controller) || is_null($controller_id) || is_null($step)) \Response::redirect(\Uri::base());
 
-		//差戻しも含めて、これまでのすべての経路情報を取得する
+		// 差戻しも含めて、これまでのすべての経路情報を取得する
 		$q = \DB::select('*');
 		$q->from('lcm_wrkflw_logs');
 		$q->where('controller', $controller);
 		$q->where('controller_id', $controller_id);
-		$q->where('current_step', "<>", -1);//経路設定をした人は、承認申請する人と同じなので、除外する
+		$q->where('current_step', "<>", -1);// 経路設定をした人は、承認申請する人と同じなので、除外する
 		$q->order_by('created_at', 'ASC');
 		$members = $q->as_object()->execute()->as_array();
 
@@ -271,11 +271,14 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($controller) || is_null($controller_id) ) \Response::redirect(\Uri::base());
 
-		//workflow_idと現在のステップを取得
+		// add_head_backslash
+		$controller = \Inflector::add_head_backslash($controller);
+
+		// workflow_idと現在のステップを取得
 		$workflow_id = $workflow_id ? $workflow_id : self::get_route($controller, $controller_id);
 		$current_step = self::get_current_step($controller, $controller_id);
 
-		//current stepの変更
+		// current stepの変更
 		if ($status == 'init'):
 			$current_step = -1;
 		elseif ($status == 'approve' || $status == 'finish'):
@@ -286,7 +289,7 @@ trait Model_Traits_Wrkflw
 			$current_step = $target_step ? $target_step : $current_step - 1;
 		endif;
 
-		//値の準備
+		// 値の準備
 		$set = array(
 			'workflow_id'   => $workflow_id,
 			'controller'    => $controller,
@@ -298,34 +301,34 @@ trait Model_Traits_Wrkflw
 			'did_user_id'   => \Auth::get('id'),
 		);
 
-		//ログのアップデート
+		// ログのアップデート
 		$q = \DB::insert();
 		$q->table('lcm_wrkflw_logs');
 		$q->set($set);
 		$q->execute();
 
-		//ログのidを取得
+		// ログのidを取得
 		$q = \DB::select(\DB::Expr('last_insert_id()'));
 		$q->from('lcm_wrkflw_logs');
 		$last_insert_id = $q->execute()->current();
 		$log_id = $last_insert_id['last_insert_id()'];
 
-		//「次のユーザたち」をいったん削除
+		// 「次のユーザたち」をいったん削除
 		$q = \DB::delete();
 		$q->table('lcm_wrkflw_current_users');
 		$q->where('controller', $controller);
 		$q->where('controller_id', $controller_id);
 		$q->execute();
 
-		//最後の承認か、ルート設定直後だったら、「次のユーザたち」を削除後return
+		// 最後の承認か、ルート設定直後だったら、「次のユーザたち」を削除後return
 		if ($status == 'finish' || $status == 'init'):
 			return;
 		endif;
 
-		//現在のステップのidを取得
+		// 現在のステップのidを取得
 		$step_id = self::get_current_step_id($workflow_id, $current_step);
 
-		//次のステップのユーザたちを取得
+		// 次のステップのユーザたちを取得
 		$members = self::get_members($step_id);
 
 		foreach($members as $user_id):
@@ -359,40 +362,40 @@ trait Model_Traits_Wrkflw
 	 */
 	public static function auth_workflow($module = null, $controller = null, $options = array(), $mode = null)
 	{
-		//workflow_statusカラムがなければ、対象にしない
+		// workflow_statusカラムがなければ、対象にしない
 		$column = isset(static::$_workflow_field_name) ?
 			static::$_workflow_field_name :
 			static::get_default_field_name('workflow');
 		if ( ! isset(static::properties()[$column])) return $options;
 
-		//編集
+		// 編集
 		if ($mode == 'edit') {
-			//作成権限があるユーザだったらin_progress以外を編集できる
+			// 作成権限があるユーザだったらin_progress以外を編集できる
 			if (\Auth::instance()->has_access($controller.'/create')):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
 			endif;
 		}
 
-		//承認のための閲覧
+		// 承認のための閲覧
 		if (\Auth::instance()->has_access($controller.'/approve')):
-			//承認ユーザはin_progressとfinishを閲覧できる
+			// 承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
 			return $options;
 		endif;
 
-		//作成ユーザはどんな条件でも閲覧できる
+		// 作成ユーザはどんな条件でも閲覧できる
 		if (\Auth::instance()->has_access($controller.'/create')):
 			return $options;
 		endif;
 
-		//閲覧ユーザはfinishを閲覧できる
+		// 閲覧ユーザはfinishを閲覧できる
 		if (\Auth::instance()->has_access($controller.'/view')):
 			$options['where'][] = array(array($column, '=', 'finish'));
 			return $options;
 		endif;
 
-		//一般ユーザは閲覧できない
+		// 一般ユーザは閲覧できない
 		$pk = static::get_primary_keys('first');
 		$options['where'][] = array(array($pk, '=', 'null'));
 		return $options;

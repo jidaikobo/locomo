@@ -38,7 +38,6 @@ trait Controller_Traits_Wrkflw
 		$view->set('subject_field', $model::get_default_field_name('subject'));
 		$view->set('related', $related);
 		$view->set('not_related', $not_related);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -91,7 +90,6 @@ trait Controller_Traits_Wrkflw
 		$view->set('items', $items);
 		$view->set('route_id', $route_id);
 		$view->set('item_id', $id);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -102,13 +100,14 @@ trait Controller_Traits_Wrkflw
 	{
 		is_null($id) and \Response::redirect(\Uri::base());
 
-		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$controller = get_called_class();
+		$model_name = str_replace('Controller', 'Model', $controller);
 		$model = $model_name::forge();
 
 		//postがあったら申請処理をして、編集画面に戻る
 		if (\Input::method() == 'POST'):
 			$comment = \Input::post('comment');
-			$model::add_log('approve', null, $this->request->controller, $id, $comment);
+			$model::add_log('approve', null, $controller, $id, $comment);
 			\Session::set_flash('success', '申請しました');
 
 			//項目のworkflow_statusをin_progressにする（編集できないようにする）
@@ -116,24 +115,23 @@ trait Controller_Traits_Wrkflw
 			$obj = $target_model::find($id);
 			$obj->workflow_status = 'in_progress';
 			$obj->save();
-
-			return \Response::redirect(\Uri::create($this->request->module.'/view/'.$id));
+			$redirect = \Inflector::ctrl_to_dir($controller);
+			return \Response::redirect(\Uri::create($redirect.'/view/'.$id));
 		endif;
 
 		//コメント入力viewを表示
 		$view = \View::forge('wrkflw/comment');
 
 		//add_actionset - back to edit
-		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
+		$ctrl_url = \Inflector::ctrl_to_dir($controller);
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'edit/'.$id,'戻る');
 		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
+		\Actionset::add_actionset($controller, 'ctrl', $action);
 
 		//assign
 		$view->set_global('title', '承認申請');
 		$view->set('button', '申請する');
 		$view->set('id', $id);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -183,7 +181,6 @@ trait Controller_Traits_Wrkflw
 		$view->set_global('title', '承認');
 		$view->set('button', '承認する');
 		$view->set('id', $id);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -243,7 +240,6 @@ trait Controller_Traits_Wrkflw
 		$view->set('button',       '差し戻す');
 		$view->set('target_steps', $target_steps);
 		$view->set('id',           $id);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -280,7 +276,6 @@ trait Controller_Traits_Wrkflw
 		$view->set_global('title', '却下の確認');
 		$view->set('button', '却下する');
 		$view->set('id', $id);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 }
