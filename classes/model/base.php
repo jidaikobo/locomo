@@ -558,7 +558,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		$pagenate_txt = ($per_page < $total) ? number_format($from).'から'.number_format($to).'件 / ' : '';
 		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$pagenate_txt}全".number_format($total)."件</span>";
-		$sortinfo = $total ? $sortinfo_txt : '項目がありません' ;
+		$sortinfo = $total ? $sortinfo_txt : '項目が存在しません' ;
 
 		$form
 			->add('opener','',array('type' => 'text'))
@@ -587,6 +587,7 @@ class Model_Base extends \Orm\Model_Soft
 			50 => 50,
 			100 => 100,
 			250 => 250,
+			24 => '24(タックシール一枚分)',
 		);
 		
 		$form
@@ -594,7 +595,7 @@ class Model_Base extends \Orm\Model_Soft
 			->set_template('
 				<div class="submit_button">'.
 				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).
-				\Form::select('limit', \Input::get('limit', 25), $options, $attributes = array('title'=>'表示件数')).'件&nbsp;
+				\Form::select('limit', \Input::get('limit', 25), $options, $attributes = array('class'=>'w4em', 'title'=>'表示件数')).'件&nbsp;
 				{field}
 				</div><!--/.submit_button-->
 				</form>

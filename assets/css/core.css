@@ -26,13 +26,12 @@ body.default_logo.lcm_action_login .container{
 .default_logo.lcm_action_login .site_title {
     display: none;
 }
-
 body.lcm_action_login {
 	background-color: #dde7ee;
 }
 .lcm_action_login .container {
 	min-height: inherit;
-	width: 23em;
+	width: 23.5em;
 	min-width: 23em;
 	height: 23.75em !important;
 	padding: 0 1.5em;
@@ -431,7 +430,6 @@ ul.horizontal_list {
 }
 */
 /* dashboard */
-/*あとでview側直書きの記述を削除*/
 .lcm_action_dashboard .contents {
 	margin-left: 0;
 	margin-right: -0.95%;
@@ -891,7 +889,9 @@ td.minimum {
 }
 /* tbl datatable */
 *>table.datatable thead th,
+*>table.datatable .thead th,
 *>table.datatable thead td,
+*>table.datatable .thead td,
 *>table.datatable td,
 .datatable td {
 	padding:.25em .5em;
@@ -1033,6 +1033,27 @@ h1#page_title {
 	margin: 1em 0 .25em;
 }
 
+.w1em {width: 1em;}
+.w2em {width: 2em;}
+.w3em {width: 3em;}
+.w4em {width: 4em;}
+.w5em {width: 5em;}
+.w8em {width: 8em;}
+.w10em {width: 10em;}
+.w15em {width: 15em;}
+.w20em {width: 20em;}
+.w25em {width: 25em;}
+
+.w10 {width: 10%;}
+.w20 {width: 20%;}
+.w25 {width: 25%;}
+.w30 {width: 30%;}
+.w33 {width: 33%;}
+.w48 {width: 48%;}
+.w50, .wharf {width: 50%;}
+.w75 {width: 75%;}
+.w98 {width: 98%;}
+.w100, .wfull {width: 100%;}
 /*=== tbl_scrollable ===*/
 /*.nocelspan */
 .tbl_scrollable.nocelspan thead tr {
