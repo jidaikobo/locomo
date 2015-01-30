@@ -360,7 +360,7 @@ trait Model_Traits_Wrkflw
 	/*
 	 * auth_workflow()
 	 */
-	public static function auth_workflow($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_workflow($controller = null, $options = array(), $mode = null)
 	{
 		// workflow_statusカラムがなければ、対象にしない
 		$column = isset(static::$_workflow_field_name) ?

@@ -411,7 +411,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		\Profiler::mark('Locomo\\Controller_Core::base_assign() - done');
 	}
 
-
 	/**
 	 * set_object
 	 */

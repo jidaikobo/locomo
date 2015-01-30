@@ -705,6 +705,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		$obj = parent::edit($id);
 
 		// error
+		\Session::delete_flash('error'); // delete \Upload::save() generate message
 		if($errors) \Session::set_flash('error', $errors);
 
 		$this->template->set_global('title', 'ファイルアップロード');
