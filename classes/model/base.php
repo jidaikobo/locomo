@@ -463,37 +463,76 @@ class Model_Base extends \Orm\Model_Soft
 	 * @param $glue       string length 1~2
 	 * @param $paren
 	 */
-	public function to_csv($options = array(), $rel_names = array(), $glue = ',', $paren = '()', $glue_key_val = ':', $implode = false) {
+	public function to_csv(
+		$options = array(),
+		$rel_names = array(),
+		$field_joins = array(),
+		$glue = ',',
+		$paren = '()',
+		$glue_key_val = ':',
+		$implode = false
+	) {
 
 		$options = array_merge(static::condition(), $options);
 		$properties = static::properties();
 
-		$r_arr = array(); // return
+		$o_arr = array(); // return
 
 		foreach($this->_data as $kk => $vv) {
 			if ($options['select'] and !in_array($kk, $options['select'])) continue;
 
 			// if (array_key_exists($kk, $properties) and isset($properties[$kk]['label'])) var_dump($properties[$kk]['label']); die();
-			array_key_exists($kk, $properties) and isset($properties[$kk]['label']) ? $key = $properties[$kk]['label'] : $key = $kk;
 			if(isset($properties[$kk]['form']['options'][$vv])) {
 				$vv = $properties[$kk]['form']['options'][$vv];
 			}
-			$r_arr[$key] = $vv;
+			$o_arr[$kk] = $vv;
+		}
+
+		$r_arr = isset($o_arr['id']) ? array('id' => $o_arr['id'],) : array();;
+		$skip_keys = array();
+		// var_dump($field_joins); die();
+		foreach ($field_joins as $k => $v) {
+			foreach ($v as $vv) {
+				$skip_keys[] = $vv;
+			}
+		}
+
+
+
+		// 並べ替えと join
+		foreach ($o_arr as $k => $v) {
+			if ($k == 'id') continue;
+			if (in_array($k, $skip_keys)) continue;
+			array_key_exists($k, $properties) and isset($properties[$k]['label']) ? $key = $properties[$k]['label'] : $key = $k;
+			if(isset($properties[$k]['form']['options'][$v])) {
+				$v .= $properties[$k]['form']['options'][$v];
+			}
+			if (array_key_exists($k, $field_joins)) {
+				foreach ($field_joins[$k] as $vv){
+					if (array_key_exists($vv, $properties)) {
+						$v .= $o_arr[$vv];
+					} else {
+						$v .= $vv;
+					}
+				}
+			}
+			$r_arr[$key] = $v;
 		}
 
 		if ($this->_data_relations) {
 			foreach ($this->_data_relations as $rel_name => $dr) {
 				$rel_options = isset($options['related'][$rel_name]) ? $options['related'][$rel_name] : array();
+				$rel_field_joins = (array_key_exists($rel_name, $field_joins)) ? $field_joins[$rel_name] : array();;
 				if (array_key_exists($rel_name, $rel_names)) $rel_name = $rel_names[$rel_name];
 				if (is_array($dr)) {
 				   foreach($dr as $dr_val) {
-						$r_arr[$rel_name] = $dr_val->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
+						$r_arr[$rel_name] = $dr_val->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, true);
 				   }
 				} else {
 					//$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
 
 					// var_dump($dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
-					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
+					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, false));
 				}
 			}
 		}
