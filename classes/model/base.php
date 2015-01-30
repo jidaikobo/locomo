@@ -22,34 +22,26 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_cache_form_definition;
 
-
 	/*
 	 * default authorize options
 	 */
-	protected static $_authorize_methods = array(
+	public static $_authorize_methods = array(
 		'auth_expired',
 		'auth_created',
 		'auth_deleted',
 		'auth_visibility',
 	);
 
-	// todo 不要
-	/*
-	 * _option_options - see sample at \User\Model_Usrgrp
-	 */
-	protected static $_option_options = array();
-
-	// todo 不要
+	// todo 不要 - workflow など add_authorize_methods() をつかうコントローラがあるので必要。
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
 	{
-		//depend_modules
 		parent::__construct($data, $new, $view, $cache);
 
-		//add_authorize_methods
+		// add_authorize_methods
 		static::add_authorize_methods();
 	}
 
-	// todo 不要
+	// todo 不要 - absdtract的にあってほしい。
 	/**
 	 * add_authorize_methods()
 	 */
@@ -62,7 +54,7 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
-	 * get_default_field_name($str)
+	 * get_default_field_name($str) - むしろこれが不要な気がする。
 	 */
 	public static function get_default_field_name($str = null)
 	{
@@ -124,7 +116,7 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
-	 * get_original_values()
+	 * get_original_values() - これもたぶん不要。
 	 */
 	public function get_original_values()
 	{
@@ -137,19 +129,19 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function authorized_option($options = array(), $mode = null)
 	{
-		$module     = \Request::main()->module;
+		// $controller
 		$controller = \Request::main()->controller;
 
-		//add_authorize_methods
+		// add_authorize_methods
 		static::add_authorize_methods();
 
-		//view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
+		// view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
 		if (\Auth::instance()->has_access($controller.DS.'view_anyway')) {
 			static::disable_filter();
 		} else {
-			//モデルが持っている判定材料を、適宜$optionsに足す。
+			// モデルが持っている判定材料を、適宜$optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method):
-				$options = static::$authorize_method($module, $controller, $options, $mode);
+				$options = static::$authorize_method($controller, $options, $mode);
 			endforeach;
 		}
 		return $options;
@@ -158,7 +150,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_expired()
 	 */
-	public static function auth_expired($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_expired($controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_expired_field_name) ?
 			static::$_expired_field_name :
@@ -177,7 +169,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_created()
 	 */
-	public static function auth_created($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_created($controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_created_field_name) ?
 			static::$_created_field_name :
@@ -195,7 +187,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_deleted()
 	 */
-	public static function auth_deleted($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_deleted($controller = null, $options = array(), $mode = null)
 	{
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
@@ -211,7 +203,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_visibility()
 	 */
-	public static function auth_visibility($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_visibility($controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_visibility_field_name) ?
 			static::$_visibility_field_name :
