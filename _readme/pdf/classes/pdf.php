@@ -15,8 +15,8 @@
 
 namespace Pdf;
 
-		define('MY_ENCODING', 'UTF-8');
-		define('MM_PER_POINT', (25.4 / 72.0));
+define('MY_ENCODING', 'UTF-8');
+define('MM_PER_POINT', (25.4 / 72.0));
 
 class Pdf {
 	
@@ -40,8 +40,7 @@ class Pdf {
 	protected function __construct($driver = null)
 	{
 		// Load Config
-		\Config::load('pdf', true);
-		
+		\Config::load(PKGPATH . 'pdf/config/pdf.php', 'pdf');
 		// Default Driver
 		if ($driver == null)
 		{
@@ -475,4 +474,8 @@ class Pdf {
 		return $text;
 	}
 
+
+
+
 }
+
