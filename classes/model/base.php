@@ -571,10 +571,35 @@ class Model_Base extends \Orm\Model_Soft
 	/**
 	 * search_form_base()
 	 */
-	public static function search_form_base($title = '項目一覧')
+	public static function search_form_base($title = '')
 	{
 		// forge
 		$form = \Fieldset::forge('search_form_base');
+
+		// modify title
+/*		if (property_exists(\Request::active()->controller, 'locomo'))
+		{
+			$controller = \Request::active()->controller;
+			$title = \Arr::get($controller::$locomo, 'nicename', '項目');
+		}
+*/
+		$titles = array(
+			'index_deleted'   => '削除済み項目一覧',
+			'index_yet'       => '予約項目一覧',
+			'index_expired'   => '期限切れ項目一覧',
+			'index_invisible' => '不可視項目一覧',
+			'index'           => '公開一覧',
+			'index_all'       => 'すべて',
+		);
+		
+		$title .= $title=='' ? '' : 'の';
+		
+		if (array_key_exists(\Request::active()->action, $titles))
+		{
+			$title.= $titles[\Request::active()->action];
+		} else {
+			$title .= '項目一覧'; 
+		}
 
 		// add opener before unrefine
 		$sortinfo     = \Pagination::sort_info(get_called_class());
@@ -582,7 +607,6 @@ class Model_Base extends \Orm\Model_Soft
 		$current_page = \Pagination::get("current_page");
 		$per_page     = \Pagination::get("per_page");
 		$refined      = \Pagination::$refined_items;
-		
 
 		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
 		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;

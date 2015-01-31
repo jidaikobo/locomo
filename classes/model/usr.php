@@ -291,7 +291,7 @@ class Model_Usr extends Model_Base
 			');
 
 		// wrap
-		$parent = parent::search_form_base('ユーザ一覧');
+		$parent = parent::search_form_base('ユーザ');
 		$parent->add_after($form, 'customer', array(), array(), 'opener');
 
 		return $parent;
