@@ -131,6 +131,17 @@ class Inflector extends \Fuel\Core\Inflector
 	}
 
 	/**
+	 * maybe_ctrl_to_model()
+	 * @param string [\MODNAME\]Controller_CTRL
+	 * @return string [\MODNAME\]Model_CTRL
+	 */
+	public static function maybe_ctrl_to_model($ctrl)
+	{
+		return str_replace('Controller', 'Model', $ctrl);
+	}
+
+
+	/**
 	 * get_root_relative_path()
 	 * @param string http://exmple.com/root_dir/ctrl/action
 	 * @return string /root_dir/ctrl/action
