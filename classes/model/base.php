@@ -136,7 +136,7 @@ class Model_Base extends \Orm\Model_Soft
 		static::add_authorize_methods();
 
 		// view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (\Auth::instance()->has_access($controller.DS.'view_anyway')) {
+		if (\Auth::has_access($controller.DS.'view_anyway')) {
 			static::disable_filter();
 		} else {
 			// モデルが持っている判定材料を、適宜$optionsに足す。
@@ -157,7 +157,7 @@ class Model_Base extends \Orm\Model_Soft
 			static::$_default_expired_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($controller.'/view_expired')
+			! \Auth::has_access($controller.'/view_expired')
 		)
 		{
 			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
@@ -176,7 +176,7 @@ class Model_Base extends \Orm\Model_Soft
 			static::$_default_created_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($controller.'/view_yet')
+			! \Auth::has_access($controller.'/view_yet')
 		) {
 			$options['where'][] = array(array($column, '<=', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
@@ -189,9 +189,11 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_deleted($controller = null, $options = array(), $mode = null)
 	{
+		if (\Request::active()->action == 'index_admin' or \Request::active()->action == 'index') return $options;
+
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			! \Auth::instance()->has_access($controller.'/view_deleted')
+			! \Auth::has_access($controller.'/view_deleted')
 		) {
 			static::enable_filter();
 		} else {
@@ -211,7 +213,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($controller.'/view_invisible')
+			! \Auth::has_access($controller.'/view_invisible')
 		) {
 			$options['where'][] = array($column, '=', true);
 		}
@@ -381,6 +383,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function paginated_find($options = array(), $use_get_query = true)
 	{
+
 		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
 		if ($use_get_query) {
 			$input_get = \Input::get();
@@ -407,6 +410,7 @@ class Model_Base extends \Orm\Model_Soft
 						$options['order_by'] = $orders;
 					}
 				}
+				static::$_conditions['order_by'] = array();
 			}
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {
@@ -483,14 +487,14 @@ class Model_Base extends \Orm\Model_Soft
 
 			// if (array_key_exists($kk, $properties) and isset($properties[$kk]['label'])) var_dump($properties[$kk]['label']); die();
 			if(isset($properties[$kk]['form']['options'][$vv])) {
-				$vv = $properties[$kk]['form']['options'][$vv];
+				$o_arr[$kk] = $properties[$kk]['form']['options'][$vv];
+			} else {
+				$o_arr[$kk] = $vv;
 			}
-			$o_arr[$kk] = $vv;
 		}
 
 		$r_arr = isset($o_arr['id']) ? array('id' => $o_arr['id'],) : array();;
 		$skip_keys = array();
-		// var_dump($field_joins); die();
 		foreach ($field_joins as $k => $v) {
 			foreach ($v as $vv) {
 				$skip_keys[] = $vv;
@@ -500,34 +504,41 @@ class Model_Base extends \Orm\Model_Soft
 
 
 		// 並べ替えと join
-		foreach ($o_arr as $k => $v) {
-			if ($k == 'id') continue;
-			if (in_array($k, $skip_keys)) continue;
-			array_key_exists($k, $properties) and isset($properties[$k]['label']) ? $key = $properties[$k]['label'] : $key = $k;
-			if(isset($properties[$k]['form']['options'][$v])) {
-				$v .= $properties[$k]['form']['options'][$v];
+		foreach ($options['select'] as $v) {
+			if ($v == 'id') continue;
+			if (in_array($v, $skip_keys)) continue;
+
+			$value = $o_arr[$v];
+			// label の設定
+			array_key_exists($v, $properties) and isset($properties[$v]['label']) ? $key = $properties[$v]['label'] : $key = $v;
+
+			if(isset($properties[$v]['form']['options'][$value])) {
+				$v = $properties[$v]['form']['options'][$value];
 			}
-			if (array_key_exists($k, $field_joins)) {
-				foreach ($field_joins[$k] as $vv){
+			if (array_key_exists($v, $field_joins)) {
+				foreach ($field_joins[$v] as $vv){
 					if (array_key_exists($vv, $properties)) {
-						$v .= $o_arr[$vv];
+						$value .= $o_arr[$vv];
 					} else {
-						$v .= $vv;
+						$value .= $vv;
 					}
 				}
 			}
-			$r_arr[$key] = $v;
+			$r_arr[$key] = $value;
 		}
 
 		if ($this->_data_relations) {
 			foreach ($this->_data_relations as $rel_name => $dr) {
 				$rel_options = isset($options['related'][$rel_name]) ? $options['related'][$rel_name] : array();
-				$rel_field_joins = (array_key_exists($rel_name, $field_joins)) ? $field_joins[$rel_name] : array();;
+				$rel_field_joins = (array_key_exists($rel_name, $field_joins)) ? $field_joins[$rel_name] : array();
 				if (array_key_exists($rel_name, $rel_names)) $rel_name = $rel_names[$rel_name];
 				if (is_array($dr)) {
-				   foreach($dr as $dr_val) {
-						$r_arr[$rel_name] = $dr_val->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, true);
-				   }
+					$relate_arr = array();
+					foreach($dr as $dr_val) {
+						$relate_arr[] = $dr_val->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, true);
+					}
+					$r_arr[$rel_name] = implode($glue,$relate_arr);
+					// $r_arr = array_merge($r_arr, $r_arr[$rel_name]);
 				} else {
 					//$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
 
@@ -539,13 +550,18 @@ class Model_Base extends \Orm\Model_Soft
 
 		if ($implode) {
 			$str = substr($paren, 0 ,1);
-			foreach($r_arr as $k => $v) {
-				$r_arr[$k] = $k . $glue_key_val . $v;
+			if (count($r_arr) == 1) {
+				return reset($r_arr);
+			} else {
+				foreach($r_arr as $k => $v) {
+					$r_arr[$k] = $k . $glue_key_val . $v;
+				}
 			}
 			$str .= implode($glue, $r_arr);
 			$str = $str . substr($paren, 1 ,2) ?: substr($paren, 0 ,1);
 			return $str;
 		}
+
 		return $r_arr;
 	}
 
