@@ -835,6 +835,7 @@ span.icon img {
 	width: 1.5em;
 	margin: 0 .125em 0 .25em;
 }
+
 #page_title + .hidden_item {
 	margin-top: -.65em;
 	padding-left: 0;
@@ -867,6 +868,20 @@ form.search h2 {
 form.search select {
 	max-width: 10em;
 }
+
+form.col1 h2 {
+	display: inline-block;
+	width: 9em;
+	border: none;
+}
+form.col1 {
+	max-width: 35em;
+}
+
+em.exp:empty {
+	display: none;
+}
+
 a.show_item:hover {
 	text-decoration: underline;
 }
