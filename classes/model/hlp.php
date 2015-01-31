@@ -43,8 +43,8 @@ class Model_Hlp extends \Model_Base
 			),
 		),
 
-		'creator_id' => array('form' => array('type' => false), 'default' => -1),
-		'updater_id' => array('form' => array('type' => false), 'default' => -1),
+		'creator_id' => array('form' => array('type' => false), 'default' => ''),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),

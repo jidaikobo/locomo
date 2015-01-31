@@ -71,6 +71,7 @@ $paths = array(
 	'\\Locomo\\Module' => 'module.php',
 	'\\Locomo\\Pagination' => 'pagination.php',
 	'\\Locomo\\Request' => 'request.php',
+	'\\Locomo\\Security' => 'security.php',
 	'\\Locomo\\Util' => 'util.php',
 	'\\Locomo\\Validation' => 'validation.php',
 );
@@ -107,16 +108,12 @@ Autoloader::add_classes($classes);
 \Asset::add_path(APPPATH.'locomo/assets/');
 
 // event
-\Event::register('request_finished', 'request_finished');
-function request_finished()
+\Event::register('shutdown', 'shutdown');
+function shutdown()
 {
-$hoge = \Session::get_flash();
-/*
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $hoge ) ;
-echo '</textarea>' ;
-*/
-
+	\Session::delete_flash('error');
+	\Session::delete_flash('success');
+	\Session::delete_flash('message');
 }
 
 /* End of file bootstrap.php */

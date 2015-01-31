@@ -115,21 +115,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			return parent::router($method, $params);
 		}
 
-		// auth
-		if ( ! static::auth())
-		{
-			if (\Auth::check())
-			{
-				return \Response::redirect(\Uri::create('sys/403'));
-			}
-			else
-			{
-				$qstr = \Arr::get($_SERVER, 'QUERY_STRING') ;
-				$qstr = $qstr ? '?'.e($qstr) : '' ;
-				return \Response::redirect(\Uri::create('auth/login?ret='.\Uri::string().$qstr));
-			}
-		}
-
 		// action not exists - index
 		$called_class = get_called_class();
 		$is_allow = true;
@@ -150,6 +135,21 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 				{
 					return \Response::redirect($main_action);
 				}
+			}
+		}
+
+		// auth
+		if ( ! static::auth())
+		{
+			if (\Auth::check())
+			{
+				return \Response::redirect(\Uri::create('sys/403'));
+			}
+			else
+			{
+				$qstr = \Arr::get($_SERVER, 'QUERY_STRING') ;
+				$qstr = $qstr ? '?'.e($qstr) : '' ;
+				return \Response::redirect(\Uri::create('auth/login?ret='.\Uri::string().$qstr));
 			}
 		}
 
@@ -251,7 +251,16 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			}
 		}
 
+		// base assign
 		$this->base_assign();
+
+		// event
+		if (\Event::instance()->has_events('locomo_after'))
+		{
+			$response = \Event::instance()->trigger('locomo_after', (string) $response);
+			$response = \Response::forge($response, $this->response_status);
+		}
+
 		return parent::after($response);
 	}
 
