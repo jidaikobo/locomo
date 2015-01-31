@@ -66,8 +66,8 @@ class Model_Flr extends \Model_Base
 			'default' => 'dir'
 		), // enum: dir, file, txt, image, audio, movie, braille, doc, xls, ppt
 		'expired_at' => array('form' => array('type' => false), 'default' => null),
-		'creator_id' => array('form' => array('type' => false), 'default' => -1),
-		'updater_id' => array('form' => array('type' => false), 'default' => -1),
+		'creator_id' => array('form' => array('type' => false), 'default' => ''),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),

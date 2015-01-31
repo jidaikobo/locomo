@@ -58,7 +58,7 @@ class Model_Dashboard_User extends Model_Base
 			// auth
 			foreach ($widget as $kk => $vv)
 			{
-				if(\Auth::instance()->has_access($vv['uri']))
+				if(\Auth::has_access($vv['uri']))
 				{
 					$tmps[$vv['uri']] = $vv['name'];
 				}
