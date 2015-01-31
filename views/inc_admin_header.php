@@ -25,18 +25,19 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 	<?php echo \Asset::css('core.css'); ?>
 	<?php echo \Asset::css('admin.css'); ?>
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css">
-	<link rel="stylesheet" href="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css">
+	<?php echo \Asset::css('../js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css'); ?>
 	<?php echo \Asset::render('css'); ?>
+
 
 	<!--JavaScript-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 	<?php echo \Asset::js('jquery.inc.js'); ?>
-	<script src="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery.exresize/jquery.exresize.0.1.0.js"></script>
+	<?php echo \Asset::js('jquery.exresize/jquery.exresize.0.1.0.js'); ?>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/i18n/jquery.ui.datepicker-ja.js"></script>
-	<script src="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
-	<script src="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js"></script>
-	<script src="<?php echo \Uri::base() ?>/sys/fetch_view/js/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+	<?php echo \Asset::js('jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js'); ?>
+	<?php echo \Asset::js('jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js'); ?>
+	<?php echo \Asset::js('jquery-ui-touch-punch/jquery.ui.touch-punch.min.js'); ?>
 	<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
 	<?php echo \Asset::render('js'); ?>
 	<!--[if lt IE 9]>
