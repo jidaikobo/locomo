@@ -22,8 +22,8 @@
 			<!--
 			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
 			-->
-			<th class="minimum"><?php echo \Pagination::sort('id', 'ID', false);?></th>
-			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名', false);?></th>
+			<th class="min"><?php echo \Pagination::sort('id', 'ID');?></th>
+			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名');?></th>
 			<th style="width:8em;"><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
 			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
 			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
@@ -38,8 +38,8 @@
 			<!--
 			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
 			-->
-			<th class="minimum"><?php echo \Pagination::sort('id', 'ID', false);?></th>
-			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名', false);?></th>
+			<th class="min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
+			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名');?></th>
 			<th style="width:8em;"><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
 			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
 			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
@@ -62,7 +62,7 @@
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<td><?php echo $item->deleted_at; ?></td>
 			<?php endif; ?>
-			<td class="minimum">
+			<td class="min">
 				<div class="btn_group">
 					<?php
 					if (\Auth::has_access('\Controller_Usr/view')):
