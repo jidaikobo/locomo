@@ -595,7 +595,7 @@ class Model_Base extends \Orm\Model_Soft
 			->set_template('
 				<div class="submit_button">'.
 				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).
-				\Form::select('limit', \Input::get('limit', 25), $options, $attributes = array('class'=>'w4em', 'title'=>'表示件数')).'件&nbsp;
+				\Form::select('limit', \Input::get('limit', 25), $options, $attributes = array('class'=>'w5em', 'title'=>'表示件数')).'件&nbsp;
 				{field}
 				</div><!--/.submit_button-->
 				</form>

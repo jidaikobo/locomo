@@ -51,14 +51,15 @@ body.lcm_action_login {
 .lcm_action_login.home .container {
 	height: 23em !important;
 }
-.lcm_action_login h1 {
+/*.lcm_action_login h1 {
 	position: absolute !important;
 	left: auto;
 	height: 0;
 	clip: rect(1px 1px 1px 1px);
 	clip: rect(1px, 1px, 1px, 1px);
 }
-.lcm_action_login .contents h2 {
+*/
+.lcm_action_login h1 {
 	font-size: 2em !important;
 	color: #004896;
 	font-weight: normal;
@@ -66,7 +67,7 @@ body.lcm_action_login {
 	border: none;
 	margin: 0 0 .5em !important;
 }
-.lcm_action_login .contents h2 img {
+.lcm_action_login h1 img {
 	display: block;
 	margin: .5em auto 0;
 	width: 1.5em;
@@ -921,6 +922,17 @@ table.datatable td {
 .datatable tr:nth-child(even) th {
 	background: #eee;
 }
+.datatable thead a,
+.datatable .thead a {
+	display: block;
+	text-decoration: none;
+	color: #333;
+}
+.datatable thead a:hover,
+.datatable .thead a:hover {
+	background-color: #e6e6e6;
+	text-decoration: underline;
+}
 .col_scrollable {
 	display: block;
 	white-space: normal;
@@ -1410,11 +1422,6 @@ li.show_if_smalldisplay {
 		text-shadow: none;
 		line-height: 1;
 	}
-	form.search h2 {
-		display: block;
-		float: none;
-		text-align: left;
-	}
 
 }
 
@@ -1438,6 +1445,11 @@ li.show_if_smalldisplay {
 	}
 	select {
 		width: 100%;
+	}
+	form.search h2 {
+		display: block;
+		float: none;
+		text-align: left;
 	}
 
 }

@@ -1,10 +1,10 @@
-<h2>
+<h1>
 <?php
 	// use default or override logo
 	echo \Asset::img('system/logo.png', array('id' => 'logo', 'title' => \Config::get('site_title')));
 	echo '<span class="site_title" aria-hidden="true">'.\Config::get('site_title').'</span>';
 ?>
-</h2>
+</h1>
 
 <?php echo \Form::open(array('action' => \Uri::base(false).'auth/login/','class' => 'login')); ?>
 
