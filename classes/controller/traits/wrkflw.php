@@ -65,7 +65,8 @@ trait Controller_Traits_Wrkflw
 				$obj->workflow_status = 'init';
 				$obj->save();
 
-				return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir($this->request->controller.'/view/'.$id)));
+				// ルート設定したら編集画面に返す
+				return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir($this->request->controller.'/edit/'.$id)));
 			else:
 				\Session::set_flash('error', 'ルートを選択してください');
 			endif;

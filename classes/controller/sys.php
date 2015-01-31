@@ -40,6 +40,7 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_404()
 	{
+		\Session::delete_flash('error');
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
@@ -52,6 +53,7 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_403()
 	{
+		\Session::delete_flash('error');
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');

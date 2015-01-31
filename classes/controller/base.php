@@ -74,6 +74,7 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 
+/*
 		if (isset($model::properties()['created_at']))
 		{
 			$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d H:i:s'));
@@ -86,6 +87,16 @@ class Controller_Base extends Controller_Core
 		{
 			$model::$_conditions['where'][] = array('is_visible', '=', true);
 		}
+*/
+
+		// モデルが持っている判定材料を、反映する。
+		foreach($model::$_authorize_methods as $authorize_method):
+			$model::$_conditions = $model::$authorize_method(
+				\Inflector::add_head_backslash(get_called_class()), // controller
+				$model::$_conditions, // conditions
+				$mode = 'index' // mode
+			);
+		endforeach;
 
 		static::index_core();//$options, $model, $deleted);
 		$this->template->set_global('title', static::$nicename.'管理一覧');

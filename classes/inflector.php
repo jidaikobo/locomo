@@ -63,6 +63,7 @@ class Inflector extends \Fuel\Core\Inflector
 			$cache[$path] = $classes;
 
 			// cache 20 min
+			\Cache::delete($cache_str);
 			\Cache::set($cache_str, $classes, 3600 / 3);
 
 			return $classes;
