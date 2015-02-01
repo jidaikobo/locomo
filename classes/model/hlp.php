@@ -94,7 +94,7 @@ class Model_Hlp extends \Model_Base
 		$controllers = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
 			if ( ! isset($v['nicename']) || ! isset($v['admin_home'])) continue;
-			if ( ! property_exists($k, 'locomo')) continue;
+			if ( ! \Util::get_locomo($k, 'nicename')) continue;
 			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
 		endforeach;
 		$selected = isset($obj->ctrl) && ! empty($obj->ctrl) ? $obj->ctrl : $ctrl;

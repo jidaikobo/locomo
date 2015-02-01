@@ -56,7 +56,12 @@
 						echo Html::anchor('usr/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
 					if (\Auth::has_access('\Controller_Usr/delete')):
-						echo Html::anchor('usr/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
+						if ($item->deleted_at):
+							echo Html::anchor('usr/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
+							echo Html::anchor('usr/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
+						else:
+							echo Html::anchor('usr/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
+						endif;
 					endif;
 					?>
 				</div>
