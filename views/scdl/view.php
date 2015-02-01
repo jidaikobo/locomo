@@ -43,6 +43,17 @@ calendar【<?php print $detail->title_text; ?>】
 
 <?php endif; ?>
 
+<tr>
+<th>詳細設定</th>
+<td>
+	<span class="icon_small">
+	<?php if ($detail->provisional_kb) { print '[仮登録]'; }; ?>
+	<?php if ($detail->unspecified_kb) { print '[時間指定なし]'; }; ?>
+	<?php if ($detail->allday_kb) { print '[終日]'; }; ?>
+		</span>
+</td>
+</tr>
+
 <?php if($detail->message && !$detail->private_kb): ?>
 <tr>
 	<th>メッセージ</th>
@@ -75,7 +86,7 @@ calendar【<?php print $detail->title_text; ?>】
 <?php if($detail->user_id): ?>
 <tr>
 	<th>作成者</th>
-	<td><?php echo $detail->user_id; ?></td>
+	<td><?php echo $detail->create_user->username; ?></td>
 </tr>
 
 <?php endif; ?>
