@@ -632,6 +632,9 @@ textarea[disabled] {
 a.delete {
 	color: #a20;
 }
+a.undelete {
+	color: #290;
+}
 
 /* hidden_item */
 .hidden_item {
