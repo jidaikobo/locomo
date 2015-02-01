@@ -251,5 +251,17 @@ class Bulk {
 	public static function set_define_function($name) {
 		if ($name) static::$_define_function = $name;
 	}
+
+
+	/**
+	 * Magic method toString that will build this as a form
+	 *
+	 * @return  string
+	 */
+	public function __toString()
+	{
+		return $this->build();
+	}
+
 }
 
