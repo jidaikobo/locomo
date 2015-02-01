@@ -57,7 +57,7 @@ class Controller_Base extends Controller_Core
 		{
 			$options = $model::condition();
 		}
-		$model::$_conditions = array();
+//		$model::$_conditions = array();
 //		$options = array('expired_at', '>', date('Y-m-d H:i:s'));
 
 		$content->set('items',  $model::paginated_find($options));

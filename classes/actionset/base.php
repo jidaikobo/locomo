@@ -312,31 +312,11 @@ class Actionset_Base extends Actionset
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
 		// count
-		static $count;
 		$model = str_replace('Controller', 'Model', $controller);
-		if (class_exists($model) && ! $count)
-		{
-			$pk = $model::get_primary_keys('first');
-			$options = array();
-			$options[] = array($pk, 'is not' , null);
-			if (isset($model::properties()['created_at']))
-			{
-				$options[] = array('created_at', '<=', date('Y-m-d H:i:s'));
-			}
-			if (isset($model::properties()['expired_at']))
-			{
-				$options[] = array('expired_at', 'is', null);
-			}
-			if (isset($model::properties()['is_visible']))
-			{
-				$options[] = array('is_visible', '=', true);
-			}
-			$count = $model::count(array('where' => $options));
-		}
 
 		// urls
-		$count = " ({$count})";
-		$actions = array(array($controller.DS."index_admin", "管理一覧{$count}"));
+		$count = $model::count();
+		$actions = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
 		$urls = static::generate_urls($controller.DS.'index_admin', $actions);
 
 		$retvals = array(
@@ -361,17 +341,18 @@ class Actionset_Base extends Actionset
 	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
 		// count
-		static $count;
+		// static $count;
 		$model = str_replace('Controller', 'Model', $controller);
-		if (class_exists($model) && ! $count && isset($model::properties()['deleted_at']))
+		if (class_exists($model) && isset($model::properties()['deleted_at']))
 		{
 			$model::disable_filter();
 			$count = $model::count(array('where' => array(array('deleted_at', 'is not' , NULL))));
+			// $model::enable_filter();
 		}
 
 		// urls
-		$count = " ({$count})";
-		$actions = array(array($controller.DS."index_deleted", "ごみ箱{$count}"));
+		$count = $count;
+		$actions = array(array($controller.DS."index_deleted", "ごみ箱 ({$count})"));
 		$urls = static::generate_urls($controller.DS.'index_deleted', $actions);
 
 		$retvals = array(
