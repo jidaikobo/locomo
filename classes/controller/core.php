@@ -5,11 +5,13 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	/**
 	* @vars
 	*/
-	public static $nicename  = ''; // name for human
-	public static $shortname = ''; // '[\Modname]\Controller_Example' to 'example'
-	public static $base_url  = ''; // http(s)://example.com/path/to/controller
-	public static $main_url  = ''; // http(s)://example.com/path/to/controller/main_action
-	public static $current_url  = ''; // http(s)://example.com/path/to/controller/current_action
+	public static $nicename    = ''; // name for human
+	public static $controller  = ''; // \Request::main()->controller
+	public static $action      = ''; // \Request::main()->action
+	public static $shortname   = ''; // '[\Modname]\Controller_Example' to 'example'
+	public static $base_url    = ''; // http(s)://example.com/path/to/controller
+	public static $main_url    = ''; // http(s)://example.com/path/to/controller/main_action
+	public static $current_url = ''; // http(s)://example.com/path/to/controller/current_action
 
 	/**
 	* @var string template
@@ -51,6 +53,8 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// called_class
 		$called_class = get_called_class();
+		static::$controller  = \Request::main()->controller;
+		static::$action      = \Request::main()->action;
 		static::$base_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
 		static::$base_url    = str_replace('locomo/', '' , static::$base_url); // locomo is not module
 		static::$current_url = static::$base_url.\Request::main()->action.DS;

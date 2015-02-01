@@ -58,21 +58,21 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 		$steps = \Input::post('steps') ?: $steps;
 		if (\Input::post('steps'))
 		{
-			if ( ! \Security::check_token()):
-				\Session::set_flash('error', 'please check token');
-				return \Response::redirect(\Uri::create('wrkflwadmin/setup/'.$id));
-			endif;
-
-			// unset empty values to tidt up
-			foreach($steps['allowers'] as $key => $step)
+			if ( ! \Security::check_token())
 			{
-				// name is required.
-				if (empty($step['name']))
+				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+			} else {
+				// unset empty values to tidt up
+				foreach($steps['allowers'] as $key => $step)
 				{
-					unset($steps['allowers'][$key]);
+					// name is required.
+					if (empty($step['name']))
+					{
+						unset($steps['allowers'][$key]);
+					}
 				}
+				$allstep = count($steps['allowers']) + 1; // add step
 			}
-			$allstep = count($steps['allowers']) + 1; // add step
 		}
 
 		// default step number
@@ -85,21 +85,25 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 		// store to DB
 		if ($steps && \Input::post('submit'))
 		{
-			if ($model::update_workflow_setting($id, $steps))
+			if ( ! \Security::check_token())
 			{
-				\Session::set_flash('success', 'ワークフローを更新しました');
+				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+			} else {
+				if ($model::update_workflow_setting($id, $steps))
+				{
+					\Session::set_flash('success', 'ワークフローを更新しました');
+				}
+				else
+				{
+					//いまのところtrueしか返らない。
+					\Session::set_flash('error', 'ワークフローの更新に失敗しました');
+				}
+				\Response::redirect(\Uri::create('wrkflwadmin/setup/'.$id));
 			}
-			else
-			{
-				//いまのところtrueしか返らない。
-				\Session::set_flash('error', 'ワークフローの更新に失敗しました');
-			}
-			\Response::redirect(\Uri::create('wrkflwadmin/setup/'.$id));
 		}
 
 		//add_actionset - back to index at edit
-		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
-		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
+		$action['urls'][] = \Html::anchor(static::$main_url, \Util::get_locomo(static::$controller, 'main_action_name', '一覧へ'));
 		$action['order'] = 10;
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 

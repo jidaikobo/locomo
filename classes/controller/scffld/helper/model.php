@@ -152,6 +152,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		//template
 		$str = static::fetch_temlpate('model.php');
 		$str = self::replaces($name, $str);
+		$str = str_replace ('###NICENAME###',  $nicename, $str);
 		$str = str_replace('###FRMDFN###',     $frmdfn,     $str);
 		$str = str_replace('###DLT_FLD###',    $dlt_fld,    $str);
 		$str = str_replace('###OBSRVR###',     $observers,  $str);
