@@ -189,7 +189,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_deleted($controller = null, $options = array(), $mode = null)
 	{
-		if (\Request::active()->action == 'index_admin' or \Request::active()->action == 'index') return $options;
+		if (\Request::active()->action == 'index_admin' or \Request::active()->action == 'index' or \Request::active()->action == 'customer_index') return $options;
 
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
