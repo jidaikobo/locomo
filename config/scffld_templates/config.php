@@ -7,5 +7,4 @@ return array(
 	'no_acl'          => false, // true: not show at acl
 	'show_at_menu'    => true, // true: hide from admin bar
 	'order'           => 10, // order at menu
-	'widgets'         => array(): // widgets
 );

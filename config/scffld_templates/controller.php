@@ -18,7 +18,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 		'order_at_menu' => 10,   // order of appearance
 		'is_for_admin' => false, // true: place it admin's menu instead of normal menu
 		'no_acl' => false, // true: admin's action. it will not appear at acl.
-		'widgets' =>array(
+		'widgets' => array(
 		),
 	);
 }

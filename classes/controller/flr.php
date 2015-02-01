@@ -10,7 +10,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		'main_action_name' => 'ファイル管理', // main action's name
 		'main_action_explanation' => 'ファイルのアップロードや、アップロードされたファイルの閲覧を行います。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home
-		'is_for_admin' => true, // true: hide from admin bar
+		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 1030, // order of appearance
 		'widgets' =>array(
 			array('name' => '共有ダウンロードファイル', 'uri' => '\\Controller_Flr/common_files'),

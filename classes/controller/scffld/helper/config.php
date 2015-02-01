@@ -14,7 +14,7 @@ class Controller_Scffld_Helper_Config extends Controller_Scffld_Helper
 		//template
 		$val = static::fetch_temlpate('config.php');
 		$val = self::replaces($name, $val);
-		$val = str_replace ('###nicename###', $nicename, $val);
+		$val = str_replace ('###NICENAME###', $nicename, $val);
 		return $val;
 	}
 

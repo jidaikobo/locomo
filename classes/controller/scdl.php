@@ -12,7 +12,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		'main_action'  => 'calendar', // main action
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
-		'order'        => 10,   // order of appearance
+		'order'        => 900,   // order of appearance
 	);
 
 	/**
