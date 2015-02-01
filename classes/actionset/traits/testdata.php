@@ -7,6 +7,8 @@ trait Actionset_Traits_Testdata
 	 */
 	public static function actionset_add_testdata($controller, $obj = null, $id = null, $urls = array())
 	{
+		if (\Fuel::$env != 'development') return array();
+
 		$url = '';
 		$usergroup_ids = \Auth::get_groups();
 
