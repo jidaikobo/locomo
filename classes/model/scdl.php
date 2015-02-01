@@ -372,6 +372,16 @@ class Model_Scdl extends \Model_Base
 	public static $_option_options = array();
 
 
+	protected static $_belongs_to = array(
+		'create_user' => array(
+			'key_from' => 'user_id',
+			'model_to' => '\Model_Usr',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		),
+	);
+
 	protected static $_many_many = array(
 
 		'user' => array(

@@ -6,7 +6,7 @@
 	<legend><?php echo \Form::label('コメント', "comment"); ?></legend>
 
 	<div class="form-group">
-		<?php echo \Form::textarea("comment", ''); ?>
+		<?php echo \Form::textarea("comment", \Input::post('comment')); ?>
 	</div>
 </fieldset>
 
@@ -21,6 +21,7 @@
 
 <p>
 	<?php
+		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', $button, array('class' => 'button primary'));
 	?>
 </p>

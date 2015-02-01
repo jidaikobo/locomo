@@ -1,4 +1,5 @@
 <?php
+// usrのobserver_selfに
 namespace Locomo;
 class Observer_Users extends \Orm\Observer
 {

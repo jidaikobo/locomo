@@ -10,14 +10,9 @@
 		<tr>
 			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
 			<th><?php echo \Pagination::sort('repeat_kb', '繰り返し区分', false);?></th>
-			<th><?php echo \Pagination::sort('repeat_finish_datetime', '繰り返し終了日時', false);?></th>
-			<th><?php echo \Pagination::sort('start_datetime', '開始日時', false);?></th>
-			<th><?php echo \Pagination::sort('end_datetime', '終了日時', false);?></th>
 			<th><?php echo \Pagination::sort('week_kb', '繰り返し曜日', false);?></th>
 			<th><?php echo \Pagination::sort('title_text', 'タイトル', false);?></th>
-			<th><?php echo \Pagination::sort('title_priority_kb', 'タイトル（重要度）', false);?></th>
 			<th><?php echo \Pagination::sort('title_kb', 'タイトル（区分）', false);?></th>
-			<th><?php echo \Pagination::sort('detail_kb', '詳細設定', false);?></th>
 			<th><?php echo \Pagination::sort('message', 'メッセージ', false);?></th>
 			<th><?php echo \Pagination::sort('group_kb', '表示するグループフラグ', false);?></th>
 			<th><?php echo \Pagination::sort('group_detail', 'グループ指定', false);?></th>
@@ -37,14 +32,9 @@
 <?php foreach ($items as $item): ?>		<tr>
 	<td><?php echo $item->id; ?></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->repeat_kb; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->repeat_finish_datetime; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->start_datetime; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->end_datetime; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->week_kb; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->title_text; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->title_priority_kb; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->title_kb; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->detail_kb; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->message; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->group_kb; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->group_detail; ?></div></td>

@@ -110,18 +110,6 @@ class Model_Scdl_Building extends \Model_Base
 	);
 
 	protected static $_observers = array(
-		"Orm\Observer_Self" => array(),
-		'Locomo\Observer_Created' => array(
-			'events' => array('before_insert', 'before_save'),
-			'mysql_timestamp' => true,
-		),
-		'Orm\Observer_UpdatedAt' => array(
-			'events' => array('before_save'),
-			'mysql_timestamp' => true,
-		),
-		'Locomo\Observer_Userids' => array(
-			'events' => array('before_insert', 'before_save'),
-		),
 	);
 
 	/**

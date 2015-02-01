@@ -26,7 +26,7 @@ trait Model_Traits_Wrkflw
 		// コントローラとidから最新のlcm_wrkflw_logs取得
 		$q = \DB::select('id','workflow_id','current_step');
 		$q->from('lcm_wrkflw_logs');
-		$q->where('controller', $controller);
+		$q->where('controller', \Inflector::add_head_backslash($controller));
 		$q->where('controller_id', $controller_id);
 		$q->order_by('created_at', 'DESC');
 		$log = $q->execute()->current();
@@ -72,7 +72,7 @@ trait Model_Traits_Wrkflw
 		// ワークフローidを得る
 		$q = \DB::select('workflow_id');
 		$q->from('lcm_wrkflw_logs');
-		$q->where('controller', $controller);
+		$q->where('controller', \Inflector::add_head_backslash($controller));
 		$q->where('controller_id', $controller_id);
 		$id = $q->execute()->current();
 
@@ -89,7 +89,7 @@ trait Model_Traits_Wrkflw
 		// ログidを得る
 		$q = \DB::select('id');
 		$q->from('lcm_wrkflw_logs');
-		$q->where('controller', $controller);
+		$q->where('controller', \Inflector::add_head_backslash($controller));
 		$q->where('controller_id', $controller_id);
 		$id = $q->execute()->current();
 
@@ -158,20 +158,42 @@ trait Model_Traits_Wrkflw
 	/**
 	 * get_route_logs()
 	*/
-	public static function get_route_logs($controller = null, $controller_id = null, $step = null)
+	public static function get_route_logs($controller = null, $controller_id = null)
 	{
-		if (is_null($controller) || is_null($controller_id) || is_null($step)) \Response::redirect(\Uri::base());
+		if (is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 
 		// 差戻しも含めて、これまでのすべての経路情報を取得する
-		$q = \DB::select('*');
+		$q = \DB::select('lcm_wrkflw_logs.*','lcm_usrs.display_name');
 		$q->from('lcm_wrkflw_logs');
-		$q->where('controller', $controller);
+		$q->join('lcm_usrs');
+		$q->on('lcm_wrkflw_logs.did_user_id', '=', 'lcm_usrs.id');
+		$q->where('controller', \Inflector::add_head_backslash($controller));
 		$q->where('controller_id', $controller_id);
 		$q->where('current_step', "<>", -1);// 経路設定をした人は、承認申請する人と同じなので、除外する
 		$q->order_by('created_at', 'ASC');
-		$members = $q->as_object()->execute()->as_array();
+		$logs = $q->as_object()->execute()->as_array();
 
-		return $members ? $members : false ;
+		return $logs ? $logs : false ;
+	}
+
+	/**
+	 * get_strait_route_logs()
+	 * stepをkeyとした最短ルートを返す
+	*/
+	public static function get_strait_route_logs($controller = null, $controller_id = null)
+	{
+		$logs = static::get_route_logs($controller, $controller_id);
+		$max = max(array_keys($logs));
+		$current_step = $logs[$max]->current_step ?: 0 ;
+
+		$retvals = array();
+		foreach ($logs as $log)
+		{
+			if ($current_step < $log->current_step) continue;
+			$retvals[$log->current_step] = $log;
+		}
+
+		return $retvals ;
 	}
 
 	/**
@@ -194,7 +216,7 @@ trait Model_Traits_Wrkflw
 			// get latest log
 			$q = \DB::select('workflow_id', 'current_step', 'created_at');
 			$q->from('lcm_wrkflw_logs');
-			$q->where('controller', $controller);
+			$q->where('controller', \Inflector::add_head_backslash($controller));
 			$q->where('controller_id', $id);
 			$q->where('status', '<>', 'finish');
 			$q->order_by('id', 'desc');
@@ -212,7 +234,7 @@ trait Model_Traits_Wrkflw
 			$writers = \Model_Wrkflwadmin::find_writers($workflow_id);
 
 			// get latest step_id
-			$current_step_id = self::get_current_step_id($workflow_id, $current_step);
+			$current_step_id = static::get_current_step_id($workflow_id, $current_step);
 
 			// set latest action date
 			$unfinished[$id]->latest_action_date = $workflow['created_at'];
@@ -251,7 +273,7 @@ trait Model_Traits_Wrkflw
 			// add apply date
 			$q = \DB::select('created_at');
 			$q->from('lcm_wrkflw_logs');
-			$q->where('controller', $controller);
+			$q->where('controller', \Inflector::add_head_backslash($controller));
 			$q->where('controller_id', $id);
 			$q->where('status', '<>', 'finish');
 			$q->order_by('id', 'asc');
@@ -359,6 +381,7 @@ trait Model_Traits_Wrkflw
 
 	/*
 	 * auth_workflow()
+	 * \Model_Base::add_authorize_methods()から呼ばれる
 	 */
 	public static function auth_workflow($controller = null, $options = array(), $mode = null)
 	{
