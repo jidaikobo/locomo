@@ -64,6 +64,7 @@ class Controller_Sys extends \Controller_Base
 	 * action_fetch_view()
 	 * fetch files view
 	 */
+/*
 	public function action_fetch_view()
 	{
 		// ヘンなアクセスを追い返す
@@ -102,6 +103,7 @@ class Controller_Sys extends \Controller_Base
 		$this->template->set_global('title', '');
 		return \Response::forge(file_get_contents($filename), 200, $headers);
 	}
+*/
 
 	/**
 	* action_admin()

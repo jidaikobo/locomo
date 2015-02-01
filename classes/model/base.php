@@ -634,7 +634,7 @@ class Model_Base extends \Orm\Model_Soft
 					<span class="sort_info">'.$sortinfo.'</span>
 					<span class="icon fr">
 						<a href="javascript: void(0);" class="toggle_item disclosure">
-							<img src="'.\Uri::base().'sys/fetch_view/img/system/mark_search.png" alt="">
+							<img src="'.\Uri::base().'lcm_assets/img/system/mark_search.png" alt="">
 							<span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">検索</span>
 							<span class="skip"> エンターで検索条件を開きます</span>
 						</a>
