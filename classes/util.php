@@ -151,4 +151,21 @@ class Util
 		
 		return $list;
 	}
+
+	/**
+	 * get_locomo
+	 * コントローラの$locomoの任意の値を取得
+	 * fetch $locomo value
+	 * @return Mix
+	 */
+	public static function get_locomo($controller, $property = null, $default = false)
+	{
+		if ( ! class_exists($controller)) return $default;
+		if ( ! property_exists($controller, 'locomo')) return $default;
+
+		// locomos
+		$locomos = $controller::$locomo;
+		if (is_null($property)) return $locomos;
+		return \Arr::get($locomos, $property, $default);
+	}
 }

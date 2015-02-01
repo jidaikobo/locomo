@@ -111,9 +111,10 @@ Autoloader::add_classes($classes);
 \Event::register('shutdown', 'shutdown');
 function shutdown()
 {
-	\Session::delete_flash('error');
-	\Session::delete_flash('success');
-	\Session::delete_flash('message');
+// 要一考
+//	\Session::delete_flash('error');
+//	\Session::delete_flash('success');
+//	\Session::delete_flash('message');
 }
 
 /* End of file bootstrap.php */

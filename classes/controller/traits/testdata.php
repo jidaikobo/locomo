@@ -102,6 +102,6 @@ trait Controller_Traits_Testdata
 		else:
 			\Session::set_flash('success', 'added '.$num.' datas.');
 		endif;
-		return \Response::redirect($this->base_url);
+		return \Response::redirect(static::$base_url);
 	}
 }

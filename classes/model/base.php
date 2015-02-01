@@ -593,12 +593,7 @@ class Model_Base extends \Orm\Model_Soft
 		$form = \Fieldset::forge('search_form_base');
 
 		// modify title
-/*		if (property_exists(\Request::active()->controller, 'locomo'))
-		{
-			$controller = \Request::active()->controller;
-			$title = \Arr::get($controller::$locomo, 'nicename', '項目');
-		}
-*/
+//		$title = \Util::get_locomo(\Request::active()->controller, 'nicename');
 		$titles = array(
 			'index_deleted'   => '削除済み項目一覧',
 			'index_yet'       => '予約項目一覧',

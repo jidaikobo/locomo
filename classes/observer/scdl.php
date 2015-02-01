@@ -10,33 +10,6 @@ class Observer_Scdl extends \Orm\Observer
 	}
 
 
-	/**
-	 * before_insert()
-	 */
-	public function before_insert(\Orm\Model $obj)
-	{
-		// checkbox値
-		$columns = array('provisional_kb', 'unspecified_kb', 'allday_kb', 'private_kb', 'overlap_kb', 'attend_flg');
-		foreach ($columns as $v) {
-			if (!\Input::post($v)) {
-				$obj->__set($v, 0);
-			}
-		}
-	}
-
-	/**
-	 * before_save()
-	 */
-	public function before_save(\Orm\Model $obj)
-	{
-		// checkbox値
-		$columns = array('provisional_kb', 'unspecified_kb', 'allday_kb', 'private_kb', 'overlap_kb', 'attend_flg');
-		foreach ($columns as $v) {
-			if (!\Input::post($v)) {
-				$obj->__set($v, 0);
-			}
-		}
-	}
 	public function after_save(\Orm\Model $obj)
 	{
 		// schedule_membersへの登録

@@ -33,22 +33,6 @@
 			<th>操作</th>
 		</tr>
 	</thead>
-	<tfoot class="thead">
-		<tr>
-			<!--
-			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
-			-->
-			<th class="min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
-			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名');?></th>
-			<th style="width:8em;"><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
-			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
-			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
-			<?php if (\Request::main()->action == 'index_deleted'): ?>
-				<th>削除された日</th>
-			<?php endif; ?>
-			<th>操作</th>
-		</tr>
-	</tfoot>
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
@@ -72,18 +56,36 @@
 						echo Html::anchor('usr/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
 					if (\Auth::has_access('\Controller_Usr/delete')):
-						echo Html::anchor('usr/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
+						if ($item->deleted_at):
+							echo Html::anchor('usr/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
+							echo Html::anchor('usr/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
+						else:
+							echo Html::anchor('usr/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
+						endif;
 					endif;
 					?>
 				</div>
 			</td>
 		</tr><?php endforeach; ?>
 	</tbody>
+	<tfoot class="thead">
+		<tr>
+			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
+			<th><?php echo \Pagination::sort('username', 'ユーザ名');?></th>
+			<th><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
+			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
+			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
+			<?php if (\Request::main()->action == 'index_deleted'): ?>
+				<th>削除された日</th>
+			<?php endif; ?>
+			<th>操作</th>
+		</tr>
+	</tfoot>
 </table>
 <?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>
-<p>ユーザが存在しません。</p>
+<p>項目が存在しません</p>
 
 <?php endif; ?>
 </div><!-- /.main_column -->
