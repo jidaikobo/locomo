@@ -1062,16 +1062,16 @@ h1#page_title {
 	margin: 1em 0 .25em;
 }
 
-.w1em {width: 1em;}
-.w2em {width: 2em;}
-.w3em {width: 3em;}
-.w4em {width: 4em;}
-.w5em {width: 5em;}
-.w8em {width: 8em;}
-.w10em {width: 10em;}
-.w15em {width: 15em;}
-.w20em {width: 20em;}
-.w25em {width: 25em;}
+.w1em {width: 1em !important;}
+.w2em {width: 2em !important;}
+.w3em {width: 3em !important;}
+.w4em {width: 4em !important;}
+.w5em {width: 5em !important;}
+.w8em {width: 8em !important;}
+.w10em {width: 10em !important;}
+.w15em {width: 15em !important;}
+.w20em {width: 20em !important;}
+.w25em {width: 25em !important;}
 
 .w10 {width: 10%;}
 .w20 {width: 20%;}
