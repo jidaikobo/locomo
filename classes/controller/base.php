@@ -19,11 +19,9 @@ class Controller_Base extends Controller_Core
 
 	/**
 	 * action_admin()
-	 * this action is placeholder for actionset. Don't delete.
+	 * this action is placeholder for actionset. DON'T DELETE.
 	 */
-	public function action_admin()
-	{
-	}
+	public function action_admin(){}
 
 	/**
 	 * index_core()
@@ -59,7 +57,7 @@ class Controller_Base extends Controller_Core
 		{
 			$options = $model::condition();
 		}
-		$model::$_conditions = array();
+//		$model::$_conditions = array();
 //		$options = array('expired_at', '>', date('Y-m-d H:i:s'));
 
 		$content->set('items',  $model::paginated_find($options));
@@ -90,13 +88,15 @@ class Controller_Base extends Controller_Core
 */
 
 		// モデルが持っている判定材料を、反映する。
-		foreach($model::$_authorize_methods as $authorize_method):
+		foreach($model::$_authorize_methods as $authorize_method)
+		{
+			if ( ! method_exists($model, $authorize_method)) continue;
 			$model::$_conditions = $model::$authorize_method(
 				\Inflector::add_head_backslash(get_called_class()), // controller
 				$model::$_conditions, // conditions
 				$mode = 'index' // mode
 			);
-		endforeach;
+		}
 
 		static::index_core();//$options, $model, $deleted);
 		$this->template->set_global('title', static::$nicename.'管理一覧');
@@ -194,7 +194,7 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 
-		is_null($id) and \Response::redirect(\Uri::base());
+		is_null($id) and \Response::redirect(static::$main_url);
 
 		$authorized_option = $model::authorized_option();
 
@@ -203,18 +203,13 @@ class Controller_Base extends Controller_Core
 				'error',
 				sprintf('%1$s #%2$d は表示できません', self::$nicename, $id)
 			);
-			throw new \HttpNotFoundException;
-			\Response::redirect(\Inflector::ctrl_to_dir(get_called_class()));
+			\Response::redirect(static::$main_url);
 		endif;
-
-		//view
-		// $dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
-		// $content = \View::forge($this->_content_template ?: $dir.'view');
 
 		if ($this->_content_template) {
 			$content = \View::forge($this->_content_template);
 		} else {
-			$tmp = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS.'/view';
+			$tmp = static::$shortname.DS.'/view';
 			// var_dump(\Finder::search('views', $tmp)); die();
 			$content = \View::forge(
 				\Finder::search('views', $tmp) ? $tmp : 'defaults/view'
@@ -233,8 +228,7 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function create($id = null, $redirect = null)
 	{
-		$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
-		$redirect = $redirect ?: str_replace('create', 'edit', $locomo_path);
+		$redirect = $redirect ?: str_replace('create', 'edit', static::$current_url);
 		static::edit($id, $redirect);
 	}
 
@@ -249,7 +243,7 @@ class Controller_Base extends Controller_Core
 		if ($this->_content_template) {
 			$content = \View::forge($this->_content_template);
 		} else {
-			$tmp = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS.'/edit';
+			$tmp = static::$shortname.'/edit';
 			// var_dump(\Finder::search('views', $tmp)); die();
 			$content = \View::forge(
 				\Finder::search('views', $tmp) ? $tmp : 'defaults/edit'
@@ -287,29 +281,17 @@ class Controller_Base extends Controller_Core
 				if ($obj->save(null, true))
 				{
 					//success
-					\Session::set_flash(
-						'success',
-						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
-					);
+					\Session::set_flash('success', '更新しました。');
 
 					// redirect
-					$locomo_path = \Inflector::ctrl_to_dir(\Request::main()->controller.DS.\Request::main()->action);
-					$redirect = $redirect ? $redirect.DS.$obj->id : $locomo_path.DS.$obj->id;
-					static::$redirect = $redirect;
-
+					// idセグメント込みのredirectを渡されるとちょっと間抜けな帰り先になるがとりあえずこのまま
+					static::$redirect = $redirect ? trim($redirect, DS).DS.$obj->id: static::$current_url.$obj->id;
 					return $obj;
-				}
-				else
-				{
+				} else {
 					//save failed
-					\Session::set_flash(
-						'error',
-						sprintf('%1$sの #%2$d を更新できませんでした', self::$nicename, $id)
-					);
+					\Session::set_flash('error', '更新を失敗しました。');
 				}
-			}
-			else
-			{
+			} else {
 				//edit view or validation failed of CSRF suspected
 				if (\Input::method() == 'POST')
 				{
@@ -328,13 +310,13 @@ class Controller_Base extends Controller_Core
 		$this->template->content = $content;
 		static::set_object($obj);
 
+		// falseが正常処理
 		return false;
 	}
 
 	/**
 	 * delete()
-	 * post only
-	 * need csrf token
+	 * get action with JavaScript confirm
 	 */
 	protected function delete($id = null)
 	{
@@ -345,10 +327,7 @@ class Controller_Base extends Controller_Core
 				$obj->delete(null, true);
 			}
 			catch (\Exception $e) {
-				\Session::set_flash(
-					'error',
-					sprintf('%1$sの #%2$d の削除中にエラーが発生しました', self::$nicename, $id)
-				);
+				\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
 			}
 
 			\Session::set_flash(
@@ -356,15 +335,16 @@ class Controller_Base extends Controller_Core
 				sprintf('%1$sの #%2$d を削除しました', self::$nicename, $id)
 			);
 
-			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()) . '/index_deleted');
+			return \Response::redirect(static::$base_url.'index_deleted');
 		}
 
-		\Session::set_flash('error', sprintf('削除中にエラーが発生しました'));
-		throw new \HttpNotFoundException;
+		\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
+		return \Response::redirect(static::$main_url);
 	}
 
 	/**
 	 * undelete()
+	 * get action with JavaScript confirm
 	 */
 	protected function undelete($id = null)
 	{
@@ -375,18 +355,18 @@ class Controller_Base extends Controller_Core
 				$obj->undelete();
 			}
 			catch (\Exception $e) {
-				\Session::set_flash('error', sprintf('%1$sの #%2$d の復活中にエラーが発生しました', self::$nicename, $id));
-				return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class() . '/index_deleted'));
+				\Session::set_flash('error', '復活中にエラーが発生しました。');
+				return \Response::redirect(static::$base_url.'index_deleted');
 			}
 			\Session::set_flash(
 				'success',
 				sprintf('%1$sの #%2$d を復活しました', self::$nicename, $id)
 			);
-			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class(). '/index_admin'));
+			return \Response::redirect(static::$main_url);
 		}
 
-		\Session::set_flash('error', sprintf('項目の復活中にエラーが発生しました'));
-		throw new \HttpNotFoundException;
+		\Session::set_flash('error', '項目の復活中にエラーが発生しました。');
+		return \Response::redirect(static::$base_url.'index_deleted');
 	}
 
 	/**
@@ -394,26 +374,41 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function purge_confirm ($id = null)
 	{
-
 		$model = $this->model_name;
 
-		// if (!$item = $model::find_deleted($id)) {
-		if (!$item = $model::find($id)) {
-			\Session::set_flash('error', sprintf('完全削除中にエラーが発生しました'));
-			throw new \HttpNotFoundException;
+		// purgable check
+		$is_purgable = true;
+		$is_purgable = $item = $model::find_deleted($id) ?: false;
+		if ( ! $is_purgable)
+		{
+			$is_purgable = $item = $model::find($id) ?: false;
+		}
+		if ( ! $is_purgable)
+		{
+			\Session::set_flash('error', '完全削除中にエラーが発生しました。');
+			return \Response::redirect(static::$main_url);
 		}
 
-		$content = \View::forge($this->_content_template ?: 'purge');
+		// purge
+		$content = \View::forge($this->_content_template ?: 'defaults/purge');
 
+		// plain_definition
 		$plain = $model::plain_definition('purge_confirm', $item);
 		$content->set_safe('plain', $plain->build_plain());
 
+		// form definition
 		$form = \Fieldset::forge('confirm_submit');
-		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))->set_value(\Security::fetch_token());
-		$form->add('submit', '', array('type'=>'submit', 'value' => '消去する'))->set_template('<div class="submit">{field}</div>');
-		$content->set_safe('form', $form->build(\Inflector::ctrl_to_dir(get_called_class()) . DS . 'purge' . DS . $item->id));
+		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
+			->set_value(\Security::fetch_token());
+		$form->add(
+			'submit',
+			'',
+			array('type'=>'submit', 'value' => '完全削除する', 'class' => 'button primary')
+		);
+		$content->set_safe('form', $form->build(static::$base_url . 'purge/' . $item->id));
 
-		$this->template->set_global('title', self::$nicename.'消去');
+		$this->template->set_global('action', static::$base_url.'purge/'.$item->id);
+		$this->template->set_global('title', self::$nicename.'完全削除');
 		$this->template->content = $content;
 		static::set_object($item);
 	}
@@ -426,26 +421,28 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		$model::disable_filter();
-		if (\Auth::is_root()
-			//and \Input::post()
-			//and \Security::check_token()
-			and $obj = $model::find($id)) {
+		if (
+			\Auth::is_root()
+			and \Input::post()
+			and \Security::check_token()
+			and $obj = $model::find($id)
+		) {
 
 			try {
 				// 現状 Cascading deleteの恩恵を受けられない？ 要実装
 				$obj->purge(null, true);
 			}
 			catch (\Exception $e) {
-				\Session::set_flash('error', sprintf('%1$sの #%2$d の完全削除中にエラーが発生しました', self::$nicename, $id));
-				return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class()) . DS .  'index_deleted');
+				\Session::set_flash('error', '完全削除中にエラーが発生しました');
+				return \Response::redirect(static::$base_url.'index_deleted');
 			}
 
-			\Session::set_flash('success', sprintf('%1$sの #%2$d を完全に削除しました', self::$nicename, $id));
+			\Session::set_flash('success', '項目を完全に削除しました');
 
-			return \Response::redirect(\Inflector::ctrl_to_dir(get_called_class() . '/index_deleted'));
+			return \Response::redirect(static::$base_url.'index_deleted');
+		} else {
+			\Session::set_flash('error', '項目の完全削除中にエラーが発生しました');
+			return \Response::redirect(static::$base_url.'index_deleted');
 		}
-
-		\Session::set_flash('error', sprintf('項目の完全削除中にエラーが発生しました'));
-		throw new \HttpNotFoundException;
 	}
 }

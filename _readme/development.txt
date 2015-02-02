@@ -29,8 +29,14 @@ scaffoldを使うとモジュールが生成されますが、APPPATH/classes/co
 		'order' => 10,
 		// (bool)	true: not appear to acl menu
 		'is_for_admin' => true,
-		// (str)	main action.
-		'main_action' => 'index_admin',
+		 // (str)	explanation of controller
+		'explanation'  => 'システムを利用するユーザの新規作成、編集、削除等を行います。',
+		 // (str)	main action
+		'main_action'  => 'index_admin',
+		 // (str)	main action's name
+		'main_action_name' => 'ユーザ管理',
+		 // (str)	explanation of top page
+		'main_action_explanation' => '既存ユーザの一覧です。',
 		// (arr)	widgets
 		'widgets' =>array(
 		),
@@ -39,7 +45,6 @@ scaffoldを使うとモジュールが生成されますが、APPPATH/classes/co
 
 モジュールの場合は、Locomoは、モジュール名と同名のconfigが存在することを期待します。configでは、最低限、一つの項目、main_controllerを持っている必要があります。configのnicename、explanation、orderは推奨項目です。
 なお、モジュールがconfigを持っていない場合、\Locomo\Controller_Baseを継承していても、モジュールは管理画面のコントローラリストやアクセス権限管理コントローラの対象になりません。しかし、\Locomo\Controller_Baseを継承するとアクセス権限チェックは行われるので、別途アクセス権限管理を実装する必要があります。
-モジュールの場合は、widgetsは、configに書きます。
 
 +quote start-----------------------------+
 return array(
@@ -47,10 +52,8 @@ return array(
 	'nicename'        => 'MODULE NICENAME',
 	'explanation'     => 'XXを行います。',
 	'order'           => 10,
-	'widgets'         => array(),
 );
 +-------------------------------quote end+
-
 
 // actionset - overview
 
@@ -60,15 +63,14 @@ return array(
 +------------------------------------+
 |global admin bar                    |
 +------------------------------------+
-|[base]                [ctrl][option]|
+|[base][index]         [ctrl][option]|
 +------------------------------------+
-|[index]                             |
 |                                    |
 
 [base]  : 基本的な操作系のリンクです。
 [ctrl]  : アクション固有のリンクです。「戻る」などのリンクが主です。
 [option]: コントローラやモジュールの設定を変更するリンクです。ギアマークのドロップダウンに格納されます。
-[index] : 一覧を切り替えるリンクです。原則、index時に表示されます。
+[index] : 一覧を切り替えるリンクです。
 
 // actionset - disable default actionset
 
@@ -78,6 +80,20 @@ return array(
 	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
 	{
 		return array();
+	}
++-------------------------------quote end+
+
+あるいは基本的なアクションセットのクラスを使いつつ、少しだけ改変したい場合も下記のような要領です。
+リンク先だけ変更している例です。
+
++quote start-----------------------------+
+	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
+	{
+		$actions = array(array($controller.DS."index_XXX", 'リンク文字列'),);
+		$urls = static::generate_urls($controller.DS.'create', $actions, ['create']);
+		$retvals = parent::actionset_index($controller, $obj, $id, $urls);
+		\Arr::set($retvals, 'urls', $urls);
+		return $retvals;
 	}
 +-------------------------------quote end+
 
@@ -97,6 +113,7 @@ return array(
 		endif;
 
 		$retvals = array(
+			'realm'        => 'base' ,
 			'urls'         => $urls ,
 			'show_at_top'  => false,
 			'action_name'  => '編集（通常項目）',
@@ -135,7 +152,7 @@ generate_urls()でurlsを生成することで、所与の条件でリンクが�
 
 // actionset - override interface
 
-ある種のコントローラでは、baseレルムのリンクを上書きしたい場合があります。
+ある種のコントローラでは、他レルムのリンクを上書きしたい場合があります。
 基本的には、$retvalsのoverridesを設定することで、オーバライドされますので、オーバライド条件を設定して、urlsと同様にa要素を配列で渡します。
 本ファイルの「bulk edit」の箇所もあわせて読んでみてください。
 
@@ -160,10 +177,11 @@ configでは、通常のaclと異なったアクセス権管理を行いたい�
 +-------------------------------quote end+
 
 この例では、userモジュールのviewとeditにおいて、特別なアクセス権管理を行う処理を\User\Controller_Userのuser_auth_find()で定義しています。
+# もしかしたら、Eventに変更するかも？
 
 // template override
 
-モジュールのテンプレートだけオーバライドする場合は、APPPATH.views/MODNAME/views/に同じ名前のファイルで設置してください。inc_header等のオーバライドに関しては、APPPATH.views/に設置できます。
+Locomoの基本コントローラのテンプレートだけオーバライドする場合は、APPPATH.views/CONTROLLER/views/に同じ名前のファイルで設置してください。inc_header等のオーバライドに関しては、APPPATH.views/に設置できます。
 
 // column name
 
@@ -194,7 +212,7 @@ workflow_status:varchar[50]
 seq:int[n]
 orderはいちおうMySQLの予約語なので、表示順を制御する際は、seqを使ってください。
 
-これらの条件は、Model::authorized_option()で判定材料にされ、tableの構成とユーザの権限にあわせて、表示権限等を制御します。
+これらの条件は、Model::authorized_option()等で判定材料にされ、tableの構成とユーザの権限にあわせて、表示権限等を制御します。
 
 // Model::cascade_set()
 

@@ -1,6 +1,6 @@
 <?php echo \Form::open(); ?>
 
-<h2>ワークフロー名：<?php echo $workflow_name; ?></h2>
+<h1>ワークフロー名：<?php echo $workflow_name; ?></h1>
 
 <fieldset>
 	<legend>執筆者設定</legend>

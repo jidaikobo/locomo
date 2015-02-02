@@ -78,13 +78,13 @@ trait Controller_Traits_Bulk
 				if (empty($judge))
 				{
 					\Session::set_flash('error', '保存対象が 0 件です');
-					$url = \Uri::create($this->base_url.$action, array(), \Input::get());
+					$url = \Uri::create(static::$base_url.$action, array(), \Input::get());
 					return \Response::redirect($url);
 				}
 
 				\Session::set_flash('success', self::$nicename . 'への変更を' . count($ids) . '件保存しました');
 
-				$url = \Uri::create($this->base_url.$action, array(), array('ids' => $ids));
+				$url = \Uri::create(static::$base_url.$action, array(), array('ids' => $ids));
 				return \Response::redirect($url);
 			}
 			else

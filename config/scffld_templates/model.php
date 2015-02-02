@@ -95,4 +95,26 @@ class Model_XXX extends \Model_Base
 
 		return $form;
 	}
+
+	/*
+	 * search_form
+	 */
+	public static function search_form()
+	{
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('xxx_search_form', $config);
+
+		// 検索
+		$form->add(
+			'all',
+			'フリーワード',
+			array('type' => 'text', 'value' => \Input::get('all'))
+		);
+
+		// wrap
+		$parent = parent::search_form_base('ユーザ');
+		$parent->add_after($form, 'xxx_search_form', array(), array(), 'opener');
+
+		return $parent;
+	}
 }

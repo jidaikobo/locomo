@@ -3,9 +3,15 @@ namespace Locomo;
 class Controller_Core extends \Fuel\Core\Controller_Rest
 {
 	/**
-	* @var string name for human
+	* @vars
 	*/
-	public static $nicename = '';
+	public static $nicename    = ''; // name for human
+	public static $controller  = ''; // \Request::main()->controller
+	public static $action      = ''; // \Request::main()->action
+	public static $shortname   = ''; // '[\Modname]\Controller_Example' to 'example'
+	public static $base_url    = ''; // http(s)://example.com/path/to/controller
+	public static $main_url    = ''; // http(s)://example.com/path/to/controller/main_action
+	public static $current_url = ''; // http(s)://example.com/path/to/controller/current_action
 
 	/**
 	* @var string template
@@ -16,13 +22,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 * @var string model name
 	 */
 	protected $model_name = '';
-
-	/*
-	 * @var string urls
-	 */
-	protected $base_url = '';
-	protected $main_url = '';
-
 
 	/*
 	 * @var string redirect
@@ -45,57 +44,41 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// parent
 		parent::before();
 
-		// hmvc
-		if (\Request::is_hmvc())
-		{
-			$this->_template = 'widget';
-		}
-
 		// show profile to development only
 		\Fuel::$profiling = \Fuel::$env == 'development' ?: false ;
 		\Fuel::$profiling = \Input::get('no_prof') ? false : \Fuel::$profiling ;
 
-		// template path
-		$request = \Request::active();
-		$request->add_path(APPPATH.'views'.DS.\Request::main()->module.DS, true);
+		// hmvc
+		$this->_template = \Request::is_hmvc() ? 'widget' : $this->_template ;
+
+		// called_class
+		$called_class = get_called_class();
+		static::$controller  = \Request::main()->controller;
+		static::$action      = \Request::main()->action;
+		static::$base_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
+		static::$base_url    = str_replace('locomo/', '' , static::$base_url); // locomo is not module
+		static::$current_url = static::$base_url.\Request::main()->action.DS;
+		static::$main_url    = static::$base_url.\Util::get_locomo($called_class, 'main_action').DS ;
+		static::$nicename    = \Util::get_locomo($called_class, 'nicename') ?: @static::$config['nicename'];
+		static::$shortname   = strtolower(substr(\Inflector::denamespace(\Request::active()->controller), 11));
+
+		// template path いまはfuel本来っぽいテンプレート配置が基本なので、不要？ しばらくコメントアウトして様子見
+//		$request = \Request::active();
+//		$request->add_path(APPPATH.'views'.DS.\Request::main()->module.DS, true);
 
 		// load config and set model_name
-		$controller = substr(ucfirst(\Inflector::denamespace(\Request::active()->controller)), 11);
-		$current_module = \Request::main()->module;
-		if (\Request::is_hmvc())
+		$module = \Request::is_hmvc() ? \Request::active()->module : \Request::main()->module;
+		if ($module)
 		{
-			$current_module = \Request::active()->module;
-		}
-		if ($current_module)
-		{
-			$module = ucfirst($current_module);
-//			if (! $this->model_name) $this->model_name = '\\'.$module.'\\Model_'.$module;
-			if (! $this->model_name) $this->model_name = '\\'.$module.'\\Model_'.$controller;
-			static::$config = \Config::load(strtolower($this->request->module));
+			$this->model_name = $this->model_name ?: '\\'.ucfirst($module).'\\Model_'.ucfirst(static::$shortname);
+			static::$config = \Config::load(strtolower($module));
 		}
 		else
 		{
-			if (! $this->model_name) $this->model_name = '\\Model_'.$controller;
-			static::$config = \Config::load(strtolower($controller));
+			if (! $this->model_name) $this->model_name = '\\Model_'.ucfirst(static::$shortname);
+			static::$config = \Config::load(static::$shortname);
 		}
 		static::$config = static::$config ?: array();
-
-		// base_url and main_url
-		$this->base_url = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
-		if (property_exists($this, 'locomo'))
-		{
-			$this->main_url = $this->base_url.\Arr::get(static::$locomo, 'main_action') ?: '' ;
-		}
-
-		// nicename
-		$called_class = get_called_class();
-		$nicename = '';
-		if (property_exists($called_class, 'locomo'))
-		{
-			$nicename = \Arr::get($called_class::$locomo, 'nicename');
-		}
-		$nicename = $nicename ?: @static::$config['nicename'];
-		static::$nicename = $nicename;
 	}
 
 	/**
@@ -123,19 +106,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			\Request::main()->action == 'index'
 		)
 		{
-			if (property_exists($called_class, 'locomo'))
-			{
-				$main_action = \Arr::get($called_class::$locomo, 'main_action');
-				$main_action = $main_action ? \Inflector::ctrl_to_dir($called_class.DS.$main_action) : '';
-				
-				// Locomo is no module
-				$main_action = str_replace('locomo/', '' , $main_action);
-
-				if ($main_action)
-				{
-					return \Response::redirect($main_action);
-				}
-			}
+			return \Response::redirect(static::$main_url);
 		}
 
 		// auth
