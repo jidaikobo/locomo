@@ -261,8 +261,7 @@ hmvcにサイズを渡すと、widget側でサイズごとの表示を返すこ�
 
 		// add_actionset - back to index at edit
 		$action['urls'][] = \Html::anchor('/sys/dashboard/','ダッシュボードへ');
-		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
+		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// assign
 		$this->template->set_global('title', 'ダッシュボードの設定');

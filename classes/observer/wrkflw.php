@@ -83,9 +83,7 @@ class Observer_Wrkflw extends \Orm\Observer
 			$thead.= '<th>'.mb_substr($step['name'],0,5).'</th>';
 			if (isset(static::$logs[$seq]))
 			{
-				$user = $controller::get_userinfo(static::$logs[$seq]->did_user_id);
-
-				$tbody.= '<td><div style="border:1px red solid;border-radius: 50%;width: 5em;height: 5em;text-align:center; overflow: hidden;white-space: nowrap;color: red;font-family: \'YuMincho\'; line-height: 1.4;padding-top:0.5em;padding-bottom:0.5em;box-sizing: border-box;font-size: 0.9em"><div style="border-bottom:1px red solid;">'.$step['name'].'</div><div style="border-bottom:1px red solid;">'.$user->display_name.'</div>'.'<div style="font-size: 0.8em">'.date('y.m.d', strtotime(static::$logs[$seq]->created_at)).'</div></div></td>';
+				$tbody.= '<td><div style="border:1px red solid;border-radius: 50%;width: 5em;height: 5em;text-align:center; overflow: hidden;white-space: nowrap;color: red;font-family: \'YuMincho\'; line-height: 1.4;padding-top:0.5em;padding-bottom:0.5em;box-sizing: border-box;font-size: 0.9em"><div style="border-bottom:1px red solid;">'.$step['name'].'</div><div style="border-bottom:1px red solid;">'.\Model_Usr::get_display_name(static::$logs[$seq]->did_user_id).'</div>'.'<div style="font-size: 0.8em">'.date('y.m.d', strtotime(static::$logs[$seq]->created_at)).'</div></div></td>';
 			} else {
 				$tbody.= '<td></td>';
 			}

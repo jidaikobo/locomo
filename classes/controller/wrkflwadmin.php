@@ -104,8 +104,7 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 
 		//add_actionset - back to index at edit
 		$action['urls'][] = \Html::anchor(static::$main_url, \Util::get_locomo(static::$controller, 'main_action_name', '一覧へ'));
-		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
+		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		//assign
 		$view = \View::forge('wrkflwadmin/setup');

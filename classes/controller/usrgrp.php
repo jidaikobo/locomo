@@ -30,10 +30,8 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 		$form = $this->bulk($option, '\Model_Usrgrp');
 
 		// add_actionset - back to index at edit
-		$ctrl_url = \Inflector::ctrl_to_dir(\Request::main()->controller);
-		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
-		$action['order'] = 10;
-		\Actionset::add_actionset(\Request::main()->controller, 'ctrl', $action);
+		$action['urls'][] = \Html::anchor(static::$main_url, '一覧へ');
+		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// assign
 		$view = \View::forge('bulk/bulk');

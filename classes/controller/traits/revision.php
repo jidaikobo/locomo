@@ -34,10 +34,11 @@ trait Controller_Traits_Revision
 	{
 		is_null($id) and \Response::redirect(static::$base_url);
 		// paginated_find
-		$options['where'][]     = array('model', \Inflector::add_head_backslash($this->model_name));
-		$options['where']['or'] = array('model', '\Locomo'.\Inflector::add_head_backslash($this->model_name));
-		$options['where'][]     = array('pk_id', '=', $id);
-		$options['order_by'][]  = array('created_at', 'DESC');
+		$options['where'][][]    = array('pk_id', '=', $id);
+		$options['where'][][]    = array('model', \Inflector::add_head_backslash($this->model_name));
+		$max = max(array_keys($options['where']));
+		$options['where'][$max]['or'] = array('model', '\Locomo'.\Inflector::add_head_backslash($this->model_name));
+		$options['order_by'][] = array('created_at', 'DESC');
 
 		\Pagination::set_config('uri_segment', 5);
 		$items = \Model_Revision::paginated_find($options);
@@ -50,33 +51,13 @@ trait Controller_Traits_Revision
 		// unserialize data - to display usernames
 		foreach($items as $k => $item):
 			$items[$k]->data = unserialize($item->data);
-			// root
-			if ($item->user_id == -2)
-			{
-				$items[$k]->modifier_name = 'root管理者';
-			}
-			// admin
-			elseif ($item->user_id == -1)
-			{
-				$items[$k]->modifier_name = '管理者';
-			}
-			// users
-			else
-			{
-				$modifier_name = \Model_Usr::find($item->user_id, array('select'=>array('display_name')));
-				$modifier_name = $modifier_name ? $modifier_name->display_name : 'deleted user #'.$item->user_id;
-				$items[$k]->modifier_name = $modifier_name;
-			}
+			$modifier_name = \Model_Usr::get_display_name($item->user_id);
+			$items[$k]->modifier_name = $modifier_name ?: 'deleted user #'.$item->user_id;
 		endforeach;
 
 		// add_actionset
 		$action['urls'][] = \Html::anchor(static::$base_url.'index_revision/','履歴一覧へ');
-		$action['order'] = 10;
-		$action['overrides']['base'] = array(
-//			\Html::anchor(static::$base_url.'view/'.$id,'閲覧'),
-//			\Html::anchor(static::$base_url.'edit/'.$id,'編集')
-		);
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
+		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// subject field
 		$model = $this->model_name;
@@ -122,14 +103,8 @@ trait Controller_Traits_Revision
 		$content->set_global('is_revision', true);
 
 		// add_actionset
-		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
 		$action['urls'][] = \Html::anchor(static::$base_url.'each_index_revision/'.$revisions->pk_id, '履歴一覧へ');
-		$action['order'] = 10;
-		$action['overrides']['base'] = array(
-//			\Html::anchor(static::$base_url.'view/'.$revisions->pk_id,'閲覧'),
-//			\Html::anchor(static::$base_url.'edit/'.$revisions->pk_id,'編集')
-		);
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
+		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// view
 		$this->base_assign();
