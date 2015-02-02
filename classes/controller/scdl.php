@@ -243,7 +243,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 			$detail->private_kb = $allow ? 0 : 1;
 		}
-		
+
 
 		$view = \View::forge($model::$_kind_name . "/view");
 		$view->set_global('title', self::$nicename);
@@ -560,21 +560,48 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
 					$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
 
-					// 前半
-					if (!($target_1 < $starttime || $target_1 >= $endtime)) {
-					
-						$r['primary'] = 1;
+					if ($r['repeat_kb'] == 1 || $r['repeat_kb'] == 2 || $r['repeat_kb'] == 3 || $r['repeat_kb'] == 4 || $r['repeat_kb'] == 5) {
+						$starttime = date('Hi', strtotime($r['start_time']));
+						$endtime = date('Hi', strtotime($r['end_time']));
+						$target_1 = sprintf("%02d", $row['hour']) . "00";
+						$target_2 = sprintf("%02d", $row['hour']) . "30";
+						// 前半
+						if (!($target_1 < $starttime || $target_1 >= $endtime)) {
+						
+							$r['primary'] = 1;
+						} else {
+							$r['primary'] = 0;
+						}
+						$target = $row['hour'] . "30";
+						//if (!($target < $starttime || $target > $endtime)) {
+						
+						if ($target_2 < $endtime && $starttime <= $target_2) {
+							$r['secondary'] = 1;
+						
+						} else {
+							$r['secondary'] = 0;
+						}
 					} else {
-						$r['primary'] = 0;
-					}
-					$target = $row['hour'] . "30";
-					//if (!($target < $starttime || $target > $endtime)) {
-					
-					if ($target_2 < $endtime && $starttime <= $target_2) {
-						$r['secondary'] = 1;
-					
-					} else {
-						$r['secondary'] = 0;
+						$starttime = date('Ymd', strtotime($r['start_date'])) . date('Hi', strtotime($r['start_time']));
+						$endtime = date('Ymd', strtotime($r['end_date'])) . date('Hi', strtotime($r['end_time']));
+						$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
+						$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
+						// 前半
+						if (!($target_1 < $starttime || $target_1 >= $endtime)) {
+						
+							$r['primary'] = 1;
+						} else {
+							$r['primary'] = 0;
+						}
+						$target = $row['hour'] . "30";
+						//if (!($target < $starttime || $target > $endtime)) {
+						
+						if ($target_2 < $endtime && $starttime <= $target_2) {
+							$r['secondary'] = 1;
+						
+						} else {
+							$r['secondary'] = 0;
+						}
 					}
 					if (isset($r['primary']) || isset($r['secondary'])) {
 						// 詳細へのリンク
@@ -759,6 +786,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['target_mon'] = $row['mon'];
 					$r['target_day'] = $row['day'];
 					// 追加
+					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
 					$row['data'][] = clone $r;
 				}
 			}
