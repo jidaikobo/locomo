@@ -88,6 +88,7 @@ class Controller_Base extends Controller_Core
 */
 
 		// モデルが持っている判定材料を、反映する。
+		$model::add_authorize_methods();
 		foreach($model::$_authorize_methods as $authorize_method)
 		{
 			if ( ! method_exists($model, $authorize_method)) continue;
