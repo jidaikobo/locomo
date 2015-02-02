@@ -16,7 +16,7 @@
 	<?php echo \Asset::css('base.css'); ?>
 	<?php echo \Asset::css('core.css'); ?>
 	<?php echo \Asset::css('layout.css'); ?>
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css">
 	<?php echo \Asset::css('../js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css'); ?>
 	<?php echo \Asset::render('css'); ?>
 
@@ -35,7 +35,7 @@
 	<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
 	<?php echo \Asset::render('js'); ?>
 	<!--[if lt IE 9]>
-	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+	<script src="//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 	<![endif]-->
 
 </head>

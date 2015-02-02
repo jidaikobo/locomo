@@ -62,6 +62,10 @@ class Model_Scdl extends \Model_Base
 				'size' => 0,
 				'class' => 'date',
 			),
+			'validation' => 
+			array (
+				'required',
+			),
 		),
 		'end_date' => 
 		array (
@@ -72,6 +76,10 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 0,
 				'class' => 'date',
+			),
+			'validation' => 
+			array (
+				'required',
 			),
 		),
 		'start_time' => 
@@ -84,6 +92,10 @@ class Model_Scdl extends \Model_Base
 				'size' => 0,
 				'class' => 'time min15',
 			),
+			'validation' => 
+			array (
+				'required',
+			),
 		),
 		'end_time' => 
 		array (
@@ -94,6 +106,10 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 0,
 				'class' => 'time min15',
+			),
+			'validation' => 
+			array (
+				'required',
 			),
 		),
 		'week_kb' => 
@@ -239,6 +255,10 @@ class Model_Scdl extends \Model_Base
 				'type' => 'radio',
 				'class' => 'int',
 				'options' => array('1' => '全グループ', '2' => 'グループ指定')
+			),
+			'validation' => 
+			array (
+				'required',
 			),
 		),
 		'group_detail' => 

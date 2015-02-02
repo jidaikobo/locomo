@@ -357,7 +357,6 @@ a.has_dropdown {
 	background-color: rgba(0,0,0,.06);
 	text-shadow: none;
 }
-
 #adminbar .menulist.on {
 	box-shadow: 0 0 6px #aaa;
 	-moz-box-shadow: 0 0 6px #aaa;
@@ -371,6 +370,12 @@ a.has_dropdown {
 /*
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */
+}
+#adminbar .menulist li.hasborder,
+#adminbar .menulist li.hasseparate {
+	border-bottom: 1px solid #ddd;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+	margin-bottom: 1px;
 }
 #adminbar .menulist.on a:hover,
 #adminbar .menulist.on a:focus {
@@ -745,14 +750,31 @@ div.form_tooltip {
 	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
-/*
-.contents form h2:first-child{
-	border-top: none;
-	box-shadow: none;
-	margin-top: 0;
-	margin-bottom: .5em;
+.lcm_form div {
+	outline: 1px transparent dotted;
 }
-*/
+.lcm_form > div {
+	outline-color: rgba( 255,0,0,.5);
+	background-color: rgba( 0,0,0,.1);
+}
+.lcm_form > div > div {
+	outline-color: rgba( 0,0,255,.5);
+}
+.lcm_form > div > div > div {
+	outline-color: rgba( 0,128,128,.5);
+}
+.lcm_form h2 {
+/*	clear: left;
+	float: left;*/
+	outline: 1px dotted #f0a;
+	line-height: 1.5em;
+}
+.lcm_form .field {
+/*	float: left;*/
+}
+.lmc_form .input_group {
+	display: block;
+}
 form tbody th {
 	text-align: left;
 	padding-right: 5px;
@@ -913,13 +935,16 @@ td.minimum {
 	padding:.25em .5em;
 }
 .datatable {
-	border-bottom:1px solid #bbb;
 	background-color: #fefefe;
 	font-size: .9em;
 }
 .datatable thead th,
-.datatable thead td {
-	border-bottom: 1px solid #ccc;
+.datatable thead td,
+tbody tr:last-child th,
+tbody tr:last-child td,
+.datatable tfoot tr:last-child th,
+.datatable tfoot tr:last-child td {
+	border-bottom: 1px solid #bbb;
 }
 
 .datatable tbody th {
@@ -950,7 +975,7 @@ td.minimum {
 }
 .datatable thead a:hover,
 .datatable .thead a:hover {
-	background-color: #e6e6e6;
+	background-color: #ddd;
 	text-decoration: underline;
 }
 .col_scrollable {
