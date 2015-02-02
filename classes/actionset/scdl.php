@@ -7,7 +7,6 @@ class Actionset_Scdl extends \Actionset_Base
 
 	/*
 	(arr)  urls          メニューに表示するリンク先
-	(arr)  overrides     urlをオーバライドする際に設定。ユーザグループのActionset_Optionにサンプルがある
 	(bool) show_at_top   モジュール／コントローラトップに表示するかどうか
 	(str)  action_name   ACL設定画面などで用いる
 	(str)  explanation   ACL設定画面などで用いる説明文

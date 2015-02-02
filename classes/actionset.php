@@ -123,32 +123,13 @@ class Actionset
 		}
 		if (empty(static::$actions[$controller])) return false;
 
-		// override and order
-		$overrides = array();
+		// order
 		foreach (static::$actions[$controller] as $realm => $v)
 		{
-			foreach ($v as $kk => $vv)
-			{
-				if (isset($vv['overrides']))
-				{
-					$overrides = array_merge($overrides, $vv['overrides']);
-				}
-			}
-
-			// order
-			$override = \Arr::get(static::$actions[$controller][$realm], 'override_url');
-			if ($override) unset(static::$actions[$controller][$realm]['override_url']);// evacuate
 			static::$actions[$controller][$realm] = \Arr::multisort(
 				static::$actions[$controller][$realm],
 				array('order' => SORT_ASC,)
 			);
-			if ($override) static::$actions[$controller][$realm]['override_url'] = $override;// evacuate
-		}
-
-		// override
-		foreach($overrides as $realm => $urls)
-		{
-			static::$actions[$controller][$realm]['override_url'] = $urls;
 		}
 
 		return true;
@@ -170,6 +151,8 @@ class Actionset
 		{
 			static::$actions[$controller][$realm]['added'] = array();
 		}
+		 // orderが設定されてなければ10にする。
+		\Arr::set($arr, 'order', \Arr::get($arr, 'order', 10));
 		static::$actions[$controller][$realm]['added'] += $arr;
 	}
 
@@ -226,12 +209,6 @@ class Actionset
 			}
 		}
 		if ( ! $arr) return false;
-
-		// override
-		if (isset($obj['override_url']))
-		{
-			$arr = $obj['override_url'];
-		}
 
 		return \Html::ul($arr, $ul_attr);
 	}
