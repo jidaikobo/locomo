@@ -325,6 +325,9 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// locomo path
 		$locomo['locomo_path'] = $controller.DS.$action;
 
+		// current model
+		$locomo['model'] = $this->model_name;
+
 		// current controller
 		$locomo['controller']['name'] = $controller;
 		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'main_action'))
