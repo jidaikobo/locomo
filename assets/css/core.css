@@ -59,12 +59,13 @@ body.lcm_action_login {
 	clip: rect(1px, 1px, 1px, 1px);
 }
 */
-.lcm_action_login h1 {
+.lcm_action_login .container h1 {
 	font-size: 2em !important;
 	color: #004896;
 	font-weight: normal;
 	font-family: Verdana;
 	border: none;
+	box-shadow: none;
 	margin: 0 0 .5em !important;
 }
 .lcm_action_login h1 img {
@@ -220,7 +221,7 @@ body.lcm_action_login {
 }
 /* あとで整理 */
 .lcmbar_top {
-	background-image: url('../../assets/img/system/adminbar_bg.png');
+	background-image: url('../../app_assets/img/system/adminbar_bg.png');
 	background-color: #0e3664;
 	background-position: center top;
 	background-repeat: no-repeat;
@@ -357,7 +358,6 @@ a.has_dropdown {
 	background-color: rgba(0,0,0,.06);
 	text-shadow: none;
 }
-
 #adminbar .menulist.on {
 	box-shadow: 0 0 6px #aaa;
 	-moz-box-shadow: 0 0 6px #aaa;
@@ -371,6 +371,12 @@ a.has_dropdown {
 /*
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */
+}
+#adminbar .menulist li.hasborder,
+#adminbar .menulist li.hasseparate {
+	border-bottom: 1px solid #ddd;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+	margin-bottom: 1px;
 }
 #adminbar .menulist.on a:hover,
 #adminbar .menulist.on a:focus {
@@ -745,14 +751,61 @@ div.form_tooltip {
 	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
-/*
-.contents form h2:first-child{
+
+.lcm_form {
+	display: table;
+	margin-top: 2em;
+	padding-bottom: 4em;
+}
+.lcm_form * {
+	vertical-align: top;
+}
+.lcm_form > div {
+	display: table-row;
+}
+.lcm_form .input_group > h2 ,
+.lcm_form .input_group > .field ,
+.lcm_form .input_group > table {
+	padding: 1em 0 .8em;
+	border-top: 1px solid #ccc;
+	box-shadow: 0 -1px 0 #fff;
+}
+.lcm_form .input_group:first-child h2,
+.lcm_form .input_group:first-child .field,
+.lcm_form .input_group:first-child table {
 	border-top: none;
 	box-shadow: none;
-	margin-top: 0;
-	margin-bottom: .5em;
 }
-*/
+ .lcm_form .input_group > h2,
+.lcm_form .input_group > table {
+	display: table-cell;
+}
+.lcm_form .input_group > table th {
+	text-align: left;
+}
+.lcm_form .input_group > table * {
+	vertical-align: middle;
+}
+.lcm_form .input_group > h2 {
+	width: 11em;
+	text-align: right;
+}
+.lcm_form .input_group > .field,
+.lcm_form .input_group > table {
+	padding-left: .5em;
+}
+.lcm_form .address input {
+	display: block;
+	width: 20em;
+	margin-bottom: -1px;
+}
+.lcm_form .submit_button {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
+
 form tbody th {
 	text-align: left;
 	padding-right: 5px;
@@ -790,12 +843,11 @@ div.submit_button {
 	margin: 1em 0 .5em;
 }
 
-.label_reqired {
+.label_required {
 	font-weight: normal;
 	font-size: .75em;
 	letter-spacing: .125em;
-	margin-left: .5em;
-	margin-right: -.125em;
+	margin:0 .5em;
 	padding: .2em .25em .15em;
 	vertical-align: text-bottom;
 	color: #fff;
@@ -913,13 +965,16 @@ td.minimum {
 	padding:.25em .5em;
 }
 .datatable {
-	border-bottom:1px solid #bbb;
 	background-color: #fefefe;
 	font-size: .9em;
 }
 .datatable thead th,
-.datatable thead td {
-	border-bottom: 1px solid #ccc;
+.datatable thead td,
+.datatable tbody tr:last-child th,
+.datatable tbody tr:last-child td,
+.datatable tfoot tr:last-child th,
+.datatable tfoot tr:last-child td {
+	border-bottom: 1px solid #bbb;
 }
 
 .datatable tbody th {
@@ -950,7 +1005,7 @@ td.minimum {
 }
 .datatable thead a:hover,
 .datatable .thead a:hover {
-	background-color: #e6e6e6;
+	background-color: #ddd;
 	text-decoration: underline;
 }
 .col_scrollable {
@@ -1042,7 +1097,7 @@ table.calendar {
 	font-size: 85%;
 }
 /*=== contents ===*/
-h1#page_title {
+.contents > h1 {
 	margin: 0 0 .5em;
 	font-size: 1.25em;
 	border-bottom: 1px solid #aaa;
@@ -1455,7 +1510,24 @@ li.show_if_smalldisplay {
 		text-shadow: none;
 		line-height: 1;
 	}
-
+	.lcm_form {
+		display: block;
+	}
+	.lcm_form .input_group,
+	.lcm_form .input_group h2,
+	.lcm_form .input_group div{
+		display: block;
+	}
+	.lcm_form .input_group h2 {
+		width: 100%;
+		text-align: left;
+		margin: .5em 0 0;
+		padding: 1em 0 0;
+	}
+	.lcm_form .input_group .field {
+		border: none;
+		box-shadow: none;
+	}
 }
 
 @media screen and (max-width: 320px) {

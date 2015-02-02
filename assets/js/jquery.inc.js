@@ -823,7 +823,7 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 	$('form').change( function(e){
 		e = e ? e : event;
 		var t = $(e.target);
-		if( t.closest('.search')[0] || t.hasClass('datetime') && t.val() == t.data('val') ){//.search form内やdatetimepickerは除外
+		if( t.closest('.search')[0] || t.hasClass('checkbox_binded') || t.hasClass('no_confirm') || t.hasClass('datetime') && t.val() == t.data('val') ){//.search form内や、一括処理用のチェックボックス、datetimepickerは除外
 			return false;
 		}else{
 			confirm_beforeunload();

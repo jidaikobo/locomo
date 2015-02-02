@@ -64,10 +64,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$eyear = date('Y', strtotime(\Input::post("end_date")));
 			$emon  = date('m', strtotime(\Input::post("end_date")));
 			$eday  = date('d', strtotime(\Input::post("end_date")));
-			$shour = explode(":", \Input::post("start_time"))[0];
-			$smin  = explode(":", \Input::post("start_time"))[1];
-			$ehour = explode(":", \Input::post("end_time"))[0];
-			$emin  = explode(":", \Input::post("end_time"))[1];
+			$shour = $smin = $ehour = $emin = 0;
+
+			if (preg_match("/:/", \Input::post("start_time"))) {
+				$shour = explode(":", \Input::post("start_time"))[0];
+				$smin  = explode(":", \Input::post("start_time"))[1];
+			}
+			if (preg_match("/:/", \Input::post("end_time"))) {
+				$ehour = explode(":", \Input::post("end_time"))[0];
+				$emin  = explode(":", \Input::post("end_time"))[1];
+			}
 			$overlap_result = $this->checkOverlap($id								
 								, $syear
 								, $smon
@@ -92,7 +98,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 				// オブザーバーの処理をここへ移動(仮から本登録の処理でも発動してしまうため)
 				// checkbox値
-				$columns = array('provisional_kb', 'unspecified_kb', 'allday_kb', 'private_kb', 'overlap_kb', 'attend_flg');
+				$columns = array('provisional_kb', 'unspecified_kb', 'allday_kb', 'private_kb', 'overlap_kb', 'attend_flg', 'group_kb');
 				foreach ($columns as $v) {
 					if (!\Input::post($v)) {
 						$obj->__set($v, 0);
