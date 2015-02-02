@@ -786,6 +786,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['target_mon'] = $row['mon'];
 					$r['target_day'] = $row['day'];
 					// 追加
+					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
 					$row['data'][] = clone $r;
 				}
 			}
