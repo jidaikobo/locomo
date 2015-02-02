@@ -143,6 +143,8 @@ trait Actionset_Traits_Wrkflw
 					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/remand/{$obj->id}"), '差戻し'),
 					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/reject/{$obj->id}"), '却下'),
 				);
+				// ワークフロー進行中は編集と削除はできない
+				\Actionset::disabled(array('base' => array('edit','delete')));
 			}
 			$menu_str = '';
 		}

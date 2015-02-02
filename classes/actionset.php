@@ -4,6 +4,22 @@ class Actionset
 {
 	public static $actions     = array();
 	public static $mod_actions = array();
+	public static $disabled    = array();
+
+	/**
+	 * disabled()
+	 * @param array $args
+	 */
+	public static function disabled($args)
+	{
+		// add disabled
+		$controller = \Inflector::add_head_backslash(\Request::main()->controller);
+		foreach ($args as $realm => $action)
+		{
+			static::$disabled[$realm] = \Arr::get(static::$disabled, $realm, array());
+			\Arr::insert(static::$disabled[$realm], $action, 0);
+		}
+	}
 
 	/**
 	 * get_actionset()
@@ -14,10 +30,19 @@ class Actionset
 	 */
 	public static function get_actionset($controller, $obj = null, $default = false)
 	{
+		// set actionset
 		$controller = \Inflector::add_head_backslash($controller);
-// do not turn below on. add_actionset() generate static member variable first
-//		if ( ! empty(static::$actions[$controller])) return static::$actions[$controller];
-	return static::set_actionset($controller, $obj) ? static::$actions[$controller] : $default;
+		$actionsets = static::set_actionset($controller, $obj) ? static::$actions[$controller] : $default;
+
+		// check disabled
+		foreach (static::$disabled as $realm => $disables)
+		{
+			foreach ($disables as $v)
+			{
+				\Arr::delete($actionsets[$realm], $v);
+			}
+		}
+		return $actionsets;
 	}
 
 	/**
@@ -75,22 +100,17 @@ class Actionset
 		$id = method_exists($obj, 'get_pk') ? $obj->get_pk() : null ;
 
 		// get controllers actions - search prefixed 'action_'
-		$act_methods = get_class_methods($controller);
-		$act_methods = array_flip($act_methods);
+		$act_methods = array_flip(get_class_methods($controller));
 		$act_methods = \Arr::filter_prefixed($act_methods, 'action_');
-		$act_methods = array_flip($act_methods);
 
 		// methods - search prefixed 'actionset_'
-		$methods = get_class_methods($class);
-		if (! is_array($methods)) return;
-		$methods = array_flip($methods);
+		$methods = array_flip(get_class_methods($class));
 		$methods = \Arr::filter_prefixed($methods, 'actionset_');
-		$methods = array_flip($methods);
 
-		foreach($methods as $method)
+		foreach($methods as $method => $v)
 		{
 			// eliminate non exists action
-			if ( ! in_array($method, $act_methods)) continue;
+			if ( ! array_key_exists($method, $act_methods)) continue;
 
 			$p_method = 'actionset_'.$method;
 			$as = $class::$p_method($controller, $obj, $id);
