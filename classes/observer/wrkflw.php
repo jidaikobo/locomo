@@ -72,6 +72,8 @@ class Observer_Wrkflw extends \Orm\Observer
 		</style>
 		";
 
+		$controller = \Inflector::add_head_backslash(\Request::active()->controller);
+
 		// 承認のhtmlを生成
 		$thead = '<thead><tr>';
 		$tbody = '<tr>';
@@ -81,7 +83,9 @@ class Observer_Wrkflw extends \Orm\Observer
 			$thead.= '<th>'.mb_substr($step['name'],0,5).'</th>';
 			if (isset(static::$logs[$seq]))
 			{
-				$tbody.= '<td><div style="border:1px red solid;border-radius: 50%;width: 5em;height: 5em;text-align:center; overflow: hidden;white-space: nowrap;color: red;font-family: \'YuMincho\'; line-height: 1.4;padding-top:0.5em;padding-bottom:0.5em;box-sizing: border-box;font-size: 0.9em"><div style="border-bottom:1px red solid;">'.$step['name'].'</div><div style="border-bottom:1px red solid;">'.static::$logs[$seq]->display_name.'</div>'.'<div style="font-size: 0.8em">'.date('y.m.d', strtotime(static::$logs[$seq]->created_at)).'</div></div></td>';
+				$user = $controller::get_userinfo(static::$logs[$seq]->did_user_id);
+
+				$tbody.= '<td><div style="border:1px red solid;border-radius: 50%;width: 5em;height: 5em;text-align:center; overflow: hidden;white-space: nowrap;color: red;font-family: \'YuMincho\'; line-height: 1.4;padding-top:0.5em;padding-bottom:0.5em;box-sizing: border-box;font-size: 0.9em"><div style="border-bottom:1px red solid;">'.$step['name'].'</div><div style="border-bottom:1px red solid;">'.$user->display_name.'</div>'.'<div style="font-size: 0.8em">'.date('y.m.d', strtotime(static::$logs[$seq]->created_at)).'</div></div></td>';
 			} else {
 				$tbody.= '<td></td>';
 			}
@@ -115,7 +119,12 @@ class Observer_Wrkflw extends \Orm\Observer
 				\Event::register('locomo_after', '\Locomo\Observer_Wrkflw::progress');
 
 				// set message
-				\Session::set_flash('success', "承認進行中の項目です。（{$workflow->name}ルート {$total_step}段階中の{$current_step}）");
+				if (static::$route_id)
+				{
+					\Session::set_flash('success', "承認進行中の項目です。（{$workflow->name}ルート {$total_step}段階中の{$current_step}）");
+				} else {
+					\Session::set_flash('error', "承認ルートを見失いました。経路設定からやり直してください。");
+				}
 			}
 
 			// ルート設定してください

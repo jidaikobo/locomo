@@ -35,10 +35,15 @@ trait Controller_Traits_Wrkflw
 		// 進行中の件数
 		$count = $model::count(array('where'=>array(array('workflow_status', '<>', 'finish')),));
 
+		// 表示権限を厳密にとるためモデルのキャッシュを削除しauthorized_option()を設定する
+		$model::clear_cached_objects();
+		$model::$_conditions = $model::authorized_option(array(), 'index');
+
 		// assign
 		$view->set_global('title', '関連ワークフロー項目');
 		$view->set('controller_uri', \Inflector::ctrl_to_dir($controller));
 		$view->set('pk', $model->get_primary_keys('first'));
+		$view->set('model', $model);
 		$view->set('count', $count);
 		$view->set('subject_field', $model::get_default_field_name('subject'));
 		$view->set('related', $related);
@@ -286,8 +291,8 @@ trait Controller_Traits_Wrkflw
 			$step_name = \Arr::get($steps, "{$log->current_step}.name", '作成');
 
 			// 複数回の差戻しによって同じステップ数を持つ場合は、keyで上書きする
-			$user_info = \Model_Usr::find($log->did_user_id);
-			$target_steps[$target_step] = $user_info->username." ({$step_name}の段階)";
+			$user_info = static::get_userinfo($log->did_user_id);
+			$target_steps[$target_step] = $user_info->display_name." ({$step_name}の段階)";
 		}
 
 		// コメント入力viewを表示
@@ -354,6 +359,29 @@ trait Controller_Traits_Wrkflw
 		$view->set_global('title', '却下の確認');
 		$view->set('button', '却下');
 		$this->template->content = $view;
+	}
+
+	/**
+	 * get_userinfo()
+	 * ユーザ情報を取得する
+	 * @return (object)
+	 */
+	public static function get_userinfo($uid)
+	{
+		$user_info = \Model_Usr::find($uid);
+
+		// \Model_Usrで見つからなかったら管理者ユーザ
+		if ( ! $user_info)
+		{
+			$admins = [-1 => '管理者', -2 => 'root管理者'];
+			$user_info = (object) array();
+			$user_info->display_name = $admins[$uid];
+		}
+		if ( ! $user_info)
+		{
+		}
+
+		return $user_info;
 	}
 
 	/**
