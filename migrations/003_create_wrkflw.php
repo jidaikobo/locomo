@@ -1,10 +1,11 @@
 <?php
 namespace Fuel\Migrations;
-class Create_wrkflw
+class Create_Wrkflw
 {
 	public function up()
 	{
 		//workflows
+		echo "create lcm_wrkflws table.\n";
 		\DBUtil::create_table('lcm_wrkflws', array(
 			'id'         => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'       => array('constraint' => 50, 'type' => 'varchar'),
@@ -13,6 +14,7 @@ class Create_wrkflw
 		\DBUtil::create_index('lcm_wrkflws', array('deleted_at'), 'wf_deleted_at');
 
 		//lcm_wrkflw_steps
+		echo "create lcm_wrkflw_steps table.\n";
 		\DBUtil::create_table('lcm_wrkflw_steps', array(
 			'id'          => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'        => array('constraint' => 200, 'type' => 'varchar'),
@@ -25,6 +27,7 @@ class Create_wrkflw
 		\DBUtil::create_index('lcm_wrkflw_steps', array('seq'), 'wf_steps_seq');
 
 		//lcm_wrkflw_allowers
+		echo "create lcm_wrkflw_allowers table.\n";
 		\DBUtil::create_table('lcm_wrkflw_allowers', array(
 			'workflow_id'  => array('constraint' => 11, 'type' => 'int', 'comment' => 'redundant field'),
 			'step_id'      => array('constraint' => 11, 'type' => 'int'),
@@ -36,6 +39,7 @@ class Create_wrkflw
 		\DBUtil::create_index('lcm_wrkflw_allowers', array('step_id','usergroup_id','is_writer'), 'wf_allwrs_ug_id');
 
 		//lcm_wrkflw_logs
+		echo "create lcm_wrkflw_logs table.\n";
 		\DBUtil::create_table('lcm_wrkflw_logs', array(
 			'id'            => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'workflow_id'   => array('constraint' => 11, 'type' => 'int'),
@@ -55,6 +59,7 @@ class Create_wrkflw
 		\DBUtil::create_index('lcm_wrkflw_logs', array('did_user_id'), 'wf_logs_did_user_id');
 
 		//lcm_wrkflw_current_users
+		echo "create lcm_wrkflw_current_users table.\n";
 		\DBUtil::create_table('lcm_wrkflw_current_users', array(
 			'log_id'        => array('constraint' => 11, 'type' => 'int'),
 			'controller'    => array('constraint' => 50, 'type' => 'varchar'),
@@ -68,6 +73,7 @@ class Create_wrkflw
 
 	public function down()
 	{
+		echo "drop workflow related tables.\n";
 		\DBUtil::drop_table('lcm_wrkflws');
 		\DBUtil::drop_table('lcm_wrkflw_steps');
 		\DBUtil::drop_table('lcm_wrkflw_step_actions');

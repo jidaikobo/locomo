@@ -1,9 +1,11 @@
 <?php
 namespace Fuel\Migrations;
-class Create_scdl
+class Create_Scdl
 {
 	public function up()
 	{
+		// lcm_scdls
+		echo "create lcm_scdls table.\n";
 		\DBUtil::create_table('lcm_scdls', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'repeat_kb' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
@@ -50,6 +52,7 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 		", \DB::INSERT);
 		$query->execute();
 
+		echo "create lcm_scdls_buildings table.\n";
 		\DBUtil::create_table('lcm_scdls_buildings', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'schedule_id' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
@@ -78,6 +81,7 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 		);
 		")->execute();
 
+		echo "create lcm_scdls_members table.\n";
 		\DBUtil::create_table('lcm_scdls_members', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'schedule_id' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
@@ -87,6 +91,7 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 			'deleted_at' => array('type' => 'datetime', 'null' => true),
 
 		), array('id'));
+		echo "create lcm_scdls_items table.\n";
 		\DBUtil::create_table('lcm_scdls_items', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'item_id' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
@@ -389,6 +394,7 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 				'updated_at' => \DB::expr("NOW()")
 			))->execute();
 
+		echo "create lcm_scdls_attends table.\n";
 		\DBUtil::create_table('lcm_scdls_attends', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'user_id' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
@@ -403,6 +409,7 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 
 	public function down()
 	{
+		echo "drop scdl related tables.\n";
 		\DBUtil::drop_table('lcm_scdls');
 		\DBUtil::drop_table('lcm_scdls_buildings');
 		\DB::delete("items")->where("category", "schedule_building")->execute();
