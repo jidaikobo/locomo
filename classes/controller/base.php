@@ -257,6 +257,12 @@ class Controller_Base extends Controller_Core
 			// not found
 			if ( ! $obj)
 			{
+				// locomo_edit_not_found
+				if (\Event::instance()->has_events('locomo_edit_not_found'))
+				{
+					\Event::instance()->trigger('locomo_edit_not_found');
+				}
+
 				$page = \Request::forge('sys/403')->execute();
 				$this->template->set_safe('content', $page);
 				return new \Response($page, 403);
@@ -284,11 +290,24 @@ class Controller_Base extends Controller_Core
 					//success
 					\Session::set_flash('success', '更新しました。');
 
+					// locomo_edit_succeed
+					if (\Event::instance()->has_events('locomo_edit_succeed'))
+					{
+						$obj = \Event::instance()->trigger('locomo_edit_succeed', $obj);
+					}
+
 					// redirect
 					// idセグメント込みのredirectを渡されるとちょっと間抜けな帰り先になるがとりあえずこのまま
 					static::$redirect = $redirect ? trim($redirect, DS).DS.$obj->id: static::$current_url.$obj->id;
 					return $obj;
 				} else {
+
+					// locomo_edit_failed
+					if (\Event::instance()->has_events('locomo_edit_failed'))
+					{
+						\Event::instance()->trigger('locomo_edit_failed');
+					}
+
 					//save failed
 					\Session::set_flash('error', '更新を失敗しました。');
 				}

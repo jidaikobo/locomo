@@ -3,6 +3,18 @@ namespace Locomo;
 trait Controller_Traits_Wrkflw
 {
 	/**
+	 * before_wrkflw()
+	 */
+	public function before_wrkflw()
+	{
+		// event
+		\Event::register('locomo_edit_not_found', function(){
+			\Session::set_flash('error', '削除されているか、承認プロセス進行中の項目は編集できません。');
+			\Response::redirect_back();
+		});
+	}
+
+	/**
 	 * action_index_workflow()
 	 */
 	public function action_index_workflow($controller = null)
