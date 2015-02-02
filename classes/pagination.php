@@ -16,6 +16,8 @@ class Pagination extends \Fuel\Core\Pagination
 	// 絞り込まれたページあたりの項目数
 	public static $refined_items = 0;
 
+	protected static $_sort_info_model = '';
+
 	protected static $_sort_info_label = array();
 
 	/*
@@ -108,7 +110,9 @@ class Pagination extends \Fuel\Core\Pagination
 
 
 	public function __set($name, $value = null) {
-		if ($name == 'sort_info_label') {
+		if ($name == 'sort_info_model') {
+			static::$_sort_info_model = $value;
+		} else if ($name == 'sort_info_label') {
 			is_array($value) and static::$_sort_info_label = $value;
 		} else {
 			parent::__set($name, $value);
@@ -127,9 +131,9 @@ class Pagination extends \Fuel\Core\Pagination
 				return call_fuel_func_array(array($instance, 'render_sort_info'), $arguments);
 			}
 		}
-
 		return parent::__callStatic($name, $arguments);
 	}
+
 
 	public function render_nav($raw = false)
 	{

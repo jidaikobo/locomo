@@ -94,29 +94,29 @@ class Controller_Pdf extends \Locomo\Controller_Base
 
 			// field address
 			$address = '';
-			if (is_array($field_format['address'])) {
-				foreach ($field_format['address'] as $key => $val) {
-					$address .= $customer->{$field_format['address'][$key]} . $cr;
+			$field_format_address = $field_format['address'];
+			if (!is_array($field_format_address)) $field_format_address = array($field_format_address);
+			foreach ($field_format_address as $key => $val) {
+				if (isset($customer->{$field_format_address[$key]})) {
+					$address .= $customer->{$field_format_address[$key]} . $cr;
+				} else {
+					$address .=$field_format_address[$key];
 				}
-			} elseif ( is_string($field_format['address']) ) {
-				$address = $customer->{$field_format['address']};
 			}
 
 			// field name
 			$name = '';
-
-			if (is_array($field_format['name'])) {
-				$sp_flg = false;
-				foreach ($field_format['name'] as $key => $val) {
-					if ($sp_flg) $name .= '　';
-					$name .= $customer->{$field_format['name'][$key]};
-					if (!$sp_flg) $cr_flg = true;
+			$field_format_name = $field_format['name'];
+			if (!is_array($field_format_name)) $field_format_name = array($field_format_name);
+			foreach ($field_format_name as $key => $val) {
+				if (isset($customer->{$field_format_name[$key]})) {
+					$name .= $customer->{$field_format_name[$key]};
+				} else {
+					$name .=$field_format_name[$key];
 				}
-			} elseif ( is_string($field_format['name']) ) {
-				$name = $customer->{$field_format['name']};
 			}
 
-			$name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
+			// $name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
 
 			// output customer id
 			$fs = min($width / 24 / MM_PER_POINT, 11);

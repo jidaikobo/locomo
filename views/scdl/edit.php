@@ -54,6 +54,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 <tr>
 	<th>予定日指定</th>
 	<td>
+	<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
+	<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
+	<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>
 		<table id="">
 			<tr>
 				<th>期間</th>
@@ -227,15 +230,31 @@ change_repeat_kb_area();
 $("#form_repeat_kb").change(function(event){
 	change_repeat_kb_area();
 });
+
+
 /**
  * [change_repeat_kb_area description]
  * @return {[type]} [description]
  */
 function change_repeat_kb_area() {
-	for (i = 0; i <= 5; i++) {
-		$("#repeat_kb_" + i).css({'display': 'none'});
+	if ($("#form_repeat_kb").val() == 0 || $("#form_repeat_kb").val() == 1 || $("#form_repeat_kb").val() == 2) {
+		// なし
+		$("#span_week_kb").css({'display': 'none'});
+		$("#span_target_day").css({'display': 'none'});
+		$("#span_target_month").css({'display': 'none'});
+	} else if ($("#form_repeat_kb").val() == 3) {
+		$("#span_week_kb").css({'display': 'block'});
+		$("#span_target_day").css({'display': 'none'});
+		$("#span_target_month").css({'display': 'none'});
+	} else if ($("#form_repeat_kb").val() == 4) {
+		$("#span_week_kb").css({'display': 'none'});
+		$("#span_target_day").css({'display': 'block'});
+		$("#span_target_month").css({'display': 'none'});
+	} else if ($("#form_repeat_kb").val() == 5) {
+		$("#span_week_kb").css({'display': 'none'});
+		$("#span_target_day").css({'display': 'block'});
+		$("#span_target_month").css({'display': 'block'});
 	}
-	$("#repeat_kb_" + $("#form_repeat_kb").val()).css({'display': 'block'});
 }
 
 make_hidden_members();

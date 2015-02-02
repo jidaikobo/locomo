@@ -474,6 +474,7 @@ class Model_Base extends \Orm\Model_Soft
 		$glue = ',',
 		$paren = '()',
 		$glue_key_val = ':',
+		$glue_many = "\n",
 		$implode = false
 	) {
 
@@ -535,15 +536,15 @@ class Model_Base extends \Orm\Model_Soft
 				if (is_array($dr)) {
 					$relate_arr = array();
 					foreach($dr as $dr_val) {
-						$relate_arr[] = $dr_val->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, true);
+						$relate_arr[] = $dr_val->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, $glue_many, true);
 					}
-					$r_arr[$rel_name] = implode($glue,$relate_arr);
+					$r_arr[$rel_name] = implode($glue_many,$relate_arr);
 					// $r_arr = array_merge($r_arr, $r_arr[$rel_name]);
 				} else {
 					//$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
 
 					// var_dump($dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
-					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, false));
+					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, $glue_many, false));
 				}
 			}
 		}

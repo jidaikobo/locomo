@@ -90,13 +90,6 @@ calendar【<?php print $detail->title_text; ?>】
 </tr>
 
 <?php endif; ?>
-<?php if($detail->created_at): ?>
-<tr>
-	<th>作成日時</th>
-	<td><?php echo $detail->created_at; ?></td>
-</tr>
-
-<?php endif; ?>
 <?php if($detail->updated_at): ?>
 <tr>
 	<th>更新日時</th>
