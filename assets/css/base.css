@@ -626,7 +626,9 @@ form em.explanation {
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 }
-
+.label_fb label * {
+	vertical-align: text-bottom;
+}
 .disabled label {
 	opacity: 0.5;
 }
