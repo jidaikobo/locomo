@@ -59,12 +59,13 @@ body.lcm_action_login {
 	clip: rect(1px, 1px, 1px, 1px);
 }
 */
-.lcm_action_login h1 {
+.lcm_action_login .container h1 {
 	font-size: 2em !important;
 	color: #004896;
 	font-weight: normal;
 	font-family: Verdana;
 	border: none;
+	box-shadow: none;
 	margin: 0 0 .5em !important;
 }
 .lcm_action_login h1 img {
