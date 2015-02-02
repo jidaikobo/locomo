@@ -131,7 +131,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function clear_cached_objects()
 	{
-			static::$_cached_objects = array();
+		static::$_cached_objects = array();
 	}
 
 	/*
