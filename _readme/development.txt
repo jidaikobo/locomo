@@ -150,12 +150,6 @@ generate_urls()の第3引数は、generate_urls()で判定される例外です�
 
 generate_urls()でurlsを生成することで、所与の条件でリンクが所定の位置に表示されるようになります。
 
-// actionset - override interface
-
-ある種のコントローラでは、他レルムのリンクを上書きしたい場合があります。
-基本的には、$retvalsのoverridesを設定することで、オーバライドされますので、オーバライド条件を設定して、urlsと同様にa要素を配列で渡します。
-本ファイルの「bulk edit」の箇所もあわせて読んでみてください。
-
 // actionset - acl
 
 アクションセットで設定されているdependenciesは、アクションセットのリンクを表示する上で必要なアクションです。ここにはlocomo-pathのuriを配列で渡します。ここで設定したものがlocomoのaclの画面に表示され、管理の対象になります。
