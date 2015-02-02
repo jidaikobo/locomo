@@ -43,8 +43,8 @@ class Model_Hlp extends \Model_Base
 			),
 		),
 
-		'creator_id' => array('form' => array('type' => false), 'default' => -1),
-		'updater_id' => array('form' => array('type' => false), 'default' => -1),
+		'creator_id' => array('form' => array('type' => false), 'default' => ''),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
@@ -94,7 +94,7 @@ class Model_Hlp extends \Model_Base
 		$controllers = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
 			if ( ! isset($v['nicename']) || ! isset($v['admin_home'])) continue;
-			if ( ! property_exists($k, 'locomo')) continue;
+			if ( ! \Util::get_locomo($k, 'nicename')) continue;
 			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
 		endforeach;
 		$selected = isset($obj->ctrl) && ! empty($obj->ctrl) ? $obj->ctrl : $ctrl;

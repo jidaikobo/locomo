@@ -67,8 +67,8 @@ class Model_Usr extends Model_Base
 		'activation_key',
 		'profile_fields',
 		'expired_at' => array('form' => array('type' => false), 'default' => null),
-		'creator_id' => array('form' => array('type' => false), 'default' => -1),
-		'updater_id' => array('form' => array('type' => false), 'default' => -1),
+		'creator_id' => array('form' => array('type' => false), 'default' => ''),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
@@ -291,7 +291,7 @@ class Model_Usr extends Model_Base
 			');
 
 		// wrap
-		$parent = parent::search_form_base('ユーザ一覧');
+		$parent = parent::search_form_base('ユーザ');
 		$parent->add_after($form, 'customer', array(), array(), 'opener');
 
 		return $parent;

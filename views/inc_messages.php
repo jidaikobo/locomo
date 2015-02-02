@@ -2,7 +2,16 @@
 		<div id="alert_success" class="flash_alert alert_success" tabindex="0">
 			<a id="anchor_alert_message" class="skip" tabindex="1" id="alert_message">インフォメーション:メッセージが次の行にあります</a>
 			<p>
-			<?php echo implode('</p><p>', e((array) Session::get_flash('message'))); ?>
+			<?php
+				$flash_massages = Session::get_flash('message');
+				if (\Arr::is_multi($flash_massages)):
+					foreach ($flash_massages as $v):
+						echo '<a href="'.$v[1].'">'.$v[0].'</a>';
+					endforeach;
+				else:
+					echo implode('</p><p>', e((array) $flash_massages));
+				endif;
+			?>
 			</p>
 		</div>
 <?php endif; ?>

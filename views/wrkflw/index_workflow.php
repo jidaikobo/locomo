@@ -1,13 +1,12 @@
-<?php
-// このテンプレート、見ないで小長井くん。
-?>
 <table class="tbl datatable">
 <thead>
 	<tr>
 		<th>表題</th>
 		<th>申請日</th>
+		<?php if ( ! \Request::is_hmvc()): ?>
 		<th>最後の進捗</th>
 		<th class="ctrl">進捗</th>
+		<?php endif; ?>
 		<th>操作</th>
 	</tr>
 </thead>
@@ -16,32 +15,30 @@
 	<tr>
 		<td><div class="col_scrollable" tabindex="-1"><?php echo $item->{$subject_field} ?></div></td>
 		<td class="ctrl"><?php echo $item->workflow_apply_date ? date('Y-m-d', strtotime($item->workflow_apply_date)) : '-' ?></td>
+		<?php if ( ! \Request::is_hmvc()): ?>
 		<td class="ctrl"><?php echo $item->latest_action_date ? date('Y-m-d', strtotime($item->latest_action_date)) : '-' ?></td>
 		<td class="ctrl"><?php echo $item->workflow_step_status ?: '-' ?></td>
+		<?php endif; ?>
 		<td class="ctrl">
-			<a href="<?php echo \Uri::create($controller_uri.'/view/'.$item->{$pk}); ?>">
-				<span class="skip"><?php echo $item->{$subject_field} ?>を</span>確認
-			</a>
-		</td>
-	</tr>
-<?php endforeach; ?>
-<!--こちらは後に表示-->
-<?php foreach($not_related as $item): ?>
-	<tr>
-		<td><div class="col_scrollable" tabindex="-1"><?php echo $item->{$subject_field} ?></div></td>
-		<td class="ctrl"><?php echo $item->workflow_apply_date ? date('Y-m-d', strtotime($item->workflow_apply_date)) : '-' ?></td>
-		<td class="ctrl"><?php echo $item->latest_action_date ? date('Y-m-d', strtotime($item->latest_action_date)) : '-' ?></td>
-		<td class="ctrl"><?php echo $item->workflow_step_status ?: '-' ?></td>
-		<td class="ctrl">
-		<?php if(empty($item->workflow_users) && @$item->creator_id == \Auth::get('id')): ?>
-			<a href="<?php echo \Uri::create($controller_uri.'/edit/'.$item->{$pk}); ?>">
-				<span class="skip"><?php echo $item->{$subject_field} ?>を</span>編集
-			</a>
+		<?php if(in_array(\Auth::get('id'), $item->workflow_users)): ?>
+			<?php if ($item->workflow_status == 'before_progress') : ?>
+				<a href="<?php echo \Uri::create($controller_uri.'/route/'.$item->{$pk}); ?>">
+					<span class="skip"><?php echo $item->{$subject_field} ?>を</span>ルート設定
+				</a>
+			<?php elseif ($item->creator_id == \Auth::get('id') && $item->workflow_status != 'in_progress') : ?>
+				<a href="<?php echo \Uri::create($controller_uri.'/edit/'.$item->{$pk}); ?>">
+					<span class="skip"><?php echo $item->{$subject_field} ?>を</span>編集
+				</a>
+			<?php else : ?>
+				<a href="<?php echo \Uri::create($controller_uri.'/view/'.$item->{$pk}); ?>">
+					<span class="skip"><?php echo $item->{$subject_field} ?>を</span>確認
+				</a>
+			<?php endif; ?>
 		<?php else: ?>
 			進行中
 		<?php endif; ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
-</table>
 
+</table>

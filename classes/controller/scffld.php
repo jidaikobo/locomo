@@ -27,14 +27,8 @@ class Controller_Scffld extends \Controller_Base
 		$view = \View::forge('scffld/main');
 
 		// scaffold
-		if (\Input::method() == 'POST'):
-
-			// repoplateを配慮するように書き換える
-			if ( ! \Security::check_token()):
-				\Session::set_flash('error', 'please check token');
-				return \Response::redirect(\Uri::create('scffld/main'));
-			endif;
-
+		if (\Input::method() == 'POST' && \Security::check_token())
+		{
 			// vals
 			$cmd_raw = \Input::post('cmd');
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw );
@@ -43,10 +37,11 @@ class Controller_Scffld extends \Controller_Base
 			$cmd  = \Controller_Scffld_Helper::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
 
-			if ( ! $cmd_orig):
+			if ( ! $cmd_orig)
+			{
 				\Session::set_flash('error', 'invalid value sent');
 				return \Response::redirect(\Uri::create('/scffld/main'));
-			endif;
+			}
 
 			// migration
 			$name       = array_shift($cmds);
@@ -198,7 +193,13 @@ class Controller_Scffld extends \Controller_Base
 			$messages[] = "にpostされた文字列を保存しています。";
 			\Session::set_flash('success', $messages);
 			\Response::redirect(\Uri::create('/scffld/main'));
-		endif;
+		}
+
+		// set errors
+		if (\Input::method() == 'POST' && ! \Security::check_token())
+		{
+			\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+		}
 
 		//view
 		$view->set_global('title', '足場組み');

@@ -1,5 +1,5 @@
 <?php echo \Form::open(); ?>
-
+<h1>足場組み</h1>
 <div class="form_group">
 <h2 class="skip"><?php echo \Form::label('拡張oilコマンド書式', 'cmd'); ?></h2>
 <p>

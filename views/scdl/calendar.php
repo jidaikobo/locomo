@@ -16,6 +16,9 @@
 .week6 {
 	background-color: lightblue;
 }
+.icon_small {
+	font-size: 10px;
+}
 </style>
 
 
@@ -71,7 +74,14 @@
 			<?php foreach ($v['data'] as $v2) {
 				$detail_pop_data = $v2;
 				?>
-				<p><?php print htmlspecialchars_decode($v2['link_detail']); ?></p>
+				<p>
+					<span class="icon_small">
+					<?php if ($v2['provisional_kb']) { print '[仮登録]'; }; ?>
+					<?php if ($v2['unspecified_kb']) { print '[時間指定なし]'; }; ?>
+					<?php if ($v2['allday_kb']) { print '[終日]'; }; ?>
+					</span>
+					<?php print htmlspecialchars_decode($v2['link_detail']); ?>
+				</p>
 			<?php include("detail_pop.php"); ?>
 			<?php } ?>
 			</div>

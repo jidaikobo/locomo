@@ -15,13 +15,13 @@ trait Controller_Traits_Revision
 		{
 			\Session::set_flash('error', '表示できませんでした');
 			$redirect = \Arr::get(static::$locomo, 'admin_home');
-			$redirect = $redirect ? \Uri::create(\Inflector::ctrl_to_dir($redirect)) : $this->base_url;
+			$redirect = $redirect ? \Uri::create(\Inflector::ctrl_to_dir($redirect)) : static::$base_url;
 			return \Response::redirect($redirect);
 		}
 
 		// assign
 		$view->set_global('title', static::$locomo['nicename'].'履歴一覧');
-		$view->set_global('base_url', $this->base_url);
+		$view->set_global('base_url', static::$base_url);
 		$view->set_global('subject', $model::get_default_field_name('subject'));
 		$this->base_assign();
 		$this->template->content = $view;
@@ -32,7 +32,7 @@ trait Controller_Traits_Revision
 	 */
 	public function action_each_index_revision($id = null)
 	{
-		is_null($id) and \Response::redirect($this->base_url);
+		is_null($id) and \Response::redirect(static::$base_url);
 		// paginated_find
 		$options['where'][]     = array('model', \Inflector::add_head_backslash($this->model_name));
 		$options['where']['or'] = array('model', '\Locomo'.\Inflector::add_head_backslash($this->model_name));
@@ -43,7 +43,7 @@ trait Controller_Traits_Revision
 		$items = \Model_Revision::paginated_find($options);
 		if ( ! $items):
 			\Session::set_flash('error', '履歴を取得できませんでした');
-			$ret = method_exists(__CLASS__, 'action_view') ? $this->base_url.'view/'.$id : $this->main_url;
+			$ret = method_exists(__CLASS__, 'action_view') ? static::$base_url.'view/'.$id : static::$main_url;
 			return \Response::redirect($ret);
 		endif;
 
@@ -70,11 +70,11 @@ trait Controller_Traits_Revision
 		endforeach;
 
 		// add_actionset
-		$action['urls'][] = \Html::anchor($this->base_url.'index_revision/','履歴一覧へ');
+		$action['urls'][] = \Html::anchor(static::$base_url.'index_revision/','履歴一覧へ');
 		$action['order'] = 10;
 		$action['overrides']['base'] = array(
-//			\Html::anchor($this->base_url.'view/'.$id,'閲覧'),
-//			\Html::anchor($this->base_url.'edit/'.$id,'編集')
+//			\Html::anchor(static::$base_url.'view/'.$id,'閲覧'),
+//			\Html::anchor(static::$base_url.'edit/'.$id,'編集')
 		);
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
@@ -86,7 +86,7 @@ trait Controller_Traits_Revision
 		// view
 		$view = \View::forge('revision/each_index_revision');
 		$view->set_global('items', $items);
-		$view->set_global('base_url', $this->base_url);
+		$view->set_global('base_url', static::$base_url);
 		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $subject);
 		$this->base_assign();
@@ -98,12 +98,12 @@ trait Controller_Traits_Revision
 	 */
 	public function action_view_revision($revision_id = null)
 	{
-		is_null($revision_id) and \Response::redirect($this->base_url);
+		is_null($revision_id) and \Response::redirect(static::$base_url);
 
 		if ( ! $revisions = \Model_Revision::find($revision_id))
 		{
 			\Session::set_flash('error', '履歴を取得できませんでした');
-			return \Response::redirect($this->base_url);
+			return \Response::redirect(static::$base_url);
 		}
 
 		// prepare data
@@ -123,11 +123,11 @@ trait Controller_Traits_Revision
 
 		// add_actionset
 		$opt_arg = \Input::get('opt') ? '?opt='.\Input::get('opt') : '';
-		$action['urls'][] = \Html::anchor($this->base_url.'each_index_revision/'.$revisions->pk_id, '履歴一覧へ');
+		$action['urls'][] = \Html::anchor(static::$base_url.'each_index_revision/'.$revisions->pk_id, '履歴一覧へ');
 		$action['order'] = 10;
 		$action['overrides']['base'] = array(
-//			\Html::anchor($this->base_url.'view/'.$revisions->pk_id,'閲覧'),
-//			\Html::anchor($this->base_url.'edit/'.$revisions->pk_id,'編集')
+//			\Html::anchor(static::$base_url.'view/'.$revisions->pk_id,'閲覧'),
+//			\Html::anchor(static::$base_url.'edit/'.$revisions->pk_id,'編集')
 		);
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 

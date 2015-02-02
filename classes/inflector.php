@@ -63,6 +63,7 @@ class Inflector extends \Fuel\Core\Inflector
 			$cache[$path] = $classes;
 
 			// cache 20 min
+			\Cache::delete($cache_str);
 			\Cache::set($cache_str, $classes, 3600 / 3);
 
 			return $classes;
@@ -128,6 +129,17 @@ class Inflector extends \Fuel\Core\Inflector
 	{
 		return static::words_to_upper(str_replace('-', '\\', $str));
 	}
+
+	/**
+	 * maybe_ctrl_to_model()
+	 * @param string [\MODNAME\]Controller_CTRL
+	 * @return string [\MODNAME\]Model_CTRL
+	 */
+	public static function maybe_ctrl_to_model($ctrl)
+	{
+		return str_replace('Controller', 'Model', $ctrl);
+	}
+
 
 	/**
 	 * get_root_relative_path()

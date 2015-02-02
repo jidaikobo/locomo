@@ -40,14 +40,19 @@ class Model_Wrkflwadmin extends \Model_Base
 	/**
 	 * search_form()
 	*/
-	public static function search_form($factory = 'wkflwadmin', $obj = null, $title = '')
+	public static function search_form()
 	{
-		$form = parent::search_form($factory, $obj, 'ワークフロー一覧');
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('wkflwadm', $config);
 
 		$form
-			->add_after('all', '検索', array('type' => 'text','value' => \Input::get('all')), array(), 'opener');
+			->add('all', '検索', array('type' => 'text','value' => \Input::get('all')));
 
-		return $form;
+		// wrapper
+		$parent = parent::search_form_base('ワークフロー一覧');
+		$parent->add_after($form, 'wkflwadm', array(), array(), 'opener');
+
+		return $parent;
 	}
 
 

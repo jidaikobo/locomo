@@ -116,7 +116,7 @@ function set_focus(t){
 }
 
 //ページ読み込み直後のフォーカス
-if($('.flash_alert').length){
+if($('.flash_alert')[0]){
 	var firstFocus = $('.flash_alert a.skip').first();
 }else if($('body').hasClass('lcm_action_login')){
 	var firstFocus = $('input:visible').first();
@@ -130,7 +130,7 @@ function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );
 }
 var adminbar = $('#adminbar');
-if(adminbar.length){
+if(adminbar[0]){
 	headerheight = adminbar.outerHeight();
 	add_body_padding(headerheight);
 
@@ -159,15 +159,24 @@ $(document).find('[accesskey]').each(add_accesskey_title);
 
 //非表示の要素の設定
 $('.hidden_item').each(function(){
-	var trigger, contain, v; 
+	var trigger, contain, v, is_val; 
 	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
 	if(!($(this).is(':input') && $(this).val())){
+/*		$(this).find('form').each(function(){
+			var arr = $(this).serializeArray();
+			$(arr).each(function(){
+				if(this.name == 'limit') return;
+				is_val = this.value ? true : is_val;
+			});
+		});
+*/
 		contain = 0;
 		$(this).find(':input').each(function(){
 			v = $(this).val();
 			if( !v || $(this).closest('.submit_button')[0]) return;
 			contain += $(this).val();
 		});
+//		if(!is_val) return; この条件がおかしい？あとで
 		if(!contain) return;
 	}
 	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
@@ -175,7 +184,22 @@ $('.hidden_item').each(function(){
 	trigger.addClass('on');
 });
 
-
+//テーブルにあわせたcontent幅
+/*
+var container = $('.container');
+var container_w = container.width();
+var overflow = 0;
+$(document).find('table').each(function(){
+console.log(container_w);
+console.log($(this).outerWidth());
+	var o = container_w - $(this).outerWidth();
+	if(o < overflow ) overflow = o;
+	return overflow;
+});
+var c_w = container.outerWidth() - overflow;
+console.log(c_w);
+$('.container').css({'cssText':'width: '+c_w+'px ; max-width : auto;'});
+*/
 /*================================▼▼▼===============================*/
 
 //tabindex制御
@@ -215,15 +239,15 @@ $.fn.reset_tabindex = function(){
 
 
 //.lcm_focusに基づくフォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする
-if(tabindexCtrl) set_lcm_focus();
+//if(tabindexCtrl) set_lcm_focus();
 
 function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 	var lcm_focus, lcm_calender, each_date;
 	lcm_focus    = $('.lcm_focus');
-	if(!lcm_focus.length) return; //lcm_focusがなければおしまい
+	if(!lcm_focus[0]) return; //lcm_focusがなければおしまい
 
 	lcm_calendar = $('.lcm_focus.calendar');
-	each_date    = lcm_calendar.length ? $('.each_date:has(a)').addClass('lcm_focus') : null;
+	each_date    = lcm_calendar[0] ? $('.each_date:has(a)').addClass('lcm_focus') : null;
 	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
 
 	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
@@ -236,7 +260,7 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 		var parent, t; 
 /*
 	parent = $(this).closest('.currentfocus');
-	if(parent.length){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+	if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
 		parent.removeClass('currentfocus').addClass('focusparent');
 		$('#escape_focus').remove();
 	}
@@ -244,7 +268,7 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 	*/
 //		if(!this.isWindow)console.log($(this).isWindow);
 		parent = $(this).closest('.currentfocus');
-		if(parent.length){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+		if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
 			parent.removeClass('currentfocus').addClass('focusparent');
 			$('#escape_focus').remove();
 		}
@@ -265,14 +289,14 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 		t = $(e.target);
 		parent = t.closest('.currentfocus');
 		grandparent = t.closest('.focusparent');
-		if(parent.length){
+		if(parent[0]){
 			parent.set_tabindex().focus();
 		}
 		$(document).find('.currentfocus').removeClass('currentfocus');
 		$('#escape_focus').remove();
 		$(document).reset_tabindex();
 		set_focus();
-		if(grandparent.length){
+		if(grandparent[0]){
 			$(document).reset_tabindex();
 			grandparent.removeClass('focusparent').addClass('currentfocus').set_tabindex().append(esc);
 			set_focus(grandparent);
@@ -306,7 +330,7 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 		t = $(e.target);
 		k = e.which;
 //		console.log($('.modal.on, .semimodal.on'));
-		if( !t.is(':input') && !$('.modal.on, .semimodal.on').length && k == 27 ){
+		if( !t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 ){
 			escape_focus(t);
 			e.stopPropagation();
 		}
@@ -317,7 +341,7 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 		var t, parent;
 		t = $(e.target);
 		parent = t.closest('.lcm_focus');
-		if(parent.length){
+		if(parent[0]){
 			parent.set_tabindex();
 		}
 	});
@@ -467,7 +491,7 @@ function close_modal(focus,t){
 function close_semimodal(el){
 	var t, trigger, focus;
 	t = $(document).find('.semimodal.on');
-	if(t.length){
+	if(t[0]){
 		trigger = $('.toggle_item').eq($(document).find('.hidden_item').index(t));
 		focus = ($(el).is(':input')) ? el : trigger;
 		trigger.removeClass('on');
@@ -492,7 +516,7 @@ $(document).on('click', '.toggle_item', function(e){
 		t.slideToggle(125);//ここでターゲットにフォーカスする？
 	}
 	
-	if($('.semimodal.on').length ){//モーダルが開いている場合は閉じる
+	if($('.semimodal.on')[0] ){//モーダルが開いている場合は閉じる
 		var itself = t.is('.semimodal.on');
 		close_semimodal();
 		replace_info();//開く・閉じる説明文切り替え
@@ -603,33 +627,31 @@ $(document).on('keydown',function(e){
 
 
 //表内スクロール - 各ブラウザでの挙動が怪しいのでもうちょっと
-
-if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを考える。
+/*
+if( !isNetReader && $('.tbl_scrollable')[0] ){ //複数ある時のことを考える。
 //ここで、対象内のrowspan・colspanの有無を判定して、なければdisplay:block等を設定する方法に分岐してみる？ それ用のクラスを与える。
 //ということは、そもそも簡単な表ではそのクラスを与えてもらうようにするとよい？
 //……rosplan・colspanがあってscrollableでなければいけない表は少なそう。
 //…………ということは、デフォルトのcssのはtbl_scrollableに対して設定してしまって、jslcmで分岐した際にclass名を変更するのがよいのかも。
 //noscript環境のことを考えておく
 
-/*
 //スクロールバーの幅ぶん調整したい
 //現状だと右端は最終列にかぶり、下端はスクロールバー分はみ出る（margin-bottm: -{スクロールバー};）
 //おなじく、ボーダーの幅
 //wrapperに枠を表示できる？
-*/
 	var tbl_scrollable = function(){
 		var thead, tfoot, h, tbl_wrapper, thead_wrapper, tbody_wrapper, tfoot_wrapper, fixed_thead, fixed_tfoot;
 		thead = $(this).find('thead').clone();
 		tfoot = $(this).find('tfoot').clone();
-		if(thead.length || tfoot.length){
+		if(thead[0] || tfoot[0]){
 			tbl_wrapper = $('<div>').addClass('jslcm_tbl_wrapper');
 			tbody_wrapper = $('<div>').addClass('jslcm_tbody_wrapper');
-			if(thead.length){
+			if(thead[0]){
 				thead_wrapper = $('<div>').addClass('jslcm_thead_wrapper');
 				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(thead);
 				$(fixed_thead).find('a, button').attr('tabindex', '-1');
 			}
-			if(tfoot.length){
+			if(tfoot[0]){
 				tfoot_wrapper = $('<div>').addClass('jslcm_tfoot_wrapper');
 				fixed_tfoot = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_tfoot').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(tfoot);
 				$(fixed_tfoot).find(':tabbable').attr('tabindex', '-1');
@@ -651,16 +673,16 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 		thead = $(tbl).find('thead');
 		tfoot = $(tbl).find('tfoot');
 		//重複を整理したい、というより一回でできる？
-		if(thead.length){
+		if(thead[0]){
 			thead_cols = $(tbl).children('thead').find('th, td');
-			thead_len = thead_cols.length;
+			thead_len = thead_cols[0];
 			fixed_thead = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_thead');
 			fixed_thead_cols = $(fixed_thead).find('th, td');
 			set_colswidth(thead_cols, thead_len, fixed_thead_cols, ws);
 		}
-		if(tfoot.length){
+		if(tfoot[0]){
 			tfoot_cols = $(tbl).children('tfoot').find('th, td');
-			tfoot_len = tfoot_cols.length;
+			tfoot_len = tfoot_cols[0];
 			fixed_tfoot = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_tfoot');
 			fixed_tfoot_cols = $(fixed_tfoot).find('th, td');
 			set_colswidth(tfoot_cols, tfoot_len, fixed_tfoot_cols, ws);
@@ -676,6 +698,7 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 			$(fixed_cols[i]).width(w+1);//borderの太さを足す。とりあえず1pxで
 		}
 	}
+	*/
 /*
 	if($('.tbl_scrollable').find('th[rowspan], th[colspan], td[rowspan], td[colspan]')){
 		//colspan_rowspanの分岐。なんにしても中身の幅を指定する必要がありそうなので、元の値を見るadjust的な振る舞いは必要。その後addClassする。
@@ -686,11 +709,11 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 	}else{
 */
 //	$(document).find('.tbl_scrollable').each(tbl_scrollable);
-	
+/*	
 	$.fn.el_overflow_y = function(){
 		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
 		//ウィジェットや指定の枠がある場合は親にする。自分より小さな祖先ブロック要素を見つけてあわせる、ほうがいいのかなあ
-		parent = $(this).closest('.widget, .parent_tbl_scrollable').length ? $(this).closest('.widget, .parent_tbl_scrollable')[0] : $('.container');
+		parent = $(this).closest('.widget, .parent_tbl_scrollable')[0] ? $(this).closest('.widget, .parent_tbl_scrollable')[0] : $('.container');
 		tbl = $(this).find('.jslcm_tbl_scrollable');
 		h = parseInt($(tbl)[0].scrollHeight, 10)+2;
 		t = parseInt($(tbl).offset().top, 10);
@@ -725,7 +748,7 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 		}
 	});
 	
-	if($('.jslcm_tbody_wrapper').length){
+	if($('.jslcm_tbody_wrapper')[0]){
 		$('.jslcm_tbody_wrapper').el_overflow_y();	
 		//ウィンドウリサイズ時やフォントサイズ変更時に追随したい（exResizeの挙動を再確認）
 		//ブラウザによって、リサイズを捕捉できなかったりする？ ひとまず、Safariの拡大縮小要確認
@@ -735,7 +758,7 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 		$('.jslcm_tbl_scrollable').exResize(function(){
 			is_resize = true;
 			$('.jslcm_tbody_wrapper').el_overflow_y(
-				$(this).closest('.widget , .parent_tbl_scrollable').length ? $(this).closest('.widget , .parent_tbl_scrollable') : null
+				$(this).closest('.widget , .parent_tbl_scrollable')[0] ? $(this).closest('.widget , .parent_tbl_scrollable') : null
 			);
 		});
 		$('.jslcm_tbl_wrapper').exResize(function(){
@@ -750,13 +773,13 @@ if( !isNetReader && $('.tbl_scrollable').length ){ //複数ある時のことを
 				tbl_w = $(tbl).width();
 				$(fixed_tbl).css('min-width', tbl_w+scrollbar_s+'px');
 				$(tbody_wrapper).css('min-width', tbl_w+scrollbar_s+'px');
-				set_colswidth(cols, cols.length, fixed_cols);
+				set_colswidth(cols, cols[0], fixed_cols);
 			}
 		});
 	}
 //	}//colspan, rowspan分岐終わり
 }
-
+*/
 
 //確認メッセージ
 $('.confirm').click(function(){
@@ -791,24 +814,22 @@ function confirm_beforeunload(){
 }
 
 var btn_submit = $('a:submit, input:submit');
-if(btn_submit.length && !$('body').hasClass('lcm_action_login')){
+if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 	var datetime = $('.datetime');
 	datetime.each(function(){
 		var val = $(this).val();
 		$(this).data('val',val);
 	});
-//	$('form:not(".search")').find(btn_submit).attr('disabled', 'disabled');;
 	$('form').change( function(e){
 		e = e ? e : event;
 		var t = $(e.target);
-//		$(this).find(btn_submit).removeAttr('disabled');
-		if( t.closest('section.search').length || t.hasClass('datetime') && t.val() == t.data('val') ){//.search form内やdatetimepickerは除外
+		if( t.closest('.search')[0] || t.hasClass('datetime') && t.val() == t.data('val') ){//.search form内やdatetimepickerは除外
 			return false;
 		}else{
 			confirm_beforeunload();
 		}
 	});
-	if($('#alert_error').children('ul.list').length ){
+	if($('#alert_error').children('ul.list')[0] ){
 		confirm_beforeunload();
 	}
 }

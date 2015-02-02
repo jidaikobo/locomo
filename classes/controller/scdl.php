@@ -9,10 +9,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'スケジューラ', // for human's name
 		'explanation'  => 'ユーザ毎のスケジュール管理をします。',
-		'main_action'  => 'index_admin', // main action
+		'main_action'  => 'calendar', // main action
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
-		'order'        => 10,   // order of appearance
+		'order'        => 900,   // order of appearance
 	);
 
 	/**
@@ -30,6 +30,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_edit($id = null)
 	{
+
 		$model = $this->model_name ;
 
 
@@ -88,6 +89,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				 \Security::check_token() &&
 				 !(\Input::post("overlap_kb") && count($overlap_result))
 			):
+
+				// オブザーバーの処理をここへ移動(仮から本登録の処理でも発動してしまうため)
+				// checkbox値
+				$columns = array('provisional_kb', 'unspecified_kb', 'allday_kb', 'private_kb', 'overlap_kb', 'attend_flg');
+				foreach ($columns as $v) {
+					if (!\Input::post($v)) {
+						$obj->__set($v, 0);
+					}
+				}
 				//save
 				if ($obj->save(null, true)):
 					//success
@@ -95,6 +105,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						'success',
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
+
+
 					return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
 				else:
 					//save failed
@@ -220,6 +232,18 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					        array('user_id', $uid)
 					    ),
 					));
+
+		$usergroups = \Auth::get_groups();
+		if ($detail->group_kb == 2) {
+			$allow = false;
+			foreach ($usergroups as $gid) {
+				if ($detail->group_detail == $gid) {
+					$allow = true;
+				}
+			}
+			$detail->private_kb = $allow ? 0 : 1;
+		}
+
 
 		$view = \View::forge($model::$_kind_name . "/view");
 		$view->set_global('title', self::$nicename);
@@ -536,21 +560,48 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
 					$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
 
-					// 前半
-					if (!($target_1 < $starttime || $target_1 >= $endtime)) {
-					
-						$r['primary'] = 1;
+					if ($r['repeat_kb'] == 1 || $r['repeat_kb'] == 2 || $r['repeat_kb'] == 3 || $r['repeat_kb'] == 4 || $r['repeat_kb'] == 5) {
+						$starttime = date('Hi', strtotime($r['start_time']));
+						$endtime = date('Hi', strtotime($r['end_time']));
+						$target_1 = sprintf("%02d", $row['hour']) . "00";
+						$target_2 = sprintf("%02d", $row['hour']) . "30";
+						// 前半
+						if (!($target_1 < $starttime || $target_1 >= $endtime)) {
+						
+							$r['primary'] = 1;
+						} else {
+							$r['primary'] = 0;
+						}
+						$target = $row['hour'] . "30";
+						//if (!($target < $starttime || $target > $endtime)) {
+						
+						if ($target_2 < $endtime && $starttime <= $target_2) {
+							$r['secondary'] = 1;
+						
+						} else {
+							$r['secondary'] = 0;
+						}
 					} else {
-						$r['primary'] = 0;
-					}
-					$target = $row['hour'] . "30";
-					//if (!($target < $starttime || $target > $endtime)) {
-					
-					if ($target_2 < $endtime && $starttime <= $target_2) {
-						$r['secondary'] = 1;
-					
-					} else {
-						$r['secondary'] = 0;
+						$starttime = date('Ymd', strtotime($r['start_date'])) . date('Hi', strtotime($r['start_time']));
+						$endtime = date('Ymd', strtotime($r['end_date'])) . date('Hi', strtotime($r['end_time']));
+						$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
+						$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
+						// 前半
+						if (!($target_1 < $starttime || $target_1 >= $endtime)) {
+						
+							$r['primary'] = 1;
+						} else {
+							$r['primary'] = 0;
+						}
+						$target = $row['hour'] . "30";
+						//if (!($target < $starttime || $target > $endtime)) {
+						
+						if ($target_2 < $endtime && $starttime <= $target_2) {
+							$r['secondary'] = 1;
+						
+						} else {
+							$r['secondary'] = 0;
+						}
 					}
 					if (isset($r['primary']) || isset($r['secondary'])) {
 						// 詳細へのリンク

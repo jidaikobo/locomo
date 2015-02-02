@@ -66,8 +66,8 @@ class Model_Flr extends \Model_Base
 			'default' => 'dir'
 		), // enum: dir, file, txt, image, audio, movie, braille, doc, xls, ppt
 		'expired_at' => array('form' => array('type' => false), 'default' => null),
-		'creator_id' => array('form' => array('type' => false), 'default' => -1),
-		'updater_id' => array('form' => array('type' => false), 'default' => -1),
+		'creator_id' => array('form' => array('type' => false), 'default' => ''),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
@@ -151,16 +151,26 @@ class Model_Flr extends \Model_Base
 
 		// modify name - currently directory only
 		// 名称変更。今のところディレクトリのみ
-		if (is_dir($fullpath)){
+		if ($this->genre == 'dir'){
 			$old_name = \Arr::get($this->_original, 'name', $this->name);
 			$new_name = \Input::post('name', $this->name);
 			 // rename flag to use at _event_after_update
 			if ($old_name != $new_name)
 			{
-				static::$is_renamed = true;
 				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
 			}
 			$this->name = $new_name;
+			$fullpath = LOCOMOUPLOADPATH.$this->path;
+/*
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
+var_dump( $old_name ) ;
+var_dump( $new_name ) ;
+var_dump( $this->path ) ;
+var_dump( $new_name ) ;
+var_dump( $fullpath ) ;
+echo '</textarea>' ;
+die();
+*/
 		}
 		$this->name = urldecode($this->name);
 
@@ -172,7 +182,7 @@ class Model_Flr extends \Model_Base
 
 		// modify fileinfo
 		// 拡張子やmimetypeを修正
-		if ( ! is_dir($fullpath))
+		if ($this->genre != 'dir')
 		{
 			$this->ext         = substr($this->name, strrpos($this->name, '.') + 1) ;
 			$this->mimetype    = \File::file_info($fullpath)['mimetype'] ;
@@ -195,6 +205,8 @@ class Model_Flr extends \Model_Base
 				$current_g = static::get_relation_as_array($this, 'usergroup');
 				$current_g = static::transform_permission_to_intersect_arr($current_g, 'usergroup');
 				$group_intersects = array_intersect($parent_g, $current_g);
+				$parent_g = array_unique($parent_g);
+				$group_intersects = array_unique($group_intersects);
 	
 				// user
 				$parent_u  = static::get_relation_as_array($p_obj, 'user');
@@ -202,13 +214,15 @@ class Model_Flr extends \Model_Base
 				$current_u = static::get_relation_as_array($this, 'user');
 				$current_u = static::transform_permission_to_intersect_arr($current_u, 'user');
 				$user_intersects = array_intersect($parent_u, $current_u);
-	
+				$parent_u = array_unique($parent_u);
+				$user_intersects = array_unique($user_intersects);
+
 				// initialize permission - overhead but for test purpose, it must be place here
 				// データベースを初期化。
 				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
 				unset($this->permission_usergroup);
 				unset($this->permission_user);
-	
+
 				// update permissions - group
 				if ( ! $current_g)
 				{
@@ -272,51 +286,6 @@ class Model_Flr extends \Model_Base
 		// prevent loop at inside of this observer
 		$this->disable_event('after_update');
 
-/*
-		// ここでヘンな再起処理のようになってうまく行かないので、dir rename時はコントローラでsync()してつじつまを合わせることにする。
-		// remame dirs of children
-		// ディレクトリ改名時は子供のディレクトリ名をアップデートする
-		if (static::$is_renamed && $this->genre == 'dir')
-		{
-			$old_path = \Arr::get($this->_original, 'path', $this->path);
-			$options = array(
-				'where' => array(
-					array('path', 'like', $old_path.'%'),
-					array('id', '<>', $this->id)
-				)
-			);
-			$children = \Model_Flr::find('all', $options);
-
-			if ($children)
-			{
-				foreach ($children as $child)
-				{
-//				オブザーバでの他モデルの書き換え事例として面白いので削除しないが、子供のディレクトリを全部親と同じにしてしまうので、見直し。
-//				$child->permission_usergroup = array();
-//				foreach ($this->permission_usergroup as $k => $v)
-//				{
-//					$new = \Model_Flr_Usergroup::forge();
-//					$arr = $v->to_array();
-//					unset($arr['id']);
-//					$new->set($arr);
-//					$child->permission_usergroup[] = $new;
-//				}
-
-					// rename
-					$old_path_str = LOCOMOUPLOADPATH.DS.trim($old_path, DS).DS;
-					$new_path_str = LOCOMOUPLOADPATH.DS.trim($this->path, DS).DS;
-					$child_str    = LOCOMOUPLOADPATH.DS.trim($child->path, DS).DS;
-					$new_child_str = str_replace($old_path_str, $new_path_str, $child_str);
-					$new_child_str = substr($new_child_str, strlen(LOCOMOUPLOADPATH));
-					$child->save();
-	
-					// embed($path)
-					static::embed_hidden_info($child);
-					// after rename, sync()
-				}
-			}
-		}
-*/
 		// embed hidden file
 		static::embed_hidden_info($this);
 	}
@@ -857,7 +826,6 @@ class Model_Flr extends \Model_Base
 		\Session::set_flash('message', ['ディレクトリの完全削除です。','ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。','この削除は取り消しができません。注意してください。']);
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
-		$form->field('is_sticky')->set_type('hidden');
 
 		$back = \Html::anchor(\Uri::create('flr/index_files/'.$obj->id), '戻る', array('class' => 'button'));
 		$form->field('submit')->set_value('完全に削除する')->set_template('<div class="submit_button">'.$back.'{field}</div>');
@@ -898,5 +866,73 @@ class Model_Flr extends \Model_Base
 		$back = \Html::anchor(\Uri::create('flr/view_file/'.$obj->id), '戻る', array('class' => 'button'));
 		$form->field('submit')->set_value('完全に削除する')->set_template('<div class="submit_button">'.$back.'{field}</div>');
 		return $form;
+	}
+
+	/**
+	 * search_form()
+	*/
+	public static function search_form()
+	{
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('flr_search_form', $config);
+
+		// 検索
+		$form->add(
+			'all',
+			'フリーワード',
+			array('type' => 'text', 'value' => \Input::get('all'))
+		);
+
+		// 登録日 - 開始
+		$form->add(
+				'from',
+				'登録日',
+				array(
+					'type'        => 'text',
+					'value'       => \Input::get('from'),
+					'id'          => 'registration_date_start',
+					'class'       => 'date',
+					'placeholder' => date('Y-n-j', time() - 86400 * 365),
+					'title'       => '登録日 開始 ハイフン区切りで入力してください',
+				)
+			)
+			->set_template('
+				<div class="input_group">
+				<h2>登録日</h2>
+				{field}&nbsp;から
+			');
+
+		// 登録日 - ここまで
+		$form->add(
+				'to',
+				'登録日',
+				array(
+					'type'        => 'text',
+					'value'       => \Input::get('to'),
+					'id'          => 'registration_date_end',
+					'class'       => 'date',
+					'placeholder' => date('Y-n-j'),
+					'title'       => '登録日 ここまで ハイフン区切りで入力してください',
+				)
+			)
+			->set_template('
+				{field}</div><!--/.input_group-->
+			');
+
+		// wrap
+		$parent = parent::search_form_base('ファイル');
+
+		if ( ! \Input::get('submit'))
+		{
+			$pattern  = '/<span class="sort_info">.+?<\/span>/';
+			$replace  = '<span class="sort_info">全'.\Model_Flr::count().'件のファイルがあります。</span>';
+			$subject  = (string) $parent->field('opener');
+			$template = preg_replace($pattern, $replace, $subject);
+			$parent->field('opener')->set_template($template);
+		}
+
+		$parent->add_after($form, 'flr_search_form', array(), array(), 'opener');
+
+		return $parent;
 	}
 }

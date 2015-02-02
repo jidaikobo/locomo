@@ -13,7 +13,7 @@ class Controller_Sys extends \Controller_Base
 		'widgets' =>array(
 			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys/admin'),
 			array('name' => '現在時刻', 'uri' => '\\Controller_Sys/clock'),
-			array('name' => 'カレンダ', 'uri' => '\\Schedule\\Controller_Schedule/calendar'),
+			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl/calendar'),
 		),
 	);
 
@@ -40,6 +40,7 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_404()
 	{
+//		\Session::delete_flash('error');
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
@@ -52,6 +53,7 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_403()
 	{
+//		\Session::delete_flash('error');
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
@@ -62,6 +64,7 @@ class Controller_Sys extends \Controller_Base
 	 * action_fetch_view()
 	 * fetch files view
 	 */
+/*
 	public function action_fetch_view()
 	{
 		// ヘンなアクセスを追い返す
@@ -100,6 +103,7 @@ class Controller_Sys extends \Controller_Base
 		$this->template->set_global('title', '');
 		return \Response::forge(file_get_contents($filename), 200, $headers);
 	}
+*/
 
 	/**
 	* action_admin()
@@ -253,7 +257,7 @@ hmvcにサイズを渡すと、widget側でサイズごとの表示を返すこ�
 	{
 		// get workflow name
 		$this->model_name = \Auth::is_admin() ? '\\Model_Dashboard_Admin' : '\\Model_Dashboard_User';
-		$obj = parent::edit(\Auth::get('id'));
+		$obj = parent::edit(\Auth::get('id'), '/sys/edit/'.\Auth::get('id'));
 
 		// add_actionset - back to index at edit
 		$action['urls'][] = \Html::anchor('/sys/dashboard/','ダッシュボードへ');
@@ -261,9 +265,6 @@ hmvcにサイズを渡すと、widget側でサイズごとの表示を返すこ�
 		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
 
 		// assign
-//		$content= \View::forge('sys/edit_dashboard');
-//		$content->set_global('title', 'ダッシュボードの設定');
-//		$this->template->content = $content;
 		$this->template->set_global('title', 'ダッシュボードの設定');
 	}
 

@@ -1,12 +1,19 @@
 <?php echo \Form::open(); ?>
 
-<h2>ワークフロー名</h2>
+<h1>
+ワークフロー: <?php echo $workflow->name ?>
+<?php if ($current_step == -1): ?>
+（段階 承認申請）
+<?php else: ?>
+（段階 <?php echo $total_step ?>段階中<?php echo $current_step ?>段階目）
+<?php endif; ?>
+</h1>
 
 <fieldset>
 	<legend><?php echo \Form::label('コメント', "comment"); ?></legend>
 
 	<div class="form-group">
-		<?php echo \Form::textarea("comment", ''); ?>
+		<?php echo \Form::textarea("comment", \Input::post('comment'), array('class' => 'textarea')); ?>
 	</div>
 </fieldset>
 
@@ -19,11 +26,12 @@
 </fieldset>
 <?php endif; ?>
 
-<p>
+<div class="submit_button">
 	<?php
-		echo \Form::submit('submit', $button, array('class' => 'button primary'));
+		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+		echo \Form::submit('submit', $button, array('class' => 'button primary confirm'));
 	?>
-</p>
+</div>
 
 <?php echo \Form::close(); ?>
 

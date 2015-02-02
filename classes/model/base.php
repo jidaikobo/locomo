@@ -22,34 +22,26 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	protected static $_cache_form_definition;
 
-
 	/*
 	 * default authorize options
 	 */
-	protected static $_authorize_methods = array(
+	public static $_authorize_methods = array(
 		'auth_expired',
 		'auth_created',
 		'auth_deleted',
 		'auth_visibility',
 	);
 
-	// todo 不要
-	/*
-	 * _option_options - see sample at \User\Model_Usrgrp
-	 */
-	protected static $_option_options = array();
-
-	// todo 不要
+	// todo 不要 - workflow など add_authorize_methods() をつかうコントローラがあるので必要。
 	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
 	{
-		//depend_modules
 		parent::__construct($data, $new, $view, $cache);
 
-		//add_authorize_methods
+		// add_authorize_methods
 		static::add_authorize_methods();
 	}
 
-	// todo 不要
+	// todo 不要 - absdtract的にあってほしい。
 	/**
 	 * add_authorize_methods()
 	 */
@@ -62,7 +54,7 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
-	 * get_default_field_name($str)
+	 * get_default_field_name($str) - むしろこれが不要な気がする。
 	 */
 	public static function get_default_field_name($str = null)
 	{
@@ -124,7 +116,7 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
-	 * get_original_values()
+	 * get_original_values() - これもたぶん不要。
 	 */
 	public function get_original_values()
 	{
@@ -137,19 +129,19 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function authorized_option($options = array(), $mode = null)
 	{
-		$module     = \Request::main()->module;
+		// $controller
 		$controller = \Request::main()->controller;
 
-		//add_authorize_methods
+		// add_authorize_methods
 		static::add_authorize_methods();
 
-		//view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (\Auth::instance()->has_access($controller.DS.'view_anyway')) {
+		// view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
+		if (\Auth::has_access($controller.DS.'view_anyway')) {
 			static::disable_filter();
 		} else {
-			//モデルが持っている判定材料を、適宜$optionsに足す。
+			// モデルが持っている判定材料を、適宜$optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method):
-				$options = static::$authorize_method($module, $controller, $options, $mode);
+				$options = static::$authorize_method($controller, $options, $mode);
 			endforeach;
 		}
 		return $options;
@@ -158,14 +150,14 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_expired()
 	 */
-	public static function auth_expired($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_expired($controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_expired_field_name) ?
 			static::$_expired_field_name :
 			static::$_default_expired_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($controller.'/view_expired')
+			! \Auth::has_access($controller.'/view_expired')
 		)
 		{
 			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
@@ -177,14 +169,14 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_created()
 	 */
-	public static function auth_created($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_created($controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_created_field_name) ?
 			static::$_created_field_name :
 			static::$_default_created_field_name;
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($controller.'/view_yet')
+			! \Auth::has_access($controller.'/view_yet')
 		) {
 			$options['where'][] = array(array($column, '<=', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
@@ -195,11 +187,13 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_deleted()
 	 */
-	public static function auth_deleted($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_deleted($controller = null, $options = array(), $mode = null)
 	{
+		if (\Request::active()->action == 'index_admin' or \Request::active()->action == 'index' or \Request::active()->action == 'customer_index') return $options;
+
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			! \Auth::instance()->has_access($controller.'/view_deleted')
+			! \Auth::has_access($controller.'/view_deleted')
 		) {
 			static::enable_filter();
 		} else {
@@ -211,7 +205,7 @@ class Model_Base extends \Orm\Model_Soft
 	/*
 	 * auth_visibility()
 	 */
-	public static function auth_visibility($module = null, $controller = null, $options = array(), $mode = null)
+	public static function auth_visibility($controller = null, $options = array(), $mode = null)
 	{
 		$column = isset(static::$_visibility_field_name) ?
 			static::$_visibility_field_name :
@@ -219,7 +213,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::instance()->has_access($controller.'/view_invisible')
+			! \Auth::has_access($controller.'/view_invisible')
 		) {
 			$options['where'][] = array($column, '=', true);
 		}
@@ -389,6 +383,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function paginated_find($options = array(), $use_get_query = true)
 	{
+
 		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
 		if ($use_get_query) {
 			$input_get = \Input::get();
@@ -415,6 +410,7 @@ class Model_Base extends \Orm\Model_Soft
 						$options['order_by'] = $orders;
 					}
 				}
+				static::$_conditions['order_by'] = array();
 			}
 			if (\Input::get('searches')) {
 				foreach (\Input::get('searches') as $k => $v) {
@@ -471,50 +467,101 @@ class Model_Base extends \Orm\Model_Soft
 	 * @param $glue       string length 1~2
 	 * @param $paren
 	 */
-	public function to_csv($options = array(), $rel_names = array(), $glue = ',', $paren = '()', $glue_key_val = ':', $implode = false) {
+	public function to_csv(
+		$options = array(),
+		$rel_names = array(),
+		$field_joins = array(),
+		$glue = ',',
+		$paren = '()',
+		$glue_key_val = ':',
+		$implode = false
+	) {
 
 		$options = array_merge(static::condition(), $options);
 		$properties = static::properties();
 
-		$r_arr = array(); // return
+		$o_arr = array(); // return
 
 		foreach($this->_data as $kk => $vv) {
 			if ($options['select'] and !in_array($kk, $options['select'])) continue;
 
 			// if (array_key_exists($kk, $properties) and isset($properties[$kk]['label'])) var_dump($properties[$kk]['label']); die();
-			array_key_exists($kk, $properties) and isset($properties[$kk]['label']) ? $key = $properties[$kk]['label'] : $key = $kk;
 			if(isset($properties[$kk]['form']['options'][$vv])) {
-				$vv = $properties[$kk]['form']['options'][$vv];
+				$o_arr[$kk] = $properties[$kk]['form']['options'][$vv];
+			} else {
+				$o_arr[$kk] = $vv;
 			}
-			$r_arr[$key] = $vv;
+		}
+
+		$r_arr = isset($o_arr['id']) ? array('id' => $o_arr['id'],) : array();;
+		$skip_keys = array();
+		foreach ($field_joins as $k => $v) {
+			foreach ($v as $vv) {
+				$skip_keys[] = $vv;
+			}
+		}
+
+
+
+		// 並べ替えと join
+		foreach ($options['select'] as $v) {
+			if ($v == 'id') continue;
+			if (in_array($v, $skip_keys)) continue;
+
+			$value = $o_arr[$v];
+			// label の設定
+			array_key_exists($v, $properties) and isset($properties[$v]['label']) ? $key = $properties[$v]['label'] : $key = $v;
+
+			if(isset($properties[$v]['form']['options'][$value])) {
+				$v = $properties[$v]['form']['options'][$value];
+			}
+			if (array_key_exists($v, $field_joins)) {
+				foreach ($field_joins[$v] as $vv){
+					if (array_key_exists($vv, $properties)) {
+						$value .= $o_arr[$vv];
+					} else {
+						$value .= $vv;
+					}
+				}
+			}
+			$r_arr[$key] = $value;
 		}
 
 		if ($this->_data_relations) {
 			foreach ($this->_data_relations as $rel_name => $dr) {
 				$rel_options = isset($options['related'][$rel_name]) ? $options['related'][$rel_name] : array();
+				$rel_field_joins = (array_key_exists($rel_name, $field_joins)) ? $field_joins[$rel_name] : array();
 				if (array_key_exists($rel_name, $rel_names)) $rel_name = $rel_names[$rel_name];
 				if (is_array($dr)) {
-				   foreach($dr as $dr_val) {
-						$r_arr[$rel_name] = $dr_val->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
-				   }
+					$relate_arr = array();
+					foreach($dr as $dr_val) {
+						$relate_arr[] = $dr_val->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, true);
+					}
+					$r_arr[$rel_name] = implode($glue,$relate_arr);
+					// $r_arr = array_merge($r_arr, $r_arr[$rel_name]);
 				} else {
 					//$r_arr[$rel_name] = $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, true);
 
 					// var_dump($dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
-					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $glue, $paren, $glue_key_val, false));
+					$r_arr = array_merge($r_arr, $dr->to_csv($rel_options, $rel_names, $rel_field_joins, $glue, $paren, $glue_key_val, false));
 				}
 			}
 		}
 
 		if ($implode) {
 			$str = substr($paren, 0 ,1);
-			foreach($r_arr as $k => $v) {
-				$r_arr[$k] = $k . $glue_key_val . $v;
+			if (count($r_arr) == 1) {
+				return reset($r_arr);
+			} else {
+				foreach($r_arr as $k => $v) {
+					$r_arr[$k] = $k . $glue_key_val . $v;
+				}
 			}
 			$str .= implode($glue, $r_arr);
 			$str = $str . substr($paren, 1 ,2) ?: substr($paren, 0 ,1);
 			return $str;
 		}
+
 		return $r_arr;
 	}
 
@@ -540,10 +587,30 @@ class Model_Base extends \Orm\Model_Soft
 	/**
 	 * search_form_base()
 	 */
-	public static function search_form_base($title = '項目一覧')
+	public static function search_form_base($title = '')
 	{
 		// forge
 		$form = \Fieldset::forge('search_form_base');
+
+		// modify title
+//		$title = \Util::get_locomo(\Request::active()->controller, 'nicename');
+		$titles = array(
+			'index_deleted'   => '削除済み項目一覧',
+			'index_yet'       => '予約項目一覧',
+			'index_expired'   => '期限切れ項目一覧',
+			'index_invisible' => '不可視項目一覧',
+			'index'           => '公開一覧',
+			'index_all'       => 'すべて',
+		);
+		
+		$title .= $title=='' ? '' : 'の';
+		
+		if (array_key_exists(\Request::active()->action, $titles))
+		{
+			$title.= $titles[\Request::active()->action];
+		} else {
+			$title .= '項目一覧'; 
+		}
 
 		// add opener before unrefine
 		$sortinfo     = \Pagination::sort_info(get_called_class());
@@ -551,11 +618,13 @@ class Model_Base extends \Orm\Model_Soft
 		$current_page = \Pagination::get("current_page");
 		$per_page     = \Pagination::get("per_page");
 		$refined      = \Pagination::$refined_items;
+
 		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
 		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;
 
-		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$from}から{$to}件 / 全{$total}件</span>";
-		$sortinfo = $total ? $sortinfo_txt : '項目がありません' ;
+		$pagenate_txt = ($per_page < $total) ? number_format($from).'から'.number_format($to).'件 / ' : '';
+		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$pagenate_txt}全".number_format($total)."件</span>";
+		$sortinfo = $total ? $sortinfo_txt : '項目が存在しません' ;
 
 		$form
 			->add('opener','',array('type' => 'text'))
@@ -565,7 +634,7 @@ class Model_Base extends \Orm\Model_Soft
 					<span class="sort_info">'.$sortinfo.'</span>
 					<span class="icon fr">
 						<a href="javascript: void(0);" class="toggle_item disclosure">
-							<img src="'.\Uri::base().'sys/fetch_view/img/system/mark_search.png" alt="">
+							<img src="'.\Uri::base().'lcm_assets/img/system/mark_search.png" alt="">
 							<span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">検索</span>
 							<span class="skip"> エンターで検索条件を開きます</span>
 						</a>
@@ -577,12 +646,22 @@ class Model_Base extends \Orm\Model_Soft
 					<form class="search">
 			');
 
-		// submit	
+		// submit
+		$options = array(
+			10 => 10,
+			25 => 25,
+			50 => 50,
+			100 => 100,
+			250 => 250,
+			24 => '24(タックシール一枚分)',
+		);
+		
 		$form
 			->add_after('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'), array(), 'opener')
 			->set_template('
 				<div class="submit_button">'.
-				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).'
+				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).
+				\Form::select('limit', \Input::get('limit', 25), $options, $attributes = array('class'=>'w5em', 'title'=>'表示件数')).'件&nbsp;
 				{field}
 				</div><!--/.submit_button-->
 				</form>

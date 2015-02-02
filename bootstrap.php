@@ -71,6 +71,7 @@ $paths = array(
 	'\\Locomo\\Module' => 'module.php',
 	'\\Locomo\\Pagination' => 'pagination.php',
 	'\\Locomo\\Request' => 'request.php',
+	'\\Locomo\\Security' => 'security.php',
 	'\\Locomo\\Util' => 'util.php',
 	'\\Locomo\\Validation' => 'validation.php',
 );
@@ -105,5 +106,15 @@ Autoloader::add_classes($classes);
 // add asset path
 \Asset::add_path(LOCOMOPATH.'assets/');
 \Asset::add_path(APPPATH.'locomo/assets/');
+
+// event
+\Event::register('shutdown', 'shutdown');
+function shutdown()
+{
+// 要一考
+//	\Session::delete_flash('error');
+//	\Session::delete_flash('success');
+//	\Session::delete_flash('message');
+}
 
 /* End of file bootstrap.php */

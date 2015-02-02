@@ -8,10 +8,11 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 	public function render($group = null, $raw = false)
 	{
 		$retval = parent::render($group, $raw);
-		$replace = 'sys/fetch_view/';
+		$replace = 'lcm_assets/'; //'sys/fetch_view/';
 
 		if (strpos($retval, APPPATH) !== false)
 		{
+			$replace = 'assets/';
 			$search = APPPATH.'locomo/assets';
 		}
 		else

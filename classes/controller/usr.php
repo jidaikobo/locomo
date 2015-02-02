@@ -61,6 +61,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 		// this is a sort of sample code.
 		$pkid = \Request::main()->id;
 		$obj = \Model_Usr::find($pkid);
+		if ( ! $obj) return false;
 
 		// add allowed to show links at actionset
 		\Auth::instance()->add_allowed(array(
