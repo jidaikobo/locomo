@@ -638,7 +638,8 @@ class Model_Base extends \Orm\Model_Soft
 		}
 
 		// add opener before unrefine
-		$sortinfo     = \Pagination::sort_info(get_called_class());
+		\Pagination::set_config('sort_info_model', get_called_class());
+		$sortinfo     = \Pagination::sort_info();
 		$total        = \Pagination::get("total_items");
 		$current_page = \Pagination::get("current_page");
 		$per_page     = \Pagination::get("per_page");
