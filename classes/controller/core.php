@@ -307,7 +307,9 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		$class_arr = array(
 			'lcm_module_'.strtolower($module),
 			'lcm_ctrl_'.strtolower(\Inflector::ctrl_to_safestr($controller)),
-			'lcm_action_'.strtolower($action)
+			'lcm_action_'.strtolower($action),
+//			'lcm_browser_'.\Agent::browser(),
+//			'lcm_version_'.\Agent::version(),
 		);
 		if ($action == 'login' && \Config::get('no_home'))
 		{
@@ -336,6 +338,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// current model
 		$locomo['model'] = $this->model_name;
 
+		// ua
+//		$locomo['ua']['browser'] = \Agent::browser();
+//		$locomo['ua']['version'] = \Agent::version();
+		
 		// current controller
 		$locomo['controller']['name'] = $controller;
 		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'main_action'))
