@@ -1,8 +1,9 @@
+<h1><?php echo $title; ?></h1>
 <?php if ($items): ?>
 <table class="tbl2">
 	<thead>
 		<tr>
-			<th>最新表題</th>
+			<th><?php echo $field ?></th>
 			<th>操作</th>
 			<th>編集者</th>
 			<th>更新日時</th>
