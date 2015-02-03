@@ -227,7 +227,12 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			$address = '';
 			if (is_array($field_format['address'])) {
 				foreach ($field_format['address'] as $key => $val) {
-					$address .= $customer->{$field_format['address'][$key]} . $cr;
+					if (isset($customer->{$field_format['address'][$key]})) {
+						$address .= $customer->{$field_format['address'][$key]} . $cr;
+					} else {
+						$address .= $val;
+					}
+
 				}
 			} elseif ( is_string($field_format['address']) ) {
 				$address = $customer->{$field_format['address']};
@@ -239,14 +244,19 @@ class Controller_Pdf extends \Locomo\Controller_Base
 				$sp_flg = false;
 				foreach ($field_format['name'] as $key => $val) {
 					if ($sp_flg) $name .= '　';
-					$name .= $customer->{$field_format['name'][$key]};
+					if (isset($customer->{$field_format['name'][$key]})) {
+						$name .= $customer->{$field_format['name'][$key]};
+					} else {
+						$name .= $val;
+					}
+
 					if (!$sp_flg) $cr_flg = true;
 				}
 			} elseif ( is_string($field_format['name']) ) {
 				$name = $customer->{$field_format['name']};
 			}
 
-			$name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
+			// $name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
 
 
 			// output zip & address
