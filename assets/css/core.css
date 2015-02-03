@@ -372,11 +372,11 @@ a.has_dropdown {
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */
 }
-#adminbar .menulist li.hasborder,
-#adminbar .menulist li.hasseparate {
-	border-bottom: 1px solid #ddd;
+#adminbar .menulist li.has_border,
+#adminbar .menulist li.has_separator {
+	border-top: 1px solid #ddd;
 	box-shadow: 0 1px 0 rgba(255,255,255,1);
-	margin-bottom: 1px;
+	padding-top: 2px;
 }
 #adminbar .menulist.on a:hover,
 #adminbar .menulist.on a:focus {
@@ -757,16 +757,23 @@ div.form_tooltip {
 }
 
 .lcm_form {
+	position: relative;
 	display: table;
 	width: 100%;
 	margin-top: 2em;
 	padding-bottom: 4em;
 }
+.lcm_form > .input_group {
+	display: table-row;
+}
+.lcm_form .input_group > h2,
+.lcm_form .input_group > .field,
+.lcm_form .input_group > table {
+	display: table-cell;
+	border-collapse: collapse;
+}
 .lcm_form * {
 	vertical-align: top;
-}
-.lcm_form > div {
-	display: table-row;
 }
 .lcm_form .input_group > h2 ,
 .lcm_form .input_group > .field ,
@@ -779,16 +786,15 @@ div.form_tooltip {
 	box-shadow: 0 -1px 0 #fff;
 }
 .lcm_form .input_group:first-child h2,
+.lcm_form input:first-child + .input_group h2,
 .lcm_form .input_group:first-child .field,
-.lcm_form .input_group:first-child table {
+.lcm_form input:first-child + .input_group .field,
+.lcm_form .input_group:first-child table,
+.lcm_form input:first-child + .input_group table {
 	border-top: none;
 	box-shadow: none;
 }
-.lcm_form .input_group > h2,
-.lcm_form .input_group > table {
-	display: table-cell;
-	border-collapse: collapse;
-}
+
 .lcm_form .input_group > table th {
 	line-height: 1.25em;
 	padding: .125em 0;
@@ -808,7 +814,7 @@ div.form_tooltip {
 }
 .lcm_form .input_group > .field,
 .lcm_form .input_group > table {
-	padding-left: .5em;
+	padding-left: .75em;
 }
 .lcm_form textarea {
 	max-width: 800px	;
@@ -816,6 +822,7 @@ div.form_tooltip {
 .lcm_form .address input {
 	display: block;
 	margin-bottom: -1px;
+	width: 25em;
 }
 .lcm_form .submit_button {
 	position: absolute;
@@ -825,6 +832,9 @@ div.form_tooltip {
 form tbody th {
 	text-align: left;
 	padding-right: 5px;
+}
+dl.field dt {
+	font-weight: bold;
 }
 .input_group .multiple_button {
 	display: inline-block;
@@ -1120,18 +1130,13 @@ table.calendar {
 	border-bottom: 1px solid #aaa;
 	box-shadow: 0 1px 0 #fff;
 }
-.contents h2 {
+.contents h2 ,
+div.section h1 {
 	margin: 1em 0 .5em;
 	font-size: 1.25em;
 	border-bottom: 1px solid #aaa;
 	box-shadow: 0 1px 0 #fff;
 }
-/* あとで。ページタイトル的なh2は明示的にクラスを与えて管理するほうが良さそう
-.contents h2:first-child {
-	margin-bottom: 1em;
-	margin-top: 0;
-}
-*/
 .contents h3 {
 	font-size: 1.1em;
 	margin: 1em 0 .25em;
@@ -1544,6 +1549,13 @@ li.show_if_smalldisplay {
 	.lcm_form .input_group .field {
 		border: none;
 		box-shadow: none;
+	}
+	.lcm_form .input_group > table {
+		text-align: left;
+	}
+	.lcm_form .input_group > table tbody th,
+	.lcm_form .input_group > table tbody td {
+		min-width: inherit;
 	}
 }
 
