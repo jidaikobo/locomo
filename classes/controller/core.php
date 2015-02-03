@@ -308,8 +308,8 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			'lcm_module_'.strtolower($module),
 			'lcm_ctrl_'.strtolower(\Inflector::ctrl_to_safestr($controller)),
 			'lcm_action_'.strtolower($action),
-//			'lcm_browser_'.\Agent::browser(),
-//			'lcm_version_'.\Agent::version(),
+			'lcm_browser_'.\Locomo\Browser::getBrowserType(),
+			'lcm_ieversion_'.\Locomo\Browser::getIEVersion(),
 		);
 		if ($action == 'login' && \Config::get('no_home'))
 		{
