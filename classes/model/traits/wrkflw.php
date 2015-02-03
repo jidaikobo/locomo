@@ -5,18 +5,6 @@ trait Model_Traits_Wrkflw
 	protected static $_default_workflow_field_name   = 'workflow_status';
 
 	/**
-	 * get_default_field_name($str)
-	 */
-	public static function get_default_field_name($str = null)
-	{
-		switch($str):
-			case 'workflow':
-				return static::$_default_workflow_field_name;
-		endswitch;
-		return parent::get_default_field_name($str);
-	}
-
-	/**
 	 * get_current_step()
 	*/
 	public static function get_current_step($controller = null, $controller_id = null)
@@ -402,9 +390,7 @@ trait Model_Traits_Wrkflw
 	public static function auth_workflow($controller = null, $options = array(), $mode = null)
 	{
 		// workflow_statusカラムがなければ、対象にしない
-		$column = isset(static::$_workflow_field_name) ?
-			static::$_workflow_field_name :
-			static::get_default_field_name('workflow');
+		$column = \Arr::get(static::get_field_by_role('workflow'), 'lcm_field', 'workflow_status');
 		if ( ! isset(static::properties()[$column])) return $options;
 
 		// 編集

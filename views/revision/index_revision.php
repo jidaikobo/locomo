@@ -1,12 +1,5 @@
-
+<?php echo  $search_form; ?>
 <?php if ($items): ?>
-
-<?php
-echo \Form::open(array('method' => 'get'));
-echo \Form::input('likes[all]', \Input::get('likes.all'));
-echo \Form::submit('submit', '検索', array('class' => 'button primary'));
-echo \Form::close();
-?>
 
 <table class="tbl datatable">
 	<thead>
@@ -25,7 +18,7 @@ echo \Form::close();
 			<th style="text-align:center;"><?php echo $item->pk_id ?></th>
 			<th><div class="col_scrollable"><a href="<?php echo $base_url.'each_index_revision/'.$item->pk_id ?>"><?php echo $item->$subject; ?></a></div></th>
 			<td><?php echo $item->operation; ?></td>
-			<td><?php echo $item->modifier_name; ?></td>
+			<td><?php echo \Model_Usr::get_display_name($item->user_id); ?></td>
 			<td><?php echo $item->created_at; ?></td>
 			<td><div class="col_scrollable"><?php echo $item->comment; ?></div></td>
 		</tr>

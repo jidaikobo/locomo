@@ -143,13 +143,10 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<td><?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
-<?php if(\Auth::is_admin()): ?>
 <tr>
 	<th><?php echo $form->field('is_visible')->set_template('{label}{required}'); ?></th>
 	<td><?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?></td>
 </tr>
-
-<?php endif; ?>
 
 </table>
 
@@ -162,11 +159,6 @@ if (isset($overlap_result) && count($overlap_result)) {
 
 <div class="submit_button">
 	<?php
-if( ! \Auth::is_admin()):
-		echo $form->field('is_visible')->set_template('{error_msg}{field}');
-
-endif;
-
 	if( ! @$is_revision): 
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));

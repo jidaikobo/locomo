@@ -19,12 +19,16 @@ trait Controller_Traits_Revision
 			return \Response::redirect($redirect);
 		}
 
+		// search_form
+		$search_form = \Model_Revision::search_form();
+
 		// assign
 		$view->set_global('title', static::$locomo['nicename'].'履歴一覧');
 		$view->set_global('base_url', static::$base_url);
-		$view->set_global('subject', $model::get_default_field_name('subject'));
+		$view->set_global('subject', \Arr::get($model::get_field_by_role('subject'), 'lcm_field'));
 		$this->base_assign();
 		$this->template->content = $view;
+		$this->template->content->set_safe('search_form', $search_form);
 	}
 
 	/**
@@ -61,11 +65,12 @@ trait Controller_Traits_Revision
 
 		// subject field
 		$model = $this->model_name;
-		$subject = $model::get_default_field_name('subject');
+		$subject = \Arr::get($model::get_field_by_role('subject'), 'lcm_field');
 		if(empty($subject)) throw new \OutOfBoundsException($model.' doesn\'t have public static $_subject_field_name');
 
 		// view
 		$view = \View::forge('revision/each_index_revision');
+		$view->set_global('field', \Arr::get($model::get_field_by_role('label'), 'lcm_field'));
 		$view->set_global('items', $items);
 		$view->set_global('base_url', static::$base_url);
 		$view->set_global('title', '履歴一覧');

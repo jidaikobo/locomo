@@ -260,7 +260,7 @@ class Model_Usr extends Model_Base
 	/**
 	 * search_form()
 	*/
-	public static function search_form($factory = 'user', $obj = null, $title = '')
+	public static function search_form()
 	{
 		$config = \Config::load('form_search', 'form_search', true, true);
 		$form = \Fieldset::forge('user', $config);
