@@ -372,5 +372,45 @@ class Fieldset extends \Fuel\Core\Fieldset
 	 */
 
 
+	public function add_revision($name = null, $label = '', array $attributes = array(), array $rules = array()) {
+		$arr = static::revision_replace($name, $label, $attributes);
 
+		$this->add($arr['name'], $arr['label'], $arr['attributes'], $rules)
+			->set_value(\Input::post('revision_comment'))
+			->set_template($arr['template']);
+	}
+
+	public function add_before_revision($name = null, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null) {
+		$arr = static::revision_replace($name, $label, $attributes);
+		$this->add($arr['name'], $arr['label'], $arr['attributes'], $rules, $fieldname)
+			->set_value(\Input::post('revision_comment'))
+			->set_template($arr['template']);
+	}
+
+	public function add_after_revision($name = null, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	{
+		$arr = static::revision_replace($name, $label, $attributes);
+		$this->add($arr['name'], $arr['label'], $arr['attributes'], $rules, $fieldname)
+			->set_value(\Input::post('revision_comment'))
+			->set_template($arr['template']);
+	}
+
+	protected static function revision_replace($name = '', $label = '', array $attributes = array())
+	{
+		$arr = array();
+
+
+		$arr['attributes'] = array_merge(array('type' => 'textarea', 'style'=>'width: 100%;'), $attributes);
+		$arr['name'] = $name  ?: 'revision_comment';
+		$arr['label'] = $label ?: '編集履歴用メモ';
+		$arr['label'] .= '<span class="skip">エンターで入力欄を開きます</span>';
+
+		\Config::load('form');
+		$template = \Config::get('form.field_template');
+		$label_replace = "<a href=\"javascript: void(0);\" class=\"toggle_item disclosure\">" . '{label}' . '</a>';
+		$field_replace = "<div class=\"hidden_item\">" . '{field}' . '</div>';
+		$arr['template'] = str_replace(array('{label}', '{field}'), array($label_replace, $field_replace), $template);
+
+		return $arr;
+	}
 }

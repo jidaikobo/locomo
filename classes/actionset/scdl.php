@@ -43,30 +43,6 @@ class Actionset_Scdl extends \Actionset_Base
 	}
 
 
-	/**
-	 * [actionset_edit_action description]
-	 * @param  [type] $controller [description]
-	 * @param  [type] $obj        [description]
-	 * @param  [type] $id         [description]
-	 * @param  array  $urls       [description]
-	 * @return [type]             [description]
-	 */
-	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array()) {
-		if (\Request::main()->action != 'edit' && $id) {
-			$actions = array(array($controller.DS."edit/?from=" . $id, 'コピー'));
-			$urls = static::generate_urls($controller.DS.'edit', $actions, []);
-		}
-		$retvals = array(
-			'urls'         => $urls ,
-			'action_name'  => 'コピー',
-			'show_at_top'  => true,
-			'acl_exp'      => 'コピー',
-			'explanation'  => 'コピー',
-			'help'         => '',
-			'order'        => 10
-		);
-		return $retvals;
-	}
 
 	/**
 	 * [actionset_attend_action description]
@@ -78,7 +54,6 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_attend($controller, $obj = null, $id = null, $urls = array())
 	{
-
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->attend_flg):
 			$schedule_data = \DB::select()->from("lcm_scdls_members")->where("schedule_id", 1)->where("user_id", \Auth::get('id'))->execute()->as_array();
 			// 自分がメンバーであった場合
@@ -100,6 +75,90 @@ class Actionset_Scdl extends \Actionset_Base
 		return $retvals;
 	}
 
+
+	/**
+	 * [actionset_somedelete_action description]
+	 * @param  [type] $controller [description]
+	 * @param  [type] $obj        [description]
+	 * @param  [type] $id         [description]
+	 * @param  array  $urls       [description]
+	 * @return [type]             [description]
+	 */
+	public static function actionset_somedelete($controller, $obj = null, $id = null, $urls = array())
+	{
+
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1):
+			$actions = array(array($controller.DS."somedelete/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '部分削除'));
+			$urls = static::generate_urls($controller.DS.'somedelete', $actions, ['']);
+		endif;
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '部分削除',
+			'show_at_top'  => true,
+			'acl_exp'      => '部分削除',
+			'explanation'  => '部分削除',
+			'help'         => '',
+			'order'        => 12
+		);
+		return $retvals;
+	}
+
+	/**
+	 * [actionset_regchange_action description]
+	 * @param  [type] $controller [description]
+	 * @param  [type] $obj        [description]
+	 * @param  [type] $id         [description]
+	 * @param  array  $urls       [description]
+	 * @return [type]             [description]
+	 */
+	public static function actionset_regchange($controller, $obj = null, $id = null, $urls = array())
+	{
+
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb):
+			$actions = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
+			$urls = static::generate_urls($controller.DS.'regchange', $actions, ['']);
+		endif;
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '本登録',
+			'show_at_top'  => true,
+			'acl_exp'      => '本登録',
+			'explanation'  => '本登録',
+			'help'         => '',
+			'order'        => 10
+		);
+		return $retvals;
+	}
+
+
+	/**
+	 * [actionset_copy_action description]
+	 * @param  [type] $controller [description]
+	 * @param  [type] $obj        [description]
+	 * @param  [type] $id         [description]
+	 * @param  array  $urls       [description]
+	 * @return [type]             [description]
+	 */
+	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array()) {
+
+		if (\Request::main()->action != 'edit' && $id) {
+			$actions = array(array($controller.DS."copy/?from=" . $id, 'コピー'));
+			$urls = static::generate_urls($controller.DS.'copy', $actions, []);
+		}
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => 'コピー',
+			'show_at_top'  => true,
+			'acl_exp'      => 'コピー',
+			'explanation'  => 'コピー',
+			'help'         => '',
+			'order'        => 20
+		);
+		return $retvals;
+	}
+	
 	// actionset_view
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array()) {
 		
