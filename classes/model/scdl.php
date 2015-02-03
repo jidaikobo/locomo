@@ -378,10 +378,11 @@ class Model_Scdl extends \Model_Base
 				'type' => 'select',
 				'options' => 
 				array (
-					0 => 0,
-					1 => 1,
+					0 => '不可視',
+					1 => '可視',
 				),
 				'class' => 'int',
+				'default' => 1,
 			),
 		),
 	) ;
@@ -463,13 +464,6 @@ class Model_Scdl extends \Model_Base
 	 */
 	public static function form_definition($factory = 'schedules', $obj = null)
 	{
-		
-		if(static::$_cache_form_definition && $obj == null)
-		{
-			return static::$_cache_form_definition;
-		}
-		
-
 		$form = parent::form_definition($factory, $obj);
 
 		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
@@ -485,7 +479,6 @@ class Model_Scdl extends \Model_Base
 			$form->field('user_id')->set_value(\Auth::get('id'));
 		}
 
-		static::$_cache_form_definition = $form;
 		return $form;
 	}
 
