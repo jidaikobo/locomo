@@ -179,8 +179,9 @@ class Model_Base extends \Orm\Model_Soft
 				$options['where'][$max]['or'] = array($column, 'is', null);
 			}
 /*
-			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
-				, 'or' => (array($column, 'is', null)));
+	$options['where'][] = array(
+		array($column, '>', date('Y-m-d H:i:s') )
+			, 'or' => array($column, 'is', null));
 */
 		}
 		return $options;
@@ -214,8 +215,10 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_deleted($controller = null, $options = array(), $mode = null)
 	{
-		if (\Request::active()->action == 'index_admin' or \Request::active()->action == 'index' or \Request::active()->action == 'customer_index') return $options;
 
+		if ($mode == 'index') {
+			return $options;
+		}
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
 			! \Auth::has_access($controller.'/view_deleted')
@@ -466,7 +469,6 @@ class Model_Base extends \Orm\Model_Soft
 
 		\Pagination::set('total_items', $count);
 
-
 		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
 		$options['rows_limit'] = \Pagination::get('per_page');
 		$options['rows_offset'] = \Pagination::get('offset');
@@ -478,6 +480,7 @@ class Model_Base extends \Orm\Model_Soft
 			$options['related'][] = $ref;
 		}
  */
+
 		$objs = static::find('all', $options);
 		\Pagination::$refined_items = count($objs);
 
