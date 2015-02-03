@@ -24,7 +24,6 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 	<?php echo \Asset::js('jquery.inc.js'); ?>
-	<?php echo \Asset::js('jquery.inc.js'); ?>
 	<?php echo \Asset::js('jquery.exresize/jquery.exresize.0.1.0.js'); ?>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/i18n/jquery.ui.datepicker-ja.js"></script>

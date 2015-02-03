@@ -1,3 +1,12 @@
+//console非対応ブラウザのための用意
+// consoleが使えない場合は空のオブジェクトを設定しておく
+if( typeof window.console === undefined ){
+ window.console = {};
+}
+// console.logがメソッドでない場合は空のメソッドを用意する
+if( typeof window.console.log !== "function" ){
+ window.console.log = function(){};
+}
 //チェックボックス全選択
 $(function() {
 	$('.check_all').on('click', function(e) {
@@ -835,6 +844,7 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 }
 //ページ遷移警告抑止
 $('a:submit, input:submit').click(function(){
+	console.log();
 	if(!$(this).hasClass('confirm')){
 		$(window).off('beforeunload');
 	}

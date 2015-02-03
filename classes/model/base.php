@@ -665,8 +665,8 @@ class Model_Base extends \Orm\Model_Soft
 						</a>
 					</span>
 				</h1>
-				<div class="hidden_item">
-				<section class="form_group">
+				<div class="hidden_item form_group">
+				<section>
 					<h1 class="skip">検索</h1>
 					<form class="search">
 			');
@@ -690,8 +690,8 @@ class Model_Base extends \Orm\Model_Soft
 				{field}
 				</div><!--/.submit_button-->
 				</form>
-			</section><!-- /.form_group -->
-			</div><!-- /.hidden_item -->'
+			</section>
+			</div><!-- /.hidden_item.form_group -->'
 			);
 
 		return $form;
