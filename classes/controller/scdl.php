@@ -179,7 +179,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// 重複チェック
 		$this->template->content->set("overlap_result", $overlap_result);
 
-		if (!$id && \Input::get("from")) {
+	}
+
+	public function action_copy() {
+		$model = $this->model_name ;
+		$this->action_edit();
+
+		if (\Input::get("from")) {
 			// 直接メンバ変数にアクセスしてよいか
 			$from_data = $model::find(\Input::get("from"));
 			$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
