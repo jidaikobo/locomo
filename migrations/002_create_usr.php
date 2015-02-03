@@ -1,10 +1,11 @@
 <?php
 namespace Fuel\Migrations;
-class Create_usr
+class Create_Usr
 {
 	public function up()
 	{
 		// lcm_usr_users
+		echo "create lcm_usr_users table.\n";
 		\DBUtil::create_table('lcm_usrs', array(
 			'id'             => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true),
 			'username'       => array('type' => 'varchar', 'constraint' => 50),
@@ -34,6 +35,7 @@ class Create_usr
 		\DBUtil::create_index('lcm_usrs', array('is_visible'), 'users_is_visible');
 
 		// lcm_usr_admins
+		echo "create lcm_usr_admins table.\n";
 		\DBUtil::create_table('lcm_usr_admins', array(
 			'id'            => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true), // to use ORM
 			'user_id'       => array('type' => 'int', 'constraint' => 11),
@@ -46,6 +48,7 @@ class Create_usr
 		\DBUtil::create_index('lcm_usr_admins', array('username'), 'user_admins_username');
 
 		// lcm_usr_logs
+		echo "create lcm_usr_logs table.\n";
 		\DBUtil::create_table('lcm_usr_logs', array(
 			'loginlog_id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'login_id'    => array('constraint' => 255, 'type' => 'varchar'),
@@ -57,6 +60,7 @@ class Create_usr
 		), array('loginlog_id'));
 
 		// lcm_usrgrps
+		echo "create lcm_usrgrps table.\n";
 		\DBUtil::create_table('lcm_usrgrps', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'         => array('constraint' => 50, 'type' => 'varchar'),
@@ -70,6 +74,7 @@ class Create_usr
 		\DBUtil::create_index('lcm_usrgrps', array('deleted_at'), 'usergroups_deleted_at');
 
 		// lcm_usrs_usrgrps
+		echo "create lcm_usrs_usrgrps table.\n";
 		\DBUtil::create_table('lcm_usrs_usrgrps', array(
 			'user_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 			'group_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
@@ -78,6 +83,7 @@ class Create_usr
 
 	public function down()
 	{
+		echo "drop usr related tables table.\n";
 		\DBUtil::drop_table('lcm_usrs');
 		\DBUtil::drop_table('lcm_usr_admins');
 		\DBUtil::drop_table('lcm_usr_logs');

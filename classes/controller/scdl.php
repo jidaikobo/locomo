@@ -137,10 +137,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		endif;
 
 		//add_actionset - back to index at edit
-		$ctrl_url = \Inflector::ctrl_to_dir($this->request->controller);
-		$action['urls'][] = \Html::anchor($ctrl_url.DS.'index_admin/','一覧へ');
-		$action['order'] = 10;
-		\Actionset::add_actionset($this->request->controller, 'ctrl', $action);
+		$action['urls'][] = \Html::anchor(static::$main_url,'一覧へ');
+		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		//view
 		$this->template->set_global('title', $title);

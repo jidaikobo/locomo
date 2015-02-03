@@ -1,9 +1,10 @@
 <?php
 namespace Fuel\Migrations;
-class Create_acls
+class Create_Acls
 {
 	public function up()
 	{
+		echo "create lcm_acls table.\n";
 		\DBUtil::create_table('lcm_acls', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'controller'   => array('constraint' => 100, 'type' => 'varchar'),
@@ -18,6 +19,7 @@ class Create_acls
 
 	public function down()
 	{
+		echo "drop lcm_acls table.\n";
 		\DBUtil::drop_table('lcm_acls');
 	}
 }

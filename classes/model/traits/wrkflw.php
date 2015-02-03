@@ -151,8 +151,13 @@ trait Model_Traits_Wrkflw
 		if (is_null($step_id)) \Response::redirect(\Uri::base());
 
 		$members = \Model_Wrkflwadmin::find_allowers($step_id);
+		$all = \Arr::get($members, 'allusers') ?: array();
 
-		return \Arr::get($members, 'allusers') ?: array() ;
+		// add addmins
+		\Arr::set($all, '-1:user_id', -1);
+		\Arr::set($all, '-2:user_id', -2);
+
+		return $all;
 	}
 
 	/**
@@ -163,10 +168,20 @@ trait Model_Traits_Wrkflw
 		if (is_null($controller) || is_null($controller_id)) \Response::redirect(\Uri::base());
 
 		// 差戻しも含めて、これまでのすべての経路情報を取得する
+		// ここで名前もとると便利そうだけど、管理者（-1,-2）がとれないので我慢する
+/*
 		$q = \DB::select('lcm_wrkflw_logs.*','lcm_usrs.display_name');
 		$q->from('lcm_wrkflw_logs');
 		$q->join('lcm_usrs');
 		$q->on('lcm_wrkflw_logs.did_user_id', '=', 'lcm_usrs.id');
+		$q->where('controller', \Inflector::add_head_backslash($controller));
+		$q->where('controller_id', $controller_id);
+		$q->where('current_step', "<>", -1);// 経路設定をした人は、承認申請する人と同じなので、除外する
+		$q->order_by('created_at', 'ASC');
+		$logs = $q->as_object()->execute()->as_array();
+*/
+		$q = \DB::select('*');
+		$q->from('lcm_wrkflw_logs');
 		$q->where('controller', \Inflector::add_head_backslash($controller));
 		$q->where('controller_id', $controller_id);
 		$q->where('current_step', "<>", -1);// 経路設定をした人は、承認申請する人と同じなので、除外する
@@ -183,6 +198,7 @@ trait Model_Traits_Wrkflw
 	public static function get_strait_route_logs($controller = null, $controller_id = null)
 	{
 		$logs = static::get_route_logs($controller, $controller_id);
+		if ( ! $logs) return array();
 		$max = max(array_keys($logs));
 		$current_step = $logs[$max]->current_step ?: 0 ;
 

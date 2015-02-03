@@ -20,7 +20,7 @@
 		<td class="ctrl"><?php echo $item->workflow_step_status ?: '-' ?></td>
 		<?php endif; ?>
 		<td class="ctrl">
-		<?php if(in_array(\Auth::get('id'), $item->workflow_users)): ?>
+		<?php if(in_array(\Auth::get('id'), $item->workflow_users) || in_array(\Auth::get('id'),[-1,-2])): ?>
 			<?php if ($item->workflow_status == 'before_progress') : ?>
 				<a href="<?php echo \Uri::create($controller_uri.'/route/'.$item->{$pk}); ?>">
 					<span class="skip"><?php echo $item->{$subject_field} ?>を</span>ルート設定
@@ -30,9 +30,13 @@
 					<span class="skip"><?php echo $item->{$subject_field} ?>を</span>編集
 				</a>
 			<?php else : ?>
-				<a href="<?php echo \Uri::create($controller_uri.'/view/'.$item->{$pk}); ?>">
-					<span class="skip"><?php echo $item->{$subject_field} ?>を</span>確認
-				</a>
+				<?php if ($model::find($item->{$pk})): ?>
+					<a href="<?php echo \Uri::create($controller_uri.'/view/'.$item->{$pk}); ?>">
+						<span class="skip"><?php echo $item->{$subject_field} ?>を</span>確認
+					</a>
+				<?php else : ?>
+					進行中
+				<?php endif; ?>
 			<?php endif; ?>
 		<?php else: ?>
 			進行中

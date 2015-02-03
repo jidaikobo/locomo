@@ -3,6 +3,34 @@ namespace Locomo;
 trait Controller_Traits_Wrkflw
 {
 	/**
+	 * before_wrkflw()
+	 */
+	public function before_wrkflw()
+	{
+		// event - locomo_edit_not_found
+		\Event::register('locomo_edit_not_found', function(){
+			\Session::set_flash('error', '削除されているか、承認プロセス進行中の項目は編集できません。');
+			\Response::redirect_back();
+		});
+
+		// event - locomo_revision_update
+		\Event::register('locomo_revision_update', function($operation_and_comment){
+			if (\Request::main()->action == 'route')
+			{
+				$id = \Input::post('route', 0);
+				$obj = \Model_Wrkflwadmin::find($id);
+				return array('routing', is_object($obj) ? '経路名：'.$obj->name : '');
+			}
+			$cmt = \Input::post('comment', '');
+			if (\Request::main()->action == 'apply')   return array('apply',   $cmt);
+			if (\Request::main()->action == 'remand')  return array('remand',  $cmt);
+			if (\Request::main()->action == 'approve') return array('approve', $cmt);
+			if (\Request::main()->action == 'reject')  return array('reject',  $cmt);
+			return $operation_and_comment;
+		});
+	}
+
+	/**
 	 * action_index_workflow()
 	 */
 	public function action_index_workflow($controller = null)
@@ -35,10 +63,15 @@ trait Controller_Traits_Wrkflw
 		// 進行中の件数
 		$count = $model::count(array('where'=>array(array('workflow_status', '<>', 'finish')),));
 
+		// 表示権限を厳密にとるためモデルのキャッシュを削除しauthorized_option()を設定する
+		$model::clear_cached_objects();
+		$model::$_conditions = $model::authorized_option(array(), 'index');
+
 		// assign
 		$view->set_global('title', '関連ワークフロー項目');
 		$view->set('controller_uri', \Inflector::ctrl_to_dir($controller));
 		$view->set('pk', $model->get_primary_keys('first'));
+		$view->set('model', $model);
 		$view->set('count', $count);
 		$view->set('subject_field', $model::get_default_field_name('subject'));
 		$view->set('related', $related);
@@ -98,7 +131,6 @@ trait Controller_Traits_Wrkflw
 
 		// add_actionset - back to edit
 		$action['urls'][] = \Html::anchor(static::$base_url.'edit/'.$id,'戻る');
-		$action['order'] = 10;
 		\Actionset::add_actionset(\Request::active()->controller, 'ctrl', $action);
 
 		// assign
@@ -155,7 +187,6 @@ trait Controller_Traits_Wrkflw
 		// add_actionset - back to edit
 		$ctrl_url = \Inflector::ctrl_to_dir($controller);
 		$action['urls'][] = \Html::anchor($ctrl_url.DS.'edit/'.$id,'戻る');
-		$action['order'] = 10;
 		\Actionset::add_actionset($controller, 'ctrl', $action);
 
 		// assign
@@ -286,8 +317,7 @@ trait Controller_Traits_Wrkflw
 			$step_name = \Arr::get($steps, "{$log->current_step}.name", '作成');
 
 			// 複数回の差戻しによって同じステップ数を持つ場合は、keyで上書きする
-			$user_info = \Model_Usr::find($log->did_user_id);
-			$target_steps[$target_step] = $user_info->username." ({$step_name}の段階)";
+			$target_steps[$target_step] = \Model_Usr::get_display_name($log->did_user_id)." ({$step_name}の段階)";
 		}
 
 		// コメント入力viewを表示
@@ -354,6 +384,29 @@ trait Controller_Traits_Wrkflw
 		$view->set_global('title', '却下の確認');
 		$view->set('button', '却下');
 		$this->template->content = $view;
+	}
+
+	/**
+	 * get_userinfo()
+	 * ユーザ情報を取得する
+	 * @return (object)
+	 */
+	public static function get_userinfo($uid)
+	{
+		$user_info = \Model_Usr::find($uid);
+
+		// \Model_Usrで見つからなかったら管理者ユーザ
+		if ( ! $user_info)
+		{
+			$admins = [-1 => '管理者', -2 => 'root管理者'];
+			$user_info = (object) array();
+			$user_info->display_name = $admins[$uid];
+		}
+		if ( ! $user_info)
+		{
+		}
+
+		return $user_info;
 	}
 
 	/**

@@ -1,9 +1,10 @@
 <?php
 namespace Fuel\Migrations;
-class Create_hlp
+class Create_Hlp
 {
 	public function up()
 	{
+		echo "create lcm_hlps table.\n";
 		\DBUtil::create_table('lcm_hlps', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'title'        => array('constraint' => 255, 'type' => 'varchar'),
@@ -20,6 +21,7 @@ class Create_hlp
 
 	public function down()
 	{
+		echo "drop hlp related tables.\n";
 		\DBUtil::drop_table('lcm_hlps');
 	}
 }

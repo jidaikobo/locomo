@@ -1,9 +1,10 @@
 <?php
 namespace Fuel\Migrations;
-class Create_dashboards
+class Create_Dashboards
 {
 	public function up()
 	{
+		echo "create lcm_dashboards table.\n";
 		\DBUtil::create_table('lcm_dashboards', array(
 			'id'         => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'user_id'    => array('constraint' => 11, 'type' => 'int'),
@@ -17,6 +18,7 @@ class Create_dashboards
 
 	public function down()
 	{
+		echo "drop dashboard related tables.\n";
 		\DBUtil::drop_table('lcm_dashboards');
 	}
 }

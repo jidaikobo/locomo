@@ -1,10 +1,11 @@
 <?php
 namespace Fuel\Migrations;
-class Create_flrs
+class Create_Flrs
 {
 	public function up()
 	{
 		// lcm_flrs
+		echo "create lcm_flrs table.\n";
 		\DBUtil::create_table('lcm_flrs', array(
 			'id'           => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'         => array('constraint' => 255, 'type' => 'varchar'),
@@ -26,6 +27,7 @@ class Create_flrs
 		\DBUtil::create_index('lcm_flrs', array('path'), 'flrs_path');
 
 		// lcm_flr_permissions
+		echo "create lcm_flr_permissions table.\n";
 		\DBUtil::create_table('lcm_flr_permissions', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'flr_id'       => array('constraint' => 11, 'type' => 'int'),
@@ -42,6 +44,7 @@ class Create_flrs
 
 	public function down()
 	{
+		echo "drop flr related tables.\n";
 		\DBUtil::drop_table('lcm_flrs');
 		\DBUtil::drop_table('lcm_flr_permissions');
 	}

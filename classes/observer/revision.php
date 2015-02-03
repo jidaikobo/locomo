@@ -112,6 +112,16 @@ class Observer_Revision extends \Orm\Observer
 			}
 		}
 
+		$comment = \Input::post('revision_comment', '');
+
+		// event
+		if (\Event::instance()->has_events('locomo_revision_update'))
+		{
+			$triggered = \Event::instance()->trigger('locomo_revision_update', [$operation,$comment], 'array');
+			$operation = \Arr::get($triggered, '0.0');
+			$comment   = \Arr::get($triggered, '0.1');
+		}
+
 		// args
 		foreach ($vals as $val)
 		{
@@ -119,7 +129,7 @@ class Observer_Revision extends \Orm\Observer
 			$args['model']      = \Inflector::add_head_backslash(get_class($obj));
 			$args['pk_id']      = $obj->$primary_key;
 			$args['data']       = serialize($val);
-			$args['comment']    = \Input::post('revision_comment') ?: '';
+			$args['comment']    = $comment;
 			$args['created_at'] = date('Y-m-d H:i:s');
 			$args['operation']  = $operation;
 			$args['user_id']    = \Auth::get('id');

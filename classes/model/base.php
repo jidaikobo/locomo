@@ -123,6 +123,17 @@ class Model_Base extends \Orm\Model_Soft
 		return $this->_original;
 	}
 
+	/**
+	 * clear_cached_objects()
+	 * \Orm\Model::find() が、static::$_cached_objects を読むと期待通りの値が取得できないときに使う。
+	 * 具体例は\Locomo\Controller_Traits_Wrkflw::action_index_workflow()参照。
+	 * \Orm\Model::find() は、$options が異なったらキャッシュしないべきではないかと思う。
+	 */
+	public static function clear_cached_objects()
+	{
+		static::$_cached_objects = array();
+	}
+
 	/*
 	 * authorized_option()
 	 * adjust Model::find(#, $options)
@@ -144,6 +155,7 @@ class Model_Base extends \Orm\Model_Soft
 				$options = static::$authorize_method($controller, $options, $mode);
 			endforeach;
 		}
+
 		return $options;
 	}
 
@@ -160,8 +172,16 @@ class Model_Base extends \Orm\Model_Soft
 			! \Auth::has_access($controller.'/view_expired')
 		)
 		{
+			$options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
+			if ($mode != 'index')
+			{
+				$max = max(array_keys($options['where']));
+				$options['where'][$max]['or'] = array($column, 'is', null);
+			}
+/*
 			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
 				, 'or' => (array($column, 'is', null)));
+*/
 		}
 		return $options;
 	}
@@ -177,9 +197,14 @@ class Model_Base extends \Orm\Model_Soft
 		if (
 			isset(static::properties()[$column]) &&
 			! \Auth::has_access($controller.'/view_yet')
-		) {
-			$options['where'][] = array(array($column, '<=', date('Y-m-d H:i:s'))
-				, 'or' => (array($column, 'is', null)));
+		)
+		{
+			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
+			if ($mode != 'index')
+			{
+				$max = max(array_keys($options['where']));
+				$options['where'][$max]['or'] = array($column, 'is', null);
+			}
 		}
 		return $options;
 	}
@@ -383,7 +408,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function paginated_find($options = array(), $use_get_query = true)
 	{
-
 		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
 		if ($use_get_query) {
 			$input_get = \Input::get();

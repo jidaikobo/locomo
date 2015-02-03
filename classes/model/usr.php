@@ -134,6 +134,24 @@ class Model_Usr extends Model_Base
 	);
 
 	/**
+	 * get_display_name()
+	 * @param int $id
+	 * @return  string
+	 */
+	public static function get_display_name($id)
+	{
+		// find()
+		if ($obj = \Model_Usr::find($id))
+		{
+			return $obj->display_name;
+		// admins or empty
+		} else {
+			$admins = [-1 => '管理者', -2 => 'root管理者'];
+			return \Arr::get($admins, $id, '');
+		}
+	}
+
+	/**
 	 * form_definition()
 	 *
 	 * @param str $factory

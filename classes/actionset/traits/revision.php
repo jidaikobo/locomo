@@ -12,21 +12,8 @@ trait Actionset_Traits_Revision
 			$urls = static::generate_urls($controller.DS.'index_revision', $actions);
 		endif;
 
-		// overrides - when action in revisions, override "base" realm
-		$overrides['base'] = false;
-		$arr = ['index_revision', 'each_index_revision', 'view_revision'];
-		if(in_array(\Request::main()->action, $arr))
-		{
-			$overrides_urls = array(
-				array($controller.DS, $controller::$locomo['main_action_name']),
-			);
-			// ここstaticにしたくなるけど、\Actionsetのままでないと、履歴を呼べないコントローラがあるので、注意。
-			$overrides['base'] = \Actionset::generate_urls($controller.DS.'edit', $overrides_urls, [], 'option');
-		}
-
 		$retvals = array(
 			'urls'          => $urls ,
-			'overrides'    => $overrides['base'] ? $overrides : array(),
 			'action_name'  => '編集履歴',
 			'explanation'  => '編集履歴の閲覧。',
 			'acl_exp'      => '編集履歴閲覧の権限です。',
