@@ -626,6 +626,10 @@ textarea[disabled] {
 	background-color: #eee ;
 	box-shadow:none;
 }
+input:read-only {
+	border: none;
+	background: transparent;
+}
 .btn_group {
 	white-space: nowrap;
 }
@@ -754,6 +758,7 @@ div.form_tooltip {
 
 .lcm_form {
 	display: table;
+	width: 100%;
 	margin-top: 2em;
 	padding-bottom: 4em;
 }
@@ -766,8 +771,11 @@ div.form_tooltip {
 .lcm_form .input_group > h2 ,
 .lcm_form .input_group > .field ,
 .lcm_form .input_group > table {
+	font-size: 1em;
+	margin: 0;
 	padding: 1em 0 .8em;
 	border-top: 1px solid #ccc;
+	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
 .lcm_form .input_group:first-child h2,
@@ -776,12 +784,20 @@ div.form_tooltip {
 	border-top: none;
 	box-shadow: none;
 }
- .lcm_form .input_group > h2,
+.lcm_form .input_group > h2,
 .lcm_form .input_group > table {
 	display: table-cell;
+	border-collapse: collapse;
 }
 .lcm_form .input_group > table th {
-	text-align: left;
+	line-height: 1.25em;
+	padding: .125em 0;
+}
+.lcm_form .input_group > table tbody th ,
+.lcm_form .input_group > table tbody td{
+	border-top: 1px solid #ccc;
+	padding: .5em 0;
+	min-width: 8em;
 }
 .lcm_form .input_group > table * {
 	vertical-align: middle;
@@ -794,9 +810,11 @@ div.form_tooltip {
 .lcm_form .input_group > table {
 	padding-left: .5em;
 }
+.lcm_form textarea {
+	max-width: 800px	;
+}
 .lcm_form .address input {
 	display: block;
-	width: 20em;
 	margin-bottom: -1px;
 }
 .lcm_form .submit_button {
@@ -804,8 +822,6 @@ div.form_tooltip {
 	right: 0;
 	bottom: 0;
 }
-
-
 form tbody th {
 	text-align: left;
 	padding-right: 5px;
@@ -901,23 +917,24 @@ span.icon img {
 	margin-top: -.65em;
 	padding-left: 0;
 }
-form.search {
-	margin-left: -1em;
-}
 form.search .input_group {
 	display: inline-block;
 }
 form.search > .input_group {
 	display: block;
+	width: 100%;
 	margin-left: 1em;
 	margin-bottom: .25em;
+}
+/*IE8以下用にあとで分岐する。*/
+form.search .input_group .input_group{
+	white-space: nowrap;
 }
 form.search .input_group *{
 	vertical-align: top;
 }
 form.search h2 {
 	display: inline-block;
-	float: left;
 	height: 1.75em;
 	width: 8em;
 	margin-top: 0;

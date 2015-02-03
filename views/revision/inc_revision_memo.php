@@ -5,6 +5,6 @@
 			</a>
 		</h3>
 		<div class="hidden_item">
-			<?php echo \Form::textarea('revision_comment', Input::post('revision_comment', isset($item->comment) ? $item->comment : ''), array('style'=>'width: 100%;')); ?>
+			<?php echo \Form::textarea('revision_comment', \Input::post('revision_comment', isset($item->comment) ? $item->comment : ''), array('style'=>'width: 100%;')); ?>
 		</div>
 	</div>
