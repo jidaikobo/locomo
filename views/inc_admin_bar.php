@@ -99,11 +99,12 @@ if (\Auth::check()):
 			$html.= '<h3 class="skip">ここからメインメニューです</h3>';
 			// controller menu
 			$controller_menu = '';
-
+			$menu_separators = \Config::get('menu_separators');
 			foreach($locomo['controllers'] as $k => $v):
 				if ( ! $v['is_for_admin'] && $v['show_at_menu'])
 				{
-					$controller_menu.= '<li><a href="'.\Uri::base().'sys/admin/'.\Inflector::ctrl_to_safestr($k).'">'.$v['nicename'].'</a></li>';
+					$sep = in_array($k, $menu_separators) ? ' class="hasseparator"' : '';
+					$controller_menu.= '<li'.$sep.'><a href="'.\Uri::base().'sys/admin/'.\Inflector::ctrl_to_safestr($k).'">'.$v['nicename'].'</a></li>';
 				}
 			endforeach;
 			if ($controller_menu):

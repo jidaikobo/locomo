@@ -373,10 +373,11 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 */
 }
 #adminbar .menulist li.hasborder,
-#adminbar .menulist li.hasseparate {
-	border-bottom: 1px solid #ddd;
+#adminbar .menulist li.hasseparator {
+	border-top: 1px solid #ddd;
 	box-shadow: 0 1px 0 rgba(255,255,255,1);
-	margin-bottom: 1px;
+	margin-top: 1px;
+	padding-top: 3px;
 }
 #adminbar .menulist.on a:hover,
 #adminbar .menulist.on a:focus {
