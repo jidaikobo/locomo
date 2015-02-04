@@ -17,12 +17,14 @@ class Browser
 	public static function getIEVersion()
 	{
 		if(stristr($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
-			$ver = 0;
-		} else {
 			preg_match('/MSIE\s([\d.]+)/i', $_SERVER['HTTP_USER_AGENT'], $ver);
 			$ver = @floor($ver[1]);
+		} elseif (stristr($_SERVER['HTTP_USER_AGENT'], "Trident")){
+			preg_match('/rv\:([\d.]+)/i', $_SERVER['HTTP_USER_AGENT'], $ver);
+			$ver = $ver[1];
+		} else {
+			$ver = 0;
 		}
-
 		return (int) $ver;
 	}
 
