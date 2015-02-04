@@ -756,7 +756,9 @@ div.form_tooltip {
 	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
-
+.container .search .label_fb label * {
+	vertical-align: baseline;
+}
 .lcm_form {
 	position: relative;
 	display: table;
@@ -938,7 +940,9 @@ form.search > .input_group {
 	margin-bottom: .25em;
 }
 /*IE8以下用にあとで分岐する。*/
-form.search .input_group .input_group{
+.lcm_ieversion_6 .input_group .input_group,
+.lcm_ieversion_7 .input_group .input_group,
+.lcm_ieversion_8 .input_group .input_group {
 	white-space: nowrap;
 }
 form.search .input_group *{
@@ -1131,8 +1135,7 @@ table.calendar {
 	border-bottom: 1px solid #aaa;
 	box-shadow: 0 1px 0 #fff;
 }
-.contents h2 ,
-div.section h1 {
+.contents h2 {
 	margin: 1em 0 .5em;
 	font-size: 1.25em;
 	border-bottom: 1px solid #aaa;
