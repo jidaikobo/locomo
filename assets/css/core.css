@@ -372,13 +372,26 @@ a.has_dropdown {
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */
 }
-#adminbar .menulist li.hasborder,
-#adminbar .menulist li.hasseparator {
-	border-top: 1px solid #ddd;
-	box-shadow: 0 1px 0 rgba(255,255,255,1);
-	margin-top: 1px;
+li.has_top_separator {
+	border-top: 1px solid rgba(255,255,255,1);
+	box-shadow: 0 1px 0 #ddd;
+	margin-top: -1px;
 	padding-top: 3px;
 }
+li.has_bottom_separator {
+	border-bottom: 1px solid #ddd;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+	margin-bottom: 3px;
+}
+.has_top_separator.has_bottom_separator {
+	box-shadow: 0 1px 0 #ddd, 0 1px 0 rgba(255,255,255,1);
+}
+.has_bottom_separator + .has_top_separator {
+	border-top: none;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+}
+
+
 #adminbar .menulist.on a:hover,
 #adminbar .menulist.on a:focus {
 	background-color: #d8ebfc;
@@ -763,6 +776,9 @@ div.form_tooltip {
 	position: relative;
 	display: table;
 	width: 100%;
+	webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	margin-top: 2em;
 	padding-bottom: 4em;
 }
@@ -829,8 +845,8 @@ div.form_tooltip {
 }
 .lcm_form .submit_button {
 	position: absolute;
-	right: 0;
-	bottom: 0;
+	right: 10px;
+	bottom: .25em;
 }
 form tbody th {
 	text-align: left;
