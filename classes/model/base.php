@@ -18,7 +18,7 @@ class Model_Base extends \Orm\Model_Soft
 	protected static $_default_creator_field_name    = 'creator_id';
 
 	/*
-	 * default field names
+	 * _cache_form_definition
 	 */
 	protected static $_cache_form_definition;
 
@@ -51,36 +51,6 @@ class Model_Base extends \Orm\Model_Soft
 //		if ( ! in_array('auth_sample', static::$_authorize_methods)):
 //			static::$_authorize_methods[] = 'auth_sample';
 //		endif;
-	}
-
-	/**
-	 * get_default_field_name($str) - むしろこれが不要な気がする。
-	 */
-	public static function get_default_field_name($str = null)
-	{
-		switch($str):
-			case 'subject':
-				return isset(static::$_subject_field_name) ?
-					static::$_subject_field_name :
-					static::$_default_subject_field_name;
-			case 'created':
-				return isset(static::$_created_field_name) ?
-					static::$_created_field_name :
-					static::$_default_created_field_name;
-			case 'expired':
-				return isset(static::$_expired_field_name) ?
-					static::$_expired_field_name :
-					static::$_default_expired_field_name;
-			case 'visibility':
-				return isset(static::$_visibility_field_name) ?
-					static::$_visibility_field_name :
-					static::$_default_visibility_field_name;
-			case 'creator':
-				return isset(static::$_creator_field_name) ?
-					static::$_creator_field_name :
-					static::$_default_creator_field_name;
-		endswitch;
-		return false;
 	}
 
 	// todo 不要
@@ -134,6 +104,26 @@ class Model_Base extends \Orm\Model_Soft
 		static::$_cached_objects = array();
 	}
 
+	/**
+	 * get_field_by_role()
+	 * @return array()
+	 */
+	public static function get_field_by_role($role)
+	{
+		$field = '';
+		foreach (static::properties() as $k => $v)
+		{
+			$target = \Arr::get($v, 'lcm_role');
+			if ($target === $role)
+			{
+				$field = $k;
+				break;
+			}
+		}
+		if (empty($field)) return array();
+		return array('lcm_field' => $field) + static::properties()[$field];
+	}
+
 	/*
 	 * authorized_option()
 	 * adjust Model::find(#, $options)
@@ -164,9 +154,8 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_expired($controller = null, $options = array(), $mode = null)
 	{
-		$column = isset(static::$_expired_field_name) ?
-			static::$_expired_field_name :
-			static::$_default_expired_field_name;
+		$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
+
 		if (
 			isset(static::properties()[$column]) &&
 			! \Auth::has_access($controller.'/view_expired')
@@ -179,8 +168,9 @@ class Model_Base extends \Orm\Model_Soft
 				$options['where'][$max]['or'] = array($column, 'is', null);
 			}
 /*
-			$options['where'][] = array(array($column, '>', date('Y-m-d H:i:s'))
-				, 'or' => (array($column, 'is', null)));
+	$options['where'][] = array(
+		array($column, '>', date('Y-m-d H:i:s') )
+			, 'or' => array($column, 'is', null));
 */
 		}
 		return $options;
@@ -191,9 +181,8 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_created($controller = null, $options = array(), $mode = null)
 	{
-		$column = isset(static::$_created_field_name) ?
-			static::$_created_field_name :
-			static::$_default_created_field_name;
+		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
+
 		if (
 			isset(static::properties()[$column]) &&
 			! \Auth::has_access($controller.'/view_yet')
@@ -214,8 +203,10 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_deleted($controller = null, $options = array(), $mode = null)
 	{
-		if (\Request::active()->action == 'index_admin' or \Request::active()->action == 'index' or \Request::active()->action == 'customer_index') return $options;
 
+		if ($mode == 'index') {
+			return $options;
+		}
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
 			! \Auth::has_access($controller.'/view_deleted')
@@ -232,9 +223,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_visibility($controller = null, $options = array(), $mode = null)
 	{
-		$column = isset(static::$_visibility_field_name) ?
-			static::$_visibility_field_name :
-			static::$_default_visibility_field_name;
+		$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
 
 		if (
 			isset(static::properties()[$column]) &&
@@ -244,7 +233,6 @@ class Model_Base extends \Orm\Model_Soft
 		}
 		return $options;
 	}
-
 
 	/*
 	 * @param   array     $input_post
@@ -466,7 +454,6 @@ class Model_Base extends \Orm\Model_Soft
 
 		\Pagination::set('total_items', $count);
 
-
 		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
 		$options['rows_limit'] = \Pagination::get('per_page');
 		$options['rows_offset'] = \Pagination::get('offset');
@@ -478,6 +465,7 @@ class Model_Base extends \Orm\Model_Soft
 			$options['related'][] = $ref;
 		}
  */
+
 		$objs = static::find('all', $options);
 		\Pagination::$refined_items = count($objs);
 
@@ -638,7 +626,8 @@ class Model_Base extends \Orm\Model_Soft
 		}
 
 		// add opener before unrefine
-		$sortinfo     = \Pagination::sort_info(get_called_class());
+		\Pagination::set_config('sort_info_model', get_called_class());
+		$sortinfo     = \Pagination::sort_info();
 		$total        = \Pagination::get("total_items");
 		$current_page = \Pagination::get("current_page");
 		$per_page     = \Pagination::get("per_page");
@@ -665,8 +654,8 @@ class Model_Base extends \Orm\Model_Soft
 						</a>
 					</span>
 				</h1>
-				<div class="hidden_item">
-				<section class="form_group">
+				<div class="hidden_item form_group">
+				<section>
 					<h1 class="skip">検索</h1>
 					<form class="search">
 			');
@@ -690,8 +679,8 @@ class Model_Base extends \Orm\Model_Soft
 				{field}
 				</div><!--/.submit_button-->
 				</form>
-			</section><!-- /.form_group -->
-			</div><!-- /.hidden_item -->'
+			</section>
+			</div><!-- /.hidden_item.form_group -->'
 			);
 
 		return $form;

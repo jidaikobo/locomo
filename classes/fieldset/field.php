@@ -101,7 +101,6 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 					$title_inner = ''; // タイトル 説明文 エラー
 					if (is_array($title_contained)) {
 						foreach ($title_contained as $tc) {
-						foreach ($title_contained as $tc) {
 							if ($tc == 'error') {
 								$title_inner .= (string)$this->error() . ' ';
 							} elseif($tc == 'description') {
@@ -109,7 +108,6 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 							} else {
 								$title_inner .= (string)$this->get_attribute($tc) . ' ';
 							}
-						}
 						}
 					} else {
 						$title_inner .= (string)$this->get_attribute('label') . ' ';
@@ -264,7 +262,8 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 			$this->set_attribute('id', $auto_id);
 		}
 
-
+		// リビジョンをカット
+		if ($this->name == 'revision_comment') {return '';}
 
 		switch( ! empty($this->attributes['tag']) ? $this->attributes['tag'] : $this->type)
 		{
@@ -503,8 +502,6 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 
 		return $template;
 	}
-
-
 
 
 }

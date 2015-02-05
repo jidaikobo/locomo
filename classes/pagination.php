@@ -9,6 +9,10 @@
  * @link       http://tsukitsume.com
  */
 
+/*
+ * todo ラベルはgetで送ればよくね?
+ */
+
 namespace Locomo;
 
 class Pagination extends \Fuel\Core\Pagination
@@ -73,10 +77,12 @@ class Pagination extends \Fuel\Core\Pagination
 	}
 
 
-	public function render_sort_info($model) {
+	public function render_sort_info() {
 		if ( is_null( \Input::get('orders')) ) {
 			return null;
 		}
+
+		$model = static::$_sort_info_model;
 
 		$field = array_keys( \Input::get('orders'))[0];
 		$sort = \Input::get('orders')[$field];

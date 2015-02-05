@@ -203,7 +203,6 @@ class Model_Scdl_Item extends \Model_Base
 			'order_by' => array('item_sort' => 'asc')
 				)
 			);
-
 		return \Arr::assoc_to_keyval($items, 'item_id', 'item_name');
 	}
 }

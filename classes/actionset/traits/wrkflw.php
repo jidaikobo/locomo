@@ -27,7 +27,7 @@ trait Actionset_Traits_Wrkflw
 			{
 				$options[] = array('is_visible', '=', true);
 			}
-			$count = count($model::get_related_current_items($controller, $model));
+			$count = count($model::count(array('where'=>array(array('workflow_status', '<>', 'finish')))));
 		}
 
 		// urls
@@ -124,7 +124,7 @@ trait Actionset_Traits_Wrkflw
 		//-1の場合は、承認申請
 		if ($current_step == -1)
 		{
-			if (\Auth::instance()->has_access($controller.'/apply'))
+			if (\Auth::has_access($controller.'/apply'))
 			{
 				$urls = array(
 					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/apply/{$obj->id}"), '承認申請'),
@@ -136,7 +136,7 @@ trait Actionset_Traits_Wrkflw
 		{
 		//ワークフロー進行中だったら承認・却下・差戻しができる
 			$members = $model::get_members($current_step_id);
-			if (is_array($members) && in_array($user_id, $members))
+			if ($obj->workflow_status == 'in_progress' && in_array($user_id, $members))
 			{
 				$urls = array(
 					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/approve/{$obj->id}"), '承認'),
@@ -157,7 +157,8 @@ trait Actionset_Traits_Wrkflw
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
 		if (
 			$model::get_current_step($controller, $obj->id) == -2 &&
-			\Auth::instance()->has_access($controller.'/route')
+			\Auth::has_access($controller.'/route') &&
+			$obj->workflow_status !== 'finish'
 		)
 		{
 			$urls = array(\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/route/{$obj->id}"), '経路設定')) ;

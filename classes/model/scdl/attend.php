@@ -96,6 +96,28 @@ class Model_Scdl_Attend extends \Model_Base
 	//$_option_options - see sample at \Model_Usrgrp
 	public static $_option_options = array();
 
+	protected static $_belongs_to = array(
+		'user' => array(
+						'key_from' => 'user_id',
+						'model_to' => '\Model_Usr',
+						'key_to' => 'id',
+						'cascade_save' => false,
+						'cascade_delete' => false,
+					),
+		'attend' => array(
+						'key_from' => 'attend_kb',
+						'model_to' => '\Model_Scdl_Item',
+						'key_to' => 'item_id',
+						'cascade_save' => false,
+						'cascade_delete' => false,
+						'conditions' => array(
+							 'where' => array(
+						        array('item_group', 'attend_kb'),
+						    ),
+						),
+					)
+	);
+
 /*
 	protected static $_has_many = array(
 		'foo' => array(
@@ -124,6 +146,7 @@ class Model_Scdl_Attend extends \Model_Base
 	);
 
 	protected static $_observers = array(
+		/*
 		"Orm\Observer_Self" => array(),
 		'Locomo\Observer_Created' => array(
 			'events' => array('before_insert', 'before_save'),
@@ -136,6 +159,7 @@ class Model_Scdl_Attend extends \Model_Base
 		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
+		*/
 	);
 
 	/**

@@ -49,9 +49,9 @@
 			<td>
 				<div class="btn_group">
 					<?php
-					echo Html::anchor('schedules/view'.'/'.$item->id, '閲覧', array('class' => 'edit'));
+					echo Html::anchor('scdl/viewdetail'.'/'.$item->id, '閲覧', array('class' => 'edit'));
 					echo ' ';
-					echo Html::anchor('schedules/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
+					echo Html::anchor('scdl/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
 					?>
 				</div>
 			</td>

@@ -43,7 +43,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 	public function addressee(
 		$title = '宛名',
 		$customers,
-		$field_format = array(
+		$field_format_default = array(
 			'name' => 'name',
 			'zip' => 'zip',
 			'address' => 'address'
@@ -51,7 +51,8 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		$width = 150,
 		$margin = array(0, 0),
 		$cr="",
-		$name_align = 'L'
+		$name_align = 'L',
+		$change_format = false // function change format
 	){
 
 		if (!$customers) {return;} // throw error;
@@ -81,6 +82,14 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		foreach ($customers as $customer) {
 			$pdf->AddPage('P', 'A4');
 			if (\Input::get('test')) $pdf->useTemplate(1);
+
+			// フィールドを条件によって変えたいときにコールバック呼び出す
+			$field_format = $field_format_default;
+
+			if (is_callable($change_format)) {
+				$ff = $change_format($customer);
+				if (is_array($ff)) $field_format = $ff;
+			}
 
 			// field zip
 			$zip = '';
@@ -135,8 +144,8 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			$pdf->SetFontSize($fs);
 			$y = $pdf->GetY();
 			$y = (is_float($y) or is_int($y)) ? $y : 0;
-			$pdf->SetXY($margin_x+($width*0.1), $y + $fs*MM_PER_POINT);
-			$pdf->MultiCell($width*0.9, $fs*2*MM_PER_POINT, $name . '' , 0, $name_align);
+			$pdf->SetXY($margin_x+($width*0.05), $y + $fs*MM_PER_POINT);
+			$pdf->MultiCell($width*0.95, $fs*2*MM_PER_POINT, $name, 0, $name_align);
 
 		} //endforeach;
 
@@ -152,14 +161,15 @@ class Controller_Pdf extends \Locomo\Controller_Base
 	public function tack_seal(
 		$title = '',
 		$customers = null,
-		$field_format = array(
+		$field_format_default = array(
 			'name' => 'name',
 			'zip' => 'zip',
 			'address' => 'address'
 		),
 		$cell = array(2, 5),
 		$margin = array(21, 19, 21, 19),
-		$cr = ""
+		$cr = "",
+		$change_format = false
 	) {
 
 		if (!$customers) {return;} // throw error;
@@ -213,6 +223,14 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			}
 			if (\Input::get('test')) $pdf->Rect($refer_point['x']+$margin_x, $refer_point['y']+$margin_y, $width, $height);
 
+			// フィールドを条件によって変えたいときにコールバック呼び出す
+			$field_format = $field_format_default;
+
+			if (is_callable($change_format)) {
+				$ff = $change_format($customer);
+				if (is_array($ff)) $field_format = $ff;
+			}
+
 			// field zip
 			$zip = '';
 			if (is_array($field_format['zip']) and count($field_format['zip']) == 2) {
@@ -227,7 +245,12 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			$address = '';
 			if (is_array($field_format['address'])) {
 				foreach ($field_format['address'] as $key => $val) {
-					$address .= $customer->{$field_format['address'][$key]} . $cr;
+					if (isset($customer->{$field_format['address'][$key]})) {
+						$address .= $customer->{$field_format['address'][$key]} . $cr;
+					} else {
+						$address .= $val;
+					}
+
 				}
 			} elseif ( is_string($field_format['address']) ) {
 				$address = $customer->{$field_format['address']};
@@ -239,14 +262,19 @@ class Controller_Pdf extends \Locomo\Controller_Base
 				$sp_flg = false;
 				foreach ($field_format['name'] as $key => $val) {
 					if ($sp_flg) $name .= '　';
-					$name .= $customer->{$field_format['name'][$key]};
+					if (isset($customer->{$field_format['name'][$key]})) {
+						$name .= $customer->{$field_format['name'][$key]};
+					} else {
+						$name .= $val;
+					}
+
 					if (!$sp_flg) $cr_flg = true;
 				}
 			} elseif ( is_string($field_format['name']) ) {
 				$name = $customer->{$field_format['name']};
 			}
 
-			$name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
+			// $name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
 
 
 			// output zip & address
@@ -280,7 +308,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 	protected function letter(
 		$title = '郵便はがき',
 		$customers = null,
-		$field_format = array(
+		$field_format_default = array(
 			'name'=>'name',
 			'company' => 'company',
 			// 'company2' => 'company2',
@@ -314,6 +342,14 @@ class Controller_Pdf extends \Locomo\Controller_Base
 
 			$pdf->addPage('P', array(148, 100));
 			if (\Input::get('test')) $pdf->useTemplate(1);
+
+			// フィールドを条件によって変えたいときにコールバック呼び出す
+			$field_format = $field_format_default;
+
+			if (is_callable($change_format)) {
+				$ff = $change_format($customer);
+				if (is_array($ff)) $field_format = $ff;
+			}
 
 
 			// field zip
@@ -500,7 +536,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 	protected function envelope(
 		$title = '封筒',
 		$customers = null,
-		$field_format = array(
+		$field_format_default = array(
 			'name'=>'name',
 			'company' => 'company',
 			// 'company2' => 'company2',
@@ -510,7 +546,8 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			// 'address2'=>'address2'
 		),
 		$margin = array(0, 0),
-		$delimiter = '・'
+		$delimiter = '・',
+		$change_format
 	) {
 
 		$margin_x = $margin[0];
@@ -535,6 +572,15 @@ class Controller_Pdf extends \Locomo\Controller_Base
 
 			$pdf->addPage('P', array(90, 205));
 			if (\Input::get('test')) $pdf->useTemplate(1);
+
+
+			// フィールドを条件によって変えたいときにコールバック呼び出す
+			$field_format = $field_format_default;
+
+			if (is_callable($change_format)) {
+				$ff = $change_format($customer);
+				if (is_array($ff)) $field_format = $ff;
+			}
 
 
 			// field zip

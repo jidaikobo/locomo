@@ -10,7 +10,7 @@ trait Controller_Traits_Wrkflw
 		// event - locomo_edit_not_found
 		\Event::register('locomo_edit_not_found', function(){
 			\Session::set_flash('error', '削除されているか、承認プロセス進行中の項目は編集できません。');
-			\Response::redirect_back();
+			\Response::redirect(static::$main_url);
 		});
 
 		// event - locomo_revision_update
@@ -73,7 +73,7 @@ trait Controller_Traits_Wrkflw
 		$view->set('pk', $model->get_primary_keys('first'));
 		$view->set('model', $model);
 		$view->set('count', $count);
-		$view->set('subject_field', $model::get_default_field_name('subject'));
+		$view->set('subject_field', \Arr::get($model::get_field_by_role('subject'), 'lcm_field'));
 		$view->set('related', $related);
 //		$view->set('not_related', $not_related);
 		$this->template->content = $view;
@@ -161,6 +161,20 @@ trait Controller_Traits_Wrkflw
 			return \Response::redirect(static::$base_url.'route/'.$id);
 		}
 
+		// 権限確認
+		$target_model = $this->model_name ;
+		$obj = $target_model::find($id);
+		if ( ! $obj)
+		{
+			\Session::set_flash('error', '存在しない項目です。');
+			return \Response::redirect(static::$main_url);
+		}
+		if ($obj->workflow_status !== 'init')
+		{
+			\Session::set_flash('error', '承認申請はルート設定直後のみ行うことができます。');
+			return \Response::redirect(static::$base_url.'edit/'.$id);
+		}
+
 		// postがあったら申請処理をして、編集画面に戻る
 		if (\Input::method() == 'POST')
 		{
@@ -173,8 +187,6 @@ trait Controller_Traits_Wrkflw
 				\Session::set_flash('success', '申請しました');
 	
 				// 項目のworkflow_statusをin_progressにする（編集できないようにする）
-				$target_model = $this->model_name ;
-				$obj = $target_model::find($id);
 				$obj->workflow_status = 'in_progress';
 				$obj->save();
 				return \Response::redirect(static::$base_url.'view/'.$id);
@@ -220,11 +232,19 @@ trait Controller_Traits_Wrkflw
 				if ($route_id)
 				{
 					$comment = \Input::post('comment');
-	
+
+					// 妥当な段階の承認か確認する
+					$current_step = $model::get_current_step($controller, $id) ;
+					$step_id = $model::get_current_step_id($route_id, $current_step);
+					if ( ! in_array(\Auth::get('id'), $model::get_members($step_id)))
+					{
+						\Session::set_flash('error', '承認済みです。');
+						return \Response::redirect(static::$main_url);
+					}
+
 					// 最後の承認かどうか確認する
-					$current_step = $model::get_current_step($controller, $id) + 1;
 					$total_step   = $model::get_total_step($route_id);
-					$mode = $current_step == $total_step ? 'finish' : 'approve';
+					$mode = $current_step + 1 == $total_step ? 'finish' : 'approve';
 	
 					// add_log
 					$model::add_log($mode, $route_id, $controller, $id,$comment);

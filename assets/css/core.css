@@ -372,12 +372,26 @@ a.has_dropdown {
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */
 }
-#adminbar .menulist li.hasborder,
-#adminbar .menulist li.hasseparate {
+li.has_top_separator {
+	border-top: 1px solid rgba(255,255,255,1);
+	box-shadow: 0 1px 0 #ddd;
+	margin-top: -1px;
+	padding-top: 3px;
+}
+li.has_bottom_separator {
 	border-bottom: 1px solid #ddd;
 	box-shadow: 0 1px 0 rgba(255,255,255,1);
-	margin-bottom: 1px;
+	margin-bottom: 3px;
 }
+.has_top_separator.has_bottom_separator {
+	box-shadow: 0 1px 0 #ddd, 0 1px 0 rgba(255,255,255,1);
+}
+.has_bottom_separator + .has_top_separator {
+	border-top: none;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+}
+
+
 #adminbar .menulist.on a:hover,
 #adminbar .menulist.on a:focus {
 	background-color: #d8ebfc;
@@ -626,6 +640,10 @@ textarea[disabled] {
 	background-color: #eee ;
 	box-shadow:none;
 }
+input:read-only {
+	border: none;
+	background: transparent;
+}
 .btn_group {
 	white-space: nowrap;
 }
@@ -751,37 +769,60 @@ div.form_tooltip {
 	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
-
+.container .search .label_fb label * {
+	vertical-align: baseline;
+}
 .lcm_form {
+	position: relative;
 	display: table;
+	width: 100%;
+	webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	margin-top: 2em;
 	padding-bottom: 4em;
+}
+.lcm_form > .input_group {
+	display: table-row;
+}
+.lcm_form .input_group > h2,
+.lcm_form .input_group > .field,
+.lcm_form .input_group > table {
+	display: table-cell;
+	border-collapse: collapse;
 }
 .lcm_form * {
 	vertical-align: top;
 }
-.lcm_form > div {
-	display: table-row;
-}
 .lcm_form .input_group > h2 ,
 .lcm_form .input_group > .field ,
 .lcm_form .input_group > table {
+	font-size: 1em;
+	margin: 0;
 	padding: 1em 0 .8em;
 	border-top: 1px solid #ccc;
+	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
 .lcm_form .input_group:first-child h2,
+.lcm_form input:first-child + .input_group h2,
 .lcm_form .input_group:first-child .field,
-.lcm_form .input_group:first-child table {
+.lcm_form input:first-child + .input_group .field,
+.lcm_form .input_group:first-child table,
+.lcm_form input:first-child + .input_group table {
 	border-top: none;
 	box-shadow: none;
 }
- .lcm_form .input_group > h2,
-.lcm_form .input_group > table {
-	display: table-cell;
-}
+
 .lcm_form .input_group > table th {
-	text-align: left;
+	line-height: 1.25em;
+	padding: .125em 0;
+}
+.lcm_form .input_group > table tbody th ,
+.lcm_form .input_group > table tbody td{
+	border-top: 1px solid #ccc;
+	padding: .5em 0;
+	min-width: 8em;
 }
 .lcm_form .input_group > table * {
 	vertical-align: middle;
@@ -792,23 +833,27 @@ div.form_tooltip {
 }
 .lcm_form .input_group > .field,
 .lcm_form .input_group > table {
-	padding-left: .5em;
+	padding-left: .75em;
+}
+.lcm_form textarea {
+	max-width: 800px	;
 }
 .lcm_form .address input {
 	display: block;
-	width: 20em;
 	margin-bottom: -1px;
+	width: 25em;
 }
 .lcm_form .submit_button {
 	position: absolute;
-	right: 0;
-	bottom: 0;
+	right: 10px;
+	bottom: .25em;
 }
-
-
 form tbody th {
 	text-align: left;
 	padding-right: 5px;
+}
+dl.field dt {
+	font-weight: bold;
 }
 .input_group .multiple_button {
 	display: inline-block;
@@ -901,23 +946,26 @@ span.icon img {
 	margin-top: -.65em;
 	padding-left: 0;
 }
-form.search {
-	margin-left: -1em;
-}
 form.search .input_group {
 	display: inline-block;
 }
 form.search > .input_group {
 	display: block;
+	width: 100%;
 	margin-left: 1em;
 	margin-bottom: .25em;
+}
+/*IE8以下用にあとで分岐する。*/
+.lcm_ieversion_6 .input_group .input_group,
+.lcm_ieversion_7 .input_group .input_group,
+.lcm_ieversion_8 .input_group .input_group {
+	white-space: nowrap;
 }
 form.search .input_group *{
 	vertical-align: top;
 }
 form.search h2 {
 	display: inline-block;
-	float: left;
 	height: 1.75em;
 	width: 8em;
 	margin-top: 0;
@@ -1109,12 +1157,6 @@ table.calendar {
 	border-bottom: 1px solid #aaa;
 	box-shadow: 0 1px 0 #fff;
 }
-/* あとで。ページタイトル的なh2は明示的にクラスを与えて管理するほうが良さそう
-.contents h2:first-child {
-	margin-bottom: 1em;
-	margin-top: 0;
-}
-*/
 .contents h3 {
 	font-size: 1.1em;
 	margin: 1em 0 .25em;
@@ -1527,6 +1569,13 @@ li.show_if_smalldisplay {
 	.lcm_form .input_group .field {
 		border: none;
 		box-shadow: none;
+	}
+	.lcm_form .input_group > table {
+		text-align: left;
+	}
+	.lcm_form .input_group > table tbody th,
+	.lcm_form .input_group > table tbody td {
+		min-width: inherit;
 	}
 }
 

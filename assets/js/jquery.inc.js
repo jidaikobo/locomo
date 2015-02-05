@@ -1,3 +1,12 @@
+//console非対応ブラウザのための用意
+// consoleが使えない場合は空のオブジェクトを設定しておく
+if( typeof window.console === undefined ){
+ window.console = {};
+}
+// console.logがメソッドでない場合は空のメソッドを用意する
+if( typeof window.console.log !== "function" ){
+ window.console.log = function(){};
+}
 //チェックボックス全選択
 $(function() {
 	$('.check_all').on('click', function(e) {
@@ -806,7 +815,6 @@ $('.confirm').click(function(){
 //ページ遷移時の警告
 //エラー時には必ず。//フォームと無関係のエラーは？
 //login画面とsubmitがない場合(編集履歴など)では出さない。編集履歴はむしろdisableにするほうがよい？
-//イベントを渡して.targetの値を見ることも可
 function confirm_beforeunload(){
 	$(window).on('beforeunload', function(){
 		return '変更内容は保存されていません。';
@@ -820,10 +828,13 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 		var val = $(this).val();
 		$(this).data('val',val);
 	});
+	
 	$('form').change( function(e){
 		e = e ? e : event;
 		var t = $(e.target);
-		if( t.closest('.search')[0] || t.hasClass('checkbox_binded') || t.hasClass('no_confirm') || t.hasClass('datetime') && t.val() == t.data('val') ){//.search form内や、一括処理用のチェックボックス、datetimepickerは除外
+		console.log(t);
+		if( t.closest('.search, .btn-toolbar')[0] || t.hasClass('checkbox_binded') || t.hasClass('datetime') && t.val() == t.data('val') ){
+		//変更のあった要素のうち、.search form内や、一括処理用のチェックボックス、datetimepickerは除外
 			return false;
 		}else{
 			confirm_beforeunload();
@@ -834,10 +845,8 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 	}
 }
 //ページ遷移警告抑止
-$('a:submit, input:submit').click(function(){
-	if(!$(this).hasClass('confirm')){
+$('a:submit, input:submit, .confirm').click(function(){//該当する場合遷移警告しない
 		$(window).off('beforeunload');
-	}
 });
 
 //エラー時の入力エリアから一覧へのナビゲーション

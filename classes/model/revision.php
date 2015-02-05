@@ -3,11 +3,6 @@ namespace Locomo;
 class Model_Revision extends \Model_Base
 {
 	protected static $_table_name = 'lcm_revisions';
-	protected static $_modifiers = array(
-		'-2' => 'ルート管理者',
-		'-1' => '管理者',
-		'0'  => 'ゲスト',
-	);
 
 	protected static $_properties = array(
 		'id',
@@ -53,17 +48,17 @@ class Model_Revision extends \Model_Base
 	{
 		//vals
 		if ( ! class_exists($model)) return false;
-		$model_str = substr($model,0,1) == '\\' ? substr($model,1) : $model;
-		$likes = \Input::get('likes')  ?: null ;
+		$model_str = \Inflector::add_head_backslash($model);
+		$all = \Input::get('all')  ?: null ;
 		$range = \Arr::get($model::$_conditions, 'where', null) ;
 		$order = \Arr::get($model::$_conditions, 'order_by', null) ;
 
 		//model information
 		$table = \Inflector::tableize($model);
 		if( ! \DBUtil::table_exists($table)) return false;
-		$subject = $model::get_default_field_name('subject');
-		$subject = $table.'.'.$subject;
-		$pk = $table.'.'.$model::get_primary_keys('first');
+		$subject = \Arr::get($model::get_field_by_role('subject'), 'lcm_field');
+		$subject = $table.'.'.$subject; // relation table name
+		$pk = $table.'.'.$model::get_primary_keys('first'); // relation table name
 
 		//リビジョンの一覧を取得
 		$q = \DB::select(
@@ -79,13 +74,14 @@ class Model_Revision extends \Model_Base
 		$q->from($table);
 		$q->where('lcm_revisions.model', $model_str);
 
-		//like
-		if ($likes):
+		//all
+		if ($all):
 			$columns = \DB::list_columns('lcm_revisions');
 			$q->and_where_open();
 			foreach($columns as $field => $v):
-				$q->or_where('lcm_revisions.'.$field, 'like', '%'.$likes['all'].'%');
+				$q->or_where('lcm_revisions.'.$field, 'like', '%'.$all.'%');
 			endforeach;
+			$q->or_where($subject, 'like', '%'.$all.'%');
 			$q->and_where_close();
 		endif;
 
@@ -136,13 +132,6 @@ class Model_Revision extends \Model_Base
 		//retval
 		$items = $q->as_object($model)->execute()->as_array() ;
 
-		//items
-		foreach($items as $k => $item):
-			$modifier_name = \Model_Usr::find($item->user_id, array('select'=>array('display_name')));
-			$modifier_name = $modifier_name ? $modifier_name : static::$_modifiers[$item->user_id];
-			$items[$k]->modifier_name = $modifier_name;
-		endforeach;
-
 		//assign
 		$view->set_safe('pagination', \Pagination::create_links());
 		$view->set('hit', $count);
@@ -188,5 +177,27 @@ class Model_Revision extends \Model_Base
 		$this->save();
 
 		return;
+	}
+
+	/**
+	 * search_form()
+	*/
+	public static function search_form()
+	{
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('user', $config);
+
+		// 検索
+		$form->add(
+			'all',
+			'フリーワード',
+			array('type' => 'text', 'value' => \Input::get('all'))
+		);
+
+		// wrap
+		$parent = parent::search_form_base('編集履歴一覧');
+		$parent->add_after($form, 'customer', array(), array(), 'opener');
+
+		return $parent;
 	}
 }
