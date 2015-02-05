@@ -103,7 +103,7 @@ if (\Auth::check()):
 			foreach($locomo['controllers'] as $k => $v):
 				if ( ! $v['is_for_admin'] && $v['show_at_menu'])
 				{
-					$sep = in_array($k, $menu_separators) ? ' class="hasseparator"' : '';
+					$sep = array_key_exists($k, $menu_separators) ? ' class="'.$menu_separators[$k].'"' : '';
 					$controller_menu.= '<li'.$sep.'><a href="'.\Uri::base().'sys/admin/'.\Inflector::ctrl_to_safestr($k).'">'.$v['nicename'].'</a></li>';
 				}
 			endforeach;

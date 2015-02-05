@@ -25,7 +25,9 @@
 			<th class="min"><?php echo \Pagination::sort('id', 'ID');?></th>
 			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名');?></th>
 			<th style="width:8em;"><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
+<?php if (\Auth::is_admin()): ?>
 			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
+<?php endif; ?>
 			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<th>削除された日</th>
@@ -41,7 +43,9 @@
 			<td style="min-width: 8em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->username; ?></div></th>
 			<th style="min-width: 8em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->display_name; ?></div>
 			</td>
+<?php if (\Auth::is_admin()): ?>
 			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
+<?php endif; ?>
 			<td><?php echo $item->last_login_at != '0000-00-00 00:00:00' ? $item->last_login_at : ''; ?></td>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<td><?php echo $item->deleted_at; ?></td>

@@ -23,7 +23,7 @@ return array(
 
 	// menu_separators - add separators
 	'menu_separators' => array(
-		//'\Controller_Name',
+		//'\Controller_Name' => '[has_top_separator|has_bottom_separator]',
 	),
 
 	// identity
