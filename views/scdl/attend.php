@@ -139,8 +139,4 @@ foreach ($items as $key => $value) {
 <?php } ?>
 
 
-<input type="button" value="編集" onclick="location.href='<?php print Config::get('base_url'); ?>scdl/edit/<?php print $detail->id; ?>'" />
 
-<input type="button" value="削除" onclick="location.href='<?php print Config::get('base_url'); ?>scdl/delete/<?php print $detail->id; ?>'" />
-
-<input type="button" value="コピー" onclick="location.href='<?php print Config::get('base_url'); ?>scdl/edit/?from=<?php print $detail->id; ?>'" />

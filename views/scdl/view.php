@@ -83,6 +83,18 @@ calendar【<?php print $detail->title_text; ?>】
 </tr>
 
 <?php endif; ?>
+
+<?php if (count($schedule_members_me)) { ?>
+<tr>
+<th>出席予定</th>
+<td>
+	<?php foreach ($schedule_attend_members as $row) { ?>
+		<p><?php print $row->user->username; ?>:<?php print $row->attend->item_name; ?></p>
+	<?php } ?>
+</td>
+</tr>
+<?php } ?>
+
 <?php if($detail->user_id): ?>
 <tr>
 	<th>作成者</th>

@@ -92,17 +92,18 @@ class Model_Scdl_Member extends \Model_Base
 			'cascade_delete' => false
 		)
 	);
-
+*/
 	protected static $_belongs_to = array(
-		'members' => array(
-						'key_from' => 'schedule_id',
-						'model_to' => '\Model_Schedule',
+		'user' => array(
+						'key_from' => 'user_id',
+						'model_to' => '\Model_Usr',
 						'key_to' => 'id',
 						'cascade_save' => false,
 						'cascade_delete' => false,
 					)
 	);
-*/
+
+
 	//observers
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
