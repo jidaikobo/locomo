@@ -25,14 +25,14 @@ if (\Auth::check()):
 				$ctrl_index = '';
 				// Controller_Sys
 				if ($current_name == '-Controller_Sys'):
-					if(\Auth::has_access(\Request::main()->controller.DS.'sys/home')):
+					if(\Auth::has_access(\Request::main()->controller.'::home')):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'), '管理トップ');
 					else:
 						$top_link = '管理トップ';
 					endif;
 				else:
 //					if(\Auth::has_access(\Request::main()->controller.DS.'sys/admin')):
-					if(\Auth::has_access(\Request::main()->controller.DS.\Arr::get($locomo, 'controller.ctrl_home'))):
+					if(\Auth::has_access(\Request::main()->controller.'::'.\Arr::get($locomo, 'controller.ctrl_home'))):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'.$current_name), $current_nicename).' ';
 					else:
 						$top_link = $current_nicename;
@@ -40,7 +40,7 @@ if (\Auth::check()):
 					$action_name = $title ? $title : '';
 					if (isset($locomo['controller']['home'])):
 						$home_name = \Arr::get($locomo, 'controller.home_name') ?: 'トップ';
-						if(\Auth::has_access($locomo['controller']['name'].DS.$locomo['controller']['ctrl_home'])):
+						if(\Auth::has_access($locomo['controller']['name'].'::'.$locomo['controller']['ctrl_home'])):
 							$ctrl_index = \Html::anchor($locomo['controller']['home'], $home_name);
 						endif;
 					endif;
@@ -133,7 +133,7 @@ if (\Auth::check()):
 			foreach($locomo['controllers'] as $k => $v):
 				if ($v['is_for_admin'] && $v['show_at_menu'])
 					{
-						$url = \Inflector::ctrl_to_dir($v['admin_home']);
+						$url = \Inflector::ctrl_to_dir($v['main_action']);
 						$admin_menu.= '<li><a href="'.\Uri::create($url).'">'.$v['nicename'].'</a></li>';
 					}
 			endforeach;

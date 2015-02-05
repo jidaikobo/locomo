@@ -10,13 +10,8 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		'show_at_menu' => true,
 		'order_at_menu' => 10,
 		'is_for_admin' => false,
-		'admin_home' => '\\Controller_Office/index_admin',
-		'nicename' => '寄付_後援会',
-		'actionset_classes' =>array(
-			'base'   => '\\Office\\Actionset_Base_Office',
-			// 'index'  => '\\Actionset_Index_Customer',
-			// 'option' => '\\Actionset_Option_Customer',
-		),
+		'main_action' => 'action_index_admin',
+		'nicename' => 'PDF',
 	);
 
 

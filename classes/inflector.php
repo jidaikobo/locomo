@@ -15,8 +15,8 @@ class Inflector extends \Fuel\Core\Inflector
 		$controller = static::add_head_backslash($controller);
 		$controller = $delete_locomo ? str_replace('\Locomo', '', $controller) : $controller;
 
-		// if slash exists
-		$strs = explode('/', $controller);
+		// if T_PAAMAYIM_NEKUDOTAYIM exists
+		$strs = explode('::action_', $controller);
 		$strs[0] = str_replace('\\', '', $strs[0]);
 		$strs[0] = str_replace(array('Controller_','_'), '/', $strs[0]);
 		$strs[0] = strtolower($strs[0]);

@@ -13,7 +13,7 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 		if (strpos($retval, APPPATH) !== false)
 		{
 			$replace = 'app_assets/';
-			$search = APPPATH.'locomo/assets';
+			$search = APPPATH.'locomo/assets/';
 		}
 		else
 		{

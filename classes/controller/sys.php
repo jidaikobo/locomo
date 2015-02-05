@@ -5,15 +5,15 @@ class Controller_Sys extends \Controller_Base
 	// locomo
 	public static $locomo = array(
 		'nicename'     => 'システム', // for human's name
-		'main_action'  => 'admin', // main action
+		'main_action'  => 'action_admin', // main action
 		'show_at_menu' => false, // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 0, // order of appearance
 		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 		'widgets' =>array(
-			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys/admin'),
-			array('name' => '現在時刻', 'uri' => '\\Controller_Sys/clock'),
-			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl/calendar'),
+			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys::action_admin'),
+			array('name' => '現在時刻', 'uri' => '\\Controller_Sys::action_clock'),
+			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl::action_calendar'),
 		),
 	);
 
@@ -116,7 +116,7 @@ class Controller_Sys extends \Controller_Base
 		// if $ctrl is null, show link to modules and controllers
 		if (is_null($ctrl))
 		{
-			$view->set('is_admin_home', true);
+			$view->set('is_main_action', true);
 			$view->set_global('title', '管理ホーム');
 		}
 		else
@@ -153,7 +153,7 @@ class Controller_Sys extends \Controller_Base
 				));
 			}
 
-			// add 'admin_home' action to actionset from controller::$locomo
+			// add 'main_action' action to actionset from controller::$locomo
 			if($actionset)
 			{
 				foreach ($actionset as $k => $v)
@@ -219,19 +219,13 @@ class Controller_Sys extends \Controller_Base
 			$acts = explode('?', $act);
 
 			// auth
-			if( ! \Auth::instance()->has_access($acts[0])) continue;
+			if( ! \Auth::has_access($acts[0])) continue;
 
 			// querystring 
 			$qstr = \Arr::get($acts, 1);
 
 			// method exists?
-			$ctrl_act = \Locomo\Auth_Acl_Locomoacl::_parse_conditions($acts[0]);
-			if ( ! class_exists($ctrl_act['controller']))
-			{
-				$mod_ctrl = explode('\\', $ctrl_act['controller']);
-				if ( ! \Module::load($mod_ctrl[1])) continue;
-			}
-			if ( ! method_exists($ctrl_act['controller'], 'action_'.$ctrl_act['action'])) continue;
+			if ( ! \Util::method_exists($acts[0])) continue;
 
 			// hmvc
 /*

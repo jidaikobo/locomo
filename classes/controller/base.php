@@ -92,7 +92,7 @@ class Controller_Base extends Controller_Core
 		foreach($model::$_authorize_methods as $authorize_method)
 		{
 			if ( ! method_exists($model, $authorize_method)) continue;
-			$model::$_conditions = $model::$authorize_method(
+			$model::$_options = $model::$authorize_method(
 				\Inflector::add_head_backslash(get_called_class()), // controller
 				$model::$_conditions, // conditions
 				$mode = 'index' // mode

@@ -102,7 +102,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		}
 
 		// always_allowed
-		$acls = self::modify_locomopaths(\Config::get('always_allowed'));
+		$acls = \Config::get('always_allowed');
 
 		// only worth checking if there's both a username and login-hash
 		if ( ! empty($username) and ! empty($login_hash))
@@ -140,7 +140,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				endforeach;
 
 				// always_user_allowed
-				$acls_user = self::modify_locomopaths(\Config::get('always_user_allowed'));
+				$acls_user = \Config::get('always_user_allowed');
 				$acls = array_merge($acls, $acls_user);
 
 				$this->user['allowed'] = $acls;
@@ -467,17 +467,6 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			return true;
 		}
 		return;
-	}
-
-	/**
-	 * modify_locomopaths($locomo_paths = array())
-	 * @return serialized data
-	 */
-	public function modify_locomopaths($locomo_paths = array())
-	{
-		$arr = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $locomo_paths);
-//		return array_map('serialize', $arr);
-		return array_map(array('\\Model_Acl', 'to_authstr'), $arr);
 	}
 
 	/**
