@@ -55,7 +55,7 @@ class Actionset_Scdl extends \Actionset_Base
 	public static function actionset_attend($controller, $obj = null, $id = null, $urls = array())
 	{
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->attend_flg):
-			$schedule_data = \DB::select()->from("lcm_scdls_members")->where("schedule_id", 1)->where("user_id", \Auth::get('id'))->execute()->as_array();
+			$schedule_data = \DB::select()->from("lcm_scdls_members")->where("schedule_id", $id)->where("user_id", \Auth::get('id'))->execute()->as_array();
 			// 自分がメンバーであった場合
 			if (count($schedule_data) > 0) {
 				$actions = array(array($controller.DS."attend/" . $id, '出席確認'));

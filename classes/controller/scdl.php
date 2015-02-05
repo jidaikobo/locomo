@@ -243,6 +243,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					    ),
 					));
 
+		$attend_members = \Locomo\Model_Scdl_Attend::find('all', array(
+					    'where' => array(
+					        array('schedule_id', $id)
+					    ),
+					));
+
 		$usergroups = \Auth::get_groups();
 		if ($detail->group_kb == 2) {
 			$allow = false;
@@ -261,6 +267,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("mon", $mon);
 		$view->set("day", $day);
 		$view->set("detail", $detail);
+		$view->set("schedule_attend_members", $attend_members);
 		$view->set("schedule_members_me", $schedule_members);
 		$this->template->content = $view;
 	}
@@ -319,12 +326,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			if (!$obj) {
 				$obj = Model_Scdl_Attend::forge();
 			} else {
-				$obj = $obj[1];
+				$obj = array_shift($obj);
 			}
 			$obj->user_id = $uid;
 			$obj->schedule_id = $id;
 			$obj->attend_kb = \Input::post("attend_kb");
 			$obj->save();
+			// リダイレクト
+			\Response::redirect($model::$_kind_name . "/calendar");
 		}
 
 		$view = \View::forge($model::$_kind_name . "/attend");
@@ -343,7 +352,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					        array('user_id', $uid)
 					    ),
 					));
-		$this->template->content->set("attend", count($myattend) ? $myattend[1] : array());
+
+		$this->template->content->set("attend", count($myattend) ? array_shift($myattend) : array('attend_kb' => ''));
 	}
 
 	/**

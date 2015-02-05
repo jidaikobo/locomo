@@ -157,7 +157,8 @@ trait Actionset_Traits_Wrkflw
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
 		if (
 			$model::get_current_step($controller, $obj->id) == -2 &&
-			\Auth::has_access($controller.'/route')
+			\Auth::has_access($controller.'/route') &&
+			$obj->workflow_status !== 'finish'
 		)
 		{
 			$urls = array(\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/route/{$obj->id}"), '経路設定')) ;

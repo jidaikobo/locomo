@@ -21,6 +21,11 @@ return array(
 	// upload path *not* terminated with /
 	'upload_path' => APPPATH.'locomo/uploads',
 
+	// menu_separators - add separators
+	'menu_separators' => array(
+		//'\Controller_Name',
+	),
+
 	// identity
 	'identity' => array(
 		'logo' => array(
