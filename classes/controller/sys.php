@@ -164,7 +164,7 @@ class Controller_Sys extends \Controller_Base
 					$actionset[$k]['order'] = \Arr::get($k::$locomo, 'order', 10);
 					if ($home)
 					{
-						$url       = $k.'/'.$home;
+						$url       = $k.'::'.$home;
 						$args = array(
 							'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($url), $home_name)),
 							'show_at_top' => true,
