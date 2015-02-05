@@ -7,15 +7,11 @@ class Model_Base extends \Orm\Model_Soft
 		'mysql_timestamp' => true,
 	);
 
-	public static $_conditions = array();
-	/*
-	 * default field names
+	/**
+	 * conditioners
 	 */
-	protected static $_default_subject_field_name    = 'subject';
-	protected static $_default_created_field_name    = 'created_at';
-	protected static $_default_expired_field_name    = 'expired_at';
-	protected static $_default_visibility_field_name = 'is_visible';
-	protected static $_default_creator_field_name    = 'creator_id';
+	protected static $_conditions = array();
+	public static $_options = array();
 
 	/*
 	 * _cache_form_definition
@@ -137,7 +133,7 @@ class Model_Base extends \Orm\Model_Soft
 		static::add_authorize_methods();
 
 		// view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (\Auth::has_access($controller.DS.'view_anyway')) {
+		if (\Auth::has_access($controller.'::action_view_anyway')) {
 			static::disable_filter();
 		} else {
 			// モデルが持っている判定材料を、適宜$optionsに足す。
@@ -158,7 +154,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'/view_expired')
+			! \Auth::has_access($controller.'::action_view_expired')
 		)
 		{
 			$options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
@@ -166,6 +162,8 @@ class Model_Base extends \Orm\Model_Soft
 			{
 				$max = max(array_keys($options['where']));
 				$options['where'][$max]['or'] = array($column, 'is', null);
+			} else {
+				$options['or_where'][][] = array($column, 'is', null);
 			}
 /*
 	$options['where'][] = array(
@@ -185,7 +183,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'/view_yet')
+			! \Auth::has_access($controller.'::action_view_yet')
 		)
 		{
 			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
@@ -209,7 +207,7 @@ class Model_Base extends \Orm\Model_Soft
 		}
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			! \Auth::has_access($controller.'/view_deleted')
+			! \Auth::has_access($controller.'::action_view_deleted')
 		) {
 			static::enable_filter();
 		} else {
@@ -227,7 +225,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'/view_invisible')
+			! \Auth::has_access($controller.'::action_view_invisible')
 		) {
 			$options['where'][] = array($column, '=', true);
 		}
@@ -397,11 +395,8 @@ class Model_Base extends \Orm\Model_Soft
 	public static function paginated_find($options = array(), $use_get_query = true)
 	{
 		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
-		if ($use_get_query) {
-			$input_get = \Input::get();
-		} else {
-			$input_get = array();
-		}
+		$input_get = $use_get_query ? \Input::get() : array();
+
 		if ($use_get_query and \Input::get()) {
 			if (\Input::get('orders')) {
 
@@ -439,6 +434,7 @@ class Model_Base extends \Orm\Model_Soft
 					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
 				}
 			}
+/*
 			if (\Input::get('all')) {
 				foreach (static::$_properties as $k => $v) {
 					if (in_array($v, static::$_primary_key)) continue;
@@ -446,8 +442,10 @@ class Model_Base extends \Orm\Model_Soft
 					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
 				}
 			}
-
+*/
 		}
+
+		$options+= static::$_options;
 
 		$count_all = static::count();
 		$count = static::count($options);
