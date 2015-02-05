@@ -47,8 +47,8 @@ class Controller_Usr extends \Locomo\Controller_Base
 	 */
 	public function action_index_admin()
 	{
-		if (\Input::get('from')) \Model_Usr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
-		if (\Input::get('to'))   \Model_Usr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
+		if (\Input::get('from')) \Model_Usr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
+		if (\Input::get('to'))   \Model_Usr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
 		parent::index_admin();
 	}
 

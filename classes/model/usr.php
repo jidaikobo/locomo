@@ -9,6 +9,12 @@ class Model_Usr extends Model_Base
 	public static $_subject_field_name = 'username';
 	public static $_creator_field_name = 'id';
 
+	// $_conditions
+	protected static $_conditions = array(
+		'order_by' => array('id' => 'desc'),
+	);
+	public static $_options = array();
+
 	/**
 	 * $_properties
 	 */
@@ -128,10 +134,6 @@ class Model_Usr extends Model_Base
 		),
 	);
 
-	// $_conditions
-	public static $_conditions = array(
-		'order_by' => array('id' => 'desc'),
-	);
 
 	/**
 	 * get_display_name()

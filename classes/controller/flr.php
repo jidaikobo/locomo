@@ -288,8 +288,8 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if (\Input::get('submit'))
 		{
 			// from to
-			if (\Input::get('from')) \Model_Flr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
-			if (\Input::get('to'))   \Model_Flr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
+			if (\Input::get('from')) \Model_Flr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
+			if (\Input::get('to'))   \Model_Flr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
 
 			// overwrite objs
 			$objs = \Model_Flr::paginated_find();

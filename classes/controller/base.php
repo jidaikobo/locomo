@@ -55,9 +55,9 @@ class Controller_Base extends Controller_Core
 		}
 		else
 		{
-			$options = $model::condition();
+			$options = $model::$_options;
 		}
-//		$model::$_conditions = array();
+//		$model::$_options = array();
 //		$options = array('expired_at', '>', date('Y-m-d H:i:s'));
 
 		$content->set('items',  $model::paginated_find($options));
@@ -75,15 +75,15 @@ class Controller_Base extends Controller_Core
 /*
 		if (isset($model::properties()['created_at']))
 		{
-			$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d H:i:s'));
+			$model::$_options['where'][] = array('created_at', '<=', date('Y-m-d H:i:s'));
 		}
 		if (isset($model::properties()['expired_at']))
 		{
-			$model::$_conditions['where'][] = array('expired_at', 'is', null);
+			$model::$_options['where'][] = array('expired_at', 'is', null);
 		}
 		if (isset($model::properties()['is_visible']))
 		{
-			$model::$_conditions['where'][] = array('is_visible', '=', true);
+			$model::$_options['where'][] = array('is_visible', '=', true);
 		}
 */
 
@@ -92,9 +92,9 @@ class Controller_Base extends Controller_Core
 		foreach($model::$_authorize_methods as $authorize_method)
 		{
 			if ( ! method_exists($model, $authorize_method)) continue;
-			$model::$_conditions = $model::$authorize_method(
+			$model::$_options = $model::$authorize_method(
 				\Inflector::add_head_backslash(get_called_class()), // controller
-				$model::$_conditions, // conditions
+				$model::$_options, // conditions
 				$mode = 'index' // mode
 			);
 		}
@@ -124,8 +124,8 @@ class Controller_Base extends Controller_Core
 
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
-		$model::$_conditions['where'][] = array('created_at', '>=', date('Y-m-d H:i:s'));
-		$model::$_conditions['where'][] = array('expired_at', '>=', date('Y-m-d H:i:s'));
+		$model::$_options['where'][] = array('created_at', '>=', date('Y-m-d H:i:s'));
+		$model::$_options['where'][] = array('expired_at', '>=', date('Y-m-d H:i:s'));
 
 		static::index_core();
 		$this->template->set_global('title', static::$nicename . '予約項目');
@@ -139,8 +139,8 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
-//		$model::$_conditions['where'][] = array('created_at', '<=', date('Y-m-d'));
-		$model::$_conditions['where'][] = array('expired_at', '<', date('Y-m-d H:i:s'));
+//		$model::$_options['where'][] = array('created_at', '<=', date('Y-m-d'));
+		$model::$_options['where'][] = array('expired_at', '<', date('Y-m-d H:i:s'));
 
 		static::index_core();
 		$this->template->set_global('title', static::$nicename . 'の期限切れ項目');
@@ -153,7 +153,7 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
-		$model::$_conditions['where'][] = array('is_visible', '=', 0);
+		$model::$_options['where'][] = array('is_visible', '=', 0);
 		static::index_core();
 		$this->template->set_global('title', static::$nicename . 'の不可視項目');
 	}
@@ -167,7 +167,7 @@ class Controller_Base extends Controller_Core
 		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
 
 		$deleted_column = $model::soft_delete_property('deleted_field', 'deletd_at');
-		$model::$_conditions['where'][] = array($deleted_column, 'IS NOT', null);
+		$model::$_options['where'][] = array($deleted_column, 'IS NOT', null);
 
 		$model::disable_filter();
 		//static::enable_filter();

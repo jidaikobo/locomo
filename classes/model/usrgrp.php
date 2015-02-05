@@ -5,6 +5,16 @@ class Model_Usrgrp extends \Model_Base
 	protected static $_table_name = 'lcm_usrgrps';
 	public static $_subject_field_name = 'name';
 
+	// $_conditions
+	protected static $_conditions = array(
+		'where' => array(
+			array('is_available', true)
+		),
+		'order_by' => array('seq' => 'acs'),
+	);
+
+	public static $_options = array();
+
 	protected static $_properties = array(
 		'id',
 		'name',
@@ -36,13 +46,6 @@ class Model_Usrgrp extends \Model_Base
 		'Locomo\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),
 		),
-	);
-
-	public static $_conditions = array(
-		'where' => array(
-			array('is_available', true)
-		),
-		'order_by' => array('seq' => 'acs'),
 	);
 
 	/**

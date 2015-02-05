@@ -9,6 +9,15 @@ class Model_Flr extends \Model_Base
 	public static $_table_name = 'lcm_flrs';
 	public static $is_renamed = false;
 
+	// $_conditions
+	protected static $_conditions = array(
+		'where' => array(
+			array('id', 'is not', null)
+		)
+	);
+	public static $_options = array();
+
+
 	/**
 	 * $_properties
 	 */
@@ -118,13 +127,6 @@ class Model_Flr extends \Model_Base
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
-	);
-
-	// $_conditions
-	public static $_conditions = array(
-		'where' => array(
-			array('id', 'is not', null)
-		)
 	);
 
 	/**

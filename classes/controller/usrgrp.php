@@ -26,7 +26,7 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 		// bulk
 		\Model_Usrgrp::disable_filter();
 		$option = array('where' => array(array('is_available', 'is not', null)));
-		\Model_Usrgrp::$_conditions = array();
+		\Model_Usrgrp::$_options = array();
 		$form = $this->bulk($option, '\Model_Usrgrp');
 
 		// add_actionset - back to index at edit
