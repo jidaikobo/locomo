@@ -7,11 +7,8 @@ class Model_Base extends \Orm\Model_Soft
 		'mysql_timestamp' => true,
 	);
 
-	protected static $_conditions = array();
-	public static $_options = array();
-
 	/*
-	 * default field names
+	 * conditions and options
 	 */
 	protected static $_conditions = array();
 	public static $_options = array();
