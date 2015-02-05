@@ -14,7 +14,7 @@ trait Controller_Traits_Revision
 		if ( ! $view)
 		{
 			\Session::set_flash('error', '表示できませんでした');
-			$redirect = \Arr::get(static::$locomo, 'admin_home');
+			$redirect = \Arr::get(static::$locomo, 'main_action');
 			$redirect = $redirect ? \Uri::create(\Inflector::ctrl_to_dir($redirect)) : static::$base_url;
 			return \Response::redirect($redirect);
 		}

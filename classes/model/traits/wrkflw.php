@@ -396,26 +396,26 @@ trait Model_Traits_Wrkflw
 		// 編集
 		if ($mode == 'edit') {
 			// 作成権限があるユーザだったらin_progress以外を編集できる
-			if (\Auth::instance()->has_access($controller.'/create')):
+			if (\Auth::has_access($controller.'::action_create')):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
 			endif;
 		}
 
 		// 承認のための閲覧
-		if (\Auth::instance()->has_access($controller.'/approve')):
+		if (\Auth::has_access($controller.'::action_approve')):
 			// 承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
 			return $options;
 		endif;
 
 		// 作成ユーザはどんな条件でも閲覧できる
-		if (\Auth::instance()->has_access($controller.'/create')):
+		if (\Auth::has_access($controller.'::action_create')):
 			return $options;
 		endif;
 
 		// 閲覧ユーザはfinishを閲覧できる
-		if (\Auth::instance()->has_access($controller.'/view')):
+		if (\Auth::has_access($controller.'::action_view')):
 			$options['where'][] = array(array($column, '=', 'finish'));
 			return $options;
 		endif;

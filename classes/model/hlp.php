@@ -93,7 +93,7 @@ class Model_Hlp extends \Model_Base
 		$actions = array('all' => '共通ヘルプ');
 		$controllers = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if ( ! isset($v['nicename']) || ! isset($v['admin_home'])) continue;
+			if ( ! isset($v['nicename']) || ! isset($v['main_action'])) continue;
 			if ( ! \Util::get_locomo($k, 'nicename')) continue;
 			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
 		endforeach;

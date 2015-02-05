@@ -6,7 +6,7 @@ class Controller_Acl extends \Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'アクセス権', // for human's name
 		'explanation'  => 'ユーザやユーザグループにコントローラへのアクセス権を付与します。',
-		'main_action'  => 'controller_index', // main action
+		'main_action'  => 'action_controller_index', // main action
 		'main_action_name' => 'アクセス権管理', // main action's name
 		'main_action_explanation' => 'ユーザやユーザグループにコントローラへのアクセス権を付与します。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home
@@ -158,6 +158,13 @@ class Controller_Acl extends \Controller_Base
 		// query build
 		if (\Input::method() == 'POST')
 		{
+//
+
+/*
+csrf
+
+*/
+
 			// delete all at first
 			$q = \DB::delete('lcm_acls');
 			$q->where('controller', 'IN', array_keys($actionsets));
@@ -178,17 +185,17 @@ class Controller_Acl extends \Controller_Base
 							foreach($actionsets[$ctrl][$realm][$action]['dependencies'] as $each_action)
 							{
 								//format conditions
-								$conditions = \Auth_Acl_Locomoacl::_parse_conditions($each_action);
-								$condition = \Model_Acl::to_authstr($conditions);
+								$each_action = \Inflector::add_head_backslash($each_action);
+								list($dpnd_controller, $dpnd_action) = explode('::', $each_action);
 
 								//insert
 								$q = \DB::insert('lcm_acls');
 								$q->set(array(
-									'controller' => \Inflector::add_head_backslash($conditions['controller']),
-									'action' => $conditions['action'],
-									'slug' => $condition,
+									'controller'   => $dpnd_controller,
+									'action'       => $dpnd_action,
+									'slug'         => $each_action,
 									'usergroup_id' => $usergroup_id,
-									'user_id' => $user_id
+									'user_id'      => $user_id
 									)
 								);
 								$q->execute();

@@ -23,14 +23,14 @@ class Actionset_Scdl extends \Actionset_Base
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-				$controller.DS.'create',
-				$controller.DS.'edit',
-				$controller.DS.'viewdetail',
-				$controller.DS.'attend',
-				$controller.DS.'regchange',
-				$controller.DS.'somedelete',
-				$controller.DS.'calendar',
-				$controller.DS.'view_invisible', // action is not exist yet
+				$controller.'::action_create',
+				$controller.'::action_edit',
+				$controller.'::action_viewdetail',
+				$controller.'::action_attend',
+				$controller.'::action_regchange',
+				$controller.'::action_somedelete',
+				$controller.'::action_calendar',
+				$controller.'::action_view_invisible', // action is not exist yet
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'スケジューラの管理権限');
@@ -59,7 +59,7 @@ class Actionset_Scdl extends \Actionset_Base
 			// 自分がメンバーであった場合
 			if (count($schedule_data) > 0) {
 				$actions = array(array($controller.DS."attend/" . $id, '出席確認'));
-				$urls = static::generate_urls($controller.DS.'attend', $actions, ['']);
+				$urls = static::generate_urls($controller.'::action_attend', $actions, ['']);
 			}
 		endif;
 
@@ -84,7 +84,7 @@ class Actionset_Scdl extends \Actionset_Base
 
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1):
 			$actions = array(array($controller.DS."somedelete/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '部分削除'));
-			$urls = static::generate_urls($controller.DS.'somedelete', $actions, ['']);
+			$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
 		endif;
 
 		$retvals = array(
@@ -107,7 +107,7 @@ class Actionset_Scdl extends \Actionset_Base
 
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb):
 			$actions = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
-			$urls = static::generate_urls($controller.DS.'regchange', $actions, ['']);
+			$urls = static::generate_urls($controller.'::action_regchange', $actions, ['']);
 		endif;
 
 		$retvals = array(
@@ -130,7 +130,7 @@ class Actionset_Scdl extends \Actionset_Base
 
 		if (\Request::main()->action != 'edit' && $id) {
 			$actions = array(array($controller.DS."copy/?from=" . $id, 'コピー'));
-			$urls = static::generate_urls($controller.DS.'copy', $actions, []);
+			$urls = static::generate_urls($controller.'::action_copy', $actions, []);
 		}
 		$retvals = array(
 			'urls'         => $urls ,

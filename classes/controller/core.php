@@ -179,10 +179,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public function auth()
 	{
-		$current_action = '\\'.$this->request->controller.DS.$this->request->action.DS;
+		$current_action = '\\'.$this->request->controller.'::action_'.$this->request->action;
 
 		// ordinary auth
-		$is_allow = \Auth::instance()->has_access($current_action);
+		$is_allow = \Auth::has_access($current_action);
 
 		// additional conditions
 		$conditions = \Arr::get(static::$config, 'conditioned_allowed', false);
@@ -388,7 +388,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		$all_ctrls = \Util::get_mod_or_ctrl();
 		foreach($all_ctrls as $k => $v)
 		{
-			if ( ! \Auth::instance()->has_access(\Arr::get($v, 'admin_home')))
+			if ( ! \Auth::has_access(\Arr::get($v, 'main_action')))
 			{
 				unset($all_ctrls[$k]);
 			}

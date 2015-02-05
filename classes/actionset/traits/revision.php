@@ -9,7 +9,7 @@ trait Actionset_Traits_Revision
 	{
 		if ($id && in_array(\Request::main()->action, array('edit','view'))):
 			$actions = array(array($controller.DS."each_index_revision/".$id, '編集履歴'));
-			$urls = static::generate_urls($controller.DS.'index_revision', $actions);
+			$urls = static::generate_urls($controller.'::action_index_revision', $actions);
 		endif;
 
 		$retvals = array(
@@ -19,11 +19,11 @@ trait Actionset_Traits_Revision
 			'acl_exp'      => '編集履歴閲覧の権限です。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.DS.'view',
-				$controller.DS.'edit',
-				$controller.DS.'view_revision',
-				$controller.DS.'index_revision',
-				$controller.DS.'each_index_revision',
+				$controller.'::action_view',
+				$controller.'::action_edit',
+				$controller.'::action_view_revision',
+				$controller.'::action_index_revision',
+				$controller.'::action_each_index_revision',
 			)
 		);
 		return $retvals;

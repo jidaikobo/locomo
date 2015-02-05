@@ -110,7 +110,7 @@ class Actionset
 		foreach($methods as $method => $v)
 		{
 			// eliminate non exists action
-			if ( ! array_key_exists($method, $act_methods)) continue;
+//			if ( ! array_key_exists($method, $act_methods)) continue;
 
 			$p_method = 'actionset_'.$method;
 			$as = $class::$p_method($controller, $obj, $id);
@@ -163,7 +163,7 @@ class Actionset
 	{
 		static $exists = array();
 
-		list($controller, $action) = explode('/', $locomo_path);
+		list($controller, $action) = explode('::', $locomo_path);
 
 		// check $exceptions
 		$urls = array();
@@ -174,7 +174,7 @@ class Actionset
 		}
 
 		// check auth
-		if ( ! \Auth::instance()->has_access($locomo_path))
+		if ( ! \Auth::has_access($locomo_path))
 		{
 			return $urls;
 		}

@@ -7,7 +7,7 @@ class Controller_Sample extends \Locomo\Controller_Base
 		'show_at_menu' => true,
 		'order_at_menu' => 10,
 		'is_for_admin' => false,
-		'admin_home' => '\\Sample\\Controller_Sample/index_admin',
+		'main_action' => '\\Sample\\Controller_Sample::action_index_admin',
 		'nicename' => 'サンプル',
 		'actionset_classes' =>array(
 			'base'   => '\\Sample\\Actionset_Base_Sample',

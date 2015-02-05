@@ -15,32 +15,6 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		return static::$_valid_roles;
 	}
 
-	/**
-	 * Parses a conditions string into it's array equivalent
-	 * @rights	mixed	conditions array or string
-	 * @return	array	conditions array formatted as array(controller, action)
-	 *
-	 */
-	public static function _parse_conditions($rights)
-	{
-		if ( ! is_array($rights))
-		{
-			if ( ! is_string($rights) or strpos($rights, '/') === false)
-			{
-				throw new \InvalidArgumentException('Given rights where not formatted proppery. Formatting should be like [\\Foo]\\Controller_Foo/action. Received: '.$rights);
-			}
-			$rights = explode('/', $rights);
-		}
-
-		// $conditions
-		$conditions = array(
-			'controller' => \Inflector::add_head_backslash($rights[0]),
-			'action'     => $rights[1],
-		);
-
-		return $conditions;
-	}
-
 	/*
 	 * has_access()
 	 * @param $condition	[array array(controller, action)|string '[\\Foo]\\Controller_Foo/bar']
@@ -49,15 +23,21 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 	 */
 	public function has_access($condition, Array $entity)
 	{
-		//no rights for no condition
+		// no rights for no condition
 		if ( ! $condition) return false;
+
+		// check class_exists
+		$module = \Inflector::get_modulename($condition);
+		$module && \Module::loaded($module) == false and \Module::load($module);
+
+
+//まずコントローラ単位で判定するかどうかを考える。
+
+		// controller and action
+		if ( ! \Util::method_exists($condition)) return false;
 
 		// admins are all allowed even if class and method is not exist.
 		if (in_array(\Auth::get('id'), array(-1, -2))) return true;
-
-		// parse condition to serialize
-		$conditions = static::_parse_conditions($condition);
-		$condition = \Model_Acl::to_authstr($conditions);
 
 		return in_array($condition, \Auth::get('allowed'));
 	}

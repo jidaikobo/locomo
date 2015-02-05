@@ -108,6 +108,7 @@ class Model_Usr extends Model_Base
 	 * $_observers
 	 */
 	protected static $_observers = array(
+		"Orm\Observer_Self" => array(),
 		'Orm\Observer_UpdatedAt' => array(
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
@@ -123,9 +124,6 @@ class Model_Usr extends Model_Base
 		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Locomo\Observer_Password' => array(
-			'events' => array('before_insert', 'before_save'),
-		),
 		'Locomo\Observer_Users' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
@@ -134,6 +132,23 @@ class Model_Usr extends Model_Base
 		),
 	);
 
+
+	/**
+	 * _event_before_save()
+	 */
+	public function _event_before_save()
+	{
+		// パスワードのハッシュ
+		$password = \Input::post('password');
+		if (empty($password))
+		{
+			// postがない場合、すなわちパスワード変更なし
+			$this->password = $this->_original['password'];
+		} else {
+			// postがあるのでパスワードを変更
+			$this->password = \Auth::hash_password($password);
+		}
+	}
 
 	/**
 	 * get_display_name()

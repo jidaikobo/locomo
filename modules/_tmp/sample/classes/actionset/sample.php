@@ -10,7 +10,7 @@ class Actionset_Sample extends \Actionset_Base
 	public static function actionset_sample($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."sample", 'オプション'));
-		$urls = static::generate_urls($controller.DS.'create', $actions);
+		$urls = static::generate_urls($controller.'::action_create', $actions);
 
 		$retvals = array(
 			'realm'        => 'option',
@@ -19,7 +19,7 @@ class Actionset_Sample extends \Actionset_Base
 			'explanation'  => 'オプションの設定権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.DS.'sample',
+				$controller.'::action_sample',
 			)
 		);
 		return $retvals;

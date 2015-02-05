@@ -63,12 +63,12 @@ return array(
 	'default_dashboard' => array(
 		array(
 			'name' => 'コントローラ一覧',
-			'action' => '\\Controller_Sys/admin',
+			'action' => '\\Controller_Sys::action_admin',
 			'size' => 1,
 		),
 		array(
 			'name' => '現在時刻',
-			'action' => '\\Controller_Sys/clock',
+			'action' => '\\Controller_Sys::action_clock',
 			'size' => 1,
 		),
 	),
@@ -76,21 +76,21 @@ return array(
 	// always guest allowed actions
 	// ex) '\\Modname\\Controller_Something/action'
 	'always_allowed' => array(
-		'\\Controller_Auth/login',
-		'\\Controller_Auth/logout',
-		'\\Controller_Sys/home',
-		'\\Controller_Sys/403',
-		'\\Controller_Sys/404',
-		'\\Controller_Sys/fetch_view',
-		'\\Controller_Flr/dl',
+		'\\Controller_Auth::action_login',
+		'\\Controller_Auth::action_logout',
+		'\\Controller_Sys::action_home',
+		'\\Controller_Sys::action_403',
+		'\\Controller_Sys::action_404',
+		'\\Controller_Sys::action_fetch_view',
+		'\\Controller_Flr::action_dl',
 	),
 
 	// always user allowed actions
 	'always_user_allowed' => array(
-		'\\Controller_Hlp/view',
-		'\\Controller_Sys/admin',
-		'\\Controller_Sys/dashboard',
-		'\\Controller_Sys/edit',
-		'\\Controller_Sys/clock',
+		'\\Controller_Hlp::action_view',
+		'\\Controller_Sys::action_admin',
+		'\\Controller_Sys::action_dashboard',
+		'\\Controller_Sys::action_edit',
+		'\\Controller_Sys::action_clock',
 	),
 );
