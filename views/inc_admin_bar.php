@@ -32,16 +32,16 @@ if (\Auth::check()):
 					endif;
 				else:
 //					if(\Auth::has_access(\Request::main()->controller.DS.'sys/admin')):
-					if(\Auth::has_access(\Request::main()->controller.'::'.\Arr::get($locomo, 'controller.ctrl_home'))):
+					if(\Auth::has_access(\Request::main()->controller.'::'.\Arr::get($locomo, 'controller.main_action'))):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'.$current_name), $current_nicename).' ';
 					else:
 						$top_link = $current_nicename;
 					endif;
 					$action_name = $title ? $title : '';
-					if (isset($locomo['controller']['home'])):
-						$home_name = \Arr::get($locomo, 'controller.home_name') ?: 'トップ';
-						if(\Auth::has_access($locomo['controller']['name'].'::'.$locomo['controller']['ctrl_home'])):
-							$ctrl_index = \Html::anchor($locomo['controller']['home'], $home_name);
+					if (isset($locomo['controller']['main'])):
+						$action_name = \Arr::get($locomo, 'controller.main_action_name') ?: 'トップ';
+						if(\Auth::has_access($locomo['controller']['name'].'::'.$locomo['controller']['main_action'])):
+							$ctrl_index = \Html::anchor($locomo['controller']['home'], $action_name);
 						endif;
 					endif;
 				endif;
@@ -131,11 +131,10 @@ if (\Auth::check()):
 			// admin option menu
 			$admin_menu = '';
 			foreach($locomo['controllers'] as $k => $v):
-				if ($v['is_for_admin'] && $v['show_at_menu'])
-					{
-						$url = \Inflector::ctrl_to_dir($v['main_action']);
-						$admin_menu.= '<li><a href="'.\Uri::create($url).'">'.$v['nicename'].'</a></li>';
-					}
+				if ($v['is_for_admin'] && $v['show_at_menu']):
+					$url = \Inflector::ctrl_to_dir($v['main_action']);
+					$admin_menu.= '<li><a href="'.\Uri::create($url).'">'.$v['nicename'].'</a></li>';
+				endif;
 			endforeach;
 			if ($admin_menu):
 				$html.= '<div class="admin_option">';

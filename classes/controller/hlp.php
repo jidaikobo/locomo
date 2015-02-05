@@ -60,10 +60,10 @@ $h->up();
 		$nicename = '';
 		$action = '';
 		$actionsets = array();
-		if (strpos($locomo_path, '/') !== false)
+		if (strpos($locomo_path, '::action_') !== false)
 		{
 			// get actionset
-			list($controller, $action) = explode('/', $locomo_path);
+			list($controller, $action) = explode('::action_', $locomo_path);
 			$action = strtolower($action);
 		}
 
@@ -108,7 +108,7 @@ $h->up();
 			}
 		}
 
-		$help = $help ?: 'この項目専用のヘルプは存在しません。' ;
+		$help = $help ?: 'この項目専用のヘルプは存在しません。画面内の指示に従って操作してください。' ;
 		$help = html_tag('div', array('class' => 'txt'), \Markdown::parse($help));
 
 		// additional help
