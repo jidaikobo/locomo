@@ -475,7 +475,7 @@ ul.horizontal_list {
 	-moz-border-radius: 2px;
 	float: left;
 	position: relative;
-	height: 220px;
+	height: 16em;
 	overflow: hidden;
 	margin: 5px 1%;
 	font-size: .85em;
@@ -491,13 +491,13 @@ ul.horizontal_list {
 	width: 96.95% !important;
 }
 .lcmbar_top_title {
-	height: 20px;
-	padding: 3px;
+	height: 1.5em;
+	padding: .25em;
 	margin: 0 !important;
 }
 .widget_content {
 	overflow: auto;
-	height: 194px;
+	height: 14em;
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -838,7 +838,10 @@ div.form_tooltip {
 .lcm_form textarea {
 	max-width: 800px	;
 }
-.lcm_form .address input {
+.lcm_form .address input[type="button"] {
+	margin-bottom: .5em;
+}
+.lcm_form .address input[type="text"] {
 	display: block;
 	margin-bottom: -1px;
 	width: 25em;
@@ -898,6 +901,10 @@ div.submit_button {
 	color: #fff;
 	background-color: #f07070;
 	border-radius: 3px;
+}
+span#customer_address2:empty + br,
+span#customer_address3:empty + br {
+	display: none;
 }
 a.disclosure {
 	display: block;
