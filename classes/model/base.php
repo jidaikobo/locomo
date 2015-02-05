@@ -150,13 +150,8 @@ class Model_Base extends \Orm\Model_Soft
 		)
 		{
 			$options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
-			if ($mode != 'index')
-			{
-				$max = max(array_keys($options['where']));
-				$options['where'][$max]['or'] = array($column, 'is', null);
-			} else {
-				$options['or_where'][][] = array($column, 'is', null);
-			}
+			$max = max(array_keys($options['where']));
+			$options['where'][$max]['or'] = array($column, 'is', null);
 /*
 	$options['where'][] = array(
 		array($column, '>', date('Y-m-d H:i:s') )
@@ -179,11 +174,8 @@ class Model_Base extends \Orm\Model_Soft
 		)
 		{
 			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
-			if ($mode != 'index')
-			{
-				$max = max(array_keys($options['where']));
-				$options['where'][$max]['or'] = array($column, 'is', null);
-			}
+			$max = max(array_keys($options['where']));
+			$options['where'][$max]['or'] = array($column, 'is', null);
 		}
 		return $options;
 	}
