@@ -301,6 +301,9 @@ class Fieldset extends \Fuel\Core\Fieldset
 	}
 
 
+	/*
+	 * ラッパー
+	 */
 	public function set_tabular_form($model, $relation, $parent, $blanks = 1)
 	{
 		if (\Request::main()->action == 'view') $blanks = 0;
@@ -372,6 +375,10 @@ class Fieldset extends \Fuel\Core\Fieldset
 	 */
 
 
+	/*
+	 * 以下 add_revision
+	 * add_bofore, add_after は 第一引数に参照するフィールドを取るので注意
+	 */
 	public function add_revision($name = null, $label = '', array $attributes = array(), array $rules = array()) {
 		$arr = static::revision_replace($name, $label, $attributes);
 
@@ -380,14 +387,14 @@ class Fieldset extends \Fuel\Core\Fieldset
 			->set_template($arr['template']);
 	}
 
-	public function add_before_revision($name = null, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null) {
+	public function add_before_revision($fieldname = null, $name = null, $label = '', array $attributes = array(), array $rules = array()) {
 		$arr = static::revision_replace($name, $label, $attributes);
 		$this->add($arr['name'], $arr['label'], $arr['attributes'], $rules, $fieldname)
 			->set_value(\Input::post('revision_comment'))
 			->set_template($arr['template']);
 	}
 
-	public function add_after_revision($name = null, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	public function add_after_revision($fieldname = null, $name = null, $label = '', array $attributes = array(), array $rules = array())
 	{
 		$arr = static::revision_replace($name, $label, $attributes);
 		$this->add($arr['name'], $arr['label'], $arr['attributes'], $rules, $fieldname)
