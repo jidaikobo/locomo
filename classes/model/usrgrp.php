@@ -3,11 +3,13 @@ namespace Locomo;
 class Model_Usrgrp extends \Model_Base
 {
 	protected static $_table_name = 'lcm_usrgrps';
-	public static $_subject_field_name = 'name';
 
 	protected static $_properties = array(
 		'id',
-		'name',
+		'name' => array(
+			'lcm_role' => 'subject',
+			'label' => '名称',
+		),
 		'description',
 		'seq',
 		'is_available',

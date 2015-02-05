@@ -3,11 +3,11 @@ namespace Locomo;
 class Model_Hlp extends \Model_Base
 {
 	protected static $_table_name = 'lcm_hlps';
-	public static $_subject_field_name = 'title';
 
 	protected static $_properties = array(
 		'id',
 		'title' => array(
+			'lcm_role' => 'subject',
 			'label' => '表題',
 			'form' => array(
 				'type' => 'hidden',
