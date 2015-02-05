@@ -7,8 +7,11 @@ class Model_Base extends \Orm\Model_Soft
 		'mysql_timestamp' => true,
 	);
 
-	/**
-	 * conditioners
+	protected static $_conditions = array();
+	public static $_options = array();
+
+	/*
+	 * default field names
 	 */
 	protected static $_conditions = array();
 	public static $_options = array();
@@ -409,6 +412,7 @@ class Model_Base extends \Orm\Model_Soft
 						$options['order_by'] = $orders;
 					}
 				}
+				// ここは $_conditions
 				static::$_conditions['order_by'] = array();
 			}
 			if (\Input::get('searches')) {
@@ -480,7 +484,7 @@ class Model_Base extends \Orm\Model_Soft
 		$implode = false
 	) {
 
-		$options = array_merge(static::condition(), $options);
+		$options = array_merge(static::$_options, $options);
 		$properties = static::properties();
 
 		$o_arr = array(); // return

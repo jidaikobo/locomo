@@ -65,7 +65,7 @@ trait Controller_Traits_Wrkflw
 
 		// 表示権限を厳密にとるためモデルのキャッシュを削除しauthorized_option()を設定する
 		$model::clear_cached_objects();
-		$model::$_conditions = $model::authorized_option(array(), 'index');
+		$model::$_options = $model::authorized_option(array(), 'index');
 
 		// assign
 		$view->set_global('title', '関連ワークフロー項目');

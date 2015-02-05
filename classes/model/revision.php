@@ -50,8 +50,8 @@ class Model_Revision extends \Model_Base
 		if ( ! class_exists($model)) return false;
 		$model_str = \Inflector::add_head_backslash($model);
 		$all = \Input::get('all')  ?: null ;
-		$range = \Arr::get($model::$_conditions, 'where', null) ;
-		$order = \Arr::get($model::$_conditions, 'order_by', null) ;
+		$range = \Arr::get($model::$_options, 'where', null) ;
+		$order = \Arr::get($model::$_options, 'order_by', null) ;
 
 		//model information
 		$table = \Inflector::tableize($model);

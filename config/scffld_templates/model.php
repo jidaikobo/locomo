@@ -14,8 +14,8 @@ class Model_XXX extends \Model_Base
 
 
 	//$_conditions
-	public static $_conditions = array();
-
+	protected static $_conditions = array();
+	public static $_options = array();
 /*
 	protected static $_has_many = array(
 		'foo' => array(

@@ -1,7 +1,7 @@
 +------------------------------+
 |         Model_Base           |
 +------------------------------+
-	・Controller 内で Model::$_conditions を変更すると、子クラスににない場合、親
+	・Controller 内で Model::$_options を変更すると、子クラスににない場合、親
 	クラスの $_condiitons が変更されるため、空でもいいので必ず定義してください
 	・\Orm\Model_Soft を継承しているため、 deleted_at field は追加して下さい。
 	・
