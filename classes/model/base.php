@@ -82,14 +82,6 @@ class Model_Base extends \Orm\Model_Soft
 	}
 
 	/**
-	 * get_original_values() - これもたぶん不要。
-	 */
-	public function get_original_values()
-	{
-		return $this->_original;
-	}
-
-	/**
 	 * clear_cached_objects()
 	 * \Orm\Model::find() が、static::$_cached_objects を読むと期待通りの値が取得できないときに使う。
 	 * 具体例は\Locomo\Controller_Traits_Wrkflw::action_index_workflow()参照。
