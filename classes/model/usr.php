@@ -132,10 +132,6 @@ class Model_Usr extends Model_Base
 		),
 	);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> a89f547c7fff5e4a292b8558879f3c73d72f46de
 	/**
 	 * _event_before_save()
 	 */
