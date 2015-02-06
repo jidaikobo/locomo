@@ -1,32 +1,21 @@
-
-<?php print htmlspecialchars_decode($display_month); ?> / 
-<?php print htmlspecialchars_decode($display_week); ?>
-
+<div class="select_display_type">
+	<?php print htmlspecialchars_decode($display_month); ?> / 
+	<?php print htmlspecialchars_decode($display_week); ?>
+</div>
 
 <h1><?php print $year; ?>年<?php print (int)$mon; ?>月</h1>
 
 <style>
-.table table, .table td, .table th{
-	border: 1px solid black;
-	vertical-align: top;
-}
-.week0 {
-	background-color: pink;
-}
-.week6 {
-	background-color: lightblue;
-}
 .icon_small {
 	font-size: 10px;
 }
 </style>
 
-
-
-
-<div class="lcm_focus">
+<div class="field_wrapper calendar">
+<div class="select_period lcm_focus" title="月を選択 エンターで開きます">
 	<?php print htmlspecialchars_decode($prev_url); ?> 
 	<?php print htmlspecialchars_decode($next_url); ?>
+	<span class="select_num">
 	<?php 
 		for($i = 1; $i <= 12; $i++) {
 			if ($i == $mon) {
@@ -39,8 +28,8 @@
 	<?php
 	}
 	?>
-
 	<?php } ?>
+	</span>
 	<?php print htmlspecialchars_decode($prev_year_url); ?> 
 	<?php print htmlspecialchars_decode($next_year_url); ?>
 
@@ -48,13 +37,13 @@
 <table class="calendar month lcm_focus">
 	<thead>
 		<tr>
-			<th class="week1">月曜日</th>
-			<th class="week2">火曜日</th>
-			<th class="week3">水曜日</th>
-			<th class="week4">木曜日</th>
-			<th class="week5">金曜日</th>
-			<th class="week6">土曜日</th>
-			<th class="week0">日曜日</th>
+			<th class="week1"><span>月曜日</span></th>
+			<th class="week2"><span>火曜日</span></th>
+			<th class="week3"><span>水曜日</span></th>
+			<th class="week4"><span>木曜日</span></th>
+			<th class="week5"><span>金曜日</span></th>
+			<th class="week6"><span>土曜日</span></th>
+			<th class="week0"><span>日曜日</span></th>
 		</tr>
 	</thead>
 <?php foreach($schedule_data as $v) { ?>
@@ -91,6 +80,6 @@
 	<?php if ($v['week'] == 0) { print '</tr>'; } ?>
 <?php } ?>
 </table>
-
+</div><!-- /.field_wrapper -->
 
 

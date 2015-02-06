@@ -176,7 +176,7 @@ $('.hidden_item').each(function(){
 			if(query!=''){//深いifだなあ
 				params = query.split('&');
 				for(var i=0 ; i < params.length; i++){
-					if( params[i].indexOf('orders') !== 0){
+					if( params[i].indexOf('orders') !== 0 || params[i].indexOf('no_prof') !== 0){
 						v = true;
 						break;
 					}
@@ -261,13 +261,15 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 	var set_focus = function(target){
 		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
 		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
-		var parent, t; 
+		var parent, t, add_esc; 
 		if(target){
 			$('#escape_focus').remove();
-			target.addClass('currentfocus').css('position', 'relative').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
+			target.addClass('currentfocus').set_tabindex();
+			add_esc = target.is('table') ? target.find('td').filter(":last") : target ;//tableタグ直下にaを書くと動作しないブラウザがあるので(IE等)
+			$(add_esc).css('position', 'relative').append(esc);
 		}
 		parent = $(this).closest('.currentfocus');
-		if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
+		if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので) /* このあたり、不要なものが残っているのかも*/
 			parent.removeClass('currentfocus').addClass('focusparent');
 			$('#escape_focus').remove();
 		}

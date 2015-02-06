@@ -144,7 +144,14 @@ body.lcm_action_login {
 
 
 /*=== contents layout ===*/
-
+.field_wrapper {
+	display: inline-block;
+	position: relative;
+}
+*+html .field_wrapper {
+	display: inline;
+	zoom: 1;
+}
 .contents .left_column,
 .contents .right_column {
 	float: left;
@@ -991,9 +998,57 @@ form.search > .input_group {
 /*IE8以下用にあとで分岐する。*/
 .lcm_ieversion_6 .input_group .input_group,
 .lcm_ieversion_7 .input_group .input_group,
-.lcm_ieversion_8 .input_group .input_group {
+.lcm_ieversion_8 .input_group .input_group,
+.lcm_ieversion_6 label,
+.lcm_ieversion_7 label,
+.lcm_ieversion_8 label {
 	white-space: nowrap;
 }
+.lcm_ieversion_6 input[type="text"],
+.lcm_ieversion_7 input[type="text"],
+.lcm_ieversion_8 input[type="text"],
+.lcm_ieversion_6 input[type="search"],
+.lcm_ieversion_7 input[type="search"],
+.lcm_ieversion_8 input[type="search"],
+.lcm_ieversion_6 input[type="tel"],
+.lcm_ieversion_7 input[type="tel"],
+.lcm_ieversion_8 input[type="tel"],
+.lcm_ieversion_6 input[type="url"],
+.lcm_ieversion_7 input[type="url"],
+.lcm_ieversion_8 input[type="url"],
+.lcm_ieversion_6 input[type="email"],
+.lcm_ieversion_7 input[type="email"],
+.lcm_ieversion_8 input[type="email"],
+.lcm_ieversion_6 input[type="datetime"],
+.lcm_ieversion_7 input[type="datetime"],
+.lcm_ieversion_8 input[type="datetime"],
+.lcm_ieversion_6 input[type="date"],
+.lcm_ieversion_7 input[type="date"],
+.lcm_ieversion_8 input[type="date"],
+.lcm_ieversion_6 input[type="month"],
+.lcm_ieversion_7 input[type="month"],
+.lcm_ieversion_8 input[type="month"],
+.lcm_ieversion_6 input[type="week"],
+.lcm_ieversion_7 input[type="week"],
+.lcm_ieversion_8 input[type="week"],
+.lcm_ieversion_6 input[type="time"],
+.lcm_ieversion_7 input[type="time"],
+.lcm_ieversion_8 input[type="time"],
+.lcm_ieversion_6 input[type="datetime-local"],
+.lcm_ieversion_7 input[type="datetime-local"],
+.lcm_ieversion_8 input[type="datetime-local"],
+.lcm_ieversion_6 input[type="number"],
+.lcm_ieversion_7 input[type="number"],
+.lcm_ieversion_8 input[type="number"],
+/* input[type="password"], 環境によりマスク文字が小さく表示されるため除外 */
+.lcm_ieversion_6 textarea,
+.lcm_ieversion_7 textarea,
+.lcm_ieversion_8 textarea {
+	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+}
+
+
+
 form.search .input_group *{
 	vertical-align: top;
 }
@@ -1126,9 +1181,23 @@ td.minimum {
 .formtable thead th {
 	text-align: left;
 }
+/*=== calendar ===*/
+.field_wrapper.calendar {
+	text-align: center;
+}
+.select_period {
+	display: inline-block;
+	position: relative;
+}
+*+html .select_period {
+	display: inline;
+	zoom: 1;
+}
 
 table.calendar {
+	margin-top: .5em;
 	table-layout: fixed;
+	text-align: left;
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
 	box-sizing : border-box ;
@@ -1145,11 +1214,27 @@ table.calendar {
 	width: 8em;
 	background-color: transparent;
 }
+.calendar thead * {
+	vertical-align: middle;
+	text-align: center;
+}
+.calendar thead span{
+	display: inline-block;
+	width: 1em;
+	white-space: nowrap;
+	overflow-x: hidden;
+}
 .calendar th.week6 {
 	color: darkcyan;
 }
+.calendar td.week6 {
+	background-color: #d8ebfc;
+}
 .calendar th.week0 {
 	color: indianred;
+}
+.calendar td.week0 {
+	background-color: #fcebd8;
 }
 .calendar td {
 	vertical-align: top;
