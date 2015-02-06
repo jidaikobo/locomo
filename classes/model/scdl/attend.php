@@ -5,7 +5,6 @@ class Model_Scdl_Attend extends \Model_Base
 //	use \Model_Traits_Wrkflw;
 
 	protected static $_table_name = 'lcm_scdls_attends';
-	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
 
 	protected static $_properties =
 	array (

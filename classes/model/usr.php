@@ -6,7 +6,6 @@ class Model_Usr extends Model_Base
 	 * vals
 	 */
 	protected static $_table_name = 'lcm_usrs';
-	public static $_subject_field_name = 'username';
 	public static $_creator_field_name = 'id';
 
 	// $_conditions
@@ -21,6 +20,7 @@ class Model_Usr extends Model_Base
 	protected static $_properties = array(
 		'id',
 		'username' => array(
+			'lcm_role' => 'subject',
 			'label' => 'ユーザ名',
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'username'),
 			'validation' => array(
@@ -131,7 +131,6 @@ class Model_Usr extends Model_Base
 			'events' => array('after_insert', 'after_save', 'before_delete'),
 		),
 	);
-
 
 	/**
 	 * _event_before_save()

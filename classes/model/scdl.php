@@ -5,7 +5,6 @@ class Model_Scdl extends \Model_Base
 //	use \Model_Traits_Wrkflw;
 
 	protected static $_table_name = 'lcm_scdls';
-	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
 
 	public static $_kind_name = "scdl";
 	public static $_kind_flg = 1;	// 1:スケジューラ 2:施設予約
