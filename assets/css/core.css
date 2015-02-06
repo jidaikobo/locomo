@@ -794,7 +794,7 @@ div.form_tooltip {
 .lcm_form * {
 	vertical-align: top;
 }
-.lcm_form .input_group > h2 ,
+.lcm_form .input_group h2 ,
 .lcm_form .input_group > .field ,
 .lcm_form .input_group > table {
 	font-size: 1em;
@@ -1351,7 +1351,7 @@ table.calendar {
 }
 
 /*=== lcm_focus ===*/
-#escape_focus {
+#	<li>escape</li>_focus {
 	position: absolute;
 	right: 0;
 }
