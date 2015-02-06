@@ -6,15 +6,15 @@ class Controller_Flr extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'ファイラ', // for human's name
 		'explanation'  => 'ファイルの閲覧やアップロードを行います。', // for human's explanation
-		'main_action'  => 'index_files', // main action
+		'main_action'  => 'action_index_files', // main action
 		'main_action_name' => 'ファイル管理', // main action's name
 		'main_action_explanation' => 'ファイルのアップロードや、アップロードされたファイルの閲覧を行います。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 1030, // order of appearance
 		'widgets' =>array(
-			array('name' => '共有ダウンロードファイル', 'uri' => '\\Controller_Flr/common_files'),
-			array('name' => 'ギャラリー', 'uri' => '\\Controller_Flr/gallery'),
+			array('name' => '共有ダウンロードファイル', 'uri' => '\\Controller_Flr::action_common_files'),
+			array('name' => 'ギャラリー', 'uri' => '\\Controller_Flr::action_gallery'),
 		),
 	);
 
@@ -288,8 +288,8 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if (\Input::get('submit'))
 		{
 			// from to
-			if (\Input::get('from')) \Model_Flr::$_conditions['where'][] = array('created_at', '>=', \Input::get('from'));
-			if (\Input::get('to'))   \Model_Flr::$_conditions['where'][] = array('created_at', '<=', \Input::get('to'));
+			if (\Input::get('from')) \Model_Flr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
+			if (\Input::get('to'))   \Model_Flr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
 
 			// overwrite objs
 			$objs = \Model_Flr::paginated_find();

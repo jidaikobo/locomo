@@ -44,7 +44,7 @@ class Util
 				$retvals[$ctrl]['nicename'] = \Arr::get($config, 'nicename', $module);
 				$retvals[$ctrl]['explanation'] = \Arr::get($config, 'explanation', '') ;
 				$main_action = \Arr::get($ctrl::$locomo, 'main_action', '');
-				$retvals[$ctrl]['admin_home'] = $main_action ? $ctrl.'/'.$main_action : '' ;
+				$retvals[$ctrl]['main_action'] = $main_action ? $ctrl.'::'.$main_action : '' ;
 				$retvals[$ctrl]['show_at_menu'] = \Arr::get($config, 'show_at_menu', true) ;
 				$retvals[$ctrl]['is_for_admin'] = \Arr::get($config, 'is_for_admin', false) ;
 				$retvals[$ctrl]['no_acl'] = \Arr::get($config, 'no_acl', false) ;
@@ -65,7 +65,7 @@ class Util
 				$retvals[$ctrl]['nicename'] = \Arr::get($ctrl::$locomo, 'nicename', $ctrl);
 				$retvals[$ctrl]['explanation'] = \Arr::get($ctrl::$locomo, 'explanation', '') ;
 				$main_action = \Arr::get($ctrl::$locomo, 'main_action', '');
-				$retvals[$ctrl]['admin_home'] = $main_action ? $ctrl.'/'.$main_action : '' ;
+				$retvals[$ctrl]['main_action'] = $main_action ? $ctrl.'::'.$main_action : '' ;
 				$retvals[$ctrl]['show_at_menu'] = \Arr::get($ctrl::$locomo, 'show_at_menu', true) ;
 				$retvals[$ctrl]['is_for_admin'] = \Arr::get($ctrl::$locomo, 'is_for_admin', false) ;
 				$retvals[$ctrl]['no_acl'] = \Arr::get($ctrl::$locomo, 'no_acl', false) ;
@@ -168,4 +168,30 @@ class Util
 		if (is_null($property)) return $locomos;
 		return \Arr::get($locomos, $property, $default);
 	}
+
+	/**
+	 * method_exists
+	 * コントローラの$locomoの任意の値を取得
+	 * fetch $locomo value
+	 * @return Mix
+	 */
+	public static function method_exists($locomo_path)
+	{
+		// check class_exists
+		$module = \Inflector::get_modulename($locomo_path);
+		$module && \Module::loaded($module) == false and \Module::load($module);
+
+		// controller and action
+		$locomo_path = \Inflector::add_head_backslash($locomo_path);
+		list($controller, $action) = explode('::', $locomo_path);
+
+		if (class_exists($controller))
+		{
+			if ( ! method_exists($controller, $action)) return false;
+		} else {
+			return false;
+		}
+		return true;
+	}
+
 }

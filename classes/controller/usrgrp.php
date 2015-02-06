@@ -10,7 +10,7 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'ユーザグループ', // for human's name
 		'explanation'  => '既存のユーザグループの名称、表示順、使用可否などを編集します。',
-		'main_action'  => 'index_admin', // main action
+		'main_action'  => 'action_index_admin', // main action
 		'main_action_name' => 'ユーザグループ管理', // main action's name
 		'main_action_explanation' => '既存のユーザグループの名称、表示順、使用可否などを編集します。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home
@@ -26,7 +26,7 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 		// bulk
 		\Model_Usrgrp::disable_filter();
 		$option = array('where' => array(array('is_available', 'is not', null)));
-		\Model_Usrgrp::$_conditions = array();
+		\Model_Usrgrp::$_options = array();
 		$form = $this->bulk($option, '\Model_Usrgrp');
 
 		// add_actionset - back to index at edit

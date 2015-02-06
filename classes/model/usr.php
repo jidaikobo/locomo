@@ -6,8 +6,13 @@ class Model_Usr extends Model_Base
 	 * vals
 	 */
 	protected static $_table_name = 'lcm_usrs';
-	public static $_subject_field_name = 'username';
 	public static $_creator_field_name = 'id';
+
+	// $_conditions
+	protected static $_conditions = array(
+		'order_by' => array('id' => 'desc'),
+	);
+	public static $_options = array();
 
 	/**
 	 * $_properties
@@ -15,6 +20,7 @@ class Model_Usr extends Model_Base
 	protected static $_properties = array(
 		'id',
 		'username' => array(
+			'lcm_role' => 'subject',
 			'label' => 'ユーザ名',
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'username'),
 			'validation' => array(
@@ -102,6 +108,7 @@ class Model_Usr extends Model_Base
 	 * $_observers
 	 */
 	protected static $_observers = array(
+		"Orm\Observer_Self" => array(),
 		'Orm\Observer_UpdatedAt' => array(
 			'events' => array('before_save'),
 			'mysql_timestamp' => true,
@@ -117,9 +124,6 @@ class Model_Usr extends Model_Base
 		'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-		'Locomo\Observer_Password' => array(
-			'events' => array('before_insert', 'before_save'),
-		),
 		'Locomo\Observer_Users' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
@@ -128,10 +132,22 @@ class Model_Usr extends Model_Base
 		),
 	);
 
-	// $_conditions
-	public static $_conditions = array(
-		'order_by' => array('id' => 'desc'),
-	);
+	/**
+	 * _event_before_save()
+	 */
+	public function _event_before_save()
+	{
+		// パスワードのハッシュ
+		$password = \Input::post('password');
+		if (empty($password))
+		{
+			// postがない場合、すなわちパスワード変更なし
+			$this->password = $this->_original['password'];
+		} else {
+			// postがあるのでパスワードを変更
+			$this->password = \Auth::hash_password($password);
+		}
+	}
 
 	/**
 	 * get_display_name()

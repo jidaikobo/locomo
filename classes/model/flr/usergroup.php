@@ -7,6 +7,14 @@ class Model_Flr_Usergroup extends \Model_Base
 	 */
 	protected static $_table_name = 'lcm_flr_permissions';
 
+	// $_conditions
+	protected static $_conditions = array(
+		'where' => array(
+			array('user_id', 'is', null)
+		)
+	);
+	public static $_options = array();
+
 	/**
 	 * $_properties
 	 */
@@ -38,10 +46,4 @@ class Model_Flr_Usergroup extends \Model_Base
 		),
 	);
 
-	// $_conditions
-	public static $_conditions = array(
-		'where' => array(
-			array('user_id', 'is', null)
-		)
-	);
 }

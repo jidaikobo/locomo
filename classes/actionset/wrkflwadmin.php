@@ -10,7 +10,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.DS.'view', $actions, ['create']);
+			$urls = static::generate_urls($controller.'::action_view', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -20,7 +20,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'acl_exp'      => 'ワークフローの閲覧権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				'view',
+				$controller.'::action_view',
 			)
 		);
 		return $retvals;
@@ -34,7 +34,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	{
 		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_urls($controller.DS.'edit', $actions, ['edit','create']);
+			$urls = static::generate_urls($controller.'::action_edit', $actions, ['edit','create']);
 		endif;
 
 		$retvals = array(
@@ -44,8 +44,8 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'acl_exp'      => 'ワークフロー名称の編集権限',
 			'order'        => 10,
 			'dependencies' => array(
-				'view',
-				'edit',
+				$controller.'::action_view',
+				$controller.'::action_edit',
 			)
 		);
 		return $retvals;
@@ -58,7 +58,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."create", '新規作成'));
-		$urls = static::generate_urls($controller.DS.'create', $actions, ['create']);
+		$urls = static::generate_urls($controller.'::action_create', $actions, ['create']);
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -68,8 +68,8 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'acl_exp'      => '新規ワークフロー作成フォーム。管理者のみアクセス可能。',
 			'order'        => 10,
 			'dependencies' => array(
-				'view',
-				'create',
+				$controller.'::action_view',
+				$controller.'::action_create',
 			)
 		);
 
@@ -83,7 +83,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	{
 		if ($id):
 			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
-			$urls = static::generate_urls($controller.DS.'delete', $actions, ['create']);
+			$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
 		endif;
 
 		//retval
@@ -94,11 +94,11 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'acl_exp'      => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 40,
 			'dependencies' => array(
-				$controller.DS.'view',
-				$controller.DS.'view_deleted',
-				$controller.DS.'index_deleted',
-				$controller.DS.'delete',
-				$controller.DS.'confirm_delete',
+				$controller.'::action_view',
+				$controller.'::action_view_deleted',
+				$controller.'::action_index_deleted',
+				$controller.'::action_delete',
+				$controller.'::action_confirm_delete',
 			)
 		);
 		return $retvals;
@@ -111,7 +111,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."undelete/".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
-			$urls = static::generate_urls($controller.DS.'undelete', $actions, ['create']);
+			$urls = static::generate_urls($controller.'::action_undelete', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -122,10 +122,10 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.DS.'index',
-				$controller.DS.'view',
-				$controller.DS.'view_deleted',
-				$controller.DS.'index_deleted',
-				$controller.DS.'undelete',
+				$controller.'::action_view',
+				$controller.'::action_view_deleted',
+				$controller.'::action_index_deleted',
+				$controller.'::action_undelete',
 			)
 		);
 		return $retvals;
@@ -138,7 +138,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
-			$urls = static::generate_urls($controller.DS.'delete_deleted', $actions, ['create']);
+			$urls = static::generate_urls($controller.'::action_delete_deleted', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -148,10 +148,10 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'acl_exp'      => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
-				$controller.DS.'view',
-				$controller.DS.'view_deleted',
-				$controller.DS.'index_deleted',
-				$controller.DS.'delete_deleted',
+				$controller.'::action_view',
+				$controller.'::action_view_deleted',
+				$controller.'::action_index_deleted',
+				$controller.'::action_delete_deleted',
 			)
 		);
 		return $retvals;
@@ -164,7 +164,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.DS.'view_deleted', $actions, ['view','create']);
+			$urls = static::generate_urls($controller.'::action_view_deleted', $actions, ['view','create']);
 		endif;
 
 		$retvals = array(
@@ -174,7 +174,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'acl_exp'      => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.DS.'view_deleted',
+				$controller.'::action_view_deleted',
 			)
 		);
 		return $retvals;
@@ -188,7 +188,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	{
 		if (\Request::main()->action == 'view' && $id):
 			$actions = array(array($controller.DS."setup/".$id, '設定'));
-			$urls = static::generate_urls($controller.DS.'setup', $actions, ['setup','create']);
+			$urls = static::generate_urls($controller.'::action_setup', $actions, ['setup','create']);
 		endif;
 
 		$retvals = array(
@@ -210,7 +210,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_admin", '一覧'));
-		$urls = static::generate_urls($controller.DS.'index_admin', $actions);
+		$urls = static::generate_urls($controller.'::action_index_admin', $actions);
 
 		$retvals = array(
 			'realm'        => 'index' ,
@@ -230,7 +230,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."index_deleted", 'ごみ箱'));
-		$urls = static::generate_urls($controller.DS.'index_deleted', $actions);
+		$urls = static::generate_urls($controller.'::action_index_deleted', $actions);
 
 		$retvals = array(
 			'realm'        => 'index' ,
@@ -240,7 +240,7 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'acl_exp'      => '削除された項目一覧の権限です。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.DS.'index_deleted',
+				$controller.'::action_index_deleted',
 			)
 		);
 		return $retvals;

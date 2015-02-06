@@ -9,7 +9,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'スケジューラ', // for human's name
 		'explanation'  => 'ユーザ毎のスケジュール管理をします。',
-		'main_action'  => 'calendar', // main action
+		'main_action'  => 'action_calendar', // main action
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 900,   // order of appearance

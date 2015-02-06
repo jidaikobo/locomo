@@ -25,7 +25,9 @@
 			<th class="min"><?php echo \Pagination::sort('id', 'ID');?></th>
 			<th style="width:8em;"><?php echo \Pagination::sort('username', 'ユーザ名');?></th>
 			<th style="width:8em;"><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
+<?php if (\Auth::is_admin()): ?>
 			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
+<?php endif; ?>
 			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<th>削除された日</th>
@@ -41,7 +43,9 @@
 			<td style="min-width: 8em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->username; ?></div></th>
 			<th style="min-width: 8em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->display_name; ?></div>
 			</td>
+<?php if (\Auth::is_admin()): ?>
 			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
+<?php endif; ?>
 			<td><?php echo $item->last_login_at != '0000-00-00 00:00:00' ? $item->last_login_at : ''; ?></td>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<td><?php echo $item->deleted_at; ?></td>
@@ -49,13 +53,13 @@
 			<td class="min">
 				<div class="btn_group">
 					<?php
-					if (\Auth::has_access('\Controller_Usr/view')):
+					if (\Auth::has_access('\Controller_Usr::action_view')):
 						echo Html::anchor('usr/view/'.$item->id, '<span class="skip">'.$item->display_name.'を</span>閲覧', array('class' => 'view'));
 					endif;
-					if (\Auth::has_access('\Controller_Usr/edit')):
+					if (\Auth::has_access('\Controller_Usr::action_edit')):
 						echo Html::anchor('usr/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
-					if (\Auth::has_access('\Controller_Usr/delete')):
+					if (\Auth::has_access('\Controller_Usr::action_delete')):
 						if ($item->deleted_at):
 							echo Html::anchor('usr/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
 							echo Html::anchor('usr/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
