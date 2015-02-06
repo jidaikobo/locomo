@@ -126,24 +126,33 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				$usergroups = array_merge($usergroups, array_keys($this->user->usergroup));
 				$this->user->usergroup[-10] = (object) array();
 
+				// slug
 				$acl_tmp = \Model_Acl::find('all',
 					array(
-						'select' => array('slug'),
+						'select' => array('slug', 'controller'),
 						'where' => array(
 							array('usergroup_id', 'IN', $usergroups),
 							'or' => array('user_id', 'IN', array( (int) $this->user->id))
 						),
 					)
 				);
+				$related_controllers = array();
 				foreach($acl_tmp as $v):
+					$related_controllers[] = $v->controller;
 					$acls[] = $v->slug;
 				endforeach;
 
 				// always_user_allowed
 				$acls_user = \Config::get('always_user_allowed');
 				$acls = array_merge($acls, $acls_user);
-
 				$this->user['allowed'] = $acls;
+
+				// related controller
+				$related_controllers = array_merge($related_controllers, $acls);
+				$related_controllers = array_unique($related_controllers);
+				$related_controllers = array_map(array('\Inflector', 'get_controllername'), $related_controllers);
+
+				$this->user['related_controllers'] = $related_controllers;
 				return true;
 			}
 		}
@@ -156,6 +165,8 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		// no valid login when still here, ensure empty session and optionally set guest_login
 		$this->user = \Config::get('locomoauth.guest_login', true) ? static::$guest_login : false;
 		$this->user['allowed'] = $acls;
+		$related_controllers = array_map(array('\Inflector', 'get_controllername'), $acls);
+		$this->user['related_controllers'] = $related_controllers;
 
 		\Session::delete('username');
 		\Session::delete('usergroups');

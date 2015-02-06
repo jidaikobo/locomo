@@ -137,15 +137,22 @@ class Model_Usr extends Model_Base
 	 */
 	public function _event_before_save()
 	{
-		// パスワードのハッシュ
-		$password = \Input::post('password');
-		if (empty($password))
+		// not for migration
+		if (\Input::method() == 'post')
 		{
-			// postがない場合、すなわちパスワード変更なし
-			$this->password = $this->_original['password'];
+			// パスワードのハッシュ
+			$password = \Input::post('password');
+			if (empty($password))
+			{
+				// postがない場合、すなわちパスワード変更なし
+				$this->password = $this->_original['password'];
+			} else {
+				// postがあるのでパスワードを変更
+				$this->password = \Auth::hash_password($password);
+			}
 		} else {
-			// postがあるのでパスワードを変更
-			$this->password = \Auth::hash_password($password);
+			// migration と見なす
+			$this->password = \Auth::hash_password($this->password);
 		}
 	}
 

@@ -98,7 +98,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// Profiler
 		\Profiler::mark('Locomo\\Controller_Core::router() - Called');
 
-		// action not exists - index
+		// action not exists - got to main_url instead of index
 		$called_class = get_called_class();
 		$is_allow = true;
 		if (
