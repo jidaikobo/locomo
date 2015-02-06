@@ -49,7 +49,7 @@
 		<div class="each_date">
 		
 		<?php if (isset($v['day'])) { ?>
-			<a href="<?php Config::get('base_url'); ?>/scdl/calendar/<?php print sprintf("%04d/%02d/%02d/", $year, $mon, $v['day']); ?>">
+			<a href="<?php echo \Uri::create(Config::get('base_url') . '/scdl/calendar/' . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])); ?>">
 				<span class="date_str"><?php print (int)$v['day']; ?>日</span>
 				<span class="skip"><?php print $week_name[$v['week']] . '曜日'; ?> <?php if (count($v['data']) > 0) { print count($v['data']) . '件の登録';} else { print '登録なし'; } ?></span>
 			</a>
