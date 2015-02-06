@@ -98,15 +98,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// Profiler
 		\Profiler::mark('Locomo\\Controller_Core::router() - Called');
 
-		// fetch_view() can be executed without acl
-		if (
-			\Request::main()->controller == 'Content\\Controller_Content' &&
-			$method == 'fetch_view'
-		)
-		{
-			return parent::router($method, $params);
-		}
-
 		// action not exists - index
 		$called_class = get_called_class();
 		$is_allow = true;
@@ -183,7 +174,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		$current_action = '\\'.$this->request->controller.'::action_'.$this->request->action;
 
 		// ordinary auth
-		$is_allow = \Auth::has_access($current_action);
+		$is_allow = \Auth::instance()->has_access($current_action);
 
 		// additional conditions
 		$conditions = \Arr::get(static::$config, 'conditioned_allowed', false);
