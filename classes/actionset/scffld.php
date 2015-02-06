@@ -8,7 +8,7 @@ class Actionset_Scffld extends \Actionset
 	public static function actionset_controller_index($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."main", '足場組み'));
-		$urls = static::generate_urls($controller.DS.'main', $actions);
+		$urls = static::generate_urls($controller.'::action_main', $actions);
 
 		$retvals = array(
 			'urls'         => $urls ,

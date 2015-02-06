@@ -4,6 +4,12 @@ class Model_Dashboard extends Model_Base
 {
 	protected static $_table_name = 'lcm_dashboards';
 
+	protected static $_conditions = array(
+		'order_by' => array(array('seq', 'ASC')),
+	);
+	public static $_options = array();
+
+
 	public static $_properties = array(
 		'id',
 		'user_id' => array(
@@ -35,8 +41,5 @@ class Model_Dashboard extends Model_Base
 		),
 	);
 
-	public static $_conditions = array(
-		'order_by' => array(array('seq', 'ASC')),
-	);
 }
 

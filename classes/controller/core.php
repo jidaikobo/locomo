@@ -58,7 +58,8 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		static::$base_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
 		static::$base_url    = str_replace('locomo/', '' , static::$base_url); // locomo is not module
 		static::$current_url = static::$base_url.\Request::main()->action.DS;
-		static::$main_url    = static::$base_url.\Util::get_locomo($called_class, 'main_action').DS ;
+		$main_action = '::'.\Util::get_locomo($called_class, 'main_action');
+		static::$main_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller.$main_action)) ;
 		static::$nicename    = \Util::get_locomo($called_class, 'nicename') ?: @static::$config['nicename'];
 		static::$shortname   = strtolower(substr(\Inflector::denamespace(\Request::active()->controller), 11));
 
@@ -96,15 +97,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	{
 		// Profiler
 		\Profiler::mark('Locomo\\Controller_Core::router() - Called');
-
-		// fetch_view() can be executed without acl
-		if (
-			\Request::main()->controller == 'Content\\Controller_Content' &&
-			$method == 'fetch_view'
-		)
-		{
-			return parent::router($method, $params);
-		}
 
 		// action not exists - index
 		$called_class = get_called_class();
@@ -179,7 +171,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public function auth()
 	{
-		$current_action = '\\'.$this->request->controller.DS.$this->request->action.DS;
+		$current_action = '\\'.$this->request->controller.'::action_'.$this->request->action;
 
 		// ordinary auth
 		$is_allow = \Auth::instance()->has_access($current_action);
@@ -333,7 +325,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		}
 		
 		// locomo path
-		$locomo['locomo_path'] = $controller.DS.$action;
+		$locomo['locomo_path'] = $controller.'::action_'.$action;
 
 		// current model
 		$locomo['model'] = $this->model_name;
@@ -346,17 +338,17 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		$locomo['controller']['name'] = $controller;
 		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'main_action'))
 		{
-			$ctrl_home = \Arr::get($controller::$locomo, 'main_action');
-			$locomo['controller']['ctrl_home'] = $ctrl_home;
-			$locomo['controller']['home'] = \Uri::create(\Inflector::ctrl_to_dir($controller.DS.$ctrl_home));
-			$locomo['controller']['home_name'] = \Arr::get($controller::$locomo, 'main_action_name');
+			$main_action = \Arr::get($controller::$locomo, 'main_action');
+			$locomo['controller']['main_action'] = $main_action;
+			$locomo['controller']['main_url'] = \Uri::create(\Inflector::ctrl_to_dir($controller.'::action_'.$main_action));
+			$locomo['controller']['main_action_name'] = \Arr::get($controller::$locomo, 'main_action_name');
 			$locomo['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
 		}
 		else
 		{
-			$locomo['controller']['ctrl_home'] = false;
-			$locomo['controller']['home'] = false;
-			$locomo['controller']['home_name'] = false;
+			$locomo['controller']['main_action'] = false;
+			$locomo['controller']['main_url'] = false;
+			$locomo['controller']['main_action_name'] = false;
 			$locomo['controller']['nicename'] = false;
 		}
 
@@ -369,15 +361,15 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			if (\Arr::get($config, 'main_controller'))
 			{
 				$main_action = \Arr::get($config['main_controller']::$locomo, 'main_action');
-				$locomo['module']['ctrl_home'] = $main_action;
-				$locomo['module']['home'] = \Uri::create(\Inflector::ctrl_to_dir($main_action));
+				$locomo['module']['main_action'] = $main_action;
+				$locomo['module']['main'] = \Uri::create(\Inflector::ctrl_to_dir($main_action));
 				$locomo['module']['nicename'] = $config['nicename'];
 				$locomo['module']['main_controller'] = $config['main_controller'];
 			}
 			else
 			{
-				$locomo['module']['ctrl_home'] = false;
-				$locomo['module']['home'] = false;
+				$locomo['module']['main_action'] = false;
+				$locomo['module']['main'] = false;
 				$locomo['module']['nicename'] = $module;
 				$locomo['module']['main_controller'] = false;
 			}
@@ -388,7 +380,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		$all_ctrls = \Util::get_mod_or_ctrl();
 		foreach($all_ctrls as $k => $v)
 		{
-			if ( ! \Auth::instance()->has_access(\Arr::get($v, 'admin_home')))
+			if ( ! \Auth::has_access(\Arr::get($v, 'main_action')))
 			{
 				unset($all_ctrls[$k]);
 			}

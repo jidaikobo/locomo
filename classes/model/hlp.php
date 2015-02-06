@@ -3,11 +3,11 @@ namespace Locomo;
 class Model_Hlp extends \Model_Base
 {
 	protected static $_table_name = 'lcm_hlps';
-	public static $_subject_field_name = 'title';
 
 	protected static $_properties = array(
 		'id',
 		'title' => array(
+			'lcm_role' => 'subject',
 			'label' => '表題',
 			'form' => array(
 				'type' => 'hidden',
@@ -93,7 +93,7 @@ class Model_Hlp extends \Model_Base
 		$actions = array('all' => '共通ヘルプ');
 		$controllers = array();
 		foreach(\Util::get_mod_or_ctrl() as $k => $v):
-			if ( ! isset($v['nicename']) || ! isset($v['admin_home'])) continue;
+			if ( ! isset($v['nicename']) || ! isset($v['main_action'])) continue;
 			if ( ! \Util::get_locomo($k, 'nicename')) continue;
 			$controllers[\Inflector::ctrl_to_safestr($k)] = $k::$locomo['nicename'];
 		endforeach;

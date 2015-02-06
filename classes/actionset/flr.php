@@ -9,21 +9,21 @@ class Actionset_Flr extends \Actionset_Base
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-				$controller.DS.'create_dir',
-				$controller.DS.'edit',
-				$controller.DS.'edit_dir',
-				$controller.DS.'edit_file',
-				$controller.DS.'index_admin',
-//				$controller.DS.'move_dir',
-				$controller.DS.'permission_dir',
-				$controller.DS.'purge_file',
-				$controller.DS.'rename_dir',
-				$controller.DS.'upload',
-				$controller.DS.'view',
-				$controller.DS.'view_file',
-				$controller.DS.'common_files',
-				$controller.DS.'index_files',
-				$controller.DS.'gallery',
+				$controller.'::action_create_dir',
+				$controller.'::action_edit',
+				$controller.'::action_edit_dir',
+				$controller.'::action_edit_file',
+				$controller.'::action_index_admin',
+//				$controller.'::action_move_dir',
+				$controller.'::action_permission_dir',
+				$controller.'::action_purge_file',
+				$controller.'::action_rename_dir',
+				$controller.'::action_upload',
+				$controller.'::action_view',
+				$controller.'::action_view_file',
+				$controller.'::action_common_files',
+				$controller.'::action_index_files',
+				$controller.'::action_gallery',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'ファイラへのアクセス権');
@@ -45,7 +45,7 @@ class Actionset_Flr extends \Actionset_Base
 	public static function actionset_sync($controller, $obj = null, $id = null, $urls = array())
 	{
 		$actions = array(array($controller.DS."sync", '同期'));
-		$urls = static::generate_urls($controller.DS.'sync', $actions);
+		$urls = static::generate_urls($controller.'::action_sync', $actions);
 
 		$retvals = array(
 			'realm'        => 'option',
@@ -57,7 +57,7 @@ class Actionset_Flr extends \Actionset_Base
 			'acl_exp'      => 'ディレクトリとデータベースの内容を同期する権限です。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.DS.'sync',
+				$controller.'::action_sync',
 			)
 		);
 		return $retvals;
@@ -77,7 +77,7 @@ class Actionset_Flr extends \Actionset_Base
 			} else {
 				$actions = array(array($controller.DS."index_files/".$parent->id, 'ディレクトリへ'));
 			}
-			$urls = static::generate_urls($controller.DS.'index_files', $actions);
+			$urls = static::generate_urls($controller.'::action_index_files', $actions);
 		}
 
 		$retvals = array(
@@ -96,7 +96,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."upload/".$obj->id, '新規アップロード'));
-			$urls = static::generate_urls($controller.DS.'upload', $actions, ['create_dir']);
+			$urls = static::generate_urls($controller.'::action_upload', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -122,7 +122,7 @@ class Actionset_Flr extends \Actionset_Base
 				array($controller.DS."create_dir/".$obj->id, '<!--ディレクトリ-->作成'),
 				array($controller.DS."edit_dir/".$obj->id, '編集')
 			);
-			$urls = static::generate_urls($controller.DS.'upload', $actions, ['create_dir']);
+			$urls = static::generate_urls($controller.'::action_upload', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -147,7 +147,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."move_dir/".$obj->id, '<!--ディレクトリ-->移動'));
-			$urls = static::generate_urls($controller.DS.'move_dir', $actions, ['create_dir']);
+			$urls = static::generate_urls($controller.'::action_move_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -165,7 +165,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."rename_dir/".$obj->id, '<!--ディレクトリ-->名称変更'));
-			$urls = static::generate_urls($controller.DS.'rename_dir', $actions, ['create_dir']);
+			$urls = static::generate_urls($controller.'::action_rename_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -183,7 +183,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."permission_dir/".$obj->id, '<!--ディレクトリ-->権限設定'));
-			$urls = static::generate_urls($controller.DS.'permission_dir', $actions, ['create_dir']);
+			$urls = static::generate_urls($controller.'::action_permission_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -201,7 +201,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."purge_dir/".$obj->id, '<!--ディレクトリ-->削除'));
-			$urls = static::generate_urls($controller.DS.'purge_dir', $actions, ['create_dir']);
+			$urls = static::generate_urls($controller.'::action_purge_dir', $actions, ['create_dir']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -219,7 +219,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (\Request::active()->action == 'view_file' && $id)
 		{
 			$actions = array(array($controller.DS."edit_file".DS.$id, 'ファイル編集'));
-			$urls = static::generate_urls($controller.DS.'upload', $actions);
+			$urls = static::generate_urls($controller.'::action_upload', $actions);
 		}
 
 		$retvals = array(
@@ -244,7 +244,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (\Request::active()->action == 'edit_file' && $id)
 		{
 			$actions = array(array($controller.DS."view_file".DS.$id, 'ファイル詳細'));
-			$urls = static::generate_urls($controller.DS.'upload', $actions);
+			$urls = static::generate_urls($controller.'::action_upload', $actions);
 		}
 
 		$retvals = array(
@@ -269,7 +269,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (in_array(\Request::active()->action, ['view_file','edit_file']) && $id)
 		{
 			$actions = array(array($controller.DS."purge_file".DS.$id, 'ファイル削除'));
-			$urls = static::generate_urls($controller.DS.'purge_file', $actions);
+			$urls = static::generate_urls($controller.'::action_purge_file', $actions);
 		}
 
 		$retvals = array(

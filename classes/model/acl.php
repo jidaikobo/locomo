@@ -14,21 +14,6 @@ class Model_Acl extends \Orm\Model
 	);
 
 	/**
-	 * to_authstr()
-	 */
-	public static function to_authstr($arr)
-	{
-//		if ( ! is_array($arr)) \throw new \OutOfBoundsException('argument must be array');
-		$str = '';
-		foreach ($arr as $k => $v)
-		{
-//			if (is_array($v)) \throw new \OutOfBoundsException('argument must be one dimensional array.');
-			$str.= '##'.$k.'::::'.$v;
-		}
-		return $str ? $str.'##' : false ;
-	}
-
-	/**
 	 * judge_set()
 	 *
 	 * @param str   $actions
@@ -44,9 +29,7 @@ class Model_Acl extends \Orm\Model
 		foreach($actionsets as $actionset_name => $v)
 		{
 			if ( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
-			$dependencies = array_map(array('\\Auth_Acl_Locomoacl','_parse_conditions'), $v['dependencies']);
-			$dependencies = array_map(array('\\Model_Acl', 'to_authstr'), $dependencies);
-			if ( ! array_diff($dependencies, $actions))
+			if ( ! array_diff($v['dependencies'], $actions))
 			{
 				$results[] = $actionset_name;
 			}

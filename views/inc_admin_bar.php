@@ -25,23 +25,23 @@ if (\Auth::check()):
 				$ctrl_index = '';
 				// Controller_Sys
 				if ($current_name == '-Controller_Sys'):
-					if(\Auth::has_access(\Request::main()->controller.DS.'sys/home')):
+					if(\Auth::has_access(\Request::main()->controller.'::home')):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'), '管理トップ');
 					else:
 						$top_link = '管理トップ';
 					endif;
 				else:
 //					if(\Auth::has_access(\Request::main()->controller.DS.'sys/admin')):
-					if(\Auth::has_access(\Request::main()->controller.DS.\Arr::get($locomo, 'controller.ctrl_home'))):
+					if(\Auth::has_access(\Request::main()->controller.'::'.\Arr::get($locomo, 'controller.main_action'))):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'.$current_name), $current_nicename).' ';
 					else:
 						$top_link = $current_nicename;
 					endif;
 					$action_name = $title ? $title : '';
-					if (isset($locomo['controller']['home'])):
-						$home_name = \Arr::get($locomo, 'controller.home_name') ?: 'トップ';
-						if(\Auth::has_access($locomo['controller']['name'].DS.$locomo['controller']['ctrl_home'])):
-							$ctrl_index = \Html::anchor($locomo['controller']['home'], $home_name);
+					if (isset($locomo['controller']['main'])):
+						$action_name = \Arr::get($locomo, 'controller.main_action_name') ?: 'トップ';
+						if(\Auth::has_access($locomo['controller']['name'].'::'.$locomo['controller']['main_action'])):
+							$ctrl_index = \Html::anchor($locomo['controller']['home'], $action_name);
 						endif;
 					endif;
 				endif;
@@ -103,7 +103,7 @@ if (\Auth::check()):
 			foreach($locomo['controllers'] as $k => $v):
 				if ( ! $v['is_for_admin'] && $v['show_at_menu'])
 				{
-					$sep = in_array($k, $menu_separators) ? ' class="hasseparator"' : '';
+					$sep = array_key_exists($k, $menu_separators) ? ' class="'.$menu_separators[$k].'"' : '';
 					$controller_menu.= '<li'.$sep.'><a href="'.\Uri::base().'sys/admin/'.\Inflector::ctrl_to_safestr($k).'">'.$v['nicename'].'</a></li>';
 				}
 			endforeach;
@@ -131,11 +131,10 @@ if (\Auth::check()):
 			// admin option menu
 			$admin_menu = '';
 			foreach($locomo['controllers'] as $k => $v):
-				if ($v['is_for_admin'] && $v['show_at_menu'])
-					{
-						$url = \Inflector::ctrl_to_dir($v['admin_home']);
-						$admin_menu.= '<li><a href="'.\Uri::create($url).'">'.$v['nicename'].'</a></li>';
-					}
+				if ($v['is_for_admin'] && $v['show_at_menu']):
+					$url = \Inflector::ctrl_to_dir($v['main_action']);
+					$admin_menu.= '<li><a href="'.\Uri::create($url).'">'.$v['nicename'].'</a></li>';
+				endif;
 			endforeach;
 			if ($admin_menu):
 				$html.= '<div class="admin_option">';

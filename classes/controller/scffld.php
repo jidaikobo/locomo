@@ -6,7 +6,7 @@ class Controller_Scffld extends \Controller_Base
 	public static $locomo = array(
 		'nicename'     => '足場組み', // for human's name
 		'explanation'  => 'モジュールやコントローラの基礎を構築します。', // for human's explanation
-		'main_action'  => 'main', // main action
+		'main_action'  => 'action_main', // main action
 		'main_action_name' => '足場組み', // main action's name
 		'main_action_explanation' => 'モジュールやコントローラの基礎を構築します。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home

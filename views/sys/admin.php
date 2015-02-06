@@ -1,6 +1,6 @@
 <?php
 //モジュール／コントローラトップ
-if ( ! isset($is_admin_home)):
+if ( ! isset($is_main_action)):
 	$html = '';
 	if ($actionset):
 		foreach($actionset as $k => $v):

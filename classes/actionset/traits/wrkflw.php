@@ -33,7 +33,7 @@ trait Actionset_Traits_Wrkflw
 		// urls
 		$count = " ({$count})";
 		$actions = array(array($controller.DS."index_workflow", "承認項目一覧{$count}"));
-		$urls = static::generate_urls($controller.DS.'index_workflow', $actions);
+		$urls = static::generate_urls($controller.'::action_index_workflow', $actions);
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -43,7 +43,7 @@ trait Actionset_Traits_Wrkflw
 			'acl_exp'      => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.DS.'index_workflow',
+				$controller.'::action_index_workflow',
 			)
 		);
 		return $retvals;
@@ -60,16 +60,16 @@ trait Actionset_Traits_Wrkflw
 			'acl_exp'      => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。不可視項目の閲覧権限などに依存します。',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.DS.'view',
-				$controller.DS.'edit',
-				$controller.DS.'create',
-				$controller.DS.'index',
-				$controller.DS.'index_admin',
-				$controller.DS.'index_invisible',
-				$controller.DS.'view_invisible',
-				$controller.DS.'index_workflow',
-				$controller.DS.'apply',
-				$controller.DS.'route',
+				$controller.'::action_view',
+				$controller.'::action_edit',
+				$controller.'::action_create',
+				$controller.'::action_index',
+				$controller.'::action_index_admin',
+				$controller.'::action_index_invisible',
+				$controller.'::action_view_invisible',
+				$controller.'::action_index_workflow',
+				$controller.'::action_apply',
+				$controller.'::action_route',
 			)
 		);
 		return $retvals;
@@ -87,15 +87,15 @@ trait Actionset_Traits_Wrkflw
 			'acl_exp'      => 'ワークフロー管理下コントローラにおける承認権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.DS.'index',
-				$controller.DS.'index_admin',
-				$controller.DS.'view',
-				$controller.DS.'index_invisible',
-				$controller.DS.'view_invisible',
-				$controller.DS.'index_workflow',
-				$controller.DS.'approve',
-				$controller.DS.'reject',
-				$controller.DS.'remand',
+				$controller.'::action_index',
+				$controller.'::action_index_admin',
+				$controller.'::action_view',
+				$controller.'::action_index_invisible',
+				$controller.'::action_view_invisible',
+				$controller.'::action_index_workflow',
+				$controller.'::action_approve',
+				$controller.'::action_reject',
+				$controller.'::action_remand',
 			)
 		);
 		return $retvals;
@@ -124,7 +124,7 @@ trait Actionset_Traits_Wrkflw
 		//-1の場合は、承認申請
 		if ($current_step == -1)
 		{
-			if (\Auth::has_access($controller.'/apply'))
+			if (\Auth::has_access($controller.'::action_apply'))
 			{
 				$urls = array(
 					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/apply/{$obj->id}"), '承認申請'),
@@ -143,8 +143,6 @@ trait Actionset_Traits_Wrkflw
 					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/remand/{$obj->id}"), '差戻し'),
 					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/reject/{$obj->id}"), '却下'),
 				);
-				// ワークフロー進行中は編集と削除はできない
-				\Actionset::disabled(array('base' => array('edit','delete')));
 			}
 			$menu_str = '';
 		}
@@ -154,10 +152,16 @@ trait Actionset_Traits_Wrkflw
 			$urls = array() ;
 		}
 
+		// ワークフロー進行中は編集と削除はできない
+		if ($obj->workflow_status == 'in_progress')
+		{
+			\Actionset::disabled(array('base' => array('edit','delete')));
+		}
+
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
 		if (
 			$model::get_current_step($controller, $obj->id) == -2 &&
-			\Auth::has_access($controller.'/route') &&
+			\Auth::has_access($controller.'::action_route') &&
 			$obj->workflow_status !== 'finish'
 		)
 		{
