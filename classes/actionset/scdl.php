@@ -44,6 +44,13 @@ class Actionset_Scdl extends \Actionset_Base
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
 		$retvals = parent::actionset_edit($controller, $obj, $id);
+
+		if(\Request::main()->action == 'viewdetail' && $id):
+			$actions = array(array($controller.DS."edit/" . $id, '編集'));
+			$urls = static::generate_urls($controller.'::action_edit', $actions);
+		endif;
+
+		\Arr::set($retvals, 'urls', $urls);
 		\Arr::set($retvals, 'action_name', '編集');
 		\Arr::set($retvals, 'acl_exp', 'スケジューラの編集権限です。');
 		return $retvals;
@@ -81,7 +88,6 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_somedelete($controller, $obj = null, $id = null, $urls = array())
 	{
-
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1):
 			$actions = array(array($controller.DS."somedelete/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '部分削除'));
 			$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
