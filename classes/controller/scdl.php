@@ -33,6 +33,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$model = $this->model_name ;
 
+		// 日付の自動判断
+		if (\Input::post("end_date", "") == "" || \Input::post("end_date", "") == "0000-00-00") {
+			$_POST['end_date'] = "2100-01-01";
+		}
 
 		// --------------------- parent ---------------------
 		$content = \View::forge($model::$_kind_name . "/edit");
@@ -74,7 +78,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$ehour = explode(":", \Input::post("end_time"))[0];
 				$emin  = explode(":", \Input::post("end_time"))[1];
 			}
-			$overlap_result = $this->checkOverlap($id								
+			$overlap_result = array();
+			if (\Input::post("overlap_kb")) {
+				$overlap_result = $this->checkOverlap($id								
 								, $syear
 								, $smon
 								, $sday
@@ -89,7 +95,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 								, \Input::post("week_kb")
 								, \Input::post("target_day")
 								, \Input::post("target_month"));
-
+			}
 			if (
 				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
 				 \Security::check_token() &&
@@ -473,11 +479,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$mini_prev_url = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " - 1month"));
 		$next_year = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " + 1year"));
 		$prev_year = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " - 1year"));
-		$mini_next_url = \Html::anchor($model::$_kind_name . '/calendar/' . $mini_next_url, '次の月',  array('class' => 'next_month'));
-		$mini_prev_url = \Html::anchor($model::$_kind_name . '/calendar/' . $mini_prev_url, '前の月',  array('class' => 'prev_month'));
+		$mini_next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_next_url), '次の月',  array('class' => 'next_month'));
+		$mini_prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_prev_url), '前の月',  array('class' => 'prev_month'));
 
-		$next_year_url = \Html::anchor($model::$_kind_name . '/calendar/' . $next_year, '次の年',  array('class' => 'next_year'));
-		$prev_year_url = \Html::anchor($model::$_kind_name . '/calendar/' . $prev_year, '次の年',  array('class' => 'prev_year'));
+		$next_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_year), '次の年',  array('class' => 'next_year'));
+		$prev_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_year), '次の年',  array('class' => 'prev_year'));
 
 		if ($mode == "week") {
 			// 週表示
@@ -486,14 +492,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$next_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " + 7days")) . "/week";
 			$prev_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " - 7days")) . "/week";
 			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の週',  array('class' => 'next_week'));
-			$prev_url = \Html::anchor($model::$_kind_name . '/calendar/' . $prev_url, '前の週',  array('class' => 'prev_week'));
+			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の週',  array('class' => 'prev_week'));
 		} else if ($day && $mode == null) {
 			// 1日表示
 			$calendar = $this->make_day_calendar($year , $mon, $day);
 			$next_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " + 1days"));
 			$prev_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " - 1days"));
-			$next_url = \Html::anchor($model::$_kind_name . '/calendar/' . $next_url, '次の日');
-			$prev_url = \Html::anchor($model::$_kind_name . '/calendar/' . $prev_url, '前の日');
+			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の日');
+			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の日');
 		} else {
 			// １ヶ月表示
 			$calendar = $this->make_month_calendar($year, $mon);
@@ -520,8 +526,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("next_year_url", $next_year_url);
 		$view->set("prev_year_url", $prev_year_url);
 		$view->set("kind_name", $model::$_kind_name);
-		$view->set("display_month", \Html::anchor($model::$_kind_name . '/calendar/' . $year . '/' . $mon, '月表示'));
-		$view->set("display_week", \Html::anchor($model::$_kind_name . '/calendar/' . $weekY . '/' . $weekM . '/' . $weekD . '/week', '週表示'));
+		$view->set("display_month", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $year . '/' . $mon), '月表示'));
+		$view->set("display_week", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $weekY . '/' . $weekM . '/' . $weekD . '/week'), '週表示'));
 		$this->template->content = $view;
 	}
 
@@ -552,11 +558,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->or_where_close()
 							->or_where_open()
 								->where("start_date", "<=", $target_start)
-								->where("end_date", ">", $target_start)
+								->where("end_date", "=>", $target_start)
 							->or_where_close()
 							->or_where_open()
 								->where("start_date", "<=", $target_end)
-								->where("end_date", ">", $target_end)
+								->where("end_date", "=>", $target_end)
 							->or_where_close()
 							->or_where_open()
 								->where("start_date", ">=", $target_start)
@@ -627,7 +633,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 					if (isset($r['primary']) || isset($r['secondary'])) {
 						// 詳細へのリンク
-						$r['link_detail'] = \Html::anchor($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $day), $r['title_text']);
+						$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $day)), $r['title_text']);
 						// 30分前かどうか
 						$r['target_year'] = (int)$year;
 						$r['target_mon'] = (int)$mon;
@@ -687,11 +693,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 								->where("end_date", ">=", $target_end)
 							->or_where_close()
 							->or_where_open()
-								->where("start_date", ">=", $target_end)
-								->where("end_date", ">", $target_end)
+								->where("start_date", "<=", $target_end)
+								->where("end_date", ">=", $target_end)
 							->or_where_close()
 							->or_where_open()
-								->where("start_date", "<", $target_start)
+								->where("start_date", "<=", $target_start)
 								->where("end_date", ">=", $target_start)
 							->or_where_close()
 							->or_where_open()
@@ -716,7 +722,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				if ($this->is_target_day($row['year'], $row['mon'], $row['day'], $r)) {
 
 					// 詳細へのリンク
-					$r['link_detail'] = \Html::anchor($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $row['day']), $r['title_text']);
+					$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $row['day'])), $r['title_text']);
 					$r['target_year'] = $row['year'];
 					$r['target_mon'] = $row['mon'];
 					$r['target_day'] = $row['day'];
@@ -762,19 +768,19 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							//	->or_where(\DB::expr("DATE_FORMAT(end_date, '%Y%m')"), sprintf("%04d%02d", $year, $mon))
 							//->where_close()
 							->where_open()
-							->or_where_open()
+							->or_where_open() // <|   |>
 								->where("start_date", "<=", $target_start)
 								->where("end_date", ">=", $target_end)
 							->or_where_close()
-							->or_where_open()
-								->where("start_date", ">=", $target_end)
-								->where("end_date", ">", $target_end)
+							->or_where_open() // |   <|  >
+								->where("start_date", "<=", $target_end)
+								->where("end_date", ">=", $target_end)
 							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<", $target_start)
+							->or_where_open() // <|  >    |
+								->where("start_date", "<=", $target_start)
 								->where("end_date", ">=", $target_start)
 							->or_where_close()
-							->or_where_open()
+							->or_where_open()// |  <>  |
 								->where("start_date", ">=", $target_start)
 								->where("end_date", "<=", $target_end)
 							->or_where_close()
@@ -804,7 +810,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				// 対象の日付のデータか判断
 				if ($this->is_target_day($year, $mon, $i, $r)) {
 					// 詳細へのリンク
-					$r['link_detail'] = \Html::anchor($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $i), $r['title_text']);
+					$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $i)), $r['title_text']);
 					$r['target_year'] = $row['year'];
 					$r['target_mon'] = $row['mon'];
 					$r['target_day'] = $row['day'];
@@ -852,7 +858,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$row['day']	 = $prev_last_day - ($week - $i - 1);
 			$row['week'] = date('w', strtotime(sprintf("%04d/%02d/%02d", $row['year'], $row['mon'], $row['day'])));
 			$row['mode'] = "prev";
-			$row['link_detail'] = \Html::anchor($model::$_kind_name . '/calendar/' . $row['year'] . '/' . $row['mon'] . '/' . $row['day'], 'GO');
+			$row['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $row['year'] . '/' . $row['mon'] . '/' . $row['day']), 'GO');
 			$schedules[] = $row;
 		}
 		for ($i = 1; $i <= $last_day; $i++) {
@@ -863,7 +869,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$row['day']		 = $i;
 			$row['week']	 = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $i)));
 			$row['mode']	 = "now";
-			$row['link_detail'] = \Html::anchor($model::$_kind_name . '/calendar/' . $row['year'] . '/' . $row['mon'] . '/' . $row['day'], 'GO');
+			$row['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $row['year'] . '/' . $row['mon'] . '/' . $row['day']), 'GO');
 			$schedules[] = $row;
 		}
 		// 後ろを埋める
@@ -875,7 +881,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$row['day']	 = $i + 1;
 			$row['week'] = date('w', strtotime(sprintf("%04d/%02d/%02d", $row['year'], $row['mon'], $row['day'])));
 			$row['mode'] = "next";
-			$row['link_detail'] = \Html::anchor($model::$_kind_name . '/calendar/' . $row['year'] . '/' . $row['mon'] . '/' . $row['day'], 'GO');
+			$row['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $row['year'] . '/' . $row['mon'] . '/' . $row['day']), 'GO');
 			$schedules[] = $row;
 		}
 		return $schedules;
@@ -1017,6 +1023,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 最大チェック数
 		$maxCount = 10;
+		// 最大調査数
+		$maxSearchCount = 1000;
 
 		// 全てチェックするかどうか
 		$start_day  = sprintf("%04d/%02d/%02d", $syear, $smon, $sday);
@@ -1039,13 +1047,17 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	    $result = array();
 		// 単純に開始日付と終了日付から判定
 	 	for ($i = 0; $i < $daydiff; $i++) {
-
+	 		if ($maxSearchCount < $i) { return $result; }
 	 		$target_year_from = date('Y', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_month_from = date('m', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_day_from = date('d', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_date = date('Y/m/d', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_week = date('w', strtotime($start_day . ' +' . $i . "days"));
 	 		// 対象の日データを取得
+	 		 
+	 		if (time() > strtotime($start_day . ' +' . $i . "days")) {
+	 			continue;
+	 		}
 	 		
 	 		switch ($repeat_kb) {
 	 			case 0:
@@ -1094,11 +1106,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						->or_where_close()
 						->or_where_open()
 							->where("start_date", "<=", $target_date)
-							->where("end_date", ">", $target_date)
+							->where("end_date", ">=", $target_date)
 						->or_where_close()
 						->or_where_open()
 							->where("start_date", "<=", $target_date)
-							->where("end_date", ">", $target_date)
+							->where("end_date", ">=", $target_date)
 						->or_where_close()
 						->or_where_open()
 							->where("start_date", ">=", $target_date)
@@ -1150,7 +1162,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 				}
 			}
+
 	 	}
+
 		return $result;
 	}
 
