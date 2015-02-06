@@ -175,6 +175,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
+		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$this->template->content->set("group_list", $usergroups);
 
 		// 重複チェック
 		$this->template->content->set("overlap_result", $overlap_result);
@@ -1150,6 +1152,36 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	public static function isMember($scheduleId, $uid) {
 
 	}
+
+
+	/*
+	 * ajax グループIDからユーザリストを返す
+	 * @return users の配列
+	 */
+	public function action_get_user_list()
+	{
+//		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
+
+		if (\Input::post("gid")) {
+			$response = \Model_Usr::find('all',
+				array(
+				'related'   => array('usergroup'),
+					'where'=> array(array('usergroup.id', '=', \Input::post("gid", 0))),
+					'order_by' => 'display_name'
+					)
+				);
+		} else {
+			$response = \Model_Usr::find('all',
+				array(
+				'related'   => array('usergroup'),
+					'order_by' => 'id'
+					)
+				);
+		}
+
+		echo $this->response($response, 200); die();
+	}
+
 
 	//trait
 //	use \Controller_Traits_Testdata;

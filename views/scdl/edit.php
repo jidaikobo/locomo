@@ -111,6 +111,76 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
+<th>メンバー</th>
+<td>
+
+<div id="member_panel">
+	<table>
+		<tr>
+		<td>表示メンバー変更</td>
+		<td colspan="2">
+			<select id="group_list">
+				<option value="">--- 全員 ---
+				<?php foreach($group_list as $key => $value) { ?>
+					<option value="<?php print $key; ?>" ><?php  print $value; ?>
+				<?php } ?>
+			</select>
+		</td>
+		</tr>
+		<tr>
+			<td>
+
+				<select id="member_kizon" name="member_kizon" size="2" style="width:200px;height:200px;">
+				<?php foreach($select_user_list as $row) { ?>
+					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+				<?php } ?>
+				</select>
+			</td>
+			<td><input type="button" value="選択" onclick="javascript:select_member('plus');" /><br /><input type="button" value="解除" onclick="javascript:select_member('minus');" /></td>
+			<td>
+				<select id="member_new" name="member_new" size="2" style="width:200px;height:200px;">
+					<?php 
+					foreach($non_selected_user_list as $row) {
+					?>
+					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+				<?php } ?>
+				</select>
+			</td>
+		</tr>
+	</table>
+	<?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る
+</div>
+</td>
+</tr>
+<tr>
+<th>施設選択</th>
+<td>
+<div id="building_panel">
+	<table>
+		<tr>
+			<td>
+				<select id="building_kizon" name="building_kizon" size="2" style="width:100px;height:200px;">
+				<?php foreach($select_building_list as $row) { ?>
+					<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option>
+				<?php } ?>
+				</select>
+			</td>
+			<td><input type="button" value="選択" onclick="javascript:select_building('plus');" /><br /><input type="button" value="解除" onclick="javascript:select_building('minus');" /></td>
+			<td>
+				<select id="building_new" name="building_new" size="2" style="width:100px;height:200px;">
+				<?php foreach($non_select_building_list as $row) { ?>
+					<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option>
+				<?php } ?>
+				</select>
+			</td>
+		</tr>
+	</table>
+</div>
+
+</td>
+</tr>
+
+<tr>
 	<th><?php echo $form->field('group_kb')->set_template('{label}{required}'); ?></th>
 	<td>
 		<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
@@ -168,59 +238,15 @@ if (isset($overlap_result) && count($overlap_result)) {
 
 </div><!--/form_group-->
 
-<div id="member_panel">
-	<table>
-		<tr>
-			<td>
-				<select id="member_kizon" name="member_kizon" size="2" style="width:100px;height:200px;">
-				<?php foreach($select_user_list as $row) { ?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->username; ?></option>
-				<?php } ?>
-				</select>
-			</td>
-			<td><input type="button" value="選択" onclick="javascript:select_member('plus');" /><br /><input type="button" value="解除" onclick="javascript:select_member('minus');" /></td>
-			<td>
-				<select id="member_new" name="member_new" size="2" style="width:100px;height:200px;">
-					<?php 
-					foreach($non_selected_user_list as $row) {
-					?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->username; ?></option>
-				<?php } ?>
-				</select>
-			</td>
-		</tr>
-	</table>
-	<?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る
-</div>
-
-<div id="building_panel">
-	<table>
-		<tr>
-			<td>
-				<select id="building_kizon" name="building_kizon" size="2" style="width:100px;height:200px;">
-				<?php foreach($select_building_list as $row) { ?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option>
-				<?php } ?>
-				</select>
-			</td>
-			<td><input type="button" value="選択" onclick="javascript:select_building('plus');" /><br /><input type="button" value="解除" onclick="javascript:select_building('minus');" /></td>
-			<td>
-				<select id="building_new" name="building_new" size="2" style="width:100px;height:200px;">
-				<?php foreach($non_select_building_list as $row) { ?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option>
-				<?php } ?>
-				</select>
-			</td>
-		</tr>
-	</table>
-</div>
-
 
 <script>
 <!-- JSに移す -->
 change_repeat_kb_area();
 $("#form_repeat_kb").change(function(event){
 	change_repeat_kb_area();
+});
+$("#group_list").change(function(event) {
+	get_group_user(event);
 });
 
 
@@ -311,6 +337,44 @@ function make_hidden_buildings() {
     });
 	$("#hidden_buildings").val(hidden_str);
 }
+
+
+
+
+var base_uri = $('body').data('uri');
+
+function get_group_user(e) {
+
+	var limit = 100;
+	var group_id = $("#group_list").val();
+
+	var now_members = new Object();
+	var kizon_options = document.getElementById('member_kizon').options;
+	for(var i = 0; i < kizon_options.length; i++){
+		now_members['member' + kizon_options[i].value] = 1;
+	};
+
+	$.ajax({
+		url: base_uri + 'scdl/get_user_list.json',
+		type: 'post',
+		data: 'gid=' + group_id,
+		success: function(res) {
+			exists = JSON.parse(res);
+
+
+
+			document.getElementById("member_new").options.length=0;
+
+			for(var i in exists) {
+				if (!now_members['member' + exists[i]['id']]) {
+					$("#member_new").append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
+				}
+			}
+		
+		}
+	});
+}
+
 </script>
 
 
