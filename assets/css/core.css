@@ -374,7 +374,7 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 }
 li.has_top_separator {
 	border-top: 1px solid rgba(255,255,255,1);
-	box-shadow: 0 1px 0 #ddd;
+	box-shadow: 0 -1px 0 #ddd;
 	margin-top: -1px;
 	padding-top: 3px;
 }
@@ -1353,9 +1353,8 @@ table.calendar {
 /*=== lcm_focus ===*/
 #escape_focus {
 	position: absolute;
+	right: 0;
 }
-
-
 .menubar_icon {
 	width: 1.2em;
 }

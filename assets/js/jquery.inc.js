@@ -90,7 +90,6 @@ isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
 tabindexCtrl = isNetReader ? false : true;//この条件は増えたり減ったりするのかも。
 $('body').addClass(isNetReader ? 'netreader' : '');
 
-
 //スクロールバーのサイズ取得
 var scrollbar_s = (function(){
 	var testdiv, rs;
@@ -166,7 +165,7 @@ function add_accesskey_title(){
 $(document).find('[accesskey]').each(add_accesskey_title);
 
 
-//非表示の要素の設定
+//非表示の要素の設定　うまく分岐できていないのであとで
 $('.hidden_item').each(function(){
 	var query, params, is_val, trigger ; 
 	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
@@ -189,7 +188,7 @@ $('.hidden_item').each(function(){
 	trigger.addClass('on');
 });
 
-//テーブルにあわせたcontent幅
+//テーブルにあわせたcontent幅 //ウィンドウ幅で表示サイズが左右される端末のことも考える
 /*
 var container = $('.container');
 var container_w = container.width();
@@ -244,40 +243,36 @@ $.fn.reset_tabindex = function(){
 
 
 //.lcm_focusに基づくフォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする
-//if(tabindexCtrl) set_lcm_focus();
+if(tabindexCtrl) set_lcm_focus();
 
-function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
+function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセットする(targetがなくてthisがwindow)
 	var lcm_focus, lcm_calender, each_date;
 	lcm_focus    = $('.lcm_focus');
 	if(!lcm_focus[0]) return; //lcm_focusがなければおしまい
-
 	lcm_calendar = $('.lcm_focus.calendar');
-	each_date    = lcm_calendar[0] ? $('.each_date:has(a)').addClass('lcm_focus') : null;
+	each_date    = lcm_calendar[0] ? $('.each_date').addClass('lcm_focus') : null;
 	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
-
 	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
-	//抜けるリンクの準備。絶対に一つだけ。ウィジェットで呼び出した時のエラーの表示位置がずれるので対策
-	
+	//抜けるリンクの準備。絶対に一つだけ。というようにしたい。
+
+
 	var set_focus = function(target){
 		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
 		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
 		//フォーカスを掘っていく場合も、ここにあるとよさそう
 		var parent, t; 
-/*
-	parent = $(this).closest('.currentfocus');
-	if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
-		parent.removeClass('currentfocus').addClass('focusparent');
-		$('#escape_focus').remove();
-	}
-	$(this).addClass('currentfocus').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
-	*/
-//		if(!this.isWindow)console.log($(this).isWindow);
+		if(target){
+			$('#escape_focus').remove();
+			target.addClass('currentfocus').css('position', 'relative').set_tabindex().append(esc);//.lcm_focus.onがいいのかなあ？？
+		}
 		parent = $(this).closest('.currentfocus');
 		if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので)
 			parent.removeClass('currentfocus').addClass('focusparent');
 			$('#escape_focus').remove();
 		}
-		$(this).addClass('currentfocus').set_tabindex()/*.append(esc)*/;
+		if(!$.isWindow(this)){
+			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex().append(esc);
+		}
 		t = target ? target.find('.lcm_focus') : lcm_focus;
 		if(target && target.hasClass('calendar')){
 			t = target.find(each_date);
@@ -285,29 +280,29 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
 	}
+	
 	var escape_focus = function(e){
 		//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
-		//多重のフォーカスは、親や祖先のフォーカスを見ながら戻していく。
-		//必ず相手がいる
-		e = e ? e : event;
+		//多重のフォーカスは、親を見ながら戻していく。
+		e = e ? e : event;//この場合、抜けるリンクはeがclickイベントになり、tが#escape_focusになる
 		var t, parent, grandparent;
 		t = $(e.target);
-		parent = t.closest('.currentfocus');
-		grandparent = t.closest('.focusparent');
-		if(parent[0]){
-			parent.set_tabindex().focus();
-		}
-		$(document).find('.currentfocus').removeClass('currentfocus');
+
+		parent = $('#escape_focus').closest('.currentfocus');
+		grandparent = parent.parent().closest('.currentfocus');
+
+		parent.set_tabindex().removeClass('currentfocus').focus();
 		$('#escape_focus').remove();
-		$(document).reset_tabindex();
-		set_focus();
+
 		if(grandparent[0]){
 			$(document).reset_tabindex();
-			grandparent.removeClass('focusparent').addClass('currentfocus').set_tabindex().append(esc);
+			grandparent.set_tabindex().append(esc);
 			set_focus(grandparent);
+		}else{
+			$(document).reset_tabindex();
+			set_focus();
 		}
 	}
-
 
 	//ひとまず実行 //他のイベント実行後に動かしたいなあ
 	setTimeout(function(){
@@ -315,7 +310,7 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 	}, 100);
 
 	//lcm_focus上でのキーボードイベント。
-	lcm_focus.on('keydown', function(e){
+	$('.lcm_focus').on('keydown', function(e){
 		e = e ? e : event;
 		var t, k, parent;
 		t = $(e.target);
@@ -336,7 +331,8 @@ function set_lcm_focus(){//thisがwindowだったら初回、なのかなあ
 		k = e.which;
 //		console.log($('.modal.on, .semimodal.on'));
 		if( !t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 ){
-			escape_focus(t);
+//			escape_focus(t);
+			escape_focus();
 			e.stopPropagation();
 		}
 	});
