@@ -1,11 +1,16 @@
 <?php
+/*
 if ( ! \Input::get('create') && ! @$is_revision):
 	echo \Form::open(array('method' => 'get'));
 	echo \Form::input('likes[name]', \Input::get('likes')['name']);
 	echo \Form::submit('submit', '検索', array('class'=>'button'));
 	echo \Form::close();
 endif;
+ */
 ?>
+
+<?php if (isset($search_form)) echo $search_form; ?>
+
 
 <?php if ($form): ?>
 <?php echo \Form::open(\Uri::create(\Uri::current(), array(), \Input::get())); ?>

@@ -5,7 +5,7 @@ trait Controller_Traits_Bulk
 	/*
 	 * @return Fieldset object
 	 */
-	public function bulk($options = array(), $model = null, $total = 0)
+	public function bulk($options = array(), $model = null, $create = 3)
 	{
 		if (!$model) $model = $this->model_name;
 		$action = \Request::main()->action;
@@ -15,8 +15,10 @@ trait Controller_Traits_Bulk
 		{
 			$options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
 			$pagination_config['per_page'] = count(\Input::get('ids')) * 2;
-			$model::disable_filter();
+			// $model::disable_filter();
 			$objects = $model::paginated_find($options, false);
+
+			// if (!$model::get_filter_status()) $model::enable_filter();
 		// edit create 分岐
 		}
 		// create
@@ -31,9 +33,9 @@ trait Controller_Traits_Bulk
 		else
 		{
 			$objects = $model::paginated_find($options);
-			$total = max($total - count($objects), 1);
-			if ($total) {
-				for ($i = 0; $i < $total; $i++)
+			// $total = max($total - count($objects), 1);
+			if ($create) {
+				for ($i = 0; $i < $create; $i++)
 				{
 					$objects[] = $model::forge();
 				}
