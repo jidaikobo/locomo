@@ -56,6 +56,7 @@
 				<span class="date_str"><?php print $v['day']; ?>日</span>
 				<span class="skip"><?php print $week_name[$v['week']] . '曜日'; ?> <?php if (count($v['data']) > 0) { print count($v['data']) . '件の登録';} else { print '登録なし'; } ?></span>
 			</a>
+			<a href="<?php echo \Uri::create("scdl/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" />新規追加</a>
 			<div>
 			<?php print count($v['data']); ?>件
 			</div>
