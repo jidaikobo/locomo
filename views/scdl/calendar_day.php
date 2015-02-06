@@ -36,6 +36,8 @@
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
 	<?php print htmlspecialchars_decode($next_url); ?>
 </div>
+<a href="<?php echo \Uri::create("scdl/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
+
 <?php /*
 <table class="table">
 <tr>

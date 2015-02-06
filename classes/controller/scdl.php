@@ -33,11 +33,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$model = $this->model_name ;
 
-		// 日付の自動判断
-		if (\Input::post("end_date", "") == "" || \Input::post("end_date", "") == "0000-00-00") {
-			$_POST['end_date'] = "2100-01-01";
-		}
-
 		// --------------------- parent ---------------------
 		$content = \View::forge($model::$_kind_name . "/edit");
 

@@ -108,7 +108,7 @@ calendar【<?php print $detail->title_text; ?>】
 <?php if($detail->user_id): ?>
 <tr>
 	<th>作成者</th>
-	<td><?php echo $detail->create_user->username; ?></td>
+	<td><?php echo @$detail->create_user->username; ?></td>
 </tr>
 
 <?php endif; ?>

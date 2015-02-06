@@ -317,7 +317,7 @@ class Model_Scdl extends \Model_Base
 			'data_type' => 'int',
 			'form' => 
 			array (
-				'type' => 'select',
+				'type' => 'hidden',
 				'size' => 0,
 				'class' => 'int',
 			),
@@ -351,7 +351,7 @@ class Model_Scdl extends \Model_Base
 			'data_type' => 'date',
 			'form' => 
 			array (
-				'type' => 'text',
+				'type' => 'hidden',
 				'size' => 20,
 				'class' => 'date',
 			),
@@ -376,7 +376,7 @@ class Model_Scdl extends \Model_Base
 			'data_type' => 'int',
 			'form' => 
 			array (
-				'type' => 'select',
+				'type' => 'hidden',
 				'options' => 
 				array (
 					0 => '不可視',
@@ -473,12 +473,30 @@ class Model_Scdl extends \Model_Base
 		$form->field('kind_flg')->set_value(self::$_kind_flg);
 
 		// 作成者
-		$form->field('user_id')->set_options(Model_Usr::get_options(array(), 'username'));
+		//$form->field('user_id')->set_options(Model_Usr::get_options(array(), 'username'));
+		
+
+		$form->field('user_id')->set_value(\Auth::get('id'));
+		$form->field('is_visible')->set_value(1);
+		
 		// 初期値
 		if ($obj->id == null) {
 			// 自分を選択する
 			$form->field('user_id')->set_value(\Auth::get('id'));
+			// 重要度
+			$form->field('title_importance_kb')->set_value("→中");
 		}
+		if (\Input::get("ymd")) {
+			$form->field('start_date')->set_value(\Input::get("ymd"));
+			$form->field('end_date')->set_value(\Input::get("ymd"));
+		}
+		if (\Input::post()) {
+			// 日付の自動判断
+			if (\Input::post("end_date", "") == "" || \Input::post("end_date", "") == "0000-00-00") {
+				$_POST['end_date'] = "2100-01-01";
+			}
+		}
+
 
 		return $form;
 	}
