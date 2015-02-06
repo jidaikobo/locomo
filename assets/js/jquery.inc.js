@@ -167,21 +167,23 @@ $(document).find('[accesskey]').each(add_accesskey_title);
 
 //非表示の要素の設定　うまく分岐できていないのであとで
 $('.hidden_item').each(function(){
-	var query, params, is_val, trigger ; 
+	var query, params, v, trigger ; 
 	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
 	if(!($(this).is(':input') && $(this).val())){
 		if($(this).find('form')[0]){
-		//とりあえず、get値を見る。 このままだと、あたいのあるときに開くがうまく動かない
+		//とりあえず、get値を見る。
 			query = window.location.search.substring(1);
-			params = query.split('&');
-			for(var i=0 ; i < params.length; i++){
-				if(params[i].indexOf('orders') !== 0){
-					is_val = true;
-					break;
+			if(query!=''){//深いifだなあ
+				params = query.split('&');
+				for(var i=0 ; i < params.length; i++){
+					if( params[i].indexOf('orders') !== 0){
+						v = true;
+						break;
+					}
 				}
 			}
 		}
-		if(!is_val) return; //値のある時だけ次ぎにいく
+		if(!v) return; //値のある時だけ次ぎにいく
 	}
 	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
 	$(this).addClass('on').show();
@@ -259,7 +261,6 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 	var set_focus = function(target){
 		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
 		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
-		//フォーカスを掘っていく場合も、ここにあるとよさそう
 		var parent, t; 
 		if(target){
 			$('#escape_focus').remove();
@@ -282,6 +283,7 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 	}
 	
 	var escape_focus = function(e){
+		//メニューをESCで抜けた時のset_tabindexに対しての振る舞い。currentfocusを見てなにかしたい。今のままだと、抜けるリンクが残っている
 		//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
 		//多重のフォーカスは、親を見ながら戻していく。
 		e = e ? e : event;//この場合、抜けるリンクはeがclickイベントになり、tが#escape_focusになる
@@ -304,7 +306,7 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 		}
 	}
 
-	//ひとまず実行 //他のイベント実行後に動かしたいなあ
+	//ひとまず実行 他が終わってから動くようにsetTimeoutをしているけど、lcm_focusを実行するときに遅延させたほうがよいのかも
 	setTimeout(function(){
 		set_focus();//lcm_focusが入れ子になっていてもここで一旦-1
 	}, 100);

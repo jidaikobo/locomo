@@ -9,6 +9,7 @@ class Bulk {
 
 	protected static $_define_function = null;
 
+	protected static $_enable_deleted = false;
 
 	public function __construct ($name) {
 		$this->name = $name;
@@ -108,8 +109,8 @@ class Bulk {
 				if ($field->type === 'submit') {
 					$form->delete('submit');
 				}
-				if ($field->type == 'checkbox') {
-					is_null($field->template) and $field->set_template("\t\t\t\t<td>{fields}\n\t\t\t\t{field} {label}<br />\n{fields}{error_msg}\n\t\t\t</td>");
+				if ($field->type == 'checkbox' OR $field->type == 'radio') {
+					is_null($field->template) and $field->set_template("\t\t\t\t<td>{fields}\n\t\t\t\t{field} {label}\n{fields}{error_msg}\n\t\t\t</td>");
 				} else {
 					is_null($field->template) and $field->set_template("\t\t\t\t<td>{field}{error_msg}</td>");
 				}
@@ -251,6 +252,17 @@ class Bulk {
 	public static function set_define_function($name) {
 		if ($name) static::$_define_function = $name;
 	}
+
+
+	/*
+	public static function disable_deleted() {
+		static::$_disable_dleted = true;
+	}
+
+	public static function enable_deleted() {
+		static::$_disable_dleted = false;
+	}
+	 */
 
 
 	/**
