@@ -374,7 +374,7 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 }
 li.has_top_separator {
 	border-top: 1px solid rgba(255,255,255,1);
-	box-shadow: 0 1px 0 #ddd;
+	box-shadow: 0 -1px 0 #ddd;
 	margin-top: -1px;
 	padding-top: 3px;
 }
@@ -794,7 +794,7 @@ div.form_tooltip {
 .lcm_form * {
 	vertical-align: top;
 }
-.lcm_form .input_group > h2 ,
+.lcm_form .input_group h2 ,
 .lcm_form .input_group > .field ,
 .lcm_form .input_group > table {
 	font-size: 1em;
@@ -922,15 +922,41 @@ a.disclosure {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
+a.disclosure.on {
+	background-image: url('../img/system/mark_disclose_on.png');
+	background-position-x: 0;
+}
+a.disclosure.nomarker {
+	background-image: none;
+	padding-left: 5px;
+	font-size: 1em;
+}
+a.disclosure.nomarker span.icon {
+	padding-left: 15px;
+	background-image: url('../img/system/mark_disclose.png');
+	background-position: 4px center;
+	background-repeat: no-repeat;
+}
+h1 a.disclosure span.icon {
+	font-size: .8em;
+	line-height: 1.5;
+	height: 1.75em;
+/*あとで、無理矢理なのを直す*/
+	position: relative;
+    bottom: -.4em;
+}
+h1 a.disclosure span.icon img {
+	margin: 0 0 0 .25em;
+}
+a.disclosure.nomarker.on span.icon {
+	background-image: url('../img/system/mark_disclose_on.png');
+	background-position-x: 0;
+}
 a.disclosure:hover {
 	background-color: #e8e8e8;
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
-}
-a.disclosure.on {
-	background-image: url('../img/system/mark_disclose_on.png');
-	background-position-x: 0;
 }
 span.icon {
 	display: inline-block;
@@ -950,7 +976,7 @@ span.icon img {
 }
 
 #page_title + .hidden_item {
-	margin-top: -.65em;
+	margin-top: -.6em;
 	padding-left: 0;
 }
 form.search .input_group {
@@ -1325,11 +1351,10 @@ table.calendar {
 }
 
 /*=== lcm_focus ===*/
-#escape_focus {
+#	<li>escape</li>_focus {
 	position: absolute;
+	right: 0;
 }
-
-
 .menubar_icon {
 	width: 1.2em;
 }
