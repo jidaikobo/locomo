@@ -485,8 +485,8 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	 */
 	public function add_allowed($locomo_paths = array())
 	{
-		$locomo_paths = self::modify_locomopaths($locomo_paths);
-		$this->user['allowed'] = array_merge($this->user['allowed'], $locomo_paths);
+		$allowed = \Arr::get($this->user, 'allowed', array());
+		$this->user['allowed'] = array_merge($allowed, $locomo_paths);
 	}
 
 	/**

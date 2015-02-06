@@ -26,7 +26,14 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		// no rights for no condition
 		if ( ! $condition) return false;
 
-//ここでフック
+		// event
+		// to do nothing call back must return 'through'
+		if (\Event::instance()->has_events('locomo_has_access'))
+		{
+			$flag = \Event::instance()->trigger('locomo_has_access', $condition);
+			if ($flag === '1') return true;
+			if ($flag === '0') return false;
+		}
 
 		// check related controller first - for speed up
 		if (
