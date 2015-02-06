@@ -10,11 +10,6 @@ class Model_Base extends \Orm\Model_Soft
 	protected static $_conditions = array();
 	public static $_options = array();
 
-	/*
-	 * default field names
-	 */
-	protected static $_conditions = array();
-	public static $_options = array();
 
 	/*
 	 * _cache_form_definition
