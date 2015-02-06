@@ -477,7 +477,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$mini_prev_url = \Html::anchor($model::$_kind_name . '/calendar/' . $mini_prev_url, '前の月',  array('class' => 'prev_month'));
 
 		$next_year_url = \Html::anchor($model::$_kind_name . '/calendar/' . $next_year, '次の年',  array('class' => 'next_year'));
-		$prev_year_url = \Html::anchor($model::$_kind_name . '/calendar/' . $prev_year, '次の年',  array('class' => 'prev_year'));
+		$prev_year_url = \Html::anchor($model::$_kind_name . '/calendar/' . $prev_year, '前の年',  array('class' => 'prev_year'));
 
 		if ($mode == "week") {
 			// 週表示

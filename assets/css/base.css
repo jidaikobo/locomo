@@ -517,23 +517,6 @@ textarea {
 	max-width: 100%;
 	vertical-align: middle;
 }
-/* IE8以下適用 */
-html:first-child input[type="text"],
-html:first-child input[type="search"],
-html:first-child input[type="tel"],
-html:first-child input[type="url"],
-html:first-child input[type="email"],
-html:first-child input[type="datetime"],
-html:first-child input[type="date"],
-html:first-child input[type="month"],
-html:first-child input[type="week"],
-html:first-child input[type="time"],
-html:first-child input[type="datetime-local"],
-html:first-child input[type="number"],
-/* input[type="password"], 環境によりマスク文字が小さく表示されるため除外 */
-html:first-child textarea {
-	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
-}
 
 .btn,
 .button {
