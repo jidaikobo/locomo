@@ -168,25 +168,21 @@ $(document).find('[accesskey]').each(add_accesskey_title);
 
 //非表示の要素の設定
 $('.hidden_item').each(function(){
-	var trigger, contain, v, is_val; 
+	var query, params, is_val, trigger ; 
 	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
 	if(!($(this).is(':input') && $(this).val())){
-/*		$(this).find('form').each(function(){
-			var arr = $(this).serializeArray();
-			$(arr).each(function(){
-				if(this.name == 'limit') return;
-				is_val = this.value ? true : is_val;
-			});
-		});
-*/
-		contain = 0;
-		$(this).find(':input').each(function(){
-			v = $(this).val();
-			if( !v || $(this).closest('.submit_button')[0]) return;
-			contain += $(this).val();
-		});
-//		if(!is_val) return; この条件がおかしい？あとで
-		if(!contain) return;
+		if($(this).find('form')[0]){
+		//とりあえず、get値を見る。 このままだと、あたいのあるときに開くがうまく動かない
+			query = window.location.search.substring(1);
+			params = query.split('&');
+			for(var i=0 ; i < params.length; i++){
+				if(params[i].indexOf('orders') !== 0){
+					is_val = true;
+					break;
+				}
+			}
+		}
+		if(!is_val) return; //値のある時だけ次ぎにいく
 	}
 	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
 	$(this).addClass('on').show();
@@ -832,7 +828,6 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 	$('form').change( function(e){
 		e = e ? e : event;
 		var t = $(e.target);
-		console.log(t);
 		if( t.closest('.search, .btn-toolbar')[0] || t.hasClass('checkbox_binded') || t.hasClass('datetime') && t.val() == t.data('val') ){
 		//変更のあった要素のうち、.search form内や、一括処理用のチェックボックス、datetimepickerは除外
 			return false;
