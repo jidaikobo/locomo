@@ -61,10 +61,6 @@ class Model_Scdl extends \Model_Base
 				'size' => 0,
 				'class' => 'date',
 			),
-			'validation' => 
-			array (
-				'required',
-			),
 		),
 		'end_date' => 
 		array (
@@ -75,10 +71,6 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 0,
 				'class' => 'date',
-			),
-			'validation' => 
-			array (
-				'required',
 			),
 		),
 		'start_time' => 
@@ -91,10 +83,6 @@ class Model_Scdl extends \Model_Base
 				'size' => 0,
 				'class' => 'time min15',
 			),
-			'validation' => 
-			array (
-				'required',
-			),
 		),
 		'end_time' => 
 		array (
@@ -105,10 +93,6 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 0,
 				'class' => 'time min15',
-			),
-			'validation' => 
-			array (
-				'required',
 			),
 		),
 		'week_kb' => 
@@ -125,6 +109,24 @@ class Model_Scdl extends \Model_Base
 								, '4' => '木'
 								, '5' => '金'
 								, '6' => '土'),
+				'size' => 0,
+				'class' => 'int',
+			),
+		),
+		'week_index' => 
+		array (
+			'label' => '第何週',
+			'data_type' => 'int',
+			'form' => 
+			array (
+				'type' => 'select',
+				'options' => array('0' => '---'
+								, '1' => '1'
+								, '2' => '2'
+								, '3' => '3'
+								, '4' => '4'
+								, '5' => '5'
+								),
 				'size' => 0,
 				'class' => 'int',
 			),
