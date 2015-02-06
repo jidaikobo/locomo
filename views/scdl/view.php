@@ -16,6 +16,16 @@ calendar【<?php print $detail->title_text; ?>】
 			echo $detail->start_date . " " . $detail->start_time . "〜" . $detail->end_date . " " . $detail->end_time;
 		} else {
 			echo $year . "/" . $mon . "/" . $day . " " . $detail->start_time . "〜" . $detail->end_time;
+			if ($detail->week_kb != "" && $detail->repeat_kb == 2) {
+				echo "(";
+				$week = array('日', '月', '火', '水', '木', '金', '土');
+				if ($detail->week_index) {
+					echo "第" . $detail->week_index;
+				} else {
+					echo "毎週";
+				}
+				echo $week[$detail->week_kb] . "曜日)";
+			}
 		}?></td>
 </tr>
 

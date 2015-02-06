@@ -17,6 +17,7 @@ class Create_Scdl
 			'end_time' => array('type' => 'time', 'null' => true),
 			'delete_day' => array('type' => 'text', 'null' => true),
 			'week_kb' => array('type' => 'text', 'default' => '', 'null' => true),
+			'week_index' => array('type' => 'int', 'null' => true),
 			'title_text' => array('type' => 'text', 'default' => ''),
 			'title_importance_kb' => array('type' => 'text'),
 			'title_kb' => array('type' => 'text', 'null' => true),

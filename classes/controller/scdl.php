@@ -720,6 +720,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['target_year'] = $row['year'];
 					$r['target_mon'] = $row['mon'];
 					$r['target_day'] = $row['day'];
+					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
 					// 追加
 					$row['data'][] = clone $r;
 				}
@@ -926,6 +927,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				if ($start_unixtime <= $target_unixtime && $end_unixtime >= $target_unixtime) {
 					if ($target_week == $row['week_kb']) {
 						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
+						if ($result && $row['week_index']) {
+							// 第何週指定がある場合
+							$result = (ceil($target_day / 7) == $row['week_index']);
+						}
 					}
 				}
 				break;

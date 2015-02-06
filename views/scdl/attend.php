@@ -6,35 +6,31 @@ calendar【<?php print $detail->title_text; ?>】
 	// use model's form plain definition instead of raw-like html
 	//echo $plain;
 ?>
-<?php if($detail->repeat_kb): ?>
-<tr>
-	<th>繰り返し区分</th>
-	<td><?php echo $detail->repeat_kb; ?></td>
-</tr>
-
-<?php endif; ?>
 
 <?php if($detail->start_date): ?>
 <tr>
 	<th>開始日時</th>
-	<td><?php echo $detail->start_date; ?></td>
+	<td>
+	<?php 
+		if ($detail->repeat_kb == 0) {
+			echo $detail->start_date . " " . $detail->start_time . "〜" . $detail->end_date . " " . $detail->end_time;
+		} else {
+			echo $year . "/" . $mon . "/" . $day . " " . $detail->start_time . "〜" . $detail->end_time;
+			if ($detail->week_kb != "" && $detail->repeat_kb == 2) {
+				echo "(";
+				$week = array('日', '月', '火', '水', '木', '金', '土');
+				if ($detail->week_index) {
+					echo "第" . $detail->week_index;
+				} else {
+					echo "毎週";
+				}
+				echo $week[$detail->week_kb] . "曜日)";
+			}
+		}?></td>
 </tr>
 
 <?php endif; ?>
-<?php if($detail->end_date): ?>
-<tr>
-	<th>終了日時</th>
-	<td><?php echo $detail->end_date; ?></td>
-</tr>
 
-<?php endif; ?>
-<?php if($detail->week_kb): ?>
-<tr>
-	<th>繰り返し曜日</th>
-	<td><?php echo $detail->week_kb; ?></td>
-</tr>
-
-<?php endif; ?>
 <?php if($detail->title_text && !$detail->private_kb): ?>
 <tr>
 	<th>タイトル</th>

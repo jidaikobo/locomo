@@ -129,6 +129,24 @@ class Model_Scdl extends \Model_Base
 				'class' => 'int',
 			),
 		),
+		'week_index' => 
+		array (
+			'label' => '第何週',
+			'data_type' => 'int',
+			'form' => 
+			array (
+				'type' => 'select',
+				'options' => array('0' => '---'
+								, '1' => '1'
+								, '2' => '2'
+								, '3' => '3'
+								, '4' => '4'
+								, '5' => '5'
+								),
+				'size' => 0,
+				'class' => 'int',
+			),
+		),
 		'delete_day' => 
 		array (
 			'label' => '部分削除日',
