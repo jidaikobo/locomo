@@ -331,18 +331,13 @@ body.lcm_action_login {
 .adminbar_top div > a:hover,
 .adminbar_top div > a:focus {
 	background-color: rgba(255,255,255,.15);
+	transition: 0.3s;
 }
-.adminbar_top li a:link,
-.adminbar_top li a:visited,
-.adminbar_top li a:hover,
-.adminbar_top li a:active,
-.adminbar_bottom,
-.adminbar_bottom a:link,
-.adminbar_bottom a:visited,
-.adminbar_bottom a:hover,
-.adminbar_bottom a:active {
-	color: #333;
-	text-shadow: 1px 1px 0 #fff;
+#adminbar li,
+#adminbar li a,
+#adminbar .adminbar_bottom a {
+	color: #333 !important;
+	text-shadow: 1px 1px 0 #fff !important;
 }
 a.has_dropdown {
 	padding-right: 15px;
@@ -363,6 +358,7 @@ a.has_dropdown {
 .adminbar_bottom div a:hover,
 .adminbar_bottom div a:focus {
 	background-color: rgba(0,0,0,.06);
+	transition: 0.3s;
 	text-shadow: none;
 }
 #adminbar .menulist.on {
@@ -379,6 +375,10 @@ a.has_dropdown {
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */
 }
+#adminbar .menulist a {
+	display: block;
+	padding: 2px 20px 4px;
+}
 li.has_top_separator {
 	border-top: 1px solid rgba(255,255,255,1);
 	box-shadow: 0 -1px 0 #ddd;
@@ -391,7 +391,7 @@ li.has_bottom_separator {
 	margin-bottom: 3px;
 }
 .has_top_separator.has_bottom_separator {
-	box-shadow: 0 1px 0 #ddd, 0 1px 0 rgba(255,255,255,1);
+	box-shadow: 0 1px 0 rgba(255,255,255,1), 0 -1px 0 #ddd;
 }
 .has_bottom_separator + .has_top_separator {
 	border-top: none;
@@ -402,6 +402,7 @@ li.has_bottom_separator {
 #adminbar .menulist.on a:hover,
 #adminbar .menulist.on a:focus {
 	background-color: #d8ebfc;
+	transition: 0.3s;
 	text-shadow: none;
 	border-radius: 0;
 	-webkit-border-radius: 0;
@@ -451,11 +452,18 @@ ul.horizontal_list {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	width: 6em;
+	width: 8em;
+	padding-left: 20px;
 }
-#adminbar .on li a {
+#adminbar .usergroup {
+	padding-left: 20px;
+	font-size: .85em;
+}
+#adminbar .usergroup li {
+	display: list-item;
+}
+#adminbar .on  > li {
 	display: block;
-	padding: 1px 20px;
 }
 #adminbar .show_if_focus {
 	left:4px;
@@ -757,6 +765,7 @@ div.form_tooltip {
 .pagination .active a,
 .pagination a:hover {
 	background-color: #eee;
+	transition: 0.3s;
 }
 .pagination .active a {
 	font-weight: bold;
@@ -1178,6 +1187,11 @@ td.minimum {
 	box-shadow: 0 1px 0 #f3f3f3;
 	border-right: none;
 }
+.formtable tr:last-child th,
+.formtable tr:last-child td {
+	border-bottom: none;
+}
+
 .formtable thead th {
 	text-align: left;
 }
@@ -1227,15 +1241,18 @@ table.calendar {
 .calendar th.week6 {
 	color: darkcyan;
 }
-.calendar td.week6 {
+/*.calendar td.week6 {
 	background-color: #d8ebfc;
 }
+*/
 .calendar th.week0 {
 	color: indianred;
 }
+/*
 .calendar td.week0 {
 	background-color: #fcebd8;
 }
+*/
 .calendar td {
 	vertical-align: top;
 	padding: 0;
@@ -1246,12 +1263,12 @@ table.calendar {
 }
 .calendar .title {
 	display: block;
-/*	background-color: #eee;*/
+	background-color: #eee;
 	font-weight: bold;
 	text-decoration: none;
 }
 .week6 .title {
-	background-color: aliceblue;
+	background-color: #d8ebfc;
 }
 .week0 .title {
 	background-color: pink;
@@ -1649,6 +1666,7 @@ li.show_if_smalldisplay {
 		height: 0;
 		clip: rect(1px 1px 1px 1px);
 		clip: rect(1px, 1px, 1px, 1px);
+		overflow: hidden;
 	}
 	li.show_if_smalldisplay {
 		display: list-item !important;
@@ -1659,7 +1677,6 @@ li.show_if_smalldisplay {
 		color: #333 !important;
 		text-shadow: none;
 		font-weight: bold;
-		padding:0 20px;
 	}
 	#render_info {
 		position: fixed;

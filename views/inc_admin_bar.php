@@ -49,7 +49,7 @@ if (\Auth::check()):
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
 				$html.= '</div><!-- /.admin_controller -->';
 
-				$idxmenu = \Arr::get($actionset, 'index') ? \Actionset::generate_menu_html($actionset['index'], array('class'=>'semimodal hidden_item boxshadow')) : false ;
+				$idxmenu = \Arr::get($actionset, 'index') ? \Actionset::generate_menu_html($actionset['index'], array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
 				if ($idxmenu):
 					$html.= '<div class="admin_index_list">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"インデクス一覧を開く\">インデクス<span class=\"skip\">エンターでメニューを開きます</span></a>";
@@ -79,7 +79,7 @@ if (\Auth::check()):
 			endif;
 			
 				// option menu
-				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'semimodal hidden_item boxshadow')) : false ;
+				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
 
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';
@@ -153,21 +153,21 @@ if (\Auth::check()):
 			$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログイン中"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'<span class="skip"> エンターでメニューを開きます</span></span></a>';
 			$html.= '<ul class="semimodal menulist hidden_item">';
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
+			$html.= "<li><a href=\"".\Uri::base()."auth/logout\">ログアウト</a></li>";
 			if ( ! \Auth::is_admin()):
-				$html.= "<li><a href=\"".\Uri::base()."usr/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
+				$html.= "<li class=\"has_top_separator\"><a href=\"".\Uri::base()."usr/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
 			endif;
 			// usergroup
 			$usergroups = \Auth::get('usergroup');
 
 			if($usergroups):
-				$html.= '<li>所属ユーザグループ<ul>';
+				$html.= '<li class="usergroup">所属ユーザグループ<ul>';
 				foreach ($usergroups as $k => $usergroup):
 					if ($k == -10) continue; // usergroup -10: logged in users
 					$html.= "<li>{$usergroup->name}</li>";
 				endforeach;
 				$html.= '</ul></li>';
 			endif;
-			$html.= "<li><a href=\"".\Uri::base()."auth/logout\">ログアウト</a></li>";
 			$html.= '</ul>';
 			$html.= '</div><!-- /.adminbar_user -->';
 

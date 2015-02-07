@@ -133,8 +133,8 @@ if(firstFocus){
 	set_focus(firstFocus);
 }else{
 	var container = $('.container');
-	var page_title = container.find('h1').first();
-	container.attr('tabindex', '0').attr('title', page_title.text()).focus();
+//	var page_title = $(document).find('#adminbar h3').first().text();
+	container.focus();
 }
 
 

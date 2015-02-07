@@ -11,6 +11,7 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 <head>
 	<meta charset="utf-8">
 	<?php
+			$titlestr = $title;
 		if (\Uri::current() == \Uri::base()):
 			$title = \Config::get('site_title').' - '.$title;
 		else:
@@ -49,9 +50,9 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 	
 </head>
 <body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
+	<div class="container" title="<?php echo $titlestr ?>ページ" tabindex="-1">
 <?php 
-	echo (\Auth::check()) ? '<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
+	echo (\Auth::check()) ? '		<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
 ?>
-	<div class="container">
 <?php echo render('inc_messages'); ?>
 		<div class="contents">
