@@ -263,7 +263,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$detail->private_kb = $allow ? 0 : 1;
 		}
 
-
 		$view = \View::forge($model::$_kind_name . "/view");
 		$view->set_global('title', self::$nicename);
 		$view->set("year", $year);
