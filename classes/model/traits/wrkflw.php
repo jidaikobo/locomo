@@ -396,6 +396,11 @@ trait Model_Traits_Wrkflw
 		$column = \Arr::get(static::get_field_by_role('workflow'), 'lcm_field', 'workflow_status');
 		if ( ! isset(static::properties()[$column])) return $options;
 
+		// 一覧にはfinish以外表示しない
+		if ($mode == 'index') {
+			$options['where'][] = array(array($column, '=', 'finish'));
+		}
+
 		// 編集
 		if ($mode == 'edit') {
 			// 作成権限があるユーザだったらin_progress以外を編集できる

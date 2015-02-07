@@ -343,6 +343,13 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name ;
 		if ($obj = $model::find($id))
 		{
+			// event
+			if (\Event::instance()->has_events('locomo_delete'))
+			{
+				\Event::instance()->trigger('locomo_delete', $obj, 'none');
+			}
+
+			// try to delete
 			try {
 				$obj->delete(null, true);
 			}
