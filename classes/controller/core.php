@@ -53,7 +53,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// called_class
 		$called_class = get_called_class();
-		static::$controller  = \Request::main()->controller;
+		static::$controller  = \Inflector::add_head_backslash(\Request::main()->controller);
 		static::$action      = \Request::main()->action;
 		static::$base_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
 		static::$base_url    = str_replace('locomo/', '' , static::$base_url); // locomo is not module
@@ -98,7 +98,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// Profiler
 		\Profiler::mark('Locomo\\Controller_Core::router() - Called');
 
-		// action not exists - index
+		// action not exists - got to main_url instead of index
 		$called_class = get_called_class();
 		$is_allow = true;
 		if (

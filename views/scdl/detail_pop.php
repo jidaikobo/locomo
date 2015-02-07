@@ -7,12 +7,19 @@
 	<tr>
 		<td>
 			<?php
+			
+			// 表示加工
+			$detail_pop_data->display_startdate = date('Y年n月j日', strtotime($detail_pop_data->start_date . " " . $detail_pop_data->start_time));
+			$detail_pop_data->display_enddate = date('Y年n月j日', strtotime($detail_pop_data->end_date . " " . $detail_pop_data->end_time));
+			$detail_pop_data->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail_pop_data->start_date . " " . $detail_pop_data->start_time)));
+			$detail_pop_data->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail_pop_data->end_date . " " . $detail_pop_data->end_time)));
+
 			if ($detail_pop_data->repeat_kb == 0) {
 				// 毎年
-				print '開催日時:' . $detail_pop_data->start_date . '　' . $detail_pop_data->start_time . "〜" . $detail_pop_data->end_date . " " . $detail_pop_data->end_time;
+				print '開催日時:' . $detail_pop_data->display_startdate . '　' . $detail_pop_data->display_starttime . "〜" . $detail_pop_data->display_enddate . " " . $detail_pop_data->display_endtime;
 			} else {
 				print '開催日時:' . $detail_pop_data->target_year . "年" . $detail_pop_data->target_mon . "月" . $detail_pop_data->target_day . "日";
-				print '　' . $detail_pop_data->start_time . "〜" . $detail_pop_data->end_time;
+				print '　' . $detail_pop_data->display_starttime . "〜" . $detail_pop_data->display_endtime;
 			}
 			?>
 		</td>
@@ -50,7 +57,7 @@
 
 	<tr>
 		<td>
-			登録者：<?php print $detail_pop_data->create_user->username; ?>
+			登録者：<?php print @$detail_pop_data->create_user->username; ?>
 		</td>
 	</tr>
 </table>

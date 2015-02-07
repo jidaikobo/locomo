@@ -11,11 +11,18 @@ calendar【<?php print $detail->title_text; ?>】
 <tr>
 	<th>開始日時</th>
 	<td>
-	<?php 
+	<?php
+	
+		// 表示加工
+		$detail->display_startdate = date('Y年n月j日', strtotime($detail->start_date . " " . $detail->start_time));
+		$detail->display_enddate = date('Y年n月j日', strtotime($detail->end_date . " " . $detail->end_time));
+		$detail->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail->start_date . " " . $detail->start_time)));
+		$detail->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail->end_date . " " . $detail->end_time)));
+
 		if ($detail->repeat_kb == 0) {
-			echo $detail->start_date . " " . $detail->start_time . "〜" . $detail->end_date . " " . $detail->end_time;
+			echo $detail->display_startdate . " " . $detail->display_starttime . "〜" . $detail->display_enddate . " " . $detail->display_endtime;
 		} else {
-			echo $year . "/" . $mon . "/" . $day . " " . $detail->start_time . "〜" . $detail->end_time;
+			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detail->display_starttime . "〜" . $detail->display_endtime;
 			if ($detail->week_kb != "" && $detail->repeat_kb == 2) {
 				echo "(";
 				$week = array('日', '月', '火', '水', '木', '金', '土');
@@ -108,14 +115,14 @@ calendar【<?php print $detail->title_text; ?>】
 <?php if($detail->user_id): ?>
 <tr>
 	<th>作成者</th>
-	<td><?php echo $detail->create_user->username; ?></td>
+	<td><?php echo @$detail->create_user->username; ?></td>
 </tr>
 
 <?php endif; ?>
 <?php if($detail->updated_at): ?>
 <tr>
 	<th>更新日時</th>
-	<td><?php echo $detail->updated_at; ?></td>
+	<td><?php echo date('Y年n月j日 G時i分', strtotime($detail->updated_at)); ?></td>
 </tr>
 
 <?php endif; ?>

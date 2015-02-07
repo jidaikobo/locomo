@@ -13,6 +13,17 @@ trait Controller_Traits_Wrkflw
 			\Response::redirect(static::$main_url);
 		});
 
+		// event - locomo_delete
+		\Event::register('locomo_delete', function($obj){
+			if ( ! isset($obj->workflow_status)) return;
+			if ($obj->workflow_status == 'in_progress')
+			{
+				\Session::set_flash('error', '承認プロセス進行中の項目は削除できません。');
+				return \Response::redirect(static::$main_url);
+			}
+			return;
+		});
+
 		// event - locomo_revision_update
 		\Event::register('locomo_revision_update', function($operation_and_comment){
 			if (\Request::main()->action == 'route')
@@ -44,12 +55,16 @@ trait Controller_Traits_Wrkflw
 		// get related unfinished items
 		$current_items = $model->get_related_current_items($controller, $model);
 
+		// column
+		$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
+
 		// order by is current action?
 		$related = array();
 		$not_related = array();
 		foreach ($current_items as $id => $current_item)
 		{
-			if (in_array(\Auth::get('id'), $current_item->workflow_users))
+			$related_users = $current_item->workflow_users + array($current_item->{$column});
+			if (in_array(\Auth::get('id'), $related_users))
 			{
 				$related[] = $current_item;
 			}

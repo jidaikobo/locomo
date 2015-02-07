@@ -3,7 +3,7 @@ namespace Locomo;
 class Controller_Scdl extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Crud;
+//	use \Controller_Traits_Crud;
 
 	// locomo
 	public static $locomo = array(
@@ -32,11 +32,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	{
 
 		$model = $this->model_name ;
-
-		// 日付の自動判断
-		if (\Input::post("end_date", "") == "" || \Input::post("end_date", "") == "0000-00-00") {
-			$_POST['end_date'] = "2100-01-01";
-		}
 
 		// --------------------- parent ---------------------
 		$content = \View::forge($model::$_kind_name . "/edit");
@@ -267,7 +262,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 			$detail->private_kb = $allow ? 0 : 1;
 		}
-
 
 		$view = \View::forge($model::$_kind_name . "/view");
 		$view->set_global('title', self::$nicename);
@@ -558,11 +552,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->or_where_close()
 							->or_where_open()
 								->where("start_date", "<=", $target_start)
-								->where("end_date", "=>", $target_start)
+								->where("end_date", ">=", $target_start)
 							->or_where_close()
 							->or_where_open()
 								->where("start_date", "<=", $target_end)
-								->where("end_date", "=>", $target_end)
+								->where("end_date", ">=", $target_end)
 							->or_where_close()
 							->or_where_open()
 								->where("start_date", ">=", $target_start)

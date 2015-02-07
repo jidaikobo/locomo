@@ -236,6 +236,11 @@ trait Model_Traits_Wrkflw
 
 			// find writers
 			$writers = \Model_Wrkflwadmin::find_writers($workflow_id);
+			$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
+			if (isset(static::properties()[$column]))
+			{
+				$writers['allusers'][] = $v->{$column};
+			}
 
 			// get latest step_id
 			$current_step_id = static::get_current_step_id($workflow_id, $current_step);
@@ -247,9 +252,7 @@ trait Model_Traits_Wrkflw
 			if($current_step_id)
 			{
 				$unfinished[$id]->workflow_users = self::get_members($current_step_id);
-			}
-			else
-			{
+			} else {
 				// null means before progress - related members are 'writers'
 				$unfinished[$id]->workflow_users = $writers['allusers'];
 			}
@@ -392,6 +395,11 @@ trait Model_Traits_Wrkflw
 		// workflow_statusカラムがなければ、対象にしない
 		$column = \Arr::get(static::get_field_by_role('workflow'), 'lcm_field', 'workflow_status');
 		if ( ! isset(static::properties()[$column])) return $options;
+
+		// 一覧にはfinish以外表示しない
+		if ($mode == 'index') {
+			$options['where'][] = array(array($column, '=', 'finish'));
+		}
 
 		// 編集
 		if ($mode == 'edit') {

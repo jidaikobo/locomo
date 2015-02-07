@@ -137,15 +137,22 @@ class Model_Usr extends Model_Base
 	 */
 	public function _event_before_save()
 	{
-		// パスワードのハッシュ
-		$password = \Input::post('password');
-		if (empty($password))
+		// not for migration
+		if (\Input::method() == 'POST')
 		{
-			// postがない場合、すなわちパスワード変更なし
-			$this->password = $this->_original['password'];
+			// パスワードのハッシュ
+			$password = \Input::post('password');
+			if (empty($password))
+			{
+				// postがない場合、すなわちパスワード変更なし
+				$this->password = $this->_original['password'];
+			} else {
+				// postがあるのでパスワードを変更
+				$this->password = \Auth::hash_password($password);
+			}
 		} else {
-			// postがあるのでパスワードを変更
-			$this->password = \Auth::hash_password($password);
+			// migration と見なす
+			$this->password = \Auth::hash_password($this->password);
 		}
 	}
 
@@ -213,21 +220,6 @@ class Model_Usr extends Model_Base
 		// password
 		$form->field('password')->set_value('');
 
-		// 管理者以外は旧パスワードを求める
-		if ( ! \Auth::is_admin()):
-			$form->add(
-					'old_password',
-					'旧パスワード',
-					array('type' => 'password', 'size' => 20, 'placeholder'=>'旧パスワードを入れてください')
-				)
-				->set_value('')
-				->add_rule('required')
-				->add_rule('min_length', 8)
-				->add_rule('max_length', 50)
-				->add_rule('match_password', "lcm_usrs.password.{$id}")
-				->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
-		endif;
-
 		// password
 		$form->field('password')
 			->add_rule('require_once', "lcm_usrs.password.{$id}");
@@ -242,6 +234,23 @@ class Model_Usr extends Model_Base
 			)
 			->set_value('')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+
+		// 管理者以外は旧パスワードを求める
+		if ( ! \Auth::is_admin()):
+			$form->add_after(
+					'old_password',
+					'旧パスワード',
+					array('type' => 'password', 'size' => 20, 'placeholder'=>'旧パスワードを入れてください'),
+					array(),
+					'confirm_password'
+				)
+				->set_value('')
+				->add_rule('required')
+				->add_rule('min_length', 8)
+				->add_rule('max_length', 50)
+				->add_rule('match_password', "lcm_usrs.password.{$id}")
+				->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
+		endif;
 
 		// email
 		$form->field('email')

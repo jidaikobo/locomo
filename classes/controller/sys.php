@@ -61,51 +61,6 @@ class Controller_Sys extends \Controller_Base
 	}
 
 	/**
-	 * action_fetch_view()
-	 * fetch files view
-	 */
-/*
-	public function action_fetch_view()
-	{
-		// ヘンなアクセスを追い返す
-		$ext = \Input::extension();
-		$args = func_get_args();
-		$path = join('/', $args).'.'.$ext;
-		if (empty($path) || empty($ext))
-		{
-			return \Response::redirect('/', 'location', 404);
-		}
-
-		// 存在確認
-		$filename = '' ;
-		$locomo_assets = LOCOMOPATH."assets/{$path}";
-		$app_assets = APPPATH."locomo/assets/{$path}";
-
-		$filename = file_exists($locomo_assets) ? $locomo_assets : '';
-		$filename = file_exists($app_assets)    ? $app_assets : $filename;
-
-		if ( ! $filename)
-		{
-			$page = \Request::forge('sys/404')->execute();
-			return new \Response($page, 404);
-		}
-
-		// 拡張子を確認
-		$config = \Config::load('upload');
-		$ext = strtolower($ext);
-		if ( ! isset($config['mime_whitelist'][$ext])) return \Response::forge();
-
-		// profilerをoffに
-		\Fuel\Core\Fuel::$profiling = false;
-
-		// 描画
-		$headers = array('Content-type' => $config['mime_whitelist'][$ext]);
-		$this->template->set_global('title', '');
-		return \Response::forge(file_get_contents($filename), 200, $headers);
-	}
-*/
-
-	/**
 	* action_admin()
 	* controller menu
 	*/
