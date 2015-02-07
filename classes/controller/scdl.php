@@ -3,7 +3,7 @@ namespace Locomo;
 class Controller_Scdl extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Crud;
+//	use \Controller_Traits_Crud;
 
 	// locomo
 	public static $locomo = array(
