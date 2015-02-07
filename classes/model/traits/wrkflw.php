@@ -239,7 +239,7 @@ trait Model_Traits_Wrkflw
 			$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
 			if (isset(static::properties()[$column]))
 			{
-				$writers['allusers'][] = $v->creator_id;
+				$writers['allusers'][] = $v->{$column};
 			}
 
 			// get latest step_id
@@ -252,9 +252,7 @@ trait Model_Traits_Wrkflw
 			if($current_step_id)
 			{
 				$unfinished[$id]->workflow_users = self::get_members($current_step_id);
-			}
-			else
-			{
+			} else {
 				// null means before progress - related members are 'writers'
 				$unfinished[$id]->workflow_users = $writers['allusers'];
 			}
