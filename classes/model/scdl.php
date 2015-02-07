@@ -317,7 +317,7 @@ class Model_Scdl extends \Model_Base
 			'data_type' => 'int',
 			'form' => 
 			array (
-				'type' => 'hidden',
+				'type' => 'select',
 				'size' => 0,
 				'class' => 'int',
 			),
@@ -422,13 +422,15 @@ class Model_Scdl extends \Model_Base
 			'key_from' => 'id',
 			'key_through_from' => 'schedule_id',
 			'table_through' => 'lcm_scdls_buildings',
-			'model_to' => '\Model_Item',
+			'model_to' => '\Model_Scdl_Item',
 			'key_through_to' => 'building_id',
-			'key_to' => 'id',
+			'key_to' => 'item_id',
 			'cascade_save' => false,
 			'cascade_delete' => false,
 			'conditions' => array(
-				array('category', '=', 'schedule_building'),
+				'where'=>array(
+				array('item_group', '=', 'building'),
+				)
 			),
 		),
 
@@ -473,12 +475,12 @@ class Model_Scdl extends \Model_Base
 		$form->field('kind_flg')->set_value(self::$_kind_flg);
 
 		// 作成者
-		//$form->field('user_id')->set_options(Model_Usr::get_options(array(), 'username'));
+		$form->field('user_id')->set_options(Model_Usr::get_options(array(), 'display_name'));
 		
 
-		$form->field('user_id')->set_value(\Auth::get('id'));
+		//$form->field('user_id')->set_value(\Auth::get('id'));
 		$form->field('is_visible')->set_value(1);
-		
+
 		// 初期値
 		if ($obj->id == null) {
 			// 自分を選択する

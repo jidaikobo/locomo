@@ -129,7 +129,8 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				// slug
 				$acl_tmp = \Model_Acl::find('all',
 					array(
-						'select' => array('slug', 'controller'),
+					//	'select' => array('slug', 'controller'),
+						'select' => array('*'),
 						'where' => array(
 							array('usergroup_id', 'IN', $usergroups),
 							'or' => array('user_id', 'IN', array( (int) $this->user->id))
