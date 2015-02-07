@@ -203,8 +203,12 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
+<tr>
+	<th><?php echo $form->field('user_id')->set_template('{label}{required}'); ?></th>
+	<td><?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?></td>
+</tr>
 
-<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
+
 <?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
 <?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
 

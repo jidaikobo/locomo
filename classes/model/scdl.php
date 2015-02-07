@@ -317,7 +317,7 @@ class Model_Scdl extends \Model_Base
 			'data_type' => 'int',
 			'form' => 
 			array (
-				'type' => 'hidden',
+				'type' => 'select',
 				'size' => 0,
 				'class' => 'int',
 			),
@@ -473,12 +473,12 @@ class Model_Scdl extends \Model_Base
 		$form->field('kind_flg')->set_value(self::$_kind_flg);
 
 		// 作成者
-		//$form->field('user_id')->set_options(Model_Usr::get_options(array(), 'username'));
+		$form->field('user_id')->set_options(Model_Usr::get_options(array(), 'username'));
 		
 
-		$form->field('user_id')->set_value(\Auth::get('id'));
+		//$form->field('user_id')->set_value(\Auth::get('id'));
 		$form->field('is_visible')->set_value(1);
-		
+
 		// 初期値
 		if ($obj->id == null) {
 			// 自分を選択する
