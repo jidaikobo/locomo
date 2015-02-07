@@ -163,17 +163,18 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$this->template->content->set("non_selected_user_list", $non_selected_user_list);
 
 		$select_building_list = $this->template->content->item->building;
-		$building_where = array('category', 'schedule_building');
+		$building_where = array('item_group', 'building');
 		if (count($select_building_list)) {
 			$building_where = array($building_where, array('id', 'not in', array_keys($select_building_list)));
 		}
 
-		$non_selected_building_list = \Model_Item::find('all',
+		$non_selected_building_list = \Model_Scdl_Item::find('all',
 			array(
 				'where'=> array($building_where)
 				)
 			);
 		
+		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
 		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
@@ -1173,25 +1174,42 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_get_user_list()
 	{
-//		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
+		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
+		$where = array();
 
 		if (\Input::post("gid")) {
-			$response = \Model_Usr::find('all',
-				array(
-				'related'   => array('usergroup'),
-					'where'=> array(array('usergroup.id', '=', \Input::post("gid", 0))),
-					'order_by' => 'display_name'
-					)
-				);
-		} else {
-			$response = \Model_Usr::find('all',
-				array(
-				'related'   => array('usergroup'),
-					'order_by' => 'id'
-					)
-				);
+			$where = array(array('usergroup.id', '=', \Input::post("gid", 0)));
 		}
+		$response = \Model_Usr::find('all',
+			array(
+			'related'   => array('usergroup'),
+				'where'=> $where,
+				'order_by' => 'display_name'
+				)
+			);
+	
+		echo $this->response($response, 200); die();
+	}
 
+	/*
+	 * ajax IDから施設リストを返す
+	 * @return users の配列
+	 */
+	public function action_get_building_list()
+	{
+//		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
+		$where = array(array('item_group', 'building'));
+		if (\Input::post("bid")) {
+			$where = array(
+						array('item_group2', '=', \Input::post("bid", 0)),
+						array('item_group', 'building')
+						);
+		}
+		$response = \Model_Scdl_Item::find('all',
+			array(
+				'where'=> $where,
+				)
+			);
 		echo $this->response($response, 200); die();
 	}
 

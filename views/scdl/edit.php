@@ -158,10 +158,21 @@ if (isset($overlap_result) && count($overlap_result)) {
 <div id="building_panel">
 	<table>
 		<tr>
+		<td>グループ</td>
+		<td colspan="2">
+			<select id="building_group_list">
+				<option value="">--- 全て ---
+				<?php foreach($building_group_list as $row) { ?>
+					<option value="<?php print $row['item_group2']; ?>" ><?php  print $row['item_group2']; ?>
+				<?php } ?>
+			</select>
+		</td>
+		</tr>
+		<tr>
 			<td>
 				<select id="building_kizon" name="building_kizon" size="2" style="width:100px;height:200px;">
 				<?php foreach($select_building_list as $row) { ?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option>
+					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 				<?php } ?>
 				</select>
 			</td>
@@ -169,7 +180,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<td>
 				<select id="building_new" name="building_new" size="2" style="width:100px;height:200px;">
 				<?php foreach($non_select_building_list as $row) { ?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option>
+					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 				<?php } ?>
 				</select>
 			</td>
@@ -243,6 +254,9 @@ $("#group_list").change(function(event) {
 	get_group_user(event);
 });
 
+$("#building_group_list").change(function(event) {
+	get_group_building(event);
+});
 
 /**
  * [change_repeat_kb_area description]
@@ -369,6 +383,36 @@ function get_group_user(e) {
 	});
 }
 
+function get_group_building(e) {
+
+	var limit = 100;
+	var group_id = $("#building_group_list").val();
+
+	var now_buildings = new Object();
+	var kizon_options = document.getElementById('building_kizon').options;
+	for(var i = 0; i < kizon_options.length; i++){
+		now_buildings['building' + kizon_options[i].value] = 1;
+	};
+
+	$.ajax({
+		url: base_uri + 'scdl/get_building_list.json',
+		type: 'post',
+		data: 'bid=' + group_id,
+		success: function(res) {
+
+			exists = JSON.parse(res);
+
+			document.getElementById("building_new").options.length=0;
+
+			for(var i in exists) {
+				if (!now_buildings['building' + exists[i]['item_id']]) {
+					$("#building_new").append($('<option>').html(exists[i]['item_name']).val(exists[i]['item_id']));
+				}
+			}
+		
+		}
+	});
+}
 </script>
 
 
