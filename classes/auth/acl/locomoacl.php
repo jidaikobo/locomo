@@ -26,6 +26,8 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		// no rights for no condition
 		if ( ! $condition) return false;
 
+		$condition = \Inflector::add_head_backslash($condition);
+
 		// event
 		// to do nothing call back must return 'through'
 		if (\Event::instance()->has_events('locomo_has_access'))
