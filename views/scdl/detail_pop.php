@@ -50,7 +50,7 @@
 
 	<tr>
 		<td>
-			登録者：<?php print $detail_pop_data->create_user->username; ?>
+			登録者：<?php print @$detail_pop_data->create_user->username; ?>
 		</td>
 	</tr>
 </table>
