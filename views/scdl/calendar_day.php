@@ -36,7 +36,7 @@
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
 	<?php print htmlspecialchars_decode($next_url); ?>
 </div>
-<a href="<?php echo \Uri::create("scdl/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
+<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 
 <?php /*
 <table class="table">
@@ -140,7 +140,7 @@
 <script>
 $("#move_date").change(function(event){
 	var target = $("#move_date").val().replace(/-/g, "/");
-	location.href='/scdl/calendar/' + target;
+	location.href='/<?php print $kind_name; ?>/calendar/' + target;
 });
 </script>
 
