@@ -26,12 +26,26 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		// no rights for no condition
 		if ( ! $condition) return false;
 
+		// event
+		// to do nothing call back must return 'through'
+		if (\Event::instance()->has_events('locomo_has_access'))
+		{
+			$flag = \Event::instance()->trigger('locomo_has_access', $condition);
+			if ($flag === '1') return true;
+			if ($flag === '0') return false;
+		}
+
+		// check related controller first - for speed up
+		if (
+			! in_array(\Auth::get('id'), array(-1, -2)) &&
+			! in_array(\Inflector::get_controllername($condition), \Auth::get('related_controllers')))
+		{
+			return false;
+		}
+
 		// check class_exists
 		$module = \Inflector::get_modulename($condition);
 		$module && \Module::loaded($module) == false and \Module::load($module);
-
-
-//まずコントローラ単位で判定するかどうかを考える。
 
 		// controller and action
 		if ( ! \Util::method_exists($condition)) return false;

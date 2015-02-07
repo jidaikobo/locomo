@@ -24,6 +24,16 @@ class Controller_Usr extends \Locomo\Controller_Base
 	);
 
 	/**
+	 * before()
+	 */
+	public function before()
+	{
+		parent::before();
+		// locomo_has_access
+		\Event::register('locomo_has_access', '\Controller_Usr::user_auth_find');
+	}
+
+	/**
 	 * action_index()
 	 * user module is not for public.
 	 */
@@ -55,8 +65,19 @@ class Controller_Usr extends \Locomo\Controller_Base
 	/**
 	 * user_auth_find()
 	 */
-	public static function user_auth_find()
+	public static function user_auth_find($condition)
 	{
+		$checks = array('\Controller_Usr::action_view', '\Controller_Usr::action_edit');
+		if ( ! in_array($condition, $checks) || ! \Request::main()->controller == 'Controller_Usr')
+		{
+			return 'through';
+		}
+		$checks = array('view', 'edit');
+		if ( ! in_array(self::$action, $checks))
+		{
+			return 'through';
+		}
+
 		// honesty at this case, ($pkid == \Auth::get('id')) is make sence.
 		// this is a sort of sample code.
 		$pkid = \Request::main()->id;
@@ -65,10 +86,10 @@ class Controller_Usr extends \Locomo\Controller_Base
 
 		// add allowed to show links at actionset
 		\Auth::instance()->add_allowed(array(
-			'\\Controller_Usr/edit',
-			'\\Controller_Usr/view',
+			'\Controller_Usr::action_edit',
+			'\Controller_Usr::action_view',
 		));
 
-		return ($obj->id == \Auth::get('id'));
+		return ($obj->id == \Auth::get('id')) ;
 	}
 }

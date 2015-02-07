@@ -119,6 +119,17 @@ class Inflector extends \Fuel\Core\Inflector
 	}
 
 	/**
+	 * get_controllername()
+	 * @param string [\MODNAME\]Controller_CTRL[::action]
+	 * @return string [\MODNAME\Controller_CTRL|false]
+	 */
+	public static function get_controllername($str = null, $default = false)
+	{
+		if (strpos($str, '::') !== false) return substr($str, 0, strpos($str, '::'));
+		return $str ?: $default;
+	}
+
+	/**
 	 * ctrl_to_safestr()
 	 * @param string [\MODNAME\]Controller_CTRL
 	 * @return string [-MODNAME-]Controller_CTRL

@@ -25,14 +25,15 @@ if (\Auth::check()):
 				$ctrl_index = '';
 				// Controller_Sys
 				if ($current_name == '-Controller_Sys'):
-					if(\Auth::has_access(\Request::main()->controller.'::home')):
+					if(\Auth::has_access($locomo['controller']['name'].'::home')):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'), '管理トップ');
 					else:
 						$top_link = '管理トップ';
 					endif;
 				else:
-//					if(\Auth::has_access(\Request::main()->controller.DS.'sys/admin')):
-					if(\Auth::has_access(\Request::main()->controller.'::'.\Arr::get($locomo, 'controller.main_action'))):
+//					if(\Auth::has_access($locomo['controller']['name'].DS.'sys/admin')):
+					// 権限があればコントローラトップへのリンクを表示
+					if(\Auth::has_access($locomo['controller']['name'].'::'.\Arr::get($locomo, 'controller.main_action'))):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'.$current_name), $current_nicename).' ';
 					else:
 						$top_link = $current_nicename;
@@ -157,10 +158,11 @@ if (\Auth::check()):
 			endif;
 			// usergroup
 			$usergroups = \Auth::get('usergroup');
+
 			if($usergroups):
 				$html.= '<li>所属ユーザグループ<ul>';
-				foreach ($usergroups as $usergroup):
-					if ( ! property_exists($usergroup, 'name')) continue; // usergroup -10: logged in users
+				foreach ($usergroups as $k => $usergroup):
+					if ($k == -10) continue; // usergroup -10: logged in users
 					$html.= "<li>{$usergroup->name}</li>";
 				endforeach;
 				$html.= '</ul></li>';
