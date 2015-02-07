@@ -236,6 +236,11 @@ trait Model_Traits_Wrkflw
 
 			// find writers
 			$writers = \Model_Wrkflwadmin::find_writers($workflow_id);
+			$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
+			if (isset(static::properties()[$column]))
+			{
+				$writers['allusers'][] = $v->creator_id;
+			}
 
 			// get latest step_id
 			$current_step_id = static::get_current_step_id($workflow_id, $current_step);
