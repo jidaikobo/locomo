@@ -1251,10 +1251,10 @@ table.calendar {
 	text-decoration: none;
 }
 .week6 .title {
-	background-color: #aliceblue;
+	background-color: aliceblue;
 }
 .week0 .title {
-	background-color: #pink;
+	background-color: pink;
 }
 .widget .calendar {
 	margin: 3px;

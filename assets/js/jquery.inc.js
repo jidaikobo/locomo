@@ -131,7 +131,12 @@ if($('.flash_alert')[0]){
 }
 if(firstFocus){
 	set_focus(firstFocus);
+}else{
+	var container = $('.container');
+	var page_title = container.find('h1').first();
+	container.attr('tabindex', '0').attr('title', page_title.text()).focus();
 }
+
 
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
