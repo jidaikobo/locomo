@@ -53,6 +53,25 @@ class Actionset_Scdl extends \Actionset_Base
 		return $retvals;
 	}
 
+
+	/**
+	 * actionset_viewdetail
+	 */
+	public static function actionset_viewdetail($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = parent::actionset_view($controller, $obj, $id);
+
+		if(\Request::main()->action == 'edit' && $id):
+			$actions = array(array($controller.DS."viewdetail/" . $id, '閲覧'));
+			$urls = static::generate_urls($controller.'::action_viewdetail', $actions);
+		endif;
+
+		\Arr::set($retvals, 'urls', $urls);
+		\Arr::set($retvals, 'action_name', '編集');
+		\Arr::set($retvals, 'acl_exp', 'スケジューラの個票閲覧権限です。');
+		return $retvals;
+	}
+
 	/**
 	 * actionset_edit
 	 */
