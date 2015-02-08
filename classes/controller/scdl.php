@@ -13,6 +13,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 900,   // order of appearance
+		'widgets' =>array(
+			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl::action_calendar'),
+		),
 	);
 
 	/**

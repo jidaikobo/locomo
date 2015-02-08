@@ -13,7 +13,6 @@ class Controller_Sys extends \Controller_Base
 		'widgets' =>array(
 			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys::action_admin'),
 			array('name' => '現在時刻', 'uri' => '\\Controller_Sys::action_clock'),
-			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl::action_calendar'),
 		),
 	);
 
