@@ -1,15 +1,7 @@
-<div class="select_display_type">
-	<?php print htmlspecialchars_decode($display_month); ?> / 
-	<?php print htmlspecialchars_decode($display_week); ?>
+
+<div class="narrow_user">
+<?php include("calendar_narrow.php"); ?>
 </div>
-
-<h1><?php print $year; ?>年<?php print (int)$mon; ?>月</h1>
-
-<style>
-.icon_small {
-	font-size: 10px;
-}
-</style>
 
 <div class="field_wrapper calendar">
 <div class="select_period lcm_focus" title="月を選択 エンターで開きます">
@@ -34,6 +26,21 @@
 	<?php print htmlspecialchars_decode($next_year_url); ?>
 
 </div>
+
+<div class="select_display_type">
+	<?php print htmlspecialchars_decode($display_month); ?> / 
+	<?php print htmlspecialchars_decode($display_week); ?>
+</div>
+
+<h1><?php print $year; ?>年<?php print (int)$mon; ?>月</h1>
+
+<style>
+.icon_small {
+	font-size: 10px;
+}
+</style>
+
+
 <table class="calendar month lcm_focus">
 	<thead>
 		<tr>

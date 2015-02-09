@@ -1,3 +1,9 @@
+
+<div class="narrow_user">
+<?php include("calendar_narrow.php"); ?>
+</div>
+
+
 <?php print htmlspecialchars_decode($display_month); ?> / 
 <?php print htmlspecialchars_decode($display_week); ?>
 

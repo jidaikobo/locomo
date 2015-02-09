@@ -431,24 +431,34 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @return [type]
 	 */
 	public function action_calendar($year = null, $mon = null, $day = null, $mode = null) {
-/*
-		if ($year)
-			\Session::set("calendar_year", $year);
-		if ($mon)
-			\Session::set("calendar_mon", $mon);
-		if ($day)
-			\Session::set("calendar_day", $day);
-		if (!\Session::get("calendar_year"))
-			\Session::set("calendar_year", date('Y'));
-		if (!\Session::get("calendar_mon"))
-			\Session::set("calendar_mon", date('m'));
-		if (!\Session::get("calendar_day"))
-			\Session::set("calendar_day", date('d'));
-		$year = \Session::get("calendar_year");
-		$mon = \Session::get("calendar_mon");
-		$day = \Session::get("calendar_day");
-*/
+
 		$model = $this->model_name;
+
+		// 絞り込みをセッションへ保存
+		if (\Input::get("ugid", "not") != "not") {
+			\Session::set($model . "narrow_ugid", \Input::get("ugid"));
+			\Session::set($model . "narrow_uid", "");
+
+			\Session::set($model . "narrow_bgid", "");
+			\Session::set($model . "narrow_bid", "");
+		}
+		if (\Input::get("uid", "not") != "not")
+			\Session::set($model . "narrow_uid", \Input::get("uid"));
+
+		if (\Input::get("bgid", "not") != "not") {
+			\Session::set($model . "narrow_bgid", \Input::get("bgid"));
+			\Session::set($model . "narrow_bid", "");
+
+			\Session::set($model . "narrow_ugid", "");
+			\Session::set($model . "narrow_uid", "");
+		}
+		if (\Input::get("bid", "not") != "not")
+			\Session::set($model . "narrow_bid", \Input::get("bid"));
+
+
+
+
+
 
 		// 初期表示
 		if ($year == null)
@@ -507,10 +517,35 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 週表示用
 		list($weekY, $weekM, $weekD) = $this->get_week_first_date($year, $mon, $day);
-
 		$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
+
 		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
+		$view->set('narrow_user_group_list', \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name'));
+		$where = \Session::get($model . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model . "narrow_ugid"))) : array();
+		$view->set('narrow_user_list', \Model_Usr::find('all',
+			array(
+			'related'   => array('usergroup'),
+				'where'=> $where,
+				'order_by' => 'display_name'
+				)
+			));
+		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
+		
+		if (\Session::get($model . "narrow_bgid") > 0) {
+			$where = array(
+				array('item_group2', '=', \Session::get($model . "narrow_bgid"))
+				,array('item_group' , '=', 'building')
+				);
+		} else {
+			$where = array(array('item_group' , '=', 'building'));
+		}
+		$view->set('narrow_building_list', \Model_Scdl_Item::find('all',
+			array(
+				'where'=> $where
+				)
+			));
+		$view->set("model_name", $model);
 		$view->set('year', $year);
 		$view->set('mon', $mon);
 		$view->set("day", $day);
@@ -641,21 +676,21 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						$row['data'][] = clone $r;
 //						$schedules[$r['id']] = clone $r;
 					}
-				}
-				// メンバー
-				foreach ($r->user as $d) {
-					if (!isset($user_exist[$d->id])) {
-						$user_exist[$d->id]['model'] = $d;
-						$user_exist[$d->id]['data'][] = $r;
-					} else {
-						$flg_push = true;
-						foreach ($user_exist[$d->id]['data'] as $row_data) {
-							if ($row_data->schedule_id == $r->schedule_id) {
-								$flg_push = false;
-							}
-						}
-						if ($flg_push) {
+					// メンバー
+					foreach ($r->user as $d) {
+						if (!isset($user_exist[$d->id])) {
+							$user_exist[$d->id]['model'] = $d;
 							$user_exist[$d->id]['data'][] = $r;
+						} else {
+							$flg_push = true;
+							foreach ($user_exist[$d->id]['data'] as $row_data) {
+								if ($row_data->id == $r->schedule_id) {
+									$flg_push = false;
+								}
+							}
+							if ($flg_push) {
+								$user_exist[$d->id]['data'][] = $r;
+							}
 						}
 					}
 				}
@@ -759,7 +794,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$model = $this->model_name;
 		// 後でmodelを使うように
 		//$obj = $model::find(1);
-		$schedules_data = \Locomo\Model_Scdl::query()
+		$query = \Locomo\Model_Scdl::query()
 							//->where_open()
 							//	// 開始日時と終了日時が範囲内のもの
 							//	->where(\DB::expr("DATE_FORMAT(start_date, '%Y%m')"), sprintf("%04d%02d", $year, $mon))
@@ -784,8 +819,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->or_where_close()
 							->where_close()
 							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg)
-							->get();
+							->where("kind_flg", $model::$_kind_flg);
+		$schedules_data = $query->get();
+							
 
 		// 月曜日からはじまるため、空白のデータを入れる
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1)));
@@ -899,6 +935,29 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$start_unixtime			 = strtotime(date('Y/m/d 00:00:00', strtotime($row['start_date'])));
 		$end_unixtime			 = strtotime(date('Y/m/d 23:59:59', strtotime($row['end_date'])));
 		$target_week			 = date('w', $target_unixtime);
+
+		// 絞り込まれているかどうか
+		// DBからクエリを流すと重いのでここで判断する
+		if (\Session::get($this->model_name . "narrow_uid")) {
+			$is_member = false;
+			foreach ($row['user'] as $v) {
+				if (\Session::get($this->model_name . "narrow_uid") == $v['id']) {
+					$is_member = true;
+					break;
+				}
+			}
+			if (!$is_member) { return false; }
+		}
+		if (\Session::get($this->model_name . "narrow_bid")) {
+			$is_building = false;
+			foreach ($row['building'] as $v) {
+				if (\Session::get($this->model_name . "narrow_bid") == $v['item_id']) {
+					$is_building = true;
+					break;
+				}
+			}
+			if (!$is_building) { return false; }
+		}
 
 		switch ($row['repeat_kb']) {
 			case 0:

@@ -12,7 +12,7 @@ calendar【<?php print $detail->title_text; ?>】
 	<th>開始日時</th>
 	<td>
 	<?php
-	
+
 		// 表示加工
 		$detail->display_startdate = date('Y年n月j日', strtotime($detail->start_date . " " . $detail->start_time));
 		$detail->display_enddate = date('Y年n月j日', strtotime($detail->end_date . " " . $detail->end_time));
@@ -100,6 +100,30 @@ calendar【<?php print $detail->title_text; ?>】
 </tr>
 
 <?php endif; ?>
+
+<?php if (count($detail->user)) { ?>
+<tr>
+<th>メンバー</th>
+<td>
+	<?php foreach ($detail->user as $row) {
+		print $row['display_name'] . " ";
+	}
+	?>
+</td>
+</tr>
+<?php } ?>
+
+<?php if (count($detail->building)) { ?>
+<tr>
+<th>対象施設</th>
+<td>
+	<?php foreach ($detail->building as $row) {
+		print $row['item_name'] . " ";
+	}
+	?>
+</td>
+</tr>
+<?php } ?>
 
 <?php if (count($schedule_members_me)) { ?>
 <tr>
