@@ -397,12 +397,14 @@ trait Model_Traits_Wrkflw
 		if ( ! isset(static::properties()[$column])) return $options;
 
 		// 一覧にはfinish以外表示しない
-		if ($mode == 'index') {
+		if ($mode == 'index')
+		{
 			$options['where'][] = array(array($column, '=', 'finish'));
 		}
 
 		// 編集
-		if ($mode == 'edit') {
+		if ($mode == 'edit')
+		{
 			// 作成権限があるユーザだったらin_progress以外を編集できる
 			if (\Auth::has_access($controller.'::action_create')):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
@@ -411,22 +413,26 @@ trait Model_Traits_Wrkflw
 		}
 
 		// 承認のための閲覧
-		if (\Auth::has_access($controller.'::action_approve')):
+		if (\Auth::has_access($controller.'::action_approve'))
+		{
 			// 承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
 			return $options;
-		endif;
+		}
 
 		// 作成ユーザはどんな条件でも閲覧できる
-		if (\Auth::has_access($controller.'::action_create')):
+		if (\Auth::has_access($controller.'::action_create'))
+		{
 			return $options;
-		endif;
+		}
 
 		// 閲覧ユーザはfinishを閲覧できる
-		if (\Auth::has_access($controller.'::action_view')):
+//		if (\Auth::has_access($controller.'::action_view'))
+		if (\Auth::check())
+		{
 			$options['where'][] = array(array($column, '=', 'finish'));
 			return $options;
-		endif;
+		}
 
 		// 一般ユーザは閲覧できない
 		$pk = static::get_primary_keys('first');
