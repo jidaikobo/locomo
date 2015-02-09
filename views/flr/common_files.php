@@ -9,13 +9,13 @@
 	<tbody>
 	<?php foreach ($items as $item): ?>
 	<?php if (\Controller_Flr::check_auth($item->path)): ?>
-		<tr tabindex="-1">
-			<td style="min-width: 6em;"><div class="col_scrollable" tabindex="-1">
+		<tr>
+			<td style="min-width: 6em;"><div class="col_scrollable">
 			<?php
 				if ($item->genre == 'dir'):
-					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon'));
+					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
 				else:
-					echo Html::anchor('flr/dl/?dl=1&p='.\Model_Flr::enc_url($item->path, true), $item->name, array('class' => 'icon'));
+					echo Html::anchor('flr/dl/?dl=1&p='.\Model_Flr::enc_url($item->path, true), $item->name, array('class' => 'icon '.$item->genre));
 				endif;
 			?>
 			</div></td>

@@ -29,17 +29,6 @@ class Model_Usr extends Model_Base
 				'valid_string' => array(array('alpha','numeric','dot','dashes')),
 			),
 		),
-		'password' => array(
-			'label' => 'パスワード',
-			'form' => array('type' => 'password', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください'),
-			'validation' => array(
-				'min_length' => array(8),
-				'max_length' => array(50),
-				'match_field' => array('confirm_password'),
-				'valid_string' => array(array('alpha','numeric','dot','dashes')),
-			),
-			'default' => '',
-		),
 		'display_name' => array(
 			'label' => '表示名',
 			'form' => array('type' => 'text', 'size' => 20),
@@ -50,12 +39,23 @@ class Model_Usr extends Model_Base
 		),
 		'email' => array(
 			'label' => 'メールアドレス',
-			'form' => array('type' => 'text', 'size' => 20),
+			'form' => array('type' => 'text', 'size' => 40),
 			'validation' => array(
 				'required',
 				'valid_email',
 				'max_length' => array(255),
 			),
+		),
+		'password' => array(
+			'label' => 'パスワード',
+			'form' => array('type' => 'password', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください'),
+			'validation' => array(
+				'min_length' => array(8),
+				'max_length' => array(50),
+				'match_field' => array('confirm_password'),
+				'valid_string' => array(array('alpha','numeric','dot','dashes')),
+			),
+			'default' => '',
 		),
 		'is_visible' => array(
 			'label' => '可視属性',
@@ -213,7 +213,7 @@ class Model_Usr extends Model_Base
 				'ユーザグループ',
 				array('type' => 'checkbox', 'options' => $options),
 				array(),
-				'username'
+				'email'
 			)
 			->set_value(array_keys($obj->usergroup));
 

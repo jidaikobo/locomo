@@ -3,7 +3,7 @@
 <?php if ( ! \Input::get('submit')) echo $breadcrumbs ;?>
 
 <?php if ($items): ?>
-<table class="tbl datatable tbl_scrollable lcm_focus">
+<table class="tbl datatable tbl_scrollable lcm_focus" title="ファイル一覧">
 	<thead>
 		<tr>
 			<th>名称</th>
@@ -17,12 +17,12 @@
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1">
-			<th style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1">
+			<th style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1" style="min-width: 12em;">
 			<?php
 				if ($item->genre == 'dir'):
-					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon'));
+					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
 				else:
-					echo Html::anchor('flr/view_file'.DS.$item->id, $item->name, array('class' => 'icon'));
+					echo Html::anchor('flr/view_file'.DS.$item->id, $item->name, array('class' => 'icon '.$item->genre));
 				endif;
 			?>
 			</div></th>

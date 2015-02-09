@@ -1158,7 +1158,7 @@ td.minimum {
 	white-space: normal;
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 1.5em;
+	height: 1.6em;
 	margin: -.25em -6px -.25em -.5em;
 	padding: 0 .5em;
 }
@@ -1279,6 +1279,44 @@ table.calendar {
 .widget.size1 .calendar {
 	font-size: 85%;
 }
+/*=== filer ===*/
+a.icon.dir:before {
+	content: url('../img/led-icons/folder.png')' ';
+}
+a.icon.file:before {
+	content: url('../img/led-icons/page.png')' ';
+}
+a.icon.braille:before {
+	content: url('../img/led-icons/page_braille.png')' ';
+}
+a.icon.image:before {
+	content: url('../img/led-icons/picture.png')' ';
+}
+a.icon.pdf:before {
+	content: url('../img/led-icons/doc_pdf.png')' ';
+}
+a.icon.ppt:before {
+	content: url('../img/led-icons/page_white_powerpoint.png')' ';
+}
+a.icon.txt:before {
+	content: url('../img/led-icons/page_white_text.png')' ';
+}
+a.icon.word:before {
+	content: url('../img/led-icons/page_white_word.png')' ';
+}
+a.icon.xls:before {
+	content: url('../img/led-icons/page_white_excel.png')' ';
+}
+a.icon.audio:before {
+	content: url('../img/led-icons/doc_music.png')' ';
+}
+a.icon.movie:before {
+	content: url('../img/led-icons/doc_film.png')' ';
+}
+a.icon.zip:before {
+	content: url('../img/led-icons/page_zip.png')' ';
+}
+
 /*=== contents ===*/
 .contents > h1 {
 	margin: 0 0 .5em;
