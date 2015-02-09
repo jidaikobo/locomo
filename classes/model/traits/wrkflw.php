@@ -433,5 +433,4 @@ trait Model_Traits_Wrkflw
 		$options['where'][] = array(array($pk, '=', 'null'));
 		return $options;
 	}
-
 }
