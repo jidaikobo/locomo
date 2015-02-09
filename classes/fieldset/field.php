@@ -77,7 +77,9 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 					$title_inner = ''; // タイトル 説明文 エラー
 					if (is_array($title_contained)) {
 						foreach ($title_contained as $tc) {
-							if ($tc == 'error') {
+							if ($tc == 'required') {
+								if (in_array('required', \Arr::flatten($this->rules))) $title_inner .= '必須' . ' ';
+							} elseif ($tc == 'error') {
 								$title_inner .= (string)$this->error() . ' ';
 							} elseif($tc == 'description') {
 								$title_inner .= (string)$this->description . ' ';
@@ -86,6 +88,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 							}
 						}
 					} else {
+						if (in_array('required', \Arr::flatten($this->rules))) $title_inner .= '必須' . ' ';
 						$title_inner .= (string)$this->get_attribute('label') . ' ';
 						$title_inner .= (string)$this->error() . ' ';
 						$title_inner .= (string)$this->description . ' ';
@@ -101,7 +104,9 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 					$title_inner = ''; // タイトル 説明文 エラー
 					if (is_array($title_contained)) {
 						foreach ($title_contained as $tc) {
-							if ($tc == 'error') {
+							if ($tc == 'required') {
+								if (in_array('required', \Arr::flatten($this->rules))) $title_inner .= '必須' . ' ';
+							} elseif ($tc == 'error') {
 								$title_inner .= (string)$this->error() . ' ';
 							} elseif($tc == 'description') {
 								$title_inner .= (string)$this->description . ' ';
@@ -110,6 +115,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 							}
 						}
 					} else {
+						if (in_array('required', \Arr::flatten($this->rules))) $title_inner .= '必須' . ' ';
 						$title_inner .= (string)$this->get_attribute('label') . ' ';
 						$title_inner .= (string)$this->error() . ' ';
 						$title_inner .= (string)$this->get_attribute('description') . ' ';
