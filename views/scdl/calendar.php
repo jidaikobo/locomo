@@ -53,12 +53,19 @@
 	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
 	<td class="week<?php print $v['week']; ?>">
 		<?php if (isset($v['day'])) { ?>
-		<div class="each_date">
+		<div class="each_date lcm_focus" title="<?php
+			print $v['day'].'日 '.$week_name[$v['week']].'曜日 ';
+				if (count($v['data']) > 0) {
+					print count($v['data']) . '件の登録';
+				} else {
+					print '登録なし';
+				}
+			?>">
 			<a href="<?php echo \Uri::create($kind_name . "/calendar/" . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])) ?>" class="title">
 				<span class="date_str"><?php print $v['day']; ?>日</span>
 				<span class="skip"><?php print $week_name[$v['week']] . '曜日'; ?> <?php if (count($v['data']) > 0) { print count($v['data']) . '件の登録';} else { print '登録なし'; } ?></span>
 			</a>
-			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new">新規追加</a>
+			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new"><span class="skip">新規追加</span></a>
 			<?php /*?><div>
 			<?php print count($v['data']); ?>件
 			</div><?php */ ?>
@@ -66,7 +73,7 @@
 			<?php foreach ($v['data'] as $v2) {
 				$detail_pop_data = $v2;
 				?>
-				<p>
+				<p class="tooltip_parent" title="tooltip_test" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid ?>">
 					<span class="icon_small">
 					<?php if ($v2['provisional_kb']) { print '[仮登録]'; }; ?>
 					<?php if ($v2['unspecified_kb']) { print '[時間指定なし]'; }; ?>
@@ -74,7 +81,7 @@
 					</span>
 					<?php print htmlspecialchars_decode($v2['link_detail']); ?>
 				</p>
-			<?php include("detail_pop.php"); ?>
+			<?php// include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうので下に移動...ガッハッハ?>
 			<?php } ?>
 			</div>
 		</div>
@@ -84,5 +91,12 @@
 <?php } ?>
 </table>
 </div><!-- /.field_wrapper -->
-
+<?php foreach($schedule_data as $v) { 
+	if(isset($v['day'])){
+		foreach ($v['data'] as $v2) {
+			$detail_pop_data = $v2;
+			include("detail_pop.php");
+		}
+	}
+} ?>
 

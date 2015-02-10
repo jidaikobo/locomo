@@ -1,3 +1,4 @@
+/*
 //console非対応ブラウザのための用意
 // consoleが使えない場合は空のオブジェクトを設定しておく
 if( typeof window.console === undefined ){
@@ -7,6 +8,8 @@ if( typeof window.console === undefined ){
 if( typeof window.console.log !== "function" ){
  window.console.log = function(){};
 }
+*/
+
 //チェックボックス全選択
 $(function() {
 	$('.check_all').on('click', function(e) {
@@ -911,7 +914,7 @@ $('input.time').timepicker({
 //tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
 $('.validation_error :input').tooltip({
-	tooltipClass : 'form_tooltip',
+	tooltipClass : 'lcm_tooltip',
 	show         : 200,
 	hide         : 'fade',
 	position     : {
@@ -923,6 +926,27 @@ $('.validation_error :input').tooltip({
 	                 return $(this).data('jslcmTooltip')
 		           }*/
 });
+$('.tooltip_parent').tooltip({
+     content: function() {
+        var el = document.getElementById($(this).data('jslcmTooltipId'));
+        el = $(el).html();
+        return el
+        },
+	tooltipClass : 'lcm_tooltip',
+	show         : 200,
+	hide         : 'fade',
+	position     : {
+		             my : 'left bottom-8',
+		             at : 'left top'
+		            },
+//	tip: '#pop_pop7',
+
+//	content      : function(){
+//	                 return 'aaa'
+//		           }
+});
+
+
 
 //resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい
 $('#help_window').resizable({

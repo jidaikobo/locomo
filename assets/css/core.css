@@ -720,19 +720,19 @@ div.flash_alert.alert_error {
 }
 
 /* tooltip */
-div.form_tooltip {
+div.lcm_tooltip {
 	background: rgba(255, 255, 255, .97) !important;
 	font-size: .9em !important;
 }
-div.form_tooltip {
+div.lcm_tooltip {
 	-moz-box-shadow: 0 0 2px #aaa;
 	-o-box-shadow: 0 0 2px rgba(128, 128, 128, .5) ;
 	-ms-box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	border: 1px solid #aaa !important;
 }
-.form_tooltip:after,
-.form_tooltip:before {
+.lcm_tooltip:after,
+.lcm_tooltip:before {
 	top: 100%;
 	left: 2em;
 	border: solid transparent;
@@ -743,20 +743,25 @@ div.form_tooltip {
 	pointer-events: none;
 }
 
-.form_tooltip:after {
+.lcm_tooltip:after {
 	border-color: rgba(255, 255, 255, 0);
 	border-top-color: #ffffff;
 	border-width: 5px;
 	margin-left: -5px;
 }
-.form_tooltip:before {
+.lcm_tooltip:before {
 	border-color: rgba(170, 170, 170, 0);
 	border-top-color: #aaa;
 	border-width: 6px;
 	margin-left: -6px;
 }
-
-
+.lcm_action_calendar .lcm_tooltip {
+	font-size: .75em !important;
+}
+.lcm_action_calendar .lcm_tooltip th {
+	min-width: 6em;
+	text-align: right;
+}
 /* pagenation */
 .pagination {
 	padding: 10px;
@@ -1288,6 +1293,7 @@ table.calendar {
 /* あとでkesu */
 .calendar .each_date {
 	min-height: 4.5em;
+	position: relative;
 }
 .calendar .title {
 	display: block;
@@ -1296,8 +1302,13 @@ table.calendar {
 	text-decoration: none;
 }
 .calendar .add_new {
-	display: block;
-/*	text-align: right;*/
+	padding: 2px 4px;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.calendar .add_new:before {
+	content: url('../img/led-icons/pencil.png');
 }
 .week6 .title {
 	background-color: #d8ebfc;
@@ -1686,6 +1697,7 @@ body .ui-datepicker select.ui-datepicker-month {
 body .ui-resizable-handle {
 	z-index: 100000 !important;
 }
+
 
 
 /*=== for NetReader ===*/
