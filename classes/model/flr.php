@@ -784,6 +784,8 @@ die();
 			'options' => $options,
 			'class' => 'varchar usergroup',
 		);
+
+
 		$usergroup_id = \Fieldset::forge('permission_usergroup')->set_tabular_form('\Model_Flr_Usergroup', 'permission_usergroup', $obj, 2);
 		$form->add_after($usergroup_id, 'ユーザグループ権限', array(), array(), 'explanation');
 

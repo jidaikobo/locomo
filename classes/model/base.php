@@ -588,6 +588,9 @@ class Model_Base extends \Orm\Model_Soft
 		// forge
 		$form = \Fieldset::forge('search_form_base');
 
+
+
+
 		// modify title
 //		$title = \Util::get_locomo(\Request::active()->controller, 'nicename');
 		$titles = array(
