@@ -231,7 +231,7 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $delete_else = null)
 	{
-		is_null($delete_else) and $delete_else = $cascade_set_delete_else;
+		is_null($delete_else) and $delete_else = static::$cascade_set_delete_else;
 
 		if (!$input_post) $input_post = \Input::post();
 		$validated = array();
