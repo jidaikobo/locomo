@@ -185,14 +185,6 @@ class Model_Usr extends Model_Base
 	 */
 	public static function form_definition($factory = 'user', $obj = null)
 	{
-
-		// usergroup can modified by admin only 
-		if (!\Auth::is_admin())
-		{
-			static::$_many_many = array();
-		}
-
-
 		$id = isset($obj->id) ? $obj->id : '';
 
 		// forge
@@ -270,8 +262,6 @@ class Model_Usr extends Model_Base
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 //		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
 
-
-
 		// usergroup can modified by admin only 
 		if (\Auth::is_admin())
 		{
@@ -284,7 +274,7 @@ class Model_Usr extends Model_Base
 				)
 				->set_value(array_keys($obj->usergroup));
 		} else {
-//			unset(static::$_many_many['usergroup']);
+			static$_mm_delete_else = false;
 		}
 
 		// created_at
