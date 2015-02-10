@@ -233,10 +233,7 @@ $is_sendmail = true;
 			// send
 			try
 			{
-				if ($obj->email == 'shibata@jidaikobo.com')
-				{
-					$email->send();
-				}
+				$email->send();
 			}
 			catch(\EmailValidationFailedException $e)
 			{
