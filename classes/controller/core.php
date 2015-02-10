@@ -124,7 +124,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 				return \Response::redirect(\Uri::create('auth/login?ret='.\Uri::string().$qstr));
 			}
 		}
-
 		// action not exists
 		$is_allow = true;
 		if (
