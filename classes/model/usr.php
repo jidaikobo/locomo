@@ -339,4 +339,27 @@ class Model_Usr extends Model_Base
 
 		return $parent;
 	}
+
+	/**
+	 * reset_paswd_form()
+	*/
+	public static function reset_paswd_form()
+	{
+		$config = \Config::load('form_search', 'reset_paswd', true, true);
+		$form = \Fieldset::forge('reset_paswd', $config);
+
+		// 検索
+		$form->add(
+				'description',
+				'説明',
+				array('type' => 'text')
+			)
+			->set_template('
+				<div>パスワードリセットすると、強制的にパスワードを新規登録し、登録メールアドレス宛に新しいパスワードが送付されます。</div>
+			');
+
+		$form->add('submit', '', array('type' => 'submit', 'value' => 'パスワードをリセットする', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');;
+
+		return $form;
+	}
 }

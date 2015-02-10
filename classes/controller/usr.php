@@ -64,15 +64,20 @@ class Controller_Usr extends \Locomo\Controller_Base
 
 	/**
 	 * user_auth_find()
+	 * Event at locomo_has_access of \Auth\Auth_Acl_Locomoacl::has_access()
 	 */
 	public static function user_auth_find($condition)
 	{
-		$checks = array('\Controller_Usr::action_view', '\Controller_Usr::action_edit');
+		$checks = array(
+			'\Controller_Usr::action_view',
+			'\Controller_Usr::action_edit',
+			'\Controller_Usr::action_reset_paswd'
+		);
 		if ( ! in_array($condition, $checks) || ! \Request::main()->controller == 'Controller_Usr')
 		{
 			return 'through';
 		}
-		$checks = array('view', 'edit');
+		$checks = array('view', 'edit', 'reset_paswd');
 		if ( ! in_array(self::$action, $checks))
 		{
 			return 'through';
@@ -91,5 +96,110 @@ class Controller_Usr extends \Locomo\Controller_Base
 		));
 
 		return ($obj->id == \Auth::get('id')) ;
+	}
+
+	/**
+	 * action_reset_paswd()
+	 */
+	public function action_reset_paswd($id)
+	{
+		// vals
+		$model = $this->model_name ;
+		$content = \View::forge('defaults/edit');
+
+		if ($id)
+		{
+			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
+			// not found
+			if ( ! $obj)
+			{
+				\Session::set_flash('error', '存在しないユーザです。');
+				return \Response::redirect(\Uri::create('usr/index_admin'));
+			}
+		}
+		$form = $model::reset_paswd_form('edit', $obj);
+
+$is_sendmail = true;
+
+		// save
+		if (\Input::post())
+		{
+			if ( ! \Security::check_token())
+			{
+				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+			} else {
+				if (static::reset_paswd($obj, $is_sendmail))
+				{
+					//success
+					\Session::set_flash('success', 'パスワードをリセットして、メールを送信しました。');
+				} else {
+					\Session::set_flash('error', 'パスワードリセットを失敗しました。再度試してください。');
+				}
+			}
+		}
+
+		//view
+		$this->template->set_global('title', 'パスワードリセット');
+		$content->set_global('item', $obj, false);
+		$content->set_global('form', $form, false);
+		$this->template->content = $content;
+		static::set_object($obj);
+	}
+
+	/**
+	 * reset_paswd()
+	*/
+	public static function reset_paswd($obj, $is_sendmail = false)
+	{
+		if ( ! is_object($obj)) return false;
+
+		// package and config
+		\Package::load('email');
+		$site_title = \Config::get('site_title');
+
+		// generate password
+		$pswd = substr(md5(microtime()), 0, 8);
+
+		// save password
+		$obj->password = $pswd;
+		if ($obj->save())
+		{
+			// mail text
+			$body = '';
+			$body.= $obj->display_name."さま\n\n";
+			$body.= "パスワードリセットを行いました。\n";
+			$body.= "下記情報に沿ってログインしてください。\n\n";
+			$body.= \Uri::base()."\n";
+			$body.= 'username: '.$obj->email."\n";
+			$body.= 'password: '.$pswd."\n\n";
+			$body.= "-- \n";
+			$body.= $site_title."\n";
+			$body.= date('Y-m-d H:i:s')."\n";
+	
+			// set up email
+			$email = \Email::forge();
+			$email->from('webmaster@kyoto-lighthouse.org', 'ライトスタッフシステム');
+			$email->to($obj->email, $obj->display_name);
+			$email->subject('【'.$site_title.'】パスワードのお知らせ');
+			$email->body($body);
+
+			// send
+			try
+			{
+				if ($obj->email == 'shibata@jidaikobo.com')
+				{
+					$email->send();
+				}
+			}
+			catch(\EmailValidationFailedException $e)
+			{
+				// バリデーションが失敗したとき
+			}
+			catch(\EmailSendingFailedException $e)
+			{
+				// ドライバがメールを送信できなかったとき
+			}
+		}
+		return true;
 	}
 }
