@@ -216,6 +216,10 @@ class Model_Base extends \Orm\Model_Soft
 		return $options;
 	}
 
+
+	public static $_hm_delete_else = false;
+	public static $_mm_delete_else = true;
+
 	/*
 	 * @param   array     $input_post
 	 * @param   Fieldset  $form (for validation)
@@ -226,8 +230,15 @@ class Model_Base extends \Orm\Model_Soft
 	 *
 	 * @important   \Response::redirect() after save() or Regenerate Fieldset instance
 	 */
-	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $delete_else = false)
+	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $hm_delete_else = null, $mm_delete_else = null)
 	{
+
+		is_null($hm_delete_else) and $hm_delete_else = static::$_hm_delete_else;
+		is_null($mm_delete_else) and $mm_delete_else = static::$_mm_delete_else;
+
+
+
+
 		if (!$input_post) $input_post = \Input::post();
 		$validated = array();
 
@@ -280,7 +291,7 @@ class Model_Base extends \Orm\Model_Soft
 
 				// hm 既存列
 				foreach ($this[$k] as $kk => $vv) {
-					if ($delete_else and !isset($input_post[$k][$kk])) { // $delete_else = true なら セットされていないものは全て消去
+					if ($hm_delete_else and !isset($input_post[$k][$kk])) { // $hm_delete_else = true なら セットされていないものは全て消去
 						unset($this->{$k}[$kk]);
 					} elseif (isset($input_post[$k][$kk]['_delete'])){ // _deleted
 						unset($this->{$k}[$kk]);
@@ -343,7 +354,9 @@ class Model_Base extends \Orm\Model_Soft
 
 				// 何も飛んでこなかったとき、form に存在していれば 全て unset する
 				} else {
-					if ($form->field($k) instanceof \Fieldset_Field) unset($this->{$k});
+					if ($mm_delete_else) {
+						if ($form->field($k) instanceof \Fieldset_Field) unset($this->{$k});
+					}
 				}
 			}
 		}

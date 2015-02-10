@@ -206,25 +206,17 @@ class Model_Usr extends Model_Base
 		$form->field('username')
 			->add_rule('unique', "lcm_usrs.username.{$id}");
 
-		// usergroups
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
-		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
-		$form->add_after(
-				'usergroup',
-				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $options),
-				array(),
-				'email'
-			)
-			->set_value(array_keys($obj->usergroup));
-
-		// password
-		$form->field('password')->set_value('');
+		if ( ! \Auth::is_admin())
+		{
+			$form->field('username')->set_type('hidden');
+			$form->add_after('display_username', 'ユーザ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'username')->set_value(@$obj->username)->set_description('ユーザ名の変更は管理者に依頼してください。');
+		}
 
 		// password
 		$form->field('password')
+			->set_value('')
 			->add_rule('require_once', "lcm_usrs.password.{$id}");
-	
+
 		// confirm_password
 		$form->add_after(
 				'confirm_password',
@@ -236,12 +228,21 @@ class Model_Usr extends Model_Base
 			->set_value('')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 
-		// 管理者以外は旧パスワードを求める
-		if ( ! \Auth::is_admin()):
+		if (\Request::main()->action == 'create')
+		{
+			$form->field('password')
+				->add_rule('required');
+			$form->field('confirm_password')
+				->add_rule('required');
+		}
+
+		// 管理者以外は現在のパスワードを求める
+		if ( ! \Auth::is_admin())
+		{
 			$form->add_after(
 					'old_password',
-					'旧パスワード',
-					array('type' => 'password', 'size' => 20, 'placeholder'=>'旧パスワードを入れてください'),
+					'現在のパスワード',
+					array('type' => 'password', 'size' => 20, 'placeholder'=>'現在のパスワードを入れてください'),
 					array(),
 					'confirm_password'
 				)
@@ -251,11 +252,30 @@ class Model_Usr extends Model_Base
 				->add_rule('max_length', 50)
 				->add_rule('match_password', "lcm_usrs.password.{$id}")
 				->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
-		endif;
+		}
 
 		// email
 		$form->field('email')
 			->add_rule('unique', "lcm_usrs.email.{$id}");
+
+		// usergroups
+		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+//		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
+
+		// usergroup can modified by admin only 
+		if (\Auth::is_admin())
+		{
+			$form->add_after(
+					'usergroup',
+					'ユーザグループ',
+					array('type' => 'checkbox', 'options' => $options),
+					array(),
+					'email'
+				)
+				->set_value(array_keys($obj->usergroup));
+		} else {
+			static$_mm_delete_else = false;
+		}
 
 		// created_at
 		$form->field('created_at')
