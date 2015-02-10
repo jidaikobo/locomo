@@ -155,7 +155,7 @@ if (\Auth::check()):
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
 			$html.= "<li><a href=\"".\Uri::base()."auth/logout\">ログアウト</a></li>";
 			if ( ! \Auth::is_admin()):
-				$html.= "<li class=\"has_top_separator\"><a href=\"".\Uri::base()."usr/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
+				$html.= "<li class=\"has_bottm_separator\"><a href=\"".\Uri::base()."usr/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
 			endif;
 			// usergroup
 			$usergroups = \Auth::get('usergroup');
