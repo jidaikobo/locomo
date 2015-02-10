@@ -35,7 +35,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_edit($id = null)
 	{
-
 		$model = $this->model_name ;
 
 		// --------------------- parent ---------------------
@@ -94,7 +93,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 								, \Input::post("repeat_kb")
 								, \Input::post("week_kb")
 								, \Input::post("target_day")
-								, \Input::post("target_month"));
+								, \Input::post("target_month")
+								, \Input::post("week_index"));
 			}
 			if (
 				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
@@ -633,7 +633,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
 					$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
 
-					if ($r['repeat_kb'] == 1 || $r['repeat_kb'] == 2 || $r['repeat_kb'] == 3 || $r['repeat_kb'] == 4 || $r['repeat_kb'] == 5) {
+					if ($r['repeat_kb'] == 1 || $r['repeat_kb'] == 2 || $r['repeat_kb'] == 3 || $r['repeat_kb'] == 4 || $r['repeat_kb'] == 5 || $r['repeat_kb'] == 6) {
 						$starttime = date('Hi', strtotime($r['start_time']));
 						$endtime = date('Hi', strtotime($r['end_time']));
 						$target_1 = sprintf("%02d", $row['hour']) . "00";
@@ -1041,10 +1041,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				if ($start_unixtime <= $target_unixtime && $end_unixtime >= $target_unixtime) {
 					if ($target_week == $row['week_kb']) {
 						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
-						if ($result && $row['week_index']) {
-							// 第何週指定がある場合
-							$result = (ceil($target_day / 7) == $row['week_index']);
-						}
 					}
 				}
 				break;
@@ -1063,6 +1059,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				if ($start_unixtime <= $target_unixtime && $end_unixtime >= $target_unixtime) {
 					if ($target_day == $row['target_day'] && $target_mon == $row['target_month']) {
 						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
+					}
+				}
+				break;
+
+			case 6:
+				// 週指定
+				// 繰り返し終了日時より前で対象の曜日以外
+				if ($start_unixtime <= $target_unixtime && $end_unixtime >= $target_unixtime) {
+					if ($target_week == $row['week_kb']) {
+						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
+						if ($result && $row['week_index']) {
+							// 第何週指定がある場合
+							$result = (ceil($target_day / 7) == $row['week_index']);
+						}
 					}
 				}
 				break;
@@ -1127,7 +1137,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $target_month [description]
 	 * @return [type]               [description]
 	 */
-	private function checkOverlap($id, $syear, $smon, $sday, $shour, $smin, $eyear, $emon, $eday, $ehour, $emin, $repeat_kb, $week_kb = null, $target_day = null, $target_month = null) {
+	private function checkOverlap($id, $syear, $smon, $sday, $shour, $smin, $eyear, $emon, $eday, $ehour, $emin, $repeat_kb, $week_kb = null, $target_day = null, $target_month = null, $week_index = null) {
 		$model = $this->model_name;
 
 		$arrUsers = explode("/", \Input::post("hidden_members"));
@@ -1218,7 +1228,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						continue;
 					}
 					break;
-
+				case 6:
+					if ($target_week != $week_kb && (ceil($target_day / 7) != $week_index)) {
+						continue;
+					}
+					break;
 
 	 		}
 
