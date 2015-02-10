@@ -18,6 +18,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		),
 	);
 
+	private $_scdl_errors = array();	// エラー項目
+
 	/**
 	 * [action_create description]
 	 * @return [type]
@@ -97,6 +99,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			if (
 				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
 				 \Security::check_token() &&
+				 $this->check_error_scdl() &&
 				 !(\Input::post("overlap_kb") && count($overlap_result))
 			):
 
@@ -130,6 +133,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				if (\Input::method() == 'POST'):
 
 					$errors = $form->error();
+					$errors = array_merge($errors, $this->_scdl_errors);
 					if (count($overlap_result)) {
 						// 重複チェック
 						$errors[] = "同じ日時で重複しているデータが存在します。";
@@ -1275,6 +1279,26 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		echo $this->response($response, 200); die();
 	}
 
+	private function check_error_scdl() {
+		$flg_exist = false;
+		$model = $this->model_name;
+		if ($model::$_kind_name == "scdl") {
+			// スケジューラの場合はメンバーが必須
+			$target_data = explode("/", \Input::post("hidden_members"));
+			$target_name = "メンバー";
+		} else if ($model::$_kind_name == "reserve") {
+			// 施設予約の場合は施設が必須
+			$target_data = explode("/", \Input::post("hidden_buildings"));
+			$target_name = "施設";
+		}
+		foreach ($target_data as $v) {
+			if ($v)
+				$flg_exist = true;
+		}
+		if (!$flg_exist) {
+			$this->_scdl_errors[] = $target_name . "を選択してください。";
+		}
+	}
 
 	//trait
 //	use \Controller_Traits_Testdata;

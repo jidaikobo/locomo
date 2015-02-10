@@ -229,6 +229,7 @@ class Model_Scdl extends \Model_Base
 				'type' => 'checkbox',
 				'value' => 1
 			),
+			'default' => 1
 		),
 		 
 		'message' => 
