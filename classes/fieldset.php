@@ -309,6 +309,10 @@ class Fieldset extends \Fuel\Core\Fieldset
 		if (\Request::main()->action == 'view') $blanks = 0;
 		$tabular =  parent::set_tabular_form($model, $relation, $parent, $blanks);
 
+		// tabular の fieldset の template を set
+		\Config::load('form', true);
+		\Config::set('form.fieldset_template', \Config::get('form.tabular_form_template', "<table>{fields}</table>"));
+
 
 		$_deletes = $tabular->tabular_field('_delete');
 		$delete_label = \Config::get('form.tabular_delete_label_field', \Config::get('form.tabular_delete_label', 'Delete?'));
