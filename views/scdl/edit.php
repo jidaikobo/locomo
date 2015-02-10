@@ -56,7 +56,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<td>
 	<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 	<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
-	<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日  第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+	<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
 		<table id="">
 			<tr>
 				<th>期間</th>
@@ -266,20 +266,29 @@ function change_repeat_kb_area() {
 	if ($("#form_repeat_kb").val() == 0 || $("#form_repeat_kb").val() == 1 || $("#form_repeat_kb").val() == 2) {
 		// なし
 		$("#span_week_kb").css({'display': 'none'});
+		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	} else if ($("#form_repeat_kb").val() == 3) {
 		$("#span_week_kb").css({'display': 'block'});
+		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	} else if ($("#form_repeat_kb").val() == 4) {
 		$("#span_week_kb").css({'display': 'none'});
+		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'block'});
 		$("#span_target_month").css({'display': 'none'});
 	} else if ($("#form_repeat_kb").val() == 5) {
 		$("#span_week_kb").css({'display': 'none'});
+		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'block'});
 		$("#span_target_month").css({'display': 'block'});
+	} else if ($("#form_repeat_kb").val() == 6) {
+		$("#span_week_kb").css({'display': 'block'});
+		$("#span_week_number").css({'display': 'block'});
+		$("#span_target_day").css({'display': 'none'});
+		$("#span_target_month").css({'display': 'none'});
 	}
 }
 

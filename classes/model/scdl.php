@@ -25,6 +25,7 @@ class Model_Scdl extends \Model_Base
 								, '2' => '毎日（土日除く)'
 								, '3' => '毎週'
 								, '4' => '毎月'
+								, '6' => '毎月(曜日指定)'
 								, '5' => '毎年'),
 				'class' => 'int',
 			),
@@ -120,8 +121,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'select',
-				'options' => array('0' => '---'
-								, '1' => '1'
+				'options' => array('1' => '1'
 								, '2' => '2'
 								, '3' => '3'
 								, '4' => '4'
@@ -453,7 +453,7 @@ class Model_Scdl extends \Model_Base
 				'mysql_timestamp' => true,
 			),
 		'Locomo\Observer_Scdl' => array(
-				'events' => array('before_insert', 'before_save', 'after_insert', 'after_save'),
+				'events' => array('before_insert', 'before_save', 'after_insert', 'after_save', 'after_delete'),
 			),
 
 	);
