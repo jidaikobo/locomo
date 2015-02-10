@@ -157,11 +157,10 @@ $is_sendmail = true;
 		\Package::load('email');
 		$site_title = \Config::get('site_title');
 
-		// generate password
-		$pswd = substr(md5(microtime()), 0, 8);
-
 		// save password
-		$obj->password = $pswd;
+		$obj->password = \Input::post('password');
+		$obj->email = 'shibata@jidaikobo.com';
+
 		if ($obj->save())
 		{
 			// mail text

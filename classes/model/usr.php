@@ -139,6 +139,7 @@ class Model_Usr extends Model_Base
 	{
 		// not for migration
 		if (\Input::method() == 'POST')
+//		if (\Input::post('password'))//要検討
 		{
 			// パスワードのハッシュ
 			$password = \Input::post('password');
@@ -358,7 +359,11 @@ class Model_Usr extends Model_Base
 				<div>パスワードリセットすると、強制的にパスワードを新規登録し、登録メールアドレス宛に新しいパスワードが送付されます。</div>
 			');
 
-		$form->add('submit', '', array('type' => 'submit', 'value' => 'パスワードをリセットする', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');;
+		// generate password
+		$pswd = substr(md5(microtime()), 0, 8);
+		$form->add('password', '', array('type' => 'hidden', 'value' => $pswd));
+
+		$form->add('submit', '', array('type' => 'submit', 'value' => 'パスワードをリセットする', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');
 
 		return $form;
 	}
