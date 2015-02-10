@@ -1100,6 +1100,23 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	private function checkOverlap($id, $syear, $smon, $sday, $shour, $smin, $eyear, $emon, $eday, $ehour, $emin, $repeat_kb, $week_kb = null, $target_day = null, $target_month = null) {
 		$model = $this->model_name;
 
+		$arrUsers = explode("/", \Input::post("hidden_members"));
+		$arrBuildings = explode("/", \Input::post("hidden_buildings"));
+		$targetMember = array();
+		// 連想配列へ
+		if ($model::$_kind_name == "scdl") {
+			foreach ($arrUsers as $v) {
+				if ($v)
+					$users[$v] = $v;
+			}
+		}
+		if ($model::$_kind_name == "reserve") {
+			foreach ($arrBuildings as $v) {
+				if ($v)
+					$buildings[$v] = $v;
+			}
+		}
+
 		// 最大チェック数
 		$maxCount = 10;
 		// 最大調査数
@@ -1137,7 +1154,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 		if (time() > strtotime($start_day . ' +' . $i . "days")) {
 	 			continue;
 	 		}
-	 		
 	 		switch ($repeat_kb) {
 	 			case 0:
 	 				// 指定なし
@@ -1202,9 +1218,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						->get();
 
 			foreach ($schedule_data as $r) {
-
 				if ($this->is_target_day($target_year_from, $target_month_from, $target_day_from, $r)) {
-
 
 					if ($repeat_kb == 0) {
 						if ($r['repeat_kb'] == 0) {
@@ -1222,7 +1236,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;
 							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
-							$result[] = $r;
+							// スケジューラのメンバーが被っているかどうか
+							var_dump($targetMember);exit;
+							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
+							if (is_array($overlapUser)) {
+								$r['targetdata'] = $overlapUser;
+								$result[] = $r;
+							}
+
 							if (count($result) >= $maxCount) { return $result; }
 						}
 					} else {
@@ -1235,7 +1256,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;
 							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
-							$result[] = $r;
+							// スケジューラのメンバーが被っているかどうか
+							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
+							if (is_array($overlapUser)) {
+								$r['targetdata'] = $overlapUser;
+								$result[] = $r;
+							}
+							
 							if (count($result) >= $maxCount) { return $result; }
 						}
 					}
@@ -1247,8 +1274,30 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		return $result;
 	}
 
-	public static function isMember($scheduleId, $uid) {
+	private function isExistOverlapTarget($row, $data) {
+		$model = $this->model_name;
+		if ($model::$_kind_name == "scdl") {
+			return $this->overlapExistMember($row, $data);
+		} else if ($model::$_kind_name == "reserve") {
+			return $this->overlapExistBuilding($row, $data);
+		}
+	}
+	private function overlapExistMember($row, $users) {
+		foreach ($row['user'] as $user) {
+			if (isset($users[$user->id])) {
+				return $users[$user->id];
+			}
+		}
+		return "";
+	}
 
+	private function overlapExistBuilding($row, $buildings) {
+		foreach ($row['building'] as $buildings) {
+			if (isset($buildings[$buildings->item_id])) {
+				return $buildings[$buildings->item_id];
+			}
+		}
+		return "";
 	}
 
 
@@ -1316,6 +1365,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		if (!$flg_exist) {
 			$this->_scdl_errors[] = $target_name . "を選択してください。";
 		}
+		return (count($this->_scdl_errors) == 0);
 	}
 
 	//trait
