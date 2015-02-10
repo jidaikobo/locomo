@@ -45,6 +45,17 @@ class Model_Scdl_Item extends \Model_Base
 				'class' => 'text',
 			),
 		),
+		'item_group2' => 
+		array (
+			'label' => '項目グループ',
+			'data_type' => 'text',
+			'form' => 
+			array (
+				'type' => 'text',
+				'size' => 0,
+				'class' => 'text',
+			),
+		),
 		'item_sort' => 
 		array (
 			'label' => 'ソート順',

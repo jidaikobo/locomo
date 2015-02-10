@@ -942,23 +942,41 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 絞り込まれているかどうか
 		// DBからクエリを流すと重いのでここで判断する
-		if (\Session::get($this->model_name . "narrow_uid")) {
-			$is_member = false;
+		$is_member = false;
+		if (\Session::get($this->model_name . "narrow_uid") || \Session::get($this->model_name . "narrow_ugid")) {
 			foreach ($row['user'] as $v) {
-				if (\Session::get($this->model_name . "narrow_uid") == $v['id']) {
+				if (\Session::get($this->model_name . "narrow_uid")
+						&& \Session::get($this->model_name . "narrow_uid") == $v['id']) {
 					$is_member = true;
 					break;
+				} else if (!\Session::get($this->model_name . "narrow_uid")
+					&& \Session::get($this->model_name . "narrow_ugid")) {
+					foreach ($v->usergroup as $v2) {
+						if ($v2->id == \Session::get($this->model_name . "narrow_ugid")) {
+							$is_member = true;
+							break;
+						}
+					}
 				}
 			}
 			if (!$is_member) { return false; }
 		}
-		if (\Session::get($this->model_name . "narrow_bid")) {
+		if (\Session::get($this->model_name . "narrow_bid") || \Session::get($this->model_name . "narrow_bgid")) {
 			$is_building = false;
 			foreach ($row['building'] as $v) {
-				if (\Session::get($this->model_name . "narrow_bid") == $v['item_id']) {
+				if (\Session::get($this->model_name . "narrow_bid")
+					&& \Session::get($this->model_name . "narrow_bid") == $v['item_id']) {
 					$is_building = true;
 					break;
+				} else if (\Session::get($this->model_name . "narrow_bgid")
+					&& !\Session::get($this->model_name . "narrow_bid")) {
+					// グループの場合
+					if (\Session::get($this->model_name . "narrow_bgid") == $v['item_group2']) {
+						$is_building = true;
+						break;
+					}
 				}
+				
 			}
 			if (!$is_building) { return false; }
 		}
