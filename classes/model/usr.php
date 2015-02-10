@@ -206,25 +206,17 @@ class Model_Usr extends Model_Base
 		$form->field('username')
 			->add_rule('unique', "lcm_usrs.username.{$id}");
 
-		// usergroups
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
-		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
-		$form->add_after(
-				'usergroup',
-				'ユーザグループ',
-				array('type' => 'checkbox', 'options' => $options),
-				array(),
-				'email'
-			)
-			->set_value(array_keys($obj->usergroup));
-
-		// password
-		$form->field('password')->set_value('');
+		if ( ! \Auth::is_admin())
+		{
+			$form->field('username')->set_type('hidden');
+			$form->add_after('display_username', 'ユーザ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'username')->set_value(@$obj->username)->set_description('ユーザ名の変更は管理者に依頼してください。');
+		}
 
 		// password
 		$form->field('password')
+			->set_value('')
 			->add_rule('require_once', "lcm_usrs.password.{$id}");
-	
+
 		// confirm_password
 		$form->add_after(
 				'confirm_password',
@@ -236,12 +228,21 @@ class Model_Usr extends Model_Base
 			->set_value('')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 
-		// 管理者以外は旧パスワードを求める
-		if ( ! \Auth::is_admin()):
+		if (\Request::main()->action == 'create')
+		{
+			$form->field('password')
+				->add_rule('required');
+			$form->field('confirm_password')
+				->add_rule('required');
+		}
+
+		// 管理者以外は現在のパスワードを求める
+		if ( ! \Auth::is_admin())
+		{
 			$form->add_after(
 					'old_password',
-					'旧パスワード',
-					array('type' => 'password', 'size' => 20, 'placeholder'=>'旧パスワードを入れてください'),
+					'現在のパスワード',
+					array('type' => 'password', 'size' => 20, 'placeholder'=>'現在のパスワードを入れてください'),
 					array(),
 					'confirm_password'
 				)
@@ -251,11 +252,30 @@ class Model_Usr extends Model_Base
 				->add_rule('max_length', 50)
 				->add_rule('match_password', "lcm_usrs.password.{$id}")
 				->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
-		endif;
+		}
 
 		// email
 		$form->field('email')
 			->add_rule('unique', "lcm_usrs.email.{$id}");
+
+		// usergroups
+		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+//		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
+
+		// usergroup can modified by admin only 
+		if (\Auth::is_admin())
+		{
+			$form->add_after(
+					'usergroup',
+					'ユーザグループ',
+					array('type' => 'checkbox', 'options' => $options),
+					array(),
+					'email'
+				)
+				->set_value(array_keys($obj->usergroup));
+		} else {
+//			unset(static::$_many_many['usergroup']);
+		}
 
 		// created_at
 		$form->field('created_at')
@@ -344,20 +364,32 @@ class Model_Usr extends Model_Base
 	/**
 	 * reset_paswd_form()
 	*/
-	public static function reset_paswd_form()
+	public static function reset_paswd_form($mode = '')
 	{
 		$config = \Config::load('form_search', 'reset_paswd', true, true);
 		$form = \Fieldset::forge('reset_paswd', $config);
 
 		// 検索
-		$form->add(
-				'description',
-				'説明',
-				array('type' => 'text')
-			)
-			->set_template('
-				<div>パスワードリセットすると、強制的にパスワードを新規登録し、登録メールアドレス宛に新しいパスワードが送付されます。</div>
-			');
+		if ($mode == 'bulk')
+		{
+			$form->add(
+					'description',
+					'説明',
+					array('type' => 'text')
+				)
+				->set_template('
+					<div>ユーザ全員のパスワードをリセットし、メールを送信します。</div>
+				');
+		} else {
+			$form->add(
+					'description',
+					'説明',
+					array('type' => 'text')
+				)
+				->set_template('
+					<div>パスワードリセットすると、強制的にパスワードを新規登録し、登録メールアドレス宛に新しいパスワードが送付されます。</div>
+				');
+		}
 
 		// generate password
 		$pswd = substr(md5(microtime()), 0, 8);

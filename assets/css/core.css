@@ -457,10 +457,14 @@ ul.horizontal_list {
 }
 #adminbar .usergroup {
 	padding-left: 20px;
+	padding-bottom: 4px;
 	font-size: .85em;
 }
 #adminbar .usergroup li {
 	display: list-item;
+	list-style-type: disc;
+	margin-left: -.125em;
+	padding-right: 20px;
 }
 #adminbar .on  > li {
 	display: block;
@@ -1207,7 +1211,31 @@ td.minimum {
 	display: inline;
 	zoom: 1;
 }
-
+.select_period .prev_month {
+	padding-left: 3.5em;
+}
+.select_period .next_year {
+	padding-left: 4em;
+}
+.select_period .next_month,
+.select_period .prev_year {
+	position: absolute;
+}
+.select_period .next_month {
+	right: 3.5em;
+}
+.select_period .prev_year {
+	left: 0;
+}
+.select_period .select_num {
+	display: inline-block;
+}
+.select_period .select_num span {
+	padding: 0 .25em;
+}
+.select_period .select_num {
+	color: indianred;
+}
 table.calendar {
 	margin-top: .5em;
 	table-layout: fixed;
@@ -1259,13 +1287,17 @@ table.calendar {
 }
 /* あとでkesu */
 .calendar .each_date {
-	min-height: 3.5em;
+	min-height: 4.5em;
 }
 .calendar .title {
 	display: block;
 	background-color: #eee;
 	font-weight: bold;
 	text-decoration: none;
+}
+.calendar .add_new {
+	display: block;
+/*	text-align: right;*/
 }
 .week6 .title {
 	background-color: #d8ebfc;
@@ -1278,6 +1310,10 @@ table.calendar {
 }
 .widget.size1 .calendar {
 	font-size: 85%;
+}
+/* あとでkesu */
+.icon_small {
+	font-size: .6em;
 }
 /*=== filer ===*/
 a.icon.dir:before {
@@ -1314,7 +1350,7 @@ a.icon.movie:before {
 	content: url('../img/led-icons/doc_film.png')' ';
 }
 a.icon.zip:before {
-	content: url('../img/led-icons/page_zip.png')' ';
+	content: url('../img/led-icons/doc_film.png')' ';
 }
 
 /*=== contents ===*/
