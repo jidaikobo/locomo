@@ -344,20 +344,32 @@ class Model_Usr extends Model_Base
 	/**
 	 * reset_paswd_form()
 	*/
-	public static function reset_paswd_form()
+	public static function reset_paswd_form($mode = '')
 	{
 		$config = \Config::load('form_search', 'reset_paswd', true, true);
 		$form = \Fieldset::forge('reset_paswd', $config);
 
 		// 検索
-		$form->add(
-				'description',
-				'説明',
-				array('type' => 'text')
-			)
-			->set_template('
-				<div>パスワードリセットすると、強制的にパスワードを新規登録し、登録メールアドレス宛に新しいパスワードが送付されます。</div>
-			');
+		if ($mode == 'bulk')
+		{
+			$form->add(
+					'description',
+					'説明',
+					array('type' => 'text')
+				)
+				->set_template('
+					<div>ユーザ全員のパスワードをリセットし、メールを送信します。</div>
+				');
+		} else {
+			$form->add(
+					'description',
+					'説明',
+					array('type' => 'text')
+				)
+				->set_template('
+					<div>パスワードリセットすると、強制的にパスワードを新規登録し、登録メールアドレス宛に新しいパスワードが送付されます。</div>
+				');
+		}
 
 		// generate password
 		$pswd = substr(md5(microtime()), 0, 8);
