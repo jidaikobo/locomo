@@ -147,6 +147,57 @@ $is_sendmail = true;
 	}
 
 	/**
+	 * action_bulk_reset_paswd()
+	 */
+	public function action_bulk_reset_paswd()
+	{
+		// vals
+		$model = $this->model_name ;
+		$content = \View::forge('defaults/edit');
+
+		if ( ! \Auth::is_root())
+		{
+			\Session::set_flash('error', '権限がありません。');
+			return \Response::redirect(\Uri::create('usr/index_admin'));
+		}
+
+		$objs = $model::find('all');
+
+		$form = $model::reset_paswd_form('bulk', $objs);
+
+		// save
+		if (\Input::post())
+		{
+			if ( ! \Security::check_token())
+			{
+				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+			} else {
+				foreach ($objs as $obj)
+				{
+					if (strpos($obj->email, 'kyoto') !== false)
+					{
+						// テストなので、ライトハウスには送らない
+					} else {
+
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
+var_dump( $obj->email ) ;
+echo '</textarea>' ;
+
+//						static::reset_paswd($obj, $is_sendmail = true);
+					}
+				}
+				\Session::set_flash('success', '一括でパスワードをリセットして、メールを送信しました。');
+			}
+		}
+
+		//view
+		$this->template->set_global('title', 'パスワードリセット');
+		$content->set_global('form', $form, false);
+		$this->template->content = $content;
+	}
+
+	/**
 	 * reset_paswd()
 	*/
 	public static function reset_paswd($obj, $is_sendmail = false)
@@ -157,9 +208,12 @@ $is_sendmail = true;
 		\Package::load('email');
 		$site_title = \Config::get('site_title');
 
+		// disable_event
+		$obj->disable_event('before_save');
+
 		// save password
-		$pswd = \Input::post('password');
-		$obj->password = $pswd;
+		$pswd = substr(md5(microtime()), 0, 8);
+		$obj->password = \Auth::hash_password($pswd);
 		$obj->email = 'shibata@jidaikobo.com';
 
 		if ($obj->save())

@@ -25,4 +25,24 @@ class Actionset_Usr extends \Actionset_Base
 
 		return $retvals;
 	}
+
+	/**
+	 * actionset_bulk_reset_paswd()
+	 */
+	public static function actionset_bulk_reset_paswd($controller, $obj = null, $id = null, $urls = array())
+	{
+		if (\Auth::is_root())
+		{
+			$actions = array(array($controller.DS."bulk_reset_paswd", '一括パスワードリセット'));
+			$urls = static::generate_urls($controller.'::action_edit', $actions);
+		}
+
+		$retvals = array(
+			'realm'        => 'option',
+			'urls'         => $urls,
+			'order'        => 100,
+		);
+
+		return $retvals;
+	}
 }
