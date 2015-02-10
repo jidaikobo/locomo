@@ -469,7 +469,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @return [type]
 	 */
 	public function action_calendar($year = null, $mon = null, $day = null, $mode = null) {
-
 		$model = $this->model_name;
 
 		// 絞り込みをセッションへ保存
@@ -561,9 +560,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set_global("detail_pop_data", array());
 		$view->set('narrow_user_group_list', \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name'));
 		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
+
 		$view->set('narrow_user_list', \Model_Usr::find('all',
 			array(
-			'related'   => array('usergroup'),
+			'related'   => count($where) ? array('usergroup') : array(),
 				'where'=> $where,
 				'order_by' => 'display_name'
 				)
