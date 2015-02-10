@@ -1,6 +1,8 @@
 
-<div class="narrow_user">
-<?php include("calendar_narrow.php"); ?>
+<h1><?php print $year; ?>年<?php print (int)$mon; ?>月</h1>
+<div class="select_display_type">
+	<?php print htmlspecialchars_decode($display_month); ?> / 
+	<?php print htmlspecialchars_decode($display_week); ?>
 </div>
 
 <div class="field_wrapper calendar">
@@ -27,21 +29,15 @@
 
 </div>
 
-<div class="select_display_type">
-	<?php print htmlspecialchars_decode($display_month); ?> / 
-	<?php print htmlspecialchars_decode($display_week); ?>
+
+
+<div class="narrow_user lcm_focus al" title="絞り込み エンターで開きます">
+<?php include("calendar_narrow.php"); ?>
 </div>
 
-<h1><?php print $year; ?>年<?php print (int)$mon; ?>月</h1>
-
-<style>
-.icon_small {
-	font-size: 10px;
-}
-</style>
 
 
-<table class="calendar month lcm_focus">
+<table class="calendar month lcm_focus" title="カレンダー  エンターで開きます">
 	<thead>
 		<tr>
 			<th class="week1"><span>月曜日</span></th>
@@ -56,17 +52,16 @@
 <?php foreach($schedule_data as $v) { ?>
 	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
 	<td class="week<?php print $v['week']; ?>">
-		<div class="each_date">
-		
 		<?php if (isset($v['day'])) { ?>
+		<div class="each_date">
 			<a href="<?php echo \Uri::create($kind_name . "/calendar/" . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])) ?>" class="title">
 				<span class="date_str"><?php print $v['day']; ?>日</span>
 				<span class="skip"><?php print $week_name[$v['week']] . '曜日'; ?> <?php if (count($v['data']) > 0) { print count($v['data']) . '件の登録';} else { print '登録なし'; } ?></span>
 			</a>
-			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" />新規追加</a>
-			<div>
+			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new">新規追加</a>
+			<?php /*?><div>
 			<?php print count($v['data']); ?>件
-			</div>
+			</div><?php */ ?>
 			<div class="events">
 			<?php foreach ($v['data'] as $v2) {
 				$detail_pop_data = $v2;
@@ -82,8 +77,8 @@
 			<?php include("detail_pop.php"); ?>
 			<?php } ?>
 			</div>
-		<?php } ?>
 		</div>
+		<?php } ?>
 	</td>
 	<?php if ($v['week'] == 0) { print '</tr>'; } ?>
 <?php } ?>
