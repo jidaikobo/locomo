@@ -158,7 +158,8 @@ $is_sendmail = true;
 		$site_title = \Config::get('site_title');
 
 		// save password
-		$obj->password = \Input::post('password');
+		$pswd = \Input::post('password');
+		$obj->password = $pswd;
 		$obj->email = 'shibata@jidaikobo.com';
 
 		if ($obj->save())
