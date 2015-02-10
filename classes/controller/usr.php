@@ -208,7 +208,6 @@ $is_sendmail = true;
 		// save password
 		$pswd = substr(md5(microtime()), 0, 8);
 		$obj->password = \Auth::hash_password($pswd);
-		$obj->email = 'shibata@jidaikobo.com';
 
 		if ($obj->save())
 		{
