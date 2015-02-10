@@ -1,4 +1,8 @@
 
+<div class="narrow_user">
+<?php include("calendar_narrow.php"); ?>
+</div>
+
 <?php print htmlspecialchars_decode($display_month); ?> / 
 <?php print htmlspecialchars_decode($display_week); ?>
 
@@ -38,35 +42,11 @@
 </div>
 <a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 
-<?php /*
-<table class="table">
-<tr>
-<?php foreach($schedule_data as $v) {?>
-	<td <?php if (count($v['data']) > 0) { ?>class="active"<?php } ?>>
-			<?php print $v['hour']; ?> 
-	</td>
-<?php } ?>
-</tr>
-<tr>
-<?php foreach($schedule_data as $v) { ?>
-	<td>
-			<div>
-			<?php foreach ($v['data'] as $v2) { ?>
-				<p><?php print htmlspecialchars_decode($v2['link_detail']); ?></p>
-			<?php } ?>
-			</div>
-	</td>
-<?php } ?>
-</tr>
-</table>
-*/ ?>
-
-
 <?php foreach ($schedule_data['member_list'] as $row) { ?>
 	<table class="table">
 		<tr>
 			<td colspan="48">
-				<?php print $row['model']->username; ?>
+				<?php print $row['model']->display_name; ?>
 			</td>
 		</tr>
 		<tr>
@@ -122,12 +102,34 @@
 <?php foreach ($schedule_data['member_list'] as $row) { ?>
 		<tr>
 			<td>
-				<?php print $row['model']->username; ?>
+				<?php print $row['model']->display_name; ?>
 			</td>
 			<td>
 				<?php foreach ($row['data'] as $detaildata) { ?>
 				<div>
-				<?php print $detaildata->start_time . "〜" . $detaildata->end_time . " " . $detaildata->title_text; ?>
+
+<?php
+		$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
+		$detaildata->display_enddate = date('Y年n月j日', strtotime($detaildata->end_date . " " . $detaildata->end_time));
+		$detaildata->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
+		$detaildata->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->end_date . " " . $detaildata->end_time)));
+
+		if ($detaildata->repeat_kb == 0) {
+			echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
+		} else {
+			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
+			if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 2) {
+				echo "(";
+				$week = array('日', '月', '火', '水', '木', '金', '土');
+				if ($detaildata->week_index) {
+					echo "第" . $detaildata->week_index;
+				} else {
+					echo "毎週";
+				}
+				echo $week[$detaildata->week_kb] . "曜日)";
+			}
+		}
+?>
 				</div>
 				<?php } ?>
 
