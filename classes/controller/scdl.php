@@ -3,7 +3,7 @@ namespace Locomo;
 class Controller_Scdl extends \Locomo\Controller_Base
 {
 	// traits
-//	use \Controller_Traits_Crud;
+	use \Controller_Traits_Crud;
 
 	// locomo
 	public static $locomo = array(
@@ -165,35 +165,61 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$this->template->content->item->building = \Model_Scdl_Item::find("all", array("where" => array(array('item_group', 'building'), array('item_id', \Session::get($model::$_kind_name . "narrow_bid")))));
 			}
 		}
-
-		$select_user_list = $this->template->content->item->user;
+		if (\Input::post()) {
+			$select_user_list = \Model_Usr::find("all", array("where" => array(array('id', 'in', explode("/", \Input::post("hidden_members"))))));
+			$select_building_list = \Model_Scdl_Item::find("all", array("where" => array(array('item_group', 'building'), array('item_id', 'in', explode("/", \Input::post("hidden_buildings"))))));
+		} else {
+			$select_user_list = $this->template->content->item->user;
+			$select_building_list = $this->template->content->item->building;
+		}
 
 		$this->template->content->set("select_user_list", $select_user_list);
-		$non_selected_user_list = count($select_user_list) ? \Model_Usr::find('all',
+		if (!$id && \Session::get($model::$_kind_name . "narrow_ugid") && $model::$_kind_name=="scdl" && count($select_user_list) == 0) {
+			$non_selected_user_list = \Model_Usr::find('all',
+			array(
+				'related'   => array('usergroup'),
+				'where'=> array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid")))
+				)
+			);
+		} else if (count($select_user_list)) {
+			$non_selected_user_list = \Model_Usr::find('all',
 			array(
 				'where'=> array(array('id', 'not in', array_keys($select_user_list)))
 				)
-			)
-			: \Model_Usr::find('all');
+			);
+		} else {
+			$non_selected_user_list = \Model_Usr::find('all');
+		}
+		
 		$this->template->content->set("non_selected_user_list", $non_selected_user_list);
 
-		$select_building_list = $this->template->content->item->building;
-		$building_where = array('item_group', 'building');
-		if (count($select_building_list)) {
-			$building_where = array($building_where, array('id', 'not in', array_keys($select_building_list)));
-		}
-
-		$non_selected_building_list = \Model_Scdl_Item::find('all',
+		
+		if (!$id && \Session::get($model::$_kind_name . "narrow_bgid") && $model::$_kind_name=="reserve" && count($select_building_list) == 0) {
+			$non_selected_building_list = \Model_Scdl_Item::find('all',
 			array(
-				'where'=> array($building_where)
+				'where'=> array(array('item_group2', '=', \Session::get($model::$_kind_name . "narrow_bgid")))
 				)
 			);
+		} else if (count($select_building_list)) {
+			$non_selected_building_list = \Model_Scdl_Item::find('all',
+			array(
+				'where'=> array(array(array('item_group', 'building'), array('id', 'not in', array_keys($select_building_list))))
+				)
+			);
+		} else {
+			$non_selected_building_list = \Model_Scdl_Item::find('all',
+				array('where' => array(array('item_group', 'building')))
+			);
+		}
+
+		
 		
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
 		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 		$this->template->content->set("group_list", $usergroups);
+		$this->template->content->set("kind_name", $model::$_kind_name);
 
 		// 重複チェック
 		$this->template->content->set("overlap_result", $overlap_result);
@@ -1257,7 +1283,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						->where_close()
 						->where("deleted_at", "is", null)
 						->where("kind_flg", $model::$_kind_flg)
-						->where("id", "<>", $id)
+						->where("id", "<>", (!$id) ? 0 : $id)
 						->get();
 
 			foreach ($schedule_data as $r) {

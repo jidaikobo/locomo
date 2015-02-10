@@ -262,6 +262,7 @@ class Model_Scdl extends \Model_Base
 			array (
 				'required',
 			),
+			'default' => '1'
 		),
 		'group_detail' => 
 		array (

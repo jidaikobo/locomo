@@ -122,7 +122,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<select id="group_list">
 				<option value="">--- 全員 ---
 				<?php foreach($group_list as $key => $value) { ?>
-					<option value="<?php print $key; ?>" ><?php  print $value; ?>
+					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 				<?php } ?>
 			</select>
 		</td>
@@ -163,7 +163,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<select id="building_group_list">
 				<option value="">--- 全て ---
 				<?php foreach($building_group_list as $row) { ?>
-					<option value="<?php print $row['item_group2']; ?>" ><?php  print $row['item_group2']; ?>
+					<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 				<?php } ?>
 			</select>
 		</td>
