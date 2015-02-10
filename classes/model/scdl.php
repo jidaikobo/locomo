@@ -489,6 +489,7 @@ class Model_Scdl extends \Model_Base
 			// 重要度
 			$form->field('title_importance_kb')->set_value("→中");
 		}
+
 		if (\Input::get("ymd")) {
 			$form->field('start_date')->set_value(\Input::get("ymd"));
 			$form->field('end_date')->set_value(\Input::get("ymd"));
