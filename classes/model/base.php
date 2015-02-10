@@ -216,6 +216,9 @@ class Model_Base extends \Orm\Model_Soft
 		return $options;
 	}
 
+
+	public static $cascade_set_delete_else = false;
+
 	/*
 	 * @param   array     $input_post
 	 * @param   Fieldset  $form (for validation)
@@ -226,8 +229,10 @@ class Model_Base extends \Orm\Model_Soft
 	 *
 	 * @important   \Response::redirect() after save() or Regenerate Fieldset instance
 	 */
-	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $delete_else = false)
+	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $delete_else = null)
 	{
+		is_null($delete_else) and $delete_else = static::$cascade_set_delete_else;
+
 		if (!$input_post) $input_post = \Input::post();
 		$validated = array();
 
