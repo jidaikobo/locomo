@@ -178,13 +178,7 @@ $is_sendmail = true;
 					{
 						// テストなので、ライトハウスには送らない
 					} else {
-
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $obj->email ) ;
-echo '</textarea>' ;
-
-//						static::reset_paswd($obj, $is_sendmail = true);
+						static::reset_paswd($obj, $is_sendmail = true);
 					}
 				}
 				\Session::set_flash('success', '一括でパスワードをリセットして、メールを送信しました。');
