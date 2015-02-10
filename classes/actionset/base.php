@@ -33,10 +33,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id)
+		{
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_urls($controller.'::action_view', $actions, ['create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
