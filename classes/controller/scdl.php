@@ -933,7 +933,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type]  $row
 	 * @return boolean
 	 */
-	private function is_target_day($target_year, $target_mon, $target_day, $row) {
+	private function is_target_day($target_year, $target_mon, $target_day, $row, $opt = null) {
 		$result = false;
 		$target_unixtime		 = strtotime(sprintf("%04d/%02d/%02d 00:00:00", $target_year, $target_mon, $target_day));
 		$start_unixtime			 = strtotime(date('Y/m/d 00:00:00', strtotime($row['start_date'])));
@@ -942,45 +942,46 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 絞り込まれているかどうか
 		// DBからクエリを流すと重いのでここで判断する
-		$is_member = false;
-		if (\Session::get($this->model_name . "narrow_uid") || \Session::get($this->model_name . "narrow_ugid")) {
-			foreach ($row['user'] as $v) {
-				if (\Session::get($this->model_name . "narrow_uid")
-						&& \Session::get($this->model_name . "narrow_uid") == $v['id']) {
-					$is_member = true;
-					break;
-				} else if (!\Session::get($this->model_name . "narrow_uid")
-					&& \Session::get($this->model_name . "narrow_ugid")) {
-					foreach ($v->usergroup as $v2) {
-						if ($v2->id == \Session::get($this->model_name . "narrow_ugid")) {
-							$is_member = true;
-							break;
+		if ($opt == null) {
+			$is_member = false;
+			if (\Session::get($this->model_name . "narrow_uid") || \Session::get($this->model_name . "narrow_ugid")) {
+				foreach ($row['user'] as $v) {
+					if (\Session::get($this->model_name . "narrow_uid")
+							&& \Session::get($this->model_name . "narrow_uid") == $v['id']) {
+						$is_member = true;
+						break;
+					} else if (!\Session::get($this->model_name . "narrow_uid")
+						&& \Session::get($this->model_name . "narrow_ugid")) {
+						foreach ($v->usergroup as $v2) {
+							if ($v2->id == \Session::get($this->model_name . "narrow_ugid")) {
+								$is_member = true;
+								break;
+							}
 						}
 					}
 				}
+				if (!$is_member) { return false; }
 			}
-			if (!$is_member) { return false; }
-		}
-		if (\Session::get($this->model_name . "narrow_bid") || \Session::get($this->model_name . "narrow_bgid")) {
-			$is_building = false;
-			foreach ($row['building'] as $v) {
-				if (\Session::get($this->model_name . "narrow_bid")
-					&& \Session::get($this->model_name . "narrow_bid") == $v['item_id']) {
-					$is_building = true;
-					break;
-				} else if (\Session::get($this->model_name . "narrow_bgid")
-					&& !\Session::get($this->model_name . "narrow_bid")) {
-					// グループの場合
-					if (\Session::get($this->model_name . "narrow_bgid") == $v['item_group2']) {
+			if (\Session::get($this->model_name . "narrow_bid") || \Session::get($this->model_name . "narrow_bgid")) {
+				$is_building = false;
+				foreach ($row['building'] as $v) {
+					if (\Session::get($this->model_name . "narrow_bid")
+						&& \Session::get($this->model_name . "narrow_bid") == $v['item_id']) {
 						$is_building = true;
 						break;
+					} else if (\Session::get($this->model_name . "narrow_bgid")
+						&& !\Session::get($this->model_name . "narrow_bid")) {
+						// グループの場合
+						if (\Session::get($this->model_name . "narrow_bgid") == $v['item_group2']) {
+							$is_building = true;
+							break;
+						}
 					}
+					
 				}
-				
+				if (!$is_building) { return false; }
 			}
-			if (!$is_building) { return false; }
 		}
-
 		switch ($row['repeat_kb']) {
 			case 0:
 				// なし
@@ -1038,6 +1039,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				}
 				break;
 		}
+
 		return $result;
 	}
 
@@ -1107,13 +1109,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		if ($model::$_kind_name == "scdl") {
 			foreach ($arrUsers as $v) {
 				if ($v)
-					$users[$v] = $v;
+					$targetMember[$v] = $v;
 			}
 		}
 		if ($model::$_kind_name == "reserve") {
 			foreach ($arrBuildings as $v) {
 				if ($v)
-					$buildings[$v] = $v;
+					$targetMember[$v] = $v;
 			}
 		}
 
@@ -1139,7 +1141,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 
 	    // 日数に変換
 	    $daydiff = $seconddiff / (60 * 60 * 24);
-
 	    $result = array();
 		// 単純に開始日付と終了日付から判定
 	 	for ($i = 0; $i < $daydiff; $i++) {
@@ -1218,8 +1219,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						->get();
 
 			foreach ($schedule_data as $r) {
-				if ($this->is_target_day($target_year_from, $target_month_from, $target_day_from, $r)) {
-
+				if ($this->is_target_day($target_year_from, $target_month_from, $target_day_from, $r, "all")) {
 					if ($repeat_kb == 0) {
 						if ($r['repeat_kb'] == 0) {
 							// 繰り返しじゃない場合
@@ -1237,9 +1237,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$r['user_data'] = $target_user;
 							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
 							// スケジューラのメンバーが被っているかどうか
-							var_dump($targetMember);exit;
 							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
-							if (is_array($overlapUser)) {
+							if ($overlapUser) {
 								$r['targetdata'] = $overlapUser;
 								$result[] = $r;
 							}
@@ -1258,7 +1257,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
 							// スケジューラのメンバーが被っているかどうか
 							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
-							if (is_array($overlapUser)) {
+							if ($overlapUser) {
 								$r['targetdata'] = $overlapUser;
 								$result[] = $r;
 							}
@@ -1270,7 +1269,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 
 	 	}
-
 		return $result;
 	}
 
@@ -1285,16 +1283,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	private function overlapExistMember($row, $users) {
 		foreach ($row['user'] as $user) {
 			if (isset($users[$user->id])) {
-				return $users[$user->id];
+				return $user['display_name'];
 			}
 		}
 		return "";
 	}
 
 	private function overlapExistBuilding($row, $buildings) {
-		foreach ($row['building'] as $buildings) {
-			if (isset($buildings[$buildings->item_id])) {
-				return $buildings[$buildings->item_id];
+		foreach ($row['building'] as $build) {
+			if (isset($buildings[$build->item_id])) {
+				return $build['item_name'];
 			}
 		}
 		return "";

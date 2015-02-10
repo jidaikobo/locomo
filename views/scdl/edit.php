@@ -14,7 +14,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 <table>
 	<tr>
 		<th>
-			氏名
+			対象
 		</th>
 		<th>
 			日時
@@ -28,7 +28,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 ?>
 	<tr>
 		<td>
-		<?php print $v['user_data']->username; ?>
+		<?php print $v['targetdata']; ?>
 		</td>
 		<td>
 		<?php
