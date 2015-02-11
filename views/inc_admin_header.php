@@ -46,8 +46,8 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 	<![endif]-->
 
 	<!-- favicon -->
-	<!-- link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>" -->
-	
+	<link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>">
+
 </head>
 <body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
 	<div id="main_content" class="container" title="<?php echo $titlestr ?>ページ" tabindex="-1">
