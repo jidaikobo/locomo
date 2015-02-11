@@ -42,6 +42,7 @@
 </div>
 <a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 
+<?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
 <?php foreach ($schedule_data['member_list'] as $row) { ?>
 	<table class="table">
 		<tr>
@@ -86,9 +87,10 @@
 		</tr>
 	</table>
 <?php } ?>
+<?php } ?>
 
 
-<?php if (count($schedule_data['member_list']) > 0) { ?>
+<?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
 	<table class="table">
 		<tr>
 			<td>
@@ -98,7 +100,6 @@
 				内容
 			</td>
 		</tr>
-
 <?php foreach ($schedule_data['member_list'] as $row) { ?>
 		<tr>
 			<td>
