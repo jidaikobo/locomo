@@ -1202,12 +1202,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	    // 何秒離れているかを計算
 	    $seconddiff = abs($end_day_timestamp - $start_day_timestamp);
-	 
+
 	    // 日数に変換
 	    $daydiff = $seconddiff / (60 * 60 * 24);
 	    $result = array();
 		// 単純に開始日付と終了日付から判定
-	 	for ($i = 0; $i < $daydiff; $i++) {
+
+	 	for ($i = 0; $i <= $daydiff; $i++) {
 	 		if ($maxSearchCount < $i) { return $result; }
 	 		$target_year_from = date('Y', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_month_from = date('m', strtotime($start_day . ' +' . $i . "days"));
@@ -1215,8 +1216,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 		$target_date = date('Y/m/d', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_week = date('w', strtotime($start_day . ' +' . $i . "days"));
 	 		// 対象の日データを取得
-	 		 
-	 		if (time() > strtotime($start_day . ' +' . $i . "days")) {
+	 		if (strtotime(date('Y/m/d') . " 00:00:00") > strtotime($start_day . '00:00:00 +' . $i . "days")) {
 	 			continue;
 	 		}
 	 		switch ($repeat_kb) {
@@ -1297,16 +1297,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$target_start_timestamp = strtotime($target_date . " " . $r['start_time']);
 							$target_end_timestamp = strtotime($target_date . " " . $r['end_time']);
 						}
-						if ( !(($target_start_timestamp < $start_datetime_timestamp && $target_end_timestamp < $start_datetime_timestamp)
-							|| ($target_start_timestamp > $end_datetime_timestamp && $target_start_timestamp > $end_datetime_timestamp))
+						if ( !(($target_start_timestamp < $start_datetime_timestamp && $target_end_timestamp <= $start_datetime_timestamp)
+							|| ($target_start_timestamp >= $end_datetime_timestamp && $target_end_timestamp > $end_datetime_timestamp))
 							) {
 
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;
-							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
+							$r['target_date'] = $r['start_date'] . " " . $r['start_time'] . " - " . $r['end_date'] . " " . $r['end_time'];
 							// スケジューラのメンバーが被っているかどうか
 							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
-							if ($overlapUser) {
+							$push = true;
+							foreach ($result as $rrow) {
+								if ($rrow['id'] == $r['id']) { $push = false; break; }
+							}
+							if ($overlapUser && $push) {
 								$r['targetdata'] = $overlapUser;
 								$result[] = $r;
 							}
@@ -1322,10 +1326,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							) {
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;
-							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
+							$r['target_date'] = $r['start_date'] . " " . $r['start_time'] . " - " . $r['end_date'] . " " . $r['end_time'];
 							// スケジューラのメンバーが被っているかどうか
 							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
-							if ($overlapUser) {
+							$push =  true;
+							foreach ($result as $rrow) {
+								if ($rrow['id'] == $r['id']) { $push = false; break; }
+							}
+							if ($overlapUser && $push) {
 								$r['targetdata'] = $overlapUser;
 								$result[] = $r;
 							}
@@ -1337,6 +1345,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 
 	 	}
+
 		return $result;
 	}
 
