@@ -1,6 +1,7 @@
 <table class="tbl datatable">
 <thead>
 	<tr>
+		<th class="min">件数</th>
 		<th>表題</th>
 		<th>申請日</th>
 		<?php if ( ! \Request::is_hmvc()): ?>
@@ -10,8 +11,10 @@
 		<th>操作</th>
 	</tr>
 </thead>
+<?php $n = 1; ?>
 <?php foreach($related as $item):?>
 	<tr>
+		<td><?php echo $n++; ?></td>
 		<td><div class="col_scrollable" tabindex="-1"><?php echo $item->{$subject_field} ?></div></td>
 		<td class="ctrl"><?php echo $item->workflow_apply_date ? date('Y-m-d', strtotime($item->workflow_apply_date)) : '-' ?></td>
 		<?php if ( ! \Request::is_hmvc()): ?>

@@ -200,6 +200,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			if (\Session::get($model::$_kind_name . "narrow_bid") > 0 && $model::$_kind_name == "reserve") {
 				$this->template->content->item->building = \Model_Scdl_Item::find("all", array("where" => array(array('item_group', 'building'), array('item_id', \Session::get($model::$_kind_name . "narrow_bid")))));
 			}
+		} else if (\Input::get("from")) {
+			$from_data = $model::find(\Input::get("from"));
+			if ($from_data) {
+				$this->template->content->item->user = $from_data->user;
+				$this->template->content->item->building = $from_data->building;
+			}
 		}
 		if (\Input::post()) {
 			$select_user_list = \Model_Usr::find("all", array("where" => array(array('id', 'in', explode("/", \Input::post("hidden_members"))))));
@@ -264,17 +270,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	public function action_copy() {
 		$model = $this->model_name ;
+
 		$this->action_edit();
 
 		if (\Input::get("from")) {
 			// 直接メンバ変数にアクセスしてよいか
 			$from_data = $model::find(\Input::get("from"));
-			$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
-								, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
-								, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-								, 'purpose_text', 'user_num');
-			foreach ($setcolumns as $v) {
-				$this->template->content->form->field($v)->set_value($from_data->$v);
+			if ($from_data) {
+				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
+									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
+									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
+									, 'purpose_text', 'user_num');
+				foreach ($setcolumns as $v) {
+					$this->template->content->form->field($v)->set_value($from_data->$v);
+				}
 			}
 		}
 	}
@@ -1466,6 +1475,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		echo $this->response($response, 200); die();
 	}
 
+	/**
+	 * [check_error_scdl description]
+	 * @return [type] [description]
+	 */
 	private function check_error_scdl() {
 		$flg_exist = false;
 		$model = $this->model_name;
@@ -1484,6 +1497,32 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		}
 		if (!$flg_exist) {
 			$this->_scdl_errors[] = $target_name . "を選択してください。";
+		}
+		// 時間が反転
+		if (\Input::post("repeat_kb") == 0) {
+			$start = strtotime(\Input::post("start_date") . " " . \Input::post("start_time"));
+			$end = strtotime(\Input::post("end_date") . " " . \Input::post("end_time"));
+			if ($start > $end) {
+				$this->_scdl_errors[] = "入力された期間が不正です。";
+			}
+		} else {
+			if (\Input::post("start_time") >= \Input::post("end_time")) {
+				$this->_scdl_errors[] = "入力された期間が不正です。";
+			} else if (\Input::post("start_date") >= \Input::post("end_date")) {
+				$this->_scdl_errors[] = "入力された期間が不正です。";
+			}
+		}
+		if (\Input::post("repeat_kb") == 4 
+			&& (\Input::post("target_day") < 1 || \Input::post("target_day") > 31 || \Input::post("target_day") == "")) {
+				$this->_scdl_errors[] = "対象の日を正しく入力してください。";
+		}
+		if (\Input::post("repeat_kb") == 5) { 
+			if (\Input::post("target_month") < 1 || \Input::post("target_month") > 12 || \Input::post("target_month") == "") {
+				$this->_scdl_errors[] = "対象の月を正しく入力してください。";
+			}
+			if (\Input::post("target_day") < 1 || \Input::post("target_day") > 31 || \Input::post("target_day") == "") {
+				$this->_scdl_errors[] = "対象の日を正しく入力してください。";
+			}
 		}
 		return (count($this->_scdl_errors) == 0);
 	}
