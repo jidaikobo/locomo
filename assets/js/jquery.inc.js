@@ -140,12 +140,13 @@ if(firstFocus){
 }
 //とりあえず
 $('h1').first().not(':has(>a)').attr('tabindex', '0');
-/* 不要なh2を削除するためのいったんのスタイル */
+
+/* 不要なh2を削除するためのいったんのスタイル 
 $('h2').first().each(function(){
 	if(!$(this).prevAll('h1')[0])
 		$(this).css('background-color', '#fcc');
 });
-
+*/
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );

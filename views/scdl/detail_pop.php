@@ -32,7 +32,7 @@
 
 	<?php if ($detail_pop_data->kind_flg == 1) { ?>
 	<tr>
-		<th>
+		<th class="min">
 			メッセージ：</th><td><?php print mb_substr($detail_pop_data->message, 0, 20); ?>
 		</td>
 	</tr>
@@ -40,11 +40,13 @@
 
 	<?php if (count($detail_pop_data->user)) { ?>
 	<tr>
-	<th>メンバー</th>
+	<th>メンバー：</th>
 	<td>
-		<?php foreach ($detail_pop_data->user as $row) {
-			print $row['display_name'] . " ";
+		<?php $members = [];
+		foreach ($detail_pop_data->user as $row) {
+			$members[] .= $row['display_name'];
 		}
+		echo implode(', ', $members); 
 		?>
 	</td>
 	</tr>
@@ -52,12 +54,15 @@
 
 	<?php if (count($detail_pop_data->building)) { ?>
 	<tr>
-	<th>対象施設</th>
+	<th>対象施設：</th>
 	<td>
-		<?php foreach ($detail_pop_data->building as $row) {
-			print $row['item_name'] . " ";
+		<?php $buildings = [];
+		foreach ($detail_pop_data->building as $row) {
+			$buildings[] .= $row['item_name'];
 		}
+		echo implode(', ', $buildings); 
 		?>
+		
 	</td>
 	</tr>
 	<?php } ?>
@@ -69,7 +74,7 @@
 	</tr>
 	<?php if ($detail_pop_data->kind_flg == 2) { ?>
 	<tr>
-		<th>
+		<th class="min">
 			施設使用目的：</th><td><?php print $detail_pop_data->purpose_kb . " " . $detail_pop_data->purpose_text; ?>
 		</td>
 	</tr>

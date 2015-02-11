@@ -289,6 +289,7 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'text',
 				'class' => 'int',
+				'size' => 6,
 				'title' => '施設利用人数 半角数字で入力してください',
 			),
 		),
