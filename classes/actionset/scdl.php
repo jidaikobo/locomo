@@ -35,8 +35,6 @@ class Actionset_Scdl extends \Actionset_Base
 				$controller.'::action_get_building_list',
 				$controller.'::action_admin',
 				$controller.'::action_view_invisible', // action is not exist yet
-
-
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'スケジューラの管理権限');

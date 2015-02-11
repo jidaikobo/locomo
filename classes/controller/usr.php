@@ -57,8 +57,26 @@ class Controller_Usr extends \Locomo\Controller_Base
 	 */
 	public function action_index_admin()
 	{
+		// free word search
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
+		{
+			\Model_Usr::$_options['where'][] = array(
+				array('username', 'LIKE', $all),
+				'or' => array(
+					array('email', 'LIKE', $all),
+					'or' => array(
+						array('display_name', 'LIKE', $all), 
+					)
+				) 
+			);
+		}
+
+		// span
 		if (\Input::get('from')) \Model_Usr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
 		if (\Input::get('to'))   \Model_Usr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
+
+		// to controller base
 		parent::index_admin();
 	}
 
