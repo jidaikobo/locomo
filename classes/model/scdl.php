@@ -188,8 +188,8 @@ class Model_Scdl extends \Model_Base
 			'label' => '時間指定なし',
 			'form' => 
 			array (
-				'type' => 'checkbox',
-				'value' => 1
+				'type' => 'hidden',
+				'value' => 0
 			),
 		),
 		'allday_kb' => 
@@ -465,6 +465,12 @@ class Model_Scdl extends \Model_Base
 			$form->field('user_id')->set_value(\Auth::get('id'));
 			// 重要度
 			$form->field('title_importance_kb')->set_value("→中");
+			if (\Input::get("ymd", "") == "") {
+				$form->field('start_date')->set_value(date('Y-m-d'));
+				$form->field('end_date')->set_value(date('Y-m-d'));
+			}
+			$form->field('start_time')->set_value('00:00');
+			$form->field('end_time')->set_value('23:59');
 		}
 
 		if (\Input::get("ymd")) {
