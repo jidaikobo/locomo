@@ -25,7 +25,7 @@ if (\Auth::check()):
 				$ctrl_index = '';
 				// Controller_Sys
 				if ($current_name == '-Controller_Sys'):
-					if(\Auth::has_access($locomo['controller']['name'].'::home')):
+					if(\Auth::has_access($locomo['controller']['name'].'::action_home')):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'), '管理トップ');
 					else:
 						$top_link = '管理トップ';
