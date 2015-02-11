@@ -1,5 +1,4 @@
-
-<h1><?php print $year; ?>年<?php print (int)$mon; ?>月</h1>
+<h1><?php print $year; ?>年<?php print (int)$mon; ?>月カレンダ</h1>
 <div class="select_display_type">
 	<?php print htmlspecialchars_decode($display_month); ?> / 
 	<?php print htmlspecialchars_decode($display_week); ?>
@@ -31,13 +30,13 @@
 
 
 
-<div class="narrow_user lcm_focus al" title="絞り込み">
+<div class="narrow_user lcm_focus" title="絞り込み">
 <?php include("calendar_narrow.php"); ?>
 </div>
 
 
 
-<table class="calendar month lcm_focus" title="カレンダー">
+<table class="calendar month lcm_focus" title="カレンダ">
 	<thead>
 		<tr>
 			<th class="week1"><span>月曜日</span></th>
