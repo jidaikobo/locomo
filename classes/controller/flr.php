@@ -85,7 +85,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// eliminate invalid filenames
 		foreach ($items as $k => $fullpath)
 		{
-			if ($fullpath == LOCOMOUPLOADPATH.DS) continue;
+			if ($fullpath == LOCOMOUPLOADPATH.DS) continue; //root dir
 			$enc_name = \Model_Flr::enc_url($fullpath);
 
 			// if same name exists
@@ -107,8 +107,19 @@ class Controller_Flr extends \Locomo\Controller_Base
 				$fullpath = \Model_Flr::enc_url(dirname($fullpath)).DS.basename($fullpath);
 			}
 
-			\File::rename($fullpath, $enc_name);
+			try
+			{
+				\File::rename($fullpath, $enc_name);
+			} catch (\Fuel\Core\PhpErrorException $e) {
+				$errors = array(
+					'同期は不完全に終わりました。',
+					"'".urldecode(basename($fullpath))."'は、パーミッションが妥当でありませんシステム管理者に修正を依頼してください。",
+				);
+				\Session::set_flash('error', $errors);
+				\Response::redirect(\Uri::create('flr/sync/'));
+			}
 		}
+
 		// reload
 		$items = \Util::get_file_list(LOCOMOUPLOADPATH);
 
@@ -364,7 +375,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			{
 				\Session::set_flash('error', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 			}
-			elseif ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
+			elseif ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname), '0777'))
 			{
 				\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
 				\Response::redirect(\Uri::create('flr/create_dir/'.$id));

@@ -244,7 +244,6 @@ class Model_Scdl extends \Model_Base
 			),
 			'validation' => 
 			array (
-				'',
 			),
 		),
 		'group_kb' => 

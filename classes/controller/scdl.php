@@ -34,7 +34,34 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @return [type]     [description]
 	 */
 	public function action_delete($id) {
-		parent::delete($id);
+
+		$model = $this->model_name ;
+		if ($obj = $model::find($id))
+		{
+			// event
+			if (\Event::instance()->has_events('locomo_delete'))
+			{
+				\Event::instance()->trigger('locomo_delete', $obj, 'none');
+			}
+
+			// try to delete
+			try {
+				$obj->delete(null, true);
+			}
+			catch (\Exception $e) {
+				\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
+			}
+
+			\Session::set_flash(
+				'success',
+				sprintf('%1$sの #%2$d を削除しました', self::$nicename, $id)
+			);
+
+			\Response::redirect(\Uri::create($model::$_kind_name . '/calendar'));
+		}
+
+		\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
+		\Response::redirect(\Uri::create($model::$_kind_name . '/calendar'));
 	}
 
 	/**

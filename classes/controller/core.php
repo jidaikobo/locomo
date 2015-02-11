@@ -109,7 +109,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			return \Response::redirect(static::$main_url);
 		}
 
-
 		// auth
 		if ( ! static::auth())
 		{

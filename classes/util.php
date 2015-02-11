@@ -1,5 +1,21 @@
 <?php
 namespace Locomo;
+
+class SortedIterator extends \SplHeap
+{
+//	public function __construct(Iterator $iterator)
+	public function __construct($iterator)
+	{
+		foreach ($iterator as $item) {
+			$this->insert($item);
+		}
+	}
+	public function compare($b,$a)
+	{
+		return strcmp($a->getRealpath(), $b->getRealpath());
+	}
+}
+
 class Util
 {
 	/**
@@ -132,10 +148,11 @@ class Util
 	{
 		$iterator = new \RecursiveDirectoryIterator($dir);
 		$iterator = new \RecursiveIteratorIterator($iterator);
+		$siterator = new \Locomo\SortedIterator($iterator);
 
 		$list = array();
 		// $fileinfo is SplFiIeInfo Object
-		foreach ($iterator as $fileinfo)
+		foreach ($siterator as $fileinfo)
 		{
 //			if ($type == 'all'  && ! $fileinfo->isFile() && ! $fileinfo->isDir()) continue;
 			if ($type == 'file' && ! $fileinfo->isFile()) continue;
