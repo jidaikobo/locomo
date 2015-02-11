@@ -931,10 +931,10 @@ span#customer_address2:empty + br,
 span#customer_address3:empty + br {
 	display: none;
 }
-a.disclosure {
+.disclosure {
 	display: block;
 	position: relative;
-	color: #333;
+	color: #333 !important;
 	font-size: .9em;
 	text-decoration: none;
 	background-image: url('../img/system/mark_disclose.png');
@@ -947,22 +947,21 @@ a.disclosure {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-a.disclosure.on {
+.disclosure.on {
 	background-image: url('../img/system/mark_disclose_on.png');
 	background-position-x: 0;
 }
-a.disclosure.nomarker {
+.disclosure.nomarker {
 	background-image: none;
 	padding-left: 5px;
-	font-size: 1em;
 }
-a.disclosure.nomarker span.icon {
+.disclosure.nomarker span.icon {
 	padding-left: 15px;
 	background-image: url('../img/system/mark_disclose.png');
 	background-position: 4px center;
 	background-repeat: no-repeat;
 }
-h1 a.disclosure span.icon {
+.disclosure span.icon {
 	font-size: .8em;
 	line-height: 1.5;
 	height: 1.75em;
@@ -970,14 +969,14 @@ h1 a.disclosure span.icon {
 	position: relative;
     bottom: -.4em;
 }
-h1 a.disclosure span.icon img {
+.disclosure span.icon img {
 	margin: 0 0 0 .25em;
 }
-a.disclosure.nomarker.on span.icon {
+.disclosure.nomarker.on span.icon {
 	background-image: url('../img/system/mark_disclose_on.png');
 	background-position-x: 0;
 }
-a.disclosure:hover {
+.disclosure:hover {
 	background-color: #e8e8e8;
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -1261,6 +1260,10 @@ table.calendar {
 	width: 8em;
 	background-color: transparent;
 }
+.calendar td.today {
+/*	border: 2px solid rgba(255,0,0,.25);*/
+	background-color: #ffd;
+}
 .calendar thead * {
 	vertical-align: middle;
 	text-align: center;
@@ -1375,7 +1378,6 @@ a.icon.zip:before {
 .contents h2 {
 	margin: 1em 0 .5em;
 /*	font-size: 1.25em;*/
-	background-color: #fcc;
 	border-bottom: 1px solid #aaa;
 	box-shadow: 0 1px 0 #fff;
 }
