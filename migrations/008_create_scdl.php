@@ -42,16 +42,8 @@ class Create_Scdl
 
 		), array('id'));
 		$query = \DB::delete("lcm_scdls")->execute();
-		$query = \DB::query("
-INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start_date`, `end_date`, `start_time`, `end_time`, `week_kb`, `title_text`, `title_importance_kb`, `title_kb`, `private_kb`, `message`, `group_kb`, `group_detail`, `purpose_kb`, `purpose_text`, `user_num`, `user_id`, `created_at`, `updated_at`, `deleted_at`, `is_visible`) VALUES
-(1, 0, 0, 0, '2014-11-27', '2014-11-27', '09:00:00', '12:00:00',  '', '一日だけ', '↑高', '社内', '', '一日だけ', 0, '', '賃室', '', 0, 1, '1970-01-01 09:00:00', '2014-11-27 11:41:56', NULL, 1),
-(2, 1, 0, 0, '2014-11-18', '2014-11-28', '13:00:00', '14:00:00',  '', '毎日の予定', '↑高', '社内', '', '毎日の予定', 0, '', '賃室', '', 0, 1, '1970-01-01 09:00:00', '2014-11-27 11:43:05', NULL, 1),
-(3, 2, 0, 0, '2014-11-06', '2014-11-20', '15:00:00', '16:00:00',  '', '土日除きます', '↑高', '社内', '', '土日除きます', 0, '', '賃室', '', 0, 1, '1970-01-01 09:00:00', '2014-11-27 11:44:09', NULL, 1),
-(4, 3, 0, 0, '2014-11-06', '2014-11-20', '09:00:00', '12:00:00',  '4', '毎週の予定', '↑高', '社内', '', '毎週の予定', 0, '', '賃室', '', 0, 1, '1970-01-01 09:00:00', '2014-11-27 11:46:25', NULL, 1),
-(5, 4, 0, 3, '2014-09-01', '2015-03-01', '09:00:00', '14:00:00',  '', '毎月の予定', '↑高', '社内', '', '毎月の予定', 0, '', '賃室', '', 0, 1, '1970-01-01 09:00:00', '2014-11-27 11:47:19', NULL, 1),
-(6, 5, 12, 24, '2013-11-01', '2018-11-01', '15:00:00', '16:00:00',  '', '毎年のクリスマスイベント', '↑高', '社内', '', '毎年のクリスマスイベント', 0, '', '賃室', '', 0, 1, '1970-01-01 09:00:00', '2014-11-27 11:50:14', NULL, 1);
-		", \DB::INSERT);
-		$query->execute();
+		
+
 
 		echo "create lcm_scdls_buildings table.\n";
 		\DBUtil::create_table('lcm_scdls_buildings', array(
@@ -64,23 +56,8 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 
 		), array('id'));
 
-		\DB::query("
-		INSERT INTO items (
-			`id` ,
-			`category` ,
-			`sub_category` ,
-			`name` ,
-			`data` ,
-			`seq` ,
-			`is_memo` ,
-			`is_status`
-			)
-			VALUES (
-			NULL ,  'schedule_building',  '',  '施設1',  '',  '1',  '0',  '0'
-			), (
-			NULL ,  'schedule_building',  '',  '施設2',  '',  '2',  '0',  '0'
-		);
-		")->execute();
+		
+		
 
 		echo "create lcm_scdls_members table.\n";
 		\DBUtil::create_table('lcm_scdls_members', array(

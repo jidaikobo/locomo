@@ -71,29 +71,38 @@ class Model_Dashboard_User extends Model_Base
 			$widgets[$key] = $tmps;
 		}
 
+		$create = 3;
+
+		// count の前にセット
+		\Model_Dashboard::$_properties['action']['form']['options'] = $widgets ;
+
 		// default
-/*
 		if (count($obj->dashboard) === 0)
 		{
-			$configs = \Config::get('default_dashboard') ?: array();
-			if ( ! $configs) continue;
-			foreach ($configs as $config)
-			{
-				$arr = array(
-					'user_id' => $obj->id,
-					'action'  => $config['action'],
-					'size'    => $config['size'],
-					'seq'     => $config['seq'],
-				);
-				$obj->dashboard[] = \Model_Dashboard::forge($arr);
-			}
+			$defaults = \Config::get('default_dashboard') ?: array();
+			if ( ! $defaults) continue;
+			$create += count($defaults);
 		}
-*/
 
 		// actions
-		\Model_Dashboard::$_properties['action']['form']['options'] = $widgets ;
 		$fieldset = \Fieldset::forge('dashboard');
-		$fieldset->set_tabular_form('Model_Dashboard', 'dashboard', $obj, 3);
+		$fieldset->set_tabular_form('Model_Dashboard', 'dashboard', $obj, $create);
+
+
+		if ($defaults) {
+			$i = 0;
+			foreach ($defaults as $default)
+			{
+				$new_row = $fieldset->field('dashboard_new_' . $i);
+				//var_dump($new_row);
+				foreach ($default as $k => $v) {
+					if ($field = $new_row->field('dashboard_new[' . $i . '][' . $k . ']')) {
+						$field->set_value($v);
+					}
+				}
+				$i++;
+			}
+		}
 
 		$form->add_before($fieldset, 'ダッシュボードウィジェット', array(), array(), 'submit');
 
