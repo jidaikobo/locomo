@@ -1466,6 +1466,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		echo $this->response($response, 200); die();
 	}
 
+	/**
+	 * [check_error_scdl description]
+	 * @return [type] [description]
+	 */
 	private function check_error_scdl() {
 		$flg_exist = false;
 		$model = $this->model_name;
@@ -1484,6 +1488,32 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		}
 		if (!$flg_exist) {
 			$this->_scdl_errors[] = $target_name . "を選択してください。";
+		}
+		// 時間が反転
+		if (\Input::post("repeat_kb") == 0) {
+			$start = strtotime(\Input::post("start_date") . " " . \Input::post("start_time"));
+			$end = strtotime(\Input::post("end_date") . " " . \Input::post("end_time"));
+			if ($start > $end) {
+				$this->_scdl_errors[] = "入力された期間が不正です。";
+			}
+		} else {
+			if (\Input::post("start_time") >= \Input::post("end_time")) {
+				$this->_scdl_errors[] = "入力された期間が不正です。";
+			} else if (\Input::post("start_date") >= \Input::post("end_date")) {
+				$this->_scdl_errors[] = "入力された期間が不正です。";
+			}
+		}
+		if (\Input::post("repeat_kb") == 4 
+			&& (\Input::post("target_day") < 1 || \Input::post("target_day") > 31 || \Input::post("target_day") == "")) {
+				$this->_scdl_errors[] = "対象の日を正しく入力してください。";
+		}
+		if (\Input::post("repeat_kb") == 5) { 
+			if (\Input::post("target_month") < 1 || \Input::post("target_month") > 12 || \Input::post("target_month") == "") {
+				$this->_scdl_errors[] = "対象の月を正しく入力してください。";
+			}
+			if (\Input::post("target_day") < 1 || \Input::post("target_day") > 31 || \Input::post("target_day") == "") {
+				$this->_scdl_errors[] = "対象の日を正しく入力してください。";
+			}
 		}
 		return (count($this->_scdl_errors) == 0);
 	}
