@@ -201,7 +201,7 @@ $is_sendmail = true;
 				$email = \Email::forge();
 				$email->from('webmaster@kyoto-lighthouse.org', 'ライトスタッフシステム');
 				$email->to('shibata@jidaikobo.com', $obj->display_name);
-				$email->subject('すべてのパスワードのお知らせ');
+				$email->subject('すべてのパスワードのお知らせです');
 				$email->body($body);
 
 				// send
