@@ -85,7 +85,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// eliminate invalid filenames
 		foreach ($items as $k => $fullpath)
 		{
-			if ($fullpath == LOCOMOUPLOADPATH.DS) continue;
+			if ($fullpath == LOCOMOUPLOADPATH.DS) continue; //root dir
 			$enc_name = \Model_Flr::enc_url($fullpath);
 
 			// if same name exists
@@ -109,6 +109,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 			\File::rename($fullpath, $enc_name);
 		}
+
 		// reload
 		$items = \Util::get_file_list(LOCOMOUPLOADPATH);
 
