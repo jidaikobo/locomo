@@ -1391,7 +1391,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_get_user_list()
 	{
-		//if (!\Input::is_ajax()) throw new HttpNotFoundException;;
+		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
 		$where = array();
 
 		if (\Input::post("gid", 0)) {
@@ -1422,7 +1422,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_get_building_list()
 	{
-//		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
+		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
 		$where = array(array('item_group', 'building'));
 		if (\Input::post("bid")) {
 			$where = array(
