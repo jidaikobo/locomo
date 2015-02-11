@@ -128,7 +128,7 @@ class Actionset_Scdl extends \Actionset_Base
 	public static function actionset_somedelete($controller, $obj = null, $id = null, $urls = array())
 	{
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1):
-			$actions = array(array($controller.DS."somedelete/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '部分削除'));
+			$actions = array(array($controller.DS."somedelete/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '部分削除', array('class' => 'confirm')));
 			$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
 		endif;
 

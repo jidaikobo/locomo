@@ -72,6 +72,7 @@ class Model_Dashboard_User extends Model_Base
 		}
 
 		// default
+/*
 		if (count($obj->dashboard) === 0)
 		{
 			$configs = \Config::get('default_dashboard') ?: array();
@@ -87,6 +88,7 @@ class Model_Dashboard_User extends Model_Base
 				$obj->dashboard[] = \Model_Dashboard::forge($arr);
 			}
 		}
+*/
 
 		// actions
 		\Model_Dashboard::$_properties['action']['form']['options'] = $widgets ;
