@@ -1045,7 +1045,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// DBからクエリを流すと重いのでここで判断する
 		if ($opt == null) {
 			$is_member = false;
-			if (\Session::get($model::$_kind_name . "narrow_uid") > 0 || \Session::get($model::$_kind_name . "narrow_ugid") > 0) {
+			if ((\Session::get($model::$_kind_name . "narrow_uid") > 0 || \Session::get($model::$_kind_name . "narrow_ugid") > 0) && $model::$_kind_name == "scdl") {
+
 				foreach ($row['user'] as $v) {
 					if (\Session::get($model::$_kind_name . "narrow_uid") > 0
 							&& \Session::get($model::$_kind_name . "narrow_uid") == $v['id']) {
@@ -1063,7 +1064,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				}
 				if (!$is_member) { return false; }
 			}
-			if (\Session::get($model::$_kind_name . "narrow_bid") > 0 || \Session::get($model::$_kind_name . "narrow_bgid") > 0) {
+			if ((\Session::get($model::$_kind_name . "narrow_bid") > 0 || \Session::get($model::$_kind_name . "narrow_bgid") > 0) && $model::$_kind_name == "reserve") {
 				$is_building = false;
 				foreach ($row['building'] as $v) {
 					if (\Session::get($model::$_kind_name . "narrow_bid") > 0
