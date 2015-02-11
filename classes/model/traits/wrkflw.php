@@ -57,11 +57,13 @@ trait Model_Traits_Wrkflw
 	{
 		if (is_null($controller) || is_null($controller_id)) return false;
 
-		// ワークフローidを得る
+		// 現在のワークフローidを得る
 		$q = \DB::select('workflow_id');
 		$q->from('lcm_wrkflw_logs');
 		$q->where('controller', \Inflector::add_head_backslash($controller));
 		$q->where('controller_id', $controller_id);
+		$q->order_by('created_at', 'DESC');
+		$q->limit(1);
 		$id = $q->execute()->current();
 
 		return ($id) ? (int) $id['workflow_id'] : false;
@@ -402,6 +404,12 @@ trait Model_Traits_Wrkflw
 			$options['where'][] = array(array($column, '=', 'finish'));
 		}
 
+		// 作成ユーザと管理者はどんな条件でも閲覧できる - いったん一番上に
+		if (\Auth::has_access($controller.'::action_create'))
+		{
+			return $options;
+		}
+
 		// 編集
 		if ($mode == 'edit')
 		{
@@ -417,12 +425,6 @@ trait Model_Traits_Wrkflw
 		{
 			// 承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
-			return $options;
-		}
-
-		// 作成ユーザはどんな条件でも閲覧できる
-		if (\Auth::has_access($controller.'::action_create'))
-		{
 			return $options;
 		}
 
