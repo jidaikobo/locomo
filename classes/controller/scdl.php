@@ -172,7 +172,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$errors = array_merge($errors, $this->_scdl_errors);
 					if (count($overlap_result)) {
 						// 重複チェック
-						$errors[] = "同じ日時で重複しているデータが存在します。そのまま登録する場合は、詳細設定の重複チェックを外してください。";
+						$errors[] = "同じ日時で重複しているデータが存在します。";
 					}
 					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
 					\Session::set_flash('error', $errors);

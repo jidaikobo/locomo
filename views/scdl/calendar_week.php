@@ -1,16 +1,18 @@
-<h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
-<div class="select_display_type">
-	<?php print htmlspecialchars_decode($display_month); ?><!-- / -->
-	<?php // print htmlspecialchars_decode($display_week); ?>
-</div>
-<div class="field_wrapper calendar">
-<div class="select_period" title="週の選択">
-	<?php print htmlspecialchars_decode($prev_url); ?> / 
-	<?php print htmlspecialchars_decode($next_url); ?>
-</div>
-<div class="narrow_user lcm_focus" title="絞り込み">
-<?php include("calendar_narrow.php"); ?>
-</div>
+<?php if ( ! \Request::is_hmvc()): ?>
+	<h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
+	<div class="select_display_type">
+		<?php print htmlspecialchars_decode($display_month); ?><!-- / -->
+		<?php // print htmlspecialchars_decode($display_week); ?>
+	</div>
+	<div class="field_wrapper calendar">
+	<div class="select_period" title="週の選択">
+		<?php print htmlspecialchars_decode($prev_url); ?> / 
+		<?php print htmlspecialchars_decode($next_url); ?>
+	</div>
+	<div class="narrow_user lcm_focus" title="絞り込み">
+	<?php include("calendar_narrow.php"); ?>
+	</div>
+<?php endif; ?>
 
 <table class="calendar week lcm_focus" title="カレンダ">
 	<thead>
@@ -51,6 +53,8 @@
 </tr>
 
 </table>
-</div><!-- /.field_wrapper.calendar -->
+<?php if ( ! \Request::is_hmvc()): ?>
+	</div><!-- /.field_wrapper.calendar -->
+<?php endif; ?>
 
 
