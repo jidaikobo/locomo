@@ -38,6 +38,7 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'text',
 				'class' => 'int',
+				'size' => 3,
 			),
 		),
 		'target_day' => 
@@ -48,6 +49,7 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'text',
 				'class' => 'int',
+				'size' => 3,
 			),
 		),
 		'start_date' => 
@@ -140,7 +142,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 45,
+				'size' => 35,
 				'class' => 'text',
 			),
 			'validation' => 
