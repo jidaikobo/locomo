@@ -3,7 +3,7 @@ namespace Locomo;
 class Controller_Scdl extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Crud;
+	//use \Controller_Traits_Crud;
 
 	// locomo
 	public static $locomo = array(
@@ -26,6 +26,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_create() {
 		$this->action_edit();
+	}
+
+	/**
+	 * [action_delete description]
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 */
+	public function action_delete($id) {
+		parent::delete($id);
 	}
 
 	/**
@@ -553,7 +562,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		}
 
 		// 週表示用
-		list($weekY, $weekM, $weekD) = $this->get_week_first_date($year, $mon, $day);
+		list($weekY, $weekM, $weekD) = $this->week_first_date($year, $mon, $day);
 		$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
 
 		$view->set_global('title', self::$nicename);
@@ -1128,7 +1137,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  integer $day
 	 * @return [type]
 	 */
-	private function get_week_first_date($year, $mon, $day = 1) {
+	private function week_first_date($year, $mon, $day = 1) {
 
 		if (!$day) { $day = 1; }
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day)));
