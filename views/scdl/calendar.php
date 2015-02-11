@@ -79,7 +79,7 @@
 				
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid ?>">
 					<?php
-//						echo (int)$v2['title_importance_kb']  == '↑高' ? '↑高' : '';
+//						echo $v2['title_importance_kb']  == '↑高' ? '↑高' : '';
 						echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
 						if ($v2['allday_kb']) { print '<span class="text_icon schedule allday_kb"><span class="skip">終日</span></span>'; };
 						if ($v2['unspecified_kb']) { print '<span class="text_icon schedule unspecified_kb"><span class="skip">時間指定なし</span></span>'; };
@@ -97,6 +97,15 @@
 <?php } ?>
 </table>
 </div><!-- /.field_wrapper -->
+<div class="legend calendar">
+<?php foreach($repeat_kbs as $k => $v){
+	echo $k != 0 ? '<span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' ' : '';
+ }?>
+	<span class="text_icon schedule provisional_kb"><span class="skip">仮登録</span></span>仮登録 
+	<!--<span class="text_icon schedule unspecified_kb"><span class="skip">時間指定なし</span></span>時間指定なし-->
+	<span class="text_icon schedule allday_kb"><span class="skip">終日</span></span>終日 
+</div><!-- /.legend.calendar -->
+
 <?php foreach($schedule_data as $v) { 
 	if(isset($v['day'])){
 		foreach ($v['data'] as $v2) {

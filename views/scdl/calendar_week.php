@@ -62,6 +62,9 @@
 </tr>
 </tbody>
 </table>
+<?php if(!\Request::is_hmvc()): ?>
+</div><!-- /.field_wrapper.calendar -->
+<?php endif; ?>
 <div class="legend calendar">
 <?php foreach($repeat_kbs as $k => $v){
 	echo $k != 0 ? '<span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' ' : '';
@@ -70,9 +73,7 @@
 	<!--<span class="text_icon schedule unspecified_kb"><span class="skip">時間指定なし</span></span>時間指定なし-->
 	<span class="text_icon schedule allday_kb"><span class="skip">終日</span></span>終日 
 </div><!-- /.legend.calendar -->
-<?php if(!\Request::is_hmvc()): ?>
-</div><!-- /.field_wrapper.calendar -->
-<?php endif; ?>
+
 <?php foreach($schedule_data as $v) {?>
 	<?php if (isset($v['day'])) { ?>
 		<?php foreach ($v['data'] as $v2) {
