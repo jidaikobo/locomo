@@ -172,6 +172,10 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	{
 		$current_action = '\\'.$this->request->controller.'::action_'.$this->request->action;
 
+		if (!method_exists(static::$controller, 'action_'.static::$action)) {
+			$current_action = '\\'.$this->request->controller.'::get_'.$this->request->action;
+		}
+
 		// ordinary auth
 		$is_allow = \Auth::instance()->has_access($current_action);
 
