@@ -257,14 +257,18 @@ $.fn.reset_tabindex = function(){
 
 
 //.lcm_focusに基づくフォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする
-if(tabindexCtrl) set_lcm_focus();
+if(tabindexCtrl){
+	set_lcm_focus();
+	$('.lcm_focus').each(function(){
+		$(this).attr('title', $(this).attr('title')+' エンターで開きます')
+	});
+}
 
 function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセットする(targetがなくてthisがwindow)
-	var lcm_focus, lcm_calender, each_date;
+	var lcm_focus, each_date;
 	lcm_focus    = $('.lcm_focus');
 	if(!lcm_focus[0]) return; //lcm_focusがなければおしまい
-	lcm_calendar = $('.lcm_focus.calendar');
-	each_date    = lcm_calendar[0] ? $('.each_date').addClass('lcm_focus') : null;
+	each_date    = $('.lcm_focus.calendar')[0] ? $('.each_date') : null;
 	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
 	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
 	//抜けるリンクの準備。絶対に一つだけ。というようにしたい。
