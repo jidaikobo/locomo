@@ -2,7 +2,7 @@
 // is_user?
 if (\Auth::check()):
 	$html = '';
-	$html.= '<nav id="adminbar" class="clearfix">';
+	$html.= '<nav id="adminbar" class="clearfix noprint">';
 		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="0">ここからツールバーです</a></h2>';
 
 	// .adminbar_bottom

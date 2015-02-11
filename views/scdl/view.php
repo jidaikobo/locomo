@@ -85,7 +85,7 @@
 	foreach ($detail->user as $row) {
 		$members[] .= $row['display_name'];
 	}
-	echo implode(', ', $members); 
+	echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>'; 
 	?>
 </td>
 </tr>
@@ -95,9 +95,11 @@
 <tr>
 <th>対象施設</th>
 <td>
-	<?php foreach ($detail->building as $row) {
-		print $row['item_name'] . " ";
+	<?php $buildings = [];
+	foreach ($detail->building as $row) {
+		$buildings[] .= $row['item_name'];
 	}
+	echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>'; 
 	?>
 </td>
 </tr>

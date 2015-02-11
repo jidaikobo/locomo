@@ -46,7 +46,7 @@
 		foreach ($detail_pop_data->user as $row) {
 			$members[] .= $row['display_name'];
 		}
-		echo implode(', ', $members); 
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>'; 
 		?>
 	</td>
 	</tr>
@@ -60,7 +60,7 @@
 		foreach ($detail_pop_data->building as $row) {
 			$buildings[] .= $row['item_name'];
 		}
-		echo implode(', ', $buildings); 
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>'; 
 		?>
 		
 	</td>

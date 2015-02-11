@@ -1,7 +1,7 @@
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <div class="select_display_type">
-	<?php print htmlspecialchars_decode($display_month); ?> / 
-	<?php print htmlspecialchars_decode($display_week); ?>
+	<?php print htmlspecialchars_decode($display_month); ?><!-- / -->
+	<?php // print htmlspecialchars_decode($display_week); ?>
 </div>
 <div class="field_wrapper calendar">
 <div class="select_period" title="週の選択">

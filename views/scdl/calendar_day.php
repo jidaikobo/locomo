@@ -1,29 +1,12 @@
-
-<div class="narrow_user">
-<?php include("calendar_narrow.php"); ?>
+<h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 カレンダ一日詳細</h1>
+<div class="select_display_type">
+	<?php print htmlspecialchars_decode($display_month); ?> / 
+	<?php print htmlspecialchars_decode($display_week); ?>
 </div>
 
-<?php print htmlspecialchars_decode($display_month); ?> / 
-<?php print htmlspecialchars_decode($display_week); ?>
-
-<h1>calendar一日詳細</h1>
-
-<p>
-<?php echo $year; ?>年　<?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日
-</p>
-
-
 <style>
-.table table, .table td, .table th{
-	border: 1px solid black;
-	vertical-align: top;
-}
-.active {
-	background-color: blue;
-}
-.graydown {
-	background-color: #CCC;
-}
+
+
 .week0 {
 	background-color: pink;
 }
@@ -34,26 +17,28 @@
 
 移動<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day); ?>" class="date" id="move_date" />
 
-<hr />
 
-<div class="lcm_focus">
+<div style="position: rerative;">
+<div class="select_period" title="前後の日へ移動">
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
 	<?php print htmlspecialchars_decode($next_url); ?>
 </div>
 <a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 
-<?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-<?php foreach ($schedule_data['member_list'] as $row) { ?>
-	<table class="table">
-		<tr>
-			<td colspan="48">
-				<?php print $row['model']->display_name; ?>
-			</td>
-		</tr>
-		<tr>
+<div class="narrow_user lcm_focus" title="絞り込み">
+<?php include("calendar_narrow.php"); ?>
+</div>
 
+<?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
+<table class="table schedule_day tbl">
+<tbody>
+<?php foreach ($schedule_data['member_list'] as $row) { ?>
+		<tr>
+		<th class="name" rowspan="2">
+			<?php print $row['model']->display_name; ?>
+		</th>
 			<?php foreach($schedule_data['schedules_list'] as $v) {?>
-			<td colspan="2">
+			<td colspan="2" class="time">
 				<?php print $v['hour']; ?>
 			</td>
 			<?php } ?>
@@ -74,32 +59,35 @@
 					}
 				}
 				?>
-			<td class="<?php if ($p_active) { print "active"; } ?>">
+			<td colspan="" class="<?php if ($p_active) { print "active"; } ?> bar">
 			</td>
-			<td class="<?php if ($s_active) { print "active"; } ?>">
+			<td colspan="" class="<?php if ($s_active) { print "active"; } ?> bar">
 			</td>
 			<?php } ?>
 		</tr>
-
-
-
-
-		</tr>
-	</table>
 <?php } ?>
+	</tbody>
+</table>
 <?php } ?>
 
 
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-	<table class="table">
+<h2></h2>
+	<table class="table tbl datatable">
+		<thead>
 		<tr>
-			<td>
+			<th class="min">
 				氏名
-			</td>
-			<td>
+			</th>
+			<th>
+				予定時刻
+			</th>
+			<th>
 				内容
-			</td>
+			</th>
 		</tr>
+	</thead>
+	<tbody>
 <?php foreach ($schedule_data['member_list'] as $row) { ?>
 		<tr>
 			<td>
@@ -135,11 +123,14 @@
 				<?php } ?>
 
 			</td>
+			<td>
+			</td>
 		</tr>
 <?php } ?>
+		</tbody>
 	</table>
 <?php } ?>
-
+</div><!-- /.field_wrapper -->
 <script>
 $("#move_date").change(function(event){
 	var target = $("#move_date").val().replace(/-/g, "/");
