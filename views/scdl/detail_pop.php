@@ -36,6 +36,31 @@
 			メッセージ：</th><td><?php print mb_substr($detail_pop_data->message, 0, 20); ?>
 		</td>
 	</tr>
+
+	<?php if (count($detail_pop_data->user)) { ?>
+	<tr>
+	<th>メンバー</th>
+	<td>
+		<?php foreach ($detail_pop_data->user as $row) {
+			print $row['display_name'] . " ";
+		}
+		?>
+	</td>
+	</tr>
+	<?php } ?>
+
+	<?php if (count($detail_pop_data->building)) { ?>
+	<tr>
+	<th>対象施設</th>
+	<td>
+		<?php foreach ($detail_pop_data->building as $row) {
+			print $row['item_name'] . " ";
+		}
+		?>
+	</td>
+	</tr>
+	<?php } ?>
+
 	<tr>
 		<th>
 			予定の種類：</th><td><?php print $detail_pop_data->title_kb; ?>

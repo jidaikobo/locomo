@@ -63,11 +63,9 @@
 <tr>
 <th>詳細設定</th>
 <td>
-	<span class="icon_small">
 	<?php if ($detail->provisional_kb) { print '[仮登録]'; }; ?>
 	<?php if ($detail->unspecified_kb) { print '[時間指定なし]'; }; ?>
 	<?php if ($detail->allday_kb) { print '[終日]'; }; ?>
-		</span>
 </td>
 </tr>
 
@@ -75,28 +73,6 @@
 <tr>
 	<th>メッセージ</th>
 	<td><?php echo $detail->message; ?></td>
-</tr>
-
-<?php endif; ?>
-
-<?php if($detail->purpose_kb && !$detail->private_kb): ?>
-<tr>
-	<th>施設使用目的区分</th>
-	<td><?php echo $detail->purpose_kb; ?></td>
-</tr>
-
-<?php endif; ?>
-<?php if($detail->purpose_text && !$detail->private_kb): ?>
-<tr>
-	<th>施設使用目的テキスト</th>
-	<td><?php echo $detail->purpose_text; ?></td>
-</tr>
-
-<?php endif; ?>
-<?php if($detail->user_num && !$detail->private_kb): ?>
-<tr>
-	<th>施設利用人数</th>
-	<td><?php echo $detail->user_num; ?></td>
 </tr>
 
 <?php endif; ?>
@@ -124,6 +100,28 @@
 </td>
 </tr>
 <?php } ?>
+
+<?php if($detail->purpose_kb && !$detail->private_kb): ?>
+<tr>
+	<th>施設使用目的区分</th>
+	<td><?php echo $detail->purpose_kb; ?></td>
+</tr>
+
+<?php endif; ?>
+<?php if($detail->purpose_text && !$detail->private_kb): ?>
+<tr>
+	<th>施設使用目的テキスト</th>
+	<td><?php echo $detail->purpose_text; ?></td>
+</tr>
+
+<?php endif; ?>
+<?php if($detail->user_num && !$detail->private_kb): ?>
+<tr>
+	<th>施設利用人数</th>
+	<td><?php echo $detail->user_num; ?>人</td>
+</tr>
+
+<?php endif; ?>
 
 <?php if (count($schedule_members_me)) { ?>
 <tr>
