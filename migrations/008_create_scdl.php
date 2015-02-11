@@ -481,17 +481,17 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 
 
 		echo "create scdls index.\n";
-		$index = array('ALTER TABLE `locomo`.`lcm_scdls` ADD INDEX `start_date_index` ( `start_date` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls` ADD INDEX `end_date_index` ( `end_date` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls` ADD INDEX `start_end_date_index` ( `start_date` , `end_date` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_attends` ADD INDEX `schedule_id_index` ( `schedule_id` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_attends` ADD INDEX `user_id_index` ( `user_id` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_buildings` ADD INDEX `schedule_id_index` ( `schedule_id` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_buildings` ADD INDEX `building_id_index` ( `building_id` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_items` ADD INDEX `item_id_index` ( `item_id` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_items` ADD INDEX `item_group_index` ( `item_group` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_members` ADD INDEX `schedule_id_index` ( `schedule_id` )'
-					, 'ALTER TABLE `locomo`.`lcm_scdls_members` ADD INDEX `user_id_index` ( `user_id` )');
+		$index = array('ALTER TABLE `lcm_scdls` ADD INDEX `start_date_index` ( `start_date` )'
+					, 'ALTER TABLE `lcm_scdls` ADD INDEX `end_date_index` ( `end_date` )'
+					, 'ALTER TABLE `lcm_scdls` ADD INDEX `start_end_date_index` ( `start_date` , `end_date` )'
+					, 'ALTER TABLE `lcm_scdls_attends` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `lcm_scdls_attends` ADD INDEX `user_id_index` ( `user_id` )'
+					, 'ALTER TABLE `lcm_scdls_buildings` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `lcm_scdls_buildings` ADD INDEX `building_id_index` ( `building_id` )'
+					, 'ALTER TABLE `lcm_scdls_items` ADD INDEX `item_id_index` ( `item_id` )'
+					, 'ALTER TABLE `lcm_scdls_items` ADD INDEX `item_group_index` ( `item_group` )'
+					, 'ALTER TABLE `lcm_scdls_members` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `lcm_scdls_members` ADD INDEX `user_id_index` ( `user_id` )');
 		foreach ($index as $v) {
 			\DB::query($v)->execute();
 		}

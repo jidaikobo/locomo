@@ -298,7 +298,22 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// 検索の場合
 		if (\Input::get('submit'))
 		{
-			// from to
+			// free word search
+			$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+			if ($all)
+			{
+				\Model_Flr::$_options['where'][] = array(
+					array('name', 'LIKE', $all),
+					'or' => array(
+						array('explanation', 'LIKE', $all),
+						'or' => array(
+							array('path', 'LIKE', $all), 
+						)
+					) 
+				);
+			}
+	
+			// span
 			if (\Input::get('from')) \Model_Flr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
 			if (\Input::get('to'))   \Model_Flr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
 
@@ -347,6 +362,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// view
 		$form = \Model_Flr::sync_definition();
 		$content = \View::forge('flr/edit');
+		$content->set_safe('breadcrumbs', self::breadcrumbs(LOCOMOUPLOADPATH));
 		$content->set_safe('form', $form);
 		$this->template->content = $content;
 		$this->template->set_global('title', '同期');
