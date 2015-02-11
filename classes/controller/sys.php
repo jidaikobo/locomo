@@ -116,7 +116,7 @@ class Controller_Sys extends \Controller_Base
 					$home_name = \Arr::get($k::$locomo, 'main_action_name', $name);
 					$home_exp  = \Arr::get($k::$locomo, 'main_action_explanation', $name.'のトップです。');
 					$actionset[$k]['order'] = \Arr::get($k::$locomo, 'order', 10);
-					if ($home && \Auth::has_access($home))
+					if ($home && \Auth::has_access($k.'::'.$home))
 					{
 						$url       = $k.'::'.$home;
 						$args = array(
