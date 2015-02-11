@@ -81,9 +81,11 @@
 <tr>
 <th>メンバー</th>
 <td>
-	<?php foreach ($detail->user as $row) {
-		print $row['display_name'] . " ";
+	<?php $members = [];
+	foreach ($detail->user as $row) {
+		$members[] .= $row['display_name'];
 	}
+	echo implode(', ', $members); 
 	?>
 </td>
 </tr>
