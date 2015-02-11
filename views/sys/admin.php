@@ -1,7 +1,8 @@
 <?php
-//モジュール／コントローラトップ
+// モジュール／コントローラトップ
 if ( ! isset($is_main_action)):
 	$html = '';
+	$html.= '<h1>'.$title.'</h1>';
 	if ($actionset):
 		foreach($actionset as $k => $v):
 			$html.= '<h2>'.$k::$locomo['nicename'].'</h2>';
@@ -25,7 +26,7 @@ if ( ! isset($is_main_action)):
 	endif;
 	echo $html;
 else:
-//管理ホーム
+// 管理ホーム
 ?>
 	<?php if (\Request::is_hmvc()): ?>
 		<ul>
@@ -35,6 +36,7 @@ else:
 		<?php endforeach; ?>
 		</ul>
 	<?php else: ?>
+		<h1>管理ホーム</h1>
 		<table class="tbl2">
 		<?php foreach($locomo['controllers'] as $k => $v): ?>
 		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>

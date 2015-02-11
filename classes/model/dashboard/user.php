@@ -71,8 +71,27 @@ class Model_Dashboard_User extends Model_Base
 			$widgets[$key] = $tmps;
 		}
 
+		// default
+/*
+		if (count($obj->dashboard) === 0)
+		{
+			$configs = \Config::get('default_dashboard') ?: array();
+			if ( ! $configs) continue;
+			foreach ($configs as $config)
+			{
+				$arr = array(
+					'user_id' => $obj->id,
+					'action'  => $config['action'],
+					'size'    => $config['size'],
+					'seq'     => $config['seq'],
+				);
+				$obj->dashboard[] = \Model_Dashboard::forge($arr);
+			}
+		}
+*/
+
 		// actions
-		\Model_Dashboard::$_properties['action']['form']['options'] =$widgets ;
+		\Model_Dashboard::$_properties['action']['form']['options'] = $widgets ;
 		$fieldset = \Fieldset::forge('dashboard');
 		$fieldset->set_tabular_form('Model_Dashboard', 'dashboard', $obj, 3);
 
