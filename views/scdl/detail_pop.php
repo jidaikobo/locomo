@@ -36,6 +36,7 @@
 			メッセージ：</th><td><?php print mb_substr($detail_pop_data->message, 0, 20); ?>
 		</td>
 	</tr>
+	<?php } ?>
 
 	<?php if (count($detail_pop_data->user)) { ?>
 	<tr>
@@ -66,7 +67,6 @@
 			予定の種類：</th><td><?php print $detail_pop_data->title_kb; ?>
 		</td>
 	</tr>
-	<?php } ?>
 	<?php if ($detail_pop_data->kind_flg == 2) { ?>
 	<tr>
 		<th>
