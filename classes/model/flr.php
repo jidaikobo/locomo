@@ -473,7 +473,25 @@ die();
 		{
 			\File::delete($target.'.LOCOMO_DIR_INFO');
 		}
-		\File::create($target, '.LOCOMO_DIR_INFO', serialize($current));
+
+		$permissions = File::get_permissions($target);
+		if ($permissions !== '0777')
+		{
+			try
+			{
+				chmod($target, 0777);
+			} catch (\Fuel\Core\PhpErrorException $e) {
+				// do nothing
+			}
+		}
+
+		try
+		{
+			\File::create($target, '.LOCOMO_DIR_INFO', serialize($current));
+		} catch (\Fuel\Core\InvalidPathException $e) {
+			// do nothing
+			\Session::set_flash('error', array('同期用の補助情報の保存に失敗しています。サーバ管理者にディレクトリのパーミッションを調整するように打診してください。'));
+		}
 	}
 
 	/**
