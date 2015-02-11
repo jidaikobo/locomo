@@ -34,7 +34,34 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @return [type]     [description]
 	 */
 	public function action_delete($id) {
-		parent::delete($id);
+
+		$model = $this->model_name ;
+		if ($obj = $model::find($id))
+		{
+			// event
+			if (\Event::instance()->has_events('locomo_delete'))
+			{
+				\Event::instance()->trigger('locomo_delete', $obj, 'none');
+			}
+
+			// try to delete
+			try {
+				$obj->delete(null, true);
+			}
+			catch (\Exception $e) {
+				\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
+			}
+
+			\Session::set_flash(
+				'success',
+				sprintf('%1$sの #%2$d を削除しました', self::$nicename, $id)
+			);
+
+			\Response::redirect(\Uri::create($model::$_kind_name . '/calendar'));
+		}
+
+		\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
+		\Response::redirect(\Uri::create($model::$_kind_name . '/calendar'));
 	}
 
 	/**
@@ -1301,13 +1328,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						if ($r['repeat_kb'] == 0) {
 							// 繰り返しじゃない場合
 							$target_start_timestamp = strtotime($r['start_date'] . " " . $r['start_time']);
-							$target_end_timestamp = strtotime($r['end_year'] . " " . $r['end_time']);
+							$target_end_timestamp = strtotime($r['end_date'] . " " . $r['end_time']);
 						} else {
 							$target_start_timestamp = strtotime($target_date . " " . $r['start_time']);
 							$target_end_timestamp = strtotime($target_date . " " . $r['end_time']);
 						}
-						if ( !(($target_start_timestamp < $start_datetime_timestamp && $target_end_timestamp <= $start_datetime_timestamp)
-							|| ($target_start_timestamp >= $end_datetime_timestamp && $target_end_timestamp > $end_datetime_timestamp))
+
+						if ( !(($target_end_timestamp <= $start_datetime_timestamp && $target_end_timestamp < $end_datetime_timestamp)
+							|| ($target_start_timestamp > $start_datetime_timestamp && $target_start_timestamp >= $end_datetime_timestamp))
 							) {
 
 							$target_user = \Model_Usr::find($r['user_id']);
@@ -1330,8 +1358,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 
 						// 日にちが被っているかどうか
-						if ( !(($r['start_time'] < $start_time && $r['end_time'] < $start_time)
-							|| ($r['start_time'] > $end_time && $r['end_time'] > $end_time))
+						if ( !(($r['end_time'] <= $start_time && $r['end_time'] < $end_time)
+							|| ($r['start_time'] >= $end_time && $r['start_time'] > $start_time))
 							) {
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;

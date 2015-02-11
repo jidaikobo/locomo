@@ -38,9 +38,11 @@ function show_help(e){
 			})
 			.success(function(data) {
 				$('#help_txt').html(data);
+//				$('#lcm_help').after($('#help_window'));
 				help_preparation = true;
 			})
 		}
+		/*閉じたり開いたり、フォーカス対象を変えたり、位置や大きさのリセットをしたり*/
 		$('#help_window').show();
 		$('#help_title_anchor').focus();
 	});
@@ -138,7 +140,10 @@ if(firstFocus){
 	var container = $('#main_content');
 	container.focus();
 }
-$('h1').first().attr('tabindex', '0');
+//とりあえず
+$('h1').first().not(':has(>a)').attr('tabindex', '0');
+/* 不要なh2を削除するためのいったんのスタイル */
+$('h2').first().css('background-color', '#fcc');
 
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
@@ -520,10 +525,10 @@ $(document).on('click', '.semimodal.on, modal.on', function(e){
 });
 
 //表示・非表示切り替え
-$(document).on('click', '.toggle_item', function(e){
+$('.toggle_item').on('click', function(e){
 	e = e ? e : event;
 	var t = $('.hidden_item').eq($('.toggle_item').index(this));//切り替えの相手
-	
+
 	if($(this).hasClass('disclosure')){//ディスクロージャならスライド
 		t.slideToggle(125);//ここでターゲットにフォーカスする？
 	}
@@ -547,7 +552,6 @@ $(document).on('click', '.toggle_item', function(e){
 	e.stopPropagation();
 	return false;
 });
-
 function replace_info(){
 	$(document).find('.toggle_item').each(function(){
 		var title, skip;
