@@ -73,7 +73,10 @@ trait Controller_Traits_Wrkflw
 				$not_related[] = $current_item;
 			}
 		}
-		$related+= $not_related;
+
+		foreach($not_related as $v) {
+			array_push($related, $v);
+		}
 
 		// 進行中の件数
 		$count = $model::count(array('where'=>array(array('workflow_status', '<>', 'finish')),));
