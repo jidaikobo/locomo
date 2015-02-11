@@ -1250,6 +1250,10 @@ td.minimum {
 .select_period .select_num {
 	color: indianred;
 }
+.narrow_user {
+	text-align: left;
+	margin: 16px auto 0;
+}
 table.calendar {
 	margin-top: .5em;
 	table-layout: fixed;
