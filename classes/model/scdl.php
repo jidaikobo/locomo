@@ -28,6 +28,7 @@ class Model_Scdl extends \Model_Base
 								, '6' => '毎月(曜日指定)'
 								, '5' => '毎年'),
 				'class' => 'int',
+				'title' => '繰り返し区分'
 			),
 		),
 		'target_month' => 
@@ -149,7 +150,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
+				'size' => 45,
 				'class' => 'text',
 			),
 			'validation' => 
@@ -159,23 +160,20 @@ class Model_Scdl extends \Model_Base
 		),
 		'title_importance_kb' => 
 		array (
-			'label' => 'タイトル（重要度）',
+			'label' => '重要度',
 			'data_type' => 'text',
 			'form' => 
 			array (
 				'type' => 'select',
 				'size' => 0,
 				'class' => 'text',
-				'options' => array('↑高' => '↑高', '→中' => '→中', '↓低' => '↓低')
-			),
-			'validation' => 
-			array (
-				'required',
+				'options' => array('↑高' => '↑高', '→中' => '→中', '↓低' => '↓低'),
+				'title' => '重要度',
 			),
 		),
 		'title_kb' => 
 		array (
-			'label' => 'タイトル（区分）',
+			'label' => '区分',
 			'data_type' => 'text',
 			'form' => 
 			array (
@@ -183,6 +181,7 @@ class Model_Scdl extends \Model_Base
 				'options' => array('標準' => '標準', '社内' => '社内', '社外' => '社外', '外出' => '外出', '来社' => '来社', '個人' => '個人'),
 				'size' => 0,
 				'class' => 'text',
+				'title' => '区分',
 			),
 		),
 		'provisional_kb' => 
@@ -249,17 +248,13 @@ class Model_Scdl extends \Model_Base
 		),
 		'group_kb' => 
 		array (
-			'label' => '表示するグループフラグ',
+			'label' => '表示するグループ',
 			'data_type' => 'int',
 			'form' => 
 			array (
 				'type' => 'radio',
 				'class' => 'int',
 				'options' => array('1' => '全グループ', '2' => 'グループ指定')
-			),
-			'validation' => 
-			array (
-				'required',
 			),
 			'default' => '1'
 		),
@@ -272,6 +267,7 @@ class Model_Scdl extends \Model_Base
 				'type' => 'select',
 				'size' => 0,
 				'class' => 'text',
+				'title' => 'グループ指定',
 			),
 		),
 		'purpose_kb' => 
@@ -285,10 +281,7 @@ class Model_Scdl extends \Model_Base
 				'class' => 'text',
 				'options' => array('賃室' => '賃室')
 			),
-			'validation' => 
-			array (
-				'required',
-			),
+
 		),
 		'purpose_text' => 
 		array (
@@ -321,10 +314,6 @@ class Model_Scdl extends \Model_Base
 				'type' => 'select',
 				'size' => 0,
 				'class' => 'int',
-			),
-			'validation' => 
-			array (
-				'required',
 			),
 		),
 		'attend_flg' => 
