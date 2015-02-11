@@ -109,6 +109,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<?php echo $form->field('allday_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 	<?php echo $form->field('private_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 	<?php echo $form->field('overlap_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+	<em class="exp" style="display: inline-block;">過去の予定は重複チェックの対象になりません。</em>
 	</td>
 </tr>
 

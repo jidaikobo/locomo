@@ -1,24 +1,13 @@
+<?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 カレンダ一日詳細</h1>
 <div class="select_display_type">
 	<?php print htmlspecialchars_decode($display_month); ?> / 
 	<?php print htmlspecialchars_decode($display_week); ?>
 </div>
 
-<style>
-
-
-.week0 {
-	background-color: pink;
-}
-.week6 {
-	background-color: lightblue;
-}
-</style>
-
 移動<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day); ?>" class="date" id="move_date" />
 
-
-<div style="position: rerative;">
+<div style="position: rerative; max-width: 1000px;">
 <div class="select_period" title="前後の日へ移動">
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
 	<?php print htmlspecialchars_decode($next_url); ?>
@@ -69,10 +58,9 @@
 	</tbody>
 </table>
 <?php } ?>
-
+<?php endif;//hmvcをとじる ?>
 
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-<h2></h2>
 	<table class="table tbl datatable">
 		<thead>
 		<tr>
@@ -104,9 +92,11 @@
 		$detaildata->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->end_date . " " . $detaildata->end_time)));
 
 		if ($detaildata->repeat_kb == 0) {
-			echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
+//			echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
+			echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
 		} else {
-			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
+//			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
+			echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
 			if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 2) {
 				echo "(";
 				$week = array('日', '月', '火', '水', '木', '金', '土');
@@ -124,6 +114,13 @@
 
 			</td>
 			<td>
+				<?php foreach ($row['data'] as $detaildata) { ?>
+				<div class="col_scrollable">
+					<a href="<?php echo \Uri::create('scdl/viewdetail/').$detaildata->schedule_id ?>">
+						<?php echo $detaildata->title_text; ?>
+					</a>
+				</div>
+				<?php } ?>
 			</td>
 		</tr>
 <?php } ?>

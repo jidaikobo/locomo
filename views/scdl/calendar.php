@@ -28,12 +28,15 @@
 
 </div>
 
-
-
 <div class="narrow_user lcm_focus" title="絞り込み">
-<?php include("calendar_narrow.php"); ?>
+<?php
+if (\Request::main()->controller == 'Controller_Scdl'):
+	include("calendar_narrow.php");
+else:
+	include(APPPATH."modules/reserve/views/reserve/calendar_narrow.php");
+endif;
+?>
 </div>
-
 
 
 <table class="calendar month lcm_focus" title="カレンダ">
@@ -48,6 +51,7 @@
 			<th class="week0"><span>日曜日</span></th>
 		</tr>
 	</thead>
+<?php $repeat_kbs = array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年'); ?>
 <?php foreach($schedule_data as $v) { ?>
 	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
 	<td class="week<?php print $v['week']; ?>">
@@ -73,12 +77,12 @@
 				$detail_pop_data = $v2;
 				?>
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid ?>">
-					<span class="icon_small">
-					<?php if ($v2['provisional_kb']) { print '[仮登録]'; }; ?>
-					<?php if ($v2['unspecified_kb']) { print '[時間指定なし]'; }; ?>
-					<?php if ($v2['allday_kb']) { print '[終日]'; }; ?>
-					</span>
-					<?php print htmlspecialchars_decode($v2['link_detail']); ?>
+					<?php echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
+						if ($v2['allday_kb']) { print '<span class="text_icon schedule allday_kb"><span class="skip">終日</span></span>'; };
+						if ($v2['unspecified_kb']) { print '<span class="text_icon schedule unspecified_kb"><span class="skip">時間指定なし</span></span>'; };
+						if ($v2['provisional_kb']) { print '<span class="text_icon schedule provisional_kb"><span class="skip">仮登録</span></span>'; };
+						print htmlspecialchars_decode($v2['link_detail']);
+					?>
 				</p>
 			<?php // include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうので下に移動...ガッハッハ ?>
 			<?php } ?>

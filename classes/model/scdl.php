@@ -21,7 +21,7 @@ class Model_Scdl extends \Model_Base
 				'type' => 'select',
 				'options' => array('0' => 'なし'
 								, '1' => '毎日'
-								, '2' => '毎日（土日除く)'
+								, '2' => '毎日(土日除く)'
 								, '3' => '毎週'
 								, '4' => '毎月'
 								, '6' => '毎月(曜日指定)'
