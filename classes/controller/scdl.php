@@ -200,6 +200,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			if (\Session::get($model::$_kind_name . "narrow_bid") > 0 && $model::$_kind_name == "reserve") {
 				$this->template->content->item->building = \Model_Scdl_Item::find("all", array("where" => array(array('item_group', 'building'), array('item_id', \Session::get($model::$_kind_name . "narrow_bid")))));
 			}
+		} else if (\Input::get("from")) {
+			$from_data = $model::find(\Input::get("from"));
+			if ($from_data) {
+				$this->template->content->item->user = $from_data->user;
+				$this->template->content->item->building = $from_data->building;
+			}
 		}
 		if (\Input::post()) {
 			$select_user_list = \Model_Usr::find("all", array("where" => array(array('id', 'in', explode("/", \Input::post("hidden_members"))))));
@@ -264,17 +270,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	public function action_copy() {
 		$model = $this->model_name ;
+
 		$this->action_edit();
 
 		if (\Input::get("from")) {
 			// 直接メンバ変数にアクセスしてよいか
 			$from_data = $model::find(\Input::get("from"));
-			$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
-								, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
-								, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-								, 'purpose_text', 'user_num');
-			foreach ($setcolumns as $v) {
-				$this->template->content->form->field($v)->set_value($from_data->$v);
+			if ($from_data) {
+				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
+									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
+									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
+									, 'purpose_text', 'user_num');
+				foreach ($setcolumns as $v) {
+					$this->template->content->form->field($v)->set_value($from_data->$v);
+				}
 			}
 		}
 	}
