@@ -1301,13 +1301,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						if ($r['repeat_kb'] == 0) {
 							// 繰り返しじゃない場合
 							$target_start_timestamp = strtotime($r['start_date'] . " " . $r['start_time']);
-							$target_end_timestamp = strtotime($r['end_year'] . " " . $r['end_time']);
+							$target_end_timestamp = strtotime($r['end_date'] . " " . $r['end_time']);
 						} else {
 							$target_start_timestamp = strtotime($target_date . " " . $r['start_time']);
 							$target_end_timestamp = strtotime($target_date . " " . $r['end_time']);
 						}
-						if ( !(($target_start_timestamp < $start_datetime_timestamp && $target_end_timestamp <= $start_datetime_timestamp)
-							|| ($target_start_timestamp >= $end_datetime_timestamp && $target_end_timestamp > $end_datetime_timestamp))
+
+						if ( !(($target_end_timestamp <= $start_datetime_timestamp && $target_end_timestamp < $end_datetime_timestamp)
+							|| ($target_start_timestamp > $start_datetime_timestamp && $target_start_timestamp >= $end_datetime_timestamp))
 							) {
 
 							$target_user = \Model_Usr::find($r['user_id']);
@@ -1330,8 +1331,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 
 						// 日にちが被っているかどうか
-						if ( !(($r['start_time'] < $start_time && $r['end_time'] < $start_time)
-							|| ($r['start_time'] > $end_time && $r['end_time'] > $end_time))
+						if ( !(($r['end_time'] <= $start_time && $r['end_time'] < $end_time)
+							|| ($r['start_time'] >= $end_time && $r['start_time'] > $start_time))
 							) {
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;
