@@ -48,12 +48,13 @@ class Actionset_Scdl extends \Actionset_Base
 	public static function actionset_calendar($controller, $obj = null, $id = null, $urls = array())
 	{
 		$retvals = parent::actionset_index_admin($controller, $obj, $id);
-		$actions = array(array($controller.DS."calendar/", 'スケジューラ'));
+		$actions = array(array($controller.DS."calendar/", 'カレンダ'));
 		$urls = static::generate_urls($controller.'::action_edit', $actions);
 
 		\Arr::set($retvals, 'urls', $urls);
-		\Arr::set($retvals, 'action_name', 'スケジューラ');
-		\Arr::set($retvals, 'acl_exp', '可憐だけ意識のスケジューラの表示権限です。');
+		\Arr::set($retvals, 'realm', 'base');
+		\Arr::set($retvals, 'action_name', 'カレンダ');
+		\Arr::set($retvals, 'acl_exp', 'カレンダ形式のスケジューラの表示権限です。');
 		return $retvals;
 	}
 
