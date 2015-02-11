@@ -3,7 +3,7 @@
 
 <?php if (isset($detail_pop_data->title_text)) { ?>
 <div id="pop<?php print $detail_pop_data->scdlid; ?>" aria-hidden="true" style="display:none;">
-<table>
+<table class="tbl2">
 	<tr>
 		<th>
 			<?php

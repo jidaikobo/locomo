@@ -97,7 +97,7 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'item_id' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
 			'item_name' => array('type' => 'text'),
-			'item_group' => array('type' => 'text'),
+			'item_group' => array('type' => 'varchar', 'constraint' => 255),
 			'item_group2' => array('type' => 'text', 'null' => true),
 			'item_sort' => array('type' => 'int'),
 			'created_at' => array('type' => 'datetime', 'null' => true),
@@ -147,9 +147,17 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 			))->execute();
 		\DB::insert("lcm_scdls_items")->set(array(
 				'item_id' => 5,
-				'item_name' => '毎年',
+				'item_name' => '毎月(曜日)',
 				'item_group' => 'repeat_kb',
 				'item_sort' => 6,
+				'created_at' => \DB::expr("NOW()"),
+				'updated_at' => \DB::expr("NOW()")
+			))->execute();
+		\DB::insert("lcm_scdls_items")->set(array(
+				'item_id' => 6,
+				'item_name' => '毎年',
+				'item_group' => 'repeat_kb',
+				'item_sort' => 7,
 				'created_at' => \DB::expr("NOW()"),
 				'updated_at' => \DB::expr("NOW()")
 			))->execute();
@@ -398,56 +406,56 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 		$buildings = array(
 
 		// ホールはデフォルトで選択されている group_id をずらすか 1 に加える
-			array('name' => 'ホール',             'seq' => 1,  'group_id' => 1),
+			array('name' => 'ホール',             'seq' => 1,  'group_id' => '貸室'),
 
 
 		// 01貸室
-			array('name' => 'スタジオ',           'seq' => 11, 'group_id' => 1),
-			array('name' => '音楽室',             'seq' => 12, 'group_id' => 1),
-			array('name' => '研修室１',           'seq' => 13, 'group_id' => 1),
-			array('name' => '研修室２',           'seq' => 14, 'group_id' => 1),
-			array('name' => '研修室３',           'seq' => 15, 'group_id' => 1),
-			array('name' => '和室Ａ',             'seq' => 16, 'group_id' => 1),
-			array('name' => '和室Ｂ',             'seq' => 17, 'group_id' => 1),
+			array('name' => 'スタジオ',           'seq' => 11, 'group_id' => '貸室'),
+			array('name' => '音楽室',             'seq' => 12, 'group_id' => '貸室'),
+			array('name' => '研修室１',           'seq' => 13, 'group_id' => '貸室'),
+			array('name' => '研修室２',           'seq' => 14, 'group_id' => '貸室'),
+			array('name' => '研修室３',           'seq' => 15, 'group_id' => '貸室'),
+			array('name' => '和室Ａ',             'seq' => 16, 'group_id' => '貸室'),
+			array('name' => '和室Ｂ',             'seq' => 17, 'group_id' => '貸室'),
 
 		// 02可能貸室
-			array('name' => 'あいあい体育ルーム', 'seq' => 21, 'group_id' => 2),
-			array('name' => 'らくらく',           'seq' => 22, 'group_id' => 2),
-			array('name' => '応接室１',           'seq' => 23, 'group_id' => 2),
-			array('name' => '応接室２',           'seq' => 24, 'group_id' => 2),
-			array('name' => '会議室',             'seq' => 25, 'group_id' => 2),
-			array('name' => '相談室１',           'seq' => 26, 'group_id' => 2),
-			array('name' => '相談室２',           'seq' => 27, 'group_id' => 2),
-			array('name' => '相談室３',           'seq' => 28, 'group_id' => 2),
-			array('name' => '相談室４',           'seq' => 29, 'group_id' => 2),
-			array('name' => '調理実習室',         'seq' => 30, 'group_id' => 2),
+			array('name' => 'あいあい体育ルーム', 'seq' => 21, 'group_id' => '可能貸室'),
+			array('name' => 'らくらく',           'seq' => 22, 'group_id' => '可能貸室'),
+			array('name' => '応接室１',           'seq' => 23, 'group_id' => '可能貸室'),
+			array('name' => '応接室２',           'seq' => 24, 'group_id' => '可能貸室'),
+			array('name' => '会議室',             'seq' => 25, 'group_id' => '可能貸室'),
+			array('name' => '相談室１',           'seq' => 26, 'group_id' => '可能貸室'),
+			array('name' => '相談室２',           'seq' => 27, 'group_id' => '可能貸室'),
+			array('name' => '相談室３',           'seq' => 28, 'group_id' => '可能貸室'),
+			array('name' => '相談室４',           'seq' => 29, 'group_id' => '可能貸室'),
+			array('name' => '調理実習室',         'seq' => 30, 'group_id' => '可能貸室'),
 
 		// 03予備貸室
-			array('name' => 'ADL教室',            'seq' => 41, 'group_id' => 3),
-			array('name' => 'FSトモニー作業室',   'seq' => 42, 'group_id' => 3),
-			array('name' => 'きらきら',           'seq' => 43, 'group_id' => 3),
-			array('name' => 'ボランティアルーム', 'seq' => 44, 'group_id' => 3),
-			array('name' => '学習支援室',         'seq' => 45, 'group_id' => 3),
-			array('name' => '教室1',              'seq' => 46, 'group_id' => 3),
-			array('name' => '教室2',              'seq' => 47, 'group_id' => 3),
-			array('name' => '教室3',              'seq' => 48, 'group_id' => 3),
-			array('name' => '教室4',              'seq' => 49, 'group_id' => 3),
-			array('name' => '教室5',              'seq' => 50, 'group_id' => 3),
-			array('name' => '教室6',              'seq' => 51, 'group_id' => 3),
-			array('name' => '校正室1',            'seq' => 52, 'group_id' => 3),
-			array('name' => '校正室2',            'seq' => 53, 'group_id' => 3),
-			array('name' => '校正室2',            'seq' => 54, 'group_id' => 3),
-			array('name' => '授産工作室',         'seq' => 55, 'group_id' => 3),
-			array('name' => '授産食堂',           'seq' => 56, 'group_id' => 3),
-			array('name' => '相談自習室',         'seq' => 57, 'group_id' => 3),
-			array('name' => '読書室1',            'seq' => 58, 'group_id' => 3),
-			array('name' => '読書室2',            'seq' => 59, 'group_id' => 3),
-			array('name' => '読書室3',            'seq' => 60, 'group_id' => 3),
+			array('name' => 'ADL教室',            'seq' => 41, 'group_id' => '予備貸室'),
+			array('name' => 'FSトモニー作業室',   'seq' => 42, 'group_id' => '予備貸室'),
+			array('name' => 'きらきら',           'seq' => 43, 'group_id' => '予備貸室'),
+			array('name' => 'ボランティアルーム', 'seq' => 44, 'group_id' => '予備貸室'),
+			array('name' => '学習支援室',         'seq' => 45, 'group_id' => '予備貸室'),
+			array('name' => '教室1',              'seq' => 46, 'group_id' => '予備貸室'),
+			array('name' => '教室2',              'seq' => 47, 'group_id' => '予備貸室'),
+			array('name' => '教室3',              'seq' => 48, 'group_id' => '予備貸室'),
+			array('name' => '教室4',              'seq' => 49, 'group_id' => '予備貸室'),
+			array('name' => '教室5',              'seq' => 50, 'group_id' => '予備貸室'),
+			array('name' => '教室6',              'seq' => 51, 'group_id' => '予備貸室'),
+			array('name' => '校正室1',            'seq' => 52, 'group_id' => '予備貸室'),
+			array('name' => '校正室2',            'seq' => 53, 'group_id' => '予備貸室'),
+			array('name' => '校正室2',            'seq' => 54, 'group_id' => '予備貸室'),
+			array('name' => '授産工作室',         'seq' => 55, 'group_id' => '予備貸室'),
+			array('name' => '授産食堂',           'seq' => 56, 'group_id' => '予備貸室'),
+			array('name' => '相談自習室',         'seq' => 57, 'group_id' => '予備貸室'),
+			array('name' => '読書室1',            'seq' => 58, 'group_id' => '予備貸室'),
+			array('name' => '読書室2',            'seq' => 59, 'group_id' => '予備貸室'),
+			array('name' => '読書室3',            'seq' => 60, 'group_id' => '予備貸室'),
 
 
 		// 04その他
-			array('name' => 'LV相談',             'seq' => 71, 'group_id' => 4),
-			array('name' => '眼科相談',           'seq' => 72, 'group_id' => 4),
+			array('name' => 'LV相談',             'seq' => 71, 'group_id' => 'その他'),
+			array('name' => '眼科相談',           'seq' => 72, 'group_id' => 'その他'),
 
 		);
 
@@ -470,6 +478,24 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 			")->execute();
 
 		}
+
+
+		echo "create scdls index.\n";
+		$index = array('ALTER TABLE `lcm_scdls` ADD INDEX `start_date_index` ( `start_date` )'
+					, 'ALTER TABLE `lcm_scdls` ADD INDEX `end_date_index` ( `end_date` )'
+					, 'ALTER TABLE `lcm_scdls` ADD INDEX `start_end_date_index` ( `start_date` , `end_date` )'
+					, 'ALTER TABLE `lcm_scdls_attends` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `lcm_scdls_attends` ADD INDEX `user_id_index` ( `user_id` )'
+					, 'ALTER TABLE `lcm_scdls_buildings` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `lcm_scdls_buildings` ADD INDEX `building_id_index` ( `building_id` )'
+					, 'ALTER TABLE `lcm_scdls_items` ADD INDEX `item_id_index` ( `item_id` )'
+					, 'ALTER TABLE `lcm_scdls_items` ADD INDEX `item_group_index` ( `item_group` )'
+					, 'ALTER TABLE `lcm_scdls_members` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `lcm_scdls_members` ADD INDEX `user_id_index` ( `user_id` )');
+		foreach ($index as $v) {
+			\DB::query($v)->execute();
+		}
+
 
 	}
 

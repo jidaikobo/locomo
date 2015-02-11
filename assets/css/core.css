@@ -659,6 +659,12 @@ textarea[disabled] {
 	background-color: #eee ;
 	box-shadow:none;
 }
+#form_username,
+#form_email,
+input[type="password"],
+input.int {
+	ime-mode: inactive;
+}
 input:read-only {
 	border: none;
 	background: transparent;
@@ -761,6 +767,7 @@ div.lcm_tooltip {
 .lcm_action_calendar .lcm_tooltip th {
 	min-width: 6em;
 	text-align: right;
+	font-weight: bold;
 }
 /* pagenation */
 .pagination {
@@ -793,6 +800,9 @@ div.lcm_tooltip {
 	border-top: 1px solid #aaa;
 	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
+}
+.contents form h3 {
+	font-size: 1em;
 }
 .container .search .label_fb label * {
 	vertical-align: baseline;
