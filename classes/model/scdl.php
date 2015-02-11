@@ -477,7 +477,7 @@ class Model_Scdl extends \Model_Base
 		$form->field('kind_flg')->set_value(self::$_kind_flg);
 
 		// 作成者
-		$form->field('user_id')->set_options(Model_Usr::get_options(array(), 'display_name'));
+		$form->field('user_id')->set_options(Model_Usr::get_options(array('order_by' => 'pronunciation'), 'display_name'));
 		
 
 		//$form->field('user_id')->set_value(\Auth::get('id'));
