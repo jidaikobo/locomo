@@ -364,7 +364,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			{
 				\Session::set_flash('error', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 			}
-			elseif ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
+			elseif ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname), '0777'))
 			{
 				\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
 				\Response::redirect(\Uri::create('flr/create_dir/'.$id));
