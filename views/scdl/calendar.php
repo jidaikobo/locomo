@@ -81,7 +81,7 @@
 					</span>
 					<?php print htmlspecialchars_decode($v2['link_detail']); ?>
 				</p>
-			<?php// include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうので下に移動...ガッハッハ?>
+			<?php // include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうので下に移動...ガッハッハ ?>
 			<?php } ?>
 			</div>
 		</div>

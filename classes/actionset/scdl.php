@@ -25,12 +25,18 @@ class Actionset_Scdl extends \Actionset_Base
 		$actions = array(
 				$controller.'::action_create',
 				$controller.'::action_edit',
+				$controller.'::action_copy',
 				$controller.'::action_viewdetail',
 				$controller.'::action_attend',
 				$controller.'::action_regchange',
 				$controller.'::action_somedelete',
 				$controller.'::action_calendar',
+				$controller.'::action_get_user_list',
+				$controller.'::action_get_building_list',
+				$controller.'::action_admin',
 				$controller.'::action_view_invisible', // action is not exist yet
+
+
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'スケジューラの管理権限');
