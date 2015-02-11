@@ -9,6 +9,10 @@ class Observer_Scdl extends \Orm\Observer
 	{
 	}
 
+	public function after_delete(\Orm\Model $obj) {
+		\DB::delete("lcm_scdls_members")->where("schedule_id", $obj->__get('id'))->execute();
+		\DB::delete("lcm_scdls_buildings")->where("schedule_id", $obj->__get('id'))->execute();
+	}
 
 	public function after_save(\Orm\Model $obj)
 	{

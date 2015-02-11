@@ -1,3 +1,4 @@
+/*
 //console非対応ブラウザのための用意
 // consoleが使えない場合は空のオブジェクトを設定しておく
 if( typeof window.console === undefined ){
@@ -7,6 +8,8 @@ if( typeof window.console === undefined ){
 if( typeof window.console.log !== "function" ){
  window.console.log = function(){};
 }
+*/
+
 //チェックボックス全選択
 $(function() {
 	$('.check_all').on('click', function(e) {
@@ -132,11 +135,10 @@ if($('.flash_alert')[0]){
 if(firstFocus){
 	set_focus(firstFocus);
 }else{
-	var container = $('.container');
-//	var page_title = $(document).find('#adminbar h3').first().text();
+	var container = $('#main_content');
 	container.focus();
 }
-
+$('h1').first().attr('tabindex', '0');
 
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
@@ -911,7 +913,7 @@ $('input.time').timepicker({
 //tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
 $('.validation_error :input').tooltip({
-	tooltipClass : 'form_tooltip',
+	tooltipClass : 'lcm_tooltip',
 	show         : 200,
 	hide         : 'fade',
 	position     : {
@@ -923,6 +925,24 @@ $('.validation_error :input').tooltip({
 	                 return $(this).data('jslcmTooltip')
 		           }*/
 });
+$('.lcm_tooltip_parent').tooltip({
+	items: '[data-jslcm-tooltip-id]',
+	content: function() {
+		var el = document.getElementById($(this).data('jslcmTooltipId'));
+		el = $(el).html();
+		return el
+	},
+	tooltipClass : 'lcm_tooltip',
+	show         : 200,
+	hide         : 'fade',
+	relative     : true,
+	position     : {
+		             my : 'left bottom-8',
+		             at : 'left top'
+		            },
+});
+
+
 
 //resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい
 $('#help_window').resizable({

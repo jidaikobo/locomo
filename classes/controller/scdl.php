@@ -3,7 +3,7 @@ namespace Locomo;
 class Controller_Scdl extends \Locomo\Controller_Base
 {
 	// traits
-//	use \Controller_Traits_Crud;
+	//use \Controller_Traits_Crud;
 
 	// locomo
 	public static $locomo = array(
@@ -26,6 +26,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_create() {
 		$this->action_edit();
+	}
+
+	/**
+	 * [action_delete description]
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 */
+	public function action_delete($id) {
+		parent::delete($id);
 	}
 
 	/**
@@ -165,35 +174,61 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$this->template->content->item->building = \Model_Scdl_Item::find("all", array("where" => array(array('item_group', 'building'), array('item_id', \Session::get($model::$_kind_name . "narrow_bid")))));
 			}
 		}
-
-		$select_user_list = $this->template->content->item->user;
+		if (\Input::post()) {
+			$select_user_list = \Model_Usr::find("all", array("where" => array(array('id', 'in', explode("/", \Input::post("hidden_members"))))));
+			$select_building_list = \Model_Scdl_Item::find("all", array("where" => array(array('item_group', 'building'), array('item_id', 'in', explode("/", \Input::post("hidden_buildings"))))));
+		} else {
+			$select_user_list = $this->template->content->item->user;
+			$select_building_list = $this->template->content->item->building;
+		}
 
 		$this->template->content->set("select_user_list", $select_user_list);
-		$non_selected_user_list = count($select_user_list) ? \Model_Usr::find('all',
+		if (!$id && \Session::get($model::$_kind_name . "narrow_ugid") && $model::$_kind_name=="scdl" && count($select_user_list) == 0) {
+			$non_selected_user_list = \Model_Usr::find('all',
+			array(
+				'related'   => array('usergroup'),
+				'where'=> array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid")))
+				)
+			);
+		} else if (count($select_user_list)) {
+			$non_selected_user_list = \Model_Usr::find('all',
 			array(
 				'where'=> array(array('id', 'not in', array_keys($select_user_list)))
 				)
-			)
-			: \Model_Usr::find('all');
+			);
+		} else {
+			$non_selected_user_list = \Model_Usr::find('all');
+		}
+		
 		$this->template->content->set("non_selected_user_list", $non_selected_user_list);
 
-		$select_building_list = $this->template->content->item->building;
-		$building_where = array('item_group', 'building');
-		if (count($select_building_list)) {
-			$building_where = array($building_where, array('id', 'not in', array_keys($select_building_list)));
-		}
-
-		$non_selected_building_list = \Model_Scdl_Item::find('all',
+		
+		if (!$id && \Session::get($model::$_kind_name . "narrow_bgid") && $model::$_kind_name=="reserve" && count($select_building_list) == 0) {
+			$non_selected_building_list = \Model_Scdl_Item::find('all',
 			array(
-				'where'=> array($building_where)
+				'where'=> array(array('item_group2', '=', \Session::get($model::$_kind_name . "narrow_bgid")))
 				)
 			);
+		} else if (count($select_building_list)) {
+			$non_selected_building_list = \Model_Scdl_Item::find('all',
+			array(
+				'where'=> array(array(array('item_group', 'building'), array('id', 'not in', array_keys($select_building_list))))
+				)
+			);
+		} else {
+			$non_selected_building_list = \Model_Scdl_Item::find('all',
+				array('where' => array(array('item_group', 'building')))
+			);
+		}
+
+		
 		
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
 		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 		$this->template->content->set("group_list", $usergroups);
+		$this->template->content->set("kind_name", $model::$_kind_name);
 
 		// 重複チェック
 		$this->template->content->set("overlap_result", $overlap_result);
@@ -443,7 +478,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @return [type]
 	 */
 	public function action_calendar($year = null, $mon = null, $day = null, $mode = null) {
-
 		$model = $this->model_name;
 
 		// 絞り込みをセッションへ保存
@@ -528,16 +562,17 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		}
 
 		// 週表示用
-		list($weekY, $weekM, $weekD) = $this->get_week_first_date($year, $mon, $day);
+		list($weekY, $weekM, $weekD) = $this->week_first_date($year, $mon, $day);
 		$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
 
 		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
 		$view->set('narrow_user_group_list', \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name'));
 		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
+
 		$view->set('narrow_user_list', \Model_Usr::find('all',
 			array(
-			'related'   => array('usergroup'),
+			'related'   => count($where) ? array('usergroup') : array(),
 				'where'=> $where,
 				'order_by' => 'display_name'
 				)
@@ -1102,7 +1137,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  integer $day
 	 * @return [type]
 	 */
-	private function get_week_first_date($year, $mon, $day = 1) {
+	private function week_first_date($year, $mon, $day = 1) {
 
 		if (!$day) { $day = 1; }
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day)));
@@ -1176,12 +1211,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	    // 何秒離れているかを計算
 	    $seconddiff = abs($end_day_timestamp - $start_day_timestamp);
-	 
+
 	    // 日数に変換
 	    $daydiff = $seconddiff / (60 * 60 * 24);
 	    $result = array();
 		// 単純に開始日付と終了日付から判定
-	 	for ($i = 0; $i < $daydiff; $i++) {
+
+	 	for ($i = 0; $i <= $daydiff; $i++) {
 	 		if ($maxSearchCount < $i) { return $result; }
 	 		$target_year_from = date('Y', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_month_from = date('m', strtotime($start_day . ' +' . $i . "days"));
@@ -1189,8 +1225,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 		$target_date = date('Y/m/d', strtotime($start_day . ' +' . $i . "days"));
 	 		$target_week = date('w', strtotime($start_day . ' +' . $i . "days"));
 	 		// 対象の日データを取得
-	 		 
-	 		if (time() > strtotime($start_day . ' +' . $i . "days")) {
+	 		if (strtotime(date('Y/m/d') . " 00:00:00") > strtotime($start_day . '00:00:00 +' . $i . "days")) {
 	 			continue;
 	 		}
 	 		switch ($repeat_kb) {
@@ -1257,7 +1292,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						->where_close()
 						->where("deleted_at", "is", null)
 						->where("kind_flg", $model::$_kind_flg)
-						->where("id", "<>", $id)
+						->where("id", "<>", (!$id) ? 0 : $id)
 						->get();
 
 			foreach ($schedule_data as $r) {
@@ -1271,16 +1306,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$target_start_timestamp = strtotime($target_date . " " . $r['start_time']);
 							$target_end_timestamp = strtotime($target_date . " " . $r['end_time']);
 						}
-						if ( !(($target_start_timestamp < $start_datetime_timestamp && $target_end_timestamp < $start_datetime_timestamp)
-							|| ($target_start_timestamp > $end_datetime_timestamp && $target_start_timestamp > $end_datetime_timestamp))
+						if ( !(($target_start_timestamp < $start_datetime_timestamp && $target_end_timestamp <= $start_datetime_timestamp)
+							|| ($target_start_timestamp >= $end_datetime_timestamp && $target_end_timestamp > $end_datetime_timestamp))
 							) {
 
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;
-							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
+							$r['target_date'] = $r['start_date'] . " " . $r['start_time'] . " - " . $r['end_date'] . " " . $r['end_time'];
 							// スケジューラのメンバーが被っているかどうか
 							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
-							if ($overlapUser) {
+							$push = true;
+							foreach ($result as $rrow) {
+								if ($rrow['id'] == $r['id']) { $push = false; break; }
+							}
+							if ($overlapUser && $push) {
 								$r['targetdata'] = $overlapUser;
 								$result[] = $r;
 							}
@@ -1296,10 +1335,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							) {
 							$target_user = \Model_Usr::find($r['user_id']);
 							$r['user_data'] = $target_user;
-							$r['target_date'] = $target_date . " " . $start_time . " - " . $target_date . " " . $end_time;
+							$r['target_date'] = $r['start_date'] . " " . $r['start_time'] . " - " . $r['end_date'] . " " . $r['end_time'];
 							// スケジューラのメンバーが被っているかどうか
 							$overlapUser = $this->isExistOverlapTarget($r, $targetMember);
-							if ($overlapUser) {
+							$push =  true;
+							foreach ($result as $rrow) {
+								if ($rrow['id'] == $r['id']) { $push = false; break; }
+							}
+							if ($overlapUser && $push) {
 								$r['targetdata'] = $overlapUser;
 								$result[] = $r;
 							}
@@ -1311,6 +1354,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 
 	 	}
+
 		return $result;
 	}
 

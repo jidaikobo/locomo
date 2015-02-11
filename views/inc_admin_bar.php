@@ -173,7 +173,7 @@ if (\Auth::check()):
 
 		$html.= '</div><!-- /.adminbar_sub -->';
 		$html.= '</div><!-- /.adminbar_top -->';
-		$html.='<a class="skip show_if_focus" href="#page_title">本文へ移動</a>';
+		$html.='<a class="skip show_if_focus" href="#main_content">本文へ移動</a>';
 	$html.= '</nav><!-- /#adminbar -->';
 
 	echo $html;
