@@ -1216,10 +1216,10 @@ td.minimum {
 	zoom: 1;
 }
 .select_period .prev_month {
-	padding-left: 3.5em;
+	margin-left: 3.5em;
 }
 .select_period .next_year {
-	padding-left: 4em;
+	margin-left: 4em;
 }
 .select_period .next_month,
 .select_period .prev_year {

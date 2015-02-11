@@ -2,7 +2,7 @@
 
 
 <!--form_group-->
-<div class="form_group">
+<div class="form_group lcm_form">
 <?php
 	// use model's form definition instead of raw-like html
 	//echo $form;
@@ -12,6 +12,7 @@
 if (isset($overlap_result) && count($overlap_result)) {
 ?>
 <table>
+	<thead>
 	<tr>
 		<th>
 			対象
@@ -23,6 +24,8 @@ if (isset($overlap_result) && count($overlap_result)) {
 			タイトル
 		</th>
 	</tr>
+	</thead>
+	<tbody>
 <?php 
 	foreach ($overlap_result as $v) {
 ?>
@@ -43,10 +46,11 @@ if (isset($overlap_result) && count($overlap_result)) {
 	}
 }
 ?>
+	</tbody>
 </table>
 <table class="formtable">
 <tr>
-	<th><?php echo $form->field('repeat_kb')->set_template('{label}{required}'); ?></th>
+	<th><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></th>
 	<td>
 		<?php echo $form->field('repeat_kb')->set_template('{error_msg}{field}'); ?>
 	</td>
@@ -57,12 +61,12 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 	<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
 	<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
-		<table id="">
+		<table id="" class="lcm_focus" title="必須 予定日指定">
 			<tr>
 				<th>期間</th>
 				<td>
 					<?php echo $form->field('start_date')->set_template('{error_msg}{field}'); ?>
-					〜
+					から
 					<?php echo $form->field('end_date')->set_template('{error_msg}{field}'); ?>
 				</td>
 			</tr>
@@ -70,7 +74,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 				<th>時刻</th>
 				<td>
 					<?php echo $form->field('start_time')->set_template('{error_msg}{field}'); ?>
-					〜
+					から
 					<?php echo $form->field('end_time')->set_template('{error_msg}{field}'); ?>
 				</td>
 			</tr>
@@ -80,23 +84,26 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('title_text')->set_template('{label}{required}'); ?></th>
-	<td><?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?></td>
-</tr>
-
-<tr>
-	<th><?php echo $form->field('title_importance_kb')->set_template('{label}{required}'); ?></th>
-	<td><?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?></td>
-</tr>
-
-<tr>
-	<th><?php echo $form->field('title_kb')->set_template('{label}{required}'); ?></th>
-	<td><?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?></td>
-</tr>
-
-<tr>
-	<th>詳細設定 </th>
+	<th><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></th>
 	<td>
+		<div class="input_group">
+			<div class="field">
+				<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
+			</div>
+			<div class="field">
+				<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
+				<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
+			</div>
+			<div class="field">
+				<?php echo $form->field('title_kb')->set_template('{label}'); ?>
+				<?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?>
+			</div>
+		</div>
+	</td>
+</tr>
+<tr>
+	<th>詳細設定</th>
+	<td class="lcm_focus" title="詳細設定">
 	<?php echo $form->field('provisional_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 	<?php echo $form->field('unspecified_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 	<?php echo $form->field('allday_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
@@ -106,7 +113,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('message')->set_template('{label}{required}'); ?></th>
+	<th><?php echo $form->field('message')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('message')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
@@ -114,7 +121,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 <th>メンバー</th>
 <td>
 
-<div id="member_panel">
+<div id="member_panel" class="lcm_focus" title="メンバーの選択">
 	<table>
 		<tr>
 		<td>表示メンバー変更</td>
@@ -155,7 +162,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 <tr>
 <th>施設選択</th>
 <td>
-<div id="building_panel">
+<div id="building_panel" class="lcm_focus" title="施設の選択">
 	<table>
 		<tr>
 		<td>グループ</td>
@@ -192,7 +199,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('group_kb')->set_template('{label}{required}'); ?></th>
+	<th><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></th>
 	<td>
 		<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
 		<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
@@ -200,22 +207,22 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('purpose_kb')->set_template('{label}{required}'); ?></th>
+	<th><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 <tr>
-	<th><?php echo $form->field('purpose_text')->set_template('{label}{required}'); ?></th>
+	<th><?php echo $form->field('purpose_text')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('purpose_text')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 <tr>
-	<th><?php echo $form->field('user_num')->set_template('{label}{required}'); ?></th>
+	<th><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 <tr>
-	<th><?php echo $form->field('user_id')->set_template('{label}{required}'); ?></th>
+	<th><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 

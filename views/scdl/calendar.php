@@ -6,10 +6,10 @@
 </div>
 
 <div class="field_wrapper calendar">
-<div class="select_period lcm_focus" title="月を選択 エンターで開きます">
+<div class="select_period lcm_focus" title="月を選択">
 	<?php print htmlspecialchars_decode($prev_url); ?> 
 	<?php print htmlspecialchars_decode($next_url); ?>
-	<span class="select_num">
+	<span class="select_num lcm_focus" title="各月を選択">
 	<?php 
 		for($i = 1; $i <= 12; $i++) {
 			if ($i == $mon) {
@@ -31,13 +31,13 @@
 
 
 
-<div class="narrow_user lcm_focus al" title="絞り込み エンターで開きます">
+<div class="narrow_user lcm_focus al" title="絞り込み">
 <?php include("calendar_narrow.php"); ?>
 </div>
 
 
 
-<table class="calendar month lcm_focus" title="カレンダー  エンターで開きます">
+<table class="calendar month lcm_focus" title="カレンダー">
 	<thead>
 		<tr>
 			<th class="week1"><span>月曜日</span></th>

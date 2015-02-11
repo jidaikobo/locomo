@@ -107,7 +107,17 @@ class Controller_Flr extends \Locomo\Controller_Base
 				$fullpath = \Model_Flr::enc_url(dirname($fullpath)).DS.basename($fullpath);
 			}
 
-			\File::rename($fullpath, $enc_name);
+			try
+			{
+				\File::rename($fullpath, $enc_name);
+			} catch (\Fuel\Core\PhpErrorException $e) {
+				$errors = array(
+					'同期は不完全に終わりました。',
+					"'".urldecode(basename($fullpath))."'は、パーミッションが妥当でありませんシステム管理者に修正を依頼してください。",
+				);
+				\Session::set_flash('error', $errors);
+				\Response::redirect(\Uri::create('flr/sync/'));
+			}
 		}
 
 		// reload
