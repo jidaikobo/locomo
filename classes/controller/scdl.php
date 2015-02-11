@@ -572,9 +572,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$view->set('narrow_user_list', \Model_Usr::find('all',
 			array(
-			'related'   => count($where) ? array('usergroup') : array(),
+				'related'   => count($where) ? array('usergroup') : array(),
 				'where'=> $where,
-				'order_by' => 'display_name'
+				'order_by' => 'pronunciation'
 				)
 			));
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
@@ -1391,21 +1391,29 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_get_user_list()
 	{
-		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
+		//if (!\Input::is_ajax()) throw new HttpNotFoundException;;
 		$where = array();
 
-		if (\Input::post("gid")) {
+		if (\Input::post("gid", 0)) {
 			$where = array(array('usergroup.id', '=', \Input::post("gid", 0)));
+		} else {
+			$where = array();
 		}
 		$response = \Model_Usr::find('all',
 			array(
-			'related'   => array('usergroup'),
+				'related'   => count($where) ? array('usergroup') : array(),
 				'where'=> $where,
-				'order_by' => 'display_name'
+				'order_by' => array('pronunciation' => 'asc')
 				)
 			);
-	
-		echo $this->response($response, 200); die();
+		$result = array();
+		$index = 0;
+		foreach ($response as $row) {
+//			$row[0] = $index;
+			$index++;
+			$result[] = $row;
+		}
+		echo $this->response($result, 200); die();
 	}
 
 	/*
