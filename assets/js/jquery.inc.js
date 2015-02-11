@@ -135,11 +135,10 @@ if($('.flash_alert')[0]){
 if(firstFocus){
 	set_focus(firstFocus);
 }else{
-	var container = $('.container');
-//	var page_title = $(document).find('#adminbar h3').first().text();
+	var container = $('#main_content');
 	container.focus();
 }
-
+$('h1').first().attr('tabindex', '0');
 
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
@@ -926,24 +925,21 @@ $('.validation_error :input').tooltip({
 	                 return $(this).data('jslcmTooltip')
 		           }*/
 });
-$('.tooltip_parent').tooltip({
-     content: function() {
-        var el = document.getElementById($(this).data('jslcmTooltipId'));
-        el = $(el).html();
-        return el
-        },
+$('.lcm_tooltip_parent').tooltip({
+	items: '[data-jslcm-tooltip-id]',
+	content: function() {
+		var el = document.getElementById($(this).data('jslcmTooltipId'));
+		el = $(el).html();
+		return el
+	},
 	tooltipClass : 'lcm_tooltip',
 	show         : 200,
 	hide         : 'fade',
+	relative     : true,
 	position     : {
 		             my : 'left bottom-8',
 		             at : 'left top'
 		            },
-//	tip: '#pop_pop7',
-
-//	content      : function(){
-//	                 return 'aaa'
-//		           }
 });
 
 

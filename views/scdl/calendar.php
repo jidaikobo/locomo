@@ -73,7 +73,7 @@
 			<?php foreach ($v['data'] as $v2) {
 				$detail_pop_data = $v2;
 				?>
-				<p class="tooltip_parent" title="tooltip_test" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid ?>">
+				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid ?>">
 					<span class="icon_small">
 					<?php if ($v2['provisional_kb']) { print '[仮登録]'; }; ?>
 					<?php if ($v2['unspecified_kb']) { print '[時間指定なし]'; }; ?>
