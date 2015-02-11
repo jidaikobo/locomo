@@ -1,17 +1,7 @@
-<h1><?php echo $title ?></h1>
-<?php echo \Form::open(); ?>
-
-<!--form_group-->
-<div class="form_group lcm_form">
-<?php
-	// use model's form definition instead of raw-like html
-	//echo $form;
-?>
-
 <?php
 if (isset($overlap_result) && count($overlap_result)) {
 ?>
-<table>
+<table class="tbl datatable" tabindex="0">
 	<thead>
 	<tr>
 		<th>
@@ -42,26 +32,54 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<?php print $v['title_text']; ?>
 		</td>
 	</tr>
-<?php
-	}
-}
-?>
+<?php	} ;?>
 	</tbody>
 </table>
+<?php } ;?>
+<h1><?php echo $title ?></h1>
+<?php echo \Form::open(); ?>
+
+<!--form_group-->
+<div class="form_group lcm_form">
+<?php
+	// use model's form definition instead of raw-like html
+	//echo $form;
+?>
+
 <table class="formtable">
+<tbody>
 <tr>
-	<th><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></th>
+	<th class="ar"><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></th>
+	<td>
+		<div class="input_group">
+			<div class="field">
+				<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
+			</div>
+			<div class="field">
+				<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
+				<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
+			</div>
+			<div class="field">
+				<?php echo $form->field('title_kb')->set_template('{label}'); ?>
+				<?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?>
+			</div>
+		</div>
+	</td>
+</tr>
+
+<tr>
+	<th class="ar"><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></th>
 	<td>
 		<?php echo $form->field('repeat_kb')->set_template('{error_msg}{field}'); ?>
+		<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
+		<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
+		<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
 	</td>
 </tr>
 <tr>
-	<th>予定日指定</th>
+	<th class="ar">予定日指定</th>
 	<td>
-	<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
-	<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
-	<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
-		<table id="" class="lcm_focus" title="必須 予定日指定">
+	<table id="" class="lcm_focus" title="必須 予定日指定">
 			<tr>
 				<th>期間</th>
 				<td>
@@ -84,25 +102,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></th>
-	<td>
-		<div class="input_group">
-			<div class="field">
-				<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
-			</div>
-			<div class="field">
-				<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
-				<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
-			</div>
-			<div class="field">
-				<?php echo $form->field('title_kb')->set_template('{label}'); ?>
-				<?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?>
-			</div>
-		</div>
-	</td>
-</tr>
-<tr>
-	<th>詳細設定</th>
+	<th class="ar">詳細設定</th>
 	<td class="lcm_focus" title="詳細設定">
 	<?php echo $form->field('provisional_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 	<?php echo $form->field('unspecified_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
@@ -113,12 +113,12 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('message')->set_template('{required}{label}'); ?></th>
+	<th class="ar"><?php echo $form->field('message')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('message')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 <tr>
-<th><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="label_required">必須</span>' : '' ;?>メンバー</th>
+<th class="ar"><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="label_required">必須</span>' : '' ;?>メンバー</th>
 <td>
 
 <div id="member_panel" class="lcm_focus" title="メンバーの選択">
@@ -161,7 +161,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 </td>
 </tr>
 <tr>
-<th><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</th>
+<th class="ar"><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</th>
 <td>
 <div id="building_panel" class="lcm_focus" title="施設の選択">
 	<table>
@@ -202,7 +202,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></th>
+	<th class="ar min"><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></th>
 	<td>
 		<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
 		<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
@@ -210,7 +210,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-	<th><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></th>
+	<th class="ar"><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 <?php /* ?>
@@ -221,19 +221,19 @@ if (isset($overlap_result) && count($overlap_result)) {
 <?php */ ?>
 <?php echo $form->field('purpose_text')->set_type('hidden'); ?>
 <tr>
-	<th><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></th>
+	<th class="ar"><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?>人</td>
 </tr>
 
 <tr>
-	<th><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></th>
+	<th class="ar"><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
 
 <?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
 <?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
-
+</tbody>
 </table>
 
 <?php echo $form->field('kind_flg')->set_template('{error_msg}{field}'); ?>
@@ -281,23 +281,23 @@ function change_repeat_kb_area() {
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	} else if ($("#form_repeat_kb").val() == 3) {
-		$("#span_week_kb").css({'display': 'block'});
+		$("#span_week_kb").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	} else if ($("#form_repeat_kb").val() == 4) {
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
-		$("#span_target_day").css({'display': 'block'});
+		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'none'});
 	} else if ($("#form_repeat_kb").val() == 5) {
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
-		$("#span_target_day").css({'display': 'block'});
-		$("#span_target_month").css({'display': 'block'});
+		$("#span_target_day").css({'display': 'inline-block'});
+		$("#span_target_month").css({'display': 'inline-block'});
 	} else if ($("#form_repeat_kb").val() == 6) {
-		$("#span_week_kb").css({'display': 'block'});
-		$("#span_week_number").css({'display': 'block'});
+		$("#span_week_kb").css({'display': 'inline-block'});
+		$("#span_week_number").css({'display': 'inline-block'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	}
