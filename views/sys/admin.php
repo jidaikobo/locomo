@@ -5,22 +5,24 @@ if ( ! isset($is_main_action)):
 	$html.= '<h1>'.$title.'</h1>';
 	if ($actionset):
 		foreach($actionset as $k => $v):
-			$html.= '<h2>'.$k::$locomo['nicename'].'</h2>';
-			$html.= '<table class="tbl2">';
+			// 表示できるようなアクションセットがあるかどうかはまわしてみるまでわからないので、一度まわす。
+			$table = '';
 			foreach($v as $kk => $vv):
 			if ($kk == 'order') continue;
 				foreach($vv as $kkk => $vvv):
 					if (\Arr::get($vvv, 'show_at_top') == false) continue;
 					if (\Arr::get($vvv, 'urls') == false) continue;
-						$html.= '<tr>';
-							$html.= '<th class="ctrl">';
-							$html.= '<ul style="text-align: left;"><li>'.join('</li><li>',$vvv['urls']).'</ul>';
-							$html.= '</th>';
-							$html.= '<td>'.$vvv['explanation'].'</td>';
-						$html.= '</tr>';
+						$table.= '<tr>';
+							$table.= '<th class="ctrl">';
+							$table.= '<ul style="text-align: left;"><li>'.join('</li><li>',$vvv['urls']).'</ul>';
+							$table.= '</th>';
+							$table.= '<td>'.$vvv['explanation'].'</td>';
+						$table.= '</tr>';
 				endforeach;
 			endforeach;
-			$html.= '</table>';
+
+			// 表示できるようなアクションセットがあれば、見出しを付けて表示
+			$html.= $table ? '<h2>'.$k::$locomo['nicename'].'</h2><table class="tbl2">'.$table.'</table>' : '';
 		endforeach;
 	else:
 	endif;
