@@ -259,12 +259,12 @@ class Model_Usr extends Model_Base
 			->add_rule('unique', "lcm_usrs.email.{$id}");
 
 		// usergroups
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 //		$checked = is_object($obj->usergroup) ? array_keys($obj->usergroup) : $obj->usergroup;
 
 		// usergroup can modified by admin only 
 		if (\Auth::is_admin())
 		{
+			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 			$form->add_after(
 					'usergroup',
 					'ユーザグループ',
@@ -274,7 +274,10 @@ class Model_Usr extends Model_Base
 				)
 				->set_value(array_keys($obj->usergroup));
 		} else {
-			static$_mm_delete_else = false;
+			$usergroup = $obj->usergroup;
+			unset($usergroup[-10]); // 自分自身を参照するログインユーザーグループ
+			$obj->usergroup = $usergroup;
+			static::$_mm_delete_else = false;
 		}
 
 		// created_at
