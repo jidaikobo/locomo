@@ -19,7 +19,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'select',
-				'size' => 0,
 				'options' => array('0' => 'なし'
 								, '1' => '毎日'
 								, '2' => '毎日（土日除く)'
@@ -38,7 +37,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'int',
 			),
 		),
@@ -49,7 +47,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'int',
 			),
 		),
@@ -60,7 +57,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'date',
 			),
 		),
@@ -71,7 +67,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'date',
 			),
 		),
@@ -82,7 +77,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'time min15',
 			),
 		),
@@ -93,7 +87,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'time min15',
 			),
 		),
@@ -111,7 +104,6 @@ class Model_Scdl extends \Model_Base
 								, '4' => '木'
 								, '5' => '金'
 								, '6' => '土'),
-				'size' => 0,
 				'class' => 'int',
 			),
 		),
@@ -128,7 +120,6 @@ class Model_Scdl extends \Model_Base
 								, '4' => '4'
 								, '5' => '5'
 								),
-				'size' => 0,
 				'class' => 'int',
 			),
 		),
@@ -139,7 +130,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'text',
 			),
 		),
@@ -165,7 +155,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'select',
-				'size' => 0,
 				'class' => 'text',
 				'options' => array('↑高' => '↑高', '→中' => '→中', '↓低' => '↓低'),
 				'title' => '重要度',
@@ -179,7 +168,6 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'select',
 				'options' => array('標準' => '標準', '社内' => '社内', '社外' => '社外', '外出' => '外出', '来社' => '来社', '個人' => '個人'),
-				'size' => 0,
 				'class' => 'text',
 				'title' => '区分',
 			),
@@ -265,7 +253,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'select',
-				'size' => 0,
 				'class' => 'text',
 				'title' => 'グループ指定',
 			),
@@ -277,9 +264,9 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'select',
-				'size' => 0,
 				'class' => 'text',
-				'options' => array('賃室' => '賃室')
+				'options' => array('賃室' => '賃室', '会議' => '会議'),
+				'title' => '施設使用目的',
 			),
 
 		),
@@ -290,7 +277,6 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'text',
 			),
 		),
@@ -301,8 +287,8 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 0,
 				'class' => 'int',
+				'title' => '施設利用人数 半角数字で入力してください',
 			),
 		),
 		'user_id' => 
@@ -312,8 +298,8 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'select',
-				'size' => 0,
 				'class' => 'int',
+				'title' => '作成者'
 			),
 		),
 		'attend_flg' => 

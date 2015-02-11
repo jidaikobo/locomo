@@ -801,6 +801,9 @@ div.lcm_tooltip {
 	border-bottom: none;
 	box-shadow: 0 -1px 0 #fff;
 }
+.contents form h3 {
+	font-size: 1em;
+}
 .container .search .label_fb label * {
 	vertical-align: baseline;
 }
