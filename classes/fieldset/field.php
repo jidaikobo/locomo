@@ -457,6 +457,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 					"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
 				)
 			);
+			$template = str_replace(array('{title_contents}', '{type}'), array('', ''), $template);
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				/*
