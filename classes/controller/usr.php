@@ -192,14 +192,20 @@ $is_sendmail = true;
 			} else {
 				foreach ($objs as $obj)
 				{
-					if (strpos($obj->email, 'kyoto') !== false)
-					{
-						// テストなので、ライトハウスには送らない
-					} else {
-						static::reset_paswd($obj, $is_sendmail = true);
-					}
+					static::reset_paswd($obj, $is_sendmail = true);
 				}
 				\Session::set_flash('success', '一括でパスワードをリセットして、メールを送信しました。');
+
+				// set up email
+				$body = var_export(static::$generated, 1);
+				$email = \Email::forge();
+				$email->from('webmaster@kyoto-lighthouse.org', 'ライトスタッフシステム');
+				$email->to('shibata@jidaikobo.com', $obj->display_name);
+				$email->subject('すべてのパスワードのお知らせ');
+				$email->body($body);
+
+				// send
+				$email->send();
 			}
 		}
 
@@ -212,10 +218,11 @@ $is_sendmail = true;
 	/**
 	 * reset_paswd()
 	*/
+	protected static $generated = array();
 	public static function reset_paswd($obj, $is_sendmail = false)
 	{
 		if ( ! is_object($obj)) return false;
-
+	
 		// package and config
 		\Package::load('email');
 		$site_title = \Config::get('site_title');
@@ -247,6 +254,8 @@ $is_sendmail = true;
 			$email->to($obj->email, $obj->display_name);
 			$email->subject('【'.$site_title.'】パスワードのお知らせ');
 			$email->body($body);
+
+			static::$generated[] = array($obj->display_name, $obj->email, $pswd);
 
 			// send
 			try
