@@ -265,8 +265,7 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'select',
 				'class' => 'text',
-				'options' => array('賃室' => '賃室', '会議' => '会議'),
-				'title' => '施設使用目的',
+				'options' => array('賃室' => '賃室', '可能貸室' => '可能貸室', '予備貸室' => '予備貸室', 'その他' => 'その他')
 			),
 
 		),
