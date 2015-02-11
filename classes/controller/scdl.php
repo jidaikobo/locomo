@@ -1531,7 +1531,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	}
 
 	/*
-	 * ダッシュボード用週表示
+	 * ダッシュボード用「週表示」
 	 */
 	public function action_dashboard_week_calendar()
 	{
@@ -1539,6 +1539,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$current = \Locomo\Cal::get_week_calendar_by_weeknum(date('Y-m'), $weeknum);
 		list($year, $mon, $day) = explode('-', $current['dates'][1]);
 		return self::action_calendar($year, $mon, $day, $mode = 'week');
+	}
+
+	/*
+	 * ダッシュボード用「日表示」
+	 */
+	public function action_dashboard_today()
+	{
+		list($year, $mon, $day) = explode('-', date('Y-m-d'));
+		return self::action_calendar($year, $mon, $day);
 	}
 
 	//trait
