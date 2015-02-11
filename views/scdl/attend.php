@@ -60,6 +60,15 @@ calendar【<?php print $detail->title_text; ?>】
 
 <?php endif; ?>
 
+<tr>
+<th>詳細設定</th>
+<td>
+	<?php if ($detail->provisional_kb) { print '[仮登録]'; }; ?>
+	<?php if ($detail->unspecified_kb) { print '[時間指定なし]'; }; ?>
+	<?php if ($detail->allday_kb) { print '[終日]'; }; ?>
+</td>
+</tr>
+
 <?php if($detail->message && !$detail->private_kb): ?>
 <tr>
 	<th>メッセージ</th>
@@ -67,6 +76,31 @@ calendar【<?php print $detail->title_text; ?>】
 </tr>
 
 <?php endif; ?>
+
+<?php if (count($detail->user)) { ?>
+<tr>
+<th>メンバー</th>
+<td>
+	<?php foreach ($detail->user as $row) {
+		print $row['display_name'] . " ";
+	}
+	?>
+</td>
+</tr>
+<?php } ?>
+
+<?php if (count($detail->building)) { ?>
+<tr>
+<th>対象施設</th>
+<td>
+	<?php foreach ($detail->building as $row) {
+		print $row['item_name'] . " ";
+	}
+	?>
+</td>
+</tr>
+<?php } ?>
+
 <?php if($detail->group_kb && !$detail->private_kb): ?>
 <tr>
 	<th>表示するグループフラグ</th>
