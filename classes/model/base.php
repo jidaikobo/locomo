@@ -577,8 +577,6 @@ class Model_Base extends \Orm\Model_Soft
 
 
 
-
-
 	/**
 	 * form_definition()
 	 */

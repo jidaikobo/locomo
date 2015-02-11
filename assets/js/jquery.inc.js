@@ -22,8 +22,6 @@ $(function() {
 	});
 
 });
-
-
 // ヘルプ呼び出し
 var help_preparation = false;//なにかしら、読込済かどうかわかるようにしておく
 function show_help(e){

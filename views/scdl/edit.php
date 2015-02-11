@@ -1,5 +1,5 @@
+<h1><?php echo $title ?></h1>
 <?php echo \Form::open(); ?>
-
 
 <!--form_group-->
 <div class="form_group lcm_form">
@@ -118,7 +118,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 </tr>
 
 <tr>
-<th>メンバー</th>
+<th><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="label_required">必須</span>' : '' ;?>メンバー</th>
 <td>
 
 <div id="member_panel" class="lcm_focus" title="メンバーの選択">
@@ -136,16 +136,17 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</tr>
 		<tr>
 			<td>
-
-				<select id="member_kizon" name="member_kizon" size="2" style="width:200px;height:200px;">
+				<h3 class="ac">選択済み</h3>
+				<select id="member_kizon" name="member_kizon" size="2" style="width:200px;height:200px;" title="選択済み">
 				<?php foreach($select_user_list as $row) { ?>
 					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 				<?php } ?>
 				</select>
 			</td>
-			<td><input type="button" value="選択" onclick="javascript:select_member('plus');" /><br /><input type="button" value="解除" onclick="javascript:select_member('minus');" /></td>
+			<td style="vertical-align: middle;"><input type="button" value="選択" class="button small" onclick="javascript:select_member('plus');" /><br /><input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');" /></td>
 			<td>
-				<select id="member_new" name="member_new" size="2" style="width:200px;height:200px;">
+				<h3 class="ac">ここから選択</h3>
+				<select id="member_new" name="member_new" size="2" style="width:200px;height:200px;" title="選択肢">
 					<?php 
 					foreach($non_selected_user_list as $row) {
 					?>
@@ -155,19 +156,19 @@ if (isset($overlap_result) && count($overlap_result)) {
 			</td>
 		</tr>
 	</table>
-	<?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る
+	<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
 </div>
 </td>
 </tr>
 <tr>
-<th>施設選択</th>
+<th><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</th>
 <td>
 <div id="building_panel" class="lcm_focus" title="施設の選択">
 	<table>
 		<tr>
 		<td>グループ</td>
 		<td colspan="2">
-			<select id="building_group_list">
+			<select id="building_group_list" title="施設グループ">
 				<option value="">--- 全て ---
 				<?php foreach($building_group_list as $row) { ?>
 					<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
@@ -177,15 +178,17 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</tr>
 		<tr>
 			<td>
-				<select id="building_kizon" name="building_kizon" size="2" style="width:100px;height:200px;">
+				<h3 class="ac">選択済み</h3>
+				<select id="building_kizon" name="building_kizon" size="2" style="width:100px;height:200px;" title="選択済み">
 				<?php foreach($select_building_list as $row) { ?>
 					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 				<?php } ?>
 				</select>
 			</td>
-			<td><input type="button" value="選択" onclick="javascript:select_building('plus');" /><br /><input type="button" value="解除" onclick="javascript:select_building('minus');" /></td>
+			<td style="vertical-align: middle;"><input type="button" value="選択" class="button small" onclick="javascript:select_building('plus');" /><br /><input type="button" value="解除"  class="button small" onclick="javascript:select_building('minus');" /></td>
 			<td>
-				<select id="building_new" name="building_new" size="2" style="width:100px;height:200px;">
+				<h3 class="ac">ここから選択</h3>
+				<select id="building_new" name="building_new" size="2" style="width:100px;height:200px;" title="選択肢">
 				<?php foreach($non_select_building_list as $row) { ?>
 					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 				<?php } ?>
@@ -210,15 +213,16 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<th><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></td>
 </tr>
-
+<?php /* ?>
 <tr>
 	<th><?php echo $form->field('purpose_text')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('purpose_text')->set_template('{error_msg}{field}'); ?></td>
 </tr>
-
+<?php */ ?>
+<?php echo $form->field('purpose_text')->set_type('hidden'); ?>
 <tr>
 	<th><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></th>
-	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?></td>
+	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?>人</td>
 </tr>
 
 <tr>
