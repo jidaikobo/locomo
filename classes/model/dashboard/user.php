@@ -77,19 +77,20 @@ class Model_Dashboard_User extends Model_Base
 		\Model_Dashboard::$_properties['action']['form']['options'] = $widgets ;
 
 		// default
-		if (count($obj->dashboard) === 0)
+		$num = count($obj->dashboard);
+		$defaults = array();
+		if ($num === 0)
 		{
 			$defaults = \Config::get('default_dashboard') ?: array();
 			if ( ! $defaults) continue;
 			$create += count($defaults);
 		}
-
 		// actions
 		$fieldset = \Fieldset::forge('dashboard');
 		$fieldset->set_tabular_form('Model_Dashboard', 'dashboard', $obj, $create);
 
 
-		if ($defaults) {
+		if ($num === 0) {
 			$i = 0;
 			foreach ($defaults as $default)
 			{

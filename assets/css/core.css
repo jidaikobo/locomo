@@ -1333,7 +1333,8 @@ table.calendar {
 	background-color: pink;
 }
 .widget .calendar {
-	margin: 3px;
+	margin: 0;
+	min-width: 100%;
 }
 .widget.size1 .calendar {
 	font-size: 85%;
@@ -1353,6 +1354,12 @@ table.calendar {
 	font-size: .75em;
 	text-align: center;
 	white-space: nowrap;
+}
+td.active:not(.hoo) {
+	border-right: none;
+}
+td.active + td:not(.active) {
+	border-left: 1px solid #bbb;
 }
 .legend.calendar {
 	font-size: .75em;
