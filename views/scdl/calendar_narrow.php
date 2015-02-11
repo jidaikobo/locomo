@@ -26,11 +26,11 @@ $("#narrow_building_group_id").change(function(event) {
 function get_group_user(e) {
 
 	var group_id = $("#narrow_user_group_id").val();
-
 	$.ajax({
 		url: base_uri + 'scdl/get_user_list.json',
 		type: 'post',
 		data: 'gid=' + group_id,
+
 		success: function(res) {
 			exists = JSON.parse(res);
 			document.getElementById("narrow_user_id").options.length=0;
