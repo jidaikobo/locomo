@@ -97,7 +97,7 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'item_id' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
 			'item_name' => array('type' => 'text'),
-			'item_group' => array('type' => 'text'),
+			'item_group' => array('type' => 'varchar', 'constraint' => 255),
 			'item_group2' => array('type' => 'text', 'null' => true),
 			'item_sort' => array('type' => 'int'),
 			'created_at' => array('type' => 'datetime', 'null' => true),
@@ -147,9 +147,17 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 			))->execute();
 		\DB::insert("lcm_scdls_items")->set(array(
 				'item_id' => 5,
-				'item_name' => '毎年',
+				'item_name' => '毎月(曜日)',
 				'item_group' => 'repeat_kb',
 				'item_sort' => 6,
+				'created_at' => \DB::expr("NOW()"),
+				'updated_at' => \DB::expr("NOW()")
+			))->execute();
+		\DB::insert("lcm_scdls_items")->set(array(
+				'item_id' => 6,
+				'item_name' => '毎年',
+				'item_group' => 'repeat_kb',
+				'item_sort' => 7,
 				'created_at' => \DB::expr("NOW()"),
 				'updated_at' => \DB::expr("NOW()")
 			))->execute();
@@ -470,6 +478,24 @@ INSERT INTO `lcm_scdls` (`id`, `repeat_kb`, `target_month`, `target_day`, `start
 			")->execute();
 
 		}
+
+
+		echo "create scdls index.\n";
+		$index = array('ALTER TABLE `locomo`.`lcm_scdls` ADD INDEX `start_date_index` ( `start_date` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls` ADD INDEX `end_date_index` ( `end_date` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls` ADD INDEX `start_end_date_index` ( `start_date` , `end_date` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_attends` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_attends` ADD INDEX `user_id_index` ( `user_id` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_buildings` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_buildings` ADD INDEX `building_id_index` ( `building_id` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_items` ADD INDEX `item_id_index` ( `item_id` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_items` ADD INDEX `item_group_index` ( `item_group` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_members` ADD INDEX `schedule_id_index` ( `schedule_id` )'
+					, 'ALTER TABLE `locomo`.`lcm_scdls_members` ADD INDEX `user_id_index` ( `user_id` )');
+		foreach ($index as $v) {
+			\DB::query($v)->execute();
+		}
+
 
 	}
 
