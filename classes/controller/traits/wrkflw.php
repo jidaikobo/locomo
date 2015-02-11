@@ -144,7 +144,20 @@ trait Controller_Traits_Wrkflw
 		$model_wfadmin = \Model_Wrkflwadmin::forge();
 		$items = $model_wfadmin->find('all');
 
-		// 現在設定されている経路を取得（将来のルート変更用）
+		// 自分に関係のないワークフローをハツる
+		if ( ! in_array(\Auth::get('id'), array(-1,-2)))
+		{
+			foreach ($items as $k => $item)
+			{
+				$writers = \Model_Wrkflwadmin::find_writers($item->id);
+				if ( ! in_array(\Auth::get('id'), $writers['allusers']))
+				{
+					unset($items[$k]);
+				}
+			}
+		}
+
+		// 現在設定されている経路を取得（ルート変更用）
 		$route_id = $model::get_route(\Request::active()->controller, $id);
 
 		// add_actionset - back to edit

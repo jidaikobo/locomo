@@ -15,6 +15,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		'order'        => 900,   // order of appearance
 		'widgets' =>array(
 			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl::action_dashboard_week_calendar'),
+			array('name' => '今日の予定', 'uri' => '\\Controller_Scdl::action_dashboard_today'),
 		),
 	);
 
