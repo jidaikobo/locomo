@@ -1,5 +1,5 @@
+<h1><?php echo $title ?></h1>
 <?php echo \Form::open(); ?>
-
 
 <!--form_group-->
 <div class="form_group lcm_form">
@@ -210,15 +210,16 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<th><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></td>
 </tr>
-
+<?php /* ?>
 <tr>
 	<th><?php echo $form->field('purpose_text')->set_template('{required}{label}'); ?></th>
 	<td><?php echo $form->field('purpose_text')->set_template('{error_msg}{field}'); ?></td>
 </tr>
-
+<?php */ ?>
+<?php echo $form->field('purpose_text')->set_type('hidden'); ?>
 <tr>
 	<th><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></th>
-	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?></td>
+	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?>人</td>
 </tr>
 
 <tr>

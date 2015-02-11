@@ -1,4 +1,4 @@
-calendar【<?php print $detail->title_text; ?>】
+<h1><?php echo $title ?>：<?php print $detail->title_text; ?></h1>
 
 
 <table class="tbl">
@@ -139,7 +139,7 @@ calendar【<?php print $detail->title_text; ?>】
 <?php if($detail->user_id): ?>
 <tr>
 	<th>作成者</th>
-	<td><?php echo @$detail->create_user->username; ?></td>
+	<td><?php echo @$detail->create_user->display_name; ?></td>
 </tr>
 
 <?php endif; ?>
