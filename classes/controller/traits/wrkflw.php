@@ -442,7 +442,8 @@ trait Controller_Traits_Wrkflw
 	 * ユーザ情報を取得する
 	 * @return (object)
 	 */
-	public static function get_userinfo($uid)
+/*
+	public static function userinfo($uid)
 	{
 		$user_info = \Model_Usr::find($uid);
 
@@ -459,6 +460,7 @@ trait Controller_Traits_Wrkflw
 
 		return $user_info;
 	}
+*/
 
 	/**
 	 * set_route_info()
