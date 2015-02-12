@@ -25,6 +25,7 @@ class Actionset_Scdl extends \Actionset_Base
 		$actions = array(
 				$controller.'::action_create',
 				$controller.'::action_edit',
+				$controller.'::action_delete',
 				$controller.'::action_copy',
 				$controller.'::action_viewdetail',
 				$controller.'::action_attend',
@@ -152,10 +153,11 @@ class Actionset_Scdl extends \Actionset_Base
 	public static function actionset_regchange($controller, $obj = null, $id = null, $urls = array())
 	{
 
-		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb):
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb)
+		{
 			$actions = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
 			$urls = static::generate_urls($controller.'::action_regchange', $actions, ['']);
-		endif;
+		}
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -173,8 +175,8 @@ class Actionset_Scdl extends \Actionset_Base
 	/**
 	 * actionset_copy
 	 */
-	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array()) {
-
+	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array())
+	{
 		if (\Request::main()->action != 'edit' && $id) {
 			$actions = array(array($controller.DS."copy/?from=" . $id, 'コピー'));
 			$urls = static::generate_urls($controller.'::action_copy', $actions, []);
@@ -192,9 +194,8 @@ class Actionset_Scdl extends \Actionset_Base
 	}
 	
 	// actionset_view
-	public static function actionset_view($controller, $obj = null, $id = null, $urls = array()) {
-		
-		$urls = array();
+	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
+	{
 		$retvals = array(
 			'urls'         => $urls ,
 			'action_name'  => '',
@@ -207,5 +208,42 @@ class Actionset_Scdl extends \Actionset_Base
 		return $retvals;
 	}
 
+	/**
+	 * delete()
+	 */
+	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = parent::actionset_delete($controller, $obj, $id);
 
+		// ユーザIDが一致しない項目では削除リンクを出さない
+		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
+		{
+//			if (isset($obj->creator_id) && $obj->creator_id == \Auth::get('id'))
+			if (isset($obj->user_id) && $obj->user_id == \Auth::get('id'))
+			{
+				$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
+				$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
+			}
+		}
+
+		\Arr::set($retvals, 'urls', $urls);
+		return $retvals;
+	}
+
+	/**
+	 * delete_others()
+	 */
+	public static function actionset_delete_others($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = parent::actionset_delete($controller, $obj, $id);
+		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
+		{
+			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
+			// delete_othersのACLがなければ出さない
+			$urls = static::generate_urls($controller.'::delete_others', $actions, ['create']);
+		}
+
+		\Arr::set($retvals, 'urls', $urls);
+		return $retvals;
+	}
 }
