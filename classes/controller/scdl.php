@@ -359,6 +359,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("detail", $detail);
 		$view->set("schedule_attend_members", $attend_members);
 		$view->set("schedule_members_me", $schedule_members);
+		$view->set("model_name", $model);
 		$this->template->content = $view;
 	}
 
@@ -433,6 +434,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("year", $year);
 		$view->set("mon", $mon);
 		$view->set("day", $day);
+		$view->set("model_name", $model);
 		$this->template->content = $view;
 
 		$this->template->content->set("items", Model_Scdl_Item::get_items_array('attend_kb'));

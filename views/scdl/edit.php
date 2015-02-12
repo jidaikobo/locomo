@@ -269,6 +269,13 @@ $("#group_list").change(function(event) {
 $("#building_group_list").change(function(event) {
 	get_group_building(event);
 });
+$("#form_group_detail").change(function(event) {
+	form_group_detail_change(event);
+});
+
+function form_group_detail_change(e) {
+	$("#form_group_kb_1").val(['2']);
+}
 
 /**
  * [change_repeat_kb_area description]

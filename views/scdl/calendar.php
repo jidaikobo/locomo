@@ -1,6 +1,6 @@
 <h1><?php print $year; ?>年<?php print (int)$mon; ?>月 カレンダ</h1>
 <div class="select_display_type">
-	<?php// print htmlspecialchars_decode($display_month); ?><!-- / -->
+	<?php // print htmlspecialchars_decode($display_month); ?><!-- / -->
 	<?php print htmlspecialchars_decode($display_week); ?>
 </div>
 

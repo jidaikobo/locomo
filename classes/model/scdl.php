@@ -470,7 +470,7 @@ class Model_Scdl extends \Model_Base
 				$form->field('end_date')->set_value(date('Y-m-d'));
 			}
 			$form->field('start_time')->set_value('00:00');
-			$form->field('end_time')->set_value('23:59');
+			$form->field('end_time')->set_value('21:00');
 		}
 
 		if (\Input::get("ymd")) {
@@ -480,10 +480,13 @@ class Model_Scdl extends \Model_Base
 		if (\Input::post()) {
 			// 日付の自動判断
 			if (\Input::post("end_date", "") == "" || \Input::post("end_date", "") == "0000-00-00") {
-				$_POST['end_date'] = "2100-01-01";
+				if (\Input::post("repeat_kb") == 0) {
+					$_POST['end_date'] = \Input::post("start_date");
+				} else {
+					$_POST['end_date'] = "2100-01-01";
+				}
 			}
 		}
-
 
 		return $form;
 	}
@@ -505,5 +508,21 @@ class Model_Scdl extends \Model_Base
 */
 
 		return $form;
+	}
+
+	/**
+	 * [value2index description]
+	 * @param  [type] $key [description]
+	 * @param  [type] $val [description]
+	 * @return [type]      [description]
+	 */
+	public static function value2index($key, $val) {
+		$index = 0;
+		foreach (self::$_properties[$key]['form']['options'] as $optKey => $optValue) {
+			if ($val == $optKey)
+				return $index;
+			$index++;
+		}
+		return null;
 	}
 }
