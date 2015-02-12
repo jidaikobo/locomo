@@ -4,6 +4,14 @@
 <?php if (isset($detail_pop_data->title_text)) { ?>
 <div id="pop<?php print $detail_pop_data->scdlid; ?>" aria-hidden="true" style="display:none;">
 <table class="tbl2">
+	<thead>
+	<tr>
+		<th style="text-align: left;" colspan="2">
+			<?php print $detail_pop_data->title_text; ?>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
 	<tr>
 		<th>
 			<?php
@@ -24,12 +32,6 @@
 			?>
 		</td>
 	</tr>
-	<tr>
-		<th>
-			タイトル：</th><td><?php print $detail_pop_data->title_text; ?>
-		</td>
-	</tr>
-
 	<?php if ($detail_pop_data->kind_flg == 1) { ?>
 	<tr>
 		<th class="min">
@@ -46,7 +48,7 @@
 		foreach ($detail_pop_data->user as $row) {
 			$members[] .= $row['display_name'];
 		}
-		echo implode(', ', $members); 
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>'; 
 		?>
 	</td>
 	</tr>
@@ -60,7 +62,7 @@
 		foreach ($detail_pop_data->building as $row) {
 			$buildings[] .= $row['item_name'];
 		}
-		echo implode(', ', $buildings); 
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>'; 
 		?>
 		
 	</td>
@@ -90,6 +92,7 @@
 			登録者：</th><td><?php print @$detail_pop_data->create_user->display_name; ?>
 		</td>
 	</tr>
+	</tbody>
 </table>
 
 </div>

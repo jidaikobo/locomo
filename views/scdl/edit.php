@@ -109,6 +109,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<?php echo $form->field('allday_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 	<?php echo $form->field('private_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 	<?php echo $form->field('overlap_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+	<em class="exp" style="display: inline-block;">過去の予定は重複チェックの対象になりません。</em>
 	</td>
 </tr>
 
@@ -268,6 +269,13 @@ $("#group_list").change(function(event) {
 $("#building_group_list").change(function(event) {
 	get_group_building(event);
 });
+$("#form_group_detail").change(function(event) {
+	form_group_detail_change(event);
+});
+
+function form_group_detail_change(e) {
+	$("#form_group_kb_1").val(['2']);
+}
 
 /**
  * [change_repeat_kb_area description]

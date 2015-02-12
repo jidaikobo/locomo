@@ -2,7 +2,7 @@
 // is_user?
 if (\Auth::check()):
 	$html = '';
-	$html.= '<nav id="adminbar" class="clearfix">';
+	$html.= '<nav id="adminbar" class="clearfix noprint">';
 		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="0">ここからツールバーです</a></h2>';
 
 	// .adminbar_bottom
@@ -25,7 +25,7 @@ if (\Auth::check()):
 				$ctrl_index = '';
 				// Controller_Sys
 				if ($current_name == '-Controller_Sys'):
-					if(\Auth::has_access($locomo['controller']['name'].'::home')):
+					if(\Auth::has_access($locomo['controller']['name'].'::action_home')):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'), '管理トップ');
 					else:
 						$top_link = '管理トップ';

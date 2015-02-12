@@ -37,6 +37,9 @@
 	<script src="//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 	<![endif]-->
 
+	<!-- favicon -->
+	<link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>">
+
 </head>
 <body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
 <?php 

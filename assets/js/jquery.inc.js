@@ -262,7 +262,8 @@ $.fn.reset_tabindex = function(){
 if(tabindexCtrl){
 	set_lcm_focus();
 	$('.lcm_focus').each(function(){
-		$(this).attr('title', $(this).attr('title')+' エンターで開きます')
+		var title_str = $(this).attr('title') ? $(this).attr('title') : '';
+		$(this).attr('title', title_str+' エンターで入ります')
 	});
 }
 

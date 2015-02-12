@@ -607,7 +607,7 @@ a.button.danger:active {
 }
 .btn.small.primary:hover,
 .button.small.primary:hover {
-	border-width: 3px;
+	border-width: 2px;
 	padding: 0 6px;
 }
 .btn.small.primary:active,
@@ -1265,7 +1265,6 @@ table.calendar {
 	border-top: 1px #bbb solid;
 	border-left: 1px #bbb solid;
 }
-
 .calendar th,
 .calendar td {
 	padding: 3px 3px 2px;
@@ -1333,8 +1332,13 @@ table.calendar {
 .week0 .title {
 	background-color: pink;
 }
+table.calendar .events {
+	padding: 0 2px;
+	font-size: .85em;
+}
 .widget .calendar {
-	margin: 3px;
+	margin: 0;
+	min-width: 100%;
 }
 .widget.size1 .calendar {
 	font-size: 85%;
@@ -1342,6 +1346,127 @@ table.calendar {
 /* あとでkesu */
 .icon_small {
 	font-size: .6em;
+}
+.schedule_day {
+	table-layout: fixed;
+}
+.schedule_day .name {
+	width: 6em;
+	white-space: normal;
+}
+.schedule_day .time {
+	font-size: .75em;
+	text-align: center;
+	white-space: nowrap;
+}
+td.active:not(.hoo) {
+	border-right: none;
+}
+td.active + td:not(.active) {
+	border-left: 1px solid #bbb;
+}
+.legend.calendar {
+	font-size: .75em;
+	margin-top: .5em;
+	margin-left: -.75em;
+}
+.legend .text_icon {
+	margin-left: .75em;
+}
+table.schedule_day th,
+table.schedule_day td {
+	padding: 2px;
+}
+.text_icon {
+	display: inline-block;
+	padding: .125em;
+	font-size: .85em;
+	background-color: #999;
+	margin-right: 3px;
+	width: 1em;
+	height: 1em;
+	line-height: 1em;
+	border-radius: 2px;
+	color: #fff;
+}
+
+/*== 繰り返し ==*/
+/*  毎日  */
+.text_icon.repeat_kb_1 {
+	background-color: #2063ac;
+}
+.text_icon.repeat_kb_1:before {
+	content: '日';
+}
+/*  毎日（土日除く）  */
+.text_icon.repeat_kb_2 {
+	background-color: #1a518e;
+}
+.text_icon.repeat_kb_2:before {
+	content: '平';
+}
+/*  毎週  */
+.text_icon.repeat_kb_3 {
+	background-color: #c60;
+}
+.text_icon.repeat_kb_3:before {
+	content: '週';
+}
+/*  毎月  */
+.text_icon.repeat_kb_4 {
+	background-color: #666;
+}
+.text_icon.repeat_kb_4:before {
+	content: '月';
+}
+/*  毎月(曜日指定)  */
+.text_icon.repeat_kb_6 {
+	background-color: #c0a000;
+}
+.text_icon.repeat_kb_6:before {
+	content: '月';
+}
+/*  毎年  */
+.text_icon.repeat_kb_5 {
+	background-color: #17a8a0;
+}
+.text_icon.repeat_kb_5:before {
+	content: '年';
+}
+
+/*== 詳細設定 ==*/
+/*  仮予約  */
+.text_icon.provisional_kb {
+	background-color: #666;
+}
+.text_icon.provisional_kb:before {
+	content: '仮';
+}
+/*  時間指定無し  */
+.text_icon.unspecified_kb {
+	background-color: #3a6;
+}
+.text_icon.unspecified_kb:before {
+	content: '無';
+}
+/*  終日  */
+.text_icon.allday_kb {
+	background-color: #36a;
+}
+.text_icon.allday_kb:before {
+	content: '終';
+}
+
+
+
+.schedule_day td.bar {
+	height: .75em;
+}
+.schedule_day .active {
+	background-color: #d8ebfc;
+}
+.schedule_day .graydown {
+	background-color: #CCC;
 }
 /*=== filer ===*/
 a.icon.dir:before {
@@ -1845,3 +1970,10 @@ li.show_if_smalldisplay {
 	}
 
 }
+@media print {
+	.noprint,
+	#openProfiler,
+	#pqp-container {
+		display: none;
+	}
+} 

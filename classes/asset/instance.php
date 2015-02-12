@@ -8,7 +8,25 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 	public function render($group = null, $raw = false)
 	{
 		$retval = parent::render($group, $raw);
-		$replace = 'lcm_assets/'; //'sys/fetch_view/';
+		return self::locomo_replace($retval);
+	}
+
+	/*
+	 * override get_file() to use locomo default assets
+	 */
+	public function get_file($file, $type, $folder = '')
+	{
+		$retval = parent::get_file($file, $type, $folder);
+		if ( ! $retval) return false;
+		return self::locomo_replace($retval);
+	}
+
+	/*
+	 * locomo_replace
+	 */
+	public function locomo_replace($retval)
+	{
+		$replace = 'lcm_assets/';
 
 		if (strpos($retval, APPPATH) !== false)
 		{
@@ -23,4 +41,7 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 		}
 		return str_replace($search, $replace, $retval);
 	}
+
+
+
 }
