@@ -113,6 +113,8 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				if (class_exists('Model_Usr'))
 				{
 					$this->user = \Model_Usr::find('first', array('where' => array(array('username', $username))));
+					// ここで Model_Usr のキャッシュをクリアしないと、あとあとusergroup[-10]が悪さをする。
+					\Model_Usr::clear_cached_objects();
 				}
 				else
 				{
