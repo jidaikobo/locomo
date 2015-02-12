@@ -488,7 +488,6 @@ class Model_Scdl extends \Model_Base
 			}
 		}
 
-
 		return $form;
 	}
 
@@ -509,5 +508,21 @@ class Model_Scdl extends \Model_Base
 */
 
 		return $form;
+	}
+
+	/**
+	 * [value2index description]
+	 * @param  [type] $key [description]
+	 * @param  [type] $val [description]
+	 * @return [type]      [description]
+	 */
+	public static function value2index($key, $val) {
+		$index = 0;
+		foreach (self::$_properties[$key]['form']['options'] as $optKey => $optValue) {
+			if ($val == $optKey)
+				return $index;
+			$index++;
+		}
+		return null;
 	}
 }
