@@ -171,7 +171,7 @@ class Util
 
 	/**
 	 * get_locomo
-	 * コントローラの$locomoの任意の値を取得
+	 * コントローラ（ない場合は親クラスの）の$locomoの任意の値を取得
 	 * fetch $locomo value
 	 * @return Mix
 	 */
@@ -183,6 +183,13 @@ class Util
 		// locomos
 		$locomos = $controller::$locomo;
 		if (is_null($property)) return $locomos;
+
+		// try to search parent
+		$parent = get_parent_class($controller);
+		if (is_null(\Arr::get($locomos, $property)) && class_exists($parent))
+		{
+			return static::get_locomo($parent, $property, $default);
+		}
 		return \Arr::get($locomos, $property, $default);
 	}
 
