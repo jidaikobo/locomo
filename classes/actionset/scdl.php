@@ -69,10 +69,11 @@ class Actionset_Scdl extends \Actionset_Base
 	{
 		$retvals = parent::actionset_view($controller, $obj, $id);
 
-		if(\Request::main()->action == 'edit' && $id):
+		if(\Request::main()->action == 'edit' && $id)
+		{
 			$actions = array(array($controller.DS."viewdetail/" . $id, '閲覧'));
 			$urls = static::generate_urls($controller.'::action_viewdetail', $actions);
-		endif;
+		}
 
 		\Arr::set($retvals, 'urls', $urls);
 		\Arr::set($retvals, 'action_name', '編集');
@@ -87,10 +88,11 @@ class Actionset_Scdl extends \Actionset_Base
 	{
 		$retvals = parent::actionset_edit($controller, $obj, $id);
 
-		if(\Request::main()->action == 'viewdetail' && $id):
+		if(\Request::main()->action == 'viewdetail' && $id)
+		{
 			$actions = array(array($controller.DS."edit/" . $id, '編集'));
 			$urls = static::generate_urls($controller.'::action_edit', $actions);
-		endif;
+		}
 
 		\Arr::set($retvals, 'urls', $urls);
 		\Arr::set($retvals, 'action_name', '編集');
@@ -103,14 +105,15 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_attend($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'viewdetail' && $id && $obj->attend_flg):
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->attend_flg)
+		{
 			$schedule_data = \DB::select()->from("lcm_scdls_members")->where("schedule_id", $id)->where("user_id", \Auth::get('id'))->execute()->as_array();
 			// 自分がメンバーであった場合
 			if (count($schedule_data) > 0) {
 				$actions = array(array($controller.DS."attend/" . $id, '出席確認'));
 				$urls = static::generate_urls($controller.'::action_attend', $actions, ['']);
 			}
-		endif;
+		}
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -130,10 +133,17 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_somedelete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1):
-			$actions = array(array($controller.DS."somedelete/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '部分削除', array('class' => 'confirm')));
-			$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
-		endif;
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1)
+		{
+			$y = \Uri::segment(4);
+			$m = \Uri::segment(5);
+			$d = \Uri::segment(6);
+			if ($datestr = strtotime("$y/$m/$d"))
+			{
+				$actions = array(array($controller.DS."somedelete/$id/".date('Y/m/d', $datestr), '部分削除', array('class' => 'confirm')));
+				$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
+			}
+		}
 
 		$retvals = array(
 			'urls'         => $urls ,

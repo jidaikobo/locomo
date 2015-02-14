@@ -494,13 +494,28 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $day  [description]
 	 * @return [type]       [description]
 	 */
-	public function action_somedelete($id, $year, $mon, $day) {
+	public function action_somedelete($id = null, $year = null, $mon = null, $day = null)
+	{
+		// 一つでも欠けていたらエラー
+		if (is_null($id) || is_null($year) || is_null($mon) || is_null($day))
+		{
+			\Session::set_flash('error', "部分削除に失敗しました。");
+			\Response::redirect(static::$main_url);
+		}
+
 		$model = $this->model_name;
 		$obj = $model::find($id);
 		$obj->delete_day = $obj->delete_day . sprintf("[%04d/%02d/%02d]", $year, $mon, $day);
-		$obj->save();
+		if ($obj->save())
+		{
+			\Session::set_flash('success', "部分削除しました。");
+		} else {
+			\Session::set_flash('error', "部分削除に失敗しました。");
+		}
+
 		// カレンダー表示
-		$this->action_calendar();
+//		$this->action_calendar();
+		\Response::redirect(static::$main_url);
 	}
 
 	/**
