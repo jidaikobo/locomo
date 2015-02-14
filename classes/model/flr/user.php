@@ -47,4 +47,16 @@ class Model_Flr_User extends \Model_Base
 		),
 	);
 
+	/**
+	 * $_has_one
+	 */
+	protected static $_has_one = array(
+		'usr' => array(
+			'key_from' => 'user_id',
+			'model_to' => '\Model_Usr',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		),
+	);
 }

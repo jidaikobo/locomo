@@ -29,6 +29,8 @@ scaffoldを使うとモジュールが生成されますが、APPPATH/classes/co
 		'order' => 10,
 		// (bool)	true: not appear to acl menu
 		'is_for_admin' => true,
+		// (bool)	true: not appear to acl menu
+		'no_acl' => true,
 		 // (str)	explanation of controller
 		'explanation'  => 'システムを利用するユーザの新規作成、編集、削除等を行います。',
 		 // (str)	main action

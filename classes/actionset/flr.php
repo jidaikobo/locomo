@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Actionset_Flr extends \Actionset_Base
+class Actionset_Flr extends \Actionset
 {
 	/**
 	 * actionset_admin()
@@ -9,15 +9,16 @@ class Actionset_Flr extends \Actionset_Base
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-				$controller.'::action_create_dir',
+				'\Controller_Flr_Sync::action_sync',
+				'\Controller_Flr_Dir::action_create',
+				'\Controller_Flr_Dir::action_edit',
+				'\Controller_Flr_Dir::action_permission',
+				'\Controller_Flr_Dir::action_rename',
+//			'\Controller_Flr_Dir::action_move',
 				$controller.'::action_edit',
-				$controller.'::action_edit_dir',
 				$controller.'::action_edit_file',
 				$controller.'::action_index_admin',
-//				$controller.'::action_move_dir',
-				$controller.'::action_permission_dir',
 				$controller.'::action_purge_file',
-				$controller.'::action_rename_dir',
 				$controller.'::action_upload',
 				$controller.'::action_view',
 				$controller.'::action_view_file',
@@ -28,6 +29,31 @@ class Actionset_Flr extends \Actionset_Base
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'ファイラへのアクセス権');
 		\Arr::set($retvals, 'acl_exp', 'ファイラの個別のアクセス権は、ファイルがアップロードされるディレクトリごとに設定します。ここで管理権限を設定しても、ディレクトリで設定された権限が優先します。');
+		return $retvals;
+	}
+
+	/**
+	 * actionset_tree()
+	 */
+	public static function actionset_tree($controller, $obj = null, $id = null, $urls = array())
+	{
+		$dirs = \Model_Flr::find('all', array('where' => array(array('genre', 'dir'))));
+		if ( ! $dirs) return array();
+		// now preparing
+		return array();
+	}
+
+	/**
+	 * actionset_root()
+	 */
+	public static function actionset_root($controller, $obj = null, $id = null, $urls = array())
+	{
+		$actions = array(array("\Controller_Flr/index_files", 'ルート'));
+		$urls = static::generate_urls('\Controller_Flr::action_index_files', $actions);
+		$retvals = array(
+			'urls'  => $urls,
+			'order' => 1,
+		);
 		return $retvals;
 	}
 
@@ -44,8 +70,8 @@ class Actionset_Flr extends \Actionset_Base
 	 */
 	public static function actionset_sync($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."sync", '同期'));
-		$urls = static::generate_urls($controller.'::action_sync', $actions);
+		$actions = array(array("\Controller_Flr_Sync/sync", '同期'));
+		$urls = static::generate_urls('\Controller_Flr_Sync::action_sync', $actions);
 
 		$retvals = array(
 			'realm'        => 'option',
@@ -57,7 +83,7 @@ class Actionset_Flr extends \Actionset_Base
 			'acl_exp'      => 'ディレクトリとデータベースの内容を同期する権限です。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.'::action_sync',
+				'\Controller_Flr_Sync::action_sync',
 			)
 		);
 		return $retvals;
@@ -96,7 +122,7 @@ class Actionset_Flr extends \Actionset_Base
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(array($controller.DS."upload/".$obj->id, '新規アップロード'));
-			$urls = static::generate_urls($controller.'::action_upload', $actions, ['create_dir']);
+			$urls = static::generate_urls($controller.'::action_upload', $actions, ['create']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -112,17 +138,17 @@ class Actionset_Flr extends \Actionset_Base
 	}
 
 	/**
-	 * actionset_create_dir()
+	 * actionset_create()
 	 */
-	public static function actionset_create_dir($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (@$obj->genre == 'dir')
 		{
 			$actions = array(
-				array($controller.DS."create_dir/".$obj->id, '<!--ディレクトリ-->作成'),
-				array($controller.DS."edit_dir/".$obj->id, '編集')
+				array("\Controller_Flr_Dir/create/".$obj->id, '<!--ディレクトリ-->作成'),
+				array("\Controller_Flr_Dir/edit/".$obj->id, '編集')
 			);
-			$urls = static::generate_urls($controller.'::action_upload', $actions, ['create_dir']);
+			$urls = static::generate_urls('\Controller_Flr_Dir::action_create', $actions, ['create']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -139,15 +165,15 @@ class Actionset_Flr extends \Actionset_Base
 	}
 
 	/**
-	 * actionset_move_dir()
+	 * actionset_move()
 	 * pending. 実装検討中。
 	 */
-	public static function _actionset_move_dir($controller, $obj = null, $id = null, $urls = array())
+	public static function _actionset_move($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(array($controller.DS."move_dir/".$obj->id, '<!--ディレクトリ-->移動'));
-			$urls = static::generate_urls($controller.'::action_move_dir', $actions, ['create_dir']);
+			$actions = array(array($controller.DS."move/".$obj->id, '<!--ディレクトリ-->移動'));
+			$urls = static::generate_urls($controller.'::action_move', $actions, ['create']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -158,14 +184,14 @@ class Actionset_Flr extends \Actionset_Base
 	}
 
 	/**
-	 * actionset_rename_dir()
+	 * actionset_rename()
 	 */
-	public static function actionset_rename_dir($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_rename($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(array($controller.DS."rename_dir/".$obj->id, '<!--ディレクトリ-->名称変更'));
-			$urls = static::generate_urls($controller.'::action_rename_dir', $actions, ['create_dir']);
+			$actions = array(array("\Controller_Flr_Dir/rename/".$obj->id, '<!--ディレクトリ-->名称変更'));
+			$urls = static::generate_urls('\Controller_Flr_Dir::action_rename', $actions, ['create']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -176,14 +202,14 @@ class Actionset_Flr extends \Actionset_Base
 	}
 
 	/**
-	 * actionset_permission_dir()
+	 * actionset_permission()
 	 */
-	public static function actionset_permission_dir($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_permission($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(array($controller.DS."permission_dir/".$obj->id, '<!--ディレクトリ-->権限設定'));
-			$urls = static::generate_urls($controller.'::action_permission_dir', $actions, ['create_dir']);
+			$actions = array(array("\Controller_Flr_Dir/permission/".$obj->id, '<!--ディレクトリ-->権限設定'));
+			$urls = static::generate_urls('\Controller_Flr_Dir::action_permission', $actions, ['create']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -194,14 +220,14 @@ class Actionset_Flr extends \Actionset_Base
 	}
 
 	/**
-	 * actionset_purge_dir()
+	 * actionset_purge()
 	 */
-	public static function actionset_purge_dir($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_purge($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(array($controller.DS."purge_dir/".$obj->id, '<!--ディレクトリ-->削除'));
-			$urls = static::generate_urls($controller.'::action_purge_dir', $actions, ['create_dir']);
+			$actions = array(array("\Controller_Flr_Dir/purge/".$obj->id, '<!--ディレクトリ-->削除'));
+			$urls = static::generate_urls('\Controller_Flr_Dir::action_purge', $actions, ['create']);
 		}
 		$retvals = array(
 			'realm'        => 'base',

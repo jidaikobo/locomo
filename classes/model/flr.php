@@ -160,25 +160,15 @@ class Model_Flr extends \Model_Base
 			if ($old_name != $new_name)
 			{
 				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
+				$this->name = $new_name;
+				$fullpath = LOCOMOUPLOADPATH.$this->path;
 			}
-			$this->name = $new_name;
-			$fullpath = LOCOMOUPLOADPATH.$this->path;
-/*
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $old_name ) ;
-var_dump( $new_name ) ;
-var_dump( $this->path ) ;
-var_dump( $new_name ) ;
-var_dump( $fullpath ) ;
-echo '</textarea>' ;
-die();
-*/
 		}
 		$this->name = urldecode($this->name);
 
 		// modify depth
 		// 深さ
-		$num = is_dir($fullpath) ? 2 : 1;
+		$num = $this->genre == 'dir' ? 2 : 1;
 		$depth = count(explode('/', $this->path)) - $num;
 		$this->depth = $depth;
 
@@ -186,9 +176,9 @@ die();
 		// 拡張子やmimetypeを修正
 		if ($this->genre != 'dir')
 		{
-			$this->ext         = substr($this->name, strrpos($this->name, '.') + 1) ;
-			$this->mimetype    = \File::file_info($fullpath)['mimetype'] ;
-			$this->genre       = \Locomo\File::get_file_genre($this->name);
+			$this->ext      = substr($this->name, strrpos($this->name, '.') + 1) ;
+			$this->mimetype = \File::file_info($fullpath)['mimetype'] ;
+			$this->genre    = \Locomo\File::get_file_genre($this->name);
 		}
 
 		// permission
@@ -244,7 +234,6 @@ die();
 				} else {
 					static::update_permission_by_intersects($this, $user_intersects, 'user');
 				}
-
 			}
 	
 			// tidy up order of permissions at root dir
@@ -311,6 +300,10 @@ die();
 	*/
 	public static function enc_url($path, $enc_slash = false)
 	{
+		if (function_exists('normalizer_normalize'))
+		{
+			$path = normalizer_normalize($path);
+		}
 		if($enc_slash)
 		{
 			return urlencode(urldecode($path));
@@ -395,12 +388,14 @@ die();
 	 */
 	public static function get_parent($obj)
 	{
-		if ( ! $obj instanceof Model_Flr) return array();
+		if ( ! $obj instanceof Model_Flr) return false;
 		$p_path = rtrim(dirname($obj->path), DS).DS;
 		$option = array(
+			'from_cache' => false,
+//			'related' => array('permission_usergroup', 'permission_user'),
 			'where' => array(
 				array('path', '=', $p_path),
-			)
+			),
 		);
 		return static::find('first', \Model_Flr::authorized_option($option, 'index_files'));
 	}
@@ -523,40 +518,41 @@ die();
 		$form = parent::form_definition($factory, $obj);
 
 		// create or move
-		if (in_array(\Request::active()->action, array('create_dir', 'move_dir')))
+		if (in_array(\Request::active()->action, array('create', 'move')))
 		{
 			$form = static::directory_list($form, $obj);
+			$form = static::add_genre_to_dir($form, $obj);
 			$form->delete('is_sticky');
 		}
 
 		// move or delete
-		if (in_array(\Request::active()->action, array('move_dir', 'purge_dir', 'permission_dir')))
+		if (in_array(\Request::active()->action, array('move', 'purge', 'permission')))
 		{
 			$form = static::hide_current_name($form, $obj);
 			$form->delete('is_sticky');
 		}
 
 		// edit
-		if (in_array(\Request::active()->action, array('edit_dir')))
+		if (in_array(\Request::active()->action, array('edit')))
 		{
 			$form = static::hide_current_name($form, $obj);
 			$form->delete('is_sticky');
 		}
 
 		// rename
-		if (in_array(\Request::active()->action, array('rename_dir')))
+		if (in_array(\Request::active()->action, array('rename')))
 		{
 			$form = static::rename_dir($form, $obj);
 		}
 
 		// permission_dir
-		if (in_array(\Request::active()->action, array('permission_dir')))
+		if (in_array(\Request::active()->action, array('permission')))
 		{
 			$form = static::permission_dir($form, $obj);
 		}
 
 		// purge_dir
-		if (in_array(\Request::active()->action, array('purge_dir')))
+		if (in_array(\Request::active()->action, array('purge')))
 		{
 			$form = static::purge_dir($form, $obj);
 		}
@@ -692,6 +688,15 @@ die();
 	}
 
 	/**
+	 * add_genre_to_dir()
+	 */
+	public static function add_genre_to_dir($form, $obj)
+	{
+		$form->field('genre')->set_type('hidden')->set_value('dir');
+		return $form;
+	}
+
+	/**
 	 * directory_list()
 	 */
 	public static function directory_list($form, $obj)
@@ -771,71 +776,62 @@ die();
 	{
 		$form->field('explanation')->set_type('hidden');
 
-		\Session::set_flash('message', ['親以上の権限は選択しても有効になりません。',
+		\Session::set_flash('message', [
+			'親以上の権限は選択しても有効になりません。',
 			'親以上の権限を設定しようとすると、自動的に親以下の権限に調整されます。',
 			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
 		]);
 
-		// usergroup_id
-		// 親のパーミッションを取るがlazyloadや、リレーション先のモデルに尋ねると$_propertiesが壊れるので、SQLで取得する。
-		$parent = static::get_parent($obj);
-		$items = \DB::select('lcm_flr_permissions.usergroup_id','lcm_usrgrps.name')
-			->from('lcm_flr_permissions')
-			->join('lcm_usrgrps')
-			->on('lcm_usrgrps.id', '=', 'lcm_flr_permissions.usergroup_id')
-			->where('lcm_flr_permissions.flr_id', $parent->id)
-			->where('lcm_flr_permissions.usergroup_id', 'is not', null)
-			->execute()
-			->as_array();
-		$g_permissions = array();
-		foreach ($items as $v)
+		// === usergroup_id ===
+		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$options = array('-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
+
+		// ルートディレクトリであれば、上記で取得した全項目をoptionsとしてよい
+		if ($obj->path !== '/')
 		{
-			$g_permissions[$v['usergroup_id']] = $v['name'];
+			$parent = static::get_parent($obj);
+			$g_permissions = array();
+			foreach ($parent->permission_usergroup as $k => $v)
+			{
+				$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
+			}
+			$options = array_intersect($g_permissions, $options);
 		}
 
-		// get_options
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
-		$options = array_intersect($g_permissions, $options);
-		$options = array(''=>'選択してください', '-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
-		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = array(
-			'type' => 'select',
-			'options' => $options,
-			'class' => 'varchar usergroup',
-		);
+		// $formset
+		$options = array(''=>'選択してください') + $options;
+		$formset = array('type' => 'select', 'options' => $options, 'class' => 'varchar usergroup',);
 
-
+		// static::$_properties_cachedに値を足すのは少々奇怪だが、static::get_parent()で関係テーブルにアクセスすると、モデルの初期状態でキャッシュされるため、これを上書きしないと、Model::properties()がキャッシュしか返さないので。
+		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = $formset;
+		if (isset(static::$_properties_cached['Locomo\Model_Flr_Usergroup']['usergroup_id']['form'])){
+			static::$_properties_cached['Locomo\Model_Flr_Usergroup']['usergroup_id']['form'] = $formset;
+		}
 		$usergroup_id = \Fieldset::forge('permission_usergroup')->set_tabular_form('\Model_Flr_Usergroup', 'permission_usergroup', $obj, 2);
 		$form->add_after($usergroup_id, 'ユーザグループ権限', array(), array(), 'explanation');
 
-		// user_id
-		$parent = static::get_parent($obj);
-		$items = \DB::select('lcm_flr_permissions.user_id','lcm_usrs.username')
-			->from('lcm_flr_permissions')
-			->join('lcm_usrs')
-			->on('lcm_usrs.id', '=', 'lcm_flr_permissions.user_id')
-			->where('lcm_flr_permissions.flr_id', $parent->id)
-			->where('lcm_flr_permissions.user_id', 'is not', null)
-			->execute()
-			->as_array();
-		$u_permissions = array();
-		foreach ($items as $v)
+		// === user_id ===
+		$options = \Model_Usr::get_options(array(), 'display_name');
+		if ($obj->path !== '/')
 		{
-			$u_permissions[$v['user_id']] = $v['username'];
+			$u_permissions = array();
+			foreach ($parent->permission_user as $k => $v)
+			{
+				$g_permissions[$v->user_id] = $v->usr->display_name;
+			}
+			$options = array_intersect($u_permissions, $options);
 		}
 
-		// get_options
-		$options = array(''=>'選択してください') + \Model_Usr::get_options(array(), 'display_name');
-		$options = array_intersect($u_permissions, $options);
-		if ($options)
-		{
-			\Model_Flr_User::$_properties['user_id']['form'] = array(
-				'type' => 'select',
-				'options' => $options,
-				'class' => 'varchar user',
-			);
-			$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
-			$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
+		// $formset
+		$options = array(''=>'選択してください') + $options;
+		$formset = array('type' => 'select', 'options' => $options, 'class' => 'varchar usergroup',);
+
+		\Model_Flr_User::$_properties['user_id']['form'] = $formset;
+		if (isset(static::$_properties_cached['Locomo\Model_Flr_User']['user_id']['form'])){
+			static::$_properties_cached['Locomo\Model_Flr_User']['user_id']['form'] = $formset;
 		}
+		$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
+		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
 
 		return $form;
 	}
