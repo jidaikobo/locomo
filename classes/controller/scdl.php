@@ -67,6 +67,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	}
 
 	/**
+	 * [action_delete_others description]
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 * just for acl.
+	 */
+	public function action_delete_others($id) {
+		return $this->action_delete($id);
+	}
+
+	/**
 	 * [action_edit description]
 	 * @param  [type] $id
 	 * @return [type]
@@ -1555,8 +1565,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	public function action_dashboard_week_calendar()
 	{
 		$weeknum = \Locomo\Cal::get_current_weeknum();
-		$current = \Locomo\Cal::get_week_calendar_by_weeknum(date('Y-m'), $weeknum);
-		list($year, $mon, $day) = explode('-', $current['dates'][1]);
+		$current = \Locomo\Cal::get_week_calendar_by_weeknum(date('Y-m'), $weeknum, $start_with = 1);
+		list($year, $mon, $day) = explode('-', $current['dates'][0]);
 		return self::action_calendar($year, $mon, $day, $mode = 'week');
 	}
 
