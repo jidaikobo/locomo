@@ -137,6 +137,7 @@ class Model_Scdl extends \Model_Base
 		),
 		'title_text' => 
 		array (
+			'lcm_role' => 'subject',
 			'label' => 'タイトル',
 			'data_type' => 'text',
 			'form' => 
@@ -433,6 +434,9 @@ class Model_Scdl extends \Model_Base
 				'events' => array('before_insert', 'before_save', 'after_insert', 'after_save', 'after_delete'),
 			),
 
+		'\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
 	);
 
 	/**

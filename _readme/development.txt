@@ -230,7 +230,9 @@ scaffoldを使った場合はコメントアウトされています。
 		),
 
 またモデルで、そのモデルの項目の表題名にあたるフィールド名を設定してください。
-	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
+$_propertiesの当該fieldに、
+			'lcm_role' => 'subject',
+を設定します。
 
 以上でコントローラでの編集履歴が有効になります。
 

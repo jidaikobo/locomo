@@ -2,7 +2,7 @@
 namespace Locomo;
 class Actionset_Scdl extends \Actionset_Base
 {
-//	use \Actionset_Traits_Revision;
+	use \Actionset_Traits_Revision;
 //	use \Actionset_Traits_Wrkflw;
 
 	/*

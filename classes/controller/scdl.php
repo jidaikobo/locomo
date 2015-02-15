@@ -3,6 +3,7 @@ namespace Locomo;
 class Controller_Scdl extends \Locomo\Controller_Base
 {
 	// traits
+	use \Controller_Traits_Revision;
 	//use \Controller_Traits_Crud;
 
 	// locomo
