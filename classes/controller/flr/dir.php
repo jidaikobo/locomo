@@ -253,7 +253,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		// existence
 		if ( ! $obj)
 		{
-			\Session::set_flash('error', "ファイル／ディレクトリが見つかりませんでした。");
+			\Session::set_flash('error', "ディレクトリが見つかりませんでした。");
 			\Response::redirect(static::$main_url);
 		}
 
@@ -282,7 +282,7 @@ class Controller_Flr_Dir extends Controller_Flr
 			if ( ! file_exists($path))
 			{
 				$is_error = true;
-				\Session::set_flash('error', '削除すべきファイル／ディレクトリが存在しません。');
+				\Session::set_flash('error', '削除すべきディレクトリが存在しません。');
 			}
 
 			if (is_dir($path) && ! \File::delete_dir($path, $recursive = true))
@@ -291,17 +291,12 @@ class Controller_Flr_Dir extends Controller_Flr
 				\Session::set_flash('error', 'ディレクトリの削除に失敗しました。');
 			}
 
-			if (file_exists($path) && ! \File::delete($path)) {
-				$is_error = true;
-				\Session::set_flash('error', 'ファイルの削除に失敗しました。');
-			}
-
 			// purge
 			if ( ! $is_error)
 			{
 				try {
 					$target->purge(null, true);
-					\Session::set_flash('success', "ファイル／ディレクトリを削除しました。");
+					\Session::set_flash('success', "ディレクトリを削除しました。");
 				}
 				catch (\Exception $e) {
 					// relation先で何かエラーが出るが、現状どうしようもないので、このまま進行
@@ -309,9 +304,9 @@ class Controller_Flr_Dir extends Controller_Flr
 /*
 				if ($target->purge(null, true))
 				{
-					\Session::set_flash('success', "ファイル／ディレクトリを削除しました。");
+					\Session::set_flash('success', "ディレクトリを削除しました。");
 				} else {
-					\Session::set_flash('error', "ファイル／ディレクトリの削除に失敗しました。");
+					\Session::set_flash('error', "ディレクトリの削除に失敗しました。");
 				}
 */
 			}
@@ -324,69 +319,5 @@ class Controller_Flr_Dir extends Controller_Flr
 		// assign
 		$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
 		$this->template->set_global('title', 'ディレクトリ削除');
-	}
-
-	/**
-	 * action_move()
-	 * ディレクトリの移動。pending. 実装検討中
-	 */
-	public function _action_move($id = null)
-	{
-		$model = $this->model_name;
-		$errors = array();
-
-		// rename dir
-		if (\Input::post())
-		{
-			$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'edit'));
-			$parent = \Input::post('parent');
-			$dirnname = \Input::post('name');
-
-			// move
-			if ($obj->path != $parent.$dirnname)
-			{
-				$flag = \File::copy_dir($obj->path, $parent.$dirnname);
-				if ( ! $flag)
-				{
-					$flag = \File::delete_dir($obj->path, $recursive = true);
-				}
-				else
-				{
-					\Session::set_flash('error', 'ディレクトリの移動（作成）に失敗しました。');
-					\Response::redirect(\Uri::create('flr/dir/move/'.$id));
-				}
-
-				if( ! $flag)
-				{
-					\Session::set_flash('error', 'ディレクトリの移動（削除）に失敗しました。');
-					\Response::redirect(\Uri::create('flr/dir/move/'.$id));
-				}
-			}
-			else
-			{
-				\Session::set_flash('error', 'ディレクトリの移動（削除）に失敗しました。');
-				\Response::redirect(\Uri::create('flr/dir/move/'.$id));
-			}
-		}
-
-		// parent::edit()
-		$obj = parent::edit($id);
-
-		// new path
-		if (\Input::post() && ! $errors)
-		{
-			$obj->path = $parent.$dirnname;
-			$obj->save();
-		}
-
-		// rewrite message
-		$success = \Session::get_flash('success');
-		if ($success)
-		{
-			\Session::set_flash('success', "ディレクトリを移動しました。");
-		}
-
-		// assign
-		$this->template->set_global('title', 'ディレクトリの移動');
 	}
 }

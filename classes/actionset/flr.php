@@ -9,22 +9,18 @@ class Actionset_Flr extends \Actionset
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-				'\Controller_Flr_Sync::action_sync',
-				'\Controller_Flr_Dir::action_create',
-				'\Controller_Flr_Dir::action_edit',
-				'\Controller_Flr_Dir::action_permission',
-				'\Controller_Flr_Dir::action_rename',
-//			'\Controller_Flr_Dir::action_move',
-				$controller.'::action_edit',
-				$controller.'::action_edit_file',
-				$controller.'::action_index_admin',
-				$controller.'::action_purge_file',
-				$controller.'::action_upload',
-				$controller.'::action_view',
-				$controller.'::action_view_file',
-				$controller.'::action_common_files',
-				$controller.'::action_index_files',
-				$controller.'::action_gallery',
+			'\Controller_Flr::action_common_files',
+			'\Controller_Flr::action_index_files',
+			'\Controller_Flr::action_gallery',
+			'\Controller_Flr_Dir::action_create',
+			'\Controller_Flr_Dir::action_edit',
+			'\Controller_Flr_Dir::action_permission',
+			'\Controller_Flr_Dir::action_rename',
+			'\Controller_Flr_File::action_edit',
+			'\Controller_Flr_File::action_purge_file',
+			'\Controller_Flr_File::action_upload',
+			'\Controller_Flr_File::action_view',
+			'\Controller_Flr_Sync::action_sync',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'ファイラへのアクセス権');
@@ -45,6 +41,7 @@ class Actionset_Flr extends \Actionset
 
 	/**
 	 * actionset_root()
+	 * provide link only
 	 */
 	public static function actionset_root($controller, $obj = null, $id = null, $urls = array())
 	{
@@ -55,14 +52,6 @@ class Actionset_Flr extends \Actionset
 			'order' => 1,
 		);
 		return $retvals;
-	}
-
-	/**
-	 * actionset_index_admin()
-	 */
-	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
-	{
-		return array();
 	}
 
 	/**
@@ -82,9 +71,6 @@ class Actionset_Flr extends \Actionset
 			'help'         => 'ディレクトリとデータベースの内容を同期します。ファイルやディレクトリの実際の状況とデータベースの内容に矛盾が生じているようでしたら、これを実行してください。この処理はファイルやディレクトリの量によっては時間がかかることがあります。',
 			'acl_exp'      => 'ディレクトリとデータベースの内容を同期する権限です。',
 			'order'        => 100,
-			'dependencies' => array(
-				'\Controller_Flr_Sync::action_sync',
-			)
 		);
 		return $retvals;
 	}
@@ -105,11 +91,8 @@ class Actionset_Flr extends \Actionset
 			}
 			$urls = static::generate_urls($controller.'::action_index_files', $actions);
 		}
-
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
-			'order'        => 10,
 		);
 		return $retvals;
 	}
@@ -121,11 +104,10 @@ class Actionset_Flr extends \Actionset
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(array($controller.DS."upload/".$obj->id, '新規アップロード'));
-			$urls = static::generate_urls($controller.'::action_upload', $actions, ['create']);
+			$actions = array(array("\Controller_Flr_File/upload/".$obj->id, '新規アップロード'));
+			$urls = static::generate_urls('\Controller_Flr_File::action_upload', $actions, ['create']);
 		}
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
 			'action_name'  => '新規作成',
 			'show_at_top'  => false,
@@ -165,25 +147,6 @@ class Actionset_Flr extends \Actionset
 	}
 
 	/**
-	 * actionset_move()
-	 * pending. 実装検討中。
-	 */
-	public static function _actionset_move($controller, $obj = null, $id = null, $urls = array())
-	{
-		if (@$obj->genre == 'dir')
-		{
-			$actions = array(array($controller.DS."move/".$obj->id, '<!--ディレクトリ-->移動'));
-			$urls = static::generate_urls($controller.'::action_move', $actions, ['create']);
-		}
-		$retvals = array(
-			'realm'        => 'base',
-			'urls'         => $urls,
-			'order'        => 35,
-		);
-		return $retvals;
-	}
-
-	/**
 	 * actionset_rename()
 	 */
 	public static function actionset_rename($controller, $obj = null, $id = null, $urls = array())
@@ -194,7 +157,6 @@ class Actionset_Flr extends \Actionset
 			$urls = static::generate_urls('\Controller_Flr_Dir::action_rename', $actions, ['create']);
 		}
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
 			'order'        => 40,
 		);
@@ -212,7 +174,6 @@ class Actionset_Flr extends \Actionset
 			$urls = static::generate_urls('\Controller_Flr_Dir::action_permission', $actions, ['create']);
 		}
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
 			'order'        => 50,
 		);
@@ -230,7 +191,6 @@ class Actionset_Flr extends \Actionset
 			$urls = static::generate_urls('\Controller_Flr_Dir::action_purge', $actions, ['create']);
 		}
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
 			'order'        => 60,
 		);
@@ -242,14 +202,13 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_edit_file($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::active()->action == 'view_file' && $id)
+		if ($controller == '\Controller_Flr_File' && \Request::active()->action == 'view' && $id)
 		{
-			$actions = array(array($controller.DS."edit_file".DS.$id, 'ファイル編集'));
-			$urls = static::generate_urls($controller.'::action_upload', $actions);
+			$actions = array(array("\Controller_Flr_File/edit".DS.$id, 'ファイル編集'));
+			$urls = static::generate_urls('\Controller_Flr_File::action_upload', $actions);
 		}
 
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
 			'action_name'  => 'ファイル編集',
 			'show_at_top'  => false,
@@ -267,14 +226,13 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_view_file($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::active()->action == 'edit_file' && $id)
+		if ($controller == '\Controller_Flr_File' && \Request::active()->action == 'edit' && $id)
 		{
-			$actions = array(array($controller.DS."view_file".DS.$id, 'ファイル詳細'));
-			$urls = static::generate_urls($controller.'::action_upload', $actions);
+			$actions = array(array("\Controller_Flr_File/view".DS.$id, 'ファイル詳細'));
+			$urls = static::generate_urls('\Controller_Flr_File::action_upload', $actions);
 		}
 
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
 			'action_name'  => 'ファイル詳細',
 			'show_at_top'  => false,
@@ -292,14 +250,16 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_purge_file($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (in_array(\Request::active()->action, ['view_file','edit_file']) && $id)
+		if ($controller == '\Controller_Flr_File')
 		{
-			$actions = array(array($controller.DS."purge_file".DS.$id, 'ファイル削除'));
-			$urls = static::generate_urls($controller.'::action_purge_file', $actions);
+			if (in_array(\Request::active()->action, ['view','edit']) && $id)
+			{
+				$actions = array(array("\Controller_Flr_File/purge".DS.$id, 'ファイル削除'));
+				$urls = static::generate_urls('\Controller_Flr_File::action_purge', $actions);
+			}
 		}
 
 		$retvals = array(
-			'realm'        => 'base',
 			'urls'         => $urls,
 			'action_name'  => 'ファイル削除',
 			'show_at_top'  => false,

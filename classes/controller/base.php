@@ -244,7 +244,7 @@ class Controller_Base extends Controller_Core
 		if ($this->_content_template) {
 			$content = \View::forge($this->_content_template);
 		} else {
-			$tmp = static::$shortname.'/edit';
+			$tmp = str_replace('_', DS, static::$shortname).'/edit';
 			// var_dump(\Finder::search('views', $tmp)); die();
 			$content = \View::forge(
 				\Finder::search('views', $tmp) ? $tmp : 'defaults/edit'

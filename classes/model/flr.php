@@ -526,14 +526,14 @@ class Model_Flr extends \Model_Base
 		}
 
 		// move or delete
-		if (in_array(\Request::active()->action, array('move', 'purge', 'permission')))
+		if (\Request::active()->controller == 'Controller_Flr_Dir' && in_array(\Request::active()->action, array('move', 'purge', 'permission')))
 		{
 			$form = static::hide_current_name($form, $obj);
 			$form->delete('is_sticky');
 		}
 
 		// edit
-		if (in_array(\Request::active()->action, array('edit')))
+		if (\Request::active()->controller == 'Controller_Flr_Dir' && in_array(\Request::active()->action, array('edit')))
 		{
 			$form = static::hide_current_name($form, $obj);
 			$form->delete('is_sticky');
@@ -564,14 +564,14 @@ class Model_Flr extends \Model_Base
 		}
 
 		// modify_name
-		if (in_array(\Request::active()->action, array('edit_file')))
+		if (\Request::active()->controller == 'Controller_Flr_File' && in_array(\Request::active()->action, array('edit')))
 		{
 			$form = static::modify_name($form, $obj);
 			$form->field('is_sticky')->set_description('画像の場合はダッシュボードの「ギャラリー」に表示されます。');
 		}
 
 		// purge_file
-		if (in_array(\Request::active()->action, array('purge_file')))
+		if (\Request::active()->controller == 'Controller_Flr_File' && in_array(\Request::active()->action, array('purge')))
 		{
 			$form = static::purge_file($form, $obj);
 		}
@@ -612,7 +612,7 @@ class Model_Flr extends \Model_Base
 		$form = parent::plain_definition($factory, $obj);
 
 		// uri
-		$url  = \Uri::create('flr/dl/?p='.static::enc_url($obj->path, true));
+		$url  = \Uri::create('flr/file/dl/?p='.static::enc_url($obj->path, true));
 		$url = \Inflector::get_root_relative_path($url);
 
 		// html
@@ -875,7 +875,7 @@ class Model_Flr extends \Model_Base
 	 */
 	public static function purge_file($form, $obj)
 	{
-		\Session::set_flash('message', 'ファイルの削除は取り消しできませんので、ご注意ください。');
+		\Session::set_flash('message', ['ファイルの削除は取り消しできませんので、ご注意ください。']);
 		$form->field('name')->set_type('hidden');
 		$form->field('explanation')->set_type('hidden');
 		$form->field('is_sticky')->set_type('hidden');
