@@ -140,6 +140,5 @@ class Observer_Revision extends \Orm\Observer
 		}
 		$counter++;
 	}
-
 	
 }
