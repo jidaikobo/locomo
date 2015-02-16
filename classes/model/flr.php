@@ -782,6 +782,10 @@ class Model_Flr extends \Model_Base
 			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
 		]);
 
+		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'display_name')->set_template('<div class="input_group">');
+		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'display_name')->set_template('</div>');
+
+
 		// === usergroup_id ===
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 		$options = array('-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
