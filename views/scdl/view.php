@@ -72,7 +72,7 @@
 <?php if($detail->message && !$detail->private_kb): ?>
 <tr>
 	<th>メッセージ</th>
-	<td><?php echo $detail->message; ?></td>
+	<td><?php echo preg_replace("/(\r\n|\r|\n)/", "<br />", $detail->message); ?></td>
 </tr>
 
 <?php endif; ?>

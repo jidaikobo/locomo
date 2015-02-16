@@ -1,3 +1,4 @@
+<h1>アクセス権の設定</h1>
 
 <p><?php if ($user): ?>
 対象ユーザ：<code><?php echo $user ?></code><br />

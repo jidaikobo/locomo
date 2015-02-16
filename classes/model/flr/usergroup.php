@@ -46,4 +46,16 @@ class Model_Flr_Usergroup extends \Model_Base
 		),
 	);
 
+	/**
+	 * $_has_one
+	 */
+	protected static $_has_one = array(
+		'usrgrp' => array(
+			'key_from' => 'usergroup_id',
+			'model_to' => '\Model_Usrgrp',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		),
+	);
 }

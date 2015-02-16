@@ -15,7 +15,7 @@
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
 				else:
-					echo Html::anchor('flr/dl/?dl=1&p='.\Model_Flr::enc_url($item->path, true), $item->name, array('class' => 'icon '.$item->genre));
+					echo Html::anchor('flr/file/dl/?dl=1&p='.\Model_Flr::enc_url($item->path, true), $item->name, array('class' => 'icon '.$item->genre));
 				endif;
 			?>
 			</div></td>

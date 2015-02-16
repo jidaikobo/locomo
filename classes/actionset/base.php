@@ -83,10 +83,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_edit_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id)
+		{
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
 			$urls = static::generate_urls($controller.'::action_edit_deleted', $actions, ['edit','create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -109,10 +110,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id):
+		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
+		{
 			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 			$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
-		endif;
+		}
 
 		//retval
 		$retvals = array(

@@ -112,7 +112,9 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				// occasionally, Fuel lost Model_Usr by unidentified reason...
 				if (class_exists('Model_Usr'))
 				{
-					$this->user = \Model_Usr::find('first', array('where' => array(array('username', $username))));
+					$usrobj = \Model_Usr::find('first', array('where' => array(array('username', $username))));
+					$usrobj->usergroup;// to lazy load once, for clone
+					$this->user = clone $usrobj;
 				}
 				else
 				{

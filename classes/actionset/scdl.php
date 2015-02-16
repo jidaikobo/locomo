@@ -1,8 +1,8 @@
 <?php
 namespace Locomo;
-class Actionset_Scdl extends \Actionset_Base
+class Actionset_Scdl extends \Actionset
 {
-//	use \Actionset_Traits_Revision;
+	use \Actionset_Traits_Revision;
 //	use \Actionset_Traits_Wrkflw;
 
 	/*
@@ -12,8 +12,9 @@ class Actionset_Scdl extends \Actionset_Base
 	(str)  action_name   ACL設定画面などで用いる
 	(str)  explanation   モジュール先頭画面等で用いる説明文
 	(str)  acl_exp       ACL設定画面などで用いる説明文
+	(str)  help          ヘルプ
 	(int)  order         表示順
-	(arr)  dependencies  このアクションセットが依存するアクション
+	(arr)  dependencies  このアクションセットが依存するアクション。ACLで用いる
 	*/
 
 	/**
@@ -25,6 +26,7 @@ class Actionset_Scdl extends \Actionset_Base
 		$actions = array(
 				$controller.'::action_create',
 				$controller.'::action_edit',
+				$controller.'::action_delete',
 				$controller.'::action_copy',
 				$controller.'::action_viewdetail',
 				$controller.'::action_attend',
@@ -33,7 +35,6 @@ class Actionset_Scdl extends \Actionset_Base
 				$controller.'::action_calendar',
 				$controller.'::action_get_user_list',
 				$controller.'::action_get_building_list',
-				$controller.'::action_admin',
 				$controller.'::action_dashboard_week_calendar',
 				$controller.'::action_dashboard_today',
 				$controller.'::action_view_invisible', // action is not exist yet
@@ -49,33 +50,85 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_calendar($controller, $obj = null, $id = null, $urls = array())
 	{
-		$retvals = parent::actionset_index_admin($controller, $obj, $id);
-		$actions = array(array($controller.DS."calendar/", 'カレンダ'));
+		// datevals
+		$ym = '';
+		if (\Request::main()->action == 'calendar')
+		{
+			$y = \Uri::segment(3) ?: date('Y');
+			$m = \Uri::segment(4) ?: date('m');
+			$d = \Uri::segment(5) ?: '01';
+			$ym = date('Y-m', strtotime("$y/$m/$d"));
+		}
+
+		// 日付が与えられていたら、当月でないので、その第一週を表示
+		$weeknum = $ym ? 1 : \Locomo\Cal::get_current_weeknum() ;
+		$ym = $ym ?: date('Y-m');
+
+		// 週の第一日
+		$current = \Locomo\Cal::get_week_calendar_by_weeknum($ym, $weeknum, $start_with = 1);
+		list($year, $mon, $day) = explode('-', $current['dates'][0]);
+		$week_1st_day = $year.DS.$mon.DS.$day;
+		$ym_str = $year.DS.$mon;
+
+		// uri
+		$actions = array(
+			array($controller.DS."calendar/", '今月'),
+			array($controller.DS."calendar/".$ym_str, '月表示'),
+			array($controller.DS."calendar/".$week_1st_day.'/week', '週表示'),
+		);
 		$urls = static::generate_urls($controller.'::action_edit', $actions);
 
-		\Arr::set($retvals, 'urls', $urls);
-		\Arr::set($retvals, 'realm', 'base');
-		\Arr::set($retvals, 'action_name', 'カレンダ');
-		\Arr::set($retvals, 'acl_exp', 'カレンダ形式のスケジューラの表示権限です。');
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => 'カレンダ',
+			'show_at_top'  => true,
+			'acl_exp'      => 'カレンダ形式のスケジューラの表示権限です。',
+			'explanation'  => 'カレンダ形式のスケジューラの表示権限です。',
+			'help'         => '',
+			'order'        => 1
+		);
 		return $retvals;
 	}
 
+	/**
+	 * actionset_create
+	 */
+	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
+	{
+		$actions = array(array($controller.DS."create/", '新規作成'));
+		$urls = static::generate_urls($controller.'::action_create', $actions, ['create']);
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '新規作成',
+			'show_at_top'  => true,
+			'acl_exp'      => '予定の新規追加権限です。',
+			'explanation'  => '予定の新規追加です。',
+			'help'         => '',
+			'order'        => 5
+		);
+		return $retvals;
+	}
 
 	/**
 	 * actionset_viewdetail
 	 */
 	public static function actionset_viewdetail($controller, $obj = null, $id = null, $urls = array())
 	{
-		$retvals = parent::actionset_view($controller, $obj, $id);
-
-		if(\Request::main()->action == 'edit' && $id):
+		if(\Request::main()->action == 'edit' && $id)
+		{
 			$actions = array(array($controller.DS."viewdetail/" . $id, '閲覧'));
 			$urls = static::generate_urls($controller.'::action_viewdetail', $actions);
-		endif;
+		}
 
-		\Arr::set($retvals, 'urls', $urls);
-		\Arr::set($retvals, 'action_name', '編集');
-		\Arr::set($retvals, 'acl_exp', 'スケジューラの個票閲覧権限です。');
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '閲覧',
+			'show_at_top'  => true,
+			'acl_exp'      => 'スケジューラの個票閲覧権限です。',
+			'explanation'  => 'スケジューラの個票閲覧権限です。',
+			'help'         => '',
+		);
 		return $retvals;
 	}
 
@@ -84,16 +137,20 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		$retvals = parent::actionset_edit($controller, $obj, $id);
-
-		if(\Request::main()->action == 'viewdetail' && $id):
+		if(\Request::main()->action == 'viewdetail' && $id)
+		{
 			$actions = array(array($controller.DS."edit/" . $id, '編集'));
 			$urls = static::generate_urls($controller.'::action_edit', $actions);
-		endif;
+		}
 
-		\Arr::set($retvals, 'urls', $urls);
-		\Arr::set($retvals, 'action_name', '編集');
-		\Arr::set($retvals, 'acl_exp', 'スケジューラの編集権限です。');
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '編集',
+			'show_at_top'  => true,
+			'acl_exp'      => 'スケジューラの個票編集権限です。',
+			'explanation'  => 'スケジューラの個票編集権限です。',
+			'help'         => '',
+		);
 		return $retvals;
 	}
 
@@ -102,14 +159,15 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_attend($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'viewdetail' && $id && $obj->attend_flg):
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->attend_flg)
+		{
 			$schedule_data = \DB::select()->from("lcm_scdls_members")->where("schedule_id", $id)->where("user_id", \Auth::get('id'))->execute()->as_array();
 			// 自分がメンバーであった場合
 			if (count($schedule_data) > 0) {
 				$actions = array(array($controller.DS."attend/" . $id, '出席確認'));
 				$urls = static::generate_urls($controller.'::action_attend', $actions, ['']);
 			}
-		endif;
+		}
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -129,10 +187,17 @@ class Actionset_Scdl extends \Actionset_Base
 	 */
 	public static function actionset_somedelete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1):
-			$actions = array(array($controller.DS."somedelete/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '部分削除', array('class' => 'confirm')));
-			$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
-		endif;
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1)
+		{
+			$y = \Uri::segment(4);
+			$m = \Uri::segment(5);
+			$d = \Uri::segment(6);
+			if ($datestr = strtotime("$y/$m/$d"))
+			{
+				$actions = array(array($controller.DS."somedelete/$id/".date('Y/m/d', $datestr), '部分削除', array('class' => 'confirm')));
+				$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
+			}
+		}
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -152,10 +217,11 @@ class Actionset_Scdl extends \Actionset_Base
 	public static function actionset_regchange($controller, $obj = null, $id = null, $urls = array())
 	{
 
-		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb):
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb)
+		{
 			$actions = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
 			$urls = static::generate_urls($controller.'::action_regchange', $actions, ['']);
-		endif;
+		}
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -173,8 +239,8 @@ class Actionset_Scdl extends \Actionset_Base
 	/**
 	 * actionset_copy
 	 */
-	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array()) {
-
+	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array())
+	{
 		if (\Request::main()->action != 'edit' && $id) {
 			$actions = array(array($controller.DS."copy/?from=" . $id, 'コピー'));
 			$urls = static::generate_urls($controller.'::action_copy', $actions, []);
@@ -191,10 +257,10 @@ class Actionset_Scdl extends \Actionset_Base
 		return $retvals;
 	}
 	
+/*
 	// actionset_view
-	public static function actionset_view($controller, $obj = null, $id = null, $urls = array()) {
-		
-		$urls = array();
+	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
+	{
 		$retvals = array(
 			'urls'         => $urls ,
 			'action_name'  => '',
@@ -206,6 +272,48 @@ class Actionset_Scdl extends \Actionset_Base
 		);
 		return $retvals;
 	}
+*/
+	/**
+	 * delete()
+	 */
+	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
+	{
+		// ユーザIDが一致しない項目では削除リンクを出さない
+		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
+		{
+//			if (isset($obj->creator_id) && $obj->creator_id == \Auth::get('id'))
+			if (isset($obj->user_id) && $obj->user_id == \Auth::get('id'))
+			{
+				$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
+				$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
+			}
+		}
 
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '削除',
+			'show_at_top'  => true,
+			'acl_exp'      => 'スケジューラの個票削除権限です。',
+			'explanation'  => 'スケジューラの個票削除権限です。',
+			'help'         => '',
+		);
+		return $retvals;
+	}
 
+	/**
+	 * delete_others()
+	 */
+	public static function actionset_delete_others($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = self::actionset_delete($controller, $obj, $id);
+		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
+		{
+			$actions = array(array($controller.DS."delete_others/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
+			// delete_othersのACLがなければ出さない
+			$urls = static::generate_urls($controller.'::action_delete_others', $actions, ['create']);
+		}
+
+		\Arr::set($retvals, 'urls', $urls);
+		return $retvals;
+	}
 }
