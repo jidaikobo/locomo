@@ -87,7 +87,7 @@ class Actionset_Scdl extends \Actionset
 		}
 
 		// 与えられている日付から第何週かを得る
-		$weeknum = \Locomo\Cal::get_current_weeknum($ymd) ;
+		$weeknum = \Locomo\Cal::get_current_weeknum($ymd, $start_with = 1) ;
 		$ym = $ym ?: date('Y-m');
 
 		// 週の第一日

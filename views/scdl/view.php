@@ -12,7 +12,6 @@
 	<th>開始日時</th>
 	<td>
 	<?php
-
 		// 表示加工
 		$detail->display_startdate = date('Y年n月j日', strtotime($detail->start_date . " " . $detail->start_time));
 		$detail->display_enddate = date('Y年n月j日', strtotime($detail->end_date . " " . $detail->end_time));

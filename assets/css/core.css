@@ -1372,11 +1372,14 @@ table.calendar .events {
 	text-align: center;
 	white-space: nowrap;
 }
-td.active:not(.hoo) {
+.schedule_day.graph td.active:not(.hoo) {
 	border-right: none;
 }
-td.active + td:not(.active) {
+.schedule_day.graph td.active + td:not(.active) {
 	border-left: 1px solid #bbb;
+}
+.schedule_day.graph td:last-child.active {
+	border-right: 1px solid #bbb ;
 }
 .legend.calendar {
 	text-align: left;
