@@ -3,6 +3,7 @@ namespace XXX;
 class Controller_XXX extends \Locomo\Controller_Base
 {
 	// traits
+	use \Controller_Traits_Crud;
 	use \Controller_Traits_Testdata;
 //	use \Controller_Traits_Wrkflw;
 //	use \Controller_Traits_Revision;
@@ -11,7 +12,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename' => '###NICENAME###', // for human's name
 		'explanation' => '###NICENAME###のコントローラです', // use at admin/admin/home
-		'main_action' => 'index_admin', // main action
+		'main_action' => 'action_index_admin', // main action
 		'main_action_name' => '管理一覧', // main action's name
 		'main_action_explanation' => '###NICENAME###のトップです。', // explanation of top page
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
