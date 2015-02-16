@@ -11,6 +11,7 @@ trait Controller_Traits_Revision
 		$model = $this->model_name;
 		$view = \View::forge('revision/index_revision');
 		$view = \Model_Revision::find_all_revisions($view, $model);
+
 		if ( ! $view)
 		{
 			\Session::set_flash('error', '表示できませんでした');

@@ -54,7 +54,7 @@ class Model_Revision extends \Model_Base
 		$order = \Arr::get($model::$_options, 'order_by', null) ;
 
 		//model information
-		$table = \Inflector::tableize($model);
+		$table = $model::table();
 		if( ! \DBUtil::table_exists($table)) return false;
 		$subject = \Arr::get($model::get_field_by_role('subject'), 'lcm_field');
 		$subject = $table.'.'.$subject; // relation table name
