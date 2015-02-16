@@ -14,8 +14,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 900,   // order of appearance
 		'widgets' =>array(
-			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl::action_dashboard_week_calendar'),
-			array('name' => '今日の予定', 'uri' => '\\Controller_Scdl::action_dashboard_today'),
+			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl::action_calendar'),
 		),
 	);
 
@@ -359,7 +358,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("detail", $detail);
 		$view->set("schedule_attend_members", $attend_members);
 		$view->set("schedule_members_me", $schedule_members);
-		$view->set("model_name", $model);
 		$this->template->content = $view;
 	}
 
@@ -434,7 +432,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("year", $year);
 		$view->set("mon", $mon);
 		$view->set("day", $day);
-		$view->set("model_name", $model);
 		$this->template->content = $view;
 
 		$this->template->content->set("items", Model_Scdl_Item::get_items_array('attend_kb'));
@@ -1531,26 +1528,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 		}
 		return (count($this->_scdl_errors) == 0);
-	}
-
-	/*
-	 * ダッシュボード用「週表示」
-	 */
-	public function action_dashboard_week_calendar()
-	{
-		$weeknum = \Locomo\Cal::get_current_weeknum();
-		$current = \Locomo\Cal::get_week_calendar_by_weeknum(date('Y-m'), $weeknum);
-		list($year, $mon, $day) = explode('-', $current['dates'][1]);
-		return self::action_calendar($year, $mon, $day, $mode = 'week');
-	}
-
-	/*
-	 * ダッシュボード用「日表示」
-	 */
-	public function action_dashboard_today()
-	{
-		list($year, $mon, $day) = explode('-', date('Y-m-d'));
-		return self::action_calendar($year, $mon, $day);
 	}
 
 	//trait
