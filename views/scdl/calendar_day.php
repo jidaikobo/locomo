@@ -102,8 +102,11 @@
 		$detaildata->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->end_date . " " . $detaildata->end_time)));
 
 		if ($detaildata->repeat_kb == 0) {
-//			echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
-			echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
+			if($detaildata->display_startdate != $detaildata->display_enddate)
+				echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
+			else{
+				echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
+			}
 		} else {
 //			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
 			echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
@@ -170,7 +173,8 @@
 		}
 	endif;
 ?>
-	<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
+<?php /*	<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
+*/ ?>
 	 </div><!-- /.legend.calendar -->
  <?php }else{ ?>
 予定の登録がありません
