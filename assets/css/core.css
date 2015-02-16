@@ -528,6 +528,9 @@ ul.horizontal_list {
 .widget_content_fr {
 	text-align: right;
 }
+.widget_content > table:first-child {
+	margin-top: 0;
+}
 /* button */
 .btn,
 .button {
