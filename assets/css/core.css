@@ -835,9 +835,9 @@ div.lcm_tooltip {
 	font-size: 1em;
 	margin: 0;
 	padding: 1em 0 .8em;
-	border-top: 1px solid #ccc;
+	border-top: 1px solid #fff;
 	border-bottom: none;
-	box-shadow: 0 -1px 0 #fff;
+	box-shadow: 0 -1px 0 #ccc;
 }
 .lcm_form .input_group:first-child h2,
 .lcm_form input:first-child + .input_group h2,
