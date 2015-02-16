@@ -138,6 +138,7 @@ class Model_Scdl extends \Model_Base
 		),
 		'title_text' => 
 		array (
+			'lcm_role' => 'subject',
 			'label' => 'タイトル',
 			'data_type' => 'text',
 			'form' => 
@@ -434,6 +435,9 @@ class Model_Scdl extends \Model_Base
 				'events' => array('before_insert', 'before_save', 'after_insert', 'after_save', 'after_delete'),
 			),
 
+		'\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
 	);
 
 	/**
@@ -470,7 +474,7 @@ class Model_Scdl extends \Model_Base
 				$form->field('start_date')->set_value(date('Y-m-d'));
 				$form->field('end_date')->set_value(date('Y-m-d'));
 			}
-			$form->field('start_time')->set_value('00:00');
+			$form->field('start_time')->set_value('09:00');
 			$form->field('end_time')->set_value('21:00');
 		}
 

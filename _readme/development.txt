@@ -29,6 +29,8 @@ scaffoldを使うとモジュールが生成されますが、APPPATH/classes/co
 		'order' => 10,
 		// (bool)	true: not appear to acl menu
 		'is_for_admin' => true,
+		// (bool)	true: not appear to acl menu
+		'no_acl' => true,
 		 // (str)	explanation of controller
 		'explanation'  => 'システムを利用するユーザの新規作成、編集、削除等を行います。',
 		 // (str)	main action
@@ -228,7 +230,9 @@ scaffoldを使った場合はコメントアウトされています。
 		),
 
 またモデルで、そのモデルの項目の表題名にあたるフィールド名を設定してください。
-	public static $_subject_field_name = 'SOME_TRAITS_USE_SUBJECT_FIELD_NAME';
+$_propertiesの当該fieldに、
+			'lcm_role' => 'subject',
+を設定します。
 
 以上でコントローラでの編集履歴が有効になります。
 

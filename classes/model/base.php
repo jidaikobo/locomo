@@ -88,11 +88,12 @@ class Model_Base extends \Orm\Model_Soft
 	 * \Orm\Model::find() は、$options が異なったらキャッシュしないべきではないかと思う。
 	 * また、\Locomo\Auth_Login_LocomoauthでもModel_Usrのキャッシュクリアのために呼んでいるので要参照。
 	 */
+/*
 	public static function clear_cached_objects()
 	{
 		static::$_cached_objects = array();
 	}
-
+*/
 	/**
 	 * get_field_by_role()
 	 * @return array()

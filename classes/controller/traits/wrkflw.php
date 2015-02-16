@@ -50,7 +50,7 @@ trait Controller_Traits_Wrkflw
 		$view = \View::forge('wrkflw/index_workflow');
 		$controller = $controller ?: get_called_class();
 		$model_name = str_replace('Controller', 'Model', $controller);
-		$model = $model_name::forge();
+		$model = clone $model_name::forge();
 
 		// get related unfinished items
 		$current_items = $model->get_related_current_items($controller, $model);
@@ -82,7 +82,7 @@ trait Controller_Traits_Wrkflw
 		$count = $model::count(array('where'=>array(array('workflow_status', '<>', 'finish')),));
 
 		// 表示権限を厳密にとるためモデルのキャッシュを削除しauthorized_option()を設定する
-		$model::clear_cached_objects();
+//		$model::clear_cached_objects();
 		$model::$_options = $model::authorized_option(array(), 'index');
 
 		// assign

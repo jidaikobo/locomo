@@ -204,7 +204,8 @@ class Model_Usr extends Model_Base
 
 		// username
 		$form->field('username')
-			->add_rule('unique', "lcm_usrs.username.{$id}");
+			->add_rule('unique', "lcm_usrs.username.{$id}")
+			->add_rule('banned_string', $allnames);
 
 		if ( ! \Auth::is_admin())
 		{
@@ -215,7 +216,26 @@ class Model_Usr extends Model_Base
 		// password
 		$form->field('password')
 			->set_value('')
-			->add_rule('require_once', "lcm_usrs.password.{$id}");
+			->add_rule('require_once', "lcm_usrs.password.{$id}")
+			->add_rule(
+				function ($password) use ($obj)
+				{
+					// ユーザ名とパスワードが一緒だったらban
+					if (isset($obj) && is_object($obj) ) {
+						if ($password == @$obj->username)
+						{
+							Validation::active()->set_message('closure', 'ユーザ名とパスワードに同じものを使用しないでください。');
+							return false;
+						}
+					}
+					// あまりに連続した同じ文字が続いている場合ban
+					if (preg_match('/([\d\w])\1{6}/', $password))
+					{
+						Validation::active()->set_message('closure', '強度が低いパスワードです。');
+						return false;
+					}
+				}
+			);
 
 		// confirm_password
 		$form->add_after(

@@ -35,7 +35,7 @@
 	<?php if ($detail_pop_data->kind_flg == 1) { ?>
 	<tr>
 		<th class="min">
-			メッセージ：</th><td><?php print mb_substr($detail_pop_data->message, 0, 20); ?>
+			メッセージ：</th><td><?php print preg_replace("/(\r\n|\r|\n)/", "<br />", (mb_substr($detail_pop_data->message, 0, 20))); ?>
 		</td>
 	</tr>
 	<?php } ?>

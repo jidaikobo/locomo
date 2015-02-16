@@ -27,6 +27,7 @@ class Validation extends \Fuel\Core\Validation
 			//empty is not allowed
 			return ! empty($val);
 		endif;
+//Validation::active()->set_message('unique', '「:label 」はユニークです。「:value」は既に登録されています。');
 	}
 
 	/**

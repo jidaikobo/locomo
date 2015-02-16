@@ -6,12 +6,10 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 
 	public static function _init()
 	{
-//		static::$_valid_roles = array_keys(\Config::get('locomoauth.roles'));
 	}
 
 	public function roles()
 	{
-		// Auth_Acl_Locomoaclではroleを使わない
 		return static::$_valid_roles;
 	}
 

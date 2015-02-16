@@ -3,6 +3,7 @@ namespace Locomo;
 class Controller_Scdl extends \Locomo\Controller_Base
 {
 	// traits
+	use \Controller_Traits_Revision;
 	//use \Controller_Traits_Crud;
 
 	// locomo
@@ -63,6 +64,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
 		\Response::redirect(\Uri::create($model::$_kind_name . '/calendar'));
+	}
+
+	/**
+	 * [action_delete_others description]
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 * just for acl.
+	 */
+	public function action_delete_others($id) {
+		return $this->action_delete($id);
 	}
 
 	/**
@@ -281,7 +292,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num');
+									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
 				foreach ($setcolumns as $v) {
 					$this->template->content->form->field($v)->set_value($from_data->$v);
 				}
@@ -494,13 +505,28 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $day  [description]
 	 * @return [type]       [description]
 	 */
-	public function action_somedelete($id, $year, $mon, $day) {
+	public function action_somedelete($id = null, $year = null, $mon = null, $day = null)
+	{
+		// 一つでも欠けていたらエラー
+		if (is_null($id) || is_null($year) || is_null($mon) || is_null($day))
+		{
+			\Session::set_flash('error', "部分削除に失敗しました。");
+			\Response::redirect(static::$main_url);
+		}
+
 		$model = $this->model_name;
 		$obj = $model::find($id);
 		$obj->delete_day = $obj->delete_day . sprintf("[%04d/%02d/%02d]", $year, $mon, $day);
-		$obj->save();
+		if ($obj->save())
+		{
+			\Session::set_flash('success', "部分削除しました。");
+		} else {
+			\Session::set_flash('error', "部分削除に失敗しました。");
+		}
+
 		// カレンダー表示
-		$this->action_calendar();
+//		$this->action_calendar();
+		\Response::redirect(static::$main_url);
 	}
 
 	/**
@@ -923,7 +949,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->or_where_close()
 							->where_close()
 							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg);
+							->where("kind_flg", $model::$_kind_flg)
+							->order_by("start_time");
 		$schedules_data = $query->get();
 							
 
@@ -1270,6 +1297,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 		if (strtotime(date('Y/m/d') . " 00:00:00") > strtotime($start_day . '00:00:00 +' . $i . "days")) {
 	 			continue;
 	 		}
+	 		$flgContinue = false;
 	 		switch ($repeat_kb) {
 	 			case 0:
 	 				// 指定なし
@@ -1282,36 +1310,38 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 				// 毎日（土日除く）
 
 					if ($target_week == 0 || $target_week == 6) {
-						continue;
+				 		$flgContinue = true;
 					}
 		 			break;
 		 		case 3:
 					// 毎週
 					if ($target_week != $week_kb) {
+						$flgContinue = true;
 						continue;
 					}
-				
+					break;
 				case 4:
 					// 毎月
 					// 繰り返し終了日時より前で開始日時と終了日時の間であれば
 					if ($target_day_from != $target_day) {
-						continue;
+				 		$flgContinue = true;
 					}
 				
 					break;
 				case 5:
 					// 毎年
 					if (!($target_day_from == $target_day && $target_month_from == $target_month)) {
-						continue;
+				 		$flgContinue = true;
 					}
 					break;
 				case 6:
 					if ($target_week != $week_kb && (ceil($target_day / 7) != $week_index)) {
-						continue;
+				 		$flgContinue = true;
 					}
 					break;
 
 	 		}
+	 		if ($flgContinue) { continue; }
 
 	 		$schedule_data = \Locomo\Model_Scdl::query()
 	 					->where_open()
@@ -1539,8 +1569,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	public function action_dashboard_week_calendar()
 	{
 		$weeknum = \Locomo\Cal::get_current_weeknum();
-		$current = \Locomo\Cal::get_week_calendar_by_weeknum(date('Y-m'), $weeknum);
-		list($year, $mon, $day) = explode('-', $current['dates'][1]);
+		$current = \Locomo\Cal::get_week_calendar_by_weeknum(date('Y-m'), $weeknum, $start_with = 1);
+		list($year, $mon, $day) = explode('-', $current['dates'][0]);
 		return self::action_calendar($year, $mon, $day, $mode = 'week');
 	}
 

@@ -74,18 +74,27 @@ class Actionset
 		// controller
 		$controller = \Inflector::add_head_backslash($controller);
 
+		// paths
+		$paths = array(
+			APPPATH.'classes',
+			LOCOMOPATH.'classes',
+		);
+
 		// search actionset - remove 'Controller_'
 		$name = strtolower(substr(\Inflector::denamespace($controller), 11));
 		$module = \Inflector::get_modulename($controller, $default = '');
-		if ($module) \Module::loaded($module) or \Module::load($module);
-		$paths = array(
-			APPPATH.'classes',
-			APPPATH.'modules/'.$module.'/classes',
-			LOCOMOPATH.'classes',
-			LOCOMOPATH.'modules/'.$module.'/classes',
-		);
+		if ($module)
+		{
+			\Module::loaded($module) or \Module::load($module);
+			$paths = array(
+				APPPATH.'classes',
+				APPPATH.'modules/'.$module.'/classes',
+				LOCOMOPATH.'classes',
+				LOCOMOPATH.'modules/'.$module.'/classes',
+			);
+		}
 		$finder = \Finder::forge($paths);
-		$actionset = $finder->locate('actionset', $name);
+		$actionset = $finder->locate('actionset', str_replace('_', DS, $name));
 		if ( ! $actionset) return;
 
 		// actionset class
@@ -118,6 +127,8 @@ class Actionset
 			if (\Arr::get($as, 'urls.0') || \Arr::get($as, 'dependencies.0'))
 			{
 				$realm = \Arr::get($as, 'realm', 'base');
+				$order = \Arr::get($as, 'order', 10);
+				$as['order'] = $order;
 				static::$actions[$controller][$realm][$method] = $as;
 			}
 		}
@@ -222,7 +233,7 @@ class Actionset
 			'urls'         => $urls,
 			'action_name'  => '管理権限',
 			'show_at_top'  => false,
-			'acl_exp'      => $controller::$locomo['nicename'].'の管理権限です。すべての行為が許されます。',
+			'acl_exp'      => \Util::get_locomo($controller, 'nicename').'の管理権限です。すべての行為が許されます。',
 			'order'        => 0,
 		);
 		return $retvals;

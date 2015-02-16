@@ -22,7 +22,7 @@
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
 				else:
-					echo Html::anchor('flr/view_file'.DS.$item->id, $item->name, array('class' => 'icon '.$item->genre));
+					echo Html::anchor('flr/file/view'.DS.$item->id, $item->name, array('class' => 'icon '.$item->genre));
 				endif;
 			?>
 			</div></th>
