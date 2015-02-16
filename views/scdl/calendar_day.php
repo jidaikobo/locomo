@@ -127,14 +127,14 @@
 				<?php
 				 foreach ($row['data'] as $detaildata) { ?>
 				<div>
-			<?php	
+				<?php
+				echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->schedule_id.'">';
 				echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
 				foreach($detail_kbs as $k => $v){
 					if($detaildata->$k){
 						 echo '<span class="text_icon schedule '.$k.'"><span class="skip">'.$v.'</span></span>';
 					}
 				}
-				echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->schedule_id.'">';
 				if(!\Request::is_hmvc()): //重要度
 					$importance_v = $model_name::value2index("title_importance_kb", html_entity_decode($detaildata->title_importance_kb));
 					echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
@@ -162,15 +162,15 @@
 		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
 	}
 	foreach($detail_kbs as $k => $v){
-		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
+		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
 	}
 	if(!\Request::is_hmvc()): //重要度
 		foreach($importance_kbs as $k => $v){
-			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.' </span>';
+			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
 		}
 	endif;
 ?>
-	<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開 </span>
+	<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
 	 </div><!-- /.legend.calendar -->
  <?php }else{ ?>
 予定の登録がありません

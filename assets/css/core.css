@@ -528,6 +528,9 @@ ul.horizontal_list {
 .widget_content_fr {
 	text-align: right;
 }
+.widget_content > table:first-child {
+	margin-top: 0;
+}
 /* button */
 .btn,
 .button {
@@ -1381,6 +1384,9 @@ td.active + td:not(.active) {
 	margin-top: .5em;
 	margin-left: -.75em;
 }
+.widget .legend.calendar {
+	margin-left: -.5em;
+}
 .legend .text_icon {
 	margin-left: .75em;
 }
@@ -1402,6 +1408,7 @@ schedule_day.graph td {
 }
 
 /*== 重要度 ==*/
+.calendar .icon img ,
 .schedule_day.detail .icon img ,
 .legend.calendar .icon img {
 	width: 1.125em;
@@ -1477,6 +1484,15 @@ schedule_day.graph td {
 .text_icon.allday_kb:before {
 	content: '終';
 }
+
+/*== 登録者関係 ==*/
+.text_icon.proxy {
+	background-color: #804000;
+}
+.text_icon.proxy:before {
+	content: '代';
+}
+
 /*== 時間グラフ ==*/
 .schedule_day.graph td.bar {
 	height: .75em;
