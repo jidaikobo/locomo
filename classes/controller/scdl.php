@@ -1296,6 +1296,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 		if (strtotime(date('Y/m/d') . " 00:00:00") > strtotime($start_day . '00:00:00 +' . $i . "days")) {
 	 			continue;
 	 		}
+	 		$flgContinue = false;
 	 		switch ($repeat_kb) {
 	 			case 0:
 	 				// 指定なし
@@ -1308,36 +1309,38 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 				// 毎日（土日除く）
 
 					if ($target_week == 0 || $target_week == 6) {
-						continue;
+				 		$flgContinue = true;
 					}
 		 			break;
 		 		case 3:
 					// 毎週
 					if ($target_week != $week_kb) {
+						$flgContinue = true;
 						continue;
 					}
-				
+					break;
 				case 4:
 					// 毎月
 					// 繰り返し終了日時より前で開始日時と終了日時の間であれば
 					if ($target_day_from != $target_day) {
-						continue;
+				 		$flgContinue = true;
 					}
 				
 					break;
 				case 5:
 					// 毎年
 					if (!($target_day_from == $target_day && $target_month_from == $target_month)) {
-						continue;
+				 		$flgContinue = true;
 					}
 					break;
 				case 6:
 					if ($target_week != $week_kb && (ceil($target_day / 7) != $week_index)) {
-						continue;
+				 		$flgContinue = true;
 					}
 					break;
 
 	 		}
+	 		if ($flgContinue) { continue; }
 
 	 		$schedule_data = \Locomo\Model_Scdl::query()
 	 					->where_open()
