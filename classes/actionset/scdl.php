@@ -79,6 +79,8 @@ class Actionset_Scdl extends \Actionset
 			// 項目が日付を持っていたらそれを使う
 			if(isset($obj->start_date))
 			{
+				$y = date('Y', strtotime($obj->start_date));
+				$m = date('m', strtotime($obj->start_date));
 				$ym = date('Y-m', strtotime($obj->start_date));
 				$ymd = date('Y-m-d', strtotime($obj->start_date));
 			}
@@ -99,7 +101,7 @@ class Actionset_Scdl extends \Actionset
 			}
 		}
 
-		// 日付が与えられていたら、当月でないので、その第一週を表示
+		// 与えられている日付から第何週かを得る
 		$weeknum = \Locomo\Cal::get_current_weeknum($ymd) ;
 		$ym = $ym ?: date('Y-m');
 
@@ -108,6 +110,7 @@ class Actionset_Scdl extends \Actionset
 		list($year, $mon, $day) = explode('-', $current['dates'][0]);
 		$week_1st_day = $year.DS.$mon.DS.$day;
 		$ym_str = $y.DS.$m;
+				
 
 		// uri
 		$actions = array(
