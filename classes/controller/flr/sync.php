@@ -26,7 +26,7 @@ class Controller_Flr_Sync extends Controller_Flr
 
 		// view
 		$form = \Model_Flr::sync_definition();
-		$content = \View::forge('flr/edit');
+		$content = \View::forge('defaults/edit');
 		$content->set_safe('breadcrumbs', self::breadcrumbs(LOCOMOUPLOADPATH));
 		$content->set_safe('form', $form);
 		$this->template->content = $content;
