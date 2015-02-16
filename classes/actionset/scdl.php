@@ -82,21 +82,6 @@ class Actionset_Scdl extends \Actionset
 				$ym = date('Y-m', strtotime($obj->start_date));
 				$ymd = date('Y-m-d', strtotime($obj->start_date));
 			}
-		// 新規作成
-		} elseif (in_array(\Request::main()->action, ['create']) && is_object($obj)) {
-			// リファラを見る
-			if (\Input::referrer())
-			{
-				// calendar/ という文字列から次の三つをとる
-				$uristr = \Input::referrer();
-				$uristr = substr($uristr, strpos($uristr, 'calendar/'));
-				$sgms = explode('/', $uristr);
-				$y = \Arr::get($sgms, 1, $y) ;
-				$m = \Arr::get($sgms, 2, $m) ;
-				$d = \Arr::get($sgms, 3, $d) ;
-				$ym = date('Y-m', strtotime("$y/$m/$d"));
-				$ymd = date('Y-m-d', strtotime("$y/$m/$d"));
-			}
 		}
 
 		// 日付が与えられていたら、当月でないので、その第一週を表示
@@ -115,7 +100,7 @@ class Actionset_Scdl extends \Actionset
 			array($controller.DS."calendar/".$ym_str, '月表示'),
 			array($controller.DS."calendar/".$week_1st_day.'/week', '週表示'),
 		);
-		$urls = static::generate_urls($controller.'::action_edit', $actions);
+		$urls = static::generate_urls($controller.'::action_edit', $actions, ['create']);
 
 		$retvals = array(
 			'urls'         => $urls ,

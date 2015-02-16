@@ -21,7 +21,7 @@ class Controller_Scffld extends \Controller_Base
 	public function action_main()
 	{
 		// only at development
-//		if (\Fuel::$env != 'development') die();
+		if (\Fuel::$env != 'development') die();
 
 		//view
 		$view = \View::forge('scffld/main');
@@ -29,6 +29,24 @@ class Controller_Scffld extends \Controller_Base
 		// scaffold
 		if (\Input::method() == 'POST' && \Security::check_token())
 		{
+			// permission check
+			$arrs = array(
+				APPPATH.'migrations/',
+//				APPPATH.'classes/',
+				APPPATH.'classes/controller/',
+				APPPATH.'classes/actionset/',
+				APPPATH.'classes/model/',
+				APPPATH.'views/',
+			);
+			foreach ($arrs as $arr)
+			{
+				if ('0777' !== \File::get_permissions($arr))
+				{
+					\Session::set_flash('error', $arr.'のパーミッションを確認してください。');
+					\Response::redirect(\Uri::create('/scffld/main'));
+				}
+			}
+	
 			// vals
 			$cmd_raw = \Input::post('cmd');
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw );
