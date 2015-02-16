@@ -797,6 +797,7 @@ class Model_Flr extends \Model_Base
 			$g_permissions = array();
 			foreach ($parent->permission_usergroup as $k => $v)
 			{
+				if ( ! isset($v->usrgrp)) continue;
 				$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
 			}
 			$options = array_intersect($g_permissions, $options);
@@ -821,6 +822,7 @@ class Model_Flr extends \Model_Base
 			$u_permissions = array();
 			foreach ($parent->permission_user as $k => $v)
 			{
+				if ( ! isset($v->usr)) continue;
 				$g_permissions[$v->user_id] = $v->usr->display_name;
 			}
 			$options = array_intersect($u_permissions, $options);
