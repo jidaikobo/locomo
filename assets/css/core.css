@@ -1209,13 +1209,17 @@ td.minimum {
 .formtable tr:last-child td {
 	border-bottom: none;
 }
-
 .formtable thead th {
 	text-align: left;
 }
+
 /*=== calendar ===*/
 .field_wrapper.calendar {
 	text-align: center;
+}
+.field_wrapper.calendar_detail {
+	display: block;
+	max-width: 1000px;
 }
 .select_period {
 	display: inline-block;
@@ -1274,14 +1278,13 @@ table.calendar {
 	background-color: transparent;
 }
 .calendar td.today {
-/*	border: 2px solid rgba(255,0,0,.25);*/
 	background-color: #ffd;
 }
 .calendar thead * {
 	vertical-align: middle;
 	text-align: center;
 }
-.calendar thead span{
+.calendar thead span {
 	display: inline-block;
 	width: 1em;
 	white-space: nowrap;
@@ -1313,6 +1316,7 @@ table.calendar {
 }
 .calendar .title {
 	display: block;
+	color: #333;
 	background-color: #eee;
 	font-weight: bold;
 	text-decoration: none;
@@ -1347,14 +1351,20 @@ table.calendar .events {
 .icon_small {
 	font-size: .6em;
 }
-.schedule_day {
+.widget .schedule_day.detail th,
+.widget .schedule_day.detail td {
+	padding: .125em;
+}
+
+.schedule_day.graph {
 	table-layout: fixed;
 }
-.schedule_day .name {
+.schedule_day.graph th.name,
+.widget .schedule_day.detail th.name {
 	width: 6em;
 	white-space: normal;
 }
-.schedule_day .time {
+.schedule_day.graph .time {
 	font-size: .75em;
 	text-align: center;
 	white-space: nowrap;
@@ -1366,6 +1376,7 @@ td.active + td:not(.active) {
 	border-left: 1px solid #bbb;
 }
 .legend.calendar {
+	text-align: left;
 	font-size: .75em;
 	margin-top: .5em;
 	margin-left: -.75em;
@@ -1373,13 +1384,13 @@ td.active + td:not(.active) {
 .legend .text_icon {
 	margin-left: .75em;
 }
-table.schedule_day th,
-table.schedule_day td {
+schedule_day.graph th,
+schedule_day.graph td {
 	padding: 2px;
 }
 .text_icon {
 	display: inline-block;
-	padding: .125em;
+	padding: .15em .125em .1em;
 	font-size: .85em;
 	background-color: #999;
 	margin-right: 3px;
@@ -1390,6 +1401,16 @@ table.schedule_day td {
 	color: #fff;
 }
 
+/*== 重要度 ==*/
+.schedule_day.detail .icon img ,
+.legend.calendar .icon img {
+	width: 1.125em;
+	margin: 0 .125em .2em 0;
+	line-height: 1.25em;
+}
+.legend.calendar .icon img {
+	margin-left: .75em;
+}
 /*== 繰り返し ==*/
 /*  毎日  */
 .text_icon.repeat_kb_1 {
@@ -1456,16 +1477,14 @@ table.schedule_day td {
 .text_icon.allday_kb:before {
 	content: '終';
 }
-
-
-
-.schedule_day td.bar {
+/*== 時間グラフ ==*/
+.schedule_day.graph td.bar {
 	height: .75em;
 }
-.schedule_day .active {
+.schedule_day.graph .active {
 	background-color: #d8ebfc;
 }
-.schedule_day .graydown {
+table.schedule_day .graydown {
 	background-color: #CCC;
 }
 /*=== filer ===*/
@@ -1558,6 +1577,19 @@ a.icon.zip:before {
 .hw20em h1, .hw20em h2, .hw20em h3, .hw20em h4, .hw20em h5 {width: 20em !important;}
 .hw25em h1, .hw25em h2, .hw25em h3, .hw25em h4, .hw25em h5 {width: 25em !important;}
 
+display_inline {
+	display: inline;
+}
+.display_inline_block {
+	display: inline-block;
+}
+*+html .display_inline_block {
+	display: inline;
+	zoom: 1;
+}
+.display_block {
+	display: block;
+}
 
 /*=== tbl_scrollable ===*/
 /*.nocelspan */
