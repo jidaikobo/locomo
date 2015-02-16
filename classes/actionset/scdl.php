@@ -51,24 +51,63 @@ class Actionset_Scdl extends \Actionset
 	public static function actionset_calendar($controller, $obj = null, $id = null, $urls = array())
 	{
 		// datevals
-		$ym = '';
+		$y = date('Y');
+		$m = date('m');
+		$d = date('d');
+		$ym = date('Y-m');
+		$ymd = date('Y-m-d');
+
+		// 月および週表示
 		if (\Request::main()->action == 'calendar')
 		{
-			$y = \Uri::segment(3) ?: date('Y');
-			$m = \Uri::segment(4) ?: date('m');
-			$d = \Uri::segment(5) ?: '01';
+			// コントローラの場合。数字のみの四桁だったら年と見なす
+			if (is_numeric(\Uri::segment(3)) && strlen(\Uri::segment(3)) == 4)
+			{
+				$y = \Uri::segment(3) ?: $y ;
+				$m = \Uri::segment(4) ?: $m ;
+				$d = \Uri::segment(5) ?: $d ;
+			// モジュールだとリンクが深くなるので簡易対応
+			} elseif (is_numeric(\Uri::segment(4)) && strlen(\Uri::segment(4)) == 4) {
+				$y = \Uri::segment(4) ?: $y ;
+				$m = \Uri::segment(5) ?: $m ;
+				$d = \Uri::segment(6) ?: $d ;
+			}
 			$ym = date('Y-m', strtotime("$y/$m/$d"));
+			$ymd = date('Y-m-d', strtotime("$y/$m/$d"));
+		// 編集画面と閲覧画面
+		} elseif (in_array(\Request::main()->action, ['edit', 'viewdetail']) && is_object($obj)) {
+			// 項目が日付を持っていたらそれを使う
+			if(isset($obj->start_date))
+			{
+				$ym = date('Y-m', strtotime($obj->start_date));
+				$ymd = date('Y-m-d', strtotime($obj->start_date));
+			}
+		// 新規作成
+		} elseif (in_array(\Request::main()->action, ['create']) && is_object($obj)) {
+			// リファラを見る
+			if (\Input::referrer())
+			{
+				// calendar/ という文字列から次の三つをとる
+				$uristr = \Input::referrer();
+				$uristr = substr($uristr, strpos($uristr, 'calendar/'));
+				$sgms = explode('/', $uristr);
+				$y = \Arr::get($sgms, 1, $y) ;
+				$m = \Arr::get($sgms, 2, $m) ;
+				$d = \Arr::get($sgms, 3, $d) ;
+				$ym = date('Y-m', strtotime("$y/$m/$d"));
+				$ymd = date('Y-m-d', strtotime("$y/$m/$d"));
+			}
 		}
 
 		// 日付が与えられていたら、当月でないので、その第一週を表示
-		$weeknum = $ym ? 1 : \Locomo\Cal::get_current_weeknum() ;
+		$weeknum = \Locomo\Cal::get_current_weeknum($ymd) ;
 		$ym = $ym ?: date('Y-m');
 
 		// 週の第一日
 		$current = \Locomo\Cal::get_week_calendar_by_weeknum($ym, $weeknum, $start_with = 1);
 		list($year, $mon, $day) = explode('-', $current['dates'][0]);
 		$week_1st_day = $year.DS.$mon.DS.$day;
-		$ym_str = $year.DS.$mon;
+		$ym_str = $y.DS.$m;
 
 		// uri
 		$actions = array(

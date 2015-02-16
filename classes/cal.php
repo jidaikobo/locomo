@@ -223,9 +223,9 @@ class Cal
 	
 	// get_current_weeknum
 	// thx http://generation1986.g.hatena.ne.jp/primunu/20080317/1205767155
-	public static function get_current_weeknum()
+	public static function get_current_weeknum($ymd = '')
 	{
-		$now = time();
+		$now = $ymd ? strtotime($ymd) : time();
 		$saturday = 6;
 		$week_day = 7;
 		$w = intval(date('w', $now));
