@@ -292,7 +292,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num');
+									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
 				foreach ($setcolumns as $v) {
 					$this->template->content->form->field($v)->set_value($from_data->$v);
 				}
@@ -949,7 +949,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->or_where_close()
 							->where_close()
 							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg);
+							->where("kind_flg", $model::$_kind_flg)
+							->order_by("start_time");
 		$schedules_data = $query->get();
 							
 

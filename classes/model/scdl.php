@@ -473,7 +473,7 @@ class Model_Scdl extends \Model_Base
 				$form->field('start_date')->set_value(date('Y-m-d'));
 				$form->field('end_date')->set_value(date('Y-m-d'));
 			}
-			$form->field('start_time')->set_value('00:00');
+			$form->field('start_time')->set_value('09:00');
 			$form->field('end_time')->set_value('21:00');
 		}
 
