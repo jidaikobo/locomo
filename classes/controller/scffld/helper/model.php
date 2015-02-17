@@ -5,7 +5,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 	/**
 	 * generate()
 	 */
-	public static function generate($name, $cmd_orig)
+	public static function generate($name, $cmd_orig, $type)
 	{
 		//vals
 		$cmd_mods = array();
@@ -127,7 +127,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 			$observers.= "\t\t'Locomo\Observer_Expired' => array(\n\t\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t\t'properties' => array('expired_at'),\n\t\t\t),\n";
 		endif;
 		if (in_array('creator_id', $cmd_mods) || in_array('updater_id', $cmd_mods)):
-			$observers.= "\t\t't'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
+			$observers.= "\t\t\t'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
 		endif;
 		$observers.= "//\t\t't'Locomo\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
 		$observers.= "//\t\t't'Locomo\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
@@ -136,7 +136,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		$frmdfn = '';
 		foreach ($admins as $admin)
 		{
-			$frmdfn.= "\$form->field('{$admin}')->set_type('hidden')->set_value(\$obj->{$admin} ?: 1)";
+			$frmdfn.= "\t\t\t\$form->field('{$admin}')->set_type('hidden')->set_value(\$obj->{$admin} ?: 1);\n";
 		}
 		if ($frmdfn)
 		{
@@ -151,6 +151,8 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 
 		//template
 		$str = static::fetch_temlpate('model.php');
+		// モジュール以外では名前空間を削除
+		$str = $type !== 'all' ? str_replace("namespace XXX;\n", '', $str) : $str ;
 		$str = self::replaces($name, $str);
 		$str = str_replace ('###NICENAME###',  $nicename, $str);
 		$str = str_replace('###FRMDFN###',     $frmdfn,     $str);

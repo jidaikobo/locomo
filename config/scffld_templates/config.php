@@ -1,6 +1,6 @@
 <?php
 return array(
-	'main_controller' => '\\Aiai\\Controller_Aiai',
+	'main_controller' => '\\XXX\\Controller_XXX',
 	'nicename'        => '###NICENAME###',
 	'explanation'     => '###NICENAME###管理を行います。',
 	'is_for_admin'    => false, // true: show at admin bar and admin/home

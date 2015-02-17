@@ -110,7 +110,7 @@ class Util
 	 */
 	public static function get_latestprefix($dir, $format = '%03d')
 	{
-		$files = \File::read_dir($dir);
+		$files = \File::read_dir($dir, 1);
 		sort($files);
 		$latest_one = array_pop($files);
 		$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));

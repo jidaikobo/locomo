@@ -782,6 +782,10 @@ class Model_Flr extends \Model_Base
 			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
 		]);
 
+		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'display_name')->set_template('<div class="input_group">');
+		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'display_name')->set_template('</div>');
+
+
 		// === usergroup_id ===
 		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
 		$options = array('-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
@@ -793,6 +797,7 @@ class Model_Flr extends \Model_Base
 			$g_permissions = array();
 			foreach ($parent->permission_usergroup as $k => $v)
 			{
+				if ( ! is_object($v->usrgrp)) continue;
 				$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
 			}
 			$options = array_intersect($g_permissions, $options);
@@ -817,6 +822,7 @@ class Model_Flr extends \Model_Base
 			$u_permissions = array();
 			foreach ($parent->permission_user as $k => $v)
 			{
+				if ( ! is_object($v->usr)) continue;
 				$g_permissions[$v->user_id] = $v->usr->display_name;
 			}
 			$options = array_intersect($u_permissions, $options);

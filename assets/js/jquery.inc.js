@@ -23,10 +23,10 @@ $(function() {
 
 });
 // ヘルプ呼び出し
-var help_preparation = false;//なにかしら、読込済かどうかわかるようにしておく
 function show_help(e){
 	e = e ? e : event;
 	if(e) e.preventDefault();//クリックイベント以外(アクセスキー等)の場合を除外
+	var help_preparation = false;//重複読み込みの防止
 	$(function(){
 		if(!help_preparation){
 			var uri = $('#lcm_help').data('uri');
@@ -126,20 +126,25 @@ function set_focus(t){
 	}
 }
 
-//ページ読み込み直後のフォーカス
-if($('.flash_alert')[0]){
-	var firstFocus = $('.flash_alert a.skip').first();
-}else if($('body').hasClass('lcm_action_login')){
-	var firstFocus = $('input:visible').first();
-}
-if(firstFocus){
-	set_focus(firstFocus);
-}else{
-	var container = $('#main_content');
-	container.focus();
-}
-//とりあえず
-$('h1').first().not(':has(>a)').attr('tabindex', '0');
+//ページ読み込み直後の動作
+(function (){
+//フォーカス初期位置
+	if($('.flash_alert')[0]){
+		var firstFocus = $('.flash_alert a.skip').first();
+	}else if($('body').hasClass('lcm_action_login')){
+		var firstFocus = $('input:visible').first();
+	}
+	if(firstFocus){
+		set_focus(firstFocus);
+	}else{
+		var container = $('#main_content');
+		container.focus();
+	}
+	
+	//見出しのh1に最初のフォーカスを与える
+	$('h1').first().not(':has(>a)').attr('tabindex', '0');
+})();
+
 
 /* 不要なh2を削除するためのいったんのスタイル 
 $('h2').first().each(function(){
@@ -147,6 +152,7 @@ $('h2').first().each(function(){
 		$(this).css('background-color', '#fcc');
 });
 */
+
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );
@@ -911,7 +917,9 @@ $('input.datetime,  input[type=datetime]').datetimepicker();
 
 $('input.time.min15').timepicker({
 	timeFormat: 'HH:mm',
-	stepMinute: 15
+	stepMinute: 15,
+	hourMax: 23,
+
 });
 $('input.time.min30').timepicker({
 	timeFormat: 'HH:mm',

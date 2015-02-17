@@ -21,14 +21,33 @@ class Controller_Scffld extends \Controller_Base
 	public function action_main()
 	{
 		// only at development
-//		if (\Fuel::$env != 'development') die();
+		if (\Fuel::$env != 'development') die();
 
 		//view
 		$view = \View::forge('scffld/main');
+		$type = \Input::post('type', 'all');
 
 		// scaffold
 		if (\Input::method() == 'POST' && \Security::check_token())
 		{
+			// permission check
+			$arrs = array(
+				APPPATH.'migrations/',
+//				APPPATH.'classes/',
+				APPPATH.'classes/controller/',
+				APPPATH.'classes/actionset/',
+				APPPATH.'classes/model/',
+				APPPATH.'views/',
+			);
+			foreach ($arrs as $arr)
+			{
+				if ('0777' !== \File::get_permissions($arr))
+				{
+					\Session::set_flash('error', $arr.'のパーミッションを確認してください。');
+					\Response::redirect(\Uri::create('/scffld/main'));
+				}
+			}
+	
 			// vals
 			$cmd_raw = \Input::post('cmd');
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw );
@@ -51,9 +70,9 @@ class Controller_Scffld extends \Controller_Base
 
 			// molding - logic
 			$migration  = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
-			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig);
-			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name);
-			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig);
+			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig, $type);
+			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name, $type);
+			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig, $type);
 			$config     = \Controller_Scffld_Helper_Config::generate($name, $cmd_orig);
 
 			// molding - view
@@ -64,7 +83,7 @@ class Controller_Scffld extends \Controller_Base
 
 			// mkdir for module
 			$scfldpath = APPPATH.'modules/';
-			if (\Input::post('type') == 'all')
+			if ($type == 'all')
 			{
 				if (\File::create_dir($scfldpath, $name))
 				{
@@ -73,7 +92,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// path
-			if (\Input::post('type') == 'all2' || \Input::post('type') == 'view')
+			if ($type == 'all2' || $type == 'view')
 			{
 				$scfldpath = APPPATH;
 			}
@@ -88,7 +107,7 @@ class Controller_Scffld extends \Controller_Base
 			$migrate_file = $latest.'_create_'.$filename;
 
 			//generate
-			if (\Input::post('type') == 'model')
+			if ($type == 'model')
 			{
 				//migrations
 				\File::update(APPPATH.'migrations', $migrate_file, $migration);
@@ -105,7 +124,7 @@ class Controller_Scffld extends \Controller_Base
 				$messages[] = "php oil refine migrate:up";
 				$messages[] = "を実行してください。";
 			}
-			elseif (\Input::post('type') == 'view')
+			elseif ($type == 'view')
 			{
 				//views
 				if ( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
@@ -124,7 +143,7 @@ class Controller_Scffld extends \Controller_Base
 			{
 				//migrations
 				if ( ! file_exists($scfldpath.'/migrations')) \File::create_dir($scfldpath, 'migrations');
-				if (\Input::post('type') == 'all')
+				if ($type == 'all')
 				{
 					$migrate_file = '001_create_'.$filename;
 				}
@@ -151,7 +170,7 @@ class Controller_Scffld extends \Controller_Base
 				//views
 				if ( ! file_exists($scfldpath.'/views')) \File::create_dir($scfldpath, 'views');
 				$viewpath = $scfldpath.'/views';
-				if (\Input::post('type') == 'all2')
+				if ($type == 'all2')
 				{
 					if ( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
 					$viewpath = APPPATH.'views/'.$name;
@@ -162,7 +181,7 @@ class Controller_Scffld extends \Controller_Base
 				\File::update($viewpath, 'edit.php', $tpl_edit);
 
 				//messages
-				if (\Input::post('type') == 'all2')
+				if ($type == 'all2')
 				{
 					$messages[] = "各ファイルを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
 					$messages[] = "sudo chmod -R 777 ".APPPATH.'class';
@@ -198,6 +217,7 @@ class Controller_Scffld extends \Controller_Base
 		// set errors
 		if (\Input::method() == 'POST' && ! \Security::check_token())
 		{
+			$view->set('type', $type);
 			\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
 		}
 

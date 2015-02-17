@@ -1,3 +1,8 @@
+<?php 
+	$repeat_kbs = array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年');
+	$detail_kbs = array('provisional_kb' => '仮登録', 'unspecified_kb' => '時間指定なし', 'allday_kb' => '終日');
+	$importance_kbs = array('重要度 高', '重要度 中', '重要度 低');
+?>
 <?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <div class="select_display_type">
@@ -29,7 +34,6 @@
 <?php endif; ?>
 <tbody>
 <tr>
-<?php $repeat_kbs = array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年'); ?>
 <?php foreach($schedule_data as $v) {?>
 	<td class="week<?php print $v['week']; ?>">
 		<?php if (isset($v['day'])) { ?>
@@ -45,10 +49,18 @@
 				$detail_pop_data = $v2;
 				?>
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid ?>">
-					<?php echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
-						if ($v2['allday_kb']) { print '<span class="text_icon schedule allday_kb"><span class="skip">終日</span></span>'; };
-						if ($v2['unspecified_kb']) { print '<span class="text_icon schedule unspecified_kb"><span class="skip">時間指定なし</span></span>'; };
-						if ($v2['provisional_kb']) { print '<span class="text_icon schedule provisional_kb"><span class="skip">仮登録</span></span>'; };
+					<?php
+						//繰り返し区分
+						echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
+						//詳細区分
+						foreach($detail_kbs as $key => $value){
+							if($v2[$key]){
+								 echo '<span class="text_icon schedule '.$key.'"><span class="skip">'.$value.'</span></span>';
+							}
+						}
+						//重要度
+						$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
+						echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
 						print htmlspecialchars_decode($v2['link_detail']);
 					?>
 				</p>
@@ -65,15 +77,22 @@
 <?php if(!\Request::is_hmvc()): ?>
 </div><!-- /.field_wrapper.calendar -->
 <?php endif; ?>
-<div class="legend calendar">
-<?php foreach($repeat_kbs as $k => $v){
-	echo $k != 0 ? '<span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' ' : '';
- }?>
-	<span class="text_icon schedule provisional_kb"><span class="skip">仮登録</span></span>仮登録 
-	<!--<span class="text_icon schedule unspecified_kb"><span class="skip">時間指定なし</span></span>時間指定なし-->
-	<span class="text_icon schedule allday_kb"><span class="skip">終日</span></span>終日 
-</div><!-- /.legend.calendar -->
-
+	<div class="legend calendar">
+<?php
+	foreach($repeat_kbs as $k => $v){
+		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
+	}
+	foreach($detail_kbs as $k => $v){
+		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
+	}
+	if(!\Request::is_hmvc()): //重要度
+		foreach($importance_kbs as $k => $v){
+			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
+		}
+	endif;
+//	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
+?>
+	 </div><!-- /.legend.calendar -->
 <?php foreach($schedule_data as $v) {?>
 	<?php if (isset($v['day'])) { ?>
 		<?php foreach ($v['data'] as $v2) {

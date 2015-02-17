@@ -222,19 +222,22 @@ class Cal
 	}
 	
 	// get_current_weeknum
+	// start_with のデフォルトは7（日曜日）
 	// thx http://generation1986.g.hatena.ne.jp/primunu/20080317/1205767155
-	public static function get_current_weeknum()
+	public static function get_current_weeknum($ymd = '', $start_with = 7)
 	{
-		$now = time();
-		$saturday = 6;
+		$now = $ymd ? strtotime($ymd) : time();
+//		$saturday = 6;
+		$end_of_week_day = $start_with == 7 ? 6 : 7 ;//日曜始まり（7）なら土曜日が終端日。月曜始まりなら日曜日が終端日
 		$week_day = 7;
 		$w = intval(date('w', $now));
 		$d = intval(date('d', $now));
-	
-		if ($w != $saturday)
+
+		// 終端日を発見
+		if ($w != $end_of_week_day)
 		{
-			$w = ($saturday - $w) + $d;
-		} else { // 土曜日の場合を修正
+			$w = ($end_of_week_day - $w) + $d;
+		} else { // 終端日の場合を修正
 			$w = $d;
 		}
 		return ceil($w/$week_day);

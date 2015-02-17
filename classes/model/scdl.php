@@ -91,6 +91,7 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'class' => 'time min15',
 			),
+			'default' => '21:00'
 		),
 		'week_kb' => 
 		array (

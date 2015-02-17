@@ -51,24 +51,51 @@ class Actionset_Scdl extends \Actionset
 	public static function actionset_calendar($controller, $obj = null, $id = null, $urls = array())
 	{
 		// datevals
-		$ym = '';
+		$y = date('Y');
+		$m = date('m');
+		$d = date('d');
+		$ym = date('Y-m');
+		$ymd = date('Y-m-d');
+
+		// 月および週表示
 		if (\Request::main()->action == 'calendar')
 		{
-			$y = \Uri::segment(3) ?: date('Y');
-			$m = \Uri::segment(4) ?: date('m');
-			$d = \Uri::segment(5) ?: '01';
+			// コントローラの場合。数字のみの四桁だったら年と見なす
+			if (is_numeric(\Uri::segment(3)) && strlen(\Uri::segment(3)) == 4)
+			{
+				$y = \Uri::segment(3) ?: $y ;
+				$m = \Uri::segment(4) ?: $m ;
+				$d = \Uri::segment(5) ?: $d ;
+			// モジュールだとリンクが深くなるので簡易対応
+			} elseif (is_numeric(\Uri::segment(4)) && strlen(\Uri::segment(4)) == 4) {
+				$y = \Uri::segment(4) ?: $y ;
+				$m = \Uri::segment(5) ?: $m ;
+				$d = \Uri::segment(6) ?: $d ;
+			}
 			$ym = date('Y-m', strtotime("$y/$m/$d"));
+			$ymd = date('Y-m-d', strtotime("$y/$m/$d"));
+		// 編集画面と閲覧画面
+		} elseif (in_array(\Request::main()->action, ['edit', 'viewdetail']) && is_object($obj)) {
+			// 項目が日付を持っていたらそれを使う
+			if(isset($obj->start_date))
+			{
+				$y = date('Y', strtotime($obj->start_date));
+				$m = date('m', strtotime($obj->start_date));
+				$ym = date('Y-m', strtotime($obj->start_date));
+				$ymd = date('Y-m-d', strtotime($obj->start_date));
+			}
 		}
 
-		// 日付が与えられていたら、当月でないので、その第一週を表示
-		$weeknum = $ym ? 1 : \Locomo\Cal::get_current_weeknum() ;
+		// 与えられている日付から第何週かを得る
+		$weeknum = \Locomo\Cal::get_current_weeknum($ymd, $start_with = 1) ;
 		$ym = $ym ?: date('Y-m');
 
 		// 週の第一日
 		$current = \Locomo\Cal::get_week_calendar_by_weeknum($ym, $weeknum, $start_with = 1);
 		list($year, $mon, $day) = explode('-', $current['dates'][0]);
 		$week_1st_day = $year.DS.$mon.DS.$day;
-		$ym_str = $year.DS.$mon;
+		$ym_str = $y.DS.$m;
+				
 
 		// uri
 		$actions = array(
@@ -76,7 +103,7 @@ class Actionset_Scdl extends \Actionset
 			array($controller.DS."calendar/".$ym_str, '月表示'),
 			array($controller.DS."calendar/".$week_1st_day.'/week', '週表示'),
 		);
-		$urls = static::generate_urls($controller.'::action_edit', $actions);
+		$urls = static::generate_urls($controller.'::action_edit', $actions, ['create']);
 
 		$retvals = array(
 			'urls'         => $urls ,
