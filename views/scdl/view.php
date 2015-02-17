@@ -76,7 +76,7 @@
 
 <?php endif; ?>
 
-<?php if (count($detail->user)) { ?>
+<?php if (count($detail->user) && !$detail->private_kb) { ?>
 <tr>
 <th>メンバー</th>
 <td>
@@ -90,7 +90,7 @@
 </tr>
 <?php } ?>
 
-<?php if (count($detail->building)) { ?>
+<?php if (count($detail->building) && !$detail->private_kb) { ?>
 <tr>
 <th>対象施設</th>
 <td>

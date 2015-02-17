@@ -48,7 +48,6 @@
 								$p_active = true;
 							if (($detail_data->secondary))
 								$s_active = true;
-							//print ' class="active"';
 						}
 					}
 				}
@@ -180,8 +179,13 @@
 予定の登録がありません
 <?php } ?>
 </div><!-- /.field_wrapper -->
-<?php //detail_popをここにも ?>
+aaaa
+<?php foreach($schedule_data['unique_schedule_data'] as $v) { 
 
+		$detail_pop_data = $v;
+		include("detail_pop.php");
+	
+} ?>
 <script>
 $("#move_date").change(function(event){
 	var target = $("#move_date").val().replace(/-/g, "/");

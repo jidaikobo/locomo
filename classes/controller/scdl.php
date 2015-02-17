@@ -717,6 +717,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						
 		$user_exist = array();
 		$building_exist = array();
+		$unique_schedule_data = array();
 
 		for ($i = 0; $i <= 23; $i++) {
 			
@@ -724,6 +725,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$row['hour'] = $i;
 			$row['data'] = array();
 			foreach ($schedule_data as $r) {
+				if (!isset($unique_schedule_data['schedule_' . $r['id']])) {
+					$r['scdlid'] = $r['id'];
+					$unique_schedule_data['schedule_' . $r['id']] = clone $r;
+				}
 				if ($this->is_target_day($year, $mon, $day, $r)) {
 					$starttime = date('Ymd', strtotime($r['start_date'])) . date('Hi', strtotime($r['start_time']));
 					$endtime = date('Ymd', strtotime($r['end_date'])) . date('Hi', strtotime($r['end_time']));
@@ -826,6 +831,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$schedules['member_list'] = $user_exist;
 		$schedules['building_list'] = $building_exist;
+		$schedules['unique_schedule_data'] = $unique_schedule_data;
 
 		return $schedules;
 	}
@@ -955,7 +961,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1)));
 		for ($i = 1; $i < $week; $i++) {
 			$row = array();
-			$row['week'] = ($i == 1) ? 1 : 3; // 月曜日という事にする
+			$row['week'] = ($i == 7) ? 0 : $i;
+//			$row['week'] = ($i == 1) ? 1 : 3; // 月曜日という事にする
 			$schedules[] = $row;
 		}
 
@@ -989,7 +996,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $last_day))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $last_day)));
 		for ($i = 0; $i < 7 - $week; $i++) {
 			$row = array();
-			$row['week'] = 3;
+			$row['week'] = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, ($i + 1)) . " + 1month"));
 			$schedules[] = $row;
 		}
 
