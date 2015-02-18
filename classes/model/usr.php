@@ -248,14 +248,6 @@ class Model_Usr extends Model_Base
 			->set_value('')
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 
-		if (\Request::main()->action == 'create')
-		{
-			$form->field('password')
-				->add_rule('required');
-			$form->field('confirm_password')
-				->add_rule('required');
-		}
-
 		// 管理者以外は現在のパスワードを求める
 		if ( ! \Auth::is_admin())
 		{

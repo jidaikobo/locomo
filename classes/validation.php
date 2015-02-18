@@ -17,16 +17,17 @@ class Validation extends \Fuel\Core\Validation
 		list($table, $field, $id) = explode('.', $options);
 
 		//if data exists allow empty
-		if ($id):
+		if ($id)
+		{
 			$result = \DB::select($field)
 				->from($table)
 				->where('id',$id)
 				->execute();
 			return ($result->count() > 0);
-		else:
+		} else {
 			//empty is not allowed
 			return ! empty($val);
-		endif;
+		}
 //Validation::active()->set_message('unique', '「:label 」はユニークです。「:value」は既に登録されています。');
 	}
 
@@ -44,19 +45,20 @@ class Validation extends \Fuel\Core\Validation
 		list($table, $field, $id) = explode('.', $options);
 
 		//if it is updating then allow same id
-		if ($id):
+		if ($id)
+		{
 			$result = \DB::select("id")
 			->where('id', '<>', $id)
 			->where($field, '=', \Str::lower($val))
 			->from($table)->execute();
 			return ($result->count() == 0);
-		else:
+		} else {
 			//create
 			$result = \DB::select("id")
 			->where($field, '=', \Str::lower($val))
 			->from($table)->execute();
 			return ! ($result->count() > 0);
-		endif;
+		}
 	}
 
 	/**
@@ -71,13 +73,14 @@ class Validation extends \Fuel\Core\Validation
 	{
 		//validate
 		list($table, $field, $id) = explode('.', $options);
-		if ($id):
+		if ($id)
+		{
 			$result = \DB::select("id")
 			->where('id', '=', $id)
 			->where($field, '=', \Auth::instance()->hash_password($val))
 			->from($table)->execute();
 			return ($result->count() >= 1);
-		endif;
+		}
 	}
 
 	/**
@@ -92,13 +95,14 @@ class Validation extends \Fuel\Core\Validation
 	{
 		//validate
 		list($table, $field, $id) = explode('.', $options);
-		if ($id):
+		if ($id)
+		{
 			$result = \DB::select("id")
 			->where('id', '=', $id)
 			->where($field, '=', $val)
 			->from($table)->execute();
 			return ($result->count() >= 1);
-		endif;
+		}
 	}
 
 	/**
