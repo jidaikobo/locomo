@@ -132,6 +132,10 @@ class Controller_Flr extends \Locomo\Controller_Base
 						)
 					) 
 				);
+				\Model_Flr::$_options['order_by'] = array(
+					'genre'      => 'asc',
+					'created_at' => 'desc'
+				);
 			}
 	
 			// span

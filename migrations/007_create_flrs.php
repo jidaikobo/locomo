@@ -8,9 +8,9 @@ class Create_Flrs
 		echo "create lcm_flrs table.\n";
 		\DBUtil::create_table('lcm_flrs', array(
 			'id'           => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
-			'name'         => array('constraint' => 255, 'type' => 'varchar'),
+			'name'         => array('constraint' => 1024, 'type' => 'varchar'),
 			'explanation'  => array('type' => 'text'),
-			'path'         => array('constraint' => 255, 'type' => 'varchar', 'unique' => true),
+			'path'         => array('constraint' => 1024, 'type' => 'varchar', 'unique' => true),
 			'depth'        => array('constraint' => 5,   'type' => 'int'),
 			'is_visible'   => array('constraint' => 5,   'type' => 'int'),
 			'is_sticky'    => array('constraint' => 5,   'type' => 'int'),

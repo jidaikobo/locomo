@@ -10,8 +10,10 @@
 <?php if (\Input::get('submit')): ?>
 			<th>パス</th>
 <?php endif; ?>
+			<th class="min">操作</th>
 			<th>種類</th>
 			<th>説明</th>
+			<th>担当者</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,10 +29,16 @@
 			?>
 			</div></th>
 <?php if (\Input::get('submit')): ?>
-			<td><div class="col_scrollable" tabindex="-1"><?php echo urldecode($item->path) ?></div></td>
+			<td><div class="col_scrollable" tabindex="-1"><?php echo dirname(urldecode($item->path)) ?></div></td>
 <?php endif; ?>
+			<td><?php
+				if ($item->genre !== 'dir'):
+					echo \Html::anchor(\Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true)), 'ダウンロード', array('class' => 'button small'));
+				endif;
+			?></td>
 			<td><?php echo $item->genre; ?></td>
 			<td><?php echo $item->explanation; ?></td>
+			<td><?php echo \Model_Usr::get_display_name($item->creator_id); ?></td>
 		</tr><?php endforeach; ?>
 	</tbody>
 </table>

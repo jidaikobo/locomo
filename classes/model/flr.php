@@ -127,6 +127,9 @@ class Model_Flr extends \Model_Base
 			'events' => array('before_insert', 'before_save'),
 			'properties' => array('expired_at'),
 		),
+		'Locomo\Observer_Userids' => array(
+			'events' => array('before_insert', 'before_save'),
+		),
 	);
 
 	/**
@@ -413,7 +416,11 @@ class Model_Flr extends \Model_Base
 				array('path', 'like', $obj->path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
-			)
+			),
+			'order_by' => array(
+				'genre' => 'ASC',
+				'created_at' => 'DESC'
+			),
 		);
 		return static::find('all', \Model_Flr::authorized_option($option, 'index_files'));
 	}

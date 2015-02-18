@@ -59,6 +59,18 @@ class Controller_Flr_Sync extends Controller_Flr
 			if ($fullpath == LOCOMOUPLOADPATH.DS) continue; //root dir
 			$enc_name = \Model_Flr::enc_url($fullpath);
 
+			// too long file name
+			// ファイル名が長過ぎるときにはエラーを返す
+			if (strlen($enc_name) >= 700)
+			{
+				$errors = array(
+					'同期は不完全に終わりました。',
+					"'".urldecode(basename($fullpath))."'は、エンコード後のファイル名が長過ぎるので、短くしてください。入っているディレクトリの名前の長さも影響します。",
+				);
+				\Session::set_flash('error', $errors);
+				\Response::redirect(\Uri::create('flr/sync/sync'));
+			}
+
 			// if same name exists
 			// エンコード名が改名後と同じ項目があるときにはエラーを返す
 			if (file_exists($enc_name) && ! preg_match("/^[%a-zA-Z0-9\._-]+/", basename($fullpath)))
