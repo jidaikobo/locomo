@@ -198,7 +198,7 @@
 予定の登録がありません
 <?php } ?>
 </div><!-- /.field_wrapper -->
-aaaa
+
 <?php foreach($schedule_data['unique_schedule_data'] as $v) { 
 
 		$detail_pop_data = $v;
