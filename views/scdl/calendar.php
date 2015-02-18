@@ -57,7 +57,7 @@
 <?php $repeat_kbs = array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年'); ?>
 <?php foreach($schedule_data as $v) { ?>
 	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
-	<td class="week<?php print $v['week']; ?>">
+	<td class="week<?php print $v['week']; print isset($v['day']) ? '' : ' empty'; ?>">
 		<?php if (isset($v['day'])) { ?>
 		<div class="each_date lcm_focus" title="<?php
 			print $v['day'].'日 '.$week_name[$v['week']].'曜日 ';
@@ -68,10 +68,10 @@
 				}
 			?>">
 			<a href="<?php echo \Uri::create($kind_name . "/calendar/" . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])) ?>" class="title">
-				<span class="date_str"><?php print $v['day']; ?>日</span>
+				<span class="date_str"><?php print $v['day'] < 10 ? '&nbsp;'.$v['day'] : $v['day']; ?>日</span>
 				<span class="skip"><?php print $week_name[$v['week']] . '曜日'; ?> <?php if (count($v['data']) > 0) { print count($v['data']) . '件の登録';} else { print '登録なし'; } ?></span>
 			</a>
-			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new"><span class="skip">新規追加</span></a>
+			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 			<?php /*?><div>
 			<?php print count($v['data']); ?>件
 			</div><?php */ ?>
@@ -96,7 +96,7 @@
 						print htmlspecialchars_decode($v2['link_detail']);
 					?>
 				</p>
-			<?php // include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうので下に移動...ガッハッハ ?>
+			<?php // include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうので下に移動...ガッハッハ? ?>
 			<?php } ?>
 			</div>
 		</div>

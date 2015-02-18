@@ -859,7 +859,7 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 			confirm_beforeunload();
 		}
 	});
-	if($('#alert_error').children('ul.list')[0] ){
+	if($('#alert_error').children('ul.list')[0] || $('.lcm_module_reserve #alert_error')[0] || $('.lcm_ctrl_-controller_scdl #alert_error')[0]){
 		confirm_beforeunload();
 	}
 }

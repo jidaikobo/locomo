@@ -39,10 +39,10 @@
 		<?php if (isset($v['day'])) { ?>
 		<div class="each_date">
 				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])); ?>" class="title">
-				<span class="date_str"><?php print (int)$v['day']; ?>日</span>
+				<span class="date_str"><?php print $v['day'] < 10 ? '&nbsp;'.$v['day'] : $v['day']; ?>日</span>
 				<span class="skip"><?php print $week_name[$v['week']] . '曜日'; ?> <?php if (count($v['data']) > 0) { print count($v['data']) . '件の登録';} else { print '登録なし'; } ?></span>
 			</a>
-			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new"><span class="skip">新規追加</span></a>
+			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 			
 			<div class="events">
 			<?php foreach ($v['data'] as $v2) {
