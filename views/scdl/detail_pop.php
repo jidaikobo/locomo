@@ -32,7 +32,7 @@
 			?>
 		</td>
 	</tr>
-	<?php if ($detail_pop_data->kind_flg == 1) { ?>
+	<?php if ($detail_pop_data->kind_flg == 1 && !$detail_pop_data->private_kb) { ?>
 	<tr>
 		<th class="min">
 			メッセージ：</th><td><?php print preg_replace("/(\r\n|\r|\n)/", "<br />", (mb_substr($detail_pop_data->message, 0, 20))); ?>
@@ -40,7 +40,7 @@
 	</tr>
 	<?php } ?>
 
-	<?php if (count($detail_pop_data->user)) { ?>
+	<?php if (count($detail_pop_data->user) && !$detail_pop_data->private_kb) { ?>
 	<tr>
 	<th>メンバー：</th>
 	<td>
@@ -54,7 +54,7 @@
 	</tr>
 	<?php } ?>
 
-	<?php if (count($detail_pop_data->building)) { ?>
+	<?php if (count($detail_pop_data->building) && !$detail_pop_data->private_kb) { ?>
 	<tr>
 	<th>対象施設：</th>
 	<td>
@@ -68,7 +68,7 @@
 	</td>
 	</tr>
 	<?php } ?>
-
+	<?php if (!$detail_pop_data->private_kb) { ?>
 	<tr>
 		<th>
 			予定の種類：</th><td><?php print $detail_pop_data->title_kb; ?>
@@ -86,7 +86,7 @@
 		</td>
 	</tr>
 	<?php } ?>
-
+	<?php } ?>
 	<tr>
 		<th>
 			登録者：</th><td><?php print @$detail_pop_data->create_user->display_name; ?>

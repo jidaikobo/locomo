@@ -228,7 +228,16 @@ if (isset($overlap_result) && count($overlap_result)) {
 
 <tr>
 	<th class="ar"><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></th>
-	<td><?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?></td>
+	<td>
+		<select id="group_list_create_user">
+			<option value="">--- 全員 ---
+			<?php foreach($group_list as $key => $value) { ?>
+				<option value="<?php print $key; ?>"><?php  print $value; ?>
+			<?php } ?>
+		</select>
+		&nbsp;絞り込み&gt;&gt;&nbsp;
+		<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
+	</td>
 </tr>
 
 
@@ -263,7 +272,10 @@ $("#form_repeat_kb").change(function(event){
 	change_repeat_kb_area();
 });
 $("#group_list").change(function(event) {
-	get_group_user(event);
+	get_group_user(event, $("#group_list").val(), "member_new");
+});
+$("#group_list_create_user").change(function(event) {
+	get_group_user(event, $("#group_list_create_user").val(), "form_user_id");
 });
 
 $("#building_group_list").change(function(event) {
@@ -379,10 +391,10 @@ function make_hidden_buildings() {
 
 var base_uri = $('body').data('uri');
 
-function get_group_user(e) {
+function get_group_user(e, groupId, targetEle) {
 
-	var limit = 100;
-	var group_id = $("#group_list").val();
+	var targetEle = targetEle;
+	var group_id = groupId;
 
 	var now_members = new Object();
 	var kizon_options = document.getElementById('member_kizon').options;
@@ -399,13 +411,18 @@ function get_group_user(e) {
 
 
 
-			document.getElementById("member_new").options.length=0;
+			document.getElementById(targetEle).options.length=0;
 
 			for(var i in exists) {
-				if (!now_members['member' + exists[i]['id']]) {
-					$("#member_new").append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
+				if (targetEle == "member_new") {
+					if (!now_members['member' + exists[i]['id']]) {
+						$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
+					}
+				} else {
+					$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
 				}
 			}
+
 		
 		}
 	});
@@ -413,7 +430,6 @@ function get_group_user(e) {
 
 function get_group_building(e) {
 
-	var limit = 100;
 	var group_id = $("#building_group_list").val();
 
 	var now_buildings = new Object();
