@@ -28,7 +28,7 @@
 <tbody>
 <?php foreach ($schedule_data['member_list'] as $row) { ?>
 		<tr>
-		<th class="name" rowspan="2">
+		<th class="name" rowspan="<?php print count($row); ?>">
 			<?php print $row['model']->display_name; ?>
 		</th>
 			<?php foreach($schedule_data['schedules_list'] as $v) {?>
@@ -37,27 +37,34 @@
 			</td>
 			<?php } ?>
 		</tr>
-		<tr>
-			<?php foreach($schedule_data['schedules_list'] as $v) {?>
-			<?php $p_active = false; $s_active = false; ?>
-			
-				<?php foreach ($v['data'] as $detail_data) {
-					foreach ($row['data'] as $member_detail) {
-						if ($member_detail->id == $detail_data->schedule_id) {
-							if (($detail_data->primary))
-								$p_active = true;
-							if (($detail_data->secondary))
-								$s_active = true;
-						}
-					}
-				}
+
+			<?php
+			foreach ($row as $member_rowdata) {
+				if (!isset($member_rowdata['data'])) { continue; }
 				?>
-			<td colspan="" class="<?php if ($p_active) { print "active"; } ?> bar" <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
-			</td>
-			<td colspan="" class="<?php if ($s_active) { print "active"; } ?> bar" <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
-			</td>
+				<tr>
+					<?php foreach($schedule_data['schedules_list'] as $v) {?>
+					<?php $p_active = false; $s_active = false; ?>
+					
+						<?php foreach ($v['data'] as $detail_data) {
+							foreach ($member_rowdata['data'] as $member_detail) {
+								if ($member_detail->id == $detail_data->schedule_id) {
+									if (($detail_data->primary))
+										$p_active = true;
+									if (($detail_data->secondary))
+										$s_active = true;
+								}
+							}
+						}
+						?>
+					<td colspan="" class="<?php if ($p_active) { print "active"; } ?> bar" <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
+					</td>
+					<td colspan="" class="<?php if ($s_active) { print "active"; } ?> bar" <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+					</td>
+					<?php } ?>
+				</tr>
 			<?php } ?>
-		</tr>
+
 <?php } ?>
 	</tbody>
 </table>
@@ -85,72 +92,84 @@
 		</tr>
 	</thead>
 	<tbody>
+
 <?php foreach ($schedule_data['member_list'] as $row) { ?>
 		<tr>
 			<th class="name">
 				<?php print $row['model']->display_name; ?>
 			</th>
 			<td>
-				<?php foreach ($row['data'] as $detaildata) { ?>
+			<?php
+			foreach ($row as $member_rowdata) {
+				if (!isset($member_rowdata['data'])) { continue; }
+				foreach ($member_rowdata['data'] as $detaildata) { ?>
 				<div>
+					<?php
+						$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
+						$detaildata->display_enddate = date('Y年n月j日', strtotime($detaildata->end_date . " " . $detaildata->end_time));
+						$detaildata->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
+						$detaildata->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->end_date . " " . $detaildata->end_time)));
 
-<?php
-		$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
-		$detaildata->display_enddate = date('Y年n月j日', strtotime($detaildata->end_date . " " . $detaildata->end_time));
-		$detaildata->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
-		$detaildata->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->end_date . " " . $detaildata->end_time)));
-
-		if ($detaildata->repeat_kb == 0) {
-			if($detaildata->display_startdate != $detaildata->display_enddate)
-				echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
-			else{
-				echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
-			}
-		} else {
-//			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
-			echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
-			if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 2) {
-				echo "(";
-				$week = array('日', '月', '火', '水', '木', '金', '土');
-				if ($detaildata->week_index) {
-					echo "第" . $detaildata->week_index;
-				} else {
-					echo "毎週";
-				}
-				echo $week[$detaildata->week_kb] . "曜日)";
-			}
-		}
+						if ($detaildata->repeat_kb == 0) {
+							if($detaildata->display_startdate != $detaildata->display_enddate)
+								echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
+							else{
+								echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
+							}
+						} else {
+				//			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
+							echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
+							if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 2) {
+								echo "(";
+								$week = array('日', '月', '火', '水', '木', '金', '土');
+								if ($detaildata->week_index) {
+									echo "第" . $detaildata->week_index;
+								} else {
+									echo "毎週";
+								}
+								echo $week[$detaildata->week_kb] . "曜日)";
+							}
+						}
 ?>
 				</div>
-				<?php } ?>
-
+			<?php
+				}
+			}
+			?>
 			</td>
 			<td>
 				<?php
-				 foreach ($row['data'] as $detaildata) { ?>
-				<div>
-				<?php
-				echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->schedule_id.'">';
-				echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
-				foreach($detail_kbs as $k => $v){
-					if($detaildata->$k){
-						 echo '<span class="text_icon schedule '.$k.'"><span class="skip">'.$v.'</span></span>';
+				foreach ($row as $member_rowdata) {
+					if (!isset($member_rowdata['data'])) { continue; }
+					foreach ($member_rowdata['data'] as $detaildata) { ?>
+						<div>
+						<?php
+						echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->schedule_id.'">';
+						echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
+						foreach($detail_kbs as $k => $v){
+							if($detaildata->$k){
+								 echo '<span class="text_icon schedule '.$k.'"><span class="skip">'.$v.'</span></span>';
+							}
+						}
+						if(!\Request::is_hmvc()): //重要度
+							$importance_v = $model_name::value2index("title_importance_kb", html_entity_decode($detaildata->title_importance_kb));
+							echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
+						endif;
+						echo $detaildata->title_text.'('.$detaildata->title_kb.')' ;
+						echo '</a>';
+						echo '</div>';
 					}
 				}
-				if(!\Request::is_hmvc()): //重要度
-					$importance_v = $model_name::value2index("title_importance_kb", html_entity_decode($detaildata->title_importance_kb));
-					echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
-				endif;
-				echo $detaildata->title_text.'('.$detaildata->title_kb.')' ;
-				echo '</a>';
-				echo '</div>';
-			}
 			?>
 			</td>
 			<?php if(!\Request::is_hmvc()): ?>
 			<td>
-			<?php  foreach ($row['data'] as $detaildata) {
-				echo '<div>'.$detaildata->create_user->display_name.'</div>';
+			<?php 
+			foreach ($row as $member_rowdata) {
+				if (!isset($member_rowdata['data'])) { continue; }
+				foreach ($member_rowdata['data'] as $detaildata) {
+					echo '<div>'.$detaildata->create_user->display_name.'</div>';
+				}
 			} ?>
 			</td>
 			<?php endif; ?>

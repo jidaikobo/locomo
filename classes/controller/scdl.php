@@ -792,18 +792,18 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 					// メンバー
 					foreach ($r->user as $d) {
-						if (!isset($user_exist[$d->id])) {
+						if (!isset($user_exist[$d->id][$r->schedule_id])) {
 							$user_exist[$d->id]['model'] = $d;
-							$user_exist[$d->id]['data'][] = $r;
+							$user_exist[$d->id][$r->schedule_id]['data'][] = $r;
 						} else {
 							$flg_push = true;
-							foreach ($user_exist[$d->id]['data'] as $row_data) {
+							foreach ($user_exist[$d->id][$r->schedule_id]['data'] as $row_data) {
 								if ($row_data->id == $r->schedule_id) {
 									$flg_push = false;
 								}
 							}
 							if ($flg_push) {
-								$user_exist[$d->id]['data'][] = $r;
+								$user_exist[$d->id][$r->schedule_id]['data'][] = $r;
 							}
 						}
 					}
