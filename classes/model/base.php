@@ -187,7 +187,6 @@ class Model_Base extends \Orm\Model_Soft
 	 */
 	public static function auth_deleted($controller = null, $options = array(), $mode = null)
 	{
-
 		if ($mode == 'index') {
 			return $options;
 		}

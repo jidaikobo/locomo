@@ -27,7 +27,7 @@ trait Actionset_Traits_Wrkflw
 			{
 				$options[] = array('is_visible', '=', true);
 			}
-			$count = count($model::count(array('where'=>array(array('workflow_status', '<>', 'finish')))));
+			$count = count($model::get_related_current_items($controller, $model));
 		}
 
 		// urls

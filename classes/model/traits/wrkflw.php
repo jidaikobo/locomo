@@ -401,7 +401,6 @@ trait Model_Traits_Wrkflw
 		// index_deleted など disable_filter がかかっている場合は return する。
 		if (method_exists(get_called_class(), 'get_filter_status') and !static::get_filter_status()) return $options;
 
-
 		// 一覧にはfinish以外表示しない
 		if ($mode == 'index')
 		{
