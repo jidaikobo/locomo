@@ -789,7 +789,7 @@ table + .index_toolbar {
 .index_toolbar * {
 	vertical-align: middle;
 }
-.index_toolbar_btns {
+.index_toolbar_buttons {
 	float: left;
 }
 /* pagenation */
