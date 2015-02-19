@@ -7,6 +7,11 @@ IE8,MacIE5,Opera9以下 html:first-child
 
 /* あとでlocomoログイン時のCSSを分ける */
 
+/*=== 基本色の設定 ===*/
+a:link {
+	color: #36a;
+}
+/* あとでテーマカラー？や、ボーダー、背景色などの基本色をあてられるクラスを設定したい */
 /*=== login ===*/
 
 /* default */
@@ -1681,9 +1686,6 @@ a.icon.zip:before {
 	margin: 1em 0 .25em;
 }
 
-a:link {
-	color: #36a;
-}
 
 .w1em {width: 1em !important;}
 .w2em {width: 2em !important;}

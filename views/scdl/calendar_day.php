@@ -112,7 +112,7 @@
 						} else {
 				//			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
 							echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
-							if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 2) {
+							if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 6) {
 								echo "(";
 								$week = array('日', '月', '火', '水', '木', '金', '土');
 								if ($detaildata->week_index) {

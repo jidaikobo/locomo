@@ -22,7 +22,7 @@
 			echo $detail->display_startdate . " " . $detail->display_starttime . "〜" . $detail->display_enddate . " " . $detail->display_endtime;
 		} else {
 			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detail->display_starttime . "〜" . $detail->display_endtime;
-			if ($detail->week_kb != "" && $detail->repeat_kb == 2) {
+			if ($detail->week_kb != "" && $detail->repeat_kb == 6) {
 				echo "(";
 				$week = array('日', '月', '火', '水', '木', '金', '土');
 				if ($detail->week_index) {
