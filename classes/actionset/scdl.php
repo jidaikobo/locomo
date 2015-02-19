@@ -95,7 +95,6 @@ class Actionset_Scdl extends \Actionset
 		list($year, $mon, $day) = explode('-', $current['dates'][0]);
 		$week_1st_day = $year.DS.$mon.DS.$day;
 		$ym_str = $y.DS.$m;
-				
 
 		// uri
 		$actions = array(
