@@ -713,28 +713,33 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where_close()
 							->where("deleted_at", "is", null)
 							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_date")
+							->order_by("start_time")
 							->get();
 						
 		$user_exist = array();
 		$building_exist = array();
 		$unique_schedule_data = array();
 
+		$unique_index = array();
 		for ($i = 0; $i <= 23; $i++) {
 			
 			$row = array();
 			$row['hour'] = $i;
 			$row['data'] = array();
 			foreach ($schedule_data as $r) {
-				// 対象日を挿入
-				$r['target_year'] = (int)$year;
-				$r['target_mon'] = (int)$mon;
-				$r['target_day'] = (int)$day;
-				if (!isset($unique_schedule_data['schedule_' . $r['id']])) {
-					$r['scdlid'] = $r['id'];
-					$unique_schedule_data['schedule_' . $r['id']] = clone $r;
-				}
 				if ($this->is_target_day($year, $mon, $day, $r)) {
+					// 対象日を挿入
+					$r['target_year'] = (int)$year;
+					$r['target_mon'] = (int)$mon;
+					$r['target_day'] = (int)$day;
+					if (!isset($unique_index['schedule_' . $r['id']])) {
+						$r['scdlid'] = $r['id'];
+						// クローンする前にアクセスしないと取得しないため
+						$r['building'] = $r['building'];
+						$r['user'] = $r['user'];
+						$unique_schedule_data[] = clone $r;
+						$unique_index['schedule_' . $r['id']] = 1;
+					}
 					$starttime = date('Ymd', strtotime($r['start_date'])) . date('Hi', strtotime($r['start_time']));
 					$endtime = date('Ymd', strtotime($r['end_date'])) . date('Hi', strtotime($r['end_time']));
 					$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
@@ -788,6 +793,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $day)), $r['title_text']);
 						// 30分前かどうか
 						$r['schedule_id'] = $r['id'];	// cloneすると消えるため
+						$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
+						$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
 						// 追加
 						$row['data'][] = clone $r;
 //						$schedules[$r['id']] = clone $r;
@@ -895,6 +902,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['target_mon'] = $row['mon'];
 					$r['target_day'] = $row['day'];
 					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
+					$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
+					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
 					// 追加
 					$row['data'][] = clone $r;
 				}
@@ -987,8 +996,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['target_day'] = $row['day'];
 					// 追加
 					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
-					$r['user'] = $r['user'];	// クローンすると消える（原因分からない）
-					$r['building'] = $r['building'];	// クローンすると消える（原因分からない）
+					$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
+					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
 					$row['data'][] = clone $r;
 				}
 			}

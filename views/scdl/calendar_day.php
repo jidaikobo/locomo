@@ -76,10 +76,10 @@
 		<thead>
 		<tr>
 			<th class="min">
-				氏名
-			</th>
-			<th>
 				予定時刻
+			</th>
+			<th class="min">
+				氏名
 			</th>
 			<th>
 				内容
@@ -93,16 +93,9 @@
 	</thead>
 	<tbody>
 
-<?php foreach ($schedule_data['member_list'] as $row) { ?>
+<?php foreach ($schedule_data['unique_schedule_data'] as $detaildata) { ?>
 		<tr>
-			<th class="name">
-				<?php print $row['model']->display_name; ?>
-			</th>
 			<td>
-			<?php
-			foreach ($row as $member_rowdata) {
-				if (!isset($member_rowdata['data'])) { continue; }
-				foreach ($member_rowdata['data'] as $detaildata) { ?>
 				<div>
 					<?php
 						$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
@@ -132,19 +125,21 @@
 						}
 ?>
 				</div>
-			<?php
-				}
-			}
-			?>
 			</td>
-			<td>
+			<th class="name">
 				<?php
-				foreach ($row as $member_rowdata) {
-					if (!isset($member_rowdata['data'])) { continue; }
-					foreach ($member_rowdata['data'] as $detaildata) { ?>
+				$members = array();
+				foreach ($detaildata->user as $member_data) {
+					$members[] = $member_data->display_name;
+				}
+				print implode(",&nbsp;", $members);
+
+				?>
+			</th>
+			<td>
 						<div>
 						<?php
-						echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->schedule_id.'">';
+						echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->scdlid . sprintf("/%04d/%02d/%02d/", $detaildata->target_year, $detaildata->target_mon, $detaildata->target_day) . '">';
 						echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
 						foreach($detail_kbs as $k => $v){
 							if($detaildata->$k){
@@ -158,19 +153,13 @@
 						echo $detaildata->title_text.'('.$detaildata->title_kb.')' ;
 						echo '</a>';
 						echo '</div>';
-					}
-				}
 			?>
 			</td>
 			<?php if(!\Request::is_hmvc()): ?>
 			<td>
-			<?php 
-			foreach ($row as $member_rowdata) {
-				if (!isset($member_rowdata['data'])) { continue; }
-				foreach ($member_rowdata['data'] as $detaildata) {
-					echo '<div>'.$detaildata->create_user->display_name.'</div>';
-				}
-			} ?>
+			<?php
+				echo '<div>'.$detaildata->create_user->display_name.'</div>';
+			?>
 			</td>
 			<?php endif; ?>
 		</tr>
