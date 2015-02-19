@@ -113,9 +113,12 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				if (class_exists('Model_Usr'))
 				{
 					$usrobj = \Model_Usr::find('first', array('where' => array(array('username', $username))));
-					$usrobj->usergroup;// to lazy load once, for clone
-					$this->user = clone $usrobj;
-					$this->user->id = $usrobj->id; // Orm delete primary key.
+					if (is_object($usrobj))
+					{
+						$usrobj->usergroup;// to lazy load once, for clone
+						$this->user = clone $usrobj;
+						$this->user->id = $usrobj->id; // Orm delete primary key.
+					}
 				}
 				else
 				{
