@@ -139,6 +139,7 @@ function set_focus(t){
 	}else{
 		var container = $('#main_content');
 		container.focus();
+		document.body.scrollTop = 0; //描画が遅れるとカクカクしちゃうので、containerの描画位置自体を考えられたらよいのかも？
 	}
 	
 	//見出しのh1に最初のフォーカスを与える
@@ -193,7 +194,7 @@ $('.hidden_item').each(function(){
 		if($(this).find('form')[0]){
 		//とりあえず、get値を見る。
 			query = window.location.search.substring(1);
-			if(query!=''){//深いifだなあ
+			if(query!=''){//深いifだなあ //ordersもみる
 				params = query.split('&');
 				for(var i=0 ; i < params.length; i++){
 					if( params[i].indexOf('orders') !== 0 || params[i].indexOf('no_prof') !== 0){
@@ -488,7 +489,7 @@ $(document).on('click', 'a[href^=#]', function(e){
 	$(window).off('beforeunload');//ページ内リンクでは画面遷移の警告をキャンセル
 
 	href= $(this).attr("href");
-	if(href != '#'){
+	if(href!='#'){
 		t = $(href == '' ? 'html' : href);
 		position = t.offset().top - headerheight - 10;
 		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
