@@ -7,6 +7,11 @@ IE8,MacIE5,Opera9以下 html:first-child
 
 /* あとでlocomoログイン時のCSSを分ける */
 
+/*=== 基本色の設定 ===*/
+a:link {
+	color: #36a;
+}
+/* あとでテーマカラー？や、ボーダー、背景色などの基本色をあてられるクラスを設定したい */
 /*=== login ===*/
 
 /* default */
@@ -773,10 +778,23 @@ div.lcm_tooltip {
 	text-align: right;
 	font-weight: bold;
 }
+
+/* tooolbar */
+.index_toolbar {
+	margin: 20px 0 5px;
+}
+table + .index_toolbar {
+	margin-top: 5px;
+}
+.index_toolbar * {
+	vertical-align: middle;
+}
+.index_toolbar_buttons {
+	float: left;
+}
 /* pagenation */
-.pagination {
-	padding: 10px;
-	text_align: center;
+.index_toolbar .pagination {
+	float: right;
 }
 .pagination a {
 	padding: 5px 10px;
@@ -1681,9 +1699,6 @@ a.icon.zip:before {
 	margin: 1em 0 .25em;
 }
 
-a:link {
-	color: #36a;
-}
 
 .w1em {width: 1em !important;}
 .w2em {width: 2em !important;}
