@@ -21,10 +21,33 @@ class Actionset_Flr extends \Actionset
 			'\Controller_Flr_File::action_upload',
 			'\Controller_Flr_File::action_view',
 			'\Controller_Flr_Sync::action_sync',
+			'\Controller_Flr_Sync::action_dl',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'ファイラへのアクセス権');
 		\Arr::set($retvals, 'acl_exp', 'ファイラの個別のアクセス権は、ファイルがアップロードされるディレクトリごとに設定します。ここで管理権限を設定しても、ディレクトリで設定された権限が優先します。');
+		return $retvals;
+	}
+
+	/**
+	 * dl()
+	 */
+	public static function actionset_dl($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = array(
+			'realm'        => 'base',
+			'urls'         => $urls,
+			'action_name'  => 'ダウンロード',
+			'show_at_top'  => true,
+			'explanation'  => 'ダウンロードします。',
+			'help'         => '',
+			'acl_exp'      => 'ダウンロード権限。',
+			'order'        => 10,
+			'dependencies' => array(
+				'\Controller_Flr_File::action_dl',
+			)
+		);
+
 		return $retvals;
 	}
 
