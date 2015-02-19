@@ -230,8 +230,8 @@ class Cal
 //		$saturday = 6;
 		$end_of_week_day = $start_with == 7 ? 6 : 7 ;//日曜始まり（7）なら土曜日が終端日。月曜始まりなら日曜日が終端日
 		$week_day = 7;
-		$w = intval(date('w', $now));
-		$d = intval(date('d', $now));
+		$w = intval(date('N', $now)); // 1-7 の曜日
+		$d = intval(date('d', $now)); // 日
 
 		// 終端日を発見
 		if ($w != $end_of_week_day)
