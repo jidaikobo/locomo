@@ -239,7 +239,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 				{
 					$breadcrumbs[] = \Html::anchor('flr/index_files/'.$tmp->id, urldecode($path));
 				} else {
-					$breadcrumbs[] = \Html::anchor('flr/view_file/'.$tmp->id, urldecode($path));
+					$breadcrumbs[] = \Html::anchor('flr/file/view/'.$tmp->id, urldecode($path));
 				}
 			}
 			$tmp_path = dirname($tmp_path).DS;
