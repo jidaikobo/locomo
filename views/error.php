@@ -21,6 +21,9 @@
 		overflow: hidden;
 	}
 	</style>
+	
+	<!-- favicon -->
+	<link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>">
 </head>
 <body>
 <?php echo render('inc_messages'); ?>

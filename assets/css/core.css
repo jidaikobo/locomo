@@ -778,10 +778,23 @@ div.lcm_tooltip {
 	text-align: right;
 	font-weight: bold;
 }
+
+/* tooolbar */
+.index_toolbar {
+	margin: 20px 0 5px;
+}
+table + .index_toolbar {
+	margin-top: 5px;
+}
+.index_toolbar * {
+	vertical-align: middle;
+}
+.index_toolbar_btns {
+	float: left;
+}
 /* pagenation */
-.pagination {
-	padding: 10px;
-	text_align: center;
+.index_toolbar .pagination {
+	float: right;
 }
 .pagination a {
 	padding: 5px 10px;
