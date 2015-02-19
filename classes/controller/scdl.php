@@ -713,6 +713,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where_close()
 							->where("deleted_at", "is", null)
 							->where("kind_flg", $model::$_kind_flg)
+							->order_by("start_date")
 							->get();
 						
 		$user_exist = array();
@@ -725,6 +726,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$row['hour'] = $i;
 			$row['data'] = array();
 			foreach ($schedule_data as $r) {
+				// 対象日を挿入
+				$r['target_year'] = (int)$year;
+				$r['target_mon'] = (int)$mon;
+				$r['target_day'] = (int)$day;
 				if (!isset($unique_schedule_data['schedule_' . $r['id']])) {
 					$r['scdlid'] = $r['id'];
 					$unique_schedule_data['schedule_' . $r['id']] = clone $r;
@@ -782,9 +787,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						// 詳細へのリンク
 						$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $day)), $r['title_text']);
 						// 30分前かどうか
-						$r['target_year'] = (int)$year;
-						$r['target_mon'] = (int)$mon;
-						$r['target_day'] = (int)$day;
 						$r['schedule_id'] = $r['id'];	// cloneすると消えるため
 						// 追加
 						$row['data'][] = clone $r;
