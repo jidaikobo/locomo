@@ -80,11 +80,13 @@
 			施設使用目的：</th><td><?php print $detail_pop_data->purpose_kb . " " . $detail_pop_data->purpose_text; ?>
 		</td>
 	</tr>
+	<?php if ($detail_pop_data->user_num > 0) { ?>
 	<tr>
 		<th>
-			施設使用人数：</th><td><?php print $detail_pop_data->user_num; ?>
+			施設使用人数：</th><td><?php print $detail_pop_data->user_num.'人'; ?>
 		</td>
 	</tr>
+	<?php } ?>
 	<?php } ?>
 	<?php } ?>
 	<tr>

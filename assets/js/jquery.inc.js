@@ -197,7 +197,7 @@ $('.hidden_item').each(function(){
 			if(query!=''){//深いifだなあ //ordersもみる
 				params = query.split('&');
 				for(var i=0 ; i < params.length; i++){
-					if( params[i].indexOf('orders') !== 0 || params[i].indexOf('no_prof') !== 0){
+					if( params[i].indexOf('orders') !== 0 ){
 						v = true;
 						break;
 					}
