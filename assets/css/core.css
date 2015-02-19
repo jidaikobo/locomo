@@ -1193,6 +1193,12 @@ td.minimum {
 	background-color: #ddd;
 	text-decoration: underline;
 }
+.datatable tr.current th {
+	background-color: #f0f0dd;
+}
+.datatable tr.current td {
+	background-color: #fafadd;
+}
 .col_scrollable {
 	display: block;
 	white-space: normal;
@@ -1302,7 +1308,7 @@ table.calendar {
 	background-color: transparent;
 }
 .calendar td.today {
-	background-color: #ffd;
+	background-color: #fafadd;
 }
 .calendar thead * {
 	vertical-align: middle;
