@@ -252,7 +252,8 @@ class Controller_Flr_File extends Controller_Flr
 		{
 			try
 			{
-				\File::download($fullpath, mb_convert_encoding($obj->name, 'sjis-win', 'UTF-8'));
+				$filename = \Locomo\Browser::getIEVersion() ? mb_convert_encoding($obj->name, 'sjis-win', 'UTF-8') : $obj->name;
+				\File::download($fullpath, $filename);
 			} catch (\Fuel\Core\InvalidPathException $e) {
 				return new \Response($page, 404);
 			}
