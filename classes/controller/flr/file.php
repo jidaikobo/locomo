@@ -252,7 +252,7 @@ class Controller_Flr_File extends Controller_Flr
 		{
 			try
 			{
-				\File::download($fullpath, $obj->name);
+				\File::download($fullpath, mb_convert_encoding($obj->name, 'sjis-win', 'UTF-8'));
 			} catch (\Fuel\Core\InvalidPathException $e) {
 				return new \Response($page, 404);
 			}
