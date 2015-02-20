@@ -1,7 +1,7 @@
 <?php 
-	$repeat_kbs = array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年');
-	$detail_kbs = array('provisional_kb' => '仮登録', 'unspecified_kb' => '時間指定なし', 'allday_kb' => '終日');
-	$importance_kbs = array('重要度 高', '重要度 中', '重要度 低');
+	$repeat_kbs = $model_name::get_repeat_kbs();
+	$detail_kbs = $model_name::get_detail_kbs();
+	$importance_kbs = $model_name::get_importance_kbs();
 ?>
 <?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
@@ -34,6 +34,7 @@
 <?php endif; ?>
 <tbody>
 <tr>
+<?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data as $v) {?>
 	<td class="week<?php print $v['week']; ?>">
 		<?php if (isset($v['day'])) { ?>
@@ -46,9 +47,9 @@
 			
 			<div class="events">
 			<?php foreach ($v['data'] as $v2) {
-				$detail_pop_data = $v2;
+				$detail_pop_array[] = $v2;
 				?>
-				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid ?>">
+				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day ?>">
 					<?php
 						//繰り返し区分
 						echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
@@ -93,13 +94,9 @@
 //	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
 ?>
 	 </div><!-- /.legend.calendar -->
-<?php foreach($schedule_data as $v) {?>
-	<?php if (isset($v['day'])) { ?>
-		<?php foreach ($v['data'] as $v2) {
-				$detail_pop_data = $v2;
-				include("detail_pop.php");
-		}?>
-	<?php } ?>
-<?php } ?>
+<?php foreach($detail_pop_array as $v) {
+	$detail_pop_data = $v;
+	include("detail_pop.php");
+} ?>
 
 

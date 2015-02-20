@@ -12,27 +12,8 @@
 	<th>開始日時</th>
 	<td>
 	<?php
-		// 表示加工
-		$detail->display_startdate = date('Y年n月j日', strtotime($detail->start_date . " " . $detail->start_time));
-		$detail->display_enddate = date('Y年n月j日', strtotime($detail->end_date . " " . $detail->end_time));
-		$detail->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail->start_date . " " . $detail->start_time)));
-		$detail->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail->end_date . " " . $detail->end_time)));
-
-		if ($detail->repeat_kb == 0) {
-			echo $detail->display_startdate . " " . $detail->display_starttime . "〜" . $detail->display_enddate . " " . $detail->display_endtime;
-		} else {
-			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detail->display_starttime . "〜" . $detail->display_endtime;
-			if ($detail->week_kb != "" && $detail->repeat_kb == 6) {
-				echo "(";
-				$week = array('日', '月', '火', '水', '木', '金', '土');
-				if ($detail->week_index) {
-					echo "第" . $detail->week_index;
-				} else {
-					echo "毎週";
-				}
-				echo $week[$detail->week_kb] . "曜日)";
-			}
-		}?></td>
+	print $model_name::display_target_day_info($detail);
+	?></td>
 </tr>
 
 <?php endif; ?>

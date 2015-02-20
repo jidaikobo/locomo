@@ -530,4 +530,90 @@ class Model_Scdl extends \Model_Base
 		}
 		return null;
 	}
+
+	/**
+	 * [get_repeat_kbs description]
+	 * @return [type] [description]
+	 */
+	public static function get_repeat_kbs() {
+		return array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年');
+	}
+
+	/**
+	 * [get_detail_kbs description]
+	 * @return [type] [description]
+	 */
+	public static function get_detail_kbs() {
+		return array('provisional_kb' => '仮登録', 'unspecified_kb' => '時間指定なし', 'allday_kb' => '終日');
+	}
+
+	/**
+	 * [get_importance_kbs description]
+	 * @return [type] [description]
+	 */
+	public static function get_importance_kbs() {
+		return array('重要度 高', '重要度 中', '重要度 低');
+	}
+
+	/**
+	 * [display_target_day_info description]
+	 * @param  [type] $data [description]
+	 * @return [type]       [description]
+	 */
+	public static function display_target_day_info($data) {
+
+		// 表示加工
+		$data->display_startdate = date('Y年n月j日', strtotime($data->start_date . " " . $data->start_time));
+		$data->display_enddate = date('Y年n月j日', strtotime($data->end_date . " " . $data->end_time));
+		$data->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($data->start_date . " " . $data->start_time)));
+		$data->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($data->end_date . " " . $data->end_time)));
+
+
+
+		$print = "";
+		// 対象の日時
+		if ($data->repeat_kb == 0) {
+			// 指定なし
+			if ($data->display_startdate == $data->display_enddate) {
+				$print .= $data->display_startdate . ' ' . $data->display_starttime . "〜" . $data->display_endtime;
+			} else {
+				$print .= $data->display_startdate . ' ' . $data->display_starttime . "〜<br>" . $data->display_enddate . " " . $data->display_endtime;
+			}
+		} else {
+			$print .= $data->target_year . "年" . $data->target_mon . "月" . $data->target_day . "日";
+			$print .= '　' . $data->display_starttime . "〜" . $data->display_endtime;
+		}
+
+		// 登録データ
+		$week = array('日', '月', '火', '水', '木', '金', '土');
+		$repeat_kbs = self::get_repeat_kbs($data->repeat_kb);
+		$print .= "<p>■登録条件</p>";
+		$print .= "<p>繰り返し：" . $repeat_kbs[$data->repeat_kb];
+		
+		if ($data->repeat_kb == 3){
+			$print .= "(" . $week[$data->week_kb] . "曜日)";
+		} else if ($data->repeat_kb == 4) {
+			$print .= $data->target_day . "日";
+		} else if ($data->repeat_kb == 5) {
+			$print .= $data->target_mon . "月" . $data->target_day . "日";
+		} else if ($data->week_kb != "" && $data->repeat_kb == 6) {
+			$print .= "(";
+			if ($data->week_index) {
+				$print .= "第" . $data->week_index;
+			} else {
+				$print .= "毎週";
+			}
+			$print .= $week[$data->week_kb] . "曜日)";
+		}
+		$print .= "</p>";
+		if ($data->repeat_kb == 0) {
+			$print .= "<p>設定期間：" . $data->display_startdate . " " . $data->display_starttime . "〜" . $data->display_enddate . " " . $data->display_endtime . "</p>";
+		} else {
+			$print .= "<p>設定期間：" . $data->display_startdate . "〜" . $data->display_enddate . "</p>";
+			$print .= "<p>設定時間：" . $data->display_starttime . "〜" . $data->display_endtime . "</p>";
+		}
+		
+
+		return $print;
+	}
 }

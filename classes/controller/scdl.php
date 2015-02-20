@@ -360,12 +360,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 			$detail->private_kb = $allow ? 0 : 1;
 		}
+		$detail->target_year = $year;
+		$detail->target_mon = $mon;
+		$detail->target_day = $day;
 
 		$view = \View::forge($model::$_kind_name . "/view");
 		$view->set_global('title', self::$nicename);
 		$view->set("year", $year);
 		$view->set("mon", $mon);
 		$view->set("day", $day);
+		$view->set("model_name", $model);
 		$view->set("detail", $detail);
 		$view->set("schedule_attend_members", $attend_members);
 		$view->set("schedule_members_me", $schedule_members);
@@ -1584,5 +1588,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		list($year, $mon, $day) = explode('-', date('Y-m-d'));
 		return self::action_calendar($year, $mon, $day);
 	}
+
 
 }

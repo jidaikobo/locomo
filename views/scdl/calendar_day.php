@@ -1,7 +1,7 @@
 <?php 
-	$repeat_kbs = array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年');
-	$detail_kbs = array('provisional_kb' => '仮登録', 'unspecified_kb' => '時間指定なし', 'allday_kb' => '終日');
-	$importance_kbs = array('重要度 高', '重要度 中', '重要度 低');
+	$repeat_kbs = $model_name::get_repeat_kbs();
+	$detail_kbs = $model_name::get_detail_kbs();
+	$importance_kbs = $model_name::get_importance_kbs();
 ?>
 
 <?php if(!\Request::is_hmvc()): ?>
@@ -146,7 +146,8 @@
 			</th>
 			<td>
 						<div>
-						<?php
+						<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detaildata->scdlid.$detaildata->target_year.$detaildata->target_mon.$detaildata->target_day ?>">
+						<?php				
 						echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->scdlid . sprintf("/%04d/%02d/%02d/", $detaildata->target_year, $detaildata->target_mon, $detaildata->target_day) . '">';
 						echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
 						foreach($detail_kbs as $k => $v){
@@ -160,6 +161,7 @@
 						endif;
 						echo $detaildata->title_text.'('.$detaildata->title_kb.')' ;
 						echo '</a>';
+						echo '</p>';
 						echo '</div>';
 			?>
 			</td>
@@ -197,9 +199,8 @@
 </div><!-- /.field_wrapper -->
 
 <?php foreach($schedule_data['unique_schedule_data'] as $v) { 
-
-		$detail_pop_data = $v;
-		include("detail_pop.php");
+	$detail_pop_data = $v;
+	include("detail_pop.php");
 	
 } ?>
 <script>
