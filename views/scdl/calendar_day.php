@@ -32,7 +32,7 @@
 			<?php print $row['model']->display_name; ?>
 		</th>
 			<?php foreach($schedule_data['schedules_list'] as $v) {?>
-			<td colspan="2" class="time">
+			<td colspan="4" class="time">
 				<?php print $v['hour']; ?>
 			</td>
 			<?php } ?>
@@ -44,15 +44,19 @@
 				?>
 				<tr>
 					<?php foreach($schedule_data['schedules_list'] as $v) {?>
-					<?php $p_active = false; $s_active = false; ?>
+					<?php $p_active = false; $s_active = false; $t_active = false; $f_active = false; ?>
 					
 						<?php foreach ($v['data'] as $detail_data) {
 							foreach ($member_rowdata['data'] as $member_detail) {
 								if ($member_detail->id == $detail_data->schedule_id) {
-									if (($detail_data->primary))
+									if ($detail_data->primary)
 										$p_active = true;
-									if (($detail_data->secondary))
+									if ($detail_data->secondary)
 										$s_active = true;
+									if ($detail_data->third)
+										$t_active = true;
+									if ($detail_data->fourth)
+										$f_active = true;
 								}
 							}
 						}
@@ -60,6 +64,10 @@
 					<td colspan="" class="<?php if ($p_active) { print "active"; } ?> bar" <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
 					</td>
 					<td colspan="" class="<?php if ($s_active) { print "active"; } ?> bar" <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+					</td>
+					<td colspan="" class="<?php if ($t_active) { print "active"; } ?> bar" <?php // if ($t_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+					</td>
+					<td colspan="" class="<?php if ($f_active) { print "active"; } ?> bar" <?php // if ($f_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
 					</td>
 					<?php } ?>
 				</tr>
