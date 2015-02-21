@@ -63,6 +63,16 @@ class Controller_Base extends Controller_Core
 		$content->set('items',  $model::paginated_find($options));
 
 		$this->template->content = $content;
+
+		// search_form
+/*
+		$search_form = '<h1>項目一覧</h1>';
+		if (method_exists($model, 'search_form'))
+		{
+			$search_form = $model::search_form();
+			$this->template->content->set_safe('search_form', $search_form);
+		}
+*/
 	}
 
 	/**
