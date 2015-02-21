@@ -13,6 +13,11 @@
 		</tr>
 <?php endforeach; ?>
 	</tbody>
+	<tfoot>
+		<tr>
+###THEAD###
+		</tr>
+	</tfoot>
 </table>
 <?php echo \Pagination::create_links(); ?>
 
