@@ -76,7 +76,7 @@ class Model_Adrsgrp extends \Model_Base
 		//name
 		$form->add(
 				'name',
-				'ユーザグループ名',
+				'グループ名',
 				array('type' => 'text', 'size' => 20)
 			)
 			->set_value(@$obj->name)
