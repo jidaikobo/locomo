@@ -12,8 +12,10 @@ class Model_Usrgrp extends \Model_Base
 		'order_by' => array('seq' => 'acs'),
 	);
 
+	//$_options
 	public static $_options = array();
 
+	//$_properties
 	protected static $_properties = array(
 		'id',
 		'name' => array(
