@@ -122,7 +122,7 @@ class Bulk {
 			$output .= $form->build();
 		}
 
-		$output = str_replace('{fields}', $output, "\n\t\t\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t\n");
+		$output = str_replace('{fields}', $output, "\n\t\t\n\t\t<table class=\"tbl datatable\">\n{fields}\n\t\t</table>\n\t\t\n"); // todo template
 		return $output;
 	}
 
