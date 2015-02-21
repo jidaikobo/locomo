@@ -42,7 +42,18 @@ class Actionset
 				\Arr::delete($actionsets[$realm], $v);
 			}
 		}
-		return $actionsets;
+
+		// set base realm first
+		$base = \Arr::get($actionsets, 'base');
+		$retvals = array();
+		if ($base) \Arr::set($retvals, 'base', $base);
+		foreach ($actionsets as $realm => $v)
+		{
+			if ($realm == 'base') continue;
+			\Arr::set($retvals, $realm, $v);
+		}
+
+		return $retvals;
 	}
 
 	/**
