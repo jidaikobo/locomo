@@ -76,8 +76,11 @@ class Pagination extends \Fuel\Core\Pagination
 		return \Html::anchor($url, $label ?: $field, array('class' => $class));
 	}
 
-
-	public function render_sort_info() {
+	/*
+	 * render_sort_info()
+	*/
+	public function render_sort_info()
+	{
 		if ( is_null( \Input::get('orders')) ) {
 			return null;
 		}
@@ -114,7 +117,9 @@ class Pagination extends \Fuel\Core\Pagination
 
 	}
 
-
+	/*
+	 * __set()
+	*/
 	public function __set($name, $value = null) {
 		if ($name == 'sort_info_model') {
 			static::$_sort_info_model = $value;
@@ -125,6 +130,9 @@ class Pagination extends \Fuel\Core\Pagination
 		}
 	}
 
+	/*
+	 * __callStatic()
+	*/
 	public static function __callStatic($name, $arguments)
 	{
 		if ($name == 'create_nav') {
@@ -140,7 +148,9 @@ class Pagination extends \Fuel\Core\Pagination
 		return parent::__callStatic($name, $arguments);
 	}
 
-
+	/*
+	 * render_nav()
+	*/
 	public function render_nav($raw = false)
 	{
 		// no links if we only have one page
