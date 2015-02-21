@@ -72,6 +72,16 @@ class Controller_Usr extends \Locomo\Controller_Base
 			);
 		}
 
+		// group
+		$usergroup = \Input::get('usergroup', null) ;
+		if ($usergroup)
+		{
+			\Model_Usr::$_options['related']['usergroup']['join_type'] = 'inner';
+			\Model_Usr::$_options['related']['usergroup']['where'] = array(
+				array('id', $usergroup),
+			);
+		}
+
 		// span
 		if (\Input::get('from')) \Model_Usr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
 		if (\Input::get('to'))   \Model_Usr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));

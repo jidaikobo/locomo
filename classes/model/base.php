@@ -433,6 +433,7 @@ class Model_Base extends \Orm\Model_Soft
 					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
 				}
 			}
+
 /*
 			if (\Input::get('all')) {
 				foreach (static::$_properties as $k => $v) {

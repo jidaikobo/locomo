@@ -333,6 +333,16 @@ class Model_Usr extends Model_Base
 			array('type' => 'text', 'value' => \Input::get('all'))
 		);
 
+		// ユーザグループ
+		$options = array('' => '選択してください');
+		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', true)), 'order_by' => array('name')), 'name');
+		$form->add(
+				'usergroup',
+				'ユーザグループ',
+				array('type' => 'select', 'options' => $options)
+			)
+			->set_value(\Input::get('usergroup'));
+
 		// 登録日 - 開始
 		$form->add(
 				'from',
@@ -371,7 +381,7 @@ class Model_Usr extends Model_Base
 
 		// wrap
 		$parent = parent::search_form_base('ユーザ');
-		$parent->add_after($form, 'customer', array(), array(), 'opener');
+		$parent->add_after($form, 'user', array(), array(), 'opener');
 
 		return $parent;
 	}

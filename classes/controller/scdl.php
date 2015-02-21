@@ -360,12 +360,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 			$detail->private_kb = $allow ? 0 : 1;
 		}
+		$detail->target_year = $year;
+		$detail->target_mon = $mon;
+		$detail->target_day = $day;
 
 		$view = \View::forge($model::$_kind_name . "/view");
 		$view->set_global('title', self::$nicename);
 		$view->set("year", $year);
 		$view->set("mon", $mon);
 		$view->set("day", $day);
+		$view->set("model_name", $model);
 		$view->set("detail", $detail);
 		$view->set("schedule_attend_members", $attend_members);
 		$view->set("schedule_members_me", $schedule_members);
@@ -743,52 +747,39 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$starttime = date('Ymd', strtotime($r['start_date'])) . date('Hi', strtotime($r['start_time']));
 					$endtime = date('Ymd', strtotime($r['end_date'])) . date('Hi', strtotime($r['end_time']));
 					$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
-					$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
+					$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "15";
+					$target_3 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
+					$target_4 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "45";
 
 					if ($r['repeat_kb'] == 1 || $r['repeat_kb'] == 2 || $r['repeat_kb'] == 3 || $r['repeat_kb'] == 4 || $r['repeat_kb'] == 5 || $r['repeat_kb'] == 6) {
 						$starttime = date('Hi', strtotime($r['start_time']));
 						$endtime = date('Hi', strtotime($r['end_time']));
 						$target_1 = sprintf("%02d", $row['hour']) . "00";
-						$target_2 = sprintf("%02d", $row['hour']) . "30";
-						// 前半
-						if (!($target_1 < $starttime || $target_1 >= $endtime)) {
-						
-							$r['primary'] = 1;
-						} else {
-							$r['primary'] = 0;
-						}
-						$target = $row['hour'] . "30";
-						//if (!($target < $starttime || $target > $endtime)) {
-						
-						if ($target_2 < $endtime && $starttime <= $target_2) {
-							$r['secondary'] = 1;
-						
-						} else {
-							$r['secondary'] = 0;
-						}
+						$target_2 = sprintf("%02d", $row['hour']) . "15";
+						$target_3 = sprintf("%02d", $row['hour']) . "30";
+						$target_4 = sprintf("%02d", $row['hour']) . "45";
+
+						$r['primary'] = (!($target_1 < $starttime || $target_1 >= $endtime)) ? 1 : 0;
+						$r['secondary'] = (!($target_2 < $starttime || $target_2 >= $endtime)) ? 1 : 0;
+						$r['third'] = (!($target_3 < $starttime || $target_3 >= $endtime)) ? 1 : 0;
+						$r['fourth'] = ($target_4 < $endtime && $starttime <= $target_4) ? 1 : 0;
+						//$r['fourth'] = (!($target_4 < $starttime || $target_4 >= $endtime)) ? 1 : 0;
 					} else {
 						$starttime = date('Ymd', strtotime($r['start_date'])) . date('Hi', strtotime($r['start_time']));
 						$endtime = date('Ymd', strtotime($r['end_date'])) . date('Hi', strtotime($r['end_time']));
 						$target_1 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "00";
-						$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
-						// 前半
-						if (!($target_1 < $starttime || $target_1 >= $endtime)) {
-						
-							$r['primary'] = 1;
-						} else {
-							$r['primary'] = 0;
-						}
-						$target = $row['hour'] . "30";
-						//if (!($target < $starttime || $target > $endtime)) {
-						
-						if ($target_2 < $endtime && $starttime <= $target_2) {
-							$r['secondary'] = 1;
-						
-						} else {
-							$r['secondary'] = 0;
-						}
+						$target_2 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "15";
+						$target_3 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "30";
+						$target_4 = sprintf("%04d%02d%02d%02d", $year, $mon, $day, $row['hour']) . "45";
+
+						$r['primary'] = (!($target_1 < $starttime || $target_1 >= $endtime)) ? 1 : 0;
+						$r['secondary'] = (!($target_2 < $starttime || $target_2 >= $endtime)) ? 1 : 0;
+						$r['third'] = (!($target_3 < $starttime || $target_3 >= $endtime)) ? 1 : 0;
+						$r['fourth'] = ($target_4 < $endtime && $starttime <= $target_4) ? 1 : 0;
+						//$r['fourth'] = (!($target_4 < $starttime || $target_4 >= $endtime)) ? 1 : 0;
+
 					}
-					if (isset($r['primary']) || isset($r['secondary'])) {
+					if (isset($r['primary']) || isset($r['secondary']) || isset($r['third']) || isset($r['fourth'])) {
 						// 詳細へのリンク
 						$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $day)), $r['title_text']);
 						// 30分前かどうか
@@ -1597,5 +1588,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		list($year, $mon, $day) = explode('-', date('Y-m-d'));
 		return self::action_calendar($year, $mon, $day);
 	}
+
 
 }

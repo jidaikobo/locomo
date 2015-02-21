@@ -1,8 +1,11 @@
 <?php
-namespace Locomo;
-class Model_Usrgrp extends \Model_Base
+class Model_Adrsgrp extends \Model_Base
 {
-	protected static $_table_name = 'lcm_usrgrps';
+//	use \Model_Traits_Wrkflw;
+
+	protected static $_table_name = 'lcm_adrs_groups';
+
+	public static $_options = array();
 
 	// $_conditions
 	protected static $_conditions = array(
@@ -12,15 +15,26 @@ class Model_Usrgrp extends \Model_Base
 		'order_by' => array('seq' => 'acs'),
 	);
 
-	//$_options
-	public static $_options = array();
-
-	//$_properties
-	protected static $_properties = array(
+	protected static $_properties =
+	array (
 		'id',
 		'name' => array(
-			'lcm_role' => 'subject',
-			'label' => '名称',
+			'label' => 'グループ名',
+			'data_type' => 'varchar(255)',
+			'form' => 
+			array (
+				'type' => 'text',
+				'size' => 30,
+				'class' => 'varchar',
+			),
+			'validation' => 
+			array (
+				'required',
+				'max_length' => 
+				array (
+					255,
+				),
+			),
 		),
 		'description',
 		'seq',
@@ -28,29 +42,16 @@ class Model_Usrgrp extends \Model_Base
 		'deleted_at',
 	);
 
-	protected static $_many_many = array(
-		'user' => array(
+	protected static $_has_many = array(
+		'address' => array(
 			'key_from' => 'id',
-			'key_through_from' => 'group_id',
-			'table_through' => 'lcm_usrs_usrgrps',
-			'key_through_to' => 'user_id',
-			'model_to' => 'Model_Usr',
-			'key_to' => 'id',
+			'model_to' => 'Model_Adrs',
+			'key_to' => 'group_id',
 			'cascade_save' => false,
-			'cascade_delete' => false,
+			'cascade_delete' => false
 		)
 	);
 
-	protected static $_soft_delete = array(
-		'deleted_field'   => 'deleted_at',
-		'mysql_timestamp' => true,
-	);
-
-	protected static $_observers = array(
-		'Locomo\Observer_Revision' => array(
-			'events' => array('after_insert', 'after_save'),
-		),
-	);
 
 	/**
 	 * form_definition()

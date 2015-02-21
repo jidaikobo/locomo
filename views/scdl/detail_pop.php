@@ -2,7 +2,7 @@
 
 
 <?php if (isset($detail_pop_data->title_text)) { ?>
-<div id="pop<?php print $detail_pop_data->scdlid; ?>" aria-hidden="true" style="display:none;">
+<div id="pop<?php print $detail_pop_data->scdlid.$detail_pop_data->target_year.$detail_pop_data->target_mon.$detail_pop_data->target_day; ?>" aria-hidden="true" style="display:none;">
 <table class="tbl2">
 	<thead>
 	<tr>
@@ -15,20 +15,9 @@
 	<tr>
 		<th>
 			<?php
-			
-			// 表示加工
-			$detail_pop_data->display_startdate = date('Y年n月j日', strtotime($detail_pop_data->start_date . " " . $detail_pop_data->start_time));
-			$detail_pop_data->display_enddate = date('Y年n月j日', strtotime($detail_pop_data->end_date . " " . $detail_pop_data->end_time));
-			$detail_pop_data->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail_pop_data->start_date . " " . $detail_pop_data->start_time)));
-			$detail_pop_data->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detail_pop_data->end_date . " " . $detail_pop_data->end_time)));
 
-			if ($detail_pop_data->repeat_kb == 0) {
-				// 毎年
-				print '開催日時：</th><td>' . $detail_pop_data->display_startdate . ' ' . $detail_pop_data->display_starttime . "〜<br>" . $detail_pop_data->display_enddate . " " . $detail_pop_data->display_endtime;
-			} else {
-				print '開催日時：</th><td>' . $detail_pop_data->target_year . "年" . $detail_pop_data->target_mon . "月" . $detail_pop_data->target_day . "日";
-				print '　' . $detail_pop_data->display_starttime . "〜" . $detail_pop_data->display_endtime;
-			}
+			// 指定なし
+			print '開催日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
 			?>
 		</td>
 	</tr>
