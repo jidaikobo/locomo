@@ -174,14 +174,19 @@ class Model_Base extends \Orm\Model_Soft
 	{
 		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
 
+		if ($mode == 'index') {
+			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
+			return $options;
+		}
+
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'::action_view_yet')
+			! \Auth::has_access($controller.'::action_index_yet')
 		)
 		{
 			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
-			$max = max(array_keys($options['where']));
-			$options['where'][$max]['or'] = array($column, 'is', null);
+//			$max = max(array_keys($options['where']));
+//			$options['where'][$max]['or'] = array($column, 'is', null);
 		}
 		return $options;
 	}

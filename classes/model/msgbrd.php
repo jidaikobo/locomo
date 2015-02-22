@@ -91,17 +91,38 @@ class Model_Msgbrd extends \Model_Base
 			),
 			'default' => 0
 		),
-		'expired_at' => array('form' => array('type' => false), 'default' => null),
+
+		'expired_at' => 
+		array (
+			'label' => '公開期限',
+			'data_type' => 'datetime',
+			'form' => 
+			array (
+				'type' => 'text',
+				'class' => 'text',
+			),
+		),
+
+		'created_at' => 
+		array (
+			'label' => '作成日',
+			'data_type' => 'datetime',
+			'form' => 
+			array (
+				'type' => 'text',
+				'class' => 'text',
+			),
+		),
+
 		'creator_id' => array('form' => array('type' => false), 'default' => ''),
 		'updater_id' => array('form' => array('type' => false), 'default' => ''),
-		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
 	) ;
 
 
-	// $_has_one
-	protected static $_has_one = array(
+	// $_belongs_to
+	protected static $_belongs_to = array(
 		'usergroup' => array(
 			'key_from' => 'usergroup_id',
 			'model_to' => 'Model_Usrgrp',
@@ -153,6 +174,58 @@ class Model_Msgbrd extends \Model_Base
 //		),
 
 	);
+
+	/**
+	 * _init
+	 */
+	 public static function _init()
+	{
+// add_authorize_methods もここに書ける？
+
+		// properties
+		self::$_properties['created_at'] = array(
+			'label' => '作成日/公開日',
+			'form' => array(
+				'type' => 'text',
+				'class' => 'datetime',
+			),
+			'default' => date('Y-m-d H:i:s'),
+		);
+
+		self::$_properties['expired_at'] = array(
+			'label' => '公開期限',
+			'form' => array(
+				'type' => 'text',
+				'class' => 'datetime',
+			),
+		);
+
+/*
+		self::$_properties['hoge'] = array(
+			'label' => 'test',
+			'form' => array(
+				'type' => 'select'
+			)
+		);
+*/
+		// usergroup_id
+/*
+		echo @static::$id;
+		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
+		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
+		self::$_properties['usergroup_id'] = array(
+			'label' => '公開範囲',
+			'form' => array(
+				'type' => 'select',
+				'options' => $options,
+			),
+			'validation' => array(
+				'required',
+			),
+			'default' => 0
+		);
+*/
+	}
 
 	/**
 	 * form_definition()
@@ -255,10 +328,15 @@ class Model_Msgbrd extends \Model_Base
 
 		// logic
 		$options['where'][] = array(
-			array($column, '=', '0'), // draftでないか
+			// draftでなく、公開範囲内か？
+			array(
+				array($column, '=', '0'),
+				array('usergroup_id', 'IN', \Auth::get_groups()),
+			), 
+			 // draftでもcreator_idが一致しているか
 			'or' => array(
 				array($column, '=', '1'),
-				array('creator_id', '=', \Auth::get('id')), // draftでもcreator_idが一致しているか
+				array('creator_id', '=', \Auth::get('id')),
 			)
 		);
 

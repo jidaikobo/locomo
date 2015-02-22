@@ -135,8 +135,13 @@ class Controller_Base extends Controller_Core
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
 		$model::$_options['where'][] = array('created_at', '>=', date('Y-m-d H:i:s'));
-		$model::$_options['where'][] = array('expired_at', '>=', date('Y-m-d H:i:s'));
-
+		$model::$_options['where'][] = array('expired_at', 'is', null);
+/*
+		$model::$_options['where'] = array(
+			array('expired_at', '>=', date('Y-m-d H:i:s')),
+			'or' =>  array('expired_at', 'is', null),
+		);
+*/
 		static::index_core();
 		$this->template->set_global('title', static::$nicename . '予約項目');
 	}
@@ -365,6 +370,7 @@ class Controller_Base extends Controller_Core
 			}
 			catch (\Exception $e) {
 				\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
+				return \Response::redirect(static::$main_url);
 			}
 
 			\Session::set_flash(
@@ -374,9 +380,6 @@ class Controller_Base extends Controller_Core
 
 			return \Response::redirect(static::$base_url.'index_deleted');
 		}
-
-		\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
-		return \Response::redirect(static::$main_url);
 	}
 
 	/**

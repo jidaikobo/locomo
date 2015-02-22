@@ -9,9 +9,11 @@
 <!--			<th><?php echo \Pagination::sort('contents', '本文', false);?></th>-->
 			<th><?php echo \Pagination::sort('category_id', 'カテゴリ', false);?></th>
 			<th><?php echo \Pagination::sort('created_at', '作成日時', false);?></th>
-			<th><?php echo \Pagination::sort('updated_at', '更新日時', false);?></th>
+<!--			<th><?php echo \Pagination::sort('updated_at', '更新日時', false);?></th>-->
 			<th><?php echo \Pagination::sort('expired_at', '有効期日', false);?></th>
+<?php if (\Request::main()->action == 'index_deleted'): ?>
 			<th><?php echo \Pagination::sort('deleted_at', '削除日', false);?></th>
+<?php endif; ?>
 			<th><?php echo \Pagination::sort('is_draft', '公開', false);?></th>
 			<th><?php echo \Pagination::sort('creator_id', '投稿者', false);?></th>
 			<th>操作</th>
@@ -24,9 +26,11 @@
 <!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->contents; ?></div></td>-->
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->categories['name']; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->created_at; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->updated_at; ?></div></td>
+<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->updated_at; ?></div></td>-->
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->expired_at; ?></div></td>
+<?php if (\Request::main()->action == 'index_deleted'): ?>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->deleted_at; ?></div></td>
+<?php endif; ?>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->is_draft ? '下書き' : '公開'; ?></div></td>
 	<td><div class="col_scrollable" tabindex="-1"><?php echo \Model_Usr::get_display_name($item->creator_id); ?></div></td>
 			<td>
@@ -59,9 +63,11 @@
 <!--			<th><?php echo \Pagination::sort('contents', '本文', false);?></th>-->
 			<th><?php echo \Pagination::sort('category_id', 'カテゴリ', false);?></th>
 			<th><?php echo \Pagination::sort('created_at', '作成日時', false);?></th>
-			<th><?php echo \Pagination::sort('updated_at', '更新日時', false);?></th>
+<!--			<th><?php echo \Pagination::sort('updated_at', '更新日時', false);?></th>-->
 			<th><?php echo \Pagination::sort('expired_at', '有効期日', false);?></th>
+<?php if (\Request::main()->action == 'index_deleted'): ?>
 			<th><?php echo \Pagination::sort('deleted_at', '削除日', false);?></th>
+<?php endif; ?>
 			<th><?php echo \Pagination::sort('is_draft', '公開', false);?></th>
 			<th><?php echo \Pagination::sort('creator_id', '投稿者', false);?></th>
 			<th>操作</th>
