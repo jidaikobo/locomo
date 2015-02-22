@@ -44,6 +44,7 @@ class Model_Base extends \Orm\Model_Soft
 	public static function add_authorize_methods()
 	{
 // see sample at \Model_Traits_Wrkflw -マージでもいいか？
+// あるいは\EventだがtraitのEventをどう持ってくるか要検討
 //		if ( ! in_array('auth_sample', static::$_authorize_methods)):
 //			static::$_authorize_methods[] = 'auth_sample';
 //		endif;
@@ -87,6 +88,7 @@ class Model_Base extends \Orm\Model_Soft
 	 * 具体例は\Locomo\Controller_Traits_Wrkflw::action_index_workflow()参照。
 	 * \Orm\Model::find() は、$options が異なったらキャッシュしないべきではないかと思う。
 	 * また、\Locomo\Auth_Login_LocomoauthでもModel_Usrのキャッシュクリアのために呼んでいるので要参照。
+	 * cloneで解決。もう多分不要。
 	 */
 /*
 	public static function clear_cached_objects()
@@ -131,9 +133,11 @@ class Model_Base extends \Orm\Model_Soft
 			static::disable_filter();
 		} else {
 			// モデルが持っている判定材料を、適宜$optionsに足す。
-			foreach(self::$_authorize_methods as $authorize_method):
+			foreach(self::$_authorize_methods as $authorize_method)
+			{
+				if ( ! method_exists(get_called_class(), $authorize_method)) continue;
 				$options = static::$authorize_method($controller, $options, $mode);
-			endforeach;
+			}
 		}
 
 		return $options;
