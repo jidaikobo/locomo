@@ -1,3 +1,7 @@
+<?php if ( ! \Request::is_hmvc()): ?>
+	<h1><?php echo $title ?></h1>
+<?php endif; ?>
+
 <table class="tbl datatable">
 <thead>
 	<tr>

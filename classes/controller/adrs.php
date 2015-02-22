@@ -102,7 +102,5 @@ class Controller_Adrs extends \Locomo\Controller_Base
 		$view->set_global('form', $form, false);
 		$this->base_assign();
 		$this->template->content = $view;
-
-
 	}
 }

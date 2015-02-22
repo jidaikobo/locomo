@@ -24,8 +24,8 @@ class Actionset_XXX extends \Actionset_Base
 	public static function _actionset_sample_action($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (\Request::main()->action == 'edit' && $id):
-			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.DS.'view', $actions, ['create']);
+			$actions = array(array($controller.DS."sample_action/".$id, '閲覧'));
+			$urls = static::generate_urls($controller.'::action_sample_action', $actions, ['create']);
 		endif;
 
 		$retvals = array(
@@ -36,7 +36,7 @@ class Actionset_XXX extends \Actionset_Base
 			'acl_exp'      => 'explanation of sample_action for acl',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.DS.'sample_action',
+				$controller.'::action_sample_action',
 			)
 		);
 		return $retvals;

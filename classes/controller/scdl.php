@@ -16,6 +16,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		'order'        => 900,   // order of appearance
 		'widgets' =>array(
 			array('name' => 'カレンダ', 'uri' => '\\Controller_Scdl::action_calendar'),
+			array('name' => '今日のスケジュール', 'uri' => '\\Controller_Scdl::action_dashboard_today'),
 		),
 	);
 
@@ -1574,7 +1575,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_dashboard_week_calendar()
 	{
-		$weeknum = \Locomo\Cal::get_current_weeknum();
+		$weeknum = \Locomo\Cal::get_current_weeknum('', 1);
 		$current = \Locomo\Cal::get_week_calendar_by_weeknum(date('Y-m'), $weeknum, $start_with = 1);
 		list($year, $mon, $day) = explode('-', $current['dates'][0]);
 		return self::action_calendar($year, $mon, $day, $mode = 'week');

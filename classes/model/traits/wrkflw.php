@@ -352,9 +352,10 @@ trait Model_Traits_Wrkflw
 		$q->execute();
 
 		// 最後の承認か、ルート設定直後だったら、「次のユーザたち」を削除後return
-		if ($status == 'finish' || $status == 'init'):
+		if ($status == 'finish' || $status == 'init')
+		{
 			return;
-		endif;
+		}
 
 		// 現在のステップのidを取得
 		$step_id = self::get_current_step_id($workflow_id, $current_step);
@@ -362,7 +363,8 @@ trait Model_Traits_Wrkflw
 		// 次のステップのユーザたちを取得
 		$members = self::get_members($step_id);
 
-		foreach($members as $user_id):
+		foreach($members as $user_id)
+		{
 			$set = array(
 				'log_id'        => $log_id,
 				'controller'    => $controller,
@@ -373,7 +375,7 @@ trait Model_Traits_Wrkflw
 			$q->table('lcm_wrkflw_current_users');
 			$q->set($set);
 			$q->execute();
-		endforeach;
+		}
 
 		return;
 	}
@@ -383,9 +385,10 @@ trait Model_Traits_Wrkflw
 	 */
 	public static function add_authorize_methods()
 	{
-		if ( ! in_array('auth_workflow', static::$_authorize_methods)):
+		if ( ! in_array('auth_workflow', static::$_authorize_methods))
+		{
 			static::$_authorize_methods[] = 'auth_workflow';
-		endif;
+		}
 	}
 
 	/*
@@ -396,10 +399,10 @@ trait Model_Traits_Wrkflw
 	{
 		// workflow_statusカラムがなければ、対象にしない
 		$column = \Arr::get(static::get_field_by_role('workflow'), 'lcm_field', 'workflow_status');
-		if (! isset(static::properties()[$column])) return $options;
+		if ( ! isset(static::properties()[$column])) return $options;
 
 		// index_deleted など disable_filter がかかっている場合は return する。
-		if (method_exists(get_called_class(), 'get_filter_status') and !static::get_filter_status()) return $options;
+		if (method_exists(get_called_class(), 'get_filter_status') and ! static::get_filter_status()) return $options;
 
 		// 一覧にはfinish以外表示しない
 		if ($mode == 'index')

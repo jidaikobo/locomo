@@ -128,8 +128,9 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			// return true when login was verified, and either the hash matches or multiple logins are allowed
 			if ($this->user and (\Config::get('locomoauth.multiple_logins', false) or $this->user['login_hash'] === $login_hash))
 			{
-				$usergroups = array(-10); // logged in usergroup
+				$usergroups = array(0, -10); // logged in usergroup and guests
 				$usergroups = array_merge($usergroups, array_keys($this->user->usergroup));
+				$this->user->usergroup[0] = (object) array();
 				$this->user->usergroup[-10] = (object) array();
 
 				// slug

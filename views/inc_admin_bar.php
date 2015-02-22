@@ -163,7 +163,7 @@ if (\Auth::check()):
 			if($usergroups):
 				$html.= '<li class="usergroup">所属ユーザグループ<ul>';
 				foreach ($usergroups as $k => $usergroup):
-					if ($k == -10) continue; // usergroup -10: logged in users
+					if (in_array($k, [0, -10])) continue; // usergroup -10: logged in users, 0:guest
 					$html.= "<li>{$usergroup->name}</li>";
 				endforeach;
 				$html.= '</ul></li>';
