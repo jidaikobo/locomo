@@ -230,4 +230,38 @@ class Model_Msgbrd extends \Model_Base
 
 		return $parent;
 	}
+
+	/**
+	 * add_authorize_methods()
+	 */
+	public static function add_authorize_methods()
+	{
+		if ( ! in_array('auth_msgbrd', static::$_authorize_methods))
+		{
+			static::$_authorize_methods[] = 'auth_msgbrd';
+		}
+	}
+
+	/*
+	 * auth_msgbrd()
+	 */
+	public static function auth_msgbrd($controller = null, $options = array(), $mode = null)
+	{
+		// draftカラムがなければ、対象にしない
+		$column = \Arr::get(static::get_field_by_role('draft'), 'lcm_field', 'is_draft');
+		if (! isset(static::properties()[$column])) return $options;
+
+		if (in_array(\Auth::get('id'), [-1, -2])) return $options;
+
+		// logic
+		$options['where'][] = array(
+			array($column, '=', '0'), // draftでないか
+			'or' => array(
+				array($column, '=', '1'),
+				array('creator_id', '=', \Auth::get('id')), // draftでもcreator_idが一致しているか
+			)
+		);
+
+		return $options;
+	}
 }
