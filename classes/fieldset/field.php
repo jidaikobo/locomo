@@ -148,11 +148,19 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		if (is_array($build_field))
 		{
 			$label = $this->label ? str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>')) : '';
-			$template = $this->template ?: $form->get_config('multi_field_template_plain',
-				$form->get_config(
-					'multi_field_template',
-					"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n")
+			$template = $this->template ?: $form->get_config(
+				'multi_field_template',
+				"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
 			);
+			// template が opener, closer だったら {opener} {closer} をつける
+			if ($template == 'opener' or $template == 'closer') {
+				$origin_template = $form->get_config(
+					'multi_field_template',
+					"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
+				);
+				if ($template == 'opener') $template = "\t\t{opener}\n" . $origin_template;
+				if ($template == 'closer') $template = $origin_template . "\t\t{closer}\n";
+			}
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
@@ -204,6 +212,11 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 					array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description, $error_alert_link), $template
 				); // 変更
 
+				// 追加 opener, closer
+				$opener = $form->get_config('opener_template', "");
+				$closer = $form->get_config('closer_template', "");
+				$template = str_replace(array('{opener}', '{closer}'), array($opener, $closer), $template);
+
 				return $template;
 			}
 
@@ -219,9 +232,18 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		}
 
 		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n");
+		// template が opener, closer だったら {opener} {closer} をつける
+		if ($template == 'opener' or $template == 'closer') {
+			$origin_template = $form->get_config(
+				'field_template',
+				"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
+			);
+			if ($template == 'opener') $template = "\t\t{opener}\n" . $origin_template;
+			if ($template == 'closer') $template = $origin_template . "\t\t{closer}\n";
+		}
 
 		/*
-		// 追加 2 ここから
+		// 追加 2 ここから 単一の checkbox も optinos に与えるため不要 
 		if ((bool)$form->get_config('implicit_label', false) and $this->type == 'checkbox') {
 			$label = str_replace('</label>', '', $label);
 			$build_field .= '</label>';
@@ -233,13 +255,18 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		 // 追加 3
 		$error_alert_link = $this->error() ? $form->get_config('error_alert_link') : '';
 
-		// $build_field->set_attribute('data-jslcm-tooltip', $error_msg);
+		// $build_field->set_attribute('data-jslcm-tooltip', $error_msg); // 上でやっている
 
 
 		// 変更 error_alert_link を足した
 		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}', '{error_alert_link}'),
 			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id , $error_alert_link),
 			$template);
+
+		// 追加 opener, closer
+		$opener = $form->get_config('opener_template', "");
+		$closer = $form->get_config('closer_template', "");
+		$template = str_replace(array('{opener}', '{closer}'), array($opener, $closer), $template);
 
 		return $template;
 	}
@@ -386,59 +413,6 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 	}
 
 
-	/*
-	protected function template_plain($build_field)
-	{
-		$form = $this->fieldset()->form();
-
-		// $required_mark = $this->get_attribute('required', null) ? $form->get_config('required_mark', null) : null;
-		$label = '<label class="">' . $this->label . '</label>';
-
-		if (is_array($build_field))
-		{
-			$label = $this->label ? str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>')) : '';
-			$template = $this->template ?: $form->get_config('form.multi_field_template_plain', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}\n{fields}\t\t\t\n\t\t\t</td>\n\t\t</tr>\n");
-			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
-			{
-				$build_fields = '';
-				foreach ($build_field as $lbl => $bf)
-				{
-					$bf_temp = str_replace('{label}', '', $match[1]);
-					$bf_temp = str_replace('{required}', '', $bf_temp);
-					$bf_temp = str_replace('{field}', $bf, $bf_temp);
-					$build_fields .= $bf_temp;
-				}
-
-				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}'), array($label, '', $build_fields, '', '', ''), $template);
-
-				return $template;
-			}
-
-			// still here? wasn't a multi field template available, try the normal one with imploded $build_field
-			$build_field = implode(' ', $build_field);
-		}
-
-		// determine the field_id, which allows us to identify the field for CSS purposes
-		$field_id = 'col_'.$this->name;
-		if ($parent = $this->fieldset()->parent())
-		{
-			$parent->get_tabular_form() and $field_id = $parent->get_tabular_form().'_col_'.$this->basename;
-		}
-
-		$template = $this->template ?: $form->get_config('field_template_plain', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{field}', '{field_id}'),
-			array($label, $build_field, $field_id),
-			$template);
-
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
-			array($label, '', $build_field, '', '', '', ''),
-			$template);
-
-
-		return $template;
-	}
-	 */
 	protected function template_plain($build_field, $label)
 	{
 		$form = $this->fieldset()->form();
@@ -457,6 +431,16 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 					"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
 				)
 			);
+			// template が opener, closer だったら {opener} {closer} をつける
+			if ($template == 'opener' or $template == 'closer') {
+				$origin_template = $form->get_config(
+					'multi_field_template',
+					"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
+				);
+				if ($template == 'opener') $template = "\t\t{opener}\n" . $origin_template;
+				if ($template == 'closer') $template = $origin_template . "\t\t{closer}\n";
+			}
+
 			$template = str_replace(array('{title_contents}', '{type}'), array('', ''), $template);
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
@@ -481,6 +465,11 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 					$template
 				);
 
+				// 追加 opener, closer
+				$opener = $form->get_config('opener_template', "");
+				$closer = $form->get_config('closer_template', "");
+				$template = str_replace(array('{opener}', '{closer}'), array($opener, $closer), $template);
+
 				return $template;
 			}
 
@@ -503,9 +492,23 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 				"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n"
 			)
 		);
+		// template が opener, closer だったら {opener} {closer} をつける
+		if ($template == 'opener' or $template == 'closer') {
+			$origin_template = $form->get_config(
+				'field_template',
+				"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
+			);
+			if ($template == 'opener') $template = "\t\t{opener}\n" . $origin_template;
+			if ($template == 'closer') $template = $origin_template . "\t\t{closer}\n";
+		}
 		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}', '{error_alert_link}', '{auto_id}'),
 			array($label, $required_mark, $build_field, $error_msg, $error_class, '', $field_id, '', $this->get_attribute('id')),
 			$template);
+
+		// 追加 opener, closer
+		$opener = $form->get_config('opener_template', "");
+		$closer = $form->get_config('closer_template', "");
+		$template = str_replace(array('{opener}', '{closer}'), array($opener, $closer), $template);
 
 		return $template;
 	}
