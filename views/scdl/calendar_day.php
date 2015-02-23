@@ -108,14 +108,19 @@
 					<?php
 						$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
 						$detaildata->display_enddate = date('Y年n月j日', strtotime($detaildata->end_date . " " . $detaildata->end_time));
-						$detaildata->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
-						$detaildata->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->end_date . " " . $detaildata->end_time)));
+						$detaildata->display_starttime = date('i', strtotime($detaildata->start_time))==0 ?
+							date('G時', strtotime($detaildata->start_date . " " . $detaildata->start_time)) :
+							preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
 
+						$detaildata->display_endtime = date('i', strtotime($detaildata->end_time))==0 ?
+							date('G時', strtotime($detaildata->end_date . " " . $detaildata->end_time)) :
+							preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->end_time)));
+							
 						if ($detaildata->repeat_kb == 0) {
 							if($detaildata->display_startdate != $detaildata->display_enddate)
-								echo $detaildata->display_startdate . " " . $detaildata->display_starttime . "〜" . $detaildata->display_enddate . " " . $detaildata->display_endtime;
+								echo '<span class="nowrap">'.$detaildata->display_startdate . " " . $detaildata->display_starttime . '〜</span><span class="nowrap">' . $detaildata->display_enddate . " " . $detaildata->display_endtime.'</span>';
 							else{
-								echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
+								echo '<span class="nowrap">'.$detaildata->display_starttime . ' 〜</span> <span class="nowrap">' . $detaildata->display_endtime.'</span>';
 							}
 						} else {
 				//			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
@@ -159,7 +164,8 @@
 							$importance_v = $model_name::value2index("title_importance_kb", html_entity_decode($detaildata->title_importance_kb));
 							echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
 						endif;
-						echo $detaildata->title_text.'('.$detaildata->title_kb.')' ;
+						echo $detaildata->title_text;
+						echo  $model_name::value2index('title_kb', html_entity_decode($detaildata->title_kb)) != 0 ? '('.$detaildata->title_kb.')' : '' ;
 						echo '</a>';
 						echo '</p>';
 						echo '</div>';

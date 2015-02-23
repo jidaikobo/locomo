@@ -93,8 +93,8 @@ isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
 tabindexCtrl = isNetReader ? false : true;//この条件は増えたり減ったりするのかも。
 $('body').addClass(isNetReader ? 'netreader' : '');
 
-//スクロールバーのサイズ取得
-var scrollbar_s = (function(){
+//スクロールバーのサイズ取得//table_scrollableのために用意したけど止めているので今のところ不使用
+/*var scrollbar_s = (function(){
 	var testdiv, rs;
 	testdiv = document.createElement('div');
 	testdiv.style.width = '100px';
@@ -105,7 +105,7 @@ var scrollbar_s = (function(){
 	$(testdiv).remove();
 	return rs;
 })();
-
+*/
 
 /*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
@@ -170,7 +170,7 @@ if(adminbar[0]){
 }
 
 
-//アクセスキーをもつ要素へのタイトル付与//読み上げ要確認
+//アクセスキーをもつ要素へのタイトル付与
 //accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
 function add_accesskey_title(){
 	var str, txt, label;
@@ -194,7 +194,7 @@ $('.hidden_item').each(function(){
 		if($(this).find('form')[0]){
 		//とりあえず、get値を見る。
 			query = window.location.search.substring(1);
-			if(query!=''){//深いifだなあ //ordersもみる
+			if(query!=''){
 				params = query.split('&');
 				for(var i=0 ; i < params.length; i++){
 					if( params[i].indexOf('orders') !== 0 ){
@@ -204,7 +204,7 @@ $('.hidden_item').each(function(){
 				}
 			}
 		}
-		if(!v) return; //値のある時だけ次ぎにいく
+		if(!v) return;
 	}
 	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
 	$(this).addClass('on').show();
@@ -928,6 +928,15 @@ $('input.time.min30').timepicker({
 });
 $('input.time').timepicker({
 	timeFormat: 'HH:mm'
+});
+
+$('input.month').datepicker({
+	dateFormat: 'yy-mm',
+	changeMonth: true,
+	changeYear: true,
+	beforeShow: function(input, inst) {
+		$('#ui-datepicker-div').addClass('monthpicker');
+	}
 });
 
 //tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。

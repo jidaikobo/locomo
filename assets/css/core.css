@@ -1173,6 +1173,9 @@ td.minimum {
 .datatable td {
 	white-space: nowrap;
 }
+.widget .datatable.schedule_day td {
+	white-space: normal;
+}
 .datatable tr:nth-child(odd) {
 	background: #fefefe;
 }
@@ -2027,6 +2030,10 @@ span.add_bracket:after {
 .ui-datepicker-current {
 	opacity: 1 !important;
 }
+.monthpicker .ui-datepicker-calendar {
+	display: none;
+}
+
 div.ui-timepicker-div dl dd {
 	margin: .75em 10px .25em 40%;
 }
