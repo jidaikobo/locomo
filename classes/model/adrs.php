@@ -287,12 +287,12 @@ class Model_Adrs extends \Model_Base
 		$form->add_after('adrsgrp', 'グループ', array('type' => 'select', 'options' => $options), array(), 'name')
 			->set_value(@$obj->group_id);
 
+/*
 		if ( ! \Auth::is_admin())
 		{
 			$form->field('is_visible')->set_type('hidden')->set_value($obj->is_visible ?: 1);
-
 		}
-
+*/
 
 		static::$_cache_form_definition = $form;
 		return $form;
