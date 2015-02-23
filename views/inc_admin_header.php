@@ -50,7 +50,7 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 
 </head>
 <body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
-	<div id="main_content" class="container" title="<?php echo $titlestr ?>ページ" tabindex="-1">
+	<div id="main_content" class="container clearfix" title="<?php echo $titlestr ?>ページ" tabindex="-1">
 <?php 
 	echo (\Auth::check()) ? '		<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
 ?>

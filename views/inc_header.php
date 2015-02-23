@@ -45,6 +45,6 @@
 <?php 
 	echo (\Auth::check()) ? '<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
 ?>
-	<div class="container">
+	<div class="container clearfix">
 <?php echo render('inc_messages'); ?>
 		<div class="contents">
