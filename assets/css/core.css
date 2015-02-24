@@ -2033,6 +2033,10 @@ span.add_bracket:after {
 .monthpicker .ui-datepicker-calendar {
 	display: none;
 }
+#ui-datepicker-div.monthpicker .ui-datepicker-buttonpane {
+	border: none;
+	margin-top: 0;
+}
 
 div.ui-timepicker-div dl dd {
 	margin: .75em 10px .25em 40%;

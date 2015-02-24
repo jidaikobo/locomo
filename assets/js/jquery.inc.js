@@ -900,44 +900,133 @@ $(document).on('click', '.switch_mce', function(){
 /* jQuery UI */
 
 //calendar
-$('input.date , input[type=date]').datepicker({
+//通常の年月の選択
+$('input.month').datepicker({
+	firstDay       : 1,
+	dateFormat     : 'yy-mm',
+	changeMonth    : true,
+	changeYear     : true,
+	showButtonPanel: true,
+	currentText    : '今月',
+	closeText      : '決定',
+	beforeShow: function(input, inst) {
+		$(inst.dpDiv).addClass('monthpicker');
+		var currentDate = $(this).val();
+		if(!currentDate){
+			return;
+		} else {
+			currentDate = currentDate.replace('-', '/')+'/01';
+			$(this).datepicker('option', 'defaultDate', new Date(currentDate));
+			$(this).datepicker('setDate', new Date(currentDate));
+		}
+	},
+	onChangeMonthYear: function(year, month){
+		month = ("0"+month).slice(-2); 
+		$(this).val(year+'-'+month);
+	},
+	onClose: function(dateText, inst) { 
+		var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+		var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+		$(this).datepicker('setDate', new Date(year, month, 1));
+		setTimeout(function(){$(inst.dpDiv).removeClass('monthpicker')}, 150);//消える前に表示されてしまうので遅らせる
+	}
+});
+//開始月と終了月
+
+
+
+//開始日と終了日
+var jslcm_dates = $( '#form_start_date, #form_end_date' ).datepicker( {
+	firstDay       : 1,
 	dateFormat: 'yy-mm-dd',
 	changeMonth: true,
 	changeYear: true,
+	showButtonPanel: true,
+	onSelect: function( selectedDate ) {
+		var option = this.id == 'form_start_date' ? 'minDate' : 'maxDate',
+		inst = $(this).data('datepicker'),
+		date = $.datepicker.parseDate(inst.settings.dateFormat ||
+			$.datepicker._defaults.dateFormat,
+			selectedDate,inst.settings );
+		jslcm_dates.not(this).datepicker('option', option, date);
+	}
 });
 
+//通常の日付選択
+$('input.date , input[type=date]').datepicker({
+	firstDay       : 1,
+	dateFormat: 'yy-mm-dd',
+	changeMonth: true,
+	changeYear: true,
+	showButtonPanel: true,
+});
+
+
+//日付＋時間
+//15分区切り
 $('input.datetime.min15, input[type=datetime].min15').datetimepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 15
 });
+//30分区切り
 $('input.datetime.min30, input[type=datetime].min30').datetimepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 30
 });
-$('input.datetime,  input[type=datetime]').datetimepicker();
+//通常の日付＋時間選択
+$('input.datetime,  input[type=datetime]').datetimepicker({
+		firstDay       : 1,
+});
 
+//時間選択
+//開始時間と終了時間
+/*
+var jslcm_times = $( '#form_start_time, #form_end_time' ).timepicker( {
+	timeFormat: 'HH:mm',
+	stepMinute: 15,
+*/
+/*	beforeShow: function(){
+		var option = null;
+		option = $(this).hasClass('min15') ? 15 : option;
+		option = $(this).hasClass('min30') ? 30 : option;
+		if(option){
+			$(this).timepicker({stepMinute: option});
+			console.log(option);
+		};
+	},
+*/
+/*	onSelect: function( selectedtime ) {
+		console.log(this);
+		console.log(selectedtime);
+		
+		var option = this.id == 'form_start_time' ? 'minTime' : 'maxTime',
+		time = selectedtime;
+*/
+/*		date = $.datepicker.parseDate(inst.settings.dateFormat ||
+			$.datepicker._defaults.dateFormat,
+			selectedDate,inst.settings );
+*/
+/*
+		jslcm_times.not(this).datepicker('option', option, time);
+	}
+});
+*/
+
+//15分区切り
 $('input.time.min15').timepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 15,
-	hourMax: 23,
-
 });
+//30分区切り
 $('input.time.min30').timepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 30
 });
+//通常の時間選択
 $('input.time').timepicker({
 	timeFormat: 'HH:mm'
 });
 
-$('input.month').datepicker({
-	dateFormat: 'yy-mm',
-	changeMonth: true,
-	changeYear: true,
-	beforeShow: function(input, inst) {
-		$('#ui-datepicker-div').addClass('monthpicker');
-	}
-});
 
 //tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
