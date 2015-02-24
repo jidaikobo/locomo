@@ -70,34 +70,29 @@ if (isset($overlap_result) && count($overlap_result)) {
 <tr>
 	<th class="ar"><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></th>
 	<td>
-		<?php echo $form->field('repeat_kb')->set_template('{error_msg}{field}'); ?>
-		<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
-		<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
-		<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+		<div id="field_repeat_kb">
+			<?php echo $form->field('repeat_kb')->set_template('{error_msg}{field}'); ?>
+			<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
+			<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
+			<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+		</div>
+		<div id="field_set_time" style="display: none;"> から </div>
 	</td>
 </tr>
 <tr>
-	<th class="ar">予定日指定</th>
+	<th class="ar">期間</th>
 	<td>
-	<table id="" class="lcm_focus" title="必須 予定日指定">
-			<tr>
-				<th>期間</th>
-				<td>
-					<?php echo $form->field('start_date')->set_template('{error_msg}{field}'); ?>
-					から
-					<?php echo $form->field('end_date')->set_template('{error_msg}{field}'); ?>
-				</td>
-			</tr>
-			<tr>
-				<th>時刻</th>
-				<td>
-					<?php echo $form->field('start_time')->set_template('{error_msg}{field}'); ?>
-					から
-					<?php echo $form->field('end_time')->set_template('{error_msg}{field}'); ?>
-				</td>
-			</tr>
-		</table>
-
+		<div id="" class="lcm_focus" title="必須 期間">
+			<div>
+				<span id="span_date_start" class="display_inline_block">
+				<?php echo $form->field('start_date')->set_template('{error_msg}{field}'); ?>
+				<?php echo $form->field('start_time')->set_template('{error_msg}{field}'); ?>
+				</span> から <span id="span_date_end" class="display_inline_block">
+				<?php echo $form->field('end_date')->set_template('{error_msg}{field}'); ?>
+				<?php echo $form->field('end_time')->set_template('{error_msg}{field}'); ?>
+				</span>
+			</div>
+		</div>
 	</td>
 </tr>
 
@@ -321,6 +316,24 @@ function change_repeat_kb_area() {
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	}
+	
+	//区分選択により時間入力欄を移動
+	if($("#form_repeat_kb").val() == 0){
+		$('#field_set_time').hide();
+		$('#form_start_time').appendTo('#span_date_start');
+		$('#form_end_time').appendTo('#span_date_end');
+	}else{
+		$('#field_set_time').prepend($('#form_start_time')).append($('#form_end_time')).show();
+	}
+	
+	//区分選択により、期間の入力欄の種類を変更 //まだ入力が未対応なので動かさない
+/*	if($("#form_repeat_kb").val() < 4){
+		$('#form_start_date, #form_end_date').removeClass('month');
+		//入力欄の値もyy-mmに変更したい。datepicker上の値は"1日"が補完される
+	}else{
+		$('#form_start_date, #form_end_date').addClass('month');
+	}
+*/
 }
 
 make_hidden_members();
