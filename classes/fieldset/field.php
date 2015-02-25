@@ -353,7 +353,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 			case 'textarea':
 				$attributes = $this->attributes;
 				unset($attributes['type']);
-				$build_field = $this->value;
+				$build_field = nl2br($this->value);
 			break;
 
 			case 'button':
@@ -496,7 +496,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		if ($template == 'opener' or $template == 'closer') {
 			$origin_template = $form->get_config(
 				'field_template',
-				"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n"
+				"\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n"
 			);
 			if ($template == 'opener') $template = "\t\t{opener}\n" . $origin_template;
 			if ($template == 'closer') $template = $origin_template . "\t\t{closer}\n";

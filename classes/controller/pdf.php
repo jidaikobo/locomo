@@ -141,7 +141,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 
 			// output customer id
 			$fs = min($width / 24 / MM_PER_POINT, 11);
-			$pdf->SetFontSize($fs/1.7);
+			$pdf->SetFontSize($fs/1.1);
 			$pdf->SetXY($margin_x, $margin_y);
 			$pdf->MultiCell($width, $fs*MM_PER_POINT, $customer->id, 0, 'R', 0, 2);
 

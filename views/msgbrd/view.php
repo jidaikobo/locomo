@@ -13,7 +13,7 @@
 <?php if ($item->contents): ?>
 <tr>
 	<th>本文</th>
-	<td><?php echo $item->contents; ?></td>
+	<td><?php echo nl2br($item->contents); ?></td>
 </tr>
 
 <?php endif; ?>

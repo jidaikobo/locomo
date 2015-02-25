@@ -611,9 +611,6 @@ class Model_Base extends \Orm\Model_Soft
 		// forge
 		$form = \Fieldset::forge('search_form_base');
 
-
-
-
 		// modify title
 //		$title = \Util::get_locomo(\Request::active()->controller, 'nicename');
 		$titles = array(
@@ -678,13 +675,17 @@ class Model_Base extends \Orm\Model_Soft
 			250 => 250,
 			24 => '24(タックシール一枚分)',
 		);
-		
-		$form
-			->add_after('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'), array(), 'opener')
+
+		$form->add('limit', '', array('type' => 'select', 'class'=>'w5em', 'title'=>'表示件数', 'options' => $options))
+			->set_value(\Input::get('limit', 25))
 			->set_template('
 				<div class="submit_button">'.
 				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).
-				\Form::select('limit', \Input::get('limit', 25), $options, $attributes = array('class'=>'w5em', 'title'=>'表示件数')).'件&nbsp;
+				'{field}件&nbsp;
+			');
+
+		$form->add('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'))
+			->set_template('
 				{field}
 				</div><!--/.submit_button-->
 				</form>
