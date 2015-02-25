@@ -133,8 +133,8 @@ if (isset($overlap_result) && count($overlap_result)) {
 				</select>
 			</div><!-- /.select_multiple_content -->
 			<div class="select_multiple_content button_group">
-				<input type="button" value="選択" class="button small" onclick="javascript:select_member('plus');">
 				<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
+				<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
 			</div><!-- /.select_multiple_content -->
 			<div class="select_multiple_content select_new">
 				<h3 class="ac">ここから選択</h3>
@@ -172,8 +172,8 @@ if (isset($overlap_result) && count($overlap_result)) {
 
 			</div><!-- /.select_multiple_content -->
 			<div class="select_multiple_content button_group">
-				<input type="button" value="選択" class="button small" onclick="javascript:select_building('plus');">
 				<input type="button" value="解除"  class="button small" onclick="javascript:select_building('minus');">
+				<input type="button" value="選択" class="button small primary" onclick="javascript:select_building('plus');">
 			</div><!-- /.select_multiple_content -->
 			<div class="select_multiple_content select_new">
 				<h3 class="ac">ここから選択</h3>
@@ -319,26 +319,7 @@ function change_repeat_kb_area() {
 	//繰り返しなしのときに、時間入力欄が離れていると入力しづらい、期間でなく一日だけの予定の場合が多いので、開始日を入れると終了日も自動的に反映してほしい。なお、単日の場合時間の入力欄の開始と終了の間に日付入力欄があるのは使いづらい。前の下に並んでいる時のほうがよい。
 	//datepicker側のイベントはいったんjquery.inc.jsに記述
 
-	
-	/*
-	var jslcm_dates = $( '#form_start_date, #form_end_date' ).datepicker( {
-	firstDay       : 1,
-	dateFormat: 'yy-mm-dd',
-	changeMonth: true,
-	changeYear: true,
-	showButtonPanel: true,
-	onSelect: function( selectedDate ) {
-		var option = this.id == 'form_start_date' ? 'minDate' : 'maxDate',
-		inst = $(this).data('datepicker'),
-		date = $.datepicker.parseDate(inst.settings.dateFormat ||
-			$.datepicker._defaults.dateFormat,
-			selectedDate,inst.settings );
-		jslcm_dates.not(this).datepicker('option', option, date);
-	}
-});
 
-	
-	*/
 	
 	//区分選択により、期間の入力欄の種類を変更 //まだ入力が未対応なのでコメントアウト
 /*	if($("#form_repeat_kb").val() < 4){

@@ -931,8 +931,7 @@ $('input.month').datepicker({
 		setTimeout(function(){$(inst.dpDiv).removeClass('monthpicker')}, 150);//消える前に表示されてしまうので遅らせる
 	}
 });
-//開始月と終了月
-
+//開始月と終了月 //ひとまずつくらない
 
 
 //開始日と終了日
@@ -949,17 +948,36 @@ var jslcm_dates = $( '#form_start_date, #form_end_date' ).datepicker( {
 			$.datepicker._defaults.dateFormat,
 			selectedDate,inst.settings );
 		jslcm_dates.not(this).datepicker('option', option, date);
-
 		//繰り返しなしの場合は開始日を入力したら自動的に終了日に同じ値が入るようにする。終了日は任意変更可。
 		//むしろ、終了日入力なしで行けるようにできるとなにか解決する？
 		if($("#form_repeat_kb")[0] && $("#form_repeat_kb").val() == 0){
-			if(this.id == 'form_start_date'){
-				$('#form_end_date').val($(this).val());
-			}
+			set_startdate_to_enddate(this);
 		}
+//		val_compare($('#form_start_date'), $('#form_end_date'));
+
 	}
 });
 
+if($('#form_start_date, #form_end_date')[0]){
+//	val_compare($('#form_start_date'), $('#form_end_date'));
+	$('#form_start_date, #form_end_date').change(function(){
+		set_startdate_to_enddate(this);
+//		val_compare($('#form_start_date'), $('#form_end_date'));
+	});
+}
+function set_startdate_to_enddate(el){
+	if(el.id == 'form_start_date'){
+		$('#form_end_date').val($(el).val());
+	}
+}
+/*function val_compare(el1, el2){
+	if(el1.val()==el2.val()){
+		el2.addClass('same_value');
+	}else{
+		el2.removeClass('same_value');
+	}
+}
+*/
 
 //通常の日付選択
 $('input.date , input[type=date]').datepicker({
@@ -1039,6 +1057,7 @@ $('input.time').timepicker({
 
 //tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
+//エラー
 $('.validation_error :input').tooltip({
 	tooltipClass : 'lcm_tooltip',
 	show         : 200,
@@ -1052,6 +1071,8 @@ $('.validation_error :input').tooltip({
 	                 return $(this).data('jslcmTooltip')
 		           }*/
 });
+
+//通常のツールチップ
 $('.lcm_tooltip_parent').tooltip({
 	items: '[data-jslcm-tooltip-id]',
 	content: function() {

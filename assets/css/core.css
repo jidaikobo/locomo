@@ -610,7 +610,7 @@ a.button.danger:active {
 }
 .btn.small.primary,
 .button.small.primary {
-	padding: 1px 7px;
+	padding: 1px 5px;
 	font-weight: normal;
 }
 .btn.small.primary:hover,
@@ -657,10 +657,11 @@ fieldset[disabled] a.button {
 }
 .validation_error input,
 .validation_error select,
-.validation_error textarea {
+.validation_error textarea,
+.has_error {
 	background-color: #fff3f3;
 	outline-color: rgba(238,153,153,.6);
-	}
+}
 input[disabled],
 select[disabled],
 textarea[disabled] {
@@ -926,6 +927,7 @@ table + .index_toolbar {
 	margin-bottom: -1px;
 	width: 25em;
 }
+
 .lcm_form .submit_button {
 	position: absolute;
 	right: 10px;
@@ -960,7 +962,7 @@ textarea {
 
 }
 select {
-	height: 1.75em;
+	height: 1.95em;
 }
 select[size]{
 	height: auto;
@@ -1152,6 +1154,21 @@ a.desc:after {
 	content: ' ▼';
 }
 
+/*=== 同じ値チェック ===*/
+/*.same_value.check_same_value {
+	color: #ccc;
+	background-color: #fff;
+}
+*/
+/*
+.same_value {
+	background-color: #fff3f3;
+}
+*/
+/*.same_value.check_same_value:focus {
+	color: inherit;
+}
+*/
 /*===  table  ===*/
 th.min,
 td.min,
@@ -1336,6 +1353,13 @@ table.calendar {
 .calendar td.today {
 	background-color: #fafadd;
 }
+.calendar td.week6.today {
+	background-color: #f3f3e0;
+}
+.calendar td.week0.today {
+	background-color: #faf0da;
+}
+
 .calendar thead * {
 	vertical-align: middle;
 /*	text-align: center;*/
