@@ -113,12 +113,13 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<td><?php echo $form->field('message')->set_template('{error_msg}{field}'); ?></td>
 </tr>
 
+<?php if( $locomo['controller']['name'] === "\Controller_Scdl"): //施設選択の時は下に ?>
 <tr>
-<th class="ar"><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="label_required">必須</span>' : '' ;?>メンバー</th>
+<th class="ar"><span class="label_required">必須</span>メンバー</th>
 <td>
 	<div id="member_panel" class="lcm_focus" title="メンバーの選択">
 		<select id="group_list" title="グループ絞り込み">
-			<option value="">絞り込み：全メンバー
+			<option value="">絞り込み：全グループ
 			<?php foreach($group_list as $key => $value) { ?>
 				<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 			<?php } ?>
@@ -151,6 +152,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	</div>
 </td>
 </tr>
+<?php endif; ?>
 <tr>
 <th class="ar"><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</th>
 <td>
@@ -224,7 +226,46 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
 	</td>
 </tr>
-
+<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"):?>
+<tr>
+<th class="ar">メンバー</th>
+<td>
+	<div id="member_panel" class="lcm_focus" title="メンバーの選択">
+		<select id="group_list" title="グループ絞り込み">
+			<option value="">絞り込み：全グループ
+			<?php foreach($group_list as $key => $value) { ?>
+				<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
+			<?php } ?>
+		</select>
+		<div class="select_multiple_wrapper">
+			<div class="select_multiple_content select_kizon">
+				<h3 class="ac">選択済み</h3>
+				<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
+				<?php foreach($select_user_list as $row) { ?>
+					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+				<?php } ?>
+				</select>
+			</div><!-- /.select_multiple_content -->
+			<div class="select_multiple_content button_group">
+				<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
+				<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
+			</div><!-- /.select_multiple_content -->
+			<div class="select_multiple_content select_new">
+				<h3 class="ac">ここから選択</h3>
+				<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
+					<?php 
+					foreach($non_selected_user_list as $row) {
+					?>
+					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+				<?php } ?>
+				</select>
+			</div><!-- /.select_multiple_content -->
+		</div><!-- /.select_multiple_wrapper -->
+		<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
+	</div>
+</td>
+</tr>
+<?php endif; ?>
 
 <?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
 <?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
