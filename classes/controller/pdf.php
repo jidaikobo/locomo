@@ -47,7 +47,10 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		$margin = array(0, 0),
 		$cr="",
 		$name_align = 'L',
-		$change_format = false // function change format
+		$change_format = false, // function change format
+		$rotate = 0,
+		$rotate_x = 115,
+		$rotate_y = 0
 	){
 
 		if (!$customers) {return;} // throw error;
@@ -122,6 +125,14 @@ class Controller_Pdf extends \Locomo\Controller_Base
 
 			// $name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
 
+
+			if ($rotate) {
+				$pdf->StartTransform();
+				$pdf->Rotate($rotate, $rotate_x , $rotate_y);
+			}
+
+
+
 			// output customer id
 			$fs = min($width / 24 / MM_PER_POINT, 11);
 			$pdf->SetFontSize($fs/1.7);
@@ -141,6 +152,11 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			$y = (is_float($y) or is_int($y)) ? $y : 0;
 			$pdf->SetXY($margin_x+($width*0.05), $y + $fs*MM_PER_POINT);
 			$pdf->MultiCell($width*0.95, $fs*2*MM_PER_POINT, $name, 0, $name_align);
+
+
+			if ($rotate) $pdf->StopTransform();
+
+
 
 		} //endforeach;
 
@@ -660,6 +676,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			} elseif ( is_string($field_format['name']) ) {
 				$name = $customer->{$field_format['name']};
 			}
+
 
 
 			// output zip

@@ -416,6 +416,7 @@ class Model_Base extends \Orm\Model_Soft
 						if ( ! in_array($k, array_keys($model::properties()))) continue;
 						$options['related'][$relate]['where'][] = array('id', '!=', 0);
 						$options['related'][$relate]['order_by'][$k] = $v;
+						$options['related'][$relate]['order_by']['t0.id'] = 'asc';
 						// 既存の conditions の order_by を キャンセル
 						$options['order_by'] = $orders;
 					} else {
