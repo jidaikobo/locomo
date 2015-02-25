@@ -33,7 +33,7 @@ class Model_Scdl extends \Model_Base
 		'target_month' => 
 		array (
 			'label' => '対象月',
-			'data_type' => 'int',
+			'data_type' => 'int ar',
 			'form' => 
 			array (
 				'type' => 'text',
@@ -44,7 +44,7 @@ class Model_Scdl extends \Model_Base
 		'target_day' => 
 		array (
 			'label' => '対象日',
-			'data_type' => 'int',
+			'data_type' => 'int ar',
 			'form' => 
 			array (
 				'type' => 'text',
@@ -148,7 +148,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 35,
+				'size' => 50,
 				'class' => 'text',
 			),
 			'validation' => 
@@ -294,7 +294,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'class' => 'int',
+				'class' => 'int ar',
 				'size' => 6,
 				'title' => '施設利用人数 半角数字で入力してください',
 			),
