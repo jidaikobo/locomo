@@ -1,4 +1,4 @@
-ver.0
+ver.0 -
 - ORM基礎構築
 - Controller_Base, Model_Base実装
 - Aclの実装
@@ -15,9 +15,41 @@ ver.0
 ver.1
 - Appディレクトリでの動作
 
-ver.1.1
-- リファクタリング
-
-ver.1.5
+ver.1.2
 - 主要アクションのコア化
-- モデルのform_definition()からproperties()への移行
+
+ver.1.4
+- Model_Softから脱却
+Controller_Core
+Controller_Base
+Controller_Traits_Curd
+Model_Base
+
+をそれぞれ、
+
+Core_Controller
+Core_Controller_Base extends \Locomo\Core_Controller
+Core_Controller_Trait_Curd
+Core_Model
+Core_Model_Soft
+Core_Model_Nestedset
+Core_Model_Temporal
+Core_Model_Trait_Base
+
+に整理。これら（とくにコントローラ）は明示的にroutingの対象でないようにする。
+
+ver. 1.6
+- モデルのform_definition()から_init()へ
+- search_option()についても同様に検討
+- validation見直し
+- observer見直し
+- authorised_option見直し
+- before_***見直し（\Event見直し）
+
+ver. 1.8
+- view検討
+- 付随してbase.css、core.css、javascriptの見直し
+
+ver. 2.0
+- リファクタリング
+- skip fishチェックなど

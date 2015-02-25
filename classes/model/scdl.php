@@ -59,6 +59,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
+				'size' => 14,
 				'class' => 'date',
 			),
 		),
@@ -69,6 +70,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
+				'size' => 14,
 				'class' => 'date',
 			),
 		),
@@ -79,6 +81,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
+				'size' => 6,
 				'class' => 'time min15',
 			),
 		),
@@ -89,6 +92,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
+				'size' => 6,
 				'class' => 'time min15',
 			),
 			'default' => '21:00'
@@ -565,9 +569,15 @@ class Model_Scdl extends \Model_Base
 		// 表示加工
 		$data->display_startdate = date('Y年n月j日', strtotime($data->start_date . " " . $data->start_time));
 		$data->display_enddate = date('Y年n月j日', strtotime($data->end_date . " " . $data->end_time));
-		$data->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($data->start_date . " " . $data->start_time)));
+		$data->display_starttime = date('i', strtotime($data->start_time))==0 ?
+			date('G時', strtotime($data->start_date . " " . $data->start_time)) :
+			preg_replace("/時0/", "時", date('G時i分', strtotime($data->start_date . " " . $data->start_time)));
+		$data->display_endtime = date('i', strtotime($data->end_time))==0 ?
+			date('G時', strtotime($data->end_date . " " . $data->end_time)) :
+			preg_replace("/時0/", "時", date('G時i分', strtotime($data->start_date . " " . $data->end_time)));
+/*		$data->display_starttime = preg_replace("/時0/", "時", date('G時i分', strtotime($data->start_date . " " . $data->start_time)));
 		$data->display_endtime = preg_replace("/時0/", "時", date('G時i分', strtotime($data->end_date . " " . $data->end_time)));
-
+*/
 
 
 		$print = "";
