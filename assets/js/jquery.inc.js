@@ -949,8 +949,17 @@ var jslcm_dates = $( '#form_start_date, #form_end_date' ).datepicker( {
 			$.datepicker._defaults.dateFormat,
 			selectedDate,inst.settings );
 		jslcm_dates.not(this).datepicker('option', option, date);
+
+		//繰り返しなしの場合は開始日を入力したら自動的に終了日に同じ値が入るようにする。終了日は任意変更可。
+		//むしろ、終了日入力なしで行けるようにできるとなにか解決する？
+		if($("#form_repeat_kb")[0] && $("#form_repeat_kb").val() == 0){
+			if(this.id == 'form_start_date'){
+				$('#form_end_date').val($(this).val());
+			}
+		}
 	}
 });
+
 
 //通常の日付選択
 $('input.date , input[type=date]').datepicker({

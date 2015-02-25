@@ -116,30 +116,27 @@ if (isset($overlap_result) && count($overlap_result)) {
 <tr>
 <th class="ar"><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="label_required">必須</span>' : '' ;?>メンバー</th>
 <td>
-
-<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-	<table>
-		<tr>
-		<td colspan="3">
-			<select id="group_list" title="グループ絞り込み">
-				<option value="">グループで絞り込み
-				<?php foreach($group_list as $key => $value) { ?>
-					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
-				<?php } ?>
-			</select>
-		</td>
-		</tr>
-		<tr>
-			<td>
+	<div id="member_panel" class="lcm_focus" title="メンバーの選択">
+		<select id="group_list" title="グループ絞り込み">
+			<option value="">絞り込み：全メンバー
+			<?php foreach($group_list as $key => $value) { ?>
+				<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
+			<?php } ?>
+		</select>
+		<div class="select_multiple_wrapper">
+			<div class="select_multiple_content select_kizon">
 				<h3 class="ac">選択済み</h3>
 				<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
 				<?php foreach($select_user_list as $row) { ?>
 					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 				<?php } ?>
 				</select>
-			</td>
-			<td style="vertical-align: middle;"><input type="button" value="選択" class="button small" onclick="javascript:select_member('plus');" /><br /><input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');" /></td>
-			<td>
+			</div><!-- /.select_multiple_content -->
+			<div class="select_multiple_content button_group">
+				<input type="button" value="選択" class="button small" onclick="javascript:select_member('plus');">
+				<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
+			</div><!-- /.select_multiple_content -->
+			<div class="select_multiple_content select_new">
 				<h3 class="ac">ここから選択</h3>
 				<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
 					<?php 
@@ -148,50 +145,46 @@ if (isset($overlap_result) && count($overlap_result)) {
 					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 				<?php } ?>
 				</select>
-			</td>
-		</tr>
-	</table>
-	<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
-</div>
+			</div><!-- /.select_multiple_content -->
+		</div><!-- /.select_multiple_wrapper -->
+		<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
+	</div>
 </td>
 </tr>
 <tr>
 <th class="ar"><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</th>
 <td>
-<div id="building_panel" class="lcm_focus" title="施設の選択">
-	<table>
-		<tr>
-		<td colspan="3">
-			<select id="building_group_list" title="施設グループ絞り込み">
-				<option value="">施設グループで絞り込み
-				<?php foreach($building_group_list as $row) { ?>
-					<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
-				<?php } ?>
-			</select>
-		</td>
-		</tr>
-		<tr>
-			<td>
+	<div id="building_panel" class="lcm_focus" title="施設の選択">
+		<select id="building_group_list" title="施設グループ絞り込み">
+			<option value="">絞り込み：全施設
+			<?php foreach($building_group_list as $row) { ?>
+				<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
+			<?php } ?>
+		</select>
+		<div class="select_multiple_wrapper">
+			<div class="select_multiple_content select_kizon">
 				<h3 class="ac">選択済み</h3>
 				<select id="building_kizon" name="building_kizon" size="2" style="width:11em;height:200px;" title="選択済み施設" multiple>
 				<?php foreach($select_building_list as $row) { ?>
 					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 				<?php } ?>
 				</select>
-			</td>
-			<td style="vertical-align: middle;"><input type="button" value="選択" class="button small" onclick="javascript:select_building('plus');" /><br /><input type="button" value="解除"  class="button small" onclick="javascript:select_building('minus');" /></td>
-			<td>
+
+			</div><!-- /.select_multiple_content -->
+			<div class="select_multiple_content button_group">
+				<input type="button" value="選択" class="button small" onclick="javascript:select_building('plus');">
+				<input type="button" value="解除"  class="button small" onclick="javascript:select_building('minus');">
+			</div><!-- /.select_multiple_content -->
+			<div class="select_multiple_content select_new">
 				<h3 class="ac">ここから選択</h3>
 				<select id="building_new" name="building_new" size="2" style="width:11em;height:200px;" title="施設選択肢" multiple>
 				<?php foreach($non_select_building_list as $row) { ?>
 					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 				<?php } ?>
 				</select>
-			</td>
-		</tr>
-	</table>
-</div>
-
+			</div><!-- /.select_multiple_content -->
+		</div><!-- /.select_multiple_wrapper -->
+	</div>
 </td>
 </tr>
 
@@ -223,7 +216,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<th class="ar"><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></th>
 	<td>
 		<select id="group_list_create_user" title="グループ絞り込み">
-			<option value="">グループで絞り込み
+			<option value="">絞り込み：全グループ
 			<?php foreach($group_list as $key => $value) { ?>
 				<option value="<?php print $key; ?>"><?php  print $value; ?>
 			<?php } ?>
@@ -322,6 +315,30 @@ function change_repeat_kb_area() {
 	}else{
 		$('#field_set_time').prepend($('#form_start_time')).append($('#form_end_time')).show();
 	}
+	
+	//繰り返しなしのときに、時間入力欄が離れていると入力しづらい、期間でなく一日だけの予定の場合が多いので、開始日を入れると終了日も自動的に反映してほしい。なお、単日の場合時間の入力欄の開始と終了の間に日付入力欄があるのは使いづらい。前の下に並んでいる時のほうがよい。
+	//datepicker側のイベントはいったんjquery.inc.jsに記述
+
+	
+	/*
+	var jslcm_dates = $( '#form_start_date, #form_end_date' ).datepicker( {
+	firstDay       : 1,
+	dateFormat: 'yy-mm-dd',
+	changeMonth: true,
+	changeYear: true,
+	showButtonPanel: true,
+	onSelect: function( selectedDate ) {
+		var option = this.id == 'form_start_date' ? 'minDate' : 'maxDate',
+		inst = $(this).data('datepicker'),
+		date = $.datepicker.parseDate(inst.settings.dateFormat ||
+			$.datepicker._defaults.dateFormat,
+			selectedDate,inst.settings );
+		jslcm_dates.not(this).datepicker('option', option, date);
+	}
+});
+
+	
+	*/
 	
 	//区分選択により、期間の入力欄の種類を変更 //まだ入力が未対応なのでコメントアウト
 /*	if($("#form_repeat_kb").val() < 4){

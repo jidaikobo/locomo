@@ -892,6 +892,29 @@ table + .index_toolbar {
 .lcm_form .input_group > table {
 	padding-left: .75em;
 }
+.lcm_form .select_multiple_wrapper {
+	display: table;
+}
+.lcm_form .select_multiple_content {
+	display: table-cell;
+	vertical-align: middle;
+}
+.lcm_form .select_multiple_content.button_group {
+	width: 5em;
+	text-align: center;
+}
+.lcm_form .select_multiple_content.button_group input {
+	margin :0 .5em .5em;
+}
+.lcm_form .select_multiple_content.button_group input:first-child {
+	margin-top: 2.5em;
+}
+.lcm_form .select_multiple_content select {
+	margin-bottom: .5em;
+}
+.lcm_form .select_new select {
+	margin-left: 0;
+}
 .lcm_form textarea {
 	max-width: 800px	;
 }
@@ -1748,7 +1771,7 @@ a.icon.zip:before {
 .hw20em h1, .hw20em h2, .hw20em h3, .hw20em h4, .hw20em h5 {width: 20em !important;}
 .hw25em h1, .hw25em h2, .hw25em h3, .hw25em h4, .hw25em h5 {width: 25em !important;}
 
-display_inline {
+.display_inline {
 	display: inline;
 }
 .display_inline_block {

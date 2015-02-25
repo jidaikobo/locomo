@@ -81,7 +81,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 6,
+				'size' => 7,
 				'class' => 'time min15',
 			),
 		),
@@ -92,7 +92,7 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 6,
+				'size' => 7,
 				'class' => 'time min15',
 			),
 			'default' => '21:00'
