@@ -50,7 +50,9 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		$change_format = false, // function change format
 		$rotate = 0,
 		$rotate_x = 115,
-		$rotate_y = 0
+		$rotate_y = 0,
+		$size = false,
+		$orientation = 'P'
 	){
 
 		if (!$customers) {return;} // throw error;
@@ -78,7 +80,11 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		if (!is_array($customers)) $customers = array($customers);
 
 		foreach ($customers as $customer) {
-			$pdf->AddPage('P', 'A4');
+			if ($size) {
+				$pdf->AddPage($orientation, $size);
+			} else {
+				$pdf->AddPage('P', 'A4');
+			}
 			if (\Input::get('test')) $pdf->useTemplate(1);
 
 			// フィールドを条件によって変えたいときにコールバック呼び出す
