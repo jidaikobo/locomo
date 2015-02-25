@@ -71,7 +71,7 @@ class Cal
 	public static function get_week_calendar_by_weeknum($target_month = 'YYYY-MM', $target_term = 1, $start_with = 7, $is_recursive = false)
 	{
 		$target_term = intval($target_term);
-	
+
 		// 現在
 		$current_week_num = static::get_current_weeknum();
 		if ($target_month == 'YYYY-MM')
@@ -147,7 +147,7 @@ class Cal
 	
 			// 日付を加算し、月や年が増えるときには処理
 			$d = $d + $n;
-			$dates[] = date('Y-m-d', mktime(0, 0, 0, $m, $d, $y));
+			$dates[] = date('Y-m-d', mktime(0, 0, 0, intval($m), intval($d), intval($y)));
 		}
 	
 		// 該当月の最大週数を取得

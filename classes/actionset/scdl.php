@@ -86,6 +86,11 @@ class Actionset_Scdl extends \Actionset
 			}
 		}
 
+		// マイナスの値対策
+		$y = abs($y);
+		$m = abs($m);
+		$d = abs($d);
+
 		// 与えられている日付から第何週かを得る
 		$weeknum = \Locomo\Cal::get_current_weeknum($ymd, $start_with = 1) ;
 		$ym = $ym ?: date('Y-m');
