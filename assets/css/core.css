@@ -563,6 +563,7 @@ ul.horizontal_list {
 	color: #fff;
 	padding: 5px 15px;
 }
+
 .btn.primary:active,
 .button.primary:active {
 	border: 1px solid  #357ebd;
@@ -614,13 +615,11 @@ a.button.danger:active {
 	font-weight: normal;
 }
 .btn.small.primary:hover,
-.button.small.primary:hover {
-	border-width: 2px;
-	padding: 0 6px;
-}
+.button.small.primary:hover,
 .btn.small.primary:active,
 .button.small.primary:active {
-	padding: 0 6px;
+	border-width: 2px;
+	padding: 0 4px;
 }
 
 .btn.btn_block,
@@ -802,11 +801,13 @@ table + .index_toolbar {
 }
 
 .pagination .active a,
-.pagination a:hover {
+.pagination a:hover,
+.select_period .active {
 	background-color: #eee;
 	transition: 0.3s;
 }
-.pagination .active a {
+.pagination .active a,
+.select_period .active {
 	font-weight: bold;
 }
 
@@ -966,6 +967,9 @@ select {
 }
 select[size]{
 	height: auto;
+}
+select[size=0] {
+	height: 1.95em;
 }
 div.submit_button {
 	width: 100%;
@@ -1301,7 +1305,7 @@ td.minimum {
 	zoom: 1;
 }
 .select_period .prev_month {
-	margin-left: 3.5em;
+	margin-left: 4em;
 }
 .select_period .next_year {
 	margin-left: 4em;
@@ -1309,9 +1313,11 @@ td.minimum {
 .select_period .next_month,
 .select_period .prev_year {
 	position: absolute;
+	padding: 2px 10px;
+	top: -2px;
 }
 .select_period .next_month {
-	right: 3.5em;
+	right: 4em;
 }
 .select_period .prev_year {
 	left: 0;
@@ -1319,13 +1325,10 @@ td.minimum {
 .select_period .select_num {
 	display: inline-block;
 }
-.select_period .select_num span {
-	padding: 0 .25em;
-	margin-left: .25em;
+.select_period .active {
+	padding: 5px 10px;
 }
-.select_period .select_num {
-	color: indianred;
-}
+
 .narrow_user {
 	text-align: left;
 	margin: 16px auto 0;
@@ -1562,6 +1565,20 @@ table.calendar {
 	font-size: .75em;
 	text-align: center;
 	white-space: nowrap;
+}
+.schedule_day.graph .time.h0,
+.schedule_day.graph .time.h1,
+.schedule_day.graph .time.h2,
+.schedule_day.graph .time.h3,
+.schedule_day.graph .time.h4,
+.schedule_day.graph .time.h5,
+.schedule_day.graph .time.h6,
+.schedule_day.graph .time.h7,
+.schedule_day.graph .time.h8,
+.schedule_day.graph .time.h21,
+.schedule_day.graph .time.h22,
+.schedule_day.graph .time.h23 {
+/*	width: 1.25em;  縮小した時に、むしろ営業時間帯より長くなってしまうので */
 }
 .schedule_day.graph td.active:not(.hoo) {
 	border-right: none;

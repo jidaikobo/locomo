@@ -853,7 +853,7 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 	$('form').change( function(e){
 		e = e ? e : event;
 		var t = $(e.target);
-		if( t.closest('.search, .btn-toolbar')[0] || t.hasClass('checkbox_binded') || t.hasClass('datetime') && t.val() == t.data('val') ){
+		if( t.closest('.search, .index_toolbar')[0] || t.hasClass('checkbox_binded') || t.hasClass('datetime') && t.val() == t.data('val') ){
 		//変更のあった要素のうち、.search form内や、一括処理用のチェックボックス、datetimepickerは除外
 			return false;
 		}else{

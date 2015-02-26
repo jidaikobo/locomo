@@ -32,7 +32,7 @@
 			<?php print $row['model']->display_name; ?>
 		</th>
 			<?php foreach($schedule_data['schedules_list'] as $v) {?>
-			<td colspan="4" class="time">
+			<td colspan="4" class="time h<?php print $v['hour']; ?>">
 				<?php print $v['hour']; ?>
 			</td>
 			<?php } ?>
@@ -111,7 +111,6 @@
 						$detaildata->display_starttime = date('i', strtotime($detaildata->start_time))==0 ?
 							date('G時', strtotime($detaildata->start_date . " " . $detaildata->start_time)) :
 							preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
-
 						$detaildata->display_endtime = date('i', strtotime($detaildata->end_time))==0 ?
 							date('G時', strtotime($detaildata->end_date . " " . $detaildata->end_time)) :
 							preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->end_time)));
@@ -182,7 +181,7 @@
 <?php } ?>
 		</tbody>
 	</table>
-	<div class="legend calendar">
+	<div class="legend calendar" aria-hidden=true>
 <?php
 	foreach($repeat_kbs as $k => $v){
 		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';

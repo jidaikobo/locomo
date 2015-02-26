@@ -78,7 +78,7 @@
 <?php if(!\Request::is_hmvc()): ?>
 </div><!-- /.field_wrapper.calendar -->
 <?php endif; ?>
-	<div class="legend calendar">
+	<div class="legend calendar" aria-hidden=true>
 <?php
 	foreach($repeat_kbs as $k => $v){
 		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';

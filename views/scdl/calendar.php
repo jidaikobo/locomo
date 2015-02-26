@@ -10,7 +10,7 @@
 </div>
 
 <div class="field_wrapper calendar">
-<div class="select_period lcm_focus" title="月を選択">
+<div class="select_period lcm_focus pagination" title="月を選択">
 	<?php print htmlspecialchars_decode($prev_url); ?> 
 	<?php print htmlspecialchars_decode($next_url); ?>
 	<span class="select_num lcm_focus" title="各月を選択">
@@ -18,7 +18,7 @@
 		for($i = 1; $i <= 12; $i++) {
 			if ($i == $mon) {
 	?>
-		<span><?php print $i; ?></span>
+		<span class="active"><?php print $i; ?></span>
 	<?php
 	} else {
 	?>
@@ -108,7 +108,7 @@
 	<?php if ($v['week'] == 0) { print '</tr>'; } ?>
 <?php } ?>
 </table>
-	<div class="legend calendar">
+	<div class="legend calendar" aria-hidden=true>
 <?php
 	foreach($repeat_kbs as $k => $v){
 		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';

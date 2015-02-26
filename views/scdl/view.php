@@ -27,7 +27,7 @@
 <?php endif; ?>
 <?php if($detail->title_importance_kb && !$detail->private_kb): ?>
 <tr>
-	<th>タイトル（重要度）</th>
+	<th class="min">タイトル（重要度）</th>
 	<td><?php echo $detail->title_importance_kb; ?></td>
 </tr>
 
@@ -87,7 +87,7 @@
 
 <?php if($detail->purpose_kb && !$detail->private_kb): ?>
 <tr>
-	<th>施設使用目的区分</th>
+	<th class="min">施設使用目的区分</th>
 	<td><?php echo $detail->purpose_kb; ?></td>
 </tr>
 
