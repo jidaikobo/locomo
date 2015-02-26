@@ -175,7 +175,12 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		if ( ! method_exists(static::$controller, 'action_'.static::$action))
 		{
-			$current_action = '\\'.$this->request->controller.'::get_'.$this->request->action;
+			if (method_exists(static::$controller, 'get_'.static::$action))
+			{
+				$current_action = '\\'.$this->request->controller.'::get_'.$this->request->action;
+			} elseif (method_exists(static::$controller, 'post_'.static::$action)) {
+				$current_action = '\\'.$this->request->controller.'::post_'.$this->request->action;
+			}
 		}
 
 		// ordinary auth
