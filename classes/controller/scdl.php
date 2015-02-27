@@ -544,7 +544,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $mode
 	 * @return [type]
 	 */
-	public function action_calendar($year = null, $mon = null, $day = null, $mode = null) {
+	public function action_calendar($year = null, $mon = null, $day = null, $mode = null, $week_option = null) {
 		$model = $this->model_name;
 
 		// 絞り込みをセッションへ保存
@@ -581,6 +581,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$tmpl_sub = "_week";
 		if ($mode == null && $day)
 			$tmpl_sub = "_day";
+		// 週表示用にテンプレートを分ける
+		if ($week_option == "member") {
+			$tmpl_sub = "_week_" . $week_option;
+		} else if ($week_option == "building") {
+			$tmpl_sub = "_week_" . $week_option;
+		}
 
 		$year = (int)$year;
 		$mon = (int)$mon;
@@ -608,6 +614,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			// 次の週
 			$next_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " + 7days")) . "/week";
 			$prev_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " - 7days")) . "/week";
+			if ($week_option) {
+				$next_url .= "/" . $week_option;
+				$prev_url .= "/" . $week_option;
+			}
 			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の週',  array('class' => 'next_week'));
 			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の週',  array('class' => 'prev_week'));
 		} else if ($day && $mode == null) {
@@ -673,7 +683,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("display_week", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $weekY . '/' . $weekM . '/' . $weekD . '/week'), '週表示'));
 		$this->template->content = $view;
 	}
-
 
 	/**
 	 * 日の詳細予定を表示
@@ -848,6 +857,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 他のクラスから利用される事を前提でメンバ変数を使わないように
 		$schedules = array();
+		$schedules['schedules_list'] = array();
 
 		$schedule_data = \Locomo\Model_Scdl::query()
 							->where_open()
@@ -872,7 +882,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where("kind_flg", $model::$_kind_flg)
 							->get();
 
-
+		
+		$user_exist = array();
+		$building_exist = array();
 		for ($i = 0; $i < 7; $i++) {
 			$row = array();
 			$row['year']	 = (int)date('Y', strtotime(sprintf("%04d-%02d-%02d 00:00:00", $year, $mon, $day) . " + " . $i . "days"));
@@ -894,10 +906,50 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
 					// 追加
 					$row['data'][] = clone $r;
+
+					// メンバー
+					foreach ($r->user as $d) {
+						if (!isset($user_exist[$d->id][$r->id])) {
+							$user_exist[$d->id]['model'] = $d;
+							$user_exist[$d->id][$r->id]['data'][] = $r;
+						} else {
+							$flg_push = true;
+							foreach ($user_exist[$d->id][$r->id]['data'] as $row_data) {
+								if ($row_data->id == $r->id) {
+									$flg_push = false;
+								}
+							}
+							if ($flg_push) {
+								$user_exist[$d->id][$r->id]['data'][] = $r;
+							}
+						}
+					}
+					// 施設
+					foreach ($r->building as $d) {
+						if (!isset($building_exist[$d->item_id])) {
+							$building_exist[$d->item_id]['model'] = $d;
+							$building_exist[$d->item_id]['data'][] = $r;
+						} else {
+							$flg_push = true;
+							foreach ($building_exist[$d->item_id]['data'] as $row_data) {
+								if ($row_data->id == $r->id) {
+									$flg_push = false;
+								}
+							}
+							if ($flg_push) {
+								$building_exist[$d->item_id]['data'][] = $r;
+							}
+						}
+					}
 				}
+
+
 			}
-			$schedules[] = $row;
+			$schedules['schedules_list'][] = $row;
 		}
+
+		$schedules['member_list'] = $user_exist;
+		$schedules['building_list'] = $building_exist;
 		return $schedules;
 	}
 
