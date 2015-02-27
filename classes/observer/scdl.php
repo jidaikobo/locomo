@@ -16,8 +16,8 @@ class Observer_Scdl extends \Orm\Observer
 
 	public function after_save(\Orm\Model $obj)
 	{
-		// start_dateがない場合は本登録処理などの違う処理
-		if (\Input::post("start_date")) {
+		// repeat_kbがない場合は本登録処理などの違う処理
+		if (\Input::post("repeat_kb") != "") {
 			// schedule_membersへの登録
 			$members = explode("/", \Input::post("hidden_members"));
 
