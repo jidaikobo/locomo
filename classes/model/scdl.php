@@ -566,6 +566,17 @@ class Model_Scdl extends \Model_Base
 	 */
 	public static function display_target_day_info($data) {
 
+		// date_detail
+		$date_detail = self::make_target_day_info($data);
+		
+
+		return $date_detail['print'];
+	}
+	public static function make_target_day_info($data) {
+
+		// date_detail
+		$date_detail = array();
+
 		// 表示加工
 		$data->display_startdate = date('Y年n月j日', strtotime($data->start_date . " " . $data->start_time));
 		$data->display_enddate = date('Y年n月j日', strtotime($data->end_date . " " . $data->end_time));
@@ -593,6 +604,7 @@ class Model_Scdl extends \Model_Base
 			$print .= $data->target_year . "年" . $data->target_mon . "月" . $data->target_day . "日";
 			$print .= '　' . $data->display_starttime . "〜" . $data->display_endtime;
 		}
+		$date_detail['display_target_date'] = $print;
 
 		// 登録データ
 		$week = array('日', '月', '火', '水', '木', '金', '土');
@@ -602,28 +614,38 @@ class Model_Scdl extends \Model_Base
 		
 		if ($data->repeat_kb == 3){
 			$print .= "(" . $week[$data->week_kb] . "曜日)";
+			$date_detail['display_repeat_kb'] = "(" . $week[$data->week_kb] . "曜日)";
 		} else if ($data->repeat_kb == 4) {
 			$print .= $data->target_day . "日";
+			$date_detail['display_repeat_kb'] = $data->target_day . "日";
 		} else if ($data->repeat_kb == 5) {
 			$print .= $data->target_mon . "月" . $data->target_day . "日";
+			$date_detail['display_repeat_kb'] = $data->target_mon . "月" . $data->target_day . "日";
 		} else if ($data->week_kb != "" && $data->repeat_kb == 6) {
 			$print .= "(";
 			if ($data->week_index) {
 				$print .= "第" . $data->week_index;
+				$date_detail['display_repeat_kb'] = "第" . $data->week_index;
 			} else {
 				$print .= "毎週";
+				$date_detail['display_repeat_kb'] = "毎週";
 			}
 			$print .= $week[$data->week_kb] . "曜日)";
+			$date_detail['display_repeat_kb'] .= $week[$data->week_kb] . "曜日";
 		}
 		$print .= "</p>";
 		if ($data->repeat_kb == 0) {
 			$print .= "<p>設定期間：" . $data->display_startdate . " " . $data->display_starttime . "〜" . $data->display_enddate . " " . $data->display_endtime . "</p>";
+			$date_detail['display_period'] = $data->display_startdate . " " . $data->display_starttime . "〜" . $data->display_enddate . " " . $data->display_endtime;
 		} else {
 			$print .= "<p>設定期間：" . $data->display_startdate . "〜" . $data->display_enddate . "</p>";
 			$print .= "<p>設定時間：" . $data->display_starttime . "〜" . $data->display_endtime . "</p>";
+			$date_detail['display_period'] = "設定期間：" . $data->display_startdate . "〜" . $data->display_enddate . " 設定時間：" . $data->display_starttime . "〜" . $data->display_endtime;
+			$date_detail['display_period_day'] = $data->display_startdate . "〜" . $data->display_enddate;
+			$date_detail['display_period_time'] = $data->display_starttime . "〜" . $data->display_endtime;
 		}
 		
-
-		return $print;
+		$date_detail['print'] = $print;
+		return $date_detail;
 	}
 }
