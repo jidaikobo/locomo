@@ -569,14 +569,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			\Session::set($model::$_kind_name . "narrow_bid", \Input::get("bid"));
 
 
-
-
-
-
 		// 初期表示
-		if ($year == null)
+		if ($year == null || $year == "" || $year < 1000)
 			$year = date('Y');
-		if ($mon == null)
+		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12)
 			$mon = date('m');
 
 		// テンプレート切り分け
