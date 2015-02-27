@@ -35,7 +35,7 @@
 <tbody>
 <tr>
 <?php $detail_pop_array = array(); ?>
-<?php foreach($schedule_data as $v) {?>
+<?php foreach($schedule_data['schedules_list'] as $v) {?>
 	<td class="week<?php print $v['week']; ?>">
 		<?php if (isset($v['day'])) { ?>
 		<div class="each_date">
