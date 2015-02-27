@@ -1619,6 +1619,16 @@ schedule_day.graph td {
 	color: #fff;
 }
 
+.lcm_action_viewdetail h1 span {
+	font-weight: normal;
+}
+.lcm_action_viewdetail h1 span.icon {
+	width: 1.125em;
+	line-height: 1.125em;
+	margin-right: .5em;
+}
+
+
 /*== 重要度 ==*/
 .calendar .icon img ,
 .schedule_day.detail .icon img ,
@@ -1630,6 +1640,7 @@ schedule_day.graph td {
 .legend.calendar .icon img {
 	margin-left: .75em;
 }
+
 /*== 繰り返し ==*/
 /*  毎日  */
 .text_icon.repeat_kb_1 {

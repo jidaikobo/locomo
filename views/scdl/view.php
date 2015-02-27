@@ -1,44 +1,82 @@
-<h1><?php echo $title ?>：<?php print $detail->title_text; ?></h1>
-
+<?php 
+	$repeat_kbs = $model_name::get_repeat_kbs();
+	$detail_kbs = $model_name::get_detail_kbs();
+	$importance_kbs = $model_name::get_importance_kbs();
+	$title_str = '';
+	if(!$detail->private_kb):
+		$title_str = '：';
+		//繰り返し区分
+		$title_str .=  $detail->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detail->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detail->repeat_kb].'</span></span>' : '';
+		//詳細区分
+		foreach($detail_kbs as $key => $value):
+			if($detail->$key):
+				$title_str .=  '<span class="text_icon schedule '.$key.'"><span class="skip">'.$value.'</span></span>';
+			endif;
+		endforeach;
+		//重要度
+		$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($detail->title_importance_kb));
+		$title_str .= '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
+		$title_str .= $detail->title_text;
+		//区分
+		$title_str .= $detail->title_kb!='標準' ? '('.$detail->title_kb.')' : '';
+	endif;
+	
+?>
+<h1><?php echo $title ?>詳細<?php echo $title_str!='' ? $title_str : $detail->title_text ;?></h1>
 
 <table class="tbl">
 <?php
 	// use model's form plain definition instead of raw-like html
 	//echo $plain;
+	$info = $model_name::make_target_day_info($detail); 
 ?>
-
-<?php if($detail->start_date): ?>
+<?php if($detail->repeat_kb != 0 ||  $detail->repeat_kb == 0 && $detail->start_date == $detail->end_date): ?>
 <tr>
-	<th>開始日時</th>
+	<th>予定日時</th>
 	<td>
 	<?php
-	print $model_name::display_target_day_info($detail);
+	//	print $model_name::display_target_day_info($detail);
+	if($detail->repeat_kb ==0 ):
+		echo $info['display_period_time'];
+	elseif($detail->repeat_kb==1):
+		echo $info['display_period_time'].' （'.$info['display_repeat_kb'].'）';
+	elseif($detail->repeat_kb==2):
+		echo $info['display_period_time'].'（平日）';
+	else:
+		echo $info['display_period_time'].' （'.$info['display_repeat_kb'].'）';
+	endif;
 	?></td>
 </tr>
 
 <?php endif; ?>
-
-<?php if($detail->title_text && !$detail->private_kb): ?>
+<tr>
+	<th>設定期間</th>
+	<td>
+	<?php 
+	if($detail->repeat_kb ==0 && $detail->start_date != $detail->end_date):
+		echo $info['display_period'];
+	else:
+		echo $info['display_period_day'];
+	endif;
+	
+	 ?>
+		<?php //echo $info['display_period'] ?>
+	</td>
+</tr>
+<?php /* if($detail->title_text && !$detail->private_kb):  ?>
 <tr>
 	<th>タイトル</th>
 	<td><?php echo $detail->title_text; ?></td>
 </tr>
 
-<?php endif; ?>
-<?php if($detail->title_importance_kb && !$detail->private_kb): ?>
-<tr>
-	<th class="min">タイトル（重要度）</th>
-	<td><?php echo $detail->title_importance_kb; ?></td>
-</tr>
-
-<?php endif; ?>
-<?php if($detail->title_kb && !$detail->private_kb): ?>
+<?php endif; */ ?>
+<?php /* if($detail->title_kb && !$detail->private_kb): ?>
 <tr>
 	<th>タイトル（区分）</th>
 	<td><?php echo $detail->title_kb; ?></td>
 </tr>
 
-<?php endif; ?>
+<?php endif; */ ?>
 
 <tr>
 <th>詳細設定</th>
@@ -49,7 +87,7 @@
 </td>
 </tr>
 
-<?php if($detail->message && !$detail->private_kb): ?>
+<?php if(!$detail->private_kb): ?>
 <tr>
 	<th>メッセージ</th>
 	<td><?php echo preg_replace("/(\r\n|\r|\n)/", "<br />", $detail->message); ?></td>
@@ -87,7 +125,7 @@
 
 <?php if($detail->purpose_kb && !$detail->private_kb): ?>
 <tr>
-	<th class="min">施設使用目的区分</th>
+	<th class="min">施設使用目的</th>
 	<td><?php echo $detail->purpose_kb; ?></td>
 </tr>
 
@@ -134,7 +172,19 @@
 <?php endif; ?>
 
 </table>
-
-
-
-
+	<div class="legend calendar" aria-hidden=true>
+<?php
+	foreach($repeat_kbs as $k => $v){
+		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
+	}
+	foreach($detail_kbs as $k => $v){
+		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
+	}
+	if(!\Request::is_hmvc()): //重要度
+		foreach($importance_kbs as $k => $v){
+			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
+		}
+	endif;
+//	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
+?>
+	 </div><!-- /.legend.calendar -->

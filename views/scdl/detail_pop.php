@@ -17,7 +17,7 @@
 			<?php
 
 			// 指定なし
-			print '開催日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
+			print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
 			?>
 		</td>
 	</tr>
