@@ -612,23 +612,24 @@ class Model_Scdl extends \Model_Base
 		$print .= "<p>■登録条件</p>";
 		$print .= "<p>繰り返し：" . $repeat_kbs[$data->repeat_kb];
 		
+		$date_detail['display_repeat_kb'] = $repeat_kbs[$data->repeat_kb];
 		if ($data->repeat_kb == 3){
 			$print .= "(" . $week[$data->week_kb] . "曜日)";
-			$date_detail['display_repeat_kb'] = "(" . $week[$data->week_kb] . "曜日)";
+			$date_detail['display_repeat_kb'] .= "(" . $week[$data->week_kb] . "曜日)";
 		} else if ($data->repeat_kb == 4) {
 			$print .= $data->target_day . "日";
-			$date_detail['display_repeat_kb'] = $data->target_day . "日";
+			$date_detail['display_repeat_kb'] .= $data->target_day . "日";
 		} else if ($data->repeat_kb == 5) {
 			$print .= $data->target_mon . "月" . $data->target_day . "日";
-			$date_detail['display_repeat_kb'] = $data->target_mon . "月" . $data->target_day . "日";
+			$date_detail['display_repeat_kb'] .= $data->target_mon . "月" . $data->target_day . "日";
 		} else if ($data->week_kb != "" && $data->repeat_kb == 6) {
 			$print .= "(";
 			if ($data->week_index) {
 				$print .= "第" . $data->week_index;
-				$date_detail['display_repeat_kb'] = "第" . $data->week_index;
+				$date_detail['display_repeat_kb'] .= "第" . $data->week_index;
 			} else {
 				$print .= "毎週";
-				$date_detail['display_repeat_kb'] = "毎週";
+				$date_detail['display_repeat_kb'] .= "毎週";
 			}
 			$print .= $week[$data->week_kb] . "曜日)";
 			$date_detail['display_repeat_kb'] .= $week[$data->week_kb] . "曜日";
