@@ -1547,6 +1547,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$end = strtotime(\Input::post("end_date") . " " . \Input::post("end_time"));
 			if ($start > $end) {
 				$this->_scdl_errors[] = "入力された期間が不正です。";
+			} else if (\Input::post("start_date") == "" || \Input::post("end_date") == "") {
+				// 自動挿入しようかと思ったが、繰り返しなしの場合は全期間はおかしいのでエラーでとめておく
+				$this->_scdl_errors[] = "開始日付と終了日付を入力してください。";
 			}
 		} else {
 			if (\Input::post("start_time") >= \Input::post("end_time")) {
