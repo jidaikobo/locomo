@@ -2,13 +2,11 @@
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
+	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
 <?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
-<div class="select_display_type">
-	<?php print htmlspecialchars_decode($display_month); ?><!-- / -->
-	<?php // print htmlspecialchars_decode($display_week); ?>
-</div>
+
 <div class="field_wrapper calendar">
 <div class="select_period" title="週の選択">
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
@@ -36,7 +34,7 @@
 <tr>
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data['schedules_list'] as $v) {?>
-	<td class="week<?php print $v['week']; ?>">
+	<td class="week<?php echo $v['week']; echo $currentday == $v['day'] ? ' today' : '' ;?>">
 		<?php if (isset($v['day'])) { ?>
 		<div class="each_date">
 				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])); ?>" class="title">

@@ -2,12 +2,10 @@
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
+	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
 <h1><?php print $year; ?>年<?php print (int)$mon; ?>月 カレンダ</h1>
-<div class="select_display_type">
-	<?php // print htmlspecialchars_decode($display_month); ?><!-- / -->
-	<?php print htmlspecialchars_decode($display_week); ?>
-</div>
+
 
 <div class="field_wrapper calendar">
 <div class="select_period lcm_focus pagination" title="月を選択">
@@ -57,7 +55,7 @@
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data as $v) { ?>
 	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
-	<td class="week<?php print $v['week']; print isset($v['day']) ? '' : ' empty'; ?>">
+	<td class="week<?php echo $v['week']; echo isset($v['day']) ? '' : ' empty';  echo (isset($v['day']) && $currentday == $v['day']) ? ' today' : '' ;?>">
 		<?php if (isset($v['day'])) { ?>
 		<div class="each_date lcm_focus" title="<?php
 			print $v['day'].'日 '.$week_name[$v['week']].'曜日 ';

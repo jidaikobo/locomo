@@ -282,6 +282,8 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
 	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
 	//抜けるリンクの準備。絶対に一つだけ。というようにしたい。
+	//抜けるリンクの出る場所を考える。ウィジェットの中だったりすると、枠内下に余白ができてしまう。要工夫。
+	//抜けるリンクが常に一つだけなら、画面の中央に出してしまうことも考えられる？ その場合、親を取る方法は考えないと行けない。
 
 
 	var set_focus = function(target){
