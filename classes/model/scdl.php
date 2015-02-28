@@ -579,9 +579,9 @@ class Model_Scdl extends \Model_Base
 
 		// 表示加工
 		$data->display_startdate = date('Y年n月j日', strtotime($data->start_date . " " . $data->start_time));
-		if($data->repeat_kb == 0 && date('Y-n', strtotime($data->start_date)) ==  date('Y-n', strtotime($data->end_date))): //繰り返しなしのときに開始日と終了日が同じ場合は省略する
+		if($data->repeat_kb == 0 && date('Y-n-j', strtotime($data->start_date)) ==  date('Y-n-j', strtotime($data->end_date))): //繰り返しなしのときに開始日と終了日が同じ場合は省略する
 			$data->display_enddate = '';
-		elseif(date('Y', strtotime($data->start_date)) ==  date('Y', strtotime($data->end_date))): //開始日と終了日の年が同じ場合は年を省略する(ひとまず終了日)
+		elseif(date('Y', strtotime($data->start_date)) ==  date('Y', strtotime($data->end_date))): //開始日と終了日の年が同じ場合は年を省略する
 			$data->display_enddate = date('n月j日', strtotime($data->end_date . " " . $data->end_time));
 		else:
 			$data->display_enddate = date('Y年n月j日', strtotime($data->end_date . " " . $data->end_time));
@@ -617,7 +617,7 @@ class Model_Scdl extends \Model_Base
 		$date_detail['display_repeat_kb'] = $repeat_kbs[$data->repeat_kb];
 		if ($data->repeat_kb == 3){
 			$print .= $week[$data->week_kb] . "曜日";
-			$date_detail['display_repeat_kb'] = $week[$data->week_kb] . "曜日";
+			$date_detail['display_repeat_kb'] = '毎週 '.$week[$data->week_kb] . "曜日";
 		} else if ($data->repeat_kb == 4) {
 			$print .= $data->target_day . "日";
 			$date_detail['display_repeat_kb'] .= $data->target_day . "日";

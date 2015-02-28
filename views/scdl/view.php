@@ -20,49 +20,34 @@
 		//区分
 		$title_str .= $detail->title_kb!='標準' ? '('.$detail->title_kb.')' : '';
 	endif;
-	
+	$ymd_str = ( $year!='' && $mon!='' && $day!='' ) ?  $year.'年'.$mon.'月'.$day.'日 ' : '';
 ?>
 <h1><?php echo $title ?>詳細<?php echo $title_str!='' ? $title_str : $detail->title_text ;?></h1>
-
 <table class="tbl">
 <?php
 	// use model's form plain definition instead of raw-like html
 	//echo $plain;
 	$info = $model_name::make_target_day_info($detail); 
 ?>
-<?php if($detail->repeat_kb != 0 ||  $detail->repeat_kb == 0 && $detail->start_date == $detail->end_date): ?>
 <tr>
 	<th>予定日時</th>
 	<td>
-	<?php
-	//	print $model_name::display_target_day_info($detail);
-	if($detail->repeat_kb ==0 ):
-		echo $info['display_period_time'];
-	elseif($detail->repeat_kb==1):
-		echo $info['display_period_time'].' （'.$info['display_repeat_kb'].'）';
-	elseif($detail->repeat_kb==2):
-		echo $info['display_period_time'].'（平日）';
-	else:
-		echo $info['display_period_time'].' （'.$info['display_repeat_kb'].'）';
-	endif;
-	?></td>
-</tr>
-
-<?php endif; ?>
-<tr>
-	<th>設定期間</th>
-	<td>
-	<?php 
-	if($detail->repeat_kb ==0 && $detail->start_date != $detail->end_date):
-		echo $info['display_period'];
-	else:
-		echo $info['display_period_day'];
-	endif;
-	
-	 ?>
-		<?php //echo $info['display_period'] ?>
+	<?php if($detail->repeat_kb == 0):
+			echo $info['display_period'];
+		else:
+			echo $ymd_str.$info['display_period_time'];
+		endif; ?>
 	</td>
 </tr>
+<?php if($detail->repeat_kb != 0): ?>
+<tr>
+	<th>期間</th>
+	<td>
+		<?php echo $info['display_period_day'].' （'.$info['display_repeat_kb'].'）'; ?>
+	</td>
+</tr>
+<?php endif; ?>
+
 <?php /* if($detail->title_text && !$detail->private_kb):  ?>
 <tr>
 	<th>タイトル</th>

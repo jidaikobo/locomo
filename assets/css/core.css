@@ -1619,10 +1619,12 @@ schedule_day.graph td {
 	color: #fff;
 }
 
-.lcm_action_viewdetail h1 span {
+.lcm_action_viewdetail h1 span,
+.lcm_action_regchange h1 span {
 	font-weight: normal;
 }
-.lcm_action_viewdetail h1 span.icon {
+.lcm_action_viewdetail h1 span.icon,
+.lcm_action_regchange h1 span.icon {
 	width: 1.125em;
 	line-height: 1.125em;
 	margin-right: .5em;
