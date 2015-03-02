@@ -14,68 +14,68 @@
 移動<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day); ?>" class="date" id="move_date" />
 
 <div class="field_wrapper calendar_detail">
-<div class="select_period" title="前後の日へ移動">
-	<?php print htmlspecialchars_decode($prev_url); ?> / 
-	<?php print htmlspecialchars_decode($next_url); ?>
-</div>
-<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
-
-<div class="narrow_user lcm_focus" title="絞り込み">
-<?php include("calendar_narrow.php"); ?>
-</div>
+	<div class="select_period" title="前後の日へ移動">
+		<?php print htmlspecialchars_decode($prev_url); ?> / 
+		<?php print htmlspecialchars_decode($next_url); ?>
+	</div>
+	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
+	
+	<div class="narrow_user lcm_focus" title="絞り込み">
+	<?php include("calendar_narrow.php"); ?>
+	</div>
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-<table class="table schedule_day graph tbl">
-<tbody>
-<?php foreach ($schedule_data['member_list'] as $row) { ?>
-		<tr>
-		<th class="name" rowspan="<?php print count($row); ?>">
-			<?php print $row['model']->display_name; ?>
-		</th>
-			<?php foreach($schedule_data['schedules_list'] as $v) {?>
-			<td colspan="4" class="time h<?php print $v['hour']; ?>">
-				<?php print $v['hour']; ?>
-			</td>
-			<?php } ?>
-		</tr>
-
-			<?php
-			foreach ($row as $member_rowdata) {
-				if (!isset($member_rowdata['data'])) { continue; }
-				?>
-				<tr>
-					<?php foreach($schedule_data['schedules_list'] as $v) {?>
-					<?php $p_active = false; $s_active = false; $t_active = false; $f_active = false; ?>
-					
-						<?php foreach ($v['data'] as $detail_data) {
-							foreach ($member_rowdata['data'] as $member_detail) {
-								if ($member_detail->id == $detail_data->schedule_id) {
-									if ($detail_data->primary)
-										$p_active = true;
-									if ($detail_data->secondary)
-										$s_active = true;
-									if ($detail_data->third)
-										$t_active = true;
-									if ($detail_data->fourth)
-										$f_active = true;
+	<table class="table schedule_day graph tbl">
+	<tbody>
+	<?php foreach ($schedule_data['member_list'] as $row) { ?>
+			<tr>
+			<th class="name" rowspan="<?php print count($row); ?>">
+				<?php print $row['model']->display_name; ?>
+			</th>
+				<?php foreach($schedule_data['schedules_list'] as $v) {?>
+				<td colspan="4" class="time h<?php print $v['hour']; ?>">
+					<?php print $v['hour']; ?>
+				</td>
+				<?php } ?>
+			</tr>
+	
+				<?php
+				foreach ($row as $member_rowdata) {
+					if (!isset($member_rowdata['data'])) { continue; }
+					?>
+					<tr>
+						<?php foreach($schedule_data['schedules_list'] as $v) {?>
+						<?php $p_active = false; $s_active = false; $t_active = false; $f_active = false; ?>
+						
+							<?php foreach ($v['data'] as $detail_data) {
+								foreach ($member_rowdata['data'] as $member_detail) {
+									if ($member_detail->id == $detail_data->schedule_id) {
+										if ($detail_data->primary)
+											$p_active = true;
+										if ($detail_data->secondary)
+											$s_active = true;
+										if ($detail_data->third)
+											$t_active = true;
+										if ($detail_data->fourth)
+											$f_active = true;
+									}
 								}
 							}
-						}
-						?>
-					<td colspan="" class="<?php if ($p_active) { print "active"; } ?> bar" <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
-					</td>
-					<td colspan="" class="<?php if ($s_active) { print "active"; } ?> bar" <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
-					</td>
-					<td colspan="" class="<?php if ($t_active) { print "active"; } ?> bar" <?php // if ($t_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
-					</td>
-					<td colspan="" class="<?php if ($f_active) { print "active"; } ?> bar" <?php // if ($f_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
-					</td>
-					<?php } ?>
-				</tr>
-			<?php } ?>
-
-<?php } ?>
-	</tbody>
-</table>
+							?>
+						<td colspan="" class="<?php if ($p_active) { print "active"; } ?> bar" <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
+						</td>
+						<td colspan="" class="<?php if ($s_active) { print "active"; } ?> bar" <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+						</td>
+						<td colspan="" class="<?php if ($t_active) { print "active"; } ?> bar" <?php // if ($t_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+						</td>
+						<td colspan="" class="<?php if ($f_active) { print "active"; } ?> bar" <?php // if ($f_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+						</td>
+						<?php } ?>
+					</tr>
+				<?php } ?>
+	
+	<?php } ?>
+		</tbody>
+	</table>
 <?php } ?>
 <?php endif;//hmvcをとじる ?>
 
@@ -201,8 +201,9 @@
  <?php }else{ ?>
 予定の登録がありません
 <?php } ?>
+<?php if(!\Request::is_hmvc()): ?>
 </div><!-- /.field_wrapper -->
-
+<?php endif; ?>
 <?php foreach($schedule_data['unique_schedule_data'] as $v) { 
 	$detail_pop_data = $v;
 	include("detail_pop.php");
