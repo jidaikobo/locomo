@@ -1,5 +1,5 @@
 /*
-//console非対応ブラウザのための用意
+//console非対応ブラウザのための用意 うまく動かないので、要見直し
 // consoleが使えない場合は空のオブジェクトを設定しておく
 if( typeof window.console === undefined ){
  window.console = {};
@@ -9,6 +9,30 @@ if( typeof window.console.log !== "function" ){
  window.console.log = function(){};
 }
 */
+//loggedin
+//テスト環境やローカル開発環境での表示
+$(function(){
+	(function(){
+		var host, body, str, info, topinfo;
+		host = location.host;
+		body = $('body');
+		if(host == 'www.kyoto-lighthouse.org'){
+			body.addClass('testserver');
+			str = '--- テスト環境です　機能の改善等はまずこちらで実験します　入力されたデータは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
+		}else if(host!='kyoto-lighthouse.org'){
+			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
+		}
+		if(str){
+			info = $('<p class="develop_info">').prepend(str);
+			body.append(info);
+			if($('body').hasClass('loggedin testserver')){
+				topinfo = info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
+				$('#main_content').prepend(topinfo);
+			}
+		}
+	})();
+});
+
 
 //チェックボックス全選択
 $(function() {
@@ -293,7 +317,7 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 		if(target){
 			$('#escape_focus').remove();
 			target.addClass('currentfocus').set_tabindex();
-			add_esc = target.is('table') ? target.find('td').filter(":last") : target ;//tableタグ直下にaを書くと動作しないブラウザがあるので(IE等)
+			add_esc = target.is('table') ? target.find('td').last() : target ;//tableタグ直下にaを書くと動作しないブラウザがあるので(IE等)
 			$(add_esc).css('position', 'relative').append(esc);
 		}
 		parent = $(this).closest('.currentfocus');

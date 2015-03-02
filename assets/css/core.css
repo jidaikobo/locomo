@@ -6,7 +6,24 @@ IE8,MacIE5,Opera9以下 html:first-child
 */
 
 /* あとでlocomoログイン時のCSSを分ける */
-
+/*=== テスト環境の表示切り分け ===*/
+.develop_info {
+	position: fixed;
+	bottom: .5em;
+	left: 0;
+	right: 0;
+	color: #000;
+	font-size: .9em;
+	opacity: .55;
+	overflow-x: hidden;
+	white-space: nowrap;
+}
+.develop_info.top {
+	position: absolute;
+}
+.testserver .develop_info {
+	color: #e00;
+}
 /*=== 基本色の設定 ===*/
 a:link {
 	color: #36a;
@@ -489,7 +506,7 @@ ul.horizontal_list {
 /* dashboard */
 .lcm_action_dashboard .contents {
 	margin-left: 0;
-	margin-right: -0.95%;
+	margin-right: -2%;
 }
 .widget {
 	box-sizing: border-box;
@@ -501,18 +518,18 @@ ul.horizontal_list {
 	position: relative;
 	height: 16em;
 	overflow: hidden;
-	margin: 5px 1%;
+	margin: 5px 1.125% 15px 0;
 	font-size: .85em;
 	
 }
 .widget.size1 {
-	width: 30.975% !important;
+	width: 32% !important;
 	}
 .widget.size2 {
-	width: 63.9% !important;
+	width: 65.125% !important;
 }
 .widget.size3 {
-	width: 96.95% !important;
+	width: 100% !important;
 }
 .lcmbar_top_title {
 	height: 1.5em;
@@ -903,13 +920,15 @@ table + .index_toolbar {
 }
 .lcm_form .select_multiple_content.button_group {
 	width: 5em;
-	text-align: center;
+	position: relative;
 }
 .lcm_form .select_multiple_content.button_group input {
-	margin :0 .5em .5em;
+    position: absolute;
+	top: 7.5em;
+    left: 1.35em;
 }
 .lcm_form .select_multiple_content.button_group input:first-child {
-	margin-top: 2.5em;
+    top: 10em;
 }
 .lcm_form .select_multiple_content select {
 	margin-bottom: .5em;
@@ -1591,7 +1610,7 @@ table.calendar {
 }
 .legend.calendar {
 	text-align: left;
-	font-size: .5em;
+	font-size: .75em;
 	margin-top: 15px;
 	margin-left: -.75em;
 }
