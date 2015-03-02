@@ -21,8 +21,13 @@ IE8,MacIE5,Opera9以下 html:first-child
 .develop_info.top {
 	position: absolute;
 }
+.testserver {
+	background-color: #cdd7de !important;
+}
 .testserver .develop_info {
 	color: #e00;
+	left: 2%;
+	right: 2%;
 }
 /*=== 基本色の設定 ===*/
 a:link {
