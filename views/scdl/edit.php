@@ -55,11 +55,11 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<div class="field">
 				<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
 			</div>
-			<div class="field">
+			<div class="field nowrap">
 				<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
 				<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
 			</div>
-			<div class="field">
+			<div class="field nowrap">
 				<?php echo $form->field('title_kb')->set_template('{label}'); ?>
 				<?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?>
 			</div>
@@ -356,12 +356,7 @@ function change_repeat_kb_area() {
 	}else{
 		$('#field_set_time').prepend($('#form_start_time')).append($('#form_end_time')).show();
 	}
-	
-	//繰り返しなしのときに、時間入力欄が離れていると入力しづらい、期間でなく一日だけの予定の場合が多いので、開始日を入れると終了日も自動的に反映してほしい。なお、単日の場合時間の入力欄の開始と終了の間に日付入力欄があるのは使いづらい。前の下に並んでいる時のほうがよい。
-	//datepicker側のイベントはいったんjquery.inc.jsに記述
 
-
-	
 	//区分選択により、期間の入力欄の種類を変更 //まだ入力が未対応なのでコメントアウト
 /*	if($("#form_repeat_kb").val() < 4){
 		$('#form_start_date, #form_end_date').removeClass('month');
@@ -370,6 +365,19 @@ function change_repeat_kb_area() {
 		$('#form_start_date, #form_end_date').addClass('month');
 	}
 */
+}
+is_allday();
+$('#form_allday_kb').change(function(){
+	is_allday()
+});
+function is_allday(){
+	if($('#form_allday_kb').prop('checked')){
+		$('#form_start_time').val('0:00');
+		$('#form_end_time').val('23:59');
+		$('#form_start_time, #form_end_time').attr('readonly',true);
+	}else{
+		$('#form_start_time, #form_end_time').attr('readonly',false);
+	}
 }
 
 make_hidden_members();

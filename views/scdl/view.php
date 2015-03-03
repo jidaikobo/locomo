@@ -20,7 +20,7 @@
 		//区分
 		$title_str .= $detail->title_kb!='標準' ? '('.$detail->title_kb.')' : '';
 	endif;
-	$ymd_str = ( $year!='' && $mon!='' && $day!='' ) ?  $year.'年'.$mon.'月'.$day.'日 ' : '';
+	$ymd_str = ( $year!='' && $mon!='' && $day!='' ) ?  intval($year).'年'.intval($mon).'月'.intval($day).'日 ' : '';
 ?>
 <h1><?php echo $title ?>詳細<?php echo $title_str!='' ? $title_str : $detail->title_text ;?></h1>
 <table class="tbl">
@@ -33,7 +33,9 @@
 	<th>予定日時</th>
 	<td>
 	<?php if($detail->repeat_kb == 0):
-			echo $info['display_period'];
+			echo $info['display_target_date'];
+		elseif($detail->allday_kb):
+			echo $ymd_str.'終日';
 		else:
 			echo $ymd_str.$info['display_period_time'];
 		endif; ?>

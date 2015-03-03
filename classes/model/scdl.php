@@ -596,9 +596,12 @@ class Model_Scdl extends \Model_Base
 		$print = "";
 		// 対象の日時
 		if ($data->repeat_kb == 0) {
+			if($data->allday_kb){
+				$data->display_starttime = $data->display_endtime = '';
+			}
 			// 指定なし
-			if ($data->display_startdate == $data->display_enddate) {
-				$print .= $data->display_startdate . ' ' . $data->display_starttime . " 〜 " . $data->display_endtime;
+			if ($data->allday_kb && $data->display_enddate=='') {
+				$print .= $data->display_startdate;
 			} else {
 				$print .= $data->display_startdate . ' ' . $data->display_starttime . " 〜 " . $data->display_enddate . " " . $data->display_endtime;
 			}
@@ -619,11 +622,11 @@ class Model_Scdl extends \Model_Base
 			$print .= $week[$data->week_kb] . "曜日";
 			$date_detail['display_repeat_kb'] = '毎週 '.$week[$data->week_kb] . "曜日";
 		} else if ($data->repeat_kb == 4) {
-			$print .= $data->target_day . "日";
-			$date_detail['display_repeat_kb'] .= $data->target_day . "日";
+			$print .= intval($data->target_day) . "日";
+			$date_detail['display_repeat_kb'] .= intval($data->target_day) . "日";
 		} else if ($data->repeat_kb == 5) {
-			$print .= $data->target_mon . "月" . $data->target_day . "日";
-			$date_detail['display_repeat_kb'] .= $data->target_mon . "月" . $data->target_day . "日";
+			$print .= intval($data->target_mon) . "月" . intval($data->target_day) . "日";
+			$date_detail['display_repeat_kb'] .= intval($data->target_mon) . "月" . intval($data->target_day) . "日";
 		} else if ($data->week_kb != "" && $data->repeat_kb == 6) {
 			$print .= "(";
 			if ($data->week_index) {

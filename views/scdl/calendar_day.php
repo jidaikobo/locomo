@@ -6,10 +6,6 @@
 
 <?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 カレンダ一日詳細</h1>
-<div class="select_display_type">
-	<?php print htmlspecialchars_decode($display_month); ?> / 
-	<?php print htmlspecialchars_decode($display_week); ?>
-</div>
 
 移動<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day); ?>" class="date" id="move_date" />
 
@@ -106,6 +102,8 @@
 			<td>
 				<div>
 					<?php
+						$detaildata->display_time = $detaildata->allday_kb ? '終日' : '';
+						
 						$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
 						$detaildata->display_enddate = date('Y年n月j日', strtotime($detaildata->end_date . " " . $detaildata->end_time));
 						$detaildata->display_starttime = date('i', strtotime($detaildata->start_time))==0 ?
@@ -122,17 +120,20 @@
 								echo '<span class="nowrap">'.$detaildata->display_starttime . ' 〜</span> <span class="nowrap">' . $detaildata->display_endtime.'</span>';
 							}
 						} else {
-				//			echo sprintf("%d年%d月%d日", $year, $mon, $day) . " " . $detaildata->display_starttime . "〜" . $detaildata->display_endtime;
-							echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
-							if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 6) {
-								echo "(";
-								$week = array('日', '月', '火', '水', '木', '金', '土');
-								if ($detaildata->week_index) {
-									echo "第" . $detaildata->week_index;
-								} else {
-									echo "毎週";
+							if($detaildata->allday_kb){
+								echo '終日';
+							}else{
+								echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
+								if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 6) {
+									echo "(";
+									$week = array('日', '月', '火', '水', '木', '金', '土');
+									if ($detaildata->week_index) {
+										echo "第" . $detaildata->week_index;
+									} else {
+										echo "毎週";
+									}
+									echo $week[$detaildata->week_kb] . "曜日)";
 								}
-								echo $week[$detaildata->week_kb] . "曜日)";
 							}
 						}
 ?>
@@ -171,7 +172,7 @@
 			?>
 			</td>
 			<?php if(!\Request::is_hmvc()): ?>
-			<td>
+			<td style="min-width: 6em;">
 			<?php
 				echo '<div>'.$detaildata->create_user->display_name.'</div>';
 			?>
