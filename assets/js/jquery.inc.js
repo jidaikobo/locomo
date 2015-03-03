@@ -1069,17 +1069,25 @@ var jslcm_times = $( '#form_start_time, #form_end_time' ).timepicker( {
 $('input.time.min15').timepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 15,
+	beforeShow: function(){
+		if( $(this).attr('readonly') ) return false;
+	}
 });
 //30分区切り
 $('input.time.min30').timepicker({
 	timeFormat: 'HH:mm',
-	stepMinute: 30
+	stepMinute: 30,
+	beforeShow: function(){
+		if( $(this).attr('readonly') ) return;
+	}
 });
 //通常の時間選択
 $('input.time').timepicker({
-	timeFormat: 'HH:mm'
+	timeFormat: 'HH:mm',
+	beforeShow: function(){
+		if( $(this).attr('readonly') ) return;
+	}
 });
-
 
 //tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
@@ -1140,6 +1148,19 @@ $('#help_window').resizable({
 		var el = $(e.target);
 	}
 });
+
+//テキストエリアのリサイズ非対応ブラウザへの処置。とりあえずIEのみ
+var ta_unresizable = $('.lcm_ieversion_0')[0] ? false : true ;
+//もともとの最大幅・最大高とのかねあいを解消できるようにしたい
+//現在幅・高さをいったん明示的に与えて、max-widthとmax-heightをauto?にすればよい？？？
+if(ta_unresizable){
+	$('textarea').resizable({
+		'maxWidth' : 800,
+		'minWidth' : 60,
+		'minHeight': 30,
+		'contain'   : '#main_container'
+}).parent().addClass('resizable_textarea');
+}
 
 
 //=== rollover ===

@@ -29,6 +29,8 @@ IE8,MacIE5,Opera9以下 html:first-child
 	left: 2%;
 	right: 2%;
 }
+
+
 /*=== 基本色の設定 ===*/
 a:link {
 	color: #36a;
@@ -1358,15 +1360,15 @@ td.minimum {
 	margin: 16px auto 0;
 }
 table.calendar {
-	margin-top: .5em;
+	margin-top: 2em;
 	table-layout: fixed;
 	text-align: left;
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
 	box-sizing : border-box ;
 	border-spacing: 0px;
-	border-top: 1px #bbb solid;
-	border-left: 1px #bbb solid;
+	border-top: none;
+	border-left: none;
 	width: 100%;
 }
 .calendar th,
@@ -1377,6 +1379,38 @@ table.calendar {
 /*	width: 8em;*/
 	background-color: transparent;
 }
+.calendar thead * {
+	vertical-align: middle;
+}
+.calendar thead th {
+	border-bottom: 3px solid #36a;
+	border-right: none !important;
+}
+.calendar thead span {
+	display: inline-block;
+	margin-left: 2px;
+	width: 1em;
+	white-space: nowrap;
+	overflow-x: hidden;
+}
+
+.calendar tbody th,
+.calendar tbody td:first-child {
+	border-left: 1px solid #bbb;
+}
+.calendar tbody th,
+.calendar tbody td {
+	box-shadow: 0 0 2px rgba(0,0,0,.2);
+	background: #fafafa;
+	border-top: 1px solid #fff;
+}
+.calendar tbody th {
+	border-right: 3px double #bbb;
+}
+.calendar tbody td {
+	border-left: 1px solid #fff;
+}
+
 .calendar td.today {
 	background-color: #fafadd;
 }
@@ -1387,17 +1421,6 @@ table.calendar {
 	background-color: #faf0da;
 }
 
-.calendar thead * {
-	vertical-align: middle;
-/*	text-align: center;*/
-}
-.calendar thead span {
-	display: inline-block;
-	margin-left: 2px;
-	width: 1em;
-	white-space: nowrap;
-	overflow-x: hidden;
-}
 .calendar th.week6 {
 	color: darkcyan;
 	border-color: darkcyan;
@@ -1417,109 +1440,20 @@ table.calendar {
 	vertical-align: top;
 	padding: 0;
 }
-/* あとでkesu */
 .calendar .each_date {
 	min-height: 5.5em;
 	position: relative;
-}
-.calendar .title {
-	display: block;
-	line-height: 1em;
-	color: #333;
-	font-weight: bold;
-	text-decoration: none;
-}
-.calendar .title:hover {
-	background-color: #eee;
-	transition: .3s;
-}
-
-.week0 .title:hover,
-.holiday .title:hover {
-	background-color: #f3e6e3;
-}
-.week6 .title:hover {
-	background-color: #e6eae6;
-}
-.calendar .add_new {
-	padding: 2px 4px;
-	position: absolute;
-	top: 0;
-	right: 2px;
-}
-.calendar .add_new:before {
-	content : '＋';
-/*	content: url('../img/led-icons/pencil.png');*/
-}
-.calendar .add_new:hover {
-	color: #36f;
-} 
-.week6 .title {
-	background-color: #d8ebfc;
-}
-.week0 .title {
-	background-color: pink;
-}
-table.calendar .events {
-	padding: 0 2px 5px;
-	font-size: .85em;
-}
-.widget .calendar {
-	margin: 0;
-	min-width: 100%;
-}
-.widget.size1 .calendar {
-	font-size: 85%;
-}
-
-
-/*=== calendar いじり ===*/
-.calendar tbody td:first-child {
-	border-left: 1px solid #bbb;
-}
-table.calendar {
-	border-top: none;
-	border-left: none;
-	margin-top: 2em;
-}
-.calendar thead th {
-	border-bottom: 3px solid #36a;
-	border-right: none !important;
-}
-.calendar .each_date {
 	padding: 3px 2px;
 }
 .calendar .title {
+	display: block;
+	margin-right: 1px;
+	padding-top: 2px;
+	line-height: 1em;
 	font-size: .85em;
 	color: #888;
-	padding-top: 2px;
-	margin-right: 1px;
-}
-.calendar .title ,
-.week6 .title,
-.week0 .title {
-	background-color: transparent;
-}
-.calendar .date_str {
-	display: inline-block;
-	width: 1.75em;
-	height: 1.25em;
-	line-height: 1.25em;
-	overflow-y: hidden;
-	font-family: Arial;
-	font-size: 1.25em;
-}
-.calendar .events p {
-	margin-top: .5em;
-}
-.calendar .events p {
-	line-height: 125%;
-}
-.calendar .events a {
+	font-weight: bold;
 	text-decoration: none;
-}
-.calendar .events a:hover {
-	text-decoration: under-line;
 }
 .calendar th.week6,
 .calendar td.week6 .title {
@@ -1531,6 +1465,31 @@ table.calendar {
 	color: indianred;
 }
 
+.calendar .title ,
+.week6 .title,
+.week0 .title {
+	background-color: transparent;
+}
+.calendar .title:hover {
+	background-color: #eee;
+	transition: .3s;
+}
+.week0 .title:hover,
+.holiday .title:hover {
+	background-color: #f3e6e3;
+}
+.week6 .title:hover {
+	background-color: #e6eae6;
+}
+.calendar .date_str {
+	display: inline-block;
+	width: 1.75em;
+	height: 1.25em;
+	line-height: 1.25em;
+	overflow-y: hidden;
+	font-family: Arial;
+	font-size: 1.25em;
+}
 .calendar .add_new {
 	position: absolute;
 	top: .4em;
@@ -1541,32 +1500,35 @@ table.calendar {
 	text-decoration: none;
 	color: #aaa;
 }
-.calendar td{
-	box-shadow: 0 0 2px rgba(0,0,0,.2);
-	background: #fafafa;
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
+.calendar .add_new:before {
+	content : '＋';
+/*	content: url('../img/led-icons/pencil.png');*/
 }
-/*
-.calendar a {
+.calendar .add_new:hover {
+	color: #36f;
+} 
+
+table.calendar .events {
+	padding: 0 2px 5px;
+	font-size: .85em;
+}
+.calendar .events p {
+	margin-top: .5em;
+	line-height: 125%;
+}
+.calendar .events a {
 	text-decoration: none;
 }
-.calendar a:hover {
-	text-decoration: underline;
+.calendar .events a:hover {
+	text-decoration: under-line;
 }
-*/
-/*
-.calendar td.empty {
-	border-right: none;
+.widget .calendar {
+	margin: 0;
+	min-width: 100%;
 }
-.calendar td.empty + td:not(.empty) {
-	border-left: 1px solid #bbb;
+.widget.size1 .calendar {
+	font-size: 85%;
 }
-.calendar td.empty:last-child {
-	border-right: 1px solid #bbb;
-}
-*/
-
 
 /* あとでkesu */
 .icon_small {
@@ -1589,6 +1551,17 @@ table.calendar {
 	font-size: .75em;
 	text-align: center;
 	white-space: nowrap;
+	padding: 2px;
+}
+.schedule_day.graph .bar {
+	padding: 4px 2px;
+	border-right-color: #ddd;
+}
+.schedule_day.graph .bar:last-child{
+	border-right-color: #bbb;
+}
+.schedule_day.graph tbody td{
+	height: .75em;
 }
 .schedule_day.graph .time.h0,
 .schedule_day.graph .time.h1,
@@ -2152,7 +2125,9 @@ body .ui-datepicker select.ui-datepicker-month {
 body .ui-resizable-handle {
 	z-index: 100000 !important;
 }
-
+.ui-wrapper.resizable_textarea {
+	padding: 0 8px 0 0!important;
+}
 
 
 /*=== for NetReader ===*/
