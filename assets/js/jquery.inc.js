@@ -888,6 +888,7 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 		confirm_beforeunload();
 	}
 }
+
 //ページ遷移警告抑止
 $('a:submit, input:submit, .confirm').click(function(){//該当する場合遷移警告しない
 		$(window).off('beforeunload');
