@@ -157,7 +157,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			$y = $pdf->GetY();
 			$y = (is_float($y) or is_int($y)) ? $y : 0;
 			$pdf->SetXY($margin_x+($width*0.05), $y + $fs*MM_PER_POINT);
-			$pdf->MultiCell($width*0.95, $fs*2*MM_PER_POINT, $name, 0, $name_align);
+			$pdf->Cell($width*0.95, $fs*2*MM_PER_POINT, $name, 0, 1, $name_align);
 
 
 			if ($rotate) $pdf->StopTransform();
