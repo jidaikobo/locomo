@@ -62,17 +62,11 @@
 <?php if ($item->zip3): ?>
 <tr>
 	<th>郵便番号</th>
-	<td><?php echo $item->zip3; ?></td>
+	<td><?php echo $item->zip3.'-'.$item->zip4; ?></td>
 </tr>
 
 <?php endif; ?>
-<?php if ($item->zip4): ?>
-<tr>
-	<th>郵便番号</th>
-	<td><?php echo $item->zip4; ?></td>
-</tr>
 
-<?php endif; ?>
 <?php if ($item->address): ?>
 <tr>
 	<th>住所</th>
