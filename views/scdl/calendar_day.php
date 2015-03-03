@@ -172,7 +172,7 @@
 			?>
 			</td>
 			<?php if(!\Request::is_hmvc()): ?>
-			<td>
+			<td style="min-width: 6em;">
 			<?php
 				echo '<div>'.$detaildata->create_user->display_name.'</div>';
 			?>

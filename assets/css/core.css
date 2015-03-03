@@ -1243,6 +1243,7 @@ td.minimum {
 .datatable td {
 	white-space: nowrap;
 }
+.datatable.schedule_day td,
 .widget .datatable.schedule_day td {
 	white-space: normal;
 }
