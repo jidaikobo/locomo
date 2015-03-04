@@ -321,14 +321,15 @@ class Actionset_Scdl extends \Actionset
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
 		// ユーザIDが一致しない項目では削除リンクを出さない
+		// とりあえず出す
 		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
 		{
 //			if (isset($obj->creator_id) && $obj->creator_id == \Auth::get('id'))
-			if (isset($obj->user_id) && $obj->user_id == \Auth::get('id'))
-			{
+//			if (isset($obj->user_id) && $obj->user_id == \Auth::get('id'))
+//			{
 				$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 				$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
-			}
+//			}
 		}
 
 		$retvals = array(
@@ -347,6 +348,7 @@ class Actionset_Scdl extends \Actionset
 	 */
 	public static function actionset_delete_others($controller, $obj = null, $id = null, $urls = array())
 	{
+/*
 		$retvals = self::actionset_delete($controller, $obj, $id);
 		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
 		{
@@ -357,5 +359,7 @@ class Actionset_Scdl extends \Actionset
 
 		\Arr::set($retvals, 'urls', $urls);
 		return $retvals;
+*/
+		return array();
 	}
 }
