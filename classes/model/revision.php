@@ -29,7 +29,6 @@ class Model_Revision extends \Model_Base
 		),
 	);
 
-
 	protected static $_belongs_to = array(
 		'user' => array(
 			'key_from' => 'user_id',
@@ -40,6 +39,14 @@ class Model_Revision extends \Model_Base
 		),
 	);
 
+	/**
+	 * _init
+	 */
+	 public static function _init()
+	{
+		// properties
+		\Arr::set(static::$pagination_config, 'uri_segment', \Inflector::guess_pagination_segment());
+	}
 
 	/**
 	 * find_all_revisions()
