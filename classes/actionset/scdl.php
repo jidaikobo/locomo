@@ -79,10 +79,20 @@ class Actionset_Scdl extends \Actionset
 			// 項目が日付を持っていたらそれを使う
 			if(isset($obj->start_date))
 			{
-				$y = date('Y', strtotime($obj->start_date));
-				$m = date('m', strtotime($obj->start_date));
-				$ym = date('Y-m', strtotime($obj->start_date));
-				$ymd = date('Y-m-d', strtotime($obj->start_date));
+				// 短日イベントの場合（開始日と終了日が一致）は、その値を使う。
+				if ($obj->start_date == $obj->end_date)
+				{
+					$y = date('Y', strtotime($obj->start_date));
+					$m = date('m', strtotime($obj->start_date));
+					$d = date('d', strtotime($obj->start_date));
+				} else {
+					// 短日イベントでない場合は、ターゲット日時にする
+					$y = date('Y');
+					$m = $obj->target_month ?: date('m');
+					$d = intval($obj->target_day);
+				}
+				$ym = date('Y-m', strtotime($y.'-'.$m.'-'.$d));
+				$ymd = date('Y-m-d', strtotime($y.'-'.$m.'-'.$d));
 			}
 		}
 
@@ -106,6 +116,7 @@ class Actionset_Scdl extends \Actionset
 			array($controller.DS."calendar/", '今月'),
 			array($controller.DS."calendar/".$ym_str, '月表示'),
 			array($controller.DS."calendar/".$week_1st_day.'/week', '週表示'),
+			array($controller.DS."calendar/{$y}/{$m}/{$d}", '日表示'),
 		);
 		$urls = static::generate_urls($controller.'::action_edit', $actions, ['create']);
 
@@ -113,8 +124,8 @@ class Actionset_Scdl extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => 'カレンダ',
 			'show_at_top'  => true,
-			'acl_exp'      => 'カレンダ形式のスケジューラの表示権限です。',
-			'explanation'  => 'カレンダ形式のスケジューラの表示権限です。',
+			'acl_exp'      => 'カレンダ形式の表示権限です。',
+			'explanation'  => 'カレンダ形式で表示します。',
 			'help'         => '',
 			'order'        => 1
 		);
