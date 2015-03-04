@@ -14,6 +14,7 @@ class Model_Revision extends \Model_Base
 		'created_at',
 		'deleted_at',
 		'user_id' => array('default' => 0),
+		'then_displayname',
 	);
 
 	protected static $pagination_config = array(
