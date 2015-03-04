@@ -21,7 +21,7 @@
 			?>
 		</td>
 	</tr>
-	<?php if ($detail_pop_data->kind_flg == 1 && !$detail_pop_data->private_kb) { ?>
+	<?php if (!$detail_pop_data->private_kb) { ?>
 	<tr>
 		<th class="min">
 			メッセージ：</th><td><?php print preg_replace("/(\r\n|\r|\n)/", "<br />", (mb_substr($detail_pop_data->message, 0, 20))); ?>
