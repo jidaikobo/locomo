@@ -133,6 +133,7 @@ class Observer_Revision extends \Orm\Observer
 			$args['created_at'] = date('Y-m-d H:i:s');
 			$args['operation']  = $operation;
 			$args['user_id']    = \Auth::get('id');
+			$args['then_displayname'] = \Model_Usr::get_display_name(\Auth::get('id'));
 	
 			// save revision
 			$model = \Model_Revision::forge($args);

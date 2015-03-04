@@ -69,10 +69,20 @@ trait Controller_Traits_Revision
 		$subject = \Arr::get($model::get_field_by_role('subject'), 'lcm_field');
 		if(empty($subject)) throw new \OutOfBoundsException($model.' doesn\'t have public static $_subject_field_name');
 
+		// 現在名
+		$single = $model::find($item->pk_id);
+		$current_sbj = '';
+		if ($single)
+		{
+			$current_sbj = $single->$subject;
+		}
+
 		// view
 		$view = \View::forge('revision/each_index_revision');
-		$view->set_global('field', \Arr::get($model::get_field_by_role('label'), 'lcm_field'));
+		$view->set_global('field', \Arr::get($model::get_field_by_role('subject'), 'label'));
 		$view->set_global('items', $items);
+		$view->set_global('pk_id', $item->pk_id);
+		$view->set_global('current_sbj', $current_sbj);
 		$view->set_global('base_url', static::$base_url);
 		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $subject);
@@ -98,12 +108,20 @@ trait Controller_Traits_Revision
 		$data = unserialize($revisions->data);
 		$obj = $model::forge();
 		$obj->comment = '('.$revisions->operation.') '.$revisions->comment;
-		$obj->set($data);
-		$plain = $model::plain_definition('revision', $obj);
+
+		$val = '';
+		if ($data)
+		{
+			$obj->set($data);
+			$plain = $model::plain_definition('revision', $obj);
+			$val = $plain->build_plain();
+		}
 
 		// assign
 		$content = \View::forge('revision/view_revision');
-		$content->set_safe('plain', $plain->build_plain());
+		$content->set_safe('comment', $revisions->comment);
+		$content->set_safe('user', \Model_Usr::get_display_name($revisions->user_id));
+		$content->set_safe('plain', $val);
 		$content->set_global('item', $obj);
 		$content->set_global('title', '履歴個票');
 		$content->set_global('is_revision', true);
