@@ -1321,7 +1321,6 @@ td.minimum {
 }
 .field_wrapper.calendar_detail {
 	display: block;
-	max-width: 1000px;
 }
 .select_period {
 	display: inline-block;
@@ -1586,6 +1585,13 @@ table.calendar .events {
 }
 .schedule_day.graph td:last-child.active {
 	border-right: 1px solid #bbb ;
+}
+.datatable.schedule_day.detail tbody .members,
+.datatable.schedule_day.detail tbody .buildings {
+	white-space: normal;
+}
+.datatable.schedule_day.detail tbody .detail {
+	min-width: 8em;
 }
 .legend.calendar {
 	text-align: left;

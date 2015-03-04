@@ -1207,7 +1207,7 @@ span.nobr {
 
 .nowrap,
 .nobr {
-	white-space: nowrap;
+	white-space: nowrap !important;
 }
 
 .radius {
