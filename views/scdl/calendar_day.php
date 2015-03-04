@@ -79,17 +79,17 @@
 	<table class="tbl datatable schedule_day detail">
 		<thead>
 		<tr>
-			<th class="min">
+			<th class="time">
 				予定時刻
 			</th>
-			<th class="min">
+			<th class="members">
 				氏名
 			</th>
-			<th>
+			<th class="detail">
 				内容
 			</th>
 			<?php if(!\Request::is_hmvc()): ?>
-			<th>
+			<th class="name">
 				登録者
 			</th>
 			<?php endif; ?>
@@ -99,82 +99,79 @@
 
 <?php foreach ($schedule_data['unique_schedule_data'] as $detaildata) { ?>
 		<tr>
-			<td>
-				<div>
-					<?php
-						$detaildata->display_time = $detaildata->allday_kb ? '終日' : '';
-						
-						$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
-						$detaildata->display_enddate = date('Y年n月j日', strtotime($detaildata->end_date . " " . $detaildata->end_time));
-						$detaildata->display_starttime = date('i', strtotime($detaildata->start_time))==0 ?
-							date('G時', strtotime($detaildata->start_date . " " . $detaildata->start_time)) :
-							preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
-						$detaildata->display_endtime = date('i', strtotime($detaildata->end_time))==0 ?
-							date('G時', strtotime($detaildata->end_date . " " . $detaildata->end_time)) :
-							preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->end_time)));
-							
-						if ($detaildata->repeat_kb == 0) {
-							if($detaildata->display_startdate != $detaildata->display_enddate)
-								echo '<span class="nowrap">'.$detaildata->display_startdate . " " . $detaildata->display_starttime . '〜</span><span class="nowrap">' . $detaildata->display_enddate . " " . $detaildata->display_endtime.'</span>';
-							else{
-								echo '<span class="nowrap">'.$detaildata->display_starttime . ' 〜</span> <span class="nowrap">' . $detaildata->display_endtime.'</span>';
+			<td class="time">
+			<?php
+				$detaildata->display_time = $detaildata->allday_kb ? '終日' : '';
+				
+				$detaildata->display_startdate = date('Y年n月j日', strtotime($detaildata->start_date . " " . $detaildata->start_time));
+				$detaildata->display_enddate = date('Y年n月j日', strtotime($detaildata->end_date . " " . $detaildata->end_time));
+				$detaildata->display_starttime = date('i', strtotime($detaildata->start_time))==0 ?
+					date('G時', strtotime($detaildata->start_date . " " . $detaildata->start_time)) :
+					preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->start_time)));
+				$detaildata->display_endtime = date('i', strtotime($detaildata->end_time))==0 ?
+					date('G時', strtotime($detaildata->end_date . " " . $detaildata->end_time)) :
+					preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->end_time)));
+					
+				if ($detaildata->repeat_kb == 0) {
+					if($detaildata->display_startdate != $detaildata->display_enddate)
+						echo '<span class="nowrap">'.$detaildata->display_startdate . " " . $detaildata->display_starttime . '〜</span><span class="nowrap">' . $detaildata->display_enddate . " " . $detaildata->display_endtime.'</span>';
+					else{
+						echo '<span class="nowrap">'.$detaildata->display_starttime . ' 〜</span> <span class="nowrap">' . $detaildata->display_endtime.'</span>';
+					}
+				} else {
+					if($detaildata->allday_kb){
+						echo '終日';
+					}else{
+						echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
+						if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 6) {
+							echo "(";
+							$week = array('日', '月', '火', '水', '木', '金', '土');
+							if ($detaildata->week_index) {
+								echo "第" . $detaildata->week_index;
+							} else {
+								echo "毎週";
 							}
-						} else {
-							if($detaildata->allday_kb){
-								echo '終日';
-							}else{
-								echo $detaildata->display_starttime . " 〜 " . $detaildata->display_endtime;
-								if ($detaildata->week_kb != "" && $detaildata->repeat_kb == 6) {
-									echo "(";
-									$week = array('日', '月', '火', '水', '木', '金', '土');
-									if ($detaildata->week_index) {
-										echo "第" . $detaildata->week_index;
-									} else {
-										echo "毎週";
-									}
-									echo $week[$detaildata->week_kb] . "曜日)";
-								}
-							}
+							echo $week[$detaildata->week_kb] . "曜日)";
 						}
-?>
-				</div>
-			</td>
-			<th class="name">
-				<?php
-				$members = array();
-				foreach ($detaildata->user as $member_data) {
-					$members[] = $member_data->display_name;
+					}
 				}
-				print implode(",&nbsp;", $members);
-
-				?>
-			</th>
-			<td>
-						<div>
-						<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detaildata->scdlid.$detaildata->target_year.$detaildata->target_mon.$detaildata->target_day ?>">
-						<?php				
-						echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->scdlid . sprintf("/%04d/%02d/%02d/", $detaildata->target_year, $detaildata->target_mon, $detaildata->target_day) . '">';
-						echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
-						foreach($detail_kbs as $k => $v){
-							if($detaildata->$k){
-								 echo '<span class="text_icon schedule '.$k.'"><span class="skip">'.$v.'</span></span>';
-							}
-						}
-						if(!\Request::is_hmvc()): //重要度
-							$importance_v = $model_name::value2index("title_importance_kb", html_entity_decode($detaildata->title_importance_kb));
-							echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
-						endif;
-						echo $detaildata->title_text;
-						echo  $model_name::value2index('title_kb', html_entity_decode($detaildata->title_kb)) != 0 ? '('.$detaildata->title_kb.')' : '' ;
-						echo '</a>';
-						echo '</p>';
-						echo '</div>';
 			?>
 			</td>
+			<th class="members">
+				<span class="display_inline_block nowrap">
+				<?php
+				$members = array();
+				foreach ($detaildata->user as $member_data):
+					$members[] = $member_data->display_name;
+				endforeach;
+				print implode(',&nbsp;</span><span class="display_inline_block nowrap">', $members);
+				?>
+				</span>
+			</th>
+			<td class="detail">
+				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detaildata->scdlid.$detaildata->target_year.$detaildata->target_mon.$detaildata->target_day ?>">
+				<?php				
+				echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->scdlid . sprintf("/%04d/%02d/%02d/", $detaildata->target_year, $detaildata->target_mon, $detaildata->target_day) . '">';
+				echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
+				foreach($detail_kbs as $k => $v){
+					if($detaildata->$k){
+						 echo '<span class="text_icon schedule '.$k.'"><span class="skip">'.$v.'</span></span>';
+					}
+				}
+				if(!\Request::is_hmvc()): //重要度
+					$importance_v = $model_name::value2index("title_importance_kb", html_entity_decode($detaildata->title_importance_kb));
+					echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
+				endif;
+				echo $detaildata->title_text;
+				echo  $model_name::value2index('title_kb', html_entity_decode($detaildata->title_kb)) != 0 ? '('.$detaildata->title_kb.')' : '' ;
+				echo '</a>';
+				echo '</p>';
+				?>
+			</td>
 			<?php if(!\Request::is_hmvc()): ?>
-			<td style="min-width: 6em;">
+			<td class="name nowrap">
 			<?php
-				echo '<div>'.$detaildata->create_user->display_name.'</div>';
+				echo $detaildata->create_user->display_name;
 			?>
 			</td>
 			<?php endif; ?>
