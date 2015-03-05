@@ -11,7 +11,7 @@
 <?php foreach ($items as $item): ?>
 	<tr title="<?php echo $item->name.'：'.\Model_Usr::get_display_name($item->creator_id) ?>" tabindex="-1">
 		<td><div class="col_scrollable">
-				<?php echo \Html::anchor(\Uri::create('msgbrd/view/'.$item->id), $item->name); ?>
+			<?php echo \Html::anchor(\Uri::create('msgbrd/view/'.$item->id), $item->name); ?>
 		</div></td>
 		<td><?php echo date('Y年n月j日', strtotime($item->created_at)) ?>
 		</td>
