@@ -209,10 +209,8 @@ class Model_Msgbrd extends \Model_Base
 		);
 */
 		// usergroup_id
-/*
-		echo @static::$id;
 		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
-		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
+		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1), array('is_for_acl', 0)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
 		self::$_properties['usergroup_id'] = array(
 			'label' => '公開範囲',
 			'form' => array(
@@ -222,9 +220,8 @@ class Model_Msgbrd extends \Model_Base
 			'validation' => array(
 				'required',
 			),
-			'default' => 0
+			'default' => ''
 		);
-*/
 	}
 
 	/**
@@ -245,13 +242,14 @@ class Model_Msgbrd extends \Model_Base
 		$form = parent::form_definition($factory, $obj);
 
 		// usergroup_id
+/*
 		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
 		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
 		$form->field('usergroup_id')
 			->add_rule('required')
 			->set_options($options)
 			->set_value($obj->usergroup_id);
-
+*/
 		// categories
 		$options = array('' => '選択してください');
 		$options+= \Model_Msgbrd_Categories::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
