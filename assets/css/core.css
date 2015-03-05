@@ -1417,7 +1417,8 @@ table.calendar {
 .calendar td.week6.today {
 	background-color: #f6f6e6;
 }
-.calendar td.week0.today {
+.calendar td.week0.today,
+.calendar td.holiday.today {
 	background-color: #faf0da;
 }
 
@@ -1481,6 +1482,9 @@ table.calendar {
 .week6 .title:hover {
 	background-color: #e6eae6;
 }
+.calendar a.title * {
+	vertical-align: middle;
+}
 .calendar .date_str {
 	display: inline-block;
 	width: 1.75em;
@@ -1489,6 +1493,12 @@ table.calendar {
 	overflow-y: hidden;
 	font-family: Arial;
 	font-size: 1.25em;
+	margin-right: -.85em;
+}
+.calendar .holiday_name {
+	font-weight: normal;
+	display: inline-block;
+	padding-right: 1.5em;
 }
 .calendar .add_new {
 	position: absolute;

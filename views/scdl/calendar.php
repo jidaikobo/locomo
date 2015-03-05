@@ -55,24 +55,28 @@
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data as $v) { ?>
 	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
-	<td class="week<?php echo $v['week']; echo isset($v['day']) ? '' : ' empty';  echo (isset($v['day']) && $currentday == $v['day']) ? ' today' : '' ;?>">
+	<?php $class_str = 'week'.$v['week'];
+		if(isset($v['day'])):
+			$class_str.= $currentday == $v['day'] ? ' today' : '';
+//			$class_str.= $currentday == $v['day'] ? ' holiday' : '';
+			$each_date_title_str = $v['day'].'日 '.$week_name[$v['week']].'曜日 ';
+			$each_date_title_str .= (count($v['data']) > 0) ? count($v['data']) . '件の登録' : '登録なし';
+			$date_str = $v['day'] < 10 ? '&nbsp;'.$v['day'] : $v['day'];
+			$each_date_title_skip = $week_name[$v['week']] . '曜日';
+//			$each_date_title_skip.=  ? '祝日</span><span class="holiday_name">'..'</span><span class="skip">' : '';//祝日の場合。
+			$each_date_title_skip.= (count($v['data']) > 0) ? count($v['data']) . '件の登録' : '登録なし';
+		else:
+			$class_str.= '';
+		endif;
+	 ?>
+	<td class="<?php echo $class_str ?>">
 		<?php if (isset($v['day'])) { ?>
-		<div class="each_date lcm_focus" title="<?php
-			print $v['day'].'日 '.$week_name[$v['week']].'曜日 ';
-				if (count($v['data']) > 0) {
-					print count($v['data']) . '件の登録';
-				} else {
-					print '登録なし';
-				}
-			?>">
+		<div class="each_date lcm_focus" title="<?php echo $each_date_title_str ?>">
 			<a href="<?php echo \Uri::create($kind_name . "/calendar/" . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])) ?>" class="title">
-				<span class="date_str"><?php print $v['day'] < 10 ? '&nbsp;'.$v['day'] : $v['day']; ?>日</span>
-				<span class="skip"><?php print $week_name[$v['week']] . '曜日'; ?> <?php if (count($v['data']) > 0) { print count($v['data']) . '件の登録';} else { print '登録なし'; } ?></span>
+				<span class="date_str"><?php echo $date_str ?>日</span>
+				<span class="skip"><?php echo $each_date_title_skip ?></span>
 			</a>
 			<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
-			<?php /*?><div>
-			<?php print count($v['data']); ?>件
-			</div><?php */ ?>
 			<div class="events">
 			<?php foreach ($v['data'] as $v2) {
 				$detail_pop_data = $v2;
@@ -83,6 +87,8 @@
 				
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detail_pop_data->scdlid.$detail_pop_data->target_year.$detail_pop_data->target_mon.$detail_pop_data->target_day ?>">
 					<?php
+						//非公開
+						echo $locomo['controller']['name'] === "\Controller_Scdl" && $v2['private_kb'] ? '<span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>' : '';
 						//繰り返し区分
 						echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
 						//詳細区分
@@ -97,7 +103,7 @@
 						print htmlspecialchars_decode($v2['link_detail']);
 					?>
 				</p>
-			<?php // include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうので下に移動...ガッハッハ? ?>
+			<?php // include("detail_pop.php"); //.lcm_focus内にあるとフォーカス時にdisplay:none;も読み上げてしまうことがあるので下に移動...ガッハッハ? ?>
 			<?php } ?>
 			</div>
 		</div>

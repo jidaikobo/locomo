@@ -352,6 +352,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					));
 
 		$usergroups = \Auth::get_groups();
+		
+		// グループ判定のため$detail->private_kbが上書きされるので、個票でそもそもこれが非公開項目だったのかどうかを判定するために追加。
+		$detail->private_kb_check = $detail->private_kb;
+		
 		if ($detail->group_kb == 2) {
 			$allow = false;
 			foreach ($usergroups as $gid) {
