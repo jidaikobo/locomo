@@ -194,7 +194,8 @@
 		}
 	endif;
 ?>
-<?php /*	<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
+<?php /*
+<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
 */ ?>
 	 </div><!-- /.legend.calendar -->
  <?php }else{ ?>
