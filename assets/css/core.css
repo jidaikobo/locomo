@@ -2245,21 +2245,28 @@ li.show_if_smalldisplay {
 	}
 	
 /*=== .lcm_form ===*/
-	.lcm_form .input_group {
+	.lcm_form > .input_group,
+	.lcm_form .hidden_item > .input_group {
 		border: none;
 		box-shadow: none;
 	}
 	.lcm_form .input_group > .input_group {
 		display: block;
 	}
+	.lcm_form .toggle_item.disclosure,
 	.lcm_form .input_group > h2,
 	.lcm_form .hidden_item .input_group > h2 {
 		width: 100%;
 		text-align: left;
-		margin: .5em 0;
-		padding: 1em 0 0;
+	}
+
+	.lcm_form .input_group > h2,
+	.lcm_form .hidden_item .input_group > h2,
+	.lcm_form section h1 {
 		border-top: 1px solid #fff;
 		box-shadow: 0 -1px 0 #ccc;
+		margin: .5em 0;
+		padding: 1em 0 0;
 	}
 	.lcm_form .input_group > .field,
 	.lcm_form .hidden_item .input_group > .field,
