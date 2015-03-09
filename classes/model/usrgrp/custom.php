@@ -19,13 +19,7 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 		static::$_mm_delete_else = true;
 
 		// $_conditions
-		static::$_conditions = array(
-			'where' => array(
-				array('is_available', true),
-				array('customgroup_uid', \Auth::get('id')),
-			),
-			'order_by' => array('seq' => 'ACS', 'name' => 'ACS'),
-		);
+		static::$_conditions = array();
 
 		// name
 		\Arr::set(static::$_properties['name'], 'label', 'カスタムグループ名');
@@ -56,5 +50,28 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 		{
 			unset($this->user);
 		}
+	}
+
+	/**
+	 * get_options($option, $name)
+	 */
+	public static function get_options($options = array(), $label = 'name')
+	{
+		$items = static::find(
+			'all',
+			array(
+				'where' => array(
+					array('is_available', true),
+					array('is_for_acl', 0),
+					array(
+						array('customgroup_uid', \Auth::get('id')),
+						'or' => array('customgroup_uid', 'is', null)
+					)
+				),
+				'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
+			)
+		);
+		$items = \Arr::assoc_to_keyval($items, 'id', 'name');
+		return $items;
 	}
 }
