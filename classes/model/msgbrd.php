@@ -210,7 +210,24 @@ class Model_Msgbrd extends \Model_Base
 */
 		// usergroup_id
 		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
-		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1), array('is_for_acl', 0)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
+		$options+= \Model_Usrgrp::get_options(
+			array(
+				'where' => array(
+					array('is_available', 1),
+					array('is_for_acl', 0),
+					'or' => array('customgroup_uid', \Auth::get('id'))
+				),
+				'order_by' => array('seq' => 'ASC', 'name' => 'ASC')),
+				'name'
+			);
+
+
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
+var_dump( $options ) ;
+echo '</textarea>' ;
+die();
+
 		self::$_properties['usergroup_id'] = array(
 			'label' => '公開範囲',
 			'form' => array(

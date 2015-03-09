@@ -2,6 +2,7 @@
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
+	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
 <?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
@@ -14,7 +15,7 @@
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
 	<?php print htmlspecialchars_decode($next_url); ?>
 </div>
-<div class="narrow_user lcm_focus" title="絞り込み">
+<div class="narrow_user lcm_focus" title="表示絞り込み">
 <?php include("calendar_narrow.php"); ?>
 </div>
 <?php endif; ?>
@@ -22,7 +23,7 @@
 <?php if(!\Request::is_hmvc()): ?>
 	<thead>
 		<tr>
-			<th></th>
+			<th>&nbsp;</th>
 			<th class="week1"><span>月曜日</span></th>
 			<th class="week2"><span>火曜日</span></th>
 			<th class="week3"><span>水曜日</span></th>
@@ -36,22 +37,44 @@
 <tbody>
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data['building_list'] as $row) { ?>
-	<tr>
+	<tr class="lcm_focus" title="<?php echo  $row['model']->item_name ?>">
 		<th>
 		<?php print $row['model']->item_name; ?>
 		</th>
+		<?php foreach($schedule_data['schedules_list'] as $schedule_row):?>
+		<?php 
+			$class_str = 'week'.$schedule_row['week'];
+			$class_str.= $currentday == $schedule_row['day'] ? ' today' : '';
+//			$class_str.= $currentday ==  ? ' holiday' : ''; //祝日のとき
+			//each_date_title_strはフォーカス移動時読み上げ文字列
+			//date_str, each_date_title_skip は枠内タイトル読み上げ文字列
+			
+			$each_date_title_str = $currentday == $schedule_row['day'] ? '今日 ' : '';
+			$each_date_title_str.=  $schedule_row['day'].'日 '.$week_name[$schedule_row['week']].'曜日 ';
+//			$each_date_title_str.=  ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
 
-		<?php foreach($schedule_data['schedules_list'] as $schedule_row) {?>
-		<td class="week<?php print $schedule_row['week']; ?>">
-			<div class="each_date">
+			$schedule_num = 0;
+			foreach($schedule_row['data'] as $v1):
+				foreach($row['data'] as $item_detail):
+					if($item_detail['id'] == $v1['scdlid']) $schedule_num++;
+				endforeach;
+			endforeach;
+			$each_date_title_str .= $schedule_num!=0 ? $schedule_num . '件の登録' : ' 登録なし';
+			$date_str = $schedule_row['day'] < 10 ? '&nbsp;'.$schedule_row['day'] : $schedule_row['day'];
+			$each_date_title_skip = $week_name[$schedule_row['week']] . '曜日';
+//			$each_date_title_skip.=  ? '祝日</span><span class="holiday_name">'..'</span><span class="skip">' : '';
+			$each_date_title_skip.= $schedule_num!=0 ? ' '.$schedule_num . '件の登録' : ' 登録なし';
+ ?>
+		
+		<td class="<?php print $class_str; ?>">
+			<div class="each_date lcm_focus" title="<?php echo $each_date_title_str ?>">
 				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $year, $mon, $schedule_row['day'])); ?>" class="title">
-					<span class="date_str"><?php print $schedule_row['day'] < 10 ? '&nbsp;'.$schedule_row['day'] : $schedule_row['day']; ?>日</span>
-					<span class="skip"><?php print $week_name[$schedule_row['week']] . '曜日'; ?> <?php if (count($schedule_row['data']) > 0) { print count($schedule_row['data']) . '件の登録';} else { print '登録なし'; } ?></span>
+					<span class="date_str"><?php print $date_str ?>日</span>
+					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
 				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $schedule_row['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 			
 				<div class="events">
-
 					<?php
 						if (isset($schedule_row['day'])) { ?>
 								<?php foreach ($schedule_row['data'] as $v2) {
@@ -83,11 +106,11 @@
 								}
 							
 					?>
-				</div>
-			</div>
+				</div><!-- /.events -->
+			</div><!-- /.each_date -->
 		</td>
 <?php
-	}
+	endforeach;
 	print "</tr>";
 }
 ?>

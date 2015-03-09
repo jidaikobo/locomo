@@ -235,7 +235,6 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'textarea',
 				'rows' => 7,
-				'style' => 'width:100%;',
 				'class' => 'text',
 			),
 			'validation' => 

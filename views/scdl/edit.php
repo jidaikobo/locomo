@@ -39,256 +39,234 @@ if (isset($overlap_result) && count($overlap_result)) {
 <h1><?php echo $title ?></h1>
 <?php echo \Form::open(); ?>
 
-<!--form_group-->
 <div class="form_group lcm_form">
 <?php
 	// use model's form definition instead of raw-like html
 	//echo $form;
 ?>
-
-<table class="formtable">
-<tbody>
-<tr>
-	<th class="ar"><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></th>
-	<td>
-		<div class="input_group">
-			<div class="field">
-				<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
-			</div>
-			<div class="field nowrap">
+	<div class="input_group">
+		<h2><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></h2>
+		<div class="field">
+			<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
+			<span class="nowrap">
 				<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
 				<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
-			</div>
-			<div class="field nowrap">
+			</span>
+			<span class="nowrap">
 				<?php echo $form->field('title_kb')->set_template('{label}'); ?>
 				<?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?>
-			</div>
+			</span>
 		</div>
-	</td>
-</tr>
-
-<tr>
-	<th class="ar"><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></th>
-	<td>
-		<div id="field_repeat_kb">
+	</div><!-- /.input_group -->
+	
+	<div class="input_group">
+		<h2><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></h2>
+		<div id="field_repeat_kb" class="field">
 			<?php echo $form->field('repeat_kb')->set_template('{error_msg}{field}'); ?>
 			<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 			<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
 			<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+			<div id="field_set_time" style="display: none;"> から </div>
 		</div>
-		<div id="field_set_time" style="display: none;"> から </div>
-	</td>
-</tr>
-<tr>
-	<th class="ar">期間</th>
-	<td>
-		<div id="" class="lcm_focus" title="必須 期間">
-			<div>
-				<span id="span_date_start" class="display_inline_block">
-				<?php echo $form->field('start_date')->set_template('{error_msg}{field}'); ?>
-				<?php echo $form->field('start_time')->set_template('{error_msg}{field}'); ?>
-				</span> から <span id="span_date_end" class="display_inline_block">
-				<?php echo $form->field('end_date')->set_template('{error_msg}{field}'); ?>
-				<?php echo $form->field('end_time')->set_template('{error_msg}{field}'); ?>
-				</span>
+	</div><!-- /.input_group -->
+	<div class="input_group">
+		<h2>期間</h2>
+		<div id="" class="lcm_focus field" title="必須 期間">
+			<span id="span_date_start" class="display_inline_block">
+			<?php echo $form->field('start_date')->set_template('{error_msg}{field}'); ?>
+			<?php echo $form->field('start_time')->set_template('{error_msg}{field}'); ?>
+			</span> から <span id="span_date_end" class="display_inline_block">
+			<?php echo $form->field('end_date')->set_template('{error_msg}{field}'); ?>
+			<?php echo $form->field('end_time')->set_template('{error_msg}{field}'); ?>
+			</span>
+		</div>
+	</div><!-- /.input_group -->
+	<div class="input_group lcm_focus" title="詳細設定">
+		<h2>詳細設定</h2>
+		<div class="field">
+			<?php echo $form->field('provisional_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+			<?php echo $form->field('unspecified_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+			<?php echo $form->field('allday_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+			<?php echo $form->field('private_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+			<?php echo $form->field('overlap_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+			<em class="exp" style="display: inline-block;">過去の予定は重複チェックの対象になりません。</em>
+		</div>
+	</div><!-- /.input_group -->
+	<div class="input_group">
+		<h2><?php echo $form->field('message')->set_template('{required}{label}'); ?></h2>
+		<div class="field"><?php echo $form->field('message')->set_template('{error_msg}{field}'); ?></div>
+	</div>
+	
+	<?php if( $locomo['controller']['name'] === "\Controller_Scdl"): //施設選択の時は下に ?>
+	<div class="input_group">
+	<h2><span class="label_required">必須</span>メンバー</h2>
+		<div class="field">
+			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
+				<select id="group_list" title="グループ絞り込み">
+					<option value="">絞り込み：全グループ
+					<?php foreach($group_list as $key => $value) { ?>
+						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
+					<?php } ?>
+				</select>
+				<div class="select_multiple_wrapper">
+					<div class="select_multiple_content select_kizon">
+						<h3 class="ac">選択済み</h3>
+						<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
+						<?php foreach($select_user_list as $row) { ?>
+							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+						<?php } ?>
+						</select>
+					</div><!-- /.select_multiple_content -->
+					<div class="select_multiple_content button_group">
+						<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
+						<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
+					</div><!-- /.select_multiple_content -->
+					<div class="select_multiple_content select_new">
+						<h3 class="ac">ここから選択</h3>
+						<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
+							<?php 
+							foreach($non_selected_user_list as $row) {
+							?>
+							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+						<?php } ?>
+						</select>
+					</div><!-- /.select_multiple_content -->
+				</div><!-- /.select_multiple_wrapper -->
+				<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
 			</div>
 		</div>
-	</td>
-</tr>
-
-<tr>
-	<th class="ar">詳細設定</th>
-	<td class="lcm_focus" title="詳細設定">
-	<?php echo $form->field('provisional_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
-	<?php echo $form->field('unspecified_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
-	<?php echo $form->field('allday_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
-	<?php echo $form->field('private_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
-	<?php echo $form->field('overlap_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
-	<em class="exp" style="display: inline-block;">過去の予定は重複チェックの対象になりません。</em>
-	</td>
-</tr>
-
-<tr>
-	<th class="ar"><?php echo $form->field('message')->set_template('{required}{label}'); ?></th>
-	<td><?php echo $form->field('message')->set_template('{error_msg}{field}'); ?></td>
-</tr>
-
-<?php if( $locomo['controller']['name'] === "\Controller_Scdl"): //施設選択の時は下に ?>
-<tr>
-<th class="ar"><span class="label_required">必須</span>メンバー</th>
-<td>
-	<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-		<select id="group_list" title="グループ絞り込み">
-			<option value="">絞り込み：全グループ
-			<?php foreach($group_list as $key => $value) { ?>
-				<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
-			<?php } ?>
-		</select>
-		<div class="select_multiple_wrapper">
-			<div class="select_multiple_content select_kizon">
-				<h3 class="ac">選択済み</h3>
-				<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
-				<?php foreach($select_user_list as $row) { ?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-				<?php } ?>
+	</div><!-- /.input_group -->
+	<?php endif; ?>
+	<div class="input_group">
+		<h2><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</h2>
+		<div class="field">
+			<div id="building_panel" class="lcm_focus" title="施設の選択">
+				<select id="building_group_list" title="施設グループ絞り込み">
+					<option value="">絞り込み：全施設
+					<?php foreach($building_group_list as $row) { ?>
+						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
+					<?php } ?>
 				</select>
-			</div><!-- /.select_multiple_content -->
-			<div class="select_multiple_content button_group">
-				<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
-				<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
-			</div><!-- /.select_multiple_content -->
-			<div class="select_multiple_content select_new">
-				<h3 class="ac">ここから選択</h3>
-				<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
-					<?php 
-					foreach($non_selected_user_list as $row) {
-					?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-				<?php } ?>
-				</select>
-			</div><!-- /.select_multiple_content -->
-		</div><!-- /.select_multiple_wrapper -->
-		<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
+				<div class="select_multiple_wrapper">
+					<div class="select_multiple_content select_kizon">
+						<h3 class="ac">選択済み</h3>
+						<select id="building_kizon" name="building_kizon" size="2" style="width:11em;height:200px;" title="選択済み施設" multiple>
+						<?php foreach($select_building_list as $row) { ?>
+							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
+						<?php } ?>
+						</select>
+		
+					</div><!-- /.select_multiple_content -->
+					<div class="select_multiple_content button_group">
+						<input type="button" value="解除"  class="button small" onclick="javascript:select_building('minus');">
+						<input type="button" value="選択" class="button small primary" onclick="javascript:select_building('plus');">
+					</div><!-- /.select_multiple_content -->
+					<div class="select_multiple_content select_new">
+						<h3 class="ac">ここから選択</h3>
+						<select id="building_new" name="building_new" size="2" style="width:11em;height:200px;" title="施設選択肢" multiple>
+						<?php foreach($non_select_building_list as $row) { ?>
+							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
+						<?php } ?>
+						</select>
+					</div><!-- /.select_multiple_content -->
+				</div><!-- /.select_multiple_wrapper -->
+			</div>
+		</div>
+	</div><!-- /.input_group -->
+	<div class="input_group">
+		<h2><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></h2>
+		<div class="field">
+			<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
+			<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
+		</div>
+	</div><!-- /.input_group -->
+	<div class="input_group">
+		<h2><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></h2>
+		<div class="field"><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></div>
+	</div><!-- /.input_group -->
+	<?php /* ?>
+	<div class="input_group">
+		<h2><?php echo $form->field('purpose_text')->set_template('{required}{label}'); ?></h2>
+		<div class="field"><?php echo $form->field('purpose_text')->set_template('{error_msg}{field}'); ?></div>
 	</div>
-</td>
-</tr>
-<?php endif; ?>
-<tr>
-<th class="ar"><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</th>
-<td>
-	<div id="building_panel" class="lcm_focus" title="施設の選択">
-		<select id="building_group_list" title="施設グループ絞り込み">
-			<option value="">絞り込み：全施設
-			<?php foreach($building_group_list as $row) { ?>
-				<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
-			<?php } ?>
-		</select>
-		<div class="select_multiple_wrapper">
-			<div class="select_multiple_content select_kizon">
-				<h3 class="ac">選択済み</h3>
-				<select id="building_kizon" name="building_kizon" size="2" style="width:11em;height:200px;" title="選択済み施設" multiple>
-				<?php foreach($select_building_list as $row) { ?>
-					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
+	<?php */ ?>
+	<?php echo $form->field('purpose_text')->set_type('hidden'); ?>
+	<div class="input_group">
+		<h2><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></h2>
+		<div class="field"><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?>人</div>
+	</div><!-- /.input_group -->
+	<div class="input_group">
+		<h2><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></h2>
+		<div class="field">
+			<select id="group_list_create_user" title="グループ絞り込み">
+				<option value="">絞り込み：全グループ
+				<?php foreach($group_list as $key => $value) { ?>
+					<option value="<?php print $key; ?>"><?php  print $value; ?>
 				<?php } ?>
+			</select>
+			<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
+		</div>
+	</div><!-- /.input_group -->
+	<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"):?>
+	<div class="input_group">
+		<h2 class="ar">メンバー</h2>
+		<div class="field">
+			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
+				<select id="group_list" title="グループ絞り込み">
+					<option value="">絞り込み：全グループ
+					<?php foreach($group_list as $key => $value) { ?>
+						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
+					<?php } ?>
 				</select>
-
-			</div><!-- /.select_multiple_content -->
-			<div class="select_multiple_content button_group">
-				<input type="button" value="解除"  class="button small" onclick="javascript:select_building('minus');">
-				<input type="button" value="選択" class="button small primary" onclick="javascript:select_building('plus');">
-			</div><!-- /.select_multiple_content -->
-			<div class="select_multiple_content select_new">
-				<h3 class="ac">ここから選択</h3>
-				<select id="building_new" name="building_new" size="2" style="width:11em;height:200px;" title="施設選択肢" multiple>
-				<?php foreach($non_select_building_list as $row) { ?>
-					<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
-				<?php } ?>
-				</select>
-			</div><!-- /.select_multiple_content -->
-		</div><!-- /.select_multiple_wrapper -->
-	</div>
-</td>
-</tr>
-
-<tr>
-	<th class="ar min"><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></th>
-	<td>
-		<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
-		<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
-	</td>
-</tr>
-
-<tr>
-	<th class="ar"><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></th>
-	<td><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></td>
-</tr>
-<?php /* ?>
-<tr>
-	<th><?php echo $form->field('purpose_text')->set_template('{required}{label}'); ?></th>
-	<td><?php echo $form->field('purpose_text')->set_template('{error_msg}{field}'); ?></td>
-</tr>
-<?php */ ?>
-<?php echo $form->field('purpose_text')->set_type('hidden'); ?>
-<tr>
-	<th class="ar"><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></th>
-	<td><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?>人</td>
-</tr>
-
-<tr>
-	<th class="ar"><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></th>
-	<td>
-		<select id="group_list_create_user" title="グループ絞り込み">
-			<option value="">絞り込み：全グループ
-			<?php foreach($group_list as $key => $value) { ?>
-				<option value="<?php print $key; ?>"><?php  print $value; ?>
-			<?php } ?>
-		</select>
-		<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
-	</td>
-</tr>
-<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"):?>
-<tr>
-<th class="ar">メンバー</th>
-<td>
-	<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-		<select id="group_list" title="グループ絞り込み">
-			<option value="">絞り込み：全グループ
-			<?php foreach($group_list as $key => $value) { ?>
-				<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
-			<?php } ?>
-		</select>
-		<div class="select_multiple_wrapper">
-			<div class="select_multiple_content select_kizon">
-				<h3 class="ac">選択済み</h3>
-				<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
-				<?php foreach($select_user_list as $row) { ?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-				<?php } ?>
-				</select>
-			</div><!-- /.select_multiple_content -->
-			<div class="select_multiple_content button_group">
-				<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
-				<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
-			</div><!-- /.select_multiple_content -->
-			<div class="select_multiple_content select_new">
-				<h3 class="ac">ここから選択</h3>
-				<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
-					<?php 
-					foreach($non_selected_user_list as $row) {
-					?>
-					<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-				<?php } ?>
-				</select>
-			</div><!-- /.select_multiple_content -->
-		</div><!-- /.select_multiple_wrapper -->
-		<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
-	</div>
-</td>
-</tr>
-<?php endif; ?>
-
-<?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
-<?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
-</tbody>
-</table>
-
-<?php echo $form->field('kind_flg')->set_template('{error_msg}{field}'); ?>
-
-<?php
-	// revision memo template - optional
-	//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
-?>
-
-<div class="submit_button">
+				<div class="select_multiple_wrapper">
+					<div class="select_multiple_content select_kizon">
+						<h3 class="ac">選択済み</h3>
+						<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
+						<?php foreach($select_user_list as $row) { ?>
+							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+						<?php } ?>
+						</select>
+					</div><!-- /.select_multiple_content -->
+					<div class="select_multiple_content button_group">
+						<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
+						<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
+					</div><!-- /.select_multiple_content -->
+					<div class="select_multiple_content select_new">
+						<h3 class="ac">ここから選択</h3>
+						<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
+							<?php 
+							foreach($non_selected_user_list as $row) {
+							?>
+							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
+						<?php } ?>
+						</select>
+					</div><!-- /.select_multiple_content -->
+				</div><!-- /.select_multiple_wrapper -->
+				<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
+			</div>
+		</div>
+	</div><!-- /.input_group -->
+	<?php endif; ?>
+	
+	<?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
+	<?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
+	<?php echo $form->field('kind_flg')->set_template('{error_msg}{field}'); ?>
+	
 	<?php
-	if( ! @$is_revision): 
-		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
-	endif;
+		// revision memo template - optional
+		//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
 	?>
-</div>
+	
+	<div class="submit_button">
+		<?php
+		if( ! @$is_revision): 
+			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+			echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
+		endif;
+		?>
+	</div>
 
-</div><!--/form_group-->
+</div><!--/.form_group-->
 
 
 <script>
