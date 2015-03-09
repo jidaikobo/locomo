@@ -251,6 +251,7 @@ var c_w = container.outerWidth() - overflow;
 console.log(c_w);
 $('.container').css({'cssText':'width: '+c_w+'px ; max-width : auto;'});
 */
+
 /*================================▼▼▼===============================*/
 
 //tabindex制御
@@ -302,53 +303,51 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 	var lcm_focus, each_date;
 	lcm_focus    = $('.lcm_focus');
 	if(!lcm_focus[0]) return; //lcm_focusがなければおしまい
-	each_date    = $('.lcm_focus.calendar')[0] ? $('.each_date') : null;
-	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
-	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
+	
+	var esc = '<a href="javascript: void(0);" id="esc_focus" class="skip show_if_focus" tabindex="0">抜ける</a>';
 	//抜けるリンクの準備。絶対に一つだけ。というようにしたい。
-	//抜けるリンクの出る場所を考える。ウィジェットの中だったりすると、枠内下に余白ができてしまう。要工夫。
-	//抜けるリンクが常に一つだけなら、画面の中央に出してしまうことも考えられる？ その場合、親を取る方法は考えないと行けない。
-
+	//出る場所を考える。ウィジェットの中だったりすると、枠内下に余白ができてしまう。要工夫。
+	//常に一つだけなら、画面の中央に出してしまうことも考えられる？ その場合、親を取る方法は考えないと行けない。
 
 	var set_focus = function(target){
 		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
-		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
+		//毎回取り直したほうが安全かも重いかも。（スケジューラのように入力欄が移動した時の振る舞い？？？）
 		var parent, t, add_esc; 
 		if(target){
-			$('#escape_focus').remove();
+			$('#esc_focus').remove();
 			target.addClass('currentfocus').set_tabindex();
-			add_esc = target.is('table') ? target.find('td').last() : target ;//tableタグ直下にaを書くと動作しないブラウザがあるので(IE等)
+			add_esc = target.is('table')  || target.is('tr') ? target.find('td').last() : target ;//tableタグ直下にaを書くと動作しないブラウザがあるので(IE等) //この辺も、もう少しあとで。
 			$(add_esc).css('position', 'relative').append(esc);
 		}
-		parent = $(this).closest('.currentfocus');
+//
+		parent = $('.currentfocus').last();//ここに依存せずにすむ方法？ current_focusを探して動くとよいかも
+		parent = $(this).closest('.currentfocus');//ここに依存せずにすむ方法？ current_focusを探して動くとよいかも
 		if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので) /* このあたり、不要なものが残っているのかも*/
 			parent.removeClass('currentfocus').addClass('focusparent');
-			$('#escape_focus').remove();
+			$('#esc_focus').remove();
 		}
 		if(!$.isWindow(this)){
 			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex().append(esc);
 		}
 		t = target ? target.find('.lcm_focus') : lcm_focus;
-		if(target && target.hasClass('calendar')){
-			t = target.find(each_date);
-		}
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
+		$('#esc_focus').attr('tabindex','0');
 	}
 	
-	var escape_focus = function(e){
+	var esc_focus = function(e){
 		//メニューをESCで抜けた時のset_tabindexに対しての振る舞い。currentfocusを見てなにかしたい。今のままだと、抜けるリンクが残っている
 		//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
 		//多重のフォーカスは、親を見ながら戻していく。
-		e = e ? e : event;//この場合、抜けるリンクはeがclickイベントになり、tが#escape_focusになる
+		e = e ? e : event;//この場合、抜けるリンクはeがclickイベントになり、tが#esc_focusになる
 		var t, parent, grandparent;
 		t = $(e.target);
 
-		parent = $('#escape_focus').closest('.currentfocus');
+		parent = $('#esc_focus').closest('.currentfocus');
 		grandparent = parent.parent().closest('.currentfocus');
 
 		parent.set_tabindex().removeClass('currentfocus').focus();
-		$('#escape_focus').remove();
+		$('#esc_focus').remove();
 
 		if(grandparent[0]){
 			$(document).reset_tabindex();
@@ -373,7 +372,7 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 		k = e.which;
 
 		if( k == 13 ){//enter
-			if($(this).hasClass('currentfocus') || t.is('#escape_focus')){//currentfocus上と抜けるリンクは除外
+			if($(this).hasClass('currentfocus') || t.is('#esc_focus')){//currentfocus上と抜けるリンクは除外
 				e.stopPropagation();
 				return;
 			}
@@ -387,12 +386,12 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 		k = e.which;
 //		console.log($('.modal.on, .semimodal.on'));
 		if( !t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 ){
-//			escape_focus(t);
-			escape_focus();
+//			esc_focus(t);
+			esc_focus();
 			e.stopPropagation();
 		}
 	});
-	$(document).on('click', '#escape_focus',escape_focus);
+	$(document).on('click', '#esc_focus',esc_focus);
 	$(document).on('focus', ':input',function(e){
 		e = e ? e : event;
 		var t, parent;
