@@ -42,7 +42,8 @@ class Validation extends \Fuel\Core\Validation
 	public function _validation_unique($val, $options)
 	{
 		//validate
-		list($table, $field, $id) = explode('.', $options);
+		list($table, $field) = explode('.', $options);
+		$id = $this->callables[0]->id;
 
 		//if it is updating then allow same id
 		if ($id)
@@ -60,6 +61,31 @@ class Validation extends \Fuel\Core\Validation
 			return ! ($result->count() > 0);
 		}
 	}
+
+	public function ___validation_unique($val, $options)
+	{
+		//validate
+		list($table, $field, $id) = explode('.', $options);
+
+//$this->callables[0]->id
+
+		//if it is updating then allow same id
+		if ($id)
+		{
+			$result = \DB::select("id")
+			->where('id', '<>', $id)
+			->where($field, '=', \Str::lower($val))
+			->from($table)->execute();
+			return ($result->count() == 0);
+		} else {
+			//create
+			$result = \DB::select("id")
+			->where($field, '=', \Str::lower($val))
+			->from($table)->execute();
+			return ! ($result->count() > 0);
+		}
+	}
+
 
 	/**
 	 * _validation_match_password()

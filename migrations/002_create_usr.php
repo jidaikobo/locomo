@@ -62,12 +62,14 @@ class Create_Usr
 		// lcm_usrgrps
 		echo "create lcm_usrgrps table.\n";
 		\DBUtil::create_table('lcm_usrgrps', array(
-			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
-			'name'         => array('constraint' => 50, 'type' => 'varchar'),
-			'description'  => array('constraint' => 255, 'type' => 'varchar'),
-			'seq'          => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
-			'is_available' => array('constraint' => 1, 'type' => 'tinyint'),
-			'deleted_at'   => array('type' => 'datetime', 'null' => true),
+			'id'             => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
+			'name'           => array('constraint' => 50, 'type' => 'varchar'),
+			'description'    => array('constraint' => 255, 'type' => 'varchar'),
+			'seq'            => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'is_available'   => array('constraint' => 1, 'type' => 'tinyint'),
+			'is_for_acl'     => array('constraint' => 1, 'type' => 'tinyint'),
+			'is_customgroup' => array('constraint' => 1, 'type' => 'tinyint'),
+			'deleted_at'     => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 		\DBUtil::create_index('lcm_usrgrps', array('seq'), 'usergroups_seq');
 		\DBUtil::create_index('lcm_usrgrps', array('is_available'), 'usergroups_is_available');

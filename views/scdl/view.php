@@ -2,7 +2,7 @@
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
-	$title_str = '';
+	$title_str = '' ;
 	if(!$detail->private_kb):
 		$title_str = '：';
 		//繰り返し区分
@@ -20,9 +20,9 @@
 		//区分
 		$title_str .= $detail->title_kb!='標準' ? '('.$detail->title_kb.')' : '';
 	endif;
-	$ymd_str = ( $year!='' && $mon!='' && $day!='' ) ?  $year.'年'.$mon.'月'.$day.'日 ' : '';
+	$ymd_str = ( $year!='' && $mon!='' && $day!='' ) ?  intval($year).'年'.intval($mon).'月'.intval($day).'日 ' : '';
 ?>
-<h1><?php echo $title ?>詳細<?php echo $title_str!='' ? $title_str : $detail->title_text ;?></h1>
+<h1><?php echo $title ?>詳細<?php echo $title_str!='' ? $title_str : '：'.$detail->title_text ;?></h1>
 <table class="tbl">
 <?php
 	// use model's form plain definition instead of raw-like html
@@ -33,7 +33,9 @@
 	<th>予定日時</th>
 	<td>
 	<?php if($detail->repeat_kb == 0):
-			echo $info['display_period'];
+			echo $info['display_target_date'];
+		elseif($detail->allday_kb):
+			echo $ymd_str.'終日';
 		else:
 			echo $ymd_str.$info['display_period_time'];
 		endif; ?>
@@ -47,28 +49,13 @@
 	</td>
 </tr>
 <?php endif; ?>
-
-<?php /* if($detail->title_text && !$detail->private_kb):  ?>
-<tr>
-	<th>タイトル</th>
-	<td><?php echo $detail->title_text; ?></td>
-</tr>
-
-<?php endif; */ ?>
-<?php /* if($detail->title_kb && !$detail->private_kb): ?>
-<tr>
-	<th>タイトル（区分）</th>
-	<td><?php echo $detail->title_kb; ?></td>
-</tr>
-
-<?php endif; */ ?>
-
 <tr>
 <th>詳細設定</th>
 <td>
-	<?php if ($detail->provisional_kb) { print '[仮登録]'; }; ?>
-	<?php if ($detail->unspecified_kb) { print '[時間指定なし]'; }; ?>
-	<?php if ($detail->allday_kb) { print '[終日]'; }; ?>
+	<?php if ($detail->provisional_kb) { print '<span class="add_bracket">仮登録</span>'; }; ?>
+	<?php if ($detail->private_kb) { print '<span class="add_bracket">非公開</span>'; }; ?>
+	<?php if ($detail->unspecified_kb) { print '<span class="add_bracket">時間指定なし</span>'; }; ?>
+	<?php if ($detail->allday_kb) { print '<span class="add_bracket">終日</span>'; }; ?>
 </td>
 </tr>
 
@@ -153,7 +140,6 @@
 	<th>更新日時</th>
 	<td><?php echo date('Y年n月j日 G時i分', strtotime($detail->updated_at)); ?></td>
 </tr>
-
 <?php endif; ?>
 
 </table>
@@ -173,3 +159,4 @@
 //	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
 ?>
 	 </div><!-- /.legend.calendar -->
+

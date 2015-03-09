@@ -109,27 +109,30 @@ class Model_Adrs extends \Model_Base
 				'class' => 'varchar',
 			),
 		),
-		'zip3' => 
-		array (
+		'zip3' => array(
 			'label' => '郵便番号',
-			'data_type' => 'varchar(255)',
-			'form' => 
-			array (
+			'data_type' => 'varchar(3)',
+			'form' => array(
 				'type' => 'text',
-				'size' => 30,
-				'class' => 'varchar',
+				'size' => 3,
 			),
+			'validation' => array(
+				'max_length' => array(3),
+			),
+			'default' => '',
 		),
-		'zip4' => 
-		array (
-			'label' => '郵便番号',
-			'data_type' => 'varchar(255)',
-			'form' => 
-			array (
+		'zip4' => array(
+			'label' => '郵便番号(下4桁)',
+			'data_type' => 'varchar(4)',
+			'form' => array(
 				'type' => 'text',
-				'size' => 30,
-				'class' => 'varchar',
+				'size' => 4,
 			),
+			'validation' => array(
+				// 'required',
+				'max_length' => array(4),
+			),
+			'default' => '',
 		),
 		'address' => 
 		array (
@@ -231,12 +234,13 @@ class Model_Adrs extends \Model_Base
 );
 
 
-	//observers
+	//_soft_delete
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,
 	);
 
+	//observers
 	protected static $_observers = array(
 		"Orm\Observer_Self" => array(),
 		'Orm\Observer_UpdatedAt' => array(
@@ -258,6 +262,14 @@ class Model_Adrs extends \Model_Base
 //		),
 
 	);
+
+	// _event_before_save
+	public function _event_before_save()
+	{
+		// 郵便番号 数字のみに
+		$this->zip3 = mb_ereg_replace('[^0-9]','' , mb_convert_kana($this->zip3, 'a'));
+		$this->zip4 = mb_ereg_replace('[^0-9]','' , mb_convert_kana($this->zip4, 'a'));
+	}
 
 	/**
 	 * form_definition()
@@ -286,6 +298,24 @@ class Model_Adrs extends \Model_Base
 		);
 		$form->add_after('adrsgrp', 'グループ', array('type' => 'select', 'options' => $options), array(), 'name')
 			->set_value(@$obj->group_id);
+
+		$form->field('zip3')
+			->set_template("
+				\t\t<div class=\"input_group\">\n
+				\t\t\t<h2>{required}{label}</h2>\n
+				\t\t\t<div class=\"field\">\n
+				\t\t\t\t<em class=\"exp\">{error_msg}{description}</em>\n
+				\t\t\t\t{field}{error_alert_link}\n
+				\t\t\t\t-\n
+			");
+		$form->field('zip4')
+			->set_template("
+					\t\t\t\t<em class=\"exp\">{error_msg}{description}</em>\n
+					\t\t\t\t{field}{error_alert_link}\n
+				\t\t\t</div>\n
+				\t\t</div>\n
+				");
+
 
 /*
 		if ( ! \Auth::is_admin())

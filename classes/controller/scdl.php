@@ -271,7 +271,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
-		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false))), 'name');
 		$this->template->content->set("group_list", $usergroups);
 		$this->template->content->set("kind_name", $model::$_kind_name);
 
@@ -352,6 +352,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					));
 
 		$usergroups = \Auth::get_groups();
+		
+		// グループ判定のため$detail->private_kbが上書きされるので、個票でそもそもこれが非公開項目だったのかどうかを判定するために追加。
+		$detail->private_kb_check = $detail->private_kb;
+		
 		if ($detail->group_kb == 2) {
 			$allow = false;
 			foreach ($usergroups as $gid) {
@@ -640,7 +644,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
-		$view->set('narrow_user_group_list', \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name'));
+		$view->set('narrow_user_group_list', \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false))), 'name'));
 		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
 
 		$view->set('narrow_user_list', \Model_Usr::find('all',

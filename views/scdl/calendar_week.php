@@ -49,6 +49,8 @@
 				?>
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day ?>">
 					<?php
+						//非公開
+						echo $locomo['controller']['name'] === "\Controller_Scdl" && $v2['private_kb'] ? '<span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>' : '';
 						//繰り返し区分
 						echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
 						//詳細区分

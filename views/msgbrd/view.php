@@ -59,5 +59,8 @@
 </tr>
 
 <?php endif; ?>
-
+<tr>
+	<th>作成者</th>
+	<td><?php echo \Model_Usr::get_display_name($item->creator_id) ?></td>
+</tr>
 </table>

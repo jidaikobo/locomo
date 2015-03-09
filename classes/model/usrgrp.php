@@ -25,6 +25,12 @@ class Model_Usrgrp extends \Model_Base
 		'description',
 		'seq',
 		'is_available',
+		'is_for_acl',
+		'is_customgroup' => array(
+			'form' => array (
+				'type' => false,
+			),
+		),
 		'deleted_at',
 	);
 
@@ -108,6 +114,14 @@ class Model_Usrgrp extends \Model_Base
 				array('type' => 'select', 'options' => array('0' => '未使用', '1' => '使用中'), 'default' => 0)
 			)
 			->set_value(@$obj->is_available);
+
+		//is_for_acl
+		$form->add(
+				'is_for_acl',
+				'権限用',
+				array('type' => 'select', 'options' => array('0' => '通常', '1' => '権限用'), 'default' => 0)
+			)
+			->set_value(@$obj->is_for_acl);
 
 		return $form;
 	}

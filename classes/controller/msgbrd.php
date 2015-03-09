@@ -54,7 +54,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 			\Model_Msgbrd::$_options['where'][] = array(
 				array('name', 'LIKE', $all),
 				'or' => array(
-					array('content', 'LIKE', $all),
+					array('contents', 'LIKE', $all),
 				)
 			);
 		}
