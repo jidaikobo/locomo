@@ -220,14 +220,6 @@ class Model_Msgbrd extends \Model_Base
 				'order_by' => array('seq' => 'ASC', 'name' => 'ASC')),
 				'name'
 			);
-
-
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $options ) ;
-echo '</textarea>' ;
-die();
-
 		self::$_properties['usergroup_id'] = array(
 			'label' => '公開範囲',
 			'form' => array(

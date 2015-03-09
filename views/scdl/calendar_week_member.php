@@ -42,9 +42,6 @@
 		<?php print $row['model']->display_name; ?>
 		</th>
 <?php 
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $row ) ;
-echo '</textarea>' ;
  ?>
 		<?php foreach($schedule_data['schedules_list'] as $schedule_row) {?>
 			<?php 
@@ -59,9 +56,11 @@ echo '</textarea>' ;
 //			$each_date_title_str.=  ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
 			$schedule_num = 0;
 			foreach($schedule_row['data'] as $v1):
+/*
 				foreach($member_rowdata['data'] as $item_detail):
 					if($item_detail['id'] == $v1['scdlid']) $schedule_num++;
 				endforeach;
+*/
 			endforeach;
 			$each_date_title_str .= $schedule_num!=0 ? $schedule_num . '件の登録' : ' 登録なし';
 			$date_str = $schedule_row['day'] < 10 ? '&nbsp;'.$schedule_row['day'] : $schedule_row['day'];
