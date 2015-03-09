@@ -30,12 +30,14 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 
-		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+//		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+		$dir = substr(\Inflector::ctrl_to_dir(\Inflector::denamespace(\Request::active()->controller)), 1);
+
 		if (!$this->_content_template) {
 			if (!\Request::is_hmvc()) {
-				$this->_content_template = $dir.'index_admin';
+				$this->_content_template = $dir.'/index_admin';
 			} else {
-				$this->_content_template = $dir.'index_admin_widget';
+				$this->_content_template = $dir.'/index_admin_widget';
 			}
 		}
 		$content = \View::forge($this->_content_template);
