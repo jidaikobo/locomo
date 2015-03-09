@@ -29,13 +29,13 @@
 		<td class="min">
 			<div class="btn_group">
 				<?php
-				if (\Auth::has_access('\Controller_Usrgrp::action_view')):
+				if (\Auth::has_access('\Controller_Usrgrp_Custom::action_view')):
 					echo Html::anchor('usrgrp/custom/view/'.$item->id, '<span class="skip">'.$item->name.'を</span>閲覧', array('class' => 'view'));
 				endif;
-				if (\Auth::has_access('\Controller_Usrgrp::action_edit')):
+				if (\Auth::has_access('\Controller_Usrgrp_Custom::action_edit')):
 					echo Html::anchor('usrgrp/custom/edit/'.$item->id, '編集', array('class' => 'edit'));
 				endif;
-				if (\Auth::has_access('\Controller_Usrgrp::action_delete')):
+				if (\Auth::has_access('\Controller_Usrgrp_Custom::action_delete')):
 					if ($item->deleted_at):
 						echo Html::anchor('usrgrp/custom/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
 						echo Html::anchor('usrgrp/custom/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));

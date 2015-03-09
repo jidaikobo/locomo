@@ -2,25 +2,15 @@
 namespace Locomo;
 class Model_Usrgrp_Custom extends \Model_Usrgrp
 {
-	// $_options
+	// $_options and $_conditions
 	public static $_options = array();
-
-	// $_conditions
 	protected static $_conditions = array();
-
-	protected static $_belongs_to = array();
-
 
 	/**
 	 * _init()
 	 */
 	public static function _init()
 	{
-		static::$_mm_delete_else = true;
-
-		// $_conditions
-		static::$_conditions = array();
-
 		// name
 		\Arr::set(static::$_properties['name'], 'label', 'カスタムグループ名');
 
@@ -41,6 +31,7 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 	 */
 	public function _event_before_save()
 	{
+		// off the checkboxes of users
 		if (
 			\Request::main()->controller == 'Controller_Usrgrp_Custom' &&
 			in_array(\Request::main()->action, array('edit', 'create')) &&
@@ -54,6 +45,8 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 
 	/**
 	 * get_options($option, $name)
+	 * ユーザグループに加えて、カスタムユーザグループを取得する
+	 * get usergroups and user's custom groups
 	 */
 	public static function get_options($options = array(), $label = 'name')
 	{

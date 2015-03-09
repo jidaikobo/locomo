@@ -26,6 +26,7 @@ class Controller_Usrgrp_Custom extends \Locomo\Controller_Base
 		\Model_Usrgrp_Custom::$_options = array(
 			'where' => array(
 				array('is_available', true),
+				array('is_for_acl', false),
 				array('customgroup_uid', \Auth::get('id')),
 			),
 			'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
