@@ -27,6 +27,7 @@ class Model_Usr extends Model_Base
 				'required',
 				'max_length' => array(50),
 				'valid_string' => array(array('alpha','numeric','dot','dashes')),
+				'unique' => array("lcm_usrgrps.name"),
 			),
 		),
 		'display_name' => array(
@@ -204,7 +205,6 @@ class Model_Usr extends Model_Base
 
 		// username
 		$form->field('username')
-			->add_rule('unique', "lcm_usrs.username.{$id}")
 			->add_rule('banned_string', $allnames);
 
 		if ( ! \Auth::is_admin())

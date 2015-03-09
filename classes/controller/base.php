@@ -227,7 +227,7 @@ class Controller_Base extends Controller_Core
 		if ($this->_content_template) {
 			$content = \View::forge($this->_content_template);
 		} else {
-			$tmp = static::$shortname.DS.'/view';
+			$tmp = str_replace('_', DS, static::$shortname).'/view';
 			// var_dump(\Finder::search('views', $tmp)); die();
 			$content = \View::forge(
 				\Finder::search('views', $tmp) ? $tmp : 'defaults/view'

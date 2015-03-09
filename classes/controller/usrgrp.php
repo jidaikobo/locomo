@@ -21,7 +21,46 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 	/**
 	 * action_index_admin()
 	 */
-	public function action_index_admin($page_num = 1)
+	public function action_index_admin()
+	{
+		\Model_Usrgrp::$_options = array(
+			'where' => array(
+				array('is_available', true),
+				array('customgroup_uid', null),
+			),
+			'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
+		);
+		parent::index_admin();
+	}
+
+	/**
+	 * action_view()
+	 */
+	public function action_view($id)
+	{
+		parent::view($id);
+	}
+
+	/**
+	 * action_create()
+	 */
+	public function action_create()
+	{
+		parent::create();
+	}
+
+	/**
+	 * action_edit()
+	 */
+	public function action_edit($id)
+	{
+		parent::edit($id);
+	}
+
+	/**
+	 * action_bulk()
+	 */
+	public function action_bulk($page_num = 1)
 	{
 		// bulk
 		\Model_Usrgrp::disable_filter();
