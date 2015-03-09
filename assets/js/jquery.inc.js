@@ -77,7 +77,7 @@ $(function(){
 //書き直す。
 //modalを呼ぶ側にdata-jslcm-modal-id?を書き、相手を指定する。モーダル表示中はフォーカスを制御し、それ以外の部分については操作不可とする。
 //例えばNetReaderで制御を抜けた時はどうするの、とか、考えておくとよいのかも。(NetReader側では一時的にmodal外をdisplay: none;にするとか？　その場合、うまくイベントを抜けられなかったときが不安)
-function lcm_modal(id){
+/*function lcm_modal(id){
 	var el, wrapper, closelink;
 	el = document.getElementById(id);
 	if(el){
@@ -105,6 +105,36 @@ function lcm_modal(id){
 	event.stopPropagation();
 	return false;
 }
+*/
+$(function(){
+/*=== 基本的な設定 ===*/
+//JavaScript有効時に表示、無効時にはCSSで非表示
+$('.hide_if_no_js').removeClass('hide_if_no_js');
+$('.hide_if_no_js').find(':disabled').prop("disabled", false);
+
+//.show_if_no_js noscript的な扱い?
+$('.show_if_no_js').remove();
+
+//for NetReader
+//NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
+$('.hidden_item').hide();
+
+
+//アクセスキーをもつ要素へのタイトル付与
+//accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
+function add_accesskey_title(){
+	var str, txt, label;
+	label = this.accessKeyLabel;
+	label = label ? label : this.accessKey;
+	if(label){
+		txt = $(this).clone(false);
+		txt.find('.skip').remove();
+		str = ( $(this).attr('title') || txt.text() || $(this).children().attr('alt') );
+		$(this).attr('title',str+'['+label+']');
+	}
+}
+$(document).find('[accesskey]').each(add_accesskey_title);
+});
 
 
 //大きなくくり。あとでバラス
@@ -130,18 +160,6 @@ $('body').addClass(isNetReader ? 'netreader' : '');
 	return rs;
 })();
 */
-
-/*=== 基本的な設定 ===*/
-//JavaScript有効時に表示、無効時にはCSSで非表示
-$('.hide_if_no_js').removeClass('hide_if_no_js');
-
-//.show_if_no_js noscript的な扱い?
-$('.show_if_no_js').remove();
-
-//for NetReader
-//NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
-$('.hidden_item').hide();
-
 //フォーカスするついでに場合によってはセレクトもする
 function set_focus(t){
 	$(t).focus();
@@ -193,43 +211,28 @@ if(adminbar[0]){
 	});
 }
 
-
-//アクセスキーをもつ要素へのタイトル付与
-//accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
-function add_accesskey_title(){
-	var str, txt, label;
-	label = this.accessKeyLabel;
-	label = label ? label : this.accessKey;
-	if(label){
-		txt = $(this).clone(false);
-		txt.find('.skip').remove();
-		str = ( $(this).attr('title') || txt.text() || $(this).children().attr('alt') );
-		$(this).attr('title',str+'['+label+']');
-	}
-}
-$(document).find('[accesskey]').each(add_accesskey_title);
-
-
-//非表示の要素の設定　うまく分岐できていないのであとで
+//非表示の要素の設定
 $('.hidden_item').each(function(){
 	var query, params, v, trigger ; 
-	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
-	if(!($(this).is(':input') && $(this).val())){
-		if($(this).find('form')[0]){
-		//とりあえず、get値を見る。
-			query = window.location.search.substring(1);
-			if(query!=''){
-				params = query.split('&');
-				for(var i=0 ; i < params.length; i++){
-					if( params[i].indexOf('orders') !== 0 ){
-						v = true;
-						break;
-					}
+	//hidden_itemでも検索条件のある場合、中に値がある場合は展開しておく
+	if($(this).find('form.search')[0]){
+	//検索フォームの場合、get値を見る。
+		query = window.location.search.substring(1);
+		if(query!=''){
+			params = query.split('&');
+			for(var i=0 ; i < params.length; i++){
+				if( params[i].indexOf('orders') !== 0 ){
+					v = true;
+					break;
 				}
 			}
 		}
-		if(!v) return;
+	}else if($(this).find(':input')[0]){
+		$(this).find(':input').each(function(){
+			v = $(this).val()!='' ? true : v;
+		});
 	}
+	if(!v) return;
 	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
 	$(this).addClass('on').show();
 	trigger.addClass('on');
@@ -332,7 +335,7 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 		t = target ? target.find('.lcm_focus') : lcm_focus;
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
-		$('#esc_focus').attr('tabindex','0');
+		$('#esc_focus').attr('tabindex','0');//上でちゃんと除外できればよい
 	}
 	
 	var esc_focus = function(e){

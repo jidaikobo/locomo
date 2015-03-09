@@ -1048,7 +1048,7 @@ span#customer_address3:empty + br {
 	background-image: url('../img/system/mark_disclose.png');
 	background-position: 4px center;
 	background-repeat: no-repeat;
-	padding: .125em 5px .125em 15px;
+	padding: .125em 0 .125em 15px;
 	margin: 0;
 	width: 100%;
 	webkit-box-sizing: border-box;
@@ -1823,6 +1823,9 @@ a.icon.zip:before {
 	margin: 1em 0 .25em;
 }
 
+.hide_if_no_js {
+	display: none;
+}
 
 .w1em {width: 1em !important;}
 .w2em {width: 2em !important;}
