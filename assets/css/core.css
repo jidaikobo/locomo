@@ -891,6 +891,12 @@ table + .index_toolbar {
 	border-top: 1px solid #fff;
 	box-shadow: 0 -1px 0 #ccc;
 }
+.lcm_form .input_group > .input_group {
+	display: inline-block;
+}
+.input_group * {
+	vertical-align: top;
+}
 .lcm_form > .input_group:first-child {
 	border: none;
 	box-shadow: none;
@@ -1486,15 +1492,18 @@ table.calendar {
 .week0 .title {
 	background-color: transparent;
 }
-.calendar .title:hover {
+.calendar .title:hover ,
+.calendar .events a:hover {
 	background-color: #eee;
 	transition: .3s;
 }
 .week0 .title:hover,
-.holiday .title:hover {
+.holiday .title:hover ,
+.week0 .events a:hover {
 	background-color: #f3e6e3;
 }
-.week6 .title:hover {
+.week6 .title:hover,
+.week6 .events a:hover {
 	background-color: #e6eae6;
 }
 .calendar a.title * {
@@ -2236,19 +2245,24 @@ li.show_if_smalldisplay {
 	}
 	
 /*=== .lcm_form ===*/
-	.lcm_form > .input_group {
+	.lcm_form .input_group {
 		border: none;
 		box-shadow: none;
 	}
-	.lcm_form .input_group > h2 {
+	.lcm_form .input_group > .input_group {
+		display: block;
+	}
+	.lcm_form .input_group > h2,
+	.lcm_form .hidden_item .input_group > h2 {
 		width: 100%;
 		text-align: left;
-		margin: .5em 0 0;
+		margin: .5em 0;
 		padding: 1em 0 0;
 		border-top: 1px solid #fff;
 		box-shadow: 0 -1px 0 #ccc;
 	}
 	.lcm_form .input_group > .field,
+	.lcm_form .hidden_item .input_group > .field,
 	.lcm_form .input_group table {
 		margin-left: 0;
 		padding-left: 0;
