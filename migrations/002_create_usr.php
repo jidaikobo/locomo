@@ -7,22 +7,23 @@ class Create_Usr
 		// lcm_usr_users
 		echo "create lcm_usr_users table.\n";
 		\DBUtil::create_table('lcm_usrs', array(
-			'id'             => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true),
-			'username'       => array('type' => 'varchar', 'constraint' => 50),
-			'password'       => array('type' => 'varchar', 'constraint' => 255),
-			'email'          => array('type' => 'varchar', 'constraint' => 255),
-			'display_name'   => array('type' => 'varchar', 'constraint' => 255),
-			'last_login_at'  => array('type' => 'datetime'),
-			'login_hash'     => array('type' => 'varchar', 'constraint' => 255),
-			'activation_key' => array('constraint' => 50, 'type' => 'varchar', 'null' => true),
-			'profile_fields' => array('type' => 'text'),
-			'is_visible'     => array('constraint' => 1, 'type' => 'int'),
-			'deleted_at'     => array('type' => 'datetime', 'null' => true),
-			'created_at'     => array('type' => 'datetime', 'null' => true),
-			'expired_at'     => array('type' => 'datetime', 'null' => true),
-			'updated_at'     => array('type' => 'datetime', 'null' => true),
-			'creator_id'     => array('constraint' => 5, 'type' => 'int'),
-			'updater_id'     => array('constraint' => 5, 'type' => 'int'),
+			'id'                => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true),
+			'username'          => array('type' => 'varchar', 'constraint' => 50),
+			'password'          => array('type' => 'varchar', 'constraint' => 255),
+			'email'             => array('type' => 'varchar', 'constraint' => 255),
+			'display_name'      => array('type' => 'varchar', 'constraint' => 255),
+			'last_login_at'     => array('type' => 'datetime'),
+			'login_hash'        => array('type' => 'varchar', 'constraint' => 255),
+			'activation_key'    => array('constraint' => 50, 'type' => 'varchar', 'null' => true),
+			'profile_fields'    => array('type' => 'text'),
+			'is_visible'        => array('constraint' => 1, 'type' => 'int'),
+			'main_usergroup_id' => array('constraint' => 11, 'type' => 'int'),
+			'deleted_at'        => array('type' => 'datetime', 'null' => true),
+			'created_at'        => array('type' => 'datetime', 'null' => true),
+			'expired_at'        => array('type' => 'datetime', 'null' => true),
+			'updated_at'        => array('type' => 'datetime', 'null' => true),
+			'creator_id'        => array('constraint' => 5, 'type' => 'int'),
+			'updater_id'        => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 
 //		\DBUtil::create_index('lcm_usrs', array('username'), 'users_username', 'UNIQUE');
@@ -78,7 +79,7 @@ class Create_Usr
 		// lcm_usrs_usrgrps
 		echo "create lcm_usrs_usrgrps table.\n";
 		\DBUtil::create_table('lcm_usrs_usrgrps', array(
-			'user_id'   => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
+			'user_id'  => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 			'group_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),
 		), array('user_id','group_id'));
 	}
