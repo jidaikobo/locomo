@@ -37,19 +37,6 @@ Autoloader::add_namespace('\\Locomo', LOCOMOPATH.'classes'.DS);
 Autoloader::add_core_namespace('\\Locomo');
 
 $paths = array(
-/*
-	'\\Locomo\\Actionset_Traits_Option_Testdata' => 'actionset/traits/option/testdata.php',
-	'\\Locomo\\Actionset_Base' => 'actionset/base.php',
-	'\\Locomo\\Actionset_Index' => 'actionset/index.php',
-	'\\Locomo\\Actionset_Option' => 'actionset/option.php',
-	'\\Locomo\\Controller_Traits_Testdata' => 'controller/traits/testdata.php',
-	'\\Locomo\\Controller_Base' => 'controller/base.php',
-	'\\Locomo\\Observer_Created' => 'observer/created.php',
-	'\\Locomo\\Observer_Expired' => 'observer/expired.php',
-	'\\Locomo\\Observer_Userids' => 'observer/userids.php',
-	'\\Locomo\\Bulk' => 'bulk.php',
-*/
-
 	// these models are called by \Auth::is_root() at \Inflector::dir_to_ctrl() 
 	'\\Locomo\\Model_Base' => 'model/base.php',
 	'\\Locomo\\Model_Usr' => 'model/usr.php',
@@ -79,10 +66,9 @@ $paths = array(
 $classes = array();
 foreach ($paths as $class => $path)
 {
-	// if ( ! file_exists(APPPATH.'classes/'.$path))
 	if ( file_exists(APPPATH.'classes/'.$path))
 	{
-		require(APPPATH.'classes/'.$path);
+		Autoloader::load($class);
 	} else {
 		$classes[$class] = LOCOMOPATH.'classes/'.$path;
 	}
