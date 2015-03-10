@@ -276,7 +276,7 @@ class Model_Usr extends Model_Base
 		// usergroup can modified by admin only 
 		if (\Auth::is_admin())
 		{
-			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', null))), 'name');
 			$form->add_after(
 					'usergroup',
 					'ユーザグループ',
