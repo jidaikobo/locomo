@@ -936,28 +936,34 @@ table + .index_toolbar {
 	min-width: 8em;
 }
 
-/*=== select_multiple ===*/
-.lcm_form .select_multiple_wrapper {
+/*=== multiple_select ===*/
+.lcm_form .select_multiple_wrapper,
+.lcm_form .lcm_multiple_select {
 	display: table;
 }
-.lcm_form .select_multiple_content {
+.lcm_form .select_multiple_content,
+.lcm_form .multiple_select_content {
 	display: table-cell;
 	vertical-align: middle;
 }
-.lcm_form .select_multiple_content.button_group {
+.lcm_form .select_multiple_content.button_group,
+.lcm_form .multiple_select_content.button_group {
 	width: 5em;
 	min-width: 5em;
 	position: relative;
 }
-.lcm_form .select_multiple_content.button_group input {
+.lcm_form .select_multiple_content.button_group input,
+.lcm_form .multiple_select_content.button_group input {
     position: absolute;
 	top: 7.5em;
     left: 1.35em;
 }
-.lcm_form .select_multiple_content.button_group input:first-child {
+.lcm_form .select_multiple_content.button_group input:first-child,
+.lcm_form .multiple_select_content.button_group input:first-child {
     top: 10em;
 }
-.lcm_form .select_multiple_content select {
+.lcm_form .select_multiple_content select,
+.lcm_form .multiple_select_content select {
 	margin-bottom: .5em;
 }
 .lcm_form .select_new select {

@@ -899,6 +899,67 @@ $('a:submit, input:submit, .confirm').click(function(){//該当する場合遷�
 //エラー時の入力エリアから一覧へのナビゲーション
 $('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus link_alert_error">エラー一覧にもどる</a>');
 
+/*=== lcm_multiple_select ===*/
+
+$('.lcm_multiple_select').each(function(){
+	var select, selected, selects, to, from;
+	select = $($(this).find('.select'));
+	selected = $($(this).find('.selected'));
+	selects = select.add(selected);
+	
+	//スケジューラ用hidden
+	var hidden_items_id = $(this).data('hiddenItemId');
+	if(hidden_items_id){
+		make_hidden_form_items(hidden_items_id, selected);
+	}
+	
+	
+	$(this).find(':button').on('click', parent ,function(e){
+		from = $(this).hasClass('add_item') ? select : selected;
+		to = selects.not(from);
+		lcm_multiple_select(from, to, hidden_items_id, selected);
+	});
+	$(this).find('select').dblclick(function(){
+		from = $(this);
+		to = selects.not(from);
+		lcm_multiple_select(from, to, hidden_items_id, selected);
+	});
+});
+
+function lcm_multiple_select(from, to, hidden_items_id, selected){
+	//引数selectedはhidden_itemがなくなれば不要
+	var from, to, val, item, hidden_items_id;
+	val = from.val();
+	if ( val == "" || !val) return;
+	for(var i=0; i < val.length; i++){
+		item = from.find('option[value='+val[i]+']');
+		item.appendTo(to).attr('selected',false);
+	}
+
+	//スケジューラ用hidden
+	if(hidden_items_id){
+		make_hidden_form_items(hidden_items_id, selected)
+	};
+}
+
+//スケジューラ用hidden
+function make_hidden_form_items(hidden_items_id, selected){
+	var hidden_item = $('#'+hidden_items_id);
+	if (!hidden_item[0]) {
+		hidden_item = $('<input>').attr({
+		    type : 'hidden',
+		    id   : hidden_items_id,
+		    name : hidden_items_id,
+		    value: '',
+		}).appendTo('form');
+	}
+	var hidden_str = "";
+	// 配列に入れる
+	$(selected).find('option').each(function() {
+		hidden_str += "/" + $(this).val();
+    });
+	hidden_item.val(hidden_str);
+}
 
 /* Tiny MCE  */
 tinymce.init({
