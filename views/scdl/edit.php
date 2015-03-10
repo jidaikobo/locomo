@@ -123,7 +123,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content">
 						<label for="member_new">ここから選択</label>
-						<select id="member_new" name="member_new" class="select" multiple size="2" title="メンバー選択肢">
+						<select id="member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
 						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>
@@ -160,7 +160,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content select_new">
 						<label for="building_new">ここから選択</label>
-						<select id="building_new" name="building_new" class="select" size="2" multiple title="施設選択肢">
+						<select id="building_new" name="building_new" class="select_from" size="2" multiple title="施設選択肢">
 						<?php foreach($non_select_building_list as $row) { ?>
 							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 						<?php } ?>
@@ -230,7 +230,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content">
 						<label for="member_new">ここから選択</label>
-						<select id="member_new" name="member_new" class="select" multiple size="2" title="メンバー選択肢">
+						<select id="member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
 						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>

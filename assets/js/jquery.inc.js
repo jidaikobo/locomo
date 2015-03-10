@@ -903,7 +903,7 @@ $('.validation_error :input').after('<a href="#anchor_alert_error" class="skip s
 
 $('.lcm_multiple_select').each(function(){
 	var select, selected, selects, to, from;
-	select = $($(this).find('.select'));
+	select = $($(this).find('.select_from'));
 	selected = $($(this).find('.selected'));
 	selects = select.add(selected);
 	
@@ -919,7 +919,7 @@ $('.lcm_multiple_select').each(function(){
 		to = selects.not(from);
 		lcm_multiple_select(from, to, hidden_items_id, selected);
 	});
-	$(this).find('select').dblclick(function(){
+	selects.dblclick(function(){
 		from = $(this);
 		to = selects.not(from);
 		lcm_multiple_select(from, to, hidden_items_id, selected);
