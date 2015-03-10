@@ -109,26 +109,24 @@ if (isset($overlap_result) && count($overlap_result)) {
 					<?php } ?>
 				</select>
 				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
-					<div class="multiple_select_content select_kizon">
-						<h3 class="ac">選択済み</h3>
-						<select id="member_kizon" name="member_kizon" class="selected" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
-						<?php foreach($select_user_list as $row) { ?>
+					<div class="multiple_select_content">
+						<label for="member_kizon">選択済み</label>
+						<select id="member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
+						<?php foreach($select_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content button_group">
-						<input type="button" value="解除" class="button small remove_item">
-						<input type="button" value="選択" class="button small primary add_item">
+						<input type="button" value="解除" class="remove_item button small">
+						<input type="button" value="選択" class="add_item button small primary">
 					</div><!-- /.multiple_select_content -->
-					<div class="multiple_select_content select_new">
-						<h3 class="ac">ここから選択</h3>
-						<select id="member_new" name="member_new" class="select" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
-							<?php 
-							foreach($non_selected_user_list as $row) {
-							?>
+					<div class="multiple_select_content">
+						<label for="member_new">ここから選択</label>
+						<select id="member_new" name="member_new" class="select" multiple size="2" title="メンバー選択肢">
+						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
 				</div><!-- /.lcm_multiple_select -->
@@ -148,9 +146,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 					<?php } ?>
 				</select>
 				<div class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
-					<div class="multiple_select_content select_kizon">
-						<h3 class="ac">選択済み</h3>
-						<select id="building_kizon" name="building_kizon" class="selected" size="2" style="width:11em;height:200px;" title="選択済み施設" multiple>
+					<div class="multiple_select_content">
+						<label for="building_kizon">選択済み</label>
+						<select id="building_kizon" name="building_kizon" class="selected" size="2" title="選択済み施設" multiple>
 						<?php foreach($select_building_list as $row) { ?>
 							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 						<?php } ?>
@@ -161,8 +159,8 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<input type="button" value="選択" class="button small primary add_item">
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content select_new">
-						<h3 class="ac">ここから選択</h3>
-						<select id="building_new" name="building_new" class="select" size="2" style="width:11em;height:200px;" title="施設選択肢" multiple>
+						<label for="building_new">ここから選択</label>
+						<select id="building_new" name="building_new" class="select" size="2" multiple title="施設選択肢">
 						<?php foreach($non_select_building_list as $row) { ?>
 							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 						<?php } ?>
@@ -213,31 +211,29 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
 				<select id="group_list" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
-			<?php foreach($group_list as $key => $value) { ?>
-						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
-					<?php } ?>
+				<?php foreach($group_list as $key => $value): ?>
+					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
+				<?php endforeach; ?>
 				</select>
 				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
-					<div class="multiple_select_content select_kizon">
-						<h3 class="ac">選択済み</h3>
-						<select id="member_kizon" name="member_kizon" class="selected" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
-						<?php foreach($select_user_list as $row) { ?>
+					<div class="multiple_select_content">
+						<label for="member_kizon">選択済み</label>
+						<select id="member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
+						<?php foreach($select_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content button_group">
-						<input type="button" value="解除" class="button small remove_item">
-						<input type="button" value="選択" class="button small primary add_item">
+						<input type="button" value="解除" class="remove_item button small">
+						<input type="button" value="選択" class="add_item button small primary">
 					</div><!-- /.multiple_select_content -->
-					<div class="multiple_select_content select_new">
-						<h3 class="ac">ここから選択</h3>
-						<select id="member_new" name="member_new" class="select" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
-							<?php 
-							foreach($non_selected_user_list as $row) {
-							?>
+					<div class="multiple_select_content">
+						<label for="member_new">ここから選択</label>
+						<select id="member_new" name="member_new" class="select" multiple size="2" title="メンバー選択肢">
+						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
 				</div><!-- /.lcm_multiple_select -->

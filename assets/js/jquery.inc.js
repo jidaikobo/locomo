@@ -961,6 +961,8 @@ function make_hidden_form_items(hidden_items_id, selected){
 	hidden_item.val(hidden_str);
 }
 
+
+
 /* Tiny MCE  */
 tinymce.init({
 	mode : "none",
