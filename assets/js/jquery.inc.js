@@ -220,7 +220,7 @@ $('.hidden_item').each(function(){
 		query = window.location.search.substring(1);
 		if(query!=''){
 			params = query.split('&');
-			for(var i=0 ; i < params.length; i++){
+			for(var i=0, len = params.length ; i < len; i++){
 				if( params[i].indexOf('orders') !== 0 ){
 					v = true;
 					break;
@@ -274,7 +274,9 @@ $.fn.set_tabindex = function(){
 				$(this).data('tabindex', 'none');
 			}
 		}
-		$(this).attr('tabindex','-1');
+		if($(this).is(':visible')){
+			$(this).attr('tabindex','-1');
+		}
 	});
 	$(this).find(':focusable').removeAttr('tabindex');//set_tabindexを実行した要素の中だけtabindexをリセット
 	return this;
@@ -334,7 +336,9 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 		}
 		t = target ? target.find('.lcm_focus') : lcm_focus;
 		t.attr('tabindex', '0');
-		t.find(':tabbable').attr('tabindex', '-1');
+		t.find(':tabbable').each(function(){
+			if($(this).is(':visible')) $(this).attr('tabindex', '-1');
+		});
 		$('#esc_focus').attr('tabindex','0');//上でちゃんと除外できればよい
 	}
 	
@@ -390,7 +394,7 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 //		console.log($('.modal.on, .semimodal.on'));
 		if( !t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 ){
 //			esc_focus(t);
-			esc_focus();
+			esc_focus(e);
 			e.stopPropagation();
 		}
 	});
@@ -428,7 +432,7 @@ $(window).resize(function(){
 
 
 /*
-//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行うけれど、確実にサイト内に表示されている要素でサイズが変化するもの、がいいなあ
+//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行う。確実にサイト内に表示されている要素でサイズが変化するもの。
 //
 var fontsize_h, fontsize_ratio, window_resized;
 fontsize_h =  adminbar.height();
@@ -438,12 +442,12 @@ var font_resize = setInterval(function(){
 		 fontsize_h = adminbar.height();
 //		 console.log(fontsize_ratio);
 		if(fontsize_ratio != 1 && !window_resized){
-//			console.log('フォントリサイズされたで')
+//			console.log('フォントリサイズ')
 		}
 		window_resized = false;
 	}else
 	if(window_resized){
-//		console.log('ウィンドウのリサイズかもやで');
+//		console.log('ウィンドウのリサイズ');
 	}
 }, 200);
 //window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
@@ -641,7 +645,7 @@ $(document).on('keydown',function(e){
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	index = null;
 	
-	modal = $(document).find('.modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？　とすると？
+	modal = $(document).find('.modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？
 	if(modal){
 		tabbable = $(document).find(':tabbable');
 		first    = tabbable.first()[0];
@@ -931,7 +935,7 @@ function lcm_multiple_select(from, to, hidden_items_id, selected){
 	var from, to, val, item, hidden_items_id;
 	val = from.val();
 	if ( val == "" || !val) return;
-	for(var i=0; i < val.length; i++){
+	for(var i=0, len = val.length; i < len; i++){
 		item = from.find('option[value='+val[i]+']');
 		item.appendTo(to).attr('selected',false);
 	}

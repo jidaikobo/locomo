@@ -293,45 +293,57 @@ function form_group_detail_change(e) {
  * @return {[type]} [description]
  */
 function change_repeat_kb_area() {
-	if ($("#form_repeat_kb").val() == 0 || $("#form_repeat_kb").val() == 1 || $("#form_repeat_kb").val() == 2) {
+	var repeat_kb = $("#form_repeat_kb");
+	if (repeat_kb.val() == 0 || repeat_kb.val() == 1 || repeat_kb.val() == 2) {
 		// なし
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
-	} else if ($("#form_repeat_kb").val() == 3) {
+	} else if (repeat_kb.val() == 3) {
 		$("#span_week_kb").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
-	} else if ($("#form_repeat_kb").val() == 4) {
+	} else if (repeat_kb.val() == 4) {
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'none'});
-	} else if ($("#form_repeat_kb").val() == 5) {
+	} else if (repeat_kb.val() == 5) {
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'inline-block'});
-	} else if ($("#form_repeat_kb").val() == 6) {
+	} else if (repeat_kb.val() == 6) {
 		$("#span_week_kb").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'inline-block'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	}
-	
-	//区分選択により時間入力欄を移動
-	if($("#form_repeat_kb").val() == 0){
-		$('#field_set_time').hide();
-		$('#form_start_time').appendTo('#span_date_start');
-		$('#form_end_time').appendTo('#span_date_end');
+
+	//区分選択により時間入力欄を移動 tabindex制御されているときに別のブロックに移動する時のふるまいは個別に設定しないといけない？
+	var start_time, end_time, field;
+	start_time = $('#form_start_time');
+	end_time   = $('#form_end_time');
+	field      = $('#field_set_time');
+	if(repeat_kb.val() == 0){
+		field.hide();
+		start_time.attr('tabindex', '-1').appendTo('#span_date_start');
+		end_time.attr('tabindex', '-1').appendTo('#span_date_end');
 	}else{
-		$('#field_set_time').prepend($('#form_start_time')).append($('#form_end_time')).show();
+		field.prepend(start_time).append(end_time).show();
+		if(field.closest('.lcm_focus').attr('tabindex') == '-1'){
+			start_time.attr('tabindex', '-1');
+			end_time.attr('tabindex', '-1');
+		}else{
+			start_time.attr('tabindex', '0');
+			end_time.attr('tabindex', '0');
+		}
 	}
 
 	//区分選択により、期間の入力欄の種類を変更 //入力が未対応なのでコメントアウト
-/*	if($("#form_repeat_kb").val() < 4){
+/*	if(repeat_kb.val() < 4){
 		$('#form_start_date, #form_end_date').removeClass('month');
 		//入力欄の値もyy-mmに変更したい。datepicker上の値は"1日"が補完される
 	}else{
@@ -339,6 +351,8 @@ function change_repeat_kb_area() {
 	}
 */
 }
+
+//終日選択反映
 is_allday();
 $('#form_allday_kb').change(function(){
 	is_allday()
