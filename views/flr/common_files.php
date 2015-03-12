@@ -10,7 +10,7 @@
 	<?php foreach ($items as $item): ?>
 	<?php if (\Controller_Flr::check_auth($item->path)): ?>
 		<tr>
-			<td style="min-width: 6em;"><div class="col_scrollable">
+			<td><div class="col_scrollable" style="min-width: 6em;">
 			<?php
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
@@ -19,7 +19,7 @@
 				endif;
 			?>
 			</div></td>
-			<td><?php echo $item->explanation; ?></td>
+			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo $item->explanation; ?></div></td>
 		</tr>
 	<?php endif; ?>
 	<?php endforeach; ?>

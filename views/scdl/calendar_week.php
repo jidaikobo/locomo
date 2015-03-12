@@ -62,7 +62,8 @@
 						//重要度
 						$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
 						echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
-						print htmlspecialchars_decode($v2['link_detail']);
+						echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v['year'], $v['mon'], $v['day'])) . '">' . htmlspecialchars($v2['title_text']) . '</a>';
+
 					?>
 				</p>
 			<?php // include("detail_pop.php"); ?>
@@ -90,7 +91,7 @@
 	foreach($importance_kbs as $k => $v){
 		echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
 	}
-//	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
+	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
 ?>
 	 </div><!-- /.legend.calendar -->
 <?php foreach($detail_pop_array as $v) {

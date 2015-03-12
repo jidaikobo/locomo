@@ -108,30 +108,28 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 					<?php } ?>
 				</select>
-				<div class="select_multiple_wrapper">
-					<div class="select_multiple_content select_kizon">
-						<h3 class="ac">選択済み</h3>
-						<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
-						<?php foreach($select_user_list as $row) { ?>
+				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
+					<div class="multiple_select_content">
+						<label for="member_kizon">選択済み</label>
+						<select id="member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
+						<?php foreach($select_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
-					</div><!-- /.select_multiple_content -->
-					<div class="select_multiple_content button_group">
-						<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
-						<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
-					</div><!-- /.select_multiple_content -->
-					<div class="select_multiple_content select_new">
-						<h3 class="ac">ここから選択</h3>
-						<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
-							<?php 
-							foreach($non_selected_user_list as $row) {
-							?>
+					</div><!-- /.multiple_select_content -->
+					<div class="multiple_select_content button_group">
+						<input type="button" value="解除" class="remove_item button small">
+						<input type="button" value="選択" class="add_item button small primary">
+					</div><!-- /.multiple_select_content -->
+					<div class="multiple_select_content">
+						<label for="member_new">ここから選択</label>
+						<select id="member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
+						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
-					</div><!-- /.select_multiple_content -->
-				</div><!-- /.select_multiple_wrapper -->
+					</div><!-- /.multiple_select_content -->
+				</div><!-- /.lcm_multiple_select -->
 				<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
 			</div>
 		</div>
@@ -147,29 +145,28 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 					<?php } ?>
 				</select>
-				<div class="select_multiple_wrapper">
-					<div class="select_multiple_content select_kizon">
-						<h3 class="ac">選択済み</h3>
-						<select id="building_kizon" name="building_kizon" size="2" style="width:11em;height:200px;" title="選択済み施設" multiple>
+				<div class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
+					<div class="multiple_select_content">
+						<label for="building_kizon">選択済み</label>
+						<select id="building_kizon" name="building_kizon" class="selected" size="2" title="選択済み施設" multiple>
 						<?php foreach($select_building_list as $row) { ?>
 							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 						<?php } ?>
 						</select>
-		
-					</div><!-- /.select_multiple_content -->
-					<div class="select_multiple_content button_group">
-						<input type="button" value="解除"  class="button small" onclick="javascript:select_building('minus');">
-						<input type="button" value="選択" class="button small primary" onclick="javascript:select_building('plus');">
-					</div><!-- /.select_multiple_content -->
-					<div class="select_multiple_content select_new">
-						<h3 class="ac">ここから選択</h3>
-						<select id="building_new" name="building_new" size="2" style="width:11em;height:200px;" title="施設選択肢" multiple>
+					</div><!-- /.multiple_select_content -->
+					<div class="multiple_select_content button_group">
+						<input type="button" value="解除" class="button small remove_item">
+						<input type="button" value="選択" class="button small primary add_item">
+					</div><!-- /.multiple_select_content -->
+					<div class="multiple_select_content select_new">
+						<label for="building_new">ここから選択</label>
+						<select id="building_new" name="building_new" class="select_from" size="2" multiple title="施設選択肢">
 						<?php foreach($non_select_building_list as $row) { ?>
 							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 						<?php } ?>
 						</select>
-					</div><!-- /.select_multiple_content -->
-				</div><!-- /.select_multiple_wrapper -->
+					</div><!-- /.multiple_select_content -->
+				</div><!-- /.lcm_multiple_select -->
 			</div>
 		</div>
 	</div><!-- /.input_group -->
@@ -214,34 +211,32 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
 				<select id="group_list" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
-					<?php foreach($group_list as $key => $value) { ?>
-						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
-					<?php } ?>
+				<?php foreach($group_list as $key => $value): ?>
+					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
+				<?php endforeach; ?>
 				</select>
-				<div class="select_multiple_wrapper">
-					<div class="select_multiple_content select_kizon">
-						<h3 class="ac">選択済み</h3>
-						<select id="member_kizon" name="member_kizon" size="2" style="width:11em;height:200px;" title="選択済みメンバー" multiple>
-						<?php foreach($select_user_list as $row) { ?>
+				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
+					<div class="multiple_select_content">
+						<label for="member_kizon">選択済み</label>
+						<select id="member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
+						<?php foreach($select_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
-					</div><!-- /.select_multiple_content -->
-					<div class="select_multiple_content button_group">
-						<input type="button" value="解除" class="button small" onclick="javascript:select_member('minus');">
-						<input type="button" value="選択" class="button small primary" onclick="javascript:select_member('plus');">
-					</div><!-- /.select_multiple_content -->
-					<div class="select_multiple_content select_new">
-						<h3 class="ac">ここから選択</h3>
-						<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
-							<?php 
-							foreach($non_selected_user_list as $row) {
-							?>
+					</div><!-- /.multiple_select_content -->
+					<div class="multiple_select_content button_group">
+						<input type="button" value="解除" class="remove_item button small">
+						<input type="button" value="選択" class="add_item button small primary">
+					</div><!-- /.multiple_select_content -->
+					<div class="multiple_select_content">
+						<label for="member_new">ここから選択</label>
+						<select id="member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
+						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
-						<?php } ?>
+						<?php endforeach; ?>
 						</select>
-					</div><!-- /.select_multiple_content -->
-				</div><!-- /.select_multiple_wrapper -->
+					</div><!-- /.multiple_select_content -->
+				</div><!-- /.lcm_multiple_select -->
 				<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
 			</div>
 		</div>
@@ -298,45 +293,57 @@ function form_group_detail_change(e) {
  * @return {[type]} [description]
  */
 function change_repeat_kb_area() {
-	if ($("#form_repeat_kb").val() == 0 || $("#form_repeat_kb").val() == 1 || $("#form_repeat_kb").val() == 2) {
+	var repeat_kb = $("#form_repeat_kb");
+	if (repeat_kb.val() == 0 || repeat_kb.val() == 1 || repeat_kb.val() == 2) {
 		// なし
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
-	} else if ($("#form_repeat_kb").val() == 3) {
+	} else if (repeat_kb.val() == 3) {
 		$("#span_week_kb").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
-	} else if ($("#form_repeat_kb").val() == 4) {
+	} else if (repeat_kb.val() == 4) {
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'none'});
-	} else if ($("#form_repeat_kb").val() == 5) {
+	} else if (repeat_kb.val() == 5) {
 		$("#span_week_kb").css({'display': 'none'});
 		$("#span_week_number").css({'display': 'none'});
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'inline-block'});
-	} else if ($("#form_repeat_kb").val() == 6) {
+	} else if (repeat_kb.val() == 6) {
 		$("#span_week_kb").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'inline-block'});
 		$("#span_target_day").css({'display': 'none'});
 		$("#span_target_month").css({'display': 'none'});
 	}
-	
-	//区分選択により時間入力欄を移動
-	if($("#form_repeat_kb").val() == 0){
-		$('#field_set_time').hide();
-		$('#form_start_time').appendTo('#span_date_start');
-		$('#form_end_time').appendTo('#span_date_end');
+
+	//区分選択により時間入力欄を移動 tabindex制御されているときに別のブロックに移動する時のふるまいは個別に設定しないといけない？
+	var start_time, end_time, field;
+	start_time = $('#form_start_time');
+	end_time   = $('#form_end_time');
+	field      = $('#field_set_time');
+	if(repeat_kb.val() == 0){
+		field.hide();
+		start_time.attr('tabindex', '-1').appendTo('#span_date_start');
+		end_time.attr('tabindex', '-1').appendTo('#span_date_end');
 	}else{
-		$('#field_set_time').prepend($('#form_start_time')).append($('#form_end_time')).show();
+		field.prepend(start_time).append(end_time).show();
+		if(field.closest('.lcm_focus').attr('tabindex') == '-1'){
+			start_time.attr('tabindex', '-1');
+			end_time.attr('tabindex', '-1');
+		}else{
+			start_time.attr('tabindex', '0');
+			end_time.attr('tabindex', '0');
+		}
 	}
 
-	//区分選択により、期間の入力欄の種類を変更 //まだ入力が未対応なのでコメントアウト
-/*	if($("#form_repeat_kb").val() < 4){
+	//区分選択により、期間の入力欄の種類を変更 //入力が未対応なのでコメントアウト
+/*	if(repeat_kb.val() < 4){
 		$('#form_start_date, #form_end_date').removeClass('month');
 		//入力欄の値もyy-mmに変更したい。datepicker上の値は"1日"が補完される
 	}else{
@@ -344,6 +351,8 @@ function change_repeat_kb_area() {
 	}
 */
 }
+
+//終日選択反映
 is_allday();
 $('#form_allday_kb').change(function(){
 	is_allday()
@@ -357,90 +366,9 @@ function is_allday(){
 		$('#form_start_time, #form_end_time').attr('readonly',false);
 	}
 }
-
-make_hidden_members();
-make_hidden_buildings();
-/**
- * 
- * @param  {[type]} target [description]
- * @return {[type]}        [description]
- */
-function select_member(target) {
-	var from = (target == "plus" ? "new" : "kizon");
-	var to = (target == "plus" ? "kizon" : "new");
-	var val = $("#member_" + from).val();
-	if ( val == "" || !val) { return; }
-	for(var i=0; i < val.length; i++){
-		$("#member_" + to).append($('<option>').html($("#member_" + from + " option[value="+val[i]+"]").text()).val(val[i]));
-	}
-	$("#member_" + from + " > option:selected").remove();
-	$("#member_" + from).selectedIndex = 0;
-	make_hidden_members();
-}
-function make_hidden_members() {
-	if (!$("#hidden_members")[0]) {
-		$('<input>').attr({
-		    type: 'hidden',
-		    id: 'hidden_members',
-		    name: 'hidden_members',
-		    value: ''
-		}).appendTo('form');
-	}
-	var hidden_str = "";
-	// 配列に入れる
-	$("#member_kizon option").each(function() {
-		hidden_str += "/" + $(this).val();
-    });
-	$("#hidden_members").val(hidden_str);
-}
-
-//ダブルクリックで実行
-$('#member_new, #member_kizon').dblclick(function(){
-	var target = this.id == 'member_new' ? 'plus' : 'kizon';
-	select_member(target);
-});
-
-
-/**
- * [select_building description]
- * @param  {[type]} target [description]
- * @return {[type]}        [description]
- */
-function select_building(target) {
-	var from = (target == "plus" ? "new" : "kizon");
-	var to = (target == "plus" ? "kizon" : "new");
-	var val = $("#building_" + from).val();
-	if ( val == "" || !val) { return; }
-	for(var i=0; i < val.length; i++){
-		$("#building_" + to).append($('<option>').html($("#building_" + from + " option[value="+val[i]+"]").text()).val(val[i]));
-	}
-	$("#building_" + from + " > option:selected").remove();
-	$("#building_" + from).selectedIndex = 0;
-	make_hidden_buildings();
-}
-function make_hidden_buildings() {
-	if (!$("#hidden_buildings")[0]) {
-		$('<input>').attr({
-		    type: 'hidden',
-		    id: 'hidden_buildings',
-		    name: 'hidden_buildings',
-		    value: ''
-		}).appendTo('form');
-	}
-	var hidden_str = "";
-	// 配列に入れる
-	$("#building_kizon option").each(function() {
-		hidden_str += "/" + $(this).val();
-    });
-	$("#hidden_buildings").val(hidden_str);
-}
-//ダブルクリックで実行
-$('#building_new, #building_kizon').dblclick(function(){
-	var target = this.id == 'building_new' ? 'plus' : 'kizon';
-	select_building(target);
-});
-
-
+/*
+	複数選択はjquery.inc.jsに移動。
+*/
 
 
 var base_uri = $('body').data('uri');

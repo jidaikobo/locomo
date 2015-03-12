@@ -117,7 +117,7 @@ class Actionset_Scdl extends \Actionset
 			1 => array($controller.DS."calendar/".$ym_str, '月表示'),
 			3 => array($controller.DS."calendar/{$y}/{$m}/{$d}", '日表示'),
 		);
-		if ( \Request::main()->controller == 'Controller_Scdl' )
+		if ($controller == '\Controller_Scdl')
 		{
 			$actions[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member', '週表示');
 		} else {
