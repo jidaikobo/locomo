@@ -91,7 +91,8 @@
 									//重要度
 									$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
 									echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
-									print htmlspecialchars_decode($v2['link_detail']);
+									echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">' . htmlspecialchars($v2['title_text']) . '</a>';
+
 									echo '</p>';
 								endif;
 							endforeach;
