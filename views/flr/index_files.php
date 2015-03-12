@@ -13,13 +13,13 @@
 			<th class="min">操作</th>
 			<th>種類</th>
 			<th>説明</th>
-			<th>担当者</th>
+			<th class="min">担当者</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1">
-			<th style="min-width: 6em;" ><div class="col_scrollable" tabindex="-1" style="min-width: 12em;">
+			<th><div class="col_scrollable" style="min-width: 10em;">
 			<?php
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
@@ -29,7 +29,7 @@
 			?>
 			</div></th>
 <?php if (\Input::get('submit')): ?>
-			<td><div class="col_scrollable" tabindex="-1"><?php echo dirname(urldecode($item->path)) ?></div></td>
+			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo dirname(urldecode($item->path)) ?></div></td>
 <?php endif; ?>
 			<td><?php
 				if ($item->genre !== 'dir'):
@@ -37,7 +37,7 @@
 				endif;
 			?></td>
 			<td><?php echo $item->genre; ?></td>
-			<td><?php echo $item->explanation; ?></td>
+			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo $item->explanation; ?></div></td>
 			<td><?php echo \Model_Usr::get_display_name($item->creator_id); ?></td>
 		</tr><?php endforeach; ?>
 	</tbody>
