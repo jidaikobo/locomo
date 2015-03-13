@@ -86,23 +86,33 @@
 								foreach ($member_rowdata['data'] as $member_detail):
 									if ($member_detail['id'] == $v2['scdlid']):
 										$detail_pop_array[] = $v2;
-										echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
+
+										$eventtitle_icon = '';
+										$eventtitle_skip = '<span class="skip">';
 										//繰り返し区分
-										echo $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"><span class="skip"> '.$repeat_kbs[$v2['repeat_kb']].'</span></span>' : '';
+										$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
+										$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']] : '';
 										//詳細区分
 										foreach($detail_kbs as $key => $value):
 											if($v2[$key]):
-												 echo '<span class="text_icon schedule '.$key.'"><span class="skip">'.$value.'</span></span>';
+												$eventtitle_icon.= '<span class="text_icon schedule '.$key.'"></span>';
+												$eventtitle_skip.= ' '.$value;
 											endif;
 										endforeach;
 										//重要度
 										$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
-										echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
-										echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">' . htmlspecialchars($v2['title_text']) . '</a>';
-
-									?>
-										</p>
-								<?php endif;
+										$eventtitle_icon.= '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
+										$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
+										$eventtitle_skip.= '</span>';
+	
+										echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
+										
+										echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">';
+										echo $eventtitle_icon.htmlspecialchars($v2['title_text']).$eventtitle_skip;
+										echo '</a>';
+	
+										echo '</p>';
+									endif;
 								endforeach;
 							endforeach;
 						endif;

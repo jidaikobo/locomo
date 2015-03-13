@@ -293,33 +293,33 @@ function form_group_detail_change(e) {
  * @return {[type]} [description]
  */
 function change_repeat_kb_area() {
-	var repeat_kb = $("#form_repeat_kb");
-	if (repeat_kb.val() == 0 || repeat_kb.val() == 1 || repeat_kb.val() == 2) {
+	var repeat_kb = $("#form_repeat_kb").val();
+	if (repeat_kb == 0 || repeat_kb == 1 || repeat_kb == 2) {
 		// なし
-		$("#span_week_kb").css({'display': 'none'});
-		$("#span_week_number").css({'display': 'none'});
-		$("#span_target_day").css({'display': 'none'});
-		$("#span_target_month").css({'display': 'none'});
-	} else if (repeat_kb.val() == 3) {
+		$("#span_week_kb").hide();
+		$("#span_week_number").hide();
+		$("#span_target_day").hide();
+		$("#span_target_month").hide();
+	} else if (repeat_kb == 3) {
 		$("#span_week_kb").css({'display': 'inline-block'});
-		$("#span_week_number").css({'display': 'none'});
-		$("#span_target_day").css({'display': 'none'});
-		$("#span_target_month").css({'display': 'none'});
-	} else if (repeat_kb.val() == 4) {
-		$("#span_week_kb").css({'display': 'none'});
-		$("#span_week_number").css({'display': 'none'});
+		$("#span_week_number").hide();
+		$("#span_target_day").hide();
+		$("#span_target_month").hide();
+	} else if (repeat_kb == 4) {
+		$("#span_week_kb").hide();
+		$("#span_week_number").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
-		$("#span_target_month").css({'display': 'none'});
-	} else if (repeat_kb.val() == 5) {
-		$("#span_week_kb").css({'display': 'none'});
-		$("#span_week_number").css({'display': 'none'});
+		$("#span_target_month").hide();
+	} else if (repeat_kb == 5) {
+		$("#span_week_kb").hide();
+		$("#span_week_number").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'inline-block'});
-	} else if (repeat_kb.val() == 6) {
+	} else if (repeat_kb == 6) {
 		$("#span_week_kb").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'inline-block'});
-		$("#span_target_day").css({'display': 'none'});
-		$("#span_target_month").css({'display': 'none'});
+		$("#span_target_day").hide();
+		$("#span_target_month").hide();
 	}
 
 	//区分選択により時間入力欄を移動 tabindex制御されているときに別のブロックに移動する時のふるまいは個別に設定しないといけない？
@@ -327,7 +327,7 @@ function change_repeat_kb_area() {
 	start_time = $('#form_start_time');
 	end_time   = $('#form_end_time');
 	field      = $('#field_set_time');
-	if(repeat_kb.val() == 0){
+	if(repeat_kb == 0){
 		field.hide();
 		start_time.attr('tabindex', '-1').appendTo('#span_date_start');
 		end_time.attr('tabindex', '-1').appendTo('#span_date_end');
@@ -343,7 +343,7 @@ function change_repeat_kb_area() {
 	}
 
 	//区分選択により、期間の入力欄の種類を変更 //入力が未対応なのでコメントアウト
-/*	if(repeat_kb.val() < 4){
+/*	if(repeat_kb < 4){
 		$('#form_start_date, #form_end_date').removeClass('month');
 		//入力欄の値もyy-mmに変更したい。datepicker上の値は"1日"が補完される
 	}else{

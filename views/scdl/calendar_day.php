@@ -150,21 +150,29 @@
 				</span>
 			</th>
 			<td class="detail">
+			<?php
+				$eventtitle_icon = '';
+				$eventtitle_skip = '<span class="skip">';
+				//繰り返し区分
+				$eventtitle_icon.= $detaildata['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata['repeat_kb'].'"></span>' : '';
+				$eventtitle_skip.= $detaildata['repeat_kb'] != 0 ? $repeat_kbs[$detaildata['repeat_kb']] : '';
+				//詳細区分
+				foreach($detail_kbs as $key => $value):
+					if($detaildata[$key]):
+						$eventtitle_icon.= '<span class="text_icon schedule '.$key.'"></span>';
+						$eventtitle_skip.= ' '.$value;
+					endif;
+				endforeach;
+				//重要度
+				$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($detaildata['title_importance_kb']));
+				$eventtitle_icon.= '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
+				$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
+				$eventtitle_skip.= '</span>';
+			?>
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detaildata->scdlid.$detaildata->target_year.$detaildata->target_mon.$detaildata->target_day ?>">
-				<?php				
+				<?php
 				echo '<a href="'.\Uri::create($kind_name.'/viewdetail/').$detaildata->scdlid . sprintf("/%04d/%02d/%02d/", $detaildata->target_year, $detaildata->target_mon, $detaildata->target_day) . '">';
-				echo $detaildata->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detaildata->repeat_kb].'</span></span>' : '';
-				foreach($detail_kbs as $k => $v){
-					if($detaildata->$k){
-						 echo '<span class="text_icon schedule '.$k.'"><span class="skip">'.$v.'</span></span>';
-					}
-				}
-				if(!\Request::is_hmvc()): //重要度
-					$importance_v = $model_name::value2index("title_importance_kb", html_entity_decode($detaildata->title_importance_kb));
-					echo '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt="'.$importance_kbs[$importance_v].'"></span>';
-				endif;
-				echo $detaildata->title_text;
-				echo  $model_name::value2index('title_kb', html_entity_decode($detaildata->title_kb)) != 0 ? '('.$detaildata->title_kb.')' : '' ;
+				echo $eventtitle_icon.htmlspecialchars($detaildata['title_text']).$eventtitle_skip;
 				echo '</a>';
 				echo '</p>';
 				?>
