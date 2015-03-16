@@ -694,7 +694,8 @@ textarea[disabled] {
 #form_username,
 #form_email,
 input[type="password"],
-input.int {
+input.int,
+input.han {
 	ime-mode: inactive;
 }
 input:read-only {
@@ -1283,13 +1284,13 @@ td.minimum {
 .widget .datatable.schedule_day td {
 	white-space: normal;
 }
-.datatable tr:nth-child(odd) {
+.datatable tbody tr:nth-child(odd) {
 	background: #fefefe;
 }
-.datatable tr:nth-child(even) {
+.datatable tbody tr:nth-child(even) {
 	background: #f9f9f9;
 }
-.datatable tr:nth-child(even) th {
+.datatable tbody tr:nth-child(even) th {
 	background: #eee;
 }
 .datatable thead a,
@@ -1303,11 +1304,21 @@ td.minimum {
 	background-color: #ddd;
 	text-decoration: underline;
 }
-.datatable tr.current th {
+.datatable tr.current th,
+.datatable tbody tr:hover th,
+.datatable tfoot tr:hover th {
 	background-color: #f0f0dd;
 }
-.datatable tr.current td {
+.datatable tr.current td,
+.datatable tbody tr:hover td,
+.datatable tfoot tr:hover td {
 	background-color: #fafadd;
+}
+.datatable tfoot.thead tr:hover th {
+	background-color: #eee;
+}
+.datatable tfoot.thead tr:hover td {
+	background-color: #fefefe;
 }
 .col_scrollable {
 	display: block;
@@ -1566,6 +1577,7 @@ table.calendar .events {
 }
 .calendar .events a {
 	text-decoration: none;
+	display: block;
 }
 .calendar .events a:hover {
 	text-decoration: under-line;
@@ -2017,9 +2029,35 @@ a.icon.zip:before {
 }
 
 /*=== lcm_focus ===*/
-#escape_focus {
-	position: absolute;
+#esc_focus {
+	position: fixed;
+	display: block;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	top: 0;
+	bottom: 0;
+	left: 0;
 	right: 0;
+	background-color: rgba(128,128,128,.1);
+/*	background-image: url('../../app_assets/img/system/bg_overlay_q5.png');*/
+	z-index: 1000;
+}
+#esc_focus div {
+	position: absolute;
+	display: block;
+	width: 5em;
+	height: 3em;
+	line-height: 3em;
+	vertical-align: middle;
+	text-align: center;
+	margin: auto;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: #fff;
 }
 .menubar_icon {
 	width: 1.2em;
