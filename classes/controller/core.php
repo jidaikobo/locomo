@@ -69,12 +69,12 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		if ($module)
 		{
 			$this->model_name = $this->model_name ?: '\\'.ucfirst($module).'\\Model_'.\Inflector::words_to_upper(static::$shortname);
-			static::$config = \Config::load(strtolower($module));
+			static::$config = \Config::load(strtolower($module), true);
 		}
 		else
 		{
 			$this->model_name = $this->model_name ?: '\\Model_'.\Inflector::words_to_upper(static::$shortname);
-			static::$config = \Config::load(static::$shortname);
+			static::$config = \Config::load(static::$shortname, true);
 		}
 		static::$config = static::$config ?: array();
 
@@ -111,7 +111,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		{
 			if (\Auth::check())
 			{
-				//return \Response::redirect(\Uri::create('sys/403'));
+				return \Response::redirect(\Uri::create('sys/403'));
 			}
 			else
 			{

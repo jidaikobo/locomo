@@ -33,35 +33,48 @@ if ( ! file_exists(LOCOMOAPPPATH)) throw new \Exception("LOCOMOAPPPATH not found
 
 // Autoloader::register()
 Autoloader::register();
-Autoloader::add_namespace('\\Locomo', LOCOMOPATH.'classes'.DS);
-Autoloader::add_core_namespace('\\Locomo');
+Autoloader::add_namespace('Locomo', LOCOMOPATH.'classes'.DS);
+Autoloader::add_core_namespace('Locomo');
+
+// Autoloader::add_classes()
+$targets = \Locomo\Util::get_file_list(LOCOMOPATH.'classes/', 'file');
+foreach ($targets as $path)
+{
+	$class = str_replace(array(LOCOMOPATH.'classes/', '.php', '/'), array('', '', '_'), $path);
+	$app = str_replace(LOCOMOPATH, APPPATH, $path);
+	if (file_exists($app))
+	{
+		$classes[$class] = $app;
+	} else {
+		$classes['Locomo\\'.$class] = $path;
+	}
+}
+Autoloader::add_classes($classes);
+
+/*
 
 $paths = array(
 	// these models are called by \Auth::is_root() at \Inflector::dir_to_ctrl() 
-	'\\Locomo\\Model_Base' => 'model/base.php',
-	'\\Locomo\\Model_Usr' => 'model/usr.php',
-	'\\Locomo\\Model_Usrgrp' => 'model/usrgrp.php',
+	'\\Locomo\\Model_Auth_Usrgrps' => 'model/auth/usrgrps.php',
+	'\\Locomo\\Model_Auth' => 'model/auth.php',
 	'\\Locomo\\Model_Acl' => 'model/acl.php',
 
-	// some observer uses this
-	'\\Locomo\\Model_Revision' => 'model/revision.php',
-
 	// basic classes
-	'\\Locomo\\Asset_Instance' => 'asset/instance.php',
+	'\\Locomo\\Inflector' => 'inflector.php',
+	'\\Locomo\\Util' => 'util.php',
+	'\\Locomo\\Auth' => 'auth.php',
 	'\\Locomo\\Auth_Acl_Locomoacl' => 'auth/acl/locomoacl.php',
 	'\\Locomo\\Auth_Group_Locomogroup' => 'auth/group/locomogroup.php',
 	'\\Locomo\\Auth_Login_Locomoauth' => 'auth/login/locomoauth.php',
-	'\\Locomo\\Fieldset_Field' => 'fieldset/field.php',
-	'\\Locomo\\Actionset' => 'actionset.php',
-	'\\Locomo\\Auth' => 'auth.php',
-	'\\Locomo\\Fieldset' => 'fieldset.php',
-	'\\Locomo\\Inflector' => 'inflector.php',
-	'\\Locomo\\Module' => 'module.php',
 	'\\Locomo\\Pagination' => 'pagination.php',
+	'\\Locomo\\Actionset' => 'actionset.php',
+	'\\Locomo\\Module' => 'module.php',
 	'\\Locomo\\Request' => 'request.php',
-	'\\Locomo\\Security' => 'security.php',
-	'\\Locomo\\Util' => 'util.php',
-	'\\Locomo\\Validation' => 'validation.php',
+//	'\\Locomo\\Asset_Instance' => 'asset/instance.php',
+//	'\\Locomo\\Fieldset_Field' => 'fieldset/field.php',
+//	'\\Locomo\\Fieldset' => 'fieldset.php',
+//	'\\Locomo\\Security' => 'security.php',
+//	'\\Locomo\\Validation' => 'validation.php',
 );
 $classes = array();
 foreach ($paths as $class => $path)
@@ -86,6 +99,7 @@ foreach ($target as $class => $path)
 	}
 }
 Autoloader::add_classes($classes);
+*/
 
 // always load package
 \Package::load('auth');
@@ -93,15 +107,5 @@ Autoloader::add_classes($classes);
 // add asset path
 \Asset::add_path(LOCOMOPATH.'assets/');
 \Asset::add_path(APPPATH.'locomo/assets/');
-
-// event
-\Event::register('shutdown', 'shutdown');
-function shutdown()
-{
-// 要一考
-//	\Session::delete_flash('error');
-//	\Session::delete_flash('success');
-//	\Session::delete_flash('message');
-}
 
 /* End of file bootstrap.php */

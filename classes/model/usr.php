@@ -75,9 +75,6 @@ class Model_Usr extends Model_Base
 		'last_login_at' => array(
 			'label' => '最終ログイン',
 		),
-		'login_hash',
-		'activation_key',
-		'profile_fields',
 		'expired_at' => array(
 			'label' => '有効期日',
 			'form' => array('type' => false),
@@ -88,6 +85,9 @@ class Model_Usr extends Model_Base
 			'form' => array('type' => false),
 			'default' => null
 		),
+		'login_hash' => array('form' => array('type' => false), 'default' => ''),
+		'activation_key' => array('form' => array('type' => false), 'default' => null),
+		'profile_fields' => array('form' => array('type' => false), 'default' => ''),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
 		'creator_id' => array('form' => array('type' => false), 'default' => ''),
@@ -203,11 +203,36 @@ class Model_Usr extends Model_Base
 	 */
 	public static function _init()
 	{
-		// Autoloader - Locomo内なので、bootstrapに書いてもいいのだけど、_init()の振る舞いの備忘録として書く
-		\Autoloader::add_classes(array(
-			'\\Locomo\\Model_Usrgrp' => LOCOMOPATH.'classes/model/usrgrp.php',
-			'\\Locomo\\Model_Base' => LOCOMOPATH.'classes/model/base.php',
-		));
+		// banned user names - same as administrators
+		$alladmins = unserialize(LOCOMO_ADMINS);
+		$roots     = array_keys(\Arr::get($alladmins, 'root', array()));
+		$admins    = array_keys(\Arr::get($alladmins, 'admin', array()));
+		$allnames  = array_unique(array_merge($roots, $admins));
+
+		// usernameに予約語を設定
+		\Arr::set(static::$_properties['username'], 'validation', array('banned_string' => $allnames));
+
+		// usernameの変更は管理者のみ可能
+		if ( ! \Auth::is_admin())
+		{
+			\Arr::set(
+				static::$_properties['username'],
+				'form',
+				array(
+				'type' => 'text',
+				'disabled' => 'disabled',
+				'description' => 'ユーザ名の変更は管理者に依頼してください。',
+				)
+			);
+		}
+
+
+
+
+
+
+
+
 
 		// ユーザグループ取得（代表用）
 		$ugrps = Model_Usrgrp::get_options(
@@ -248,27 +273,6 @@ class Model_Usr extends Model_Base
 		// forge
 		$form = parent::form_definition($factory, $obj);
 
-		// banned user names - same as administrators
-		$alladmins = unserialize(LOCOMO_ADMINS);
-		$roots     = array_keys(\Arr::get($alladmins, 'root', array()));
-		$admins    = array_keys(\Arr::get($alladmins, 'admin', array()));
-		$allnames  = array_unique(array_merge($roots, $admins));
-
-		// disabled
-		$form->delete('activation_key');
-		$form->delete('last_login_at');
-		$form->delete('login_hash');
-		$form->delete('profile_fields');
-
-		// username
-		$form->field('username')
-			->add_rule('banned_string', $allnames);
-
-		if ( ! \Auth::is_admin())
-		{
-			$form->field('username')->set_type('hidden');
-			$form->add_after('display_username', 'ユーザ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'username')->set_value(@$obj->username)->set_description('ユーザ名の変更は管理者に依頼してください。');
-		}
 
 		// password
 		$form->field('password')
