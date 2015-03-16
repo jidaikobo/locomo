@@ -324,7 +324,7 @@ function set_lcm_focus(){
 	var set_focus = function(target){
 		var target, parent, t; 
 
-		$('.currentfocus').removeClass('.currentfocus');
+		$('.currentfocus').removeClass('currentfocus');
 		if(target){
 			parents = target.parents('.lcm_focus').addClass('focusparent');
 			target.addClass('currentfocus').set_tabindex();
@@ -350,7 +350,7 @@ function set_lcm_focus(){
 		}
 	
 	}
-	function set_focus_wrapper(t){//与えられなかった時のことは？
+	function set_focus_wrapper(t){
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
 	}
