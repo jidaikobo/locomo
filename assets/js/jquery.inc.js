@@ -348,13 +348,11 @@ function set_lcm_focus(){
 		}else{
 			esc.hide();
 		}
-	
 	}
 	function set_focus_wrapper(t){
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
 	}
-	
 
 	/*=== esc_focus ===*/
 	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
@@ -403,7 +401,9 @@ function set_lcm_focus(){
 		}
 
 		if( k == 13 ){//enter
-			e.preventDefault();
+			if(!$('body').hasClass('lcm_ieversion_0')){
+				e.preventDefault();
+			}
 			//とりあえず、デフォルトのイベントをキャンセルしてしまう
 			//(IEはイベントの伝播の順番がほぼ逆のようなので。ので、もうすこし条件を絞り込んだほうが良さそう。lcm_focus内のアイテム上でのエンター(送信)の有効：無効？？)
 			if($(this).hasClass('currentfocus')){//currentfocus上は除外
