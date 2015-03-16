@@ -2029,22 +2029,15 @@ a.icon.zip:before {
 }
 
 /*=== lcm_focus ===*/
-#esc_focus {
-	position: fixed;
+#esc_focus_wrapper {
+	position: absolute;
 	display: block;
-	height: 100%;
-	width: 100%;
 	margin: 0;
 	padding: 0;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background-color: rgba(128,128,128,.1);
-/*	background-image: url('../../app_assets/img/system/bg_overlay_q5.png');*/
 	z-index: 1000;
+	background: transparent !important;
 }
-#esc_focus div {
+#esc_focus {
 	position: absolute;
 	display: block;
 	width: 5em;
@@ -2055,7 +2048,7 @@ a.icon.zip:before {
 	margin: auto;
 	top: 0;
 	bottom: 0;
-	left: 0;
+	left: auto;
 	right: 0;
 	background-color: #fff;
 }
