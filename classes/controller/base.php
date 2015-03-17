@@ -62,6 +62,9 @@ class Controller_Base extends Controller_Core
 //		$model::$_options = array();
 //		$options = array('expired_at', '>', date('Y-m-d H:i:s'));
 
+		// affected_id
+		$content->set('affected_id', \Session::get('affected_id'));
+
 		$content->set('items',  $model::paginated_find($options));
 
 		$this->template->content = $content;
@@ -380,6 +383,9 @@ class Controller_Base extends Controller_Core
 				sprintf('%1$sの #%2$d を削除しました', self::$nicename, $id)
 			);
 
+			// affected_id
+			\Session::set_flash('affected_id', $id);
+
 			return \Response::redirect(static::$base_url.'index_deleted');
 		}
 	}
@@ -404,6 +410,10 @@ class Controller_Base extends Controller_Core
 				'success',
 				sprintf('%1$sの #%2$d を復活しました', self::$nicename, $id)
 			);
+
+			// affected_id
+			\Session::set_flash('affected_id', $id);
+
 			return \Response::redirect(static::$main_url);
 		}
 
