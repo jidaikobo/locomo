@@ -118,7 +118,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		//observers
 		$observers = '';
 		if (in_array('updated_at', $cmd_mods)):
-			$observers.= "\t\t'Orm\Observer_UpdatedAt' => array(\n\t\t\t\t'events' => array('before_save'),\n\t\t\t\t'mysql_timestamp' => true,\n\t\t\t),\n";
+			$observers.= "\t\t'Orm\Observer_UpdatedAt' => array(\n\t\t\t\t'events' => array('before_update'),\n\t\t\t\t'mysql_timestamp' => true,\n\t\t\t),\n";
 		endif;
 		if (in_array('created_at', $cmd_mods)):
 			$observers.= "\t\t'Locomo\Observer_Created' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
