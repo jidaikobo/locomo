@@ -110,7 +110,7 @@ class Model_Msgbrd extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'class' => 'text',
+				'class' => 'datetime',
 			),
 		),
 
@@ -152,7 +152,7 @@ class Model_Msgbrd extends \Model_Base
 	protected static $_observers = array(
 		"Orm\Observer_Self" => array(),
 		'Orm\Observer_UpdatedAt' => array(
-				'events' => array('before_save'),
+				'events' => array('before_update'),
 				'mysql_timestamp' => true,
 			),
 		'Locomo\Observer_Created' => array(
@@ -183,15 +183,6 @@ class Model_Msgbrd extends \Model_Base
 // add_authorize_methods もここに書ける？
 
 		// properties
-		self::$_properties['created_at'] = array(
-			'label' => '作成日/公開日',
-			'form' => array(
-				'type' => 'text',
-				'class' => 'datetime',
-			),
-			'default' => date('Y-m-d H:i:s'),
-		);
-
 		self::$_properties['expired_at'] = array(
 			'label' => '公開期限',
 			'form' => array(

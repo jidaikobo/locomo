@@ -61,7 +61,7 @@ class Model_Msgbrd_Attaches extends \Model_Base
 	protected static $_observers = array(
 		"Orm\Observer_Self" => array(),
 		'Orm\Observer_UpdatedAt' => array(
-				'events' => array('before_save'),
+				'events' => array('before_update'),
 				'mysql_timestamp' => true,
 			),
 		'Locomo\Observer_Created' => array(
