@@ -292,7 +292,8 @@ trait Controller_Traits_Wrkflw
 						\Session::set_flash('success', '承認しました');
 					}
 	
-					return \Response::redirect(static::$base_url.'view/'.$id);
+//					return \Response::redirect(static::$base_url.'view/'.$id);
+					return \Response::redirect(static::$base_url.'index_workflow/');
 				} else {
 					\Session::set_flash('error', '承認ルートを見つけられませんでした。');
 				}

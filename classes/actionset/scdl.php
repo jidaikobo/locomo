@@ -79,10 +79,20 @@ class Actionset_Scdl extends \Actionset
 			// 項目が日付を持っていたらそれを使う
 			if(isset($obj->start_date))
 			{
-				$y = date('Y', strtotime($obj->start_date));
-				$m = date('m', strtotime($obj->start_date));
-				$ym = date('Y-m', strtotime($obj->start_date));
-				$ymd = date('Y-m-d', strtotime($obj->start_date));
+				// 短日イベントの場合（開始日と終了日が一致）は、その値を使う。
+				if ($obj->start_date == $obj->end_date)
+				{
+					$y = date('Y', strtotime($obj->start_date));
+					$m = date('m', strtotime($obj->start_date));
+					$d = date('d', strtotime($obj->start_date));
+				} else {
+					// 短日イベントでない場合は、ターゲット日時にする
+					$y = date('Y');
+					$m = $obj->target_month ?: date('m');
+					$d = intval($obj->target_day);
+				}
+				$ym = date('Y-m', strtotime($y.'-'.$m.'-'.$d));
+				$ymd = date('Y-m-d', strtotime($y.'-'.$m.'-'.$d));
 			}
 		}
 
@@ -103,18 +113,26 @@ class Actionset_Scdl extends \Actionset
 
 		// uri
 		$actions = array(
-			array($controller.DS."calendar/", '今月'),
-			array($controller.DS."calendar/".$ym_str, '月表示'),
-			array($controller.DS."calendar/".$week_1st_day.'/week', '週表示'),
+			0 => array($controller.DS."calendar/", '今月'),
+			1 => array($controller.DS."calendar/".$ym_str, '月表示'),
+			3 => array($controller.DS."calendar/{$y}/{$m}/{$d}", '日表示'),
 		);
+		if ($controller == '\Controller_Scdl')
+		{
+			$actions[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member', '週表示');
+		} else {
+			$actions[2] = array($controller.DS."calendar/".$week_1st_day.'/week/building', '週表示');
+		}
+		ksort($actions);
+		
 		$urls = static::generate_urls($controller.'::action_edit', $actions, ['create']);
 
 		$retvals = array(
 			'urls'         => $urls ,
 			'action_name'  => 'カレンダ',
 			'show_at_top'  => true,
-			'acl_exp'      => 'カレンダ形式のスケジューラの表示権限です。',
-			'explanation'  => 'カレンダ形式のスケジューラの表示権限です。',
+			'acl_exp'      => 'カレンダ形式の表示権限です。',
+			'explanation'  => 'カレンダ形式で表示します。',
 			'help'         => '',
 			'order'        => 1
 		);
@@ -310,14 +328,15 @@ class Actionset_Scdl extends \Actionset
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
 		// ユーザIDが一致しない項目では削除リンクを出さない
+		// とりあえず出す
 		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
 		{
 //			if (isset($obj->creator_id) && $obj->creator_id == \Auth::get('id'))
-			if (isset($obj->user_id) && $obj->user_id == \Auth::get('id'))
-			{
+//			if (isset($obj->user_id) && $obj->user_id == \Auth::get('id'))
+//			{
 				$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 				$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
-			}
+//			}
 		}
 
 		$retvals = array(
@@ -336,6 +355,7 @@ class Actionset_Scdl extends \Actionset
 	 */
 	public static function actionset_delete_others($controller, $obj = null, $id = null, $urls = array())
 	{
+/*
 		$retvals = self::actionset_delete($controller, $obj, $id);
 		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
 		{
@@ -346,5 +366,7 @@ class Actionset_Scdl extends \Actionset
 
 		\Arr::set($retvals, 'urls', $urls);
 		return $retvals;
+*/
+		return array();
 	}
 }

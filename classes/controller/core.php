@@ -64,21 +64,17 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		static::$nicename    = \Util::get_locomo($called_class, 'nicename') ?: @static::$config['nicename'];
 		static::$shortname   = strtolower(substr(\Inflector::denamespace(\Request::active()->controller), 11));
 
-		// template path いまはfuel本来っぽいテンプレート配置が基本なので、不要？ しばらくコメントアウトして様子見
-//		$request = \Request::active();
-//		$request->add_path(APPPATH.'views'.DS.\Request::main()->module.DS, true);
-
 		// load config and set model_name
 		$module = \Request::is_hmvc() ? \Request::active()->module : \Request::main()->module;
 		if ($module)
 		{
-			$this->model_name = $this->model_name ?: '\\'.ucfirst($module).'\\Model_'.ucfirst(static::$shortname);
-			static::$config = \Config::load(strtolower($module));
+			$this->model_name = $this->model_name ?: '\\'.ucfirst($module).'\\Model_'.\Inflector::words_to_upper(static::$shortname);
+			static::$config = \Config::load(strtolower($module), true);
 		}
 		else
 		{
-			if (! $this->model_name) $this->model_name = '\\Model_'.ucfirst(static::$shortname);
-			static::$config = \Config::load(static::$shortname);
+			$this->model_name = $this->model_name ?: '\\Model_'.\Inflector::words_to_upper(static::$shortname);
+			static::$config = \Config::load(static::$shortname, true);
 		}
 		static::$config = static::$config ?: array();
 
@@ -171,15 +167,15 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public function auth()
 	{
-		$current_action = '\\'.$this->request->controller.'::action_'.$this->request->action;
+		$current_action = '\\'.\Request::active()->controller.'::action_'.$this->request->action;
 
 		if ( ! method_exists(static::$controller, 'action_'.static::$action))
 		{
 			if (method_exists(static::$controller, 'get_'.static::$action))
 			{
-				$current_action = '\\'.$this->request->controller.'::get_'.$this->request->action;
+				$current_action = '\\'.\Request::active()->controller.'::get_'.$this->request->action;
 			} elseif (method_exists(static::$controller, 'post_'.static::$action)) {
-				$current_action = '\\'.$this->request->controller.'::post_'.$this->request->action;
+				$current_action = '\\'.\Request::active()->controller.'::post_'.$this->request->action;
 			}
 		}
 

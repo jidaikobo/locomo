@@ -17,15 +17,49 @@ class Model_Usrgrp extends \Model_Base
 
 	//$_properties
 	protected static $_properties = array(
-		'id',
+		'id' => array(
+			'label' => 'ID',
+			'form' => array('type' => 'text', 'disabled' => 'disabled', 'size' => 2),
+		),
 		'name' => array(
 			'lcm_role' => 'subject',
-			'label' => '名称',
+			'label' => 'ユーザグループ名',
+			'form' => array('type' => 'text', 'size' => 20),
+			'validation' => array(
+				'required',
+				'max_length' => array(50),
+				'unique' => array("lcm_usrgrps.name"),
+			)
 		),
-		'description',
-		'seq',
-		'is_available',
-		'deleted_at',
+		'description' => array(
+			'label' => '説明',
+			'form' => array('type' => 'textarea', 'class' => 'textarea'),
+		),
+		'seq' => array(
+			'label' => '表示順',
+			'form' => array('type' => 'text', 'size' => '3'),
+			'validation' => array(
+				'valid_string' => array('numeric'),
+			)
+		),
+		'is_available' => array(
+			'label' => '使用中',
+			'form' => array('type' => 'select', 'options' => array(0 => '使用していない', 1 => '使用している')),
+			'default' => 1,
+		),
+		'is_for_acl' => array(
+			'label' => '権限用',
+			'form' => array('type' => 'select', 'options' => array(0 => '通常', 1 => '権限用グループ')),
+			'default' => 1,
+		),
+		'created_at' => array(
+			'label' => '作成日',
+			'form' => array('type' => false),
+		),
+		'deleted_at' => array(
+			'label' => '削除日',
+			'form' => array('type' => false),
+		),
 	);
 
 	protected static $_many_many = array(
@@ -47,68 +81,13 @@ class Model_Usrgrp extends \Model_Base
 	);
 
 	protected static $_observers = array(
+		"Orm\Observer_Self" => array(),
+		'Locomo\Observer_Created' => array(
+			'events' => array('before_insert', 'before_save'),
+			'mysql_timestamp' => true,
+		),
 		'Locomo\Observer_Revision' => array(
 			'events' => array('after_insert', 'after_save'),
 		),
 	);
-
-	/**
-	 * form_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
-	 */
-	public static function form_definition($factory = 'usergroup', $obj = null)
-	{
-		$form = \Fieldset::forge($factory, \Config::get('form'));
-
-		//id
-		$form->add(
-			'id',
-			'ID',
-			array('type' => 'text', 'disabled' => 'disabled', 'size' => 2)
-		)
-		->set_value(@$obj->id);
-
-		//name
-		$form->add(
-				'name',
-				'ユーザグループ名',
-				array('type' => 'text', 'size' => 20)
-			)
-			->set_value(@$obj->name)
-			->add_rule('required')
-			->add_rule('max_length', 50)
-			->add_rule('unique', "lcm_usrgrps.name.".@$obj->id);
-
-		//description
-		$form->add(
-				'description',
-				'説明',
-				array('type' => 'text', 'size' => 20)
-			)
-			->set_value(@$obj->description)
-			->add_rule('max_length', 255);
-
-		//order
-		$form->add(
-				'seq',
-				'表示順',
-				array('type' => 'text', 'size' => 5)
-			)
-			->set_value(@$obj->seq)
-			->add_rule('valid_string', array('numeric'));
-
-		//is_available
-		$form->add(
-				'is_available',
-				'使用中',
-				array('type' => 'select', 'options' => array('0' => '未使用', '1' => '使用中'), 'default' => 0)
-			)
-			->set_value(@$obj->is_available);
-
-		return $form;
-	}
 }

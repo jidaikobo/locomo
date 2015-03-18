@@ -77,7 +77,7 @@ $(function(){
 //書き直す。
 //modalを呼ぶ側にdata-jslcm-modal-id?を書き、相手を指定する。モーダル表示中はフォーカスを制御し、それ以外の部分については操作不可とする。
 //例えばNetReaderで制御を抜けた時はどうするの、とか、考えておくとよいのかも。(NetReader側では一時的にmodal外をdisplay: none;にするとか？　その場合、うまくイベントを抜けられなかったときが不安)
-function lcm_modal(id){
+/*function lcm_modal(id){
 	var el, wrapper, closelink;
 	el = document.getElementById(id);
 	if(el){
@@ -105,6 +105,36 @@ function lcm_modal(id){
 	event.stopPropagation();
 	return false;
 }
+*/
+$(function(){
+/*=== 基本的な設定 ===*/
+//JavaScript有効時に表示、無効時にはCSSで非表示
+$('.hide_if_no_js').removeClass('hide_if_no_js');
+$('.hide_if_no_js').find(':disabled').prop("disabled", false);
+
+//.show_if_no_js noscript的な扱い?
+$('.show_if_no_js').remove();
+
+//for NetReader
+//NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
+$('.hidden_item').hide();
+
+
+//アクセスキーをもつ要素へのタイトル付与
+//accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
+function add_accesskey_title(){
+	var str, txt, label;
+	label = this.accessKeyLabel;
+	label = label ? label : this.accessKey;
+	if(label){
+		txt = $(this).clone(false);
+		txt.find('.skip').remove();
+		str = ( $(this).attr('title') || txt.text() || $(this).children().attr('alt') );
+		$(this).attr('title',str+'['+label+']');
+	}
+}
+$(document).find('[accesskey]').each(add_accesskey_title);
+});
 
 
 //大きなくくり。あとでバラス
@@ -130,18 +160,6 @@ $('body').addClass(isNetReader ? 'netreader' : '');
 	return rs;
 })();
 */
-
-/*=== 基本的な設定 ===*/
-//JavaScript有効時に表示、無効時にはCSSで非表示
-$('.hide_if_no_js').removeClass('hide_if_no_js');
-
-//.show_if_no_js noscript的な扱い?
-$('.show_if_no_js').remove();
-
-//for NetReader
-//NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
-$('.hidden_item').hide();
-
 //フォーカスするついでに場合によってはセレクトもする
 function set_focus(t){
 	$(t).focus();
@@ -193,43 +211,28 @@ if(adminbar[0]){
 	});
 }
 
-
-//アクセスキーをもつ要素へのタイトル付与
-//accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
-function add_accesskey_title(){
-	var str, txt, label;
-	label = this.accessKeyLabel;
-	label = label ? label : this.accessKey;
-	if(label){
-		txt = $(this).clone(false);
-		txt.find('.skip').remove();
-		str = ( $(this).attr('title') || txt.text() || $(this).children().attr('alt') );
-		$(this).attr('title',str+'['+label+']');
-	}
-}
-$(document).find('[accesskey]').each(add_accesskey_title);
-
-
-//非表示の要素の設定　うまく分岐できていないのであとで
+//非表示の要素の設定
 $('.hidden_item').each(function(){
 	var query, params, v, trigger ; 
-	//hidden_itemでも中に値がある場合、または、そのなかにinputがあって値があれば、表示
-	if(!($(this).is(':input') && $(this).val())){
-		if($(this).find('form')[0]){
-		//とりあえず、get値を見る。
-			query = window.location.search.substring(1);
-			if(query!=''){
-				params = query.split('&');
-				for(var i=0 ; i < params.length; i++){
-					if( params[i].indexOf('orders') !== 0 ){
-						v = true;
-						break;
-					}
+	//hidden_itemでも検索条件のある場合、中に値がある場合は展開しておく
+	if($(this).find('form.search')[0]){
+	//検索フォームの場合、get値を見る。
+		query = window.location.search.substring(1);
+		if(query!=''){
+			params = query.split('&');
+			for(var i=0, len = params.length ; i < len; i++){
+				if( params[i].indexOf('orders') !== 0 ){
+					v = true;
+					break;
 				}
 			}
 		}
-		if(!v) return;
+	}else if($(this).find(':input')[0]){
+		$(this).find(':input').each(function(){
+			v = $(this).val()!='' ? true : v;
+		});
 	}
+	if(!v) return;
 	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
 	$(this).addClass('on').show();
 	trigger.addClass('on');
@@ -251,18 +254,19 @@ var c_w = container.outerWidth() - overflow;
 console.log(c_w);
 $('.container').css({'cssText':'width: '+c_w+'px ; max-width : auto;'});
 */
+
 /*================================▼▼▼===============================*/
 
 //tabindex制御
-//focusableな要素が動的に追加・変更されている場合に対応することを考えると、毎回.findしないといけない？重い？
-//var tabindex_preparation = false;
-
 $.fn.set_tabindex = function(){
 	//tabindexを一旦dataに格納し、現在の要素のみtabindex制御をリセットする。
 	$(document).find(':focusable').each(function(){
 		var tabindex, dataTabindex;
+		if($(this).is('#esc_focus_wrapper')) return; //tabindex制御しないものはここ。どうしよう……
 		dataTabindex = $(this).data('tabindex');
-		if(!dataTabindex){//すでにdataに格納している場合はおしまい
+	
+		//dataにtabindexの値を格納
+		if(!dataTabindex){
 			tabindex = $(this).attr('tabindex');
 			if( tabindex ){//tabindexがあるばあい
 				$(this).data('tabindex',tabindex);
@@ -270,9 +274,16 @@ $.fn.set_tabindex = function(){
 				$(this).data('tabindex', 'none');
 			}
 		}
-		$(this).attr('tabindex','-1');
+
+		//thisが表示されていれば、tab移動不可にする。
+		if($(this).is(':visible')){
+			$(this).attr('tabindex','-1');
+		}
 	});
-	$(this).find(':focusable').removeAttr('tabindex');//set_tabindexを実行した要素の中だけtabindexをリセット
+
+	//thisのなかはtabindexを有効に
+	$(this).find(':focusable').removeAttr('tabindex');
+
 	return this;
 }
 $.fn.reset_tabindex = function(){
@@ -285,82 +296,83 @@ $.fn.reset_tabindex = function(){
 			$(this).removeAttr('tabindex');
 		}
 	});
+	
 	return this;
 }
 
 
-//.lcm_focusに基づくフォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする
-if(tabindexCtrl){
+//.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする。たとえば、スマートフォンなども。
+if(tabindexCtrl && $('.lcm_focus')[0]){
 	set_lcm_focus();
-	$('.lcm_focus').each(function(){
-		var title_str = $(this).attr('title') ? $(this).attr('title') : '';
-		$(this).attr('title', title_str+' エンターで入ります')
-	});
 }
 
-function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセットする(targetがなくてthisがwindow)
-	var lcm_focus, each_date;
+function set_lcm_focus(){
+	var lcm_focus, esc;
 	lcm_focus    = $('.lcm_focus');
-	if(!lcm_focus[0]) return; //lcm_focusがなければおしまい
-	each_date    = $('.lcm_focus.calendar')[0] ? $('.each_date') : null;
-	//カレンダーのテーブルの中身を設定 この辺、なにか適当なクラスを付けてもらえば中を見ずにすむということもあるかも
-	var esc = '<a href="javascript: void(0);" id="escape_focus" class="skip show_if_focus">抜ける</a>';
-	//抜けるリンクの準備。絶対に一つだけ。というようにしたい。
-	//抜けるリンクの出る場所を考える。ウィジェットの中だったりすると、枠内下に余白ができてしまう。要工夫。
-	//抜けるリンクが常に一つだけなら、画面の中央に出してしまうことも考えられる？ その場合、親を取る方法は考えないと行けない。
 
+	if(!$('#esc_focus_wrapper')[0]){//初回だけにするもの。とりあえず抜けるリンクで判定(ので、removeはX)
+		var esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus" href="javascript: void(0);" tabindex="-1" >抜ける</a></div>').appendTo($('body'));
+		lcm_focus.each(function(){
+			var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
+			$(this).attr('title', title_str+'エンターで入ります')
+		});
+	}
 
+	/*=== set_focus ===*/
+	//フォーカス対象を指定して実行されている場合はそれを、なければlcm_focusを相手にする。
+	//?ない場合?：初回と、抜ける時親にlcm_focusがない場合。
 	var set_focus = function(target){
-		//フォーカス対象を指定して実行されている場合はそれを、指定されていない場合は基本のlcm_focusを相手にする。
-		//カレンダーの場合は、中のセルをフォーカス対象としてセットする。
-		var parent, t, add_esc; 
+		var target, parent, t; 
+
+		$('.currentfocus').removeClass('currentfocus');
 		if(target){
-			$('#escape_focus').remove();
+			parents = target.parents('.lcm_focus').addClass('focusparent');
 			target.addClass('currentfocus').set_tabindex();
-			add_esc = target.is('table') ? target.find('td').last() : target ;//tableタグ直下にaを書くと動作しないブラウザがあるので(IE等)
-			$(add_esc).css('position', 'relative').append(esc);
 		}
-		parent = $(this).closest('.currentfocus');
-		if(parent[0]){ //.currentfocusの中にいる場合(前の行で自身の場合を除外しているので) /* このあたり、不要なものが残っているのかも*/
-			parent.removeClass('currentfocus').addClass('focusparent');
-			$('#escape_focus').remove();
-		}
+
+		//lcm_focusをもとにtabindexの設定を行う
 		if(!$.isWindow(this)){
-			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex().append(esc);
+			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}
 		t = target ? target.find('.lcm_focus') : lcm_focus;
-		if(target && target.hasClass('calendar')){
-			t = target.find(each_date);
+		
+		set_focus_wrapper(t);
+		if($('.currentfocus')[0]){
+			esc.show().attr('tabindex','0');
+			esc.css({
+				'top'   : $('.currentfocus').offset().top,
+				'left'  : $('.currentfocus').offset().left,
+				'width' : $('.currentfocus').width(),
+				'height': $('.currentfocus').height(),
+				});
+		}else{
+			esc.hide();
 		}
+	}
+	function set_focus_wrapper(t){
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
 	}
-	
-	var escape_focus = function(e){
-		//メニューをESCで抜けた時のset_tabindexに対しての振る舞い。currentfocusを見てなにかしたい。今のままだと、抜けるリンクが残っている
-		//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
-		//多重のフォーカスは、親を見ながら戻していく。
-		e = e ? e : event;//この場合、抜けるリンクはeがclickイベントになり、tが#escape_focusになる
-		var t, parent, grandparent;
+
+	/*=== esc_focus ===*/
+	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
+	//多重のフォーカスは、親を見ながら戻していく。
+	var esc_focus = function(e){
+		e = e ? e : event;//この場合、抜けるリンクはeがclickイベントになり、tが#esc_focusになる
+		e.preventDefault();
+		var t, current, parent;
 		t = $(e.target);
+		
+		current = $($('.currentfocus')[0]);
 
-		parent = $('#escape_focus').closest('.currentfocus');
-		grandparent = parent.parent().closest('.currentfocus');
-
-		parent.set_tabindex().removeClass('currentfocus').focus();
-		$('#escape_focus').remove();
-
-		if(grandparent[0]){
-			$(document).reset_tabindex();
-			grandparent.set_tabindex().append(esc);
-			set_focus(grandparent);
-		}else{
-			$(document).reset_tabindex();
-			set_focus();
-		}
+		$(current).removeClass('currentfocus').set_tabindex().focus();
+		esc.hide();
+		parent = current.closest('.focusparent')[0] ? current.closest('.focusparent'): null;
+		$(document).reset_tabindex();
+		set_focus(parent);
 	}
 
-	//ひとまず実行 他が終わってから動くようにsetTimeoutをしているけど、lcm_focusを実行するときに遅延させたほうがよいのかも
+	//ひとまず実行
 	setTimeout(function(){
 		set_focus();//lcm_focusが入れ子になっていてもここで一旦-1
 	}, 100);
@@ -371,29 +383,88 @@ function set_lcm_focus(){//thisがwindowだったら普通にtabindexをセッ�
 		var t, k, parent;
 		t = $(e.target);
 		k = e.which;
+		
+		if(t.hasClass('currentfocus') && k == 9 && e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
+			esc.focus();
+			e.preventDefault();
+		}
+		//IE6-9の場合、radioには-1を与えていても移動してしまうので、lcm_fous上では次のtabbableに飛ばす
+		//逆タブでは、focus枠より先に中身にtabがあたるので、radio-1の場合の処理を書く
+		var body = $('body');
+		if(k == 9 && body.hasClass('lcm_ieversion_8') || body.hasClass('lcm_ieversion_7') || body.hasClass('lcm_ieversion_6')){
+			var tabbable = $(':tabbable');
+			var index = tabbable.index(t);
+			if(!e.shiftKey){
+				tabbable.eq(index+1).focus();
+				e.preventDefault();
+			}
+		}
 
 		if( k == 13 ){//enter
-			if($(this).hasClass('currentfocus') || t.is('#escape_focus')){//currentfocus上と抜けるリンクは除外
+			if(!$('body').hasClass('lcm_ieversion_0')){
+				e.preventDefault();
+			}
+			//とりあえず、デフォルトのイベントをキャンセルしてしまう
+			//(IEはイベントの伝播の順番がほぼ逆のようなので。ので、もうすこし条件を絞り込んだほうが良さそう。lcm_focus内のアイテム上でのエンター(送信)の有効：無効？？)
+			if($(this).hasClass('currentfocus')){//currentfocus上は除外
 				e.stopPropagation();
 				return;
 			}
 			set_focus($(this));
+			e.stopPropagation();
 		}
 	});
+	
+	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
+	if($('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6')){
+		$(document).on('keydown',function(e){
+			e = e ? e : event;
+			var k, parent;
+			k = e.which;
+			if(k == 9 && e.shiftKey){
+				setTimeout(function(){
+					if($(':focus').attr('tabindex') == -1){
+						$(':focus').closest('.lcm_focus').focus();
+					}
+				}, 0);
+			}
+		});
+
+	}
+	$('#esc_focus').on('focus', esc_focus);
 	$(document).on('keydown', function(e){//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
 		e = e ? e : event;
 		var t, k;
 		t = $(e.target);
 		k = e.which;
+		
 //		console.log($('.modal.on, .semimodal.on'));
-		if( !t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 ){
-//			escape_focus(t);
-			escape_focus();
+
+		if((t.is('#esc_focus_wrapper') && k == 13) ||(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
+			esc_focus(e);
 			e.stopPropagation();
 		}
 	});
-	$(document).on('click', '#escape_focus',escape_focus);
-	$(document).on('focus', ':input',function(e){
+	$(document).on('click',function(e){
+	//フォーカスを解除して、targetの親のlcm_focusにフォーカス、自分自身がフォーカシブルだったらちゃんとフォーカス。
+		e = e ? e : event;
+		var t, parent;
+		t = $(e.target);
+		if(t.is(':focusable')){
+
+		}
+		//		
+		parent = t.closest('.lcm_focus')[0];
+		parent = parent ? $(parent) : null;//document相手にはできない。
+		if(parent){
+			set_focus(parent);
+		}
+		if(t.is(':focusable')){
+			t.focus();
+		}
+	})
+
+	$(document).on('click', ':input',function(e){
 		e = e ? e : event;
 		var t, parent;
 		t = $(e.target);
@@ -426,7 +497,7 @@ $(window).resize(function(){
 
 
 /*
-//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行うけれど、確実にサイト内に表示されている要素でサイズが変化するもの、がいいなあ
+//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行う。確実にサイト内に表示されている要素でサイズが変化するもの。
 //
 var fontsize_h, fontsize_ratio, window_resized;
 fontsize_h =  adminbar.height();
@@ -436,12 +507,12 @@ var font_resize = setInterval(function(){
 		 fontsize_h = adminbar.height();
 //		 console.log(fontsize_ratio);
 		if(fontsize_ratio != 1 && !window_resized){
-//			console.log('フォントリサイズされたで')
+//			console.log('フォントリサイズ')
 		}
 		window_resized = false;
 	}else
 	if(window_resized){
-//		console.log('ウィンドウのリサイズかもやで');
+//		console.log('ウィンドウのリサイズ');
 	}
 }, 200);
 //window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
@@ -639,7 +710,7 @@ $(document).on('keydown',function(e){
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	index = null;
 	
-	modal = $(document).find('.modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？　とすると？
+	modal = $(document).find('.modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？
 	if(modal){
 		tabbable = $(document).find(':tabbable');
 		first    = tabbable.first()[0];
@@ -896,6 +967,69 @@ $('a:submit, input:submit, .confirm').click(function(){//該当する場合遷�
 
 //エラー時の入力エリアから一覧へのナビゲーション
 $('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus link_alert_error">エラー一覧にもどる</a>');
+
+/*=== lcm_multiple_select ===*/
+
+$('.lcm_multiple_select').each(function(){
+	var select, selected, selects, to, from;
+	select = $($(this).find('.select_from'));
+	selected = $($(this).find('.selected'));
+	selects = select.add(selected);
+	
+	//スケジューラ用hidden
+	var hidden_items_id = $(this).data('hiddenItemId');
+	if(hidden_items_id){
+		make_hidden_form_items(hidden_items_id, selected);
+	}
+	
+	
+	$(this).find(':button').on('click', parent ,function(e){
+		from = $(this).hasClass('add_item') ? select : selected;
+		to = selects.not(from);
+		lcm_multiple_select(from, to, hidden_items_id, selected);
+	});
+	selects.dblclick(function(){
+		from = $(this);
+		to = selects.not(from);
+		lcm_multiple_select(from, to, hidden_items_id, selected);
+	});
+});
+
+function lcm_multiple_select(from, to, hidden_items_id, selected){
+	//引数selectedはhidden_itemがなくなれば不要
+	var from, to, val, item, hidden_items_id;
+	val = from.val();
+	if ( val == "" || !val) return;
+	for(var i=0, len = val.length; i < len; i++){
+		item = from.find('option[value='+val[i]+']');
+		item.appendTo(to).attr('selected',false);
+	}
+
+	//スケジューラ用hidden
+	if(hidden_items_id){
+		make_hidden_form_items(hidden_items_id, selected)
+	};
+}
+
+//スケジューラ用hidden
+function make_hidden_form_items(hidden_items_id, selected){
+	var hidden_item = $('#'+hidden_items_id);
+	if (!hidden_item[0]) {
+		hidden_item = $('<input>').attr({
+		    type : 'hidden',
+		    id   : hidden_items_id,
+		    name : hidden_items_id,
+		    value: '',
+		}).appendTo('form');
+	}
+	var hidden_str = "";
+	// 配列に入れる
+	$(selected).find('option').each(function() {
+		hidden_str += "/" + $(this).val();
+    });
+	hidden_item.val(hidden_str);
+}
+
 
 
 /* Tiny MCE  */

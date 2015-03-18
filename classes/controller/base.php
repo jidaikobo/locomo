@@ -30,12 +30,14 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 
-		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+//		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
+		$dir = substr(\Inflector::ctrl_to_dir(\Inflector::denamespace(\Request::active()->controller)), 1);
+
 		if (!$this->_content_template) {
 			if (!\Request::is_hmvc()) {
-				$this->_content_template = $dir.'index_admin';
+				$this->_content_template = $dir.'/index_admin';
 			} else {
-				$this->_content_template = $dir.'index_admin_widget';
+				$this->_content_template = $dir.'/index_admin_widget';
 			}
 		}
 		$content = \View::forge($this->_content_template);
@@ -59,6 +61,9 @@ class Controller_Base extends Controller_Core
 		}
 //		$model::$_options = array();
 //		$options = array('expired_at', '>', date('Y-m-d H:i:s'));
+
+		// affected_id
+		$content->set('affected_id', \Session::get('affected_id'));
 
 		$content->set('items',  $model::paginated_find($options));
 
@@ -225,7 +230,7 @@ class Controller_Base extends Controller_Core
 		if ($this->_content_template) {
 			$content = \View::forge($this->_content_template);
 		} else {
-			$tmp = static::$shortname.DS.'/view';
+			$tmp = str_replace('_', DS, static::$shortname).'/view';
 			// var_dump(\Finder::search('views', $tmp)); die();
 			$content = \View::forge(
 				\Finder::search('views', $tmp) ? $tmp : 'defaults/view'
@@ -378,6 +383,9 @@ class Controller_Base extends Controller_Core
 				sprintf('%1$sの #%2$d を削除しました', self::$nicename, $id)
 			);
 
+			// affected_id
+			\Session::set_flash('affected_id', $id);
+
 			return \Response::redirect(static::$base_url.'index_deleted');
 		}
 	}
@@ -402,6 +410,10 @@ class Controller_Base extends Controller_Core
 				'success',
 				sprintf('%1$sの #%2$d を復活しました', self::$nicename, $id)
 			);
+
+			// affected_id
+			\Session::set_flash('affected_id', $id);
+
 			return \Response::redirect(static::$main_url);
 		}
 

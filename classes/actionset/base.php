@@ -58,10 +58,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::main()->action == 'view' && $id):
+		if (\Request::main()->action == 'view' && $id)
+		{
 			$actions = array(array($controller.DS."edit/".$id, '編集'));
 			$urls = static::generate_urls($controller.'::action_edit', $actions, ['edit','create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -140,10 +141,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_undelete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
+		if (isset($obj->deleted_at) && $obj->deleted_at && $id)
+		{
 			$actions = array(array($controller.DS."undelete/".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
 			$urls = static::generate_urls($controller.'::action_undelete', $actions, ['create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -167,10 +169,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_delete_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
+		if (isset($obj->deleted_at) && $obj->deleted_at && $id)
+		{
 			$actions = array(array($controller.DS."delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
 			$urls = static::generate_urls($controller.'::action_delete_deleted', $actions, ['create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -194,10 +197,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (isset($obj->deleted_at) && $obj->deleted_at && $id):
+		if (isset($obj->deleted_at) && $obj->deleted_at && $id)
+		{
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_urls($controller.'::action_view_deleted', $actions, ['view','create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -218,10 +222,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_expired($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id)
+		{
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_urls($controller.'::action_view_expired', $actions, ['view','create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -242,10 +247,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_yet($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id)
+		{
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_urls($controller.'::action_view_yet', $actions, ['view','create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -267,10 +273,11 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_invisible($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::main()->action == 'edit' && $id):
+		if (\Request::main()->action == 'edit' && $id)
+		{
 			$actions = array(array($controller.DS."view/".$id, '閲覧'));
 			$urls = static::generate_urls($controller.'::action_view_invisible', $actions, ['view','create']);
-		endif;
+		}
 
 		$retvals = array(
 			'realm'        => 'base',

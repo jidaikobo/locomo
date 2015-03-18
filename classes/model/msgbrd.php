@@ -110,7 +110,7 @@ class Model_Msgbrd extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'class' => 'text',
+				'class' => 'datetime',
 			),
 		),
 
@@ -152,7 +152,7 @@ class Model_Msgbrd extends \Model_Base
 	protected static $_observers = array(
 		"Orm\Observer_Self" => array(),
 		'Orm\Observer_UpdatedAt' => array(
-				'events' => array('before_save'),
+				'events' => array('before_update'),
 				'mysql_timestamp' => true,
 			),
 		'Locomo\Observer_Created' => array(
@@ -183,15 +183,6 @@ class Model_Msgbrd extends \Model_Base
 // add_authorize_methods もここに書ける？
 
 		// properties
-		self::$_properties['created_at'] = array(
-			'label' => '作成日/公開日',
-			'form' => array(
-				'type' => 'text',
-				'class' => 'datetime',
-			),
-			'default' => date('Y-m-d H:i:s'),
-		);
-
 		self::$_properties['expired_at'] = array(
 			'label' => '公開期限',
 			'form' => array(
@@ -209,10 +200,8 @@ class Model_Msgbrd extends \Model_Base
 		);
 */
 		// usergroup_id
-/*
-		echo @static::$id;
 		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
-		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
+		$options+= \Model_Usrgrp_Custom::get_options();
 		self::$_properties['usergroup_id'] = array(
 			'label' => '公開範囲',
 			'form' => array(
@@ -222,9 +211,8 @@ class Model_Msgbrd extends \Model_Base
 			'validation' => array(
 				'required',
 			),
-			'default' => 0
+			'default' => ''
 		);
-*/
 	}
 
 	/**
@@ -245,13 +233,14 @@ class Model_Msgbrd extends \Model_Base
 		$form = parent::form_definition($factory, $obj);
 
 		// usergroup_id
+/*
 		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
 		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
 		$form->field('usergroup_id')
 			->add_rule('required')
 			->set_options($options)
 			->set_value($obj->usergroup_id);
-
+*/
 		// categories
 		$options = array('' => '選択してください');
 		$options+= \Model_Msgbrd_Categories::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');

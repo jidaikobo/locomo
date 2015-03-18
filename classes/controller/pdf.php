@@ -157,8 +157,12 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			$y = $pdf->GetY();
 			$y = (is_float($y) or is_int($y)) ? $y : 0;
 			$pdf->SetXY($margin_x+($width*0.05), $y + $fs*MM_PER_POINT);
-			$pdf->Cell($width*0.95, $fs*2*MM_PER_POINT, $name, 0, 1, $name_align);
 
+			if (strpos($name, "\n") === false) { //name 改行を含まない
+				$pdf->Cell($width*0.95, $fs*2*MM_PER_POINT, $name, 0, 1, $name_align, false, '', 1);
+			} else {
+				$pdf->MultiCell($width*0.95, $fs*2*MM_PER_POINT, $name, 0, $name_align, false, 0, '', '', true, 1, false, false);
+			}
 
 			if ($rotate) $pdf->StopTransform();
 
@@ -248,6 +252,9 @@ class Controller_Pdf extends \Locomo\Controller_Base
 				if (is_array($ff)) $field_format = $ff;
 			}
 
+			// field id
+			$id = $customer->id ?: '';
+
 			// field zip
 			$zip = '';
 			if (is_array($field_format['zip']) and count($field_format['zip']) == 2) {
@@ -292,6 +299,13 @@ class Controller_Pdf extends \Locomo\Controller_Base
 			}
 
 			// $name .= (array_key_exists('title',$customer::properties()) and $customer->title) ? "　" . $customer->title : "　様";
+
+
+			// output id
+			$fs = min($width / 30 / MM_PER_POINT, 11);
+			$pdf->SetFontSize($fs);
+			$pdf->SetXY($margin_x + $refer_point['x'] + $width*0.05, $margin_y + $refer_point['y'] + $height*0.05);
+			$pdf->MultiCell($width*0.9, $height*0.45, $id, 0, 'R');
 
 
 			// output zip & address

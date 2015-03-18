@@ -167,9 +167,21 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function get_root_relative_path($url = '')
 	{
+		$url = $url ?: \Uri::current();
 		$http_host = \Input::server('HTTP_HOST');
 		$pos = strpos(\Uri::base(false), $http_host) + strlen($http_host);
 		return substr($url, $pos);
+	}
+
+	/**
+	 * guess_pagination_segment()
+	 * @param string http://exmple.com/root_dir/ctrl/action
+	 * @return int
+	 */
+	public static function guess_pagination_segment($url = '')
+	{
+		$root_relative_path = static::get_root_relative_path($url);
+		return intval(count(explode('/', $root_relative_path)));
 	}
 
 	/**

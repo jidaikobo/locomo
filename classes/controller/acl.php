@@ -139,9 +139,6 @@ class Controller_Acl extends \Controller_Base
 	 */
 	public function action_update_acl()
 	{
-		// CSRF
-//		if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
-
 		// user requests
 		$mod_or_ctrl  = \Input::param('mod_or_ctrl') == 'none' ? null : \Input::param('mod_or_ctrl');
 		$usergroup_id = is_numeric(\Input::post('usergroup')) ? \Input::post('usergroup') : null;
@@ -158,12 +155,8 @@ class Controller_Acl extends \Controller_Base
 		// query build
 		if (\Input::method() == 'POST')
 		{
-//
-
-/*
-csrf
-
-*/
+			// CSRF
+			if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 			// delete all at first
 			$q = \DB::delete('lcm_acls');
@@ -209,6 +202,7 @@ csrf
 		// redirect
 		$args = \input::all() ;
 		unset($args['submit']);
+		unset($args['locomo_csrf_token']);
 		unset($args['acls']);
 		\Session::set_flash('success', 'アクセス権をアップデートしました');
 		\Response::redirect(\Uri::create('/acl/actionset_index/', array(), $args));

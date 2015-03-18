@@ -360,7 +360,12 @@ class Model_Base extends \Orm\Model_Soft
 					}
 
 					// Fieldset_Field なので populate じゃなく set_value
-					$repopulate and $form->field($k)->set_value(array_keys($this[$k]));
+					if ($form->field($k))
+					{
+						$repopulate and $form->field($k)->set_value(array_keys($this[$k]));
+					} else {
+//						$form->add($k)->set_value(array_keys($this[$k]));
+					}
 
 				// 何も飛んでこなかったとき、form に存在していれば 全て unset する
 				} else {

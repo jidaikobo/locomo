@@ -3,6 +3,26 @@ namespace Locomo;
 class Actionset_Usrgrp extends \Actionset
 {
 	/**
+	 * actionset_admin()
+	 */
+	public static function actionset_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = parent::actionset_admin($controller, $obj, $id);
+		$actions = array(
+			'\Controller_Usrgrp::action_index_admin',
+			'\Controller_Usrgrp::action_create',
+			'\Controller_Usrgrp::action_edit',
+			'\Controller_Usrgrp::action_view',
+			'\Controller_Usrgrp::action_delete',
+			'\Controller_Usrgrp::action_undelete',
+		);
+		\Arr::set($retvals, 'dependencies', $actions);
+		\Arr::set($retvals, 'action_name', 'ユーザグループへのアクセス権');
+		\Arr::set($retvals, 'acl_exp', 'ユーザグループへのアクセス権です。');
+		return $retvals;
+	}
+
+	/**
 	 * actionset_index_admin()
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())

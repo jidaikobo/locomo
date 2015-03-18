@@ -27,6 +27,7 @@ class Model_Usr extends Model_Base
 				'required',
 				'max_length' => array(50),
 				'valid_string' => array(array('alpha','numeric','dot','dashes')),
+				'unique' => array("lcm_usrgrps.name"),
 			),
 		),
 		'display_name' => array(
@@ -68,20 +69,33 @@ class Model_Usr extends Model_Base
 				'required',
 			),
 		),
-		'last_login_at',
-		'login_hash',
-		'activation_key',
-		'profile_fields',
-		'expired_at' => array('form' => array('type' => false), 'default' => null),
-		'creator_id' => array('form' => array('type' => false), 'default' => ''),
-		'updater_id' => array('form' => array('type' => false), 'default' => ''),
-		'created_at' => array('form' => array('type' => false), 'default' => null),
+		'main_usergroup_id' => array(
+			'label' => '代表ユーザグループ',
+		),
+		'last_login_at' => array(
+			'label' => '最終ログイン',
+		),
+		'expired_at' => array(
+			'label' => '有効期日',
+			'form' => array('type' => false),
+			'default' => null
+		),
+		'created_at' => array(
+			'label' => '作成日',
+			'form' => array('type' => false),
+			'default' => null
+		),
+		'login_hash' => array('form' => array('type' => false), 'default' => ''),
+		'activation_key' => array('form' => array('type' => false), 'default' => null),
+		'profile_fields' => array('form' => array('type' => false), 'default' => ''),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
+		'creator_id' => array('form' => array('type' => false), 'default' => ''),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 	);
 
 	/**
-	 * $_many_many
+	 * relations
 	 */
 	protected static $_many_many = array(
 		'usergroup' => array(
@@ -89,6 +103,15 @@ class Model_Usr extends Model_Base
 			'key_through_from' => 'user_id',
 			'table_through' => 'lcm_usrs_usrgrps',
 			'key_through_to' => 'group_id',
+			'model_to' => '\Model_Usrgrp',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
+		)
+	);
+	protected static $_belongs_to = array(
+		'main_usergroup' => array(
+			'key_from' => 'main_usergroup_id',
 			'model_to' => '\Model_Usrgrp',
 			'key_to' => 'id',
 			'cascade_save' => false,
@@ -139,7 +162,6 @@ class Model_Usr extends Model_Base
 	{
 		// not for migration
 		if (\Input::method() == 'POST')
-//		if (\Input::post('password'))//要検討
 		{
 			// パスワードのハッシュ
 			$password = \Input::post('password');
@@ -151,9 +173,10 @@ class Model_Usr extends Model_Base
 				// postがあるのでパスワードを変更
 				$this->password = \Auth::hash_password($password);
 			}
-		} else {
-			// migration と見なす
+		} elseif ($this->password) {
+			// POST以外の更新であれば生値を送ったものと見なしてハッシュ処理
 			$this->password = \Auth::hash_password($this->password);
+		
 		}
 	}
 
@@ -176,6 +199,66 @@ class Model_Usr extends Model_Base
 	}
 
 	/**
+	 * _init()
+	 */
+	public static function _init()
+	{
+		// banned user names - same as administrators
+		$alladmins = unserialize(LOCOMO_ADMINS);
+		$roots     = array_keys(\Arr::get($alladmins, 'root', array()));
+		$admins    = array_keys(\Arr::get($alladmins, 'admin', array()));
+		$allnames  = array_unique(array_merge($roots, $admins));
+
+		// usernameに予約語を設定
+		\Arr::set(static::$_properties['username'], 'validation', array('banned_string' => $allnames));
+
+		// usernameの変更は管理者のみ可能
+		if ( ! \Auth::is_admin())
+		{
+			\Arr::set(
+				static::$_properties['username'],
+				'form',
+				array(
+				'type' => 'text',
+				'disabled' => 'disabled',
+				'description' => 'ユーザ名の変更は管理者に依頼してください。',
+				)
+			);
+		}
+
+
+
+
+
+
+
+
+
+		// ユーザグループ取得（代表用）
+		$ugrps = Model_Usrgrp::get_options(
+			array(
+				'where' => array(
+					array('is_available', true),
+					array('customgroup_uid', null),
+					array('is_for_acl', false),
+				),
+				'order_by' => array('seq' => 'ASC', 'name' => 'ASC')
+			),
+			'name'
+		);
+
+		// 代表ユーザグループ
+		\Arr::set(static::$_properties['main_usergroup_id'], 'form', array(
+			'type' => 'select',
+			'options' => $ugrps
+		));
+
+
+
+
+	}
+
+	/**
 	 * form_definition()
 	 *
 	 * @param str $factory
@@ -190,28 +273,6 @@ class Model_Usr extends Model_Base
 		// forge
 		$form = parent::form_definition($factory, $obj);
 
-		// banned user names - same as administrators
-		$alladmins = unserialize(LOCOMO_ADMINS);
-		$roots     = array_keys(\Arr::get($alladmins, 'root', array()));
-		$admins    = array_keys(\Arr::get($alladmins, 'admin', array()));
-		$allnames  = array_unique(array_merge($roots, $admins));
-
-		// disabled
-		$form->delete('activation_key');
-		$form->delete('last_login_at');
-		$form->delete('login_hash');
-		$form->delete('profile_fields');
-
-		// username
-		$form->field('username')
-			->add_rule('unique', "lcm_usrs.username.{$id}")
-			->add_rule('banned_string', $allnames);
-
-		if ( ! \Auth::is_admin())
-		{
-			$form->field('username')->set_type('hidden');
-			$form->add_after('display_username', 'ユーザ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'username')->set_value(@$obj->username)->set_description('ユーザ名の変更は管理者に依頼してください。');
-		}
 
 		// password
 		$form->field('password')
@@ -276,7 +337,7 @@ class Model_Usr extends Model_Base
 		// usergroup can modified by admin only 
 		if (\Auth::is_admin())
 		{
-			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', null))), 'name');
 			$form->add_after(
 					'usergroup',
 					'ユーザグループ',

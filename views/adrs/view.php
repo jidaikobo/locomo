@@ -77,7 +77,7 @@
 <?php if ($item->memo): ?>
 <tr>
 	<th>備考</th>
-	<td><?php echo $item->memo; ?></td>
+	<td><?php echo nl2br($item->memo); ?></td>
 </tr>
 
 <?php endif; ?>

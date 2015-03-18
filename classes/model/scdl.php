@@ -235,7 +235,6 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'textarea',
 				'rows' => 7,
-				'style' => 'width:100%;',
 				'class' => 'text',
 			),
 			'validation' => 
@@ -432,7 +431,7 @@ class Model_Scdl extends \Model_Base
 			'mysql_timestamp' => true,
 		),
 		'Orm\Observer_UpdatedAt' => array(
-				'events' => array('before_save'),
+				'events' => array('before_update'),
 				'mysql_timestamp' => true,
 			),
 		'Locomo\Observer_Scdl' => array(

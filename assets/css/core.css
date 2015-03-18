@@ -694,7 +694,8 @@ textarea[disabled] {
 #form_username,
 #form_email,
 input[type="password"],
-input.int {
+input.int,
+input.han {
 	ime-mode: inactive;
 }
 input:read-only {
@@ -855,96 +856,132 @@ table + .index_toolbar {
 .container .search .label_fb label * {
 	vertical-align: baseline;
 }
+
+/*===  lcm_form  ===*/
 .lcm_form {
 	position: relative;
-	display: table;
-	width: 100%;
+	min-height: 1px;
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	margin-top: 2em;
 	padding-bottom: 4em;
 }
-.lcm_form > .input_group {
-	display: table-row;
+.lcm_form:after {
+	content: ".";
+	display: block;
+	clear: both;
+	height: 0;
+	visibility: hidden;
 }
-.lcm_form .input_group > h2,
-.lcm_form .input_group > .field,
-.lcm_form .input_group > table {
-	display: table-cell;
-	border-collapse: collapse;
+* html .lcm_form:after {
+	height: 1px;
+	/*\*//*/
+	height: auto;
+	overflow: hidden;
+	/**/
 }
-.lcm_form * {
+.contents .lcm_form h2 {
+	border: none;
+	box-shadow: none;
+}
+.lcm_form > .input_group ,
+.lcm_form .hidden_item > .input_group {
+	width: 100%;
+	clear: both;
+	border-top: 1px solid #fff;
+	box-shadow: 0 -1px 0 #ccc;
+}
+.lcm_form .input_group > .input_group {
+	display: inline-block;
+}
+.input_group * {
 	vertical-align: top;
 }
-.lcm_form .input_group h2 ,
-.lcm_form .input_group > .field ,
-.lcm_form .input_group > table {
+.lcm_form > .input_group:first-child {
+	border: none;
+	box-shadow: none;
+}
+.lcm_form .input_group > h2 ,
+.lcm_form .hidden_item .input_group > h2 {
+	float: left;
+}
+.lcm_form .input_group h2,
+.lcm_form section h1,
+.lcm_form .input_group .field,
+.lcm_form .input_group table {
 	font-size: 1em;
 	margin: 0;
 	padding: 1em 0 .8em;
-	border-top: 1px solid #fff;
-	border-bottom: none;
-	box-shadow: 0 -1px 0 #ccc;
-}
-.lcm_form .input_group:first-child h2,
-.lcm_form input:first-child + .input_group h2,
-.lcm_form .input_group:first-child .field,
-.lcm_form input:first-child + .input_group .field,
-.lcm_form .input_group:first-child table,
-.lcm_form input:first-child + .input_group table {
-	border-top: none;
-	box-shadow: none;
-}
 
-.lcm_form .input_group > table th {
-	line-height: 1.25em;
-	padding: .125em 0;
 }
-.lcm_form .input_group > table tbody th ,
-.lcm_form .input_group > table tbody td{
-	border-top: 1px solid #ccc;
-	padding: .5em 0;
-	min-width: 8em;
-}
-.lcm_form .input_group > table * {
-	vertical-align: middle;
-}
-.lcm_form .input_group > h2 {
+.lcm_form .input_group > h2,
+.lcm_form  .toggle_item.disclosure,
+.lcm_form  .hidden_item .input_group > h2 {
+	font-size: 1em;
 	width: 11em;
 	text-align: right;
 }
 .lcm_form .input_group > .field,
-.lcm_form .input_group > table {
+.lcm_form .hidden_item .input_group > .field,
+.lcm_form .input_group table,
+.lcm_form .hidden_item .input_group table {
+	display: block;
+	margin-left: 11em;
 	padding-left: .75em;
 }
-.lcm_form .select_multiple_wrapper {
+.lcm_form .input_group table tbody th,
+.lcm_form .input_group table tbody td {
+	border-top: 1px solid #ccc;
+	padding: .5em 0;
+	min-width: 8em;
+}
+
+/*=== multiple_select ===*/
+.lcm_form .select_multiple_wrapper,
+.lcm_multiple_select {
 	display: table;
 }
-.lcm_form .select_multiple_content {
+.lcm_form .select_multiple_content,
+.lcm_multiple_select .multiple_select_content {
 	display: table-cell;
 	vertical-align: middle;
 }
-.lcm_form .select_multiple_content.button_group {
+.lcm_form .select_multiple_content.button_group,
+.lcm_multiple_select .multiple_select_content.button_group {
 	width: 5em;
+	min-width: 5em;
 	position: relative;
 }
-.lcm_form .select_multiple_content.button_group input {
+.lcm_form .select_multiple_content.button_group input,
+.lcm_multiple_select .multiple_select_content.button_group input {
     position: absolute;
 	top: 7.5em;
     left: 1.35em;
 }
-.lcm_form .select_multiple_content.button_group input:first-child {
+.lcm_form .select_multiple_content.button_group input:first-child,
+.lcm_multiple_select .multiple_select_content.button_group input:first-child {
     top: 10em;
 }
-.lcm_form .select_multiple_content select {
-	margin-bottom: .5em;
+.lcm_multiple_select label {
+	display: block;
+	padding: 1em 0 0;
+	font-weight: bold;
+	text-align: center;
 }
-.lcm_form .select_new select {
+.lcm_multiple_select .select_multiple_content ,
+.lcm_multiple_select .select_multiple_content select,
+.lcm_form .multiple_select_content select {
+	margin-bottom: .5em;
+	width: 11em;
+	height: 12.5em;
+}
+.lcm_multiple_select select:first-child {
 	margin-left: 0;
 }
 .lcm_form textarea {
-	max-width: 800px	;
+	width: 98%;
+	max-width: 800px;
 }
 .lcm_form .address input[type="button"] {
 	margin-bottom: .5em;
@@ -954,12 +991,12 @@ table + .index_toolbar {
 	margin-bottom: -1px;
 	width: 25em;
 }
-
 .lcm_form .submit_button {
 	position: absolute;
 	right: 10px;
 	bottom: .25em;
 }
+
 form tbody th {
 	text-align: left;
 	padding-right: 5px;
@@ -1027,7 +1064,7 @@ span#customer_address3:empty + br {
 	background-image: url('../img/system/mark_disclose.png');
 	background-position: 4px center;
 	background-repeat: no-repeat;
-	padding: .125em 5px .125em 15px;
+	padding: .125em 0 .125em 15px;
 	margin: 0;
 	width: 100%;
 	webkit-box-sizing: border-box;
@@ -1247,13 +1284,13 @@ td.minimum {
 .widget .datatable.schedule_day td {
 	white-space: normal;
 }
-.datatable tr:nth-child(odd) {
+.datatable tbody tr:nth-child(odd) {
 	background: #fefefe;
 }
-.datatable tr:nth-child(even) {
+.datatable tbody tr:nth-child(even) {
 	background: #f9f9f9;
 }
-.datatable tr:nth-child(even) th {
+.datatable tbody tr:nth-child(even) th {
 	background: #eee;
 }
 .datatable thead a,
@@ -1267,11 +1304,21 @@ td.minimum {
 	background-color: #ddd;
 	text-decoration: underline;
 }
-.datatable tr.current th {
+.datatable tr.current th,
+.datatable tbody tr:hover th,
+.datatable tfoot tr:hover th {
 	background-color: #f0f0dd;
 }
-.datatable tr.current td {
+.datatable tr.current td,
+.datatable tbody tr:hover td,
+.datatable tfoot tr:hover td {
 	background-color: #fafadd;
+}
+.datatable tfoot.thead tr:hover th {
+	background-color: #eee;
+}
+.datatable tfoot.thead tr:hover td {
+	background-color: #fefefe;
 }
 .col_scrollable {
 	display: block;
@@ -1321,7 +1368,6 @@ td.minimum {
 }
 .field_wrapper.calendar_detail {
 	display: block;
-	max-width: 1000px;
 }
 .select_period {
 	display: inline-block;
@@ -1418,7 +1464,8 @@ table.calendar {
 .calendar td.week6.today {
 	background-color: #f6f6e6;
 }
-.calendar td.week0.today {
+.calendar td.week0.today,
+.calendar td.holiday.today {
 	background-color: #faf0da;
 }
 
@@ -1471,16 +1518,22 @@ table.calendar {
 .week0 .title {
 	background-color: transparent;
 }
-.calendar .title:hover {
+.calendar .title:hover ,
+.calendar .events a:hover {
 	background-color: #eee;
 	transition: .3s;
 }
 .week0 .title:hover,
-.holiday .title:hover {
+.holiday .title:hover ,
+.week0 .events a:hover {
 	background-color: #f3e6e3;
 }
-.week6 .title:hover {
+.week6 .title:hover,
+.week6 .events a:hover {
 	background-color: #e6eae6;
+}
+.calendar a.title * {
+	vertical-align: middle;
 }
 .calendar .date_str {
 	display: inline-block;
@@ -1490,6 +1543,12 @@ table.calendar {
 	overflow-y: hidden;
 	font-family: Arial;
 	font-size: 1.25em;
+	margin-right: -.85em;
+}
+.calendar .holiday_name {
+	font-weight: normal;
+	display: inline-block;
+	padding-right: 1.5em;
 }
 .calendar .add_new {
 	position: absolute;
@@ -1503,7 +1562,6 @@ table.calendar {
 }
 .calendar .add_new:before {
 	content : '＋';
-/*	content: url('../img/led-icons/pencil.png');*/
 }
 .calendar .add_new:hover {
 	color: #36f;
@@ -1519,6 +1577,7 @@ table.calendar .events {
 }
 .calendar .events a {
 	text-decoration: none;
+	display: block;
 }
 .calendar .events a:hover {
 	text-decoration: under-line;
@@ -1587,6 +1646,13 @@ table.calendar .events {
 .schedule_day.graph td:last-child.active {
 	border-right: 1px solid #bbb ;
 }
+.datatable.schedule_day.detail tbody .members,
+.datatable.schedule_day.detail tbody .buildings {
+	white-space: normal;
+}
+.datatable.schedule_day.detail tbody .detail {
+	min-width: 8em;
+}
 .legend.calendar {
 	text-align: left;
 	font-size: .75em;
@@ -1596,6 +1662,7 @@ table.calendar .events {
 .widget .legend.calendar {
 	margin-top: .75em;
 	margin-left: -.5em;
+	padding-bottom: .75em;
 }
 .legend .text_icon {
 	margin-left: 1em;
@@ -1783,6 +1850,9 @@ a.icon.zip:before {
 	margin: 1em 0 .25em;
 }
 
+.hide_if_no_js {
+	display: none;
+}
 
 .w1em {width: 1em !important;}
 .w2em {width: 2em !important;}
@@ -1959,9 +2029,28 @@ a.icon.zip:before {
 }
 
 /*=== lcm_focus ===*/
-#	<li>escape</li>_focus {
+#esc_focus_wrapper {
 	position: absolute;
+	display: block;
+	margin: 0;
+	padding: 0;
+	z-index: 1000;
+	background: transparent !important;
+}
+#esc_focus {
+	position: absolute;
+	display: block;
+	width: 5em;
+	height: 3em;
+	line-height: 3em;
+	vertical-align: middle;
+	text-align: center;
+	margin: auto;
+	top: 0;
+	bottom: 0;
+	left: auto;
 	right: 0;
+	background-color: #fff;
 }
 .menubar_icon {
 	width: 1.2em;
@@ -2203,23 +2292,36 @@ li.show_if_smalldisplay {
 		text-shadow: none;
 		line-height: 1;
 	}
-	.lcm_form {
-		display: block;
-	}
-	.lcm_form .input_group,
-	.lcm_form .input_group h2,
-	.lcm_form .input_group div{
-		display: block;
-	}
-	.lcm_form .input_group h2 {
-		width: 100%;
-		text-align: left;
-		margin: .5em 0 0;
-		padding: 1em 0 0;
-	}
-	.lcm_form .input_group .field {
+	
+/*=== .lcm_form ===*/
+	.lcm_form > .input_group,
+	.lcm_form .hidden_item > .input_group {
 		border: none;
 		box-shadow: none;
+	}
+	.lcm_form .input_group > .input_group {
+		display: block;
+	}
+	.lcm_form .toggle_item.disclosure,
+	.lcm_form .input_group > h2,
+	.lcm_form .hidden_item .input_group > h2 {
+		width: 100%;
+		text-align: left;
+	}
+
+	.lcm_form .input_group > h2,
+	.lcm_form .hidden_item .input_group > h2,
+	.lcm_form section h1 {
+		border-top: 1px solid #fff;
+		box-shadow: 0 -1px 0 #ccc;
+		margin: .5em 0;
+		padding: 1em 0 0;
+	}
+	.lcm_form .input_group > .field,
+	.lcm_form .hidden_item .input_group > .field,
+	.lcm_form .input_group table {
+		margin-left: 0;
+		padding-left: 0;
 	}
 	.lcm_form .input_group > table {
 		text-align: left;
@@ -2229,7 +2331,7 @@ li.show_if_smalldisplay {
 		min-width: inherit;
 	}
 }
-
+*/
 @media screen and (max-width: 320px) {
 	body {
 		padding: 0;
