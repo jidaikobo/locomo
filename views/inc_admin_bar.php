@@ -182,10 +182,10 @@ endif;
 // is_user?
 ?>
 
-<div id="help_window">
-	<h1 id="help_title" class="lcmbar_top lcmbar_top_title"><a href="javascript:$(function(){show_help()});void(0);" tabindex="0"  id="help_title_anchor" style="color: #fff; text-decoration: none; cursor: move;">ヘルプ<span class="accesskey">(H)</span></a></h1>
+<div id="help_window" class="lcm_floatwindow" style=" display: none;">
+	<h1 id="help_title" class="lcmbar_top lcmbar_top_title lcm_floatwindow_title"><a href="javascript:$(function(){show_help(true)});void(0);" tabindex="0" id="help_title_anchor" class="has_accesskey" >ヘルプ<span class="accesskey">(H)</span></a></h1>
 	<div id="help_txt">
 		<img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/mark_loading_m.gif" class="mark_loading" alt="" role="presentation">
 	</div>
-	<a href="javascript: void(0);" role="button" class="lcm_close_parent lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ヘルプウィンドウを閉じる"></a>
+	<a href="javascript: void(0);" role="button" class="lcm_close_window lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ヘルプウィンドウを閉じる"></a>
 </div>
