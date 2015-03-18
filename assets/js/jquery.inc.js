@@ -36,18 +36,54 @@ $(function(){
 
 //チェックボックス全選択
 $(function() {
+	var checkboxes = $('.checkbox_binded');
 	$('.check_all').on('click', function(e) {
 		e.preventDefault();
-		$('.checkbox_binded').prop('checked', true);
+		checkboxes.prop('checked', true).trigger('change');
 	});
 	$('.uncheck_all').on('click', function(e) {
 		e.preventDefault();
-		$('.checkbox_binded').prop('checked', false);
+		checkboxes.prop('checked', false).trigger('change');
 	});
 
+	checkboxes.each(function(){
+		$(this).closest('tr').addClass('has_checkbox');
+	});
+
+	$('.has_checkbox').on('click', function(e){
+		var e = e ? e : event;
+		var t = $(e.target);
+		
+		if(!t || t.is('.checkbox_binded') || (t.is('label') && t.find('.checkbox_binded')[0])){
+			return;
+		}
+		var checkbox = $(this).find('.checkbox_binded');
+		if(!$(checkbox).prop('checked')){
+			$(checkbox).prop('checked', true).trigger('change');
+		}else{
+			$(checkbox).prop('checked', false).trigger('change');
+		}
+	});
+
+	function add_class(){
+		var t = $.isWindow(this) ? $('.checkbox_binded:checked') : this;
+		$(t).each(function(){
+			var tr = $(this).closest('tr');
+			var prop = $(this).prop('checked');
+			if(prop){
+				tr.addClass('checked');
+			}else{
+				tr.removeClass('checked');
+			}
+		});
+	}
+	add_class();
+	checkboxes.change(add_class);
 });
+
+
 // ヘルプ呼び出し
-function show_help(e){
+function show_help(flg,e){
 	e = e ? e : event;
 	if(e) e.preventDefault();//クリックイベント以外(アクセスキー等)の場合を除外
 	var help_preparation = false;//重複読み込みの防止
@@ -60,18 +96,30 @@ function show_help(e){
 			})
 			.success(function(data) {
 				$('#help_txt').html(data);
-//				$('#lcm_help').after($('#help_window'));
 				help_preparation = true;
 			})
 		}
-		/*閉じたり開いたり、フォーカス対象を変えたり、位置や大きさのリセットをしたり*/
-		$('#help_window').show();
-		$('#help_title_anchor').focus();
+
+		if($('#help_window').is(':visible')){
+			if(flg!=true){
+				$('#help_window').lcm_close_window($('#help_window'));
+				$('#lcm_help').focus();
+			}
+			return;
+		} else {
+			$('#help_window').show()
+		}
+		setTimeout(function(){//アクセスキーの場合、キーを設定した要素にフォーカスするのでその後に実行
+			$('#help_title_anchor').focus();
+		},0);
 	});
 }
 $(function(){
 	$('#lcm_help').click(show_help);
 });
+// ヘルプウィンドウリサイズ
+
+
 
 //モーダル
 //書き直す。
@@ -106,6 +154,9 @@ $(function(){
 	return false;
 }
 */
+
+
+
 $(function(){
 /*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
@@ -118,7 +169,6 @@ $('.show_if_no_js').remove();
 //for NetReader
 //NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
 $('.hidden_item').hide();
-
 
 //アクセスキーをもつ要素へのタイトル付与
 //accessKeyLabelが取得できないブラウザではaccessKeyを表示する。
@@ -141,10 +191,12 @@ $(document).find('[accesskey]').each(add_accesskey_title);
 $(function(){
 /*=== 環境の取得 ===*/
 
-//UA //php側は？
+//UA
 var userAgent = window.navigator.userAgent;
 isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
-tabindexCtrl = isNetReader ? false : true;//この条件は増えたり減ったりするのかも。
+isTouchDevice = userAgent.indexOf('iPhone') > 0 || userAgent.indexOf('iPod') > 0 || userAgent.indexOf('iPad') > 0 || userAgent.indexOf('Android') > 0 ? true : false;
+isLtie9 = $('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6') ? true : false;
+tabindexCtrl = isNetReader || isLtie9 || isTouchDevice ? false : true;//この条件は増えたり減ったりするのかも。
 $('body').addClass(isNetReader ? 'netreader' : '');
 
 //スクロールバーのサイズ取得//table_scrollableのために用意したけど止めているので今のところ不使用
@@ -169,7 +221,7 @@ function set_focus(t){
 }
 
 //ページ読み込み直後の動作
-(function (){
+(function(){
 //フォーカス初期位置
 	if($('.flash_alert')[0]){
 		var firstFocus = $('.flash_alert a.skip').first();
@@ -323,7 +375,6 @@ function set_lcm_focus(){
 	//?ない場合?：初回と、抜ける時親にlcm_focusがない場合。
 	var set_focus = function(target){
 		var target, parent, t; 
-
 		$('.currentfocus').removeClass('currentfocus');
 		if(target){
 			parents = target.parents('.lcm_focus').addClass('focusparent');
@@ -335,16 +386,17 @@ function set_lcm_focus(){
 			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}
 		t = target ? target.find('.lcm_focus') : lcm_focus;
-		
+//		console.log(t);
 		set_focus_wrapper(t);
-		if($('.currentfocus')[0]){
+		var current = $('.currentfocus');
+		if(current[0]){
 			esc.show().attr('tabindex','0');
 			esc.css({
-				'top'   : $('.currentfocus').offset().top,
-				'left'  : $('.currentfocus').offset().left,
-				'width' : $('.currentfocus').width(),
-				'height': $('.currentfocus').height(),
-				});
+				'top'   : current.offset().top,
+				'left'  : current.offset().left,
+				'width' : current.width(),
+				'height': current.height(),
+			});
 		}else{
 			esc.hide();
 		}
@@ -372,10 +424,8 @@ function set_lcm_focus(){
 		set_focus(parent);
 	}
 
-	//ひとまず実行
-	setTimeout(function(){
-		set_focus();//lcm_focusが入れ子になっていてもここで一旦-1
-	}, 100);
+	//ひとまず実行 //lcm_focusが入れ子になっていてもここで一旦-1
+	setTimeout(set_focus, 100);
 
 	//lcm_focus上でのキーボードイベント。
 	$('.lcm_focus').on('keydown', function(e){
@@ -383,15 +433,14 @@ function set_lcm_focus(){
 		var t, k, parent;
 		t = $(e.target);
 		k = e.which;
-		
 		if(t.hasClass('currentfocus') && k == 9 && e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
 			esc.focus();
 			e.preventDefault();
 		}
 		//IE6-9の場合、radioには-1を与えていても移動してしまうので、lcm_fous上では次のtabbableに飛ばす
-		//逆タブでは、focus枠より先に中身にtabがあたるので、radio-1の場合の処理を書く
+		//逆タブ移動では、focus枠より先に中身にtabがあたるので、radio-1の場合の処理を書く
 		var body = $('body');
-		if(k == 9 && body.hasClass('lcm_ieversion_8') || body.hasClass('lcm_ieversion_7') || body.hasClass('lcm_ieversion_6')){
+		if(k == 9 && isLtie9){
 			var tabbable = $(':tabbable');
 			var index = tabbable.index(t);
 			if(!e.shiftKey){
@@ -549,14 +598,17 @@ $('#modal_wrapper').on('click', function(){
 });
 
 //親を閉じる
-$('.lcm_close_parent').on('click', function(){
-	var parent = $(this).parent();
-	parent.hide();
-	if($(this).hasClass('lcm_reset_style')){
-		parent.removeAttr('style').removeClass('on');
-	}
+$('.lcm_close_window').on('click', function(){
+	var w = $(this).parent();
+	$(this).lcm_close_window(w);
 });
 
+$.fn.lcm_close_window = function(w){
+	w.hide();
+	if($(w.find('.lcm_close_window')[0]).hasClass('lcm_reset_style')){
+		w.removeAttr('style').hide();
+	}
+}
 
 
 //Focusまわりのテスト（NetReaderでFocus移動を検知したい）
@@ -1024,7 +1076,7 @@ function make_hidden_form_items(hidden_items_id, selected){
 	}
 	var hidden_str = "";
 	// 配列に入れる
-	$(selected).find('option').each(function() {
+	$(selected).find('option').each(function(){
 		hidden_str += "/" + $(this).val();
     });
 	hidden_item.val(hidden_str);
@@ -1257,10 +1309,8 @@ $('.lcm_tooltip_parent').tooltip({
 		            },
 });
 
-
-
 //resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい
-$('#help_window').resizable({
+$('.lcm_floatwindow').resizable({
 	'handles' : 'all',
 	'containment' : 'document',
 	start:function(e, ui) {
@@ -1273,7 +1323,7 @@ $('#help_window').resizable({
 		var el = $(e.target);
 	}
 }).draggable({
-	'handle'      : '#help_title',
+	'handle'      : '.lcm_floatwindow_title',
 	'containment' : 'document',
 	'scroll' : true,
 	stop:function(e, ui) {
