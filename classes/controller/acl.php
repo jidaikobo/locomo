@@ -49,7 +49,14 @@ class Controller_Acl extends \Controller_Base
 		}
 		else
 		{
-			$actionsets[$ctrl] = \Actionset::get_actionset($ctrl);
+			// モジュールではないが継承しているコントローラを取得する
+			foreach (\Util::get_mod_or_ctrl() as $ctrl_name => $v)
+			{
+				if (substr($ctrl_name, 0, strlen($ctrl)) == $ctrl)
+				{
+					$actionsets[$ctrl_name] = \Actionset::get_actionset($ctrl);
+				}
+			}
 		}
 		if(empty($actionsets)) throw new \OutOfBoundsException('actionset not found');
 
@@ -102,6 +109,7 @@ class Controller_Acl extends \Controller_Base
 		$q->or_where('usergroup_id', '=', '-10');
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
+
 		foreach($actionsets as $controller => $each_actionsets)
 		{
 			foreach($each_actionsets as $realm => $actionset)
@@ -114,7 +122,7 @@ class Controller_Acl extends \Controller_Base
 		$ctrl_strs = array();
 		foreach($actionsets as $controller => $each_actionsets)
 		{
-			$ctrl_strs[] = $controller::$locomo['nicename'];
+			$ctrl_strs[] = \Util::get_locomo($controller, 'nicename');
 		}
 
 		// view
