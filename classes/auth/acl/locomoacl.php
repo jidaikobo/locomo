@@ -53,7 +53,6 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		// admins are all allowed even if class and method is not exist.
 		if (in_array(\Auth::get('id'), array(-1, -2))) return true;
 
-
 		return in_array($condition, \Auth::get('allowed'));
 	}
 }
