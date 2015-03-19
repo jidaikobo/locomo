@@ -82,20 +82,13 @@ class Model_Base extends \Orm\Model_Soft
 		return $this->$pk ?: false;
 	}
 
-	/**
-	 * clear_cached_objects()
-	 * \Orm\Model::find() が、static::$_cached_objects を読むと期待通りの値が取得できないときに使う。
-	 * 具体例は\Locomo\Controller_Traits_Wrkflw::action_index_workflow()参照。
-	 * \Orm\Model::find() は、$options が異なったらキャッシュしないべきではないかと思う。
-	 * また、\Locomo\Auth_Login_LocomoauthでもModel_Usrのキャッシュクリアのために呼んでいるので要参照。
-	 * cloneで解決。もう多分不要。
+	/*
+	 * _init()
 	 */
-/*
-	public static function clear_cached_objects()
+	public static function _init()
 	{
-		static::$_cached_objects = array();
 	}
-*/
+
 	/**
 	 * get_field_by_role()
 	 * @return array()
