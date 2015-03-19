@@ -1,6 +1,9 @@
 <?php echo $search_form; ?>
 
 <?php if ($items): ?>
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
 <table class="tbl datatable tbl_scrollable lcm_focus">
 	<thead>
 		<tr>
@@ -71,7 +74,6 @@
 		</tr>
 	</tfoot>
 </table>
-<?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>
 <p>項目が存在しません</p>

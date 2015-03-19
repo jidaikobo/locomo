@@ -1,6 +1,9 @@
 <?php echo  $search_form; ?>
-<?php if ($items): ?>
 
+<?php if ($items): ?>
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
 <table class="tbl datatable">
 	<thead>
 		<tr>
@@ -25,8 +28,6 @@
 <?php endforeach; ?>
 	</tbody>
 </table>
-
-<?php echo $pagination ?>
 
 <?php else: ?>
 <p>編集履歴が存在しません。</p>
