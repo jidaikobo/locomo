@@ -65,7 +65,7 @@ $(function() {
 		}
 	});
 
-	function add_class(){
+	function set_class(){
 		var t = $.isWindow(this) ? $('.checkbox_binded:checked') : this;
 		$(t).each(function(){
 			var tr = $(this).closest('tr');
@@ -77,8 +77,8 @@ $(function() {
 			}
 		});
 	}
-	add_class();
-	checkboxes.change(add_class);
+	set_class();
+	checkboxes.change(set_class);
 });
 
 
@@ -307,6 +307,100 @@ console.log(c_w);
 $('.container').css({'cssText':'width: '+c_w+'px ; max-width : auto;'});
 */
 
+
+
+//ページ内リンク ヘッダー分位置調整とスムーズスクロール
+//html要素がスクロール対象であるか判定。
+//http://www.webdesignleaves.com/wp/jquery/573/
+var is_html_scrollable = (function(){
+	var html, el, rs, top;
+	html = $('html');
+	top = html.scrollTop();
+	el = $('<div>').height(10000).prependTo('body');
+	html.scrollTop(10000);
+	rs = !!html.scrollTop();
+	html.scrollTop(top);
+	el.remove();
+	return rs;
+})();
+
+//スクロール
+$(document).on('click', 'a[href^=#]', function(e){
+	e = e ? e : event;
+	var href, t, position;
+	$(window).off('beforeunload');//ページ内リンクでは画面遷移の警告をキャンセル
+
+	href= $(this).attr("href");
+	if(href!='#'){
+		t = $(href == '' ? 'html' : href);
+		position = t.offset().top - headerheight - 10;
+		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+		set_focus(t);
+		return false;
+	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ 
+		e.preventDefault();
+	}
+});
+
+//フォーカスしたものが画面外にある場合に位置を調節する。
+//もう少し条件を整理したら、上のページ内リンクともまとめられる？ まとめたほうがいい？
+$(document).on('keydown',function(e){
+	e = e ? e : event;
+	var t = $(e.target);
+	var k = e.which;
+	if(k==9){
+		setTimeout(function(){
+			var el = $(':focus');
+			if(el[0]){
+				var position = el.offset().top-$(window).scrollTop()-headerheight;
+				if(el.closest($('#adminbar'))[0] || position > 10) return;
+				$(is_html_scrollable ? 'html' : 'body').scrollTop(el.offset().top-headerheight-10);
+			}
+		}, 0);
+	}
+
+})
+
+
+/*	lcm_focus.focus(function(){
+		var position;
+		position = $(this).offset().top - headerheight - 10;
+		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+	});
+*/
+	/*
+	//スクロール
+$(document).on('click', 'a[href^=#]', function(e){
+	e = e ? e : event;
+	var href, t, position;
+	$(window).off('beforeunload');//ページ内リンクでは画面遷移の警告をキャンセル
+
+	href= $(this).attr("href");
+	if(href!='#'){
+		t = $(href == '' ? 'html' : href);
+		position = t.offset().top - headerheight - 10;
+		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+		set_focus(t);
+		return false;
+	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ return？？ 
+		e.preventDefault();
+	}
+});
+	*/
+	
+
+//全体に対するクリックイベント。
+$(document).click(function(e){
+	e = e ? e : event;
+	var t = e.target;
+//リストの開け閉め
+	close_semimodal(t);
+	replace_info();//開く・閉じる説明文切り替え
+} );
+
+
+
+
 /*================================▼▼▼===============================*/
 
 //tabindex制御
@@ -348,7 +442,6 @@ $.fn.reset_tabindex = function(){
 			$(this).removeAttr('tabindex');
 		}
 	});
-	
 	return this;
 }
 
@@ -362,6 +455,7 @@ function set_lcm_focus(){
 	var lcm_focus, esc;
 	lcm_focus    = $('.lcm_focus');
 
+	
 	if(!$('#esc_focus_wrapper')[0]){//初回だけにするもの。とりあえず抜けるリンクで判定(ので、removeはX)
 		var esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus" href="javascript: void(0);" tabindex="-1" >抜ける</a></div>').appendTo($('body'));
 		lcm_focus.each(function(){
@@ -385,9 +479,12 @@ function set_lcm_focus(){
 		if(!$.isWindow(this)){
 			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}
+
+		//targetの中にlcm_focusが中にあれば中身のtabindexを-1にする
 		t = target ? target.find('.lcm_focus') : lcm_focus;
-//		console.log(t);
 		set_focus_wrapper(t);
+		
+		//抜けるリンクの枠の表示領域をcurrentfocusを元に設定
 		var current = $('.currentfocus');
 		if(current[0]){
 			esc.show().attr('tabindex','0');
@@ -615,49 +712,6 @@ $.fn.lcm_close_window = function(w){
 //setActiveとか、activeElementとか、なにかIE7で使えるものでないと行けない
 //が、最新版のNetReaderはIEが7でなくなったので、古い環境の動作確認はできない(再インストール？)
 
-
-//ページ内リンク ヘッダー分位置調整とスムーズスクロール
-//html要素がスクロール対象であるか判定。
-//http://www.webdesignleaves.com/wp/jquery/573/
-var is_html_scrollable = (function(){
-	var html, el, rs, top;
-	html = $('html');
-	top = html.scrollTop();
-	el = $('<div>').height(10000).prependTo('body');
-	html.scrollTop(10000);
-	rs = !!html.scrollTop();
-	html.scrollTop(top);
-	el.remove();
-	return rs;
-})();
-
-//スクロール
-$(document).on('click', 'a[href^=#]', function(e){
-	e = e ? e : event;
-	var href, t, position;
-	$(window).off('beforeunload');//ページ内リンクでは画面遷移の警告をキャンセル
-
-	href= $(this).attr("href");
-	if(href!='#'){
-		t = $(href == '' ? 'html' : href);
-		position = t.offset().top - headerheight - 10;
-		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
-		set_focus(t);
-		return false;
-	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ return？？ 
-		e.preventDefault();
-	}
-});
-
-
-//全体に対するクリックイベント。
-$(document).click(function(e){
-	e = e ? e : event;
-	var t = e.target;
-//リストの開け閉め
-	close_semimodal(t);
-	replace_info();//開く・閉じる説明文切り替え
-} );
 
 //モーダル あとで。まだ使ってない
 function close_modal(focus,t){
