@@ -77,14 +77,6 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			static::$config = \Config::load(static::$shortname, true);
 		}
 		static::$config = static::$config ?: array();
-
-		// run other before - may traits set before_***()
-		$before_methods = array_flip(get_class_methods($this));
-		$before_methods = \Arr::filter_prefixed($before_methods, 'before_', false);
-		foreach ($before_methods as $before_method => $v)
-		{
-			$this->{$before_method}();
-		}
 	}
 
 	/**
