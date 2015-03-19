@@ -49,14 +49,7 @@ class Controller_Acl extends \Controller_Base
 		}
 		else
 		{
-			// モジュールではないが継承しているコントローラを取得する
-			foreach (\Util::get_mod_or_ctrl() as $ctrl_name => $v)
-			{
-				if (substr($ctrl_name, 0, strlen($ctrl)) == $ctrl)
-				{
-					$actionsets[$ctrl_name] = \Actionset::get_actionset($ctrl);
-				}
-			}
+			$actionsets[$ctrl] = \Actionset::get_actionset($ctrl);
 		}
 		if(empty($actionsets)) throw new \OutOfBoundsException('actionset not found');
 

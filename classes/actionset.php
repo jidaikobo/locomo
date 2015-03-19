@@ -28,7 +28,7 @@ class Actionset
 	 * @param mixed $default
 	 * @return array()
 	 */
-	public static function get_actionset($controller, $obj = null, $default = false)
+	public static function get_actionset($controller, $obj = null, $default = array())
 	{
 		// set actionset
 		$controller = \Inflector::add_head_backslash($controller);

@@ -11,7 +11,7 @@
 <h2>設定（ユーザグループ単位）</h2>
 
 <?php foreach($actionsets as $controller => $each_actionsets): ?>
-<h3><?php echo $controller::$locomo['nicename'] ?></h3>
+<h3><?php echo \Util::get_locomo($controller, 'nicename') ?></h3>
 	<?php foreach($each_actionsets as $realm => $each_actionset): ?>
 	<fieldset>
 	<legend><?php echo $realm ?></legend>

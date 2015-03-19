@@ -23,15 +23,31 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function judge_set($actions, $actionsets)
 	{
+		// 比較用にすべてのアクションセットを取得
+		// staticへの格納用にいったん取得までとする
+		static $all = array();
+		if ( ! $all)
+		{
+			foreach (\Util::get_mod_or_ctrl() as $ctrl => $v)
+			{
+				$all[$ctrl] = \Actionset::get_actionset($ctrl);
+			}
+		}
+
 		//アクションセットの条件を満たすものを抽出
 		$results = array();
-
-		foreach($actionsets as $actionset_name => $v)
+		foreach($all as $ctrl => $v)
 		{
-			if ( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
-			if ( ! array_diff($v['dependencies'], $actions))
+			foreach($v as $realm => $actionsets)
 			{
-				$results[] = $actionset_name;
+				foreach($actionsets as $actionset_name => $v)
+				{
+					if ( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
+					if ( ! array_diff($v['dependencies'], $actions))
+					{
+						$results[] = $actionset_name;
+					}
+				}
 			}
 		}
 		return $results;
