@@ -210,7 +210,7 @@ class Model_Usr extends Model_Base
 		$allnames  = array_unique(array_merge($roots, $admins));
 
 		// usernameに予約語を設定
-		\Arr::set(static::$_properties['username'], 'validation', array('banned_string' => $allnames));
+		\Arr::insert_after_key(static::$_properties['username']['validation'], array('banned_string' => array($allnames)), 'required', 1);
 
 		// usernameの変更は管理者のみ可能
 		if ( ! \Auth::is_admin())
