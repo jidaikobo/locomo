@@ -367,7 +367,7 @@ class Model_Adrs extends \Model_Base
 		$options+= \Model_Adrsgrp::get_options(array('order_by' => array('name')), 'name');
 		$form->add(
 				'group',
-				'ユーザグループ',
+				'グループ',
 				array('type' => 'select', 'options' => $options)
 			)
 			->set_value(\Input::get('group'));

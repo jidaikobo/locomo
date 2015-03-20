@@ -1,7 +1,7 @@
 <?php //echo $search_form; ?>
 
 <?php if ($items): ?>
-<table class="tbl datatable tbl_scrollable lcm_focus">
+<table class="tbl datatable tbl_scrollable lcm_focus" title="項目一覧">
 	<thead>
 		<tr>
 			<th class="min"><?php echo \Pagination::sort('id', 'ID');?></th>
