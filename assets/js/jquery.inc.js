@@ -475,7 +475,6 @@ function set_lcm_focus(){
 			parents = target.parents('.lcm_focus').addClass('focusparent');
 			target.addClass('currentfocus').set_tabindex();
 		}
-
 		//lcm_focusをもとにtabindexの設定を行う
 		if(!$.isWindow(this)){
 			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex();
@@ -484,7 +483,7 @@ function set_lcm_focus(){
 		//targetの中にlcm_focusが中にあれば中身のtabindexを-1にする
 		t = target ? target.find('.lcm_focus') : lcm_focus;
 		set_focus_wrapper(t);
-		
+
 		//抜けるリンクの枠の表示領域をcurrentfocusを元に設定
 		var current = $('.currentfocus');
 		if(current[0]){
@@ -597,17 +596,15 @@ function set_lcm_focus(){
 		e = e ? e : event;
 		var t, parent;
 		t = $(e.target);
-		if(t.is(':focusable')){
 
-		}
-		//		
-		parent = t.closest('.lcm_focus')[0];
-		parent = parent ? $(parent) : null;//document相手にはできない。
-		if(parent){
+		if(! t.closest('.lcm_focus').hasClass('currentfocus')){
+			parent = t.closest('.lcm_focus')[0];
+			parent = parent ? $(parent) : $(document);
+	
 			set_focus(parent);
-		}
-		if(t.is(':focusable')){
-			t.focus();
+			if(t.is(':focusable')){
+				t.focus();
+			}
 		}
 	})
 
