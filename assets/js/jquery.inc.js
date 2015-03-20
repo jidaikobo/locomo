@@ -50,19 +50,26 @@ $(function() {
 		$(this).closest('tr').addClass('has_checkbox');
 	});
 
+
 	$('.has_checkbox').on('click', function(e){
-		var e = e ? e : event;
-		var t = $(e.target);
-		
-		if(!t || t.is('.checkbox_binded') || (t.is('label') && t.find('.checkbox_binded')[0])){
+		var t, checkbox, prop;
+		e = e ? e : event;
+		t = $(e.target);
+
+		if(!t || (t.is('label'))){
+			e.preventDefault();
+		}
+		if(t.is('.checkbox_binded')){
 			return;
 		}
-		var checkbox = $(this).find('.checkbox_binded');
+
+		checkbox = $(this).find('.checkbox_binded');
 		if(!$(checkbox).prop('checked')){
-			$(checkbox).prop('checked', true).trigger('change');
+			prop = true; 
 		}else{
-			$(checkbox).prop('checked', false).trigger('change');
+			prop = false;
 		}
+		$(checkbox).prop('checked', prop).trigger('change');
 	});
 
 	function set_class(){
