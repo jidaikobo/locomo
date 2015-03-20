@@ -47,65 +47,57 @@ class Controller_Hlp extends \Controller_Base
 	 */
 	public function action_view()
 	{
-/*
-include(LOCOMOPATH.'migrations/005_create_help.php');
-include(LOCOMOPATH.'migrations/006_create_hlp.php');
-$h = new \Fuel\Migrations\Create_hlp();
-$h->up();
-*/
 		// set default help from actionset
-		$locomo_path_raw = \Input::get('action');
-		$locomo_path = \Inflector::safestr_to_ctrl($locomo_path_raw);
-		$controller = $locomo_path;
-		$nicename = '';
 		$action = '';
-		$actionsets = array();
-		if (strpos($locomo_path, '::action_') !== false)
+		$help = '';
+		$locomo_path = \Input::get('action');
+		$controller = $locomo_path;
+		if (strpos($locomo_path, '::'))
 		{
-			// get actionset
-			list($controller, $action) = explode('::action_', $locomo_path);
-			$action = strtolower($action);
+			list($controller, $action) = explode('::', $locomo_path);
+			$action = strtolower(str_replace('action_', '', $action));
 		}
+		$controller = str_replace('-Controller_', '\Help_', $controller);
+		$controller = \Inflector::safestr_to_ctrl($controller);
 
-		// controller is not exist
+		// title
+		$target = str_replace('\Help_', '\Controller_', $controller);
+		$title = Util::get_locomo($target, 'nicename');
+
+		// module?
+		$module = \Inflector::get_modulename($controller);
+		if ($module) \Module::loaded($module) or \Module::load($module);
+
+		// controller is not exist - help index
 		if( ! $controller)
 		{
-			$content = \View::forge('hlp/view');
+			$content = \View::forge('hlp/index_admin');
 			$this->base_assign();
 			$content->set_global('title', 'ヘルプインデクス');
-			$content->set_safe('content', '');
 			$this->template->content = $content;
 			return;
 		}
-		else
+		elseif (class_exists($controller) && $action)
 		{
-			$actionsets = \Actionset::get_actionset($controller);
+		// fetch help text
+			$hlp = new $controller;
+			$help = $hlp->$action;
 		}
-
-		// get action from actionset
-		$help = '';
-		if ($actionsets)
+		elseif (class_exists($controller))
 		{
-			foreach ($actionsets as $realm => $v)
+		// fetch each help index
+			$hlp = new $controller;
+			foreach ($hlp as $action => $v)
 			{
-				if ($action)
-				{
-					$help.= \Arr::get($v, strtolower($action).'.action_name');
-					$help.= \Arr::get($v, strtolower($action).'.help');
-				}
-				else
-				{
-					foreach ($v as $kk => $vv)
-					{
-						$txt = \Arr::get($v, strtolower($kk).'.help');
-						if ($txt)
-						{
-							$help.= html_tag('h3', array(), \Arr::get($v, strtolower($kk).'.action_name'));
-							$help.= html_tag('div', array(), $txt);
-						}
-					}
-				}
+				$target = \Inflector::ctrl_to_safestr($target.'::'.$action);
+				$items[$target] = $action;
 			}
+			$content = \View::forge('hlp/index_each');
+			$this->base_assign();
+			$content->set_global('title', $title.'ヘルプインデクス');
+			$content->set('items', $items);
+			$this->template->content = $content;
+			return;
 		}
 
 		$help = $help ?: 'この項目専用のヘルプは存在しません。画面内の指示に従って操作してください。' ;
@@ -144,7 +136,6 @@ $h->up();
 		}
 
 		// title
-		$title = $controller::$locomo['nicename'];
 		$title.= $action ? ' &gt; '.$action : '' ;
 
 		// assign

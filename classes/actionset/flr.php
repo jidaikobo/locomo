@@ -40,7 +40,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ダウンロード',
 			'show_at_top'  => true,
 			'explanation'  => 'ダウンロードします。',
-			'help'         => '',
 			'acl_exp'      => 'ダウンロード権限。',
 			'order'        => 10,
 			'dependencies' => array(
@@ -91,7 +90,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => '同期',
 			'show_at_top'  => false,
 			'explanation'  => 'ディレクトリとデータベースの内容を同期します。',
-			'help'         => 'ディレクトリとデータベースの内容を同期します。ファイルやディレクトリの実際の状況とデータベースの内容に矛盾が生じているようでしたら、これを実行してください。この処理はファイルやディレクトリの量によっては時間がかかることがあります。',
 			'acl_exp'      => 'ディレクトリとデータベースの内容を同期する権限です。',
 			'order'        => 100,
 		);
@@ -135,7 +133,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => '新規作成',
 			'show_at_top'  => false,
 			'explanation'  => '新しい項目を追加します。',
-			'help'         => '新しい項目を追加します。',
 			'acl_exp'      => '新規アップロード権限。',
 			'order'        => 20,
 		);
@@ -161,7 +158,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ディレクトリ作成、編集、削除',
 			'show_at_top'  => true,
 			'explanation'  => '新しいディレクトリを追加します。',
-			'help'         => '新しいディレクトリを追加します。',
 			'acl_exp'      => 'ディレクトリ作成、編集、削除権限。',
 			'order'        => 30,
 		);
@@ -236,7 +232,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ファイル編集',
 			'show_at_top'  => false,
 			'explanation'  => 'ファイル編集',
-			'help'         => '既存ファイルの編集',
 			'acl_exp'      => 'ファイル編集（名称変更等）権限。',
 			'order'        => 50,
 		);
@@ -260,7 +255,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ファイル詳細',
 			'show_at_top'  => false,
 			'explanation'  => 'ファイル詳細',
-			'help'         => '既存ファイルの詳細情報',
 			'acl_exp'      => 'ファイル詳細閲覧権限。',
 			'order'        => 50,
 		);
@@ -287,7 +281,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ファイル削除',
 			'show_at_top'  => false,
 			'explanation'  => 'ファイル削除',
-			'help'         => '既存ファイルの削除',
 			'acl_exp'      => 'ファイル削除権限。',
 			'order'        => 60,
 		);

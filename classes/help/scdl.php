@@ -3,52 +3,52 @@ namespace Locomo;
 class Help_Scdl
 {
 // calendar
-static $calendar = <<< EOF
+public $calendar = <<< EOF
 
 EOF;
 
 // create
-static $create = <<< EOF
+public $create = <<< EOF
 
 EOF;
 
 // viewdetail
-static $viewdetail = <<< EOF
+public $viewdetail = <<< EOF
 
 EOF;
 
 // edit
-static $edit = <<< EOF
+public $edit = <<< EOF
 
 EOF;
 
 // attend
-static $attend = <<< EOF
+public $attend = <<< EOF
 
 EOF;
 
 // somedelete
-static $somedelete = <<< EOF
+public $somedelete = <<< EOF
 
 EOF;
 
 // regchange
-static $regchange = <<< EOF
+public $regchange = <<< EOF
 
 EOF;
 
 // copy
-static $copy = <<< EOF
+public $copy = <<< EOF
 
 EOF;
 
 // delete
-static $delete = <<< EOF
+public $delete = <<< EOF
 
 EOF;
 
 // delete_others
-static $delete_others = <<< EOF
+public $delete_others = <<< EOF
 
 EOF;
 }
