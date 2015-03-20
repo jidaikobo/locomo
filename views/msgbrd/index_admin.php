@@ -24,10 +24,10 @@
 		<tr title="<?php echo $item->name.'：'.\Model_Usr::get_display_name($item->creator_id); ?>" tabindex="-1">
 			<td class="ar"><?php echo $item->id; ?></td>
 			<td><div class="col_scrollable" style="min-width: 12em;"><?php echo $item->is_sticky ? '<span class="icon" style="font-size: .5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_pin.png" alt=""></span>' : '' ?><?php echo $item->name; ?></div></td>
-		<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->contents; ?></div></td>-->
+		<!--	<td><div class="col_scrollable"><?php echo $item->contents; ?></div></td>-->
 			<td><div class="col_scrollable" style="min-width: 3em;"><?php echo $item->categories['name']; ?></div></td>
 			<td><?php echo date('Y年n月j日 G時i分', strtotime($item->created_at)) ?></td>
-		<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->updated_at; ?></div></td>-->
+		<!--	<td><div class="col_scrollable"><?php echo $item->updated_at; ?></div></td>-->
 			<td><div class="col_scrollable" style="min-width: 8.5em;"><?php echo $item->expired_at ? date('Y年n月j日 G時i分', strtotime($item->expired_at)) : '' ?></div></td>
 		<?php if (\Request::main()->action == 'index_deleted'): ?>
 			<td><?php echo $item->deleted_at ? date('Y年n月j日', strtotime($item->deleted_at)) : '' ?></td>

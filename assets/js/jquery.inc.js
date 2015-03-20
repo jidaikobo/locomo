@@ -253,6 +253,7 @@ function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );
 }
 var adminbar = $('#adminbar');
+headerheight = 0;
 if(adminbar[0]){
 	headerheight = adminbar.outerHeight();
 	add_body_padding(headerheight);

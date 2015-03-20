@@ -10,7 +10,7 @@ class Controller_Scffld_Helper_Views_Index extends Controller_Scffld_Helper
 		$cmds = explode(' ', $cmd_orig);
 		array_shift($cmds);//remove name
 
-		$thead = "\t\t\t<th><?php echo \Pagination::sort('id', 'ID', false);?></th>\n";
+		$thead = "\t\t\t<th class=\"ar min\"><?php echo \Pagination::sort('id', 'ID', false);?></th>\n";
 		$tbody = "\t<td><?php echo \$item->id; ?></td>\n";
 
 		foreach($cmds as $field){
@@ -34,7 +34,7 @@ class Controller_Scffld_Helper_Views_Index extends Controller_Scffld_Helper
 			endif;
 
 			if ($is_admin):
-				$tbody.= "\t<td><div class=\"col_scrollable\" tabindex=\"-1\">{$tdv}</div></td>\n";
+				$tbody.= "\t<td><div class=\"col_scrollable\">{$tdv}</div></td>\n";
 			else:
 				$tbody.= "\t<td>{$tdv}</td>\n";
 			endif;

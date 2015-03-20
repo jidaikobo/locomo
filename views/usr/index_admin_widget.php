@@ -1,5 +1,5 @@
 <?php if ($items): ?>
-<table class="tbl datatable tbl_scrollable lcm_focus">
+<table class="tbl datatable tbl_scrollable lcm_focus" title="ユーザ一覧">
 	<thead>
 		<tr>
 			<th>ID</th>

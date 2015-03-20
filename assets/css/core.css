@@ -2025,7 +2025,7 @@ a.icon.zip:before {
 	box-sizing : border-box ;
 	height: 100%;
 	width: 100%;
-	padding: 10px 15px 20px;
+	padding: 10px 15px 30px;
 	overflow: auto;
 	font-size: .9em;
 }
@@ -2296,6 +2296,9 @@ li.show_if_smalldisplay {
 		clip: rect(1px, 1px, 1px, 1px);
 		overflow: hidden;
 	}
+	.nd_if_smalldisplay {
+		display: none !important;
+	}
 	li.show_if_smalldisplay {
 		display: list-item !important;
 	}
@@ -2330,7 +2333,6 @@ li.show_if_smalldisplay {
 		width: 100%;
 		text-align: left;
 	}
-
 	.lcm_form .input_group > h2,
 	.lcm_form .hidden_item .input_group > h2,
 	.lcm_form section h1 {
@@ -2351,7 +2353,7 @@ li.show_if_smalldisplay {
 	.lcm_form .input_group > table tbody th,
 	.lcm_form .input_group > table tbody td {
 		min-width: inherit;
-	}
+	}	
 }
 */
 @media screen and (max-width: 320px) {
@@ -2380,6 +2382,8 @@ li.show_if_smalldisplay {
 		float: none;
 		text-align: left;
 	}
+
+
 
 }
 @media print {
