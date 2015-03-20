@@ -81,7 +81,7 @@ class Controller_Hlp extends \Controller_Base
 		{
 		// fetch help text
 			$hlp = new $controller;
-			$help = $hlp->$action;
+			$help = property_exists($hlp, $action) ? $hlp->$action : '' ;
 		}
 		elseif (class_exists($controller))
 		{
