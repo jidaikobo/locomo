@@ -310,3 +310,11 @@ order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc
 $q = \Uri::build_query_string(array('order_by' => array(array('id', 'desc')))) ;
 
 ウィジェットもaclの対象です。コントローラがウィジェットを宣言していても、アクセス権がなければ、そのユーザのウィジェットの候補にも挙がりません。
+
+
+/*
+include(LOCOMOPATH.'migrations/005_create_help.php');
+include(LOCOMOPATH.'migrations/006_create_hlp.php');
+$h = new \Fuel\Migrations\Create_hlp();
+$h->up();
+*/
