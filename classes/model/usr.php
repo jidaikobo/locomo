@@ -325,6 +325,7 @@ class Model_Usr extends Model_Base
 			->set_value($obj->main_usergroup_id);
 
 		// usergroup can modified by admin only 
+		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', null))), 'name');
 		if (\Auth::is_admin())
 		{
 			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', null))), 'name');
@@ -341,6 +342,21 @@ class Model_Usr extends Model_Base
 			unset($usergroup[-10]); // 自分自身を参照するログインユーザーグループ
 			$obj->usergroup = $usergroup;
 			static::$_mm_delete_else = false;
+
+			$usergroup_str = array();
+			foreach ($usergroup as $k => $v)
+			{
+				$usergroup_str[] = $v->name;
+			}
+			$config = \Config::get('form');
+			$form->add_after(
+					'usergroup',
+					'ユーザグループ',
+					array('type' => 'text'),
+					array(),
+					'email'
+				)
+				->set_template(str_replace('{field}', join(', ', $usergroup_str), $config['field_template']));
 		}
 
 		// created_at
