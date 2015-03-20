@@ -74,6 +74,7 @@ class Model_Usr extends Model_Base
 		),
 		'last_login_at' => array(
 			'label' => '最終ログイン',
+			'form' => array('type' => false)
 		),
 		'expired_at' => array(
 			'label' => '有効期日',

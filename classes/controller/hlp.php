@@ -89,8 +89,8 @@ class Controller_Hlp extends \Controller_Base
 			$hlp = new $controller;
 			foreach ($hlp as $action => $v)
 			{
-				$target = \Inflector::ctrl_to_safestr($target.'::'.$action);
-				$items[$target] = $action;
+				$key = \Inflector::ctrl_to_safestr($target.'::'.$action);
+				$items[$key] = $action;
 			}
 			$content = \View::forge('hlp/index_each');
 			$this->base_assign();
