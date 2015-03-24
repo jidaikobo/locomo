@@ -421,6 +421,7 @@ class Model_Base extends \Orm\Model_Soft
 						if ( ! in_array($k, array_keys(static::properties()))) continue;
 						$orders[$k] = $v;
 						$options['order_by'] = $orders;
+						if (count(\Input::get('orders')) == 1 and $k != 'id') $options['order_by']['id'] = 'asc';
 					}
 				}
 				// ここは $_conditions
@@ -546,8 +547,15 @@ class Model_Base extends \Orm\Model_Soft
 			$r_arr[$key] = $value;
 		}
 
+		/*
 		if ($this->_data_relations) {
 			foreach ($this->_data_relations as $rel_name => $dr) {
+		 */
+		if (isset($options['related'])) {
+			foreach ($options['related'] as $rel_name => $rel_options) {
+
+				$dr = $this->{$rel_name};
+
 				$rel_options = isset($options['related'][$rel_name]) ? $options['related'][$rel_name] : array();
 				$rel_field_joins = (array_key_exists($rel_name, $field_joins)) ? $field_joins[$rel_name] : array();
 				if (array_key_exists($rel_name, $rel_names)) $rel_name = $rel_names[$rel_name];
