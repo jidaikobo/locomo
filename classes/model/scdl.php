@@ -328,6 +328,8 @@ class Model_Scdl extends \Model_Base
 				'type' => 'hidden'
 			),
 		),
+		'creator_id' => array('form' => array('type' => false), 'default' => '', 'lcm_role' => 'creator_id'),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 		'created_at' => 
 		array (
 			'label' => '作成日時',
@@ -388,7 +390,6 @@ class Model_Scdl extends \Model_Base
 	);
 
 	protected static $_many_many = array(
-
 		'user' => array(
 				'key_from' => 'id',
 				'key_through_from' => 'schedule_id',
@@ -425,7 +426,12 @@ class Model_Scdl extends \Model_Base
 	);
 
 	protected static $_observers = array(
-		
+		'Locomo\Observer_Creatorid' => array(
+			'events' => array('before_insert'),
+		),
+		'Locomo\Observer_Updaterid' => array(
+			'events' => array('before_save'),
+		),
 		'Locomo\Observer_Created' => array(
 			'events' => array('before_insert', 'before_save'),
 			'mysql_timestamp' => true,

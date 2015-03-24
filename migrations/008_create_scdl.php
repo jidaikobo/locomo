@@ -35,6 +35,8 @@ class Create_Scdl
 			'user_id' => array('constraint' => 11, 'type' => 'int', 'default' => '0'),
 			'attend_flg' => array('constraint' => 11, 'type' => 'int', 'default' => '0', 'null' => true),
 			'kind_flg'	=> array('constraint' => 11, 'type' => 'int', 'default' => '1'),
+			'creator_id' => array('type' => 'int', 'null' => true, 'default' => -1),
+			'updater_id' => array('type' => 'int', 'null' => true, 'default' => -1),
 			'created_at' => array('type' => 'datetime', 'null' => true),
 			'updated_at' => array('type' => 'datetime', 'null' => true),
 			'deleted_at' => array('type' => 'datetime', 'null' => true),

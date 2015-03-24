@@ -142,6 +142,15 @@
 </tr>
 <?php endif; ?>
 
+<?php if($detail->updater_id): ?>
+<tr>
+	<th>更新者</th>
+	<td><?php echo \Model_Usr::get_display_name($detail->updater_id); ?></td>
+</tr>
+<?php endif; ?>
+
+
+
 </table>
 	<div class="legend calendar" aria-hidden=true>
 <?php
