@@ -31,21 +31,21 @@
 	<tbody>
 <?php foreach ($items as $item): ?>		<tr>
 	<td><?php echo $item->id; ?></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->repeat_kb; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->week_kb; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->title_text; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->title_kb; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->message; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->group_kb; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->group_detail; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->purpose_kb; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->purpose_text; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->user_num; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->user_id; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->created_at; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->updated_at; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->deleted_at; ?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->is_visible ? 'Yes' : 'No'; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->repeat_kb; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->week_kb; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->title_text; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->title_kb; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->message; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->group_kb; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->group_detail; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->purpose_kb; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->purpose_text; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->user_num; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->user_id; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->created_at; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->updated_at; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->deleted_at; ?></div></td>
+	<td><div class="col_scrollable"><?php echo $item->is_visible ? 'Yes' : 'No'; ?></div></td>
 			<td>
 				<div class="btn_group">
 					<?php
