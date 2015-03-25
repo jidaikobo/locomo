@@ -129,7 +129,9 @@ body.lcm_action_login {
 	margin: 0 auto;
 	box-sizing: border-box;
 }
-
+body.loggedin {
+	padding-top: 70px;
+}
 .main_column,
 .sub_column,
 #adinbar,
@@ -1323,10 +1325,16 @@ td.minimum {
 .datatable tbody tr.checked td {
 	background-color: #d8ebfc;
 }
+.datatable tbody tr.checked:nth-child(even) th {
+	background-color: #c0daea;
+}
+.datatable tbody tr.checked:nth-child(even) td {
+	background-color: #d0e6f8;
+}
 
 .datatable tbody tr.checked:hover th,
 .datatable tfoot tr.checked:hover th {
-	background-color: #daead0;
+	background-color: #dfefd9;
 }
 .datatable tbody tr.checked:hover td,
 .datatable tfoot tr.checked:hover td {
