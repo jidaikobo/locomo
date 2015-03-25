@@ -515,12 +515,10 @@ function set_lcm_focus(){
 		e.preventDefault();
 		var t, current, parent;
 		t = $(e.target);
-		
-		current = $($('.currentfocus')[0]);
-
-		$(current).removeClass('currentfocus').set_tabindex().focus();
+		current = $($('.currentfocus')[0]).removeClass('currentfocus').set_tabindex().focus();
 		esc.hide();
-		parent = current.closest('.focusparent')[0] ? current.closest('.focusparent'): null;
+
+		parent = current.parents('.focusparent')[0] ? current.parents('.focusparent').last() : null;
 		$(document).reset_tabindex();
 		set_focus(parent);
 	}
@@ -591,10 +589,11 @@ function set_lcm_focus(){
 		k = e.which;
 		
 //		console.log($('.modal.on, .semimodal.on'));
-
-		if((t.is('#esc_focus_wrapper') && k == 13) ||(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
-			esc_focus(e);
-			e.stopPropagation();
+		if($('.currentfocus')[0]){
+			if((t.is('#esc_focus_wrapper') && k == 13) ||(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
+				esc_focus(e);
+				e.stopPropagation();
+			}
 		}
 	});
 	$(document).on('click',function(e){
