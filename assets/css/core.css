@@ -547,6 +547,10 @@ ul.horizontal_list {
 }
 .widget_content {
 	overflow: auto;
+	position: absolute;
+	top: 2em;
+	left: 0;
+	width: 100%;
 	height: 14em;
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -697,6 +701,9 @@ textarea[disabled] {
 #form_email,
 input[type="password"],
 input.int,
+input.time,
+input.date,
+input,datetime,
 input.han {
 	ime-mode: inactive;
 }
