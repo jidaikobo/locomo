@@ -22,7 +22,6 @@ class Actionset_Msgbrd extends \Actionset_Base
 			'show_at_top'  => false,
 			'explanation'  => 'メッセージボードの投稿一覧です。',
 			'acl_exp'      => 'メッセージボードの投稿一覧権限です。',
-			'help'         => '',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'::action_index_admin',

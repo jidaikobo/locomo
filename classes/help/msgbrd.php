@@ -3,7 +3,7 @@ namespace Locomo;
 class Help_Scdl
 {
 // index_admin
-static $index_admin = <<< EOF
+public $index_admin = <<< EOF
 
 ## アドレスの項目一覧
 
@@ -65,7 +65,7 @@ static $index_admin = <<< EOF
 EOF;
 
 // index_draft
-static $index_draft = <<< EOF
+public $index_draft = <<< EOF
 
 ## メッセージボード下書き
 
@@ -111,7 +111,7 @@ static $index_draft = <<< EOF
 EOF;
 
 // edit_categories
-static $edit_categories = <<< EOF
+public $edit_categories = <<< EOF
 
 ## メッセージボード新規作成・編集
 

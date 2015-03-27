@@ -3,7 +3,7 @@ namespace Locomo;
 class Help_Scdl
 {
 // calendar
-static $calendar = <<< EOF
+public $calendar = <<< EOF
 
 ## 概要
 
@@ -54,7 +54,7 @@ static $calendar = <<< EOF
 EOF;
 
 // create
-static $create = <<< EOF
+public $create = <<< EOF
 
 ## 概要
 
@@ -114,7 +114,7 @@ static $create = <<< EOF
 EOF;
 
 // viewdetail
-static $viewdetail = <<< EOF
+public $viewdetail = <<< EOF
 
 ## 概要
 
@@ -124,7 +124,7 @@ static $viewdetail = <<< EOF
 EOF;
 
 // edit
-static $edit = <<< EOF
+public $edit = <<< EOF
 
 ## 概要
 
@@ -184,22 +184,22 @@ static $edit = <<< EOF
 EOF;
 
 // attend
-static $attend = <<< EOF
+public $attend = <<< EOF
 
 EOF;
 
 // somedelete
-static $somedelete = <<< EOF
+public $somedelete = <<< EOF
 
 EOF;
 
 // regchange
-static $regchange = <<< EOF
+public $regchange = <<< EOF
 
 EOF;
 
 // copy
-static $copy = <<< EOF
+public $copy = <<< EOF
 
 ## 概要
 
@@ -209,7 +209,7 @@ static $copy = <<< EOF
 EOF;
 
 // delete
-static $delete = <<< EOF
+public $delete = <<< EOF
 
 ## 概要
 
@@ -219,7 +219,7 @@ static $delete = <<< EOF
 EOF;
 
 // delete_others
-static $delete_others = <<< EOF
+public $delete_others = <<< EOF
 
 ## 概要
 

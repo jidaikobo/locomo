@@ -44,8 +44,14 @@ class Model_Revision extends \Model_Base
 	 */
 	 public static function _init()
 	{
+		// action can be deepen as controller needs
+		$segment = array_search(\Request::main()->action, \Uri::segments());
+
+		// 0:controller, 1:action_1. so add 2
+		$segment = intval($segment) + 2;
+
 		// properties
-		\Arr::set(static::$pagination_config, 'uri_segment', \Inflector::guess_pagination_segment());
+		\Arr::set(static::$pagination_config, 'uri_segment', $segment);
 	}
 
 	/**
@@ -128,7 +134,8 @@ class Model_Revision extends \Model_Base
 		//pagination
 		$pagination_config = self::$pagination_config;
 		$pagination_config['total_items'] = $count;
-		$pagination_config['pagination_url'] = \Uri::create('/'.\Request::main()->module.'/index_revision/'.\Inflector::singularize($table).'/', array(), \Input::get());
+		$base_uri = join('/', array_slice(\Uri::segments(), 0, static::$pagination_config['uri_segment'] - 1));
+		$pagination_config['pagination_url'] = \Uri::create($base_uri, array(), \Input::get());
 		\Pagination::set_config($pagination_config);
 		$offset = \Pagination::get('offset');
 		$limit  = \Input::get('limit')  ?: $pagination_config['per_page'];
@@ -141,7 +148,6 @@ class Model_Revision extends \Model_Base
 		$items = $q->as_object($model)->execute()->as_array() ;
 
 		//assign
-		$view->set_safe('pagination', \Pagination::create_links());
 		$view->set('hit', $count);
 		$view->set('items', $items);
 

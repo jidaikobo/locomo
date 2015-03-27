@@ -4,17 +4,16 @@
 <table class="tbl datatable">
 	<thead>
 		<tr>
-			<th class="min"><?php echo \Pagination::sort('group.name', 'グループ名', false);?></th>
+			<th class="min"><?php echo \Pagination::sort('group.name', 'グループ', false);?></th>
 			<th style="width: 10em;"><?php echo \Pagination::sort('kana', '氏名', false);?></th>
 <!--			<th><?php echo \Pagination::sort('kana', 'かな', false);?></th>-->
-			<th style="width: 8em;"><?php echo \Pagination::sort('tel', '電話番号', false);?></th>
+			<th><?php echo \Pagination::sort('tel', '電話番号', false);?></th>
 <!--			<th><?php echo \Pagination::sort('fax', 'FAX番号', false);?></th>-->
 <!--			<th><?php echo \Pagination::sort('mail', 'メールアドレス', false);?></th>-->
 <!--			<th><?php echo \Pagination::sort('mobile', '携帯電話', false);?></th>-->
-			<th style="width: 5em;"><?php echo \Pagination::sort('zip3', '郵便番号', false);?></th>
-			<th style="min-width: 10em;"><?php echo \Pagination::sort('address', '住所', false);?></th>
+			<th class="nd_if_smalldisplay" style="width: 5em;"><?php echo \Pagination::sort('zip3', '郵便番号', false);?></th>
+			<th class="nd_if_smalldisplay"><?php echo \Pagination::sort('address', '住所', false);?></th>
 <!--			<th><?php echo \Pagination::sort('memo', '備考', false);?></th>-->
-
 			<th class="min">操作</th>
 		</tr>
 	</thead>
@@ -22,18 +21,18 @@
 <?php foreach ($items as $item): ?>
 		<tr>
 	<td><?php echo $item->group->name; ?></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->name; ?></div></td>
-<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->kana; ?></div></td>-->
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->tel; ?></div></td>
-<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->fax; ?></div></td>-->
-<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->mail; ?></div></td>-->
-<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->mobile; ?></div></td>-->
-	<td><div class="col_scrollable" tabindex="-1"><?php
+	<td><div class="col_scrollable" style="min-width: 4em;"><?php echo $item->name; ?></div></td>
+<!--	<td><div class="col_scrollable"><?php echo $item->kana; ?></div></td>-->
+	<td><div class="col_scrollable" style="min-width: 8em;"><?php echo $item->tel; ?></div></td>
+<!--	<td><div class="col_scrollable"><?php echo $item->fax; ?></div></td>-->
+<!--	<td><div class="col_scrollable"><?php echo $item->mail; ?></div></td>-->
+<!--	<td><div class="col_scrollable"><?php echo $item->mobile; ?></div></td>-->
+	<td class="nd_if_smalldisplay"><?php
 		$item->zip3.= $item->zip3 ? '-' : '';
 		echo $item->zip3 . $item->zip4;
-	?></div></td>
-	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->address; ?></div></td>
-<!--	<td><div class="col_scrollable" tabindex="-1"><?php echo $item->memo; ?></div></td>-->
+	?></td>
+	<td class="nd_if_smalldisplay"><div class="col_scrollable" style="min-width: 4em;"><?php echo $item->address; ?></div></td>
+<!--	<td><div class="col_scrollable"><?php echo $item->memo; ?></div></td>-->
 			<td>
 				<div class="btn_group">
 					<?php

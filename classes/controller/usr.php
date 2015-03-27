@@ -43,16 +43,6 @@ class Controller_Usr extends \Locomo\Controller_Base
 	}
 
 	/**
-	 * index_core()
-	 */
-	public function index_core()
-	{
-		parent::index_core();
-		$search_form = \Model_Usr::search_form();
-		$this->template->content->set_safe('search_form', $search_form);
-	}
-
-	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin()

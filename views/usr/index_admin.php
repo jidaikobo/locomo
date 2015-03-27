@@ -1,7 +1,10 @@
-<?php echo $search_form; ?>
+<?php echo \Model_Usr::search_form(); ?>
 
 <?php if ($items): ?>
-<table class="tbl datatable tbl_scrollable lcm_focus">
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
+<table class="tbl datatable tbl_scrollable lcm_focus" title="ユーザ一覧">
 	<thead>
 		<tr>
 			<!--
@@ -25,11 +28,11 @@
 		<tr tabindex="-1" title="<?php echo $item->display_name ?>">
 <!--			<td style="text-align: center;"><input type="checkbox"></td>-->
 			<td class="ar"><?php echo $item->id; ?></td>
-			<td style="min-width: 8em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->username; ?></div></th>
-			<th style="min-width: 8em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->display_name; ?></div>
+			<td style="min-width: 8em;"><div class="col_scrollable"><?php echo $item->username; ?></div></th>
+			<th style="min-width: 8em;"><div class="col_scrollable"><?php echo $item->display_name; ?></div>
 			</td>
 <?php if (\Auth::is_admin()): ?>
-			<td style="min-width: 12em;"><div class="col_scrollable" tabindex="-1"><?php echo $item->email; ?></div></td>
+			<td style="min-width: 12em;"><div class="col_scrollable"><?php echo $item->email; ?></div></td>
 <?php endif; ?>
 			<td><?php echo $item->last_login_at != '0000-00-00 00:00:00' ? $item->last_login_at : ''; ?></td>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
@@ -71,7 +74,6 @@
 		</tr>
 	</tfoot>
 </table>
-<?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>
 <p>項目が存在しません</p>

@@ -102,6 +102,7 @@ class Controller_Acl extends \Controller_Base
 		$q->or_where('usergroup_id', '=', '-10');
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
+
 		foreach($actionsets as $controller => $each_actionsets)
 		{
 			foreach($each_actionsets as $realm => $actionset)
@@ -114,7 +115,7 @@ class Controller_Acl extends \Controller_Base
 		$ctrl_strs = array();
 		foreach($actionsets as $controller => $each_actionsets)
 		{
-			$ctrl_strs[] = $controller::$locomo['nicename'];
+			$ctrl_strs[] = \Util::get_locomo($controller, 'nicename');
 		}
 
 		// view

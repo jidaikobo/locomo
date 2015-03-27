@@ -12,7 +12,6 @@ class Actionset_Scdl extends \Actionset
 	(str)  action_name   ACL設定画面などで用いる
 	(str)  explanation   モジュール先頭画面等で用いる説明文
 	(str)  acl_exp       ACL設定画面などで用いる説明文
-	(str)  help          ヘルプ
 	(int)  order         表示順
 	(arr)  dependencies  このアクションセットが依存するアクション。ACLで用いる
 	*/
@@ -133,7 +132,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => 'カレンダ形式の表示権限です。',
 			'explanation'  => 'カレンダ形式で表示します。',
-			'help'         => '',
 			'order'        => 1
 		);
 		return $retvals;
@@ -153,7 +151,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => '予定の新規追加権限です。',
 			'explanation'  => '予定の新規追加です。',
-			'help'         => '',
 			'order'        => 5
 		);
 		return $retvals;
@@ -176,7 +173,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => 'スケジューラの個票閲覧権限です。',
 			'explanation'  => 'スケジューラの個票閲覧権限です。',
-			'help'         => '',
 		);
 		return $retvals;
 	}
@@ -198,7 +194,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => 'スケジューラの個票編集権限です。',
 			'explanation'  => 'スケジューラの個票編集権限です。',
-			'help'         => '',
 		);
 		return $retvals;
 	}
@@ -224,7 +219,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => '出席するかどうかを確認',
 			'explanation'  => '出席するかどうかを確認',
-			'help'         => '',
 			'order'        => 10
 		);
 		return $retvals;
@@ -254,7 +248,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => '部分削除',
 			'explanation'  => '部分削除',
-			'help'         => '',
 			'order'        => 12
 		);
 		return $retvals;
@@ -278,7 +271,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => '本登録',
 			'explanation'  => '本登録',
-			'help'         => '',
 			'order'        => 10
 		);
 		return $retvals;
@@ -300,7 +292,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => 'コピー',
 			'explanation'  => 'コピー',
-			'help'         => '',
 			'order'        => 20
 		);
 		return $retvals;
@@ -316,7 +307,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => '',
 			'explanation'  => '',
-			'help'         => '',
 			'order'        => 10
 		);
 		return $retvals;
@@ -345,7 +335,6 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'acl_exp'      => 'スケジューラの個票削除権限です。',
 			'explanation'  => 'スケジューラの個票削除権限です。',
-			'help'         => '',
 		);
 		return $retvals;
 	}

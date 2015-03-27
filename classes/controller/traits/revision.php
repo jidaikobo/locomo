@@ -21,6 +21,7 @@ trait Controller_Traits_Revision
 		}
 
 		// search_form
+		\Pagination::$refined_items = count($view->items);
 		$search_form = \Model_Revision::search_form();
 
 		// assign

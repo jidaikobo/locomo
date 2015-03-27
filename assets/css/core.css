@@ -129,7 +129,9 @@ body.lcm_action_login {
 	margin: 0 auto;
 	box-sizing: border-box;
 }
-
+body.loggedin {
+	padding-top: 70px;
+}
 .main_column,
 .sub_column,
 #adinbar,
@@ -545,6 +547,10 @@ ul.horizontal_list {
 }
 .widget_content {
 	overflow: auto;
+	position: absolute;
+	top: 2em;
+	left: 0;
+	width: 100%;
 	height: 14em;
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -695,6 +701,9 @@ textarea[disabled] {
 #form_email,
 input[type="password"],
 input.int,
+input.time,
+input.date,
+input,datetime,
 input.han {
 	ime-mode: inactive;
 }
@@ -1305,15 +1314,40 @@ td.minimum {
 	text-decoration: underline;
 }
 .datatable tr.current th,
+.datatable tr.affected th,
 .datatable tbody tr:hover th,
 .datatable tfoot tr:hover th {
 	background-color: #f0f0dd;
 }
 .datatable tr.current td,
+.datatable tr.affected td,
 .datatable tbody tr:hover td,
 .datatable tfoot tr:hover td {
 	background-color: #fafadd;
 }
+
+.datatable tbody tr.checked th {
+	background-color: #c6e0f0;
+}
+.datatable tbody tr.checked td {
+	background-color: #d8ebfc;
+}
+.datatable tbody tr.checked:nth-child(even) th {
+	background-color: #c0daea;
+}
+.datatable tbody tr.checked:nth-child(even) td {
+	background-color: #d0e6f8;
+}
+
+.datatable tbody tr.checked:hover th,
+.datatable tfoot tr.checked:hover th {
+	background-color: #dfefd9;
+}
+.datatable tbody tr.checked:hover td,
+.datatable tfoot tr.checked:hover td {
+	background-color: #e3f3da;
+}
+
 .datatable tfoot.thead tr:hover th {
 	background-color: #eee;
 }
@@ -1965,13 +1999,17 @@ a.icon.zip:before {
 .jslcm_fixed_tfoot a {
 	z-index: 1;
 }
-
-#help_window {
-	background: rgb(250, 250, 250);
-	position: fixed;
+.lcm_floatwindow h1 a{
+	color: #fff;
+	text-decoration: none;
+	cursor: move;
+}
+.lcm_floatwindow {
 	z-index: 110;
 	top: 2.25em;
 	right: 0;
+	background: rgb(250, 250, 250);
+	position: fixed !important;
 	box-shadow: 0 0 6px #aaa;
 	-moz-box-shadow: 0 0 6px #aaa;
 	-o-box-shadow: 0 0 6px #aaa;
@@ -1992,9 +2030,8 @@ a.icon.zip:before {
 	padding-bottom: 10px;
 	min-width: 200px;
 	overflow: hidden;
-	display: none;
 }
-#help_title {
+.lcm_floatwindow .window_title {
 	cursor: move;
 }
 #help_txt {
@@ -2003,7 +2040,7 @@ a.icon.zip:before {
 	box-sizing : border-box ;
 	height: 100%;
 	width: 100%;
-	padding: 10px 15px 20px;
+	padding: 10px 15px 30px;
 	overflow: auto;
 	font-size: .9em;
 }
@@ -2022,7 +2059,7 @@ a.icon.zip:before {
 #help_txt p {
 	margin-bottom: .5em;
 }
-.lcm_close_parent {
+.lcm_close_window {
 	position: absolute;
 	top: 0;
 	right: 5px;
@@ -2274,6 +2311,9 @@ li.show_if_smalldisplay {
 		clip: rect(1px, 1px, 1px, 1px);
 		overflow: hidden;
 	}
+	.nd_if_smalldisplay {
+		display: none !important;
+	}
 	li.show_if_smalldisplay {
 		display: list-item !important;
 	}
@@ -2308,7 +2348,6 @@ li.show_if_smalldisplay {
 		width: 100%;
 		text-align: left;
 	}
-
 	.lcm_form .input_group > h2,
 	.lcm_form .hidden_item .input_group > h2,
 	.lcm_form section h1 {
@@ -2329,7 +2368,7 @@ li.show_if_smalldisplay {
 	.lcm_form .input_group > table tbody th,
 	.lcm_form .input_group > table tbody td {
 		min-width: inherit;
-	}
+	}	
 }
 */
 @media screen and (max-width: 320px) {
@@ -2358,6 +2397,8 @@ li.show_if_smalldisplay {
 		float: none;
 		text-align: left;
 	}
+
+
 
 }
 @media print {

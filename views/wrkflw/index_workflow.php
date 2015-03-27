@@ -17,9 +17,9 @@
 </thead>
 <?php $n = 1; ?>
 <?php foreach($related as $item):?>
-	<tr>
+	<tr tabindex="-1">
 		<td><?php echo $n++; ?></td>
-		<td><div class="col_scrollable" tabindex="-1"><?php echo $item->{$subject_field} ?></div></td>
+		<td><div class="col_scrollable"><?php echo $item->{$subject_field} ?></div></td>
 		<td class="ctrl"><?php echo $item->workflow_apply_date ? date('Y-m-d', strtotime($item->workflow_apply_date)) : '-' ?></td>
 		<?php if ( ! \Request::is_hmvc()): ?>
 		<td class="ctrl"><?php echo $item->latest_action_date ? date('Y-m-d', strtotime($item->latest_action_date)) : '-' ?></td>

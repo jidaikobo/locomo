@@ -1,6 +1,9 @@
 <?php echo  $search_form; ?>
-<?php if ($items): ?>
 
+<?php if ($items): ?>
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
 <table class="tbl datatable">
 	<thead>
 		<tr>
@@ -14,7 +17,7 @@
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
-		<tr>
+		<tr tabindex="-1">
 			<th style="text-align:center;"><?php echo $item->pk_id ?></th>
 			<th><div class="col_scrollable"><a href="<?php echo $base_url.'each_index_revision/'.$item->pk_id ?>"><?php echo $item->$subject; ?></a></div></th>
 			<td><?php echo $item->operation; ?></td>
@@ -26,9 +29,7 @@
 	</tbody>
 </table>
 
-<?php echo $pagination ?>
-
 <?php else: ?>
-<p>編集履歴が存在しません。</p>
+<p>編集履歴が存在しません</p>
 <?php endif; ?>
 

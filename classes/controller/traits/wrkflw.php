@@ -3,9 +3,9 @@ namespace Locomo;
 trait Controller_Traits_Wrkflw
 {
 	/**
-	 * before_wrkflw()
+	 * _init()
 	 */
-	public function before_wrkflw()
+	public static function _init()
 	{
 		// event - locomo_edit_not_found
 		\Event::register('locomo_edit_not_found', function(){

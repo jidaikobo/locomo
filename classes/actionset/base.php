@@ -16,7 +16,6 @@ class Actionset_Base extends Actionset
 			'action_name'  => '新規作成',
 			'show_at_top'  => true,
 			'explanation'  => '新しい項目を追加します。',
-			'help'         => '新しい項目を追加します。',
 			'acl_exp'      => '新規作成権限。',
 			'order'        => 10,
 			'dependencies' => array(
@@ -338,7 +337,6 @@ class Actionset_Base extends Actionset
 			'show_at_top'  => false,
 			'explanation'  => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
 			'acl_exp'      => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
-			'help'         => '検索欄がある場合は、全文検索あるいは部分検索ができます。表組の表題部分をクリック（エンター）すると表示順を変更できます。表示順はクリック（エンター）するたびに切り替わり3回目で解除状態になります。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'::action_index_admin',
@@ -372,7 +370,6 @@ class Actionset_Base extends Actionset
 			'action_name'  => '一覧（削除された項目）',
 			'explanation'  => '削除された項目一覧です。',
 			'acl_exp'      => '削除された項目一覧の権限です。',
-			'help'         => '',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.'::action_index_deleted',
@@ -405,7 +402,6 @@ class Actionset_Base extends Actionset
 			'action_name'  => '一覧（予約項目）',
 			'explanation'  => '予約項目一覧です。',
 			'acl_exp'      => '予約項目一覧の権限です。',
-			'help'         => '',
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.'::action_index_yet',
@@ -438,7 +434,6 @@ class Actionset_Base extends Actionset
 			'action_name'  => '一覧（期限切れ項目）',
 			'explanation'  => '期限切れ項目一覧です。',
 			'acl_exp'      => '期限切れ項目一覧の権限です。',
-			'help'         => '',
 			'order'        => 40,
 			'dependencies' => array(
 				$controller.'::action_index_expired',
@@ -471,7 +466,6 @@ class Actionset_Base extends Actionset
 			'action_name'  => '一覧（不可視項目）',
 			'explanation'  => '不可視項目一覧です。',
 			'acl_exp'      => '不可視項目一覧の権限です。',
-			'help'         => '',
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.'::action_index_invisible',
@@ -506,7 +500,6 @@ class Actionset_Base extends Actionset
 			'action_name'  => '削除を含む全項目一覧',
 			'explanation'  => '全項目項目一覧です。',
 			'acl_exp'      => '全項目項目一覧の権限です。この権限を許可するとすべてのインデクスへのアクセス権を付与されます。',
-			'help'         => '',
 			'order'        => 100,
 			'dependencies' => array(
 				$controller.'::action_index_admin',

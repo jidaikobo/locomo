@@ -174,17 +174,6 @@ class Inflector extends \Fuel\Core\Inflector
 	}
 
 	/**
-	 * guess_pagination_segment()
-	 * @param string http://exmple.com/root_dir/ctrl/action
-	 * @return int
-	 */
-	public static function guess_pagination_segment($url = '')
-	{
-		$root_relative_path = static::get_root_relative_path($url);
-		return intval(count(explode('/', $root_relative_path)));
-	}
-
-	/**
 	 * remove_head_backslash()
 	 * @param string [\\]str
 	 * @return string str

@@ -1,9 +1,9 @@
 <?php
 namespace Locomo;
-class Help_Scdl
+class Help_Adrs
 {
 // edit_adrsgrp
-static $edit_adrsgrp = <<< EOF
+public $edit_adrsgrp = <<< EOF
 
 ## アドレスの項目一覧
 

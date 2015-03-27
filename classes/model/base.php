@@ -82,20 +82,13 @@ class Model_Base extends \Orm\Model_Soft
 		return $this->$pk ?: false;
 	}
 
-	/**
-	 * clear_cached_objects()
-	 * \Orm\Model::find() が、static::$_cached_objects を読むと期待通りの値が取得できないときに使う。
-	 * 具体例は\Locomo\Controller_Traits_Wrkflw::action_index_workflow()参照。
-	 * \Orm\Model::find() は、$options が異なったらキャッシュしないべきではないかと思う。
-	 * また、\Locomo\Auth_Login_LocomoauthでもModel_Usrのキャッシュクリアのために呼んでいるので要参照。
-	 * cloneで解決。もう多分不要。
+	/*
+	 * _init()
 	 */
-/*
-	public static function clear_cached_objects()
+	public static function _init()
 	{
-		static::$_cached_objects = array();
 	}
-*/
+
 	/**
 	 * get_field_by_role()
 	 * @return array()
@@ -428,6 +421,7 @@ class Model_Base extends \Orm\Model_Soft
 						if ( ! in_array($k, array_keys(static::properties()))) continue;
 						$orders[$k] = $v;
 						$options['order_by'] = $orders;
+						if (count(\Input::get('orders')) == 1 and $k != 'id') $options['order_by']['id'] = 'asc';
 					}
 				}
 				// ここは $_conditions
@@ -553,8 +547,15 @@ class Model_Base extends \Orm\Model_Soft
 			$r_arr[$key] = $value;
 		}
 
+		/*
 		if ($this->_data_relations) {
 			foreach ($this->_data_relations as $rel_name => $dr) {
+		 */
+		if (isset($options['related'])) {
+			foreach ($options['related'] as $rel_name => $rel_options) {
+
+				$dr = $this->{$rel_name};
+
 				$rel_options = isset($options['related'][$rel_name]) ? $options['related'][$rel_name] : array();
 				$rel_field_joins = (array_key_exists($rel_name, $field_joins)) ? $field_joins[$rel_name] : array();
 				if (array_key_exists($rel_name, $rel_names)) $rel_name = $rel_names[$rel_name];
