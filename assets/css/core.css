@@ -129,7 +129,9 @@ body.lcm_action_login {
 	margin: 0 auto;
 	box-sizing: border-box;
 }
-
+body.loggedin {
+	padding-top: 70px;
+}
 .main_column,
 .sub_column,
 #adinbar,
@@ -545,6 +547,10 @@ ul.horizontal_list {
 }
 .widget_content {
 	overflow: auto;
+	position: absolute;
+	top: 2em;
+	left: 0;
+	width: 100%;
 	height: 14em;
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -695,6 +701,9 @@ textarea[disabled] {
 #form_email,
 input[type="password"],
 input.int,
+input.time,
+input.date,
+input,datetime,
 input.han {
 	ime-mode: inactive;
 }
@@ -1323,10 +1332,16 @@ td.minimum {
 .datatable tbody tr.checked td {
 	background-color: #d8ebfc;
 }
+.datatable tbody tr.checked:nth-child(even) th {
+	background-color: #c0daea;
+}
+.datatable tbody tr.checked:nth-child(even) td {
+	background-color: #d0e6f8;
+}
 
 .datatable tbody tr.checked:hover th,
 .datatable tfoot tr.checked:hover th {
-	background-color: #daead0;
+	background-color: #dfefd9;
 }
 .datatable tbody tr.checked:hover td,
 .datatable tfoot tr.checked:hover td {

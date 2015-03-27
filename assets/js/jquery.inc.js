@@ -45,25 +45,25 @@ $(function() {
 		e.preventDefault();
 		checkboxes.prop('checked', false).trigger('change');
 	});
-
+/*
 	checkboxes.each(function(){
 		$(this).closest('tr').addClass('has_checkbox');
 	});
-
-
-	$('.has_checkbox').on('click', function(e){
-		var t, checkbox, prop;
+*/	
+	$(document).on('click', '.has_checkbox tr' ,function(e){
+		var t, tr, checkbox, prop;
 		e = e ? e : event;
 		t = $(e.target);
-
+		tr = $(t.closest('tr'));
+//		if(t.closest('table').hasClass('tekitou')) return;//なにか適当なクラスをつけておけばキャンセルできるように
 		if(!t || (t.is('label'))){
 			e.preventDefault();
 		}
-		if(t.is('.checkbox_binded')){
+		if(t.is('input') || t.is('a')){
 			return;
 		}
 
-		checkbox = $(this).find('.checkbox_binded');
+		checkbox = tr.find('.checkbox_binded');
 		if(!$(checkbox).prop('checked')){
 			prop = true; 
 		}else{
@@ -200,10 +200,11 @@ $(function(){
 
 //UA
 var userAgent = window.navigator.userAgent;
-isNetReader = userAgent.indexOf('NetReader') > 0 ? true : false;
+isNetReader   = userAgent.indexOf('NetReader') > 0 ? true : false;
 isTouchDevice = userAgent.indexOf('iPhone') > 0 || userAgent.indexOf('iPod') > 0 || userAgent.indexOf('iPad') > 0 || userAgent.indexOf('Android') > 0 ? true : false;
-isLtie9 = $('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6') ? true : false;
-tabindexCtrl = isNetReader || isLtie9 || isTouchDevice ? false : true;//この条件は増えたり減ったりするのかも。
+isie          = !$('body').hasClass('lcm_ieversion_0') ? true : false;
+isLtie9       = $('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6') ? true : false;
+tabindexCtrl  = isNetReader || isLtie9 || isTouchDevice ? false : true;//この条件は増えたり減ったりするのかも。
 $('body').addClass(isNetReader ? 'netreader' : '');
 
 //スクロールバーのサイズ取得//table_scrollableのために用意したけど止めているので今のところ不使用
@@ -409,7 +410,7 @@ $(document).click(function(e){
 
 
 
-/*================================▼▼▼===============================*/
+/* ================================▼▼▼=============================== */
 
 //tabindex制御
 $.fn.set_tabindex = function(){
@@ -430,13 +431,13 @@ $.fn.set_tabindex = function(){
 		}
 
 		//thisが表示されていれば、tab移動不可にする。
-		if($(this).is(':visible')){
-			$(this).attr('tabindex','-1');
+		if($(this).is(':visible') && $(this).data('tabindex') != -1){
+			$(this).attr('tabindex','-2').addClass('tabindex_ctrl');
 		}
 	});
 
 	//thisのなかはtabindexを有効に
-	$(this).find(':focusable').removeAttr('tabindex');
+	$(this).find('.tabindex_ctrl').removeAttr('tabindex');
 
 	return this;
 }
@@ -454,7 +455,7 @@ $.fn.reset_tabindex = function(){
 }
 
 
-//.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしいブラウザは対象外にする。たとえば、スマートフォンなども。
+//.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしい環境は除外
 if(tabindexCtrl && $('.lcm_focus')[0]){
 	set_lcm_focus();
 }
@@ -462,10 +463,9 @@ if(tabindexCtrl && $('.lcm_focus')[0]){
 function set_lcm_focus(){
 	var lcm_focus, esc;
 	lcm_focus    = $('.lcm_focus');
-
 	
-	if(!$('#esc_focus_wrapper')[0]){//初回だけにするもの。とりあえず抜けるリンクで判定(ので、removeはX)
-		var esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus" href="javascript: void(0);" tabindex="-1" >抜ける</a></div>').appendTo($('body'));
+	if(!$('#esc_focus_wrapper')[0]){//準備。抜けるリンクの有無で初回判定(ので、removeしない)
+		var esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus" href="javascript: void(0);" tabindex="-2" >抜ける</a></div>').appendTo($('body'));
 		lcm_focus.each(function(){
 			var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
 			$(this).attr('title', title_str+'エンターで入ります')
@@ -474,22 +474,23 @@ function set_lcm_focus(){
 
 	/*=== set_focus ===*/
 	//フォーカス対象を指定して実行されている場合はそれを、なければlcm_focusを相手にする。
-	//?ない場合?：初回と、抜ける時親にlcm_focusがない場合。
+	//?ない場合?：初回と、lcm_focus最上部で抜ける時。
 	var set_focus = function(target){
 		var target, parent, t; 
 		$('.currentfocus').removeClass('currentfocus');
 		if(target){
 			parents = target.parents('.lcm_focus').addClass('focusparent');
-			target.addClass('currentfocus').set_tabindex();
+			target.addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}
-		//lcm_focusをもとにtabindexの設定を行う
+/*		//lcm_focusをもとにtabindexの設定を行う
 		if(!$.isWindow(this)){
 			$(this).addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}
-
+*/
 		//targetの中にlcm_focusが中にあれば中身のtabindexを-1にする
 		t = target ? target.find('.lcm_focus') : lcm_focus;
-		set_focus_wrapper(t);
+		t.attr('tabindex', '0');
+		t.find(':tabbable').attr('tabindex', '-2');
 
 		//抜けるリンクの枠の表示領域をcurrentfocusを元に設定
 		var current = $('.currentfocus');
@@ -505,10 +506,6 @@ function set_lcm_focus(){
 			esc.hide();
 		}
 	}
-	function set_focus_wrapper(t){
-		t.attr('tabindex', '0');
-		t.find(':tabbable').attr('tabindex', '-1');
-	}
 
 	/*=== esc_focus ===*/
 	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを抜ける。
@@ -518,18 +515,16 @@ function set_lcm_focus(){
 		e.preventDefault();
 		var t, current, parent;
 		t = $(e.target);
-		
-		current = $($('.currentfocus')[0]);
-
-		$(current).removeClass('currentfocus').set_tabindex().focus();
+		current = $($('.currentfocus')[0]).removeClass('currentfocus').set_tabindex().focus();
 		esc.hide();
-		parent = current.closest('.focusparent')[0] ? current.closest('.focusparent'): null;
+
+		parent = current.parents('.focusparent')[0] ? current.parents('.focusparent').last() : null;
 		$(document).reset_tabindex();
 		set_focus(parent);
 	}
 
 	//ひとまず実行 //lcm_focusが入れ子になっていてもここで一旦-1
-	setTimeout(set_focus, 100);
+	setTimeout(set_focus, 0);
 
 	//lcm_focus上でのキーボードイベント。
 	$('.lcm_focus').on('keydown', function(e){
@@ -541,6 +536,7 @@ function set_lcm_focus(){
 			esc.focus();
 			e.preventDefault();
 		}
+		/*
 		//IE6-9の場合、radioには-1を与えていても移動してしまうので、lcm_fous上では次のtabbableに飛ばす
 		//逆タブ移動では、focus枠より先に中身にtabがあたるので、radio-1の場合の処理を書く
 		var body = $('body');
@@ -552,12 +548,12 @@ function set_lcm_focus(){
 				e.preventDefault();
 			}
 		}
-
+		*/
 		if( k == 13 ){//enter
-			if(!$('body').hasClass('lcm_ieversion_0')){
+			if(isie && !t.is('a') && !t.is(':input')){
 				e.preventDefault();
 			}
-			//とりあえず、デフォルトのイベントをキャンセルしてしまう
+			//aやinputでない場合は、デフォルトのイベントをキャンセル
 			//(IEはイベントの伝播の順番がほぼ逆のようなので。ので、もうすこし条件を絞り込んだほうが良さそう。lcm_focus内のアイテム上でのエンター(送信)の有効：無効？？)
 			if($(this).hasClass('currentfocus')){//currentfocus上は除外
 				e.stopPropagation();
@@ -568,8 +564,9 @@ function set_lcm_focus(){
 		}
 	});
 	
+/*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
-	if($('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6')){
+	if(isLtie9){
 		$(document).on('keydown',function(e){
 			e = e ? e : event;
 			var k, parent;
@@ -582,8 +579,8 @@ function set_lcm_focus(){
 				}, 0);
 			}
 		});
-
 	}
+*/
 	$('#esc_focus').on('focus', esc_focus);
 	$(document).on('keydown', function(e){//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
 		e = e ? e : event;
@@ -592,10 +589,11 @@ function set_lcm_focus(){
 		k = e.which;
 		
 //		console.log($('.modal.on, .semimodal.on'));
-
-		if((t.is('#esc_focus_wrapper') && k == 13) ||(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
-			esc_focus(e);
-			e.stopPropagation();
+		if($('.currentfocus')[0]){
+			if((t.is('#esc_focus_wrapper') && k == 13) ||(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
+				esc_focus(e);
+				e.stopPropagation();
+			}
 		}
 	});
 	$(document).on('click',function(e){
@@ -626,7 +624,7 @@ function set_lcm_focus(){
 	});
 }
 
-/*================================▲▲▲===============================*/
+/* ================================▲▲▲=============================== */
 
 
 
@@ -1392,7 +1390,7 @@ $('.lcm_floatwindow').resizable({
 });
 
 //テキストエリアのリサイズ非対応ブラウザへの処置。とりあえずIEのみ
-var ta_unresizable = $('.lcm_ieversion_0')[0] ? false : true ;
+var ta_unresizable = isie ;
 //もともとの最大幅・最大高とのかねあいを解消できるようにしたい
 //現在幅・高さをいったん明示的に与えて、max-widthとmax-heightをauto?にすればよい？？？
 if(ta_unresizable){

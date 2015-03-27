@@ -7,7 +7,7 @@
 <?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 カレンダ一日詳細</h1>
 
-移動<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day); ?>" class="date" id="move_date" />
+移動<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day); ?>" class="date" id="move_date" title="年月日を指定して移動" />
 
 <div class="field_wrapper calendar_detail">
 	<div class="select_period" title="前後の日へ移動">
@@ -20,7 +20,7 @@
 	<?php include("calendar_narrow.php"); ?>
 	</div>
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-	<table class="table schedule_day graph tbl">
+	<table class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
 	<tbody>
 	<?php foreach ($schedule_data['member_list'] as $row) { ?>
 			<tr>
@@ -76,7 +76,7 @@
 <?php endif;//hmvcをとじる ?>
 
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-	<table class="tbl datatable schedule_day detail">
+	<table class="tbl datatable schedule_day detail lcm_focus" title="タイムテーブル 一覧">
 		<thead>
 		<tr>
 			<th class="time">

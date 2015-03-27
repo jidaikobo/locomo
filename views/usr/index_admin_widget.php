@@ -11,7 +11,7 @@
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1">
 			<td class="minimum num"><?php echo $item->id; ?></td>
-			<td style="min-width: 6em;" ><div class="col_scrollable"tabindex="-1">
+			<td style="min-width: 6em;" ><div class="col_scrollable">
 			<?php 
 					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));
 			?>
