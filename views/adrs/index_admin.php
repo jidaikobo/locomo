@@ -36,13 +36,13 @@
 			<td>
 				<div class="btn_group">
 					<?php
-					if (\Auth::has_access('\Controller_Adrs::action_view')):
+					if (\Auth::has_access('\Controller_Adrs/view')):
 						echo Html::anchor('adrs/view/'.$item->id, '<span class="skip">'.$item->name.'を</span>閲覧', array('class' => 'view'));
 					endif;
-					if (\Auth::has_access('\Controller_Adrs::action_edit')):
+					if (\Auth::has_access('\Controller_Adrs/edit')):
 						echo Html::anchor('adrs/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
-					if (\Auth::has_access('\Controller_Adrs::action_delete')):
+					if (\Auth::has_access('\Controller_Adrs/delete')):
 						if ($item->deleted_at):
 							echo Html::anchor('adrs/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
 							echo Html::anchor('adrs/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));

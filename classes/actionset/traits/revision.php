@@ -7,10 +7,10 @@ trait Actionset_Traits_Revision
 	 */
 	public static function actionset_index_revision($controller, $obj = null, $id = null, $urls = array())
 	{
-		if ($id && in_array(\Request::main()->action, array('edit','view'))):
-			$actions = array(array($controller.DS."each_index_revision/".$id, '編集履歴'));
-			$urls = static::generate_urls($controller.'::action_index_revision', $actions);
-		endif;
+		if ($id && in_array(\Request::main()->action, array('edit','view')))
+		{
+			$urls = array(array($controller.DS."each_index_revision/".$id, '編集履歴'));
+		}
 
 		$retvals = array(
 			'urls'          => $urls ,
@@ -19,11 +19,11 @@ trait Actionset_Traits_Revision
 			'acl_exp'      => '編集履歴閲覧の権限です。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.'::action_view',
-				$controller.'::action_edit',
-				$controller.'::action_view_revision',
-				$controller.'::action_index_revision',
-				$controller.'::action_each_index_revision',
+				$controller.'/view',
+				$controller.'/edit',
+				$controller.'/view_revision',
+				$controller.'/index_revision',
+				$controller.'/each_index_revision',
 			)
 		);
 		return $retvals;

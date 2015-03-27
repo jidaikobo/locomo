@@ -9,19 +9,19 @@ class Actionset_Flr extends \Actionset
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-			'\Controller_Flr::action_common_files',
-			'\Controller_Flr::action_index_files',
-			'\Controller_Flr::action_gallery',
-			'\Controller_Flr_Dir::action_create',
-			'\Controller_Flr_Dir::action_edit',
-			'\Controller_Flr_Dir::action_permission',
-			'\Controller_Flr_Dir::action_rename',
-			'\Controller_Flr_File::action_edit',
-			'\Controller_Flr_File::action_purge_file',
-			'\Controller_Flr_File::action_upload',
-			'\Controller_Flr_File::action_view',
-			'\Controller_Flr_Sync::action_sync',
-			'\Controller_Flr_Sync::action_dl',
+			'\Controller_Flr/common_files',
+			'\Controller_Flr/index_files',
+			'\Controller_Flr/gallery',
+			'\Controller_Flr_Dir/create',
+			'\Controller_Flr_Dir/edit',
+			'\Controller_Flr_Dir/permission',
+			'\Controller_Flr_Dir/rename',
+			'\Controller_Flr_File/edit',
+			'\Controller_Flr_File/purge_file',
+			'\Controller_Flr_File/upload',
+			'\Controller_Flr_File/view',
+			'\Controller_Flr_Sync/sync',
+			'\Controller_Flr_Sync/dl',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'ファイラへのアクセス権');
@@ -43,7 +43,7 @@ class Actionset_Flr extends \Actionset
 			'acl_exp'      => 'ダウンロード権限。',
 			'order'        => 10,
 			'dependencies' => array(
-				'\Controller_Flr_File::action_dl',
+				'\Controller_Flr_File/dl',
 			)
 		);
 
@@ -67,8 +67,7 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_root($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array("\Controller_Flr/index_files", 'ルート'));
-		$urls = static::generate_urls('\Controller_Flr::action_index_files', $actions);
+		$urls = array(array("\Controller_Flr/index_files", 'ルート'));
 		$retvals = array(
 			'urls'  => $urls,
 			'order' => 1,
@@ -81,8 +80,7 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_sync($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array("\Controller_Flr_Sync/sync", '同期'));
-		$urls = static::generate_urls('\Controller_Flr_Sync::action_sync', $actions);
+		$urls = array(array("\Controller_Flr_Sync/sync", '同期'));
 
 		$retvals = array(
 			'realm'        => 'option',
@@ -106,11 +104,10 @@ class Actionset_Flr extends \Actionset
 		{
 			if ($obj->genre == 'dir')
 			{
-				$actions = array(array($controller.DS."index_files/".$parent->id, '上の階層'));
+				$urls = array(array($controller.DS."index_files/".$parent->id, '上の階層'));
 			} else {
-				$actions = array(array($controller.DS."index_files/".$parent->id, 'ディレクトリへ'));
+				$urls = array(array($controller.DS."index_files/".$parent->id, 'ディレクトリへ'));
 			}
-			$urls = static::generate_urls($controller.'::action_index_files', $actions);
 		}
 		$retvals = array(
 			'urls'         => $urls,
@@ -125,8 +122,7 @@ class Actionset_Flr extends \Actionset
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(array("\Controller_Flr_File/upload/".$obj->id, '新規アップロード'));
-			$urls = static::generate_urls('\Controller_Flr_File::action_upload', $actions, ['create']);
+			$urls = array(array("\Controller_Flr_File/upload/".$obj->id, '新規アップロード'));
 		}
 		$retvals = array(
 			'urls'         => $urls,
@@ -146,11 +142,10 @@ class Actionset_Flr extends \Actionset
 	{
 		if (@$obj->genre == 'dir')
 		{
-			$actions = array(
+			$urls = array(
 				array("\Controller_Flr_Dir/create/".$obj->id, '<!--ディレクトリ-->作成'),
 				array("\Controller_Flr_Dir/edit/".$obj->id, '編集')
 			);
-			$urls = static::generate_urls('\Controller_Flr_Dir::action_create', $actions, ['create']);
 		}
 		$retvals = array(
 			'realm'        => 'base',
@@ -170,10 +165,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_rename($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (@$obj->genre == 'dir')
+		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{
-			$actions = array(array("\Controller_Flr_Dir/rename/".$obj->id, '<!--ディレクトリ-->名称変更'));
-			$urls = static::generate_urls('\Controller_Flr_Dir::action_rename', $actions, ['create']);
+			$urls = array(array("\Controller_Flr_Dir/rename/".$obj->id, '<!--ディレクトリ-->名称変更'));
 		}
 		$retvals = array(
 			'urls'         => $urls,
@@ -187,10 +181,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_permission($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (@$obj->genre == 'dir')
+		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{
-			$actions = array(array("\Controller_Flr_Dir/permission/".$obj->id, '<!--ディレクトリ-->権限設定'));
-			$urls = static::generate_urls('\Controller_Flr_Dir::action_permission', $actions, ['create']);
+			$urls = array(array("\Controller_Flr_Dir/permission/".$obj->id, '<!--ディレクトリ-->権限設定'));
 		}
 		$retvals = array(
 			'urls'         => $urls,
@@ -204,10 +197,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_purge($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (@$obj->genre == 'dir')
+		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{
-			$actions = array(array("\Controller_Flr_Dir/purge/".$obj->id, '<!--ディレクトリ-->削除'));
-			$urls = static::generate_urls('\Controller_Flr_Dir::action_purge', $actions, ['create']);
+			$urls = array(array("\Controller_Flr_Dir/purge/".$obj->id, '<!--ディレクトリ-->削除'));
 		}
 		$retvals = array(
 			'urls'         => $urls,
@@ -223,8 +215,7 @@ class Actionset_Flr extends \Actionset
 	{
 		if ($controller == '\Controller_Flr_File' && \Request::active()->action == 'view' && $id)
 		{
-			$actions = array(array("\Controller_Flr_File/edit".DS.$id, 'ファイル編集'));
-			$urls = static::generate_urls('\Controller_Flr_File::action_upload', $actions);
+			$urls = array(array("\Controller_Flr_File/edit".DS.$id, 'ファイル編集'));
 		}
 
 		$retvals = array(
@@ -246,8 +237,7 @@ class Actionset_Flr extends \Actionset
 	{
 		if ($controller == '\Controller_Flr_File' && \Request::active()->action == 'edit' && $id)
 		{
-			$actions = array(array("\Controller_Flr_File/view".DS.$id, 'ファイル詳細'));
-			$urls = static::generate_urls('\Controller_Flr_File::action_upload', $actions);
+			$urls = array(array("\Controller_Flr_File/view".DS.$id, 'ファイル詳細'));
 		}
 
 		$retvals = array(
@@ -271,8 +261,7 @@ class Actionset_Flr extends \Actionset
 		{
 			if (in_array(\Request::active()->action, ['view','edit']) && $id)
 			{
-				$actions = array(array("\Controller_Flr_File/purge".DS.$id, 'ファイル削除'));
-				$urls = static::generate_urls('\Controller_Flr_File::action_purge', $actions);
+				$urls = array(array("\Controller_Flr_File/purge".DS.$id, 'ファイル削除'));
 			}
 		}
 

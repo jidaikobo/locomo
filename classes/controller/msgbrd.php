@@ -12,7 +12,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename' => 'メッセージボード', // for human's name
 		'explanation' => 'メッセージボードのコントローラです', // use at admin/admin/home
-		'main_action' => 'action_index_admin', // main action
+		'main_action' => 'index_admin', // main action
 		'main_action_name' => '管理一覧', // main action's name
 		'main_action_explanation' => 'メッセージボードのトップです。', // explanation of top page
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
@@ -20,7 +20,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 		'is_for_admin' => false, // true: place it admin's menu instead of normal menu
 		'no_acl' => false, // true: admin's action. it will not appear at acl.
 		'widgets' => array(
-			array('name' => 'メッセージボードより', 'uri' => '\\Controller_Msgbrd::action_index_dashboard'),
+			array('name' => 'メッセージボードより', 'uri' => '\\Controller_Msgbrd/index_dashboard'),
 		),
 	);
 

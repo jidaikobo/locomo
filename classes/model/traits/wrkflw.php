@@ -411,7 +411,7 @@ trait Model_Traits_Wrkflw
 		}
 
 		// 作成ユーザと管理者はどんな条件でも閲覧できる - いったん一番上に
-		if (\Auth::has_access($controller.'::action_create'))
+		if (\Auth::has_access($controller.'/create'))
 		{
 			return $options;
 		}
@@ -420,14 +420,14 @@ trait Model_Traits_Wrkflw
 		if ($mode == 'edit')
 		{
 			// 作成権限があるユーザだったらin_progress以外を編集できる
-			if (\Auth::has_access($controller.'::action_create')):
+			if (\Auth::has_access($controller.'/create')):
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
 			endif;
 		}
 
 		// 承認のための閲覧
-		if (\Auth::has_access($controller.'::action_approve'))
+		if (\Auth::has_access($controller.'/approve'))
 		{
 			// 承認ユーザはin_progressとfinishを閲覧できる
 			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
@@ -435,7 +435,7 @@ trait Model_Traits_Wrkflw
 		}
 
 		// 閲覧ユーザはfinishを閲覧できる
-//		if (\Auth::has_access($controller.'::action_view'))
+//		if (\Auth::has_access($controller.'/view'))
 		if (\Auth::check())
 		{
 			$options['where'][] = array(array($column, '=', 'finish'));

@@ -9,7 +9,7 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'ワークフロー', // for human's name
 		'explanation'  => 'ワークフロー経路の作成や編集を行います。',
-		'main_action'  => 'action_index_admin', // main action
+		'main_action'  => 'index_admin', // main action
 		'main_action_name' => 'ワークフロー管理', // main action's name
 		'main_action_explanation' => 'ワークフロー経路の作成や編集を行います。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home

@@ -1,8 +1,5 @@
 <?php
 namespace Locomo;
-
-
-
 class Controller_Pdf extends \Locomo\Controller_Base
 // class Controller_Pdf extends \Controller
 {
@@ -10,11 +7,9 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		'show_at_menu' => true,
 		'order_at_menu' => 10,
 		'is_for_admin' => false,
-		'main_action' => 'action_index_admin',
+		'main_action' => 'index_admin',
 		'nicename' => 'PDF',
 	);
-
-
 
 	public function before() {
 		parent::before();

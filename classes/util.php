@@ -60,7 +60,7 @@ class Util
 				$retvals[$ctrl]['nicename'] = \Arr::get($config, 'nicename', $module);
 				$retvals[$ctrl]['explanation'] = \Arr::get($config, 'explanation', '') ;
 				$main_action = \Arr::get($ctrl::$locomo, 'main_action', '');
-				$retvals[$ctrl]['main_action'] = $main_action ? $ctrl.'::'.$main_action : '' ;
+				$retvals[$ctrl]['main_action'] = $main_action ? $ctrl.DS.$main_action : '' ;
 				$retvals[$ctrl]['show_at_menu'] = \Arr::get($config, 'show_at_menu', true) ;
 				$retvals[$ctrl]['is_for_admin'] = \Arr::get($config, 'is_for_admin', false) ;
 				$retvals[$ctrl]['no_acl'] = \Arr::get($config, 'no_acl', false) ;
@@ -81,7 +81,7 @@ class Util
 				$retvals[$ctrl]['nicename'] = \Arr::get($ctrl::$locomo, 'nicename', $ctrl);
 				$retvals[$ctrl]['explanation'] = \Arr::get($ctrl::$locomo, 'explanation', '') ;
 				$main_action = \Arr::get($ctrl::$locomo, 'main_action', '');
-				$retvals[$ctrl]['main_action'] = $main_action ? $ctrl.'::'.$main_action : '' ;
+				$retvals[$ctrl]['main_action'] = $main_action ? $ctrl.DS.$main_action : '' ;
 				$retvals[$ctrl]['show_at_menu'] = \Arr::get($ctrl::$locomo, 'show_at_menu', true) ;
 				$retvals[$ctrl]['is_for_admin'] = \Arr::get($ctrl::$locomo, 'is_for_admin', false) ;
 				$retvals[$ctrl]['no_acl'] = \Arr::get($ctrl::$locomo, 'no_acl', false) ;
@@ -195,8 +195,7 @@ class Util
 
 	/**
 	 * method_exists
-	 * コントローラの$locomoの任意の値を取得
-	 * fetch $locomo value
+	 * コントローラのメソッドの存在確認
 	 * @return Mix
 	 */
 	public static function method_exists($locomo_path)
@@ -207,11 +206,18 @@ class Util
 
 		// controller and action
 		$locomo_path = \Inflector::add_head_backslash($locomo_path);
-		list($controller, $action) = explode('::', $locomo_path);
+		list($controller, $action) = explode('/', $locomo_path);
 
 		if (class_exists($controller))
 		{
-			if ( ! method_exists($controller, $action)) return false;
+			if (
+				! method_exists($controller, 'action_'.$action) &&
+				! method_exists($controller, 'get_'.$action) &&
+				! method_exists($controller, 'post_'.$action)
+			)
+			{
+				return false;
+			}
 		} else {
 			return false;
 		}

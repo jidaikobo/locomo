@@ -13,8 +13,7 @@ class Actionset_Usr extends \Actionset_Base
 	{
 		if (in_array(\Request::main()->action, ['edit', 'view']) && $id)
 		{
-			$actions = array(array($controller.DS."reset_paswd/".$id, 'パスワードリセット'));
-			$urls = static::generate_urls($controller.'::action_edit', $actions);
+			$urls = array(array($controller.DS."reset_paswd/".$id, 'パスワードリセット'));
 		}
 
 		$retvals = array(
@@ -33,8 +32,7 @@ class Actionset_Usr extends \Actionset_Base
 	{
 		if (\Auth::is_root())
 		{
-			$actions = array(array($controller.DS."bulk_reset_paswd", '一括パスワードリセット'));
-			$urls = static::generate_urls($controller.'::action_edit', $actions);
+			$urls = array(array($controller.DS."bulk_reset_paswd", '一括パスワードリセット'));
 		}
 
 		$retvals = array(

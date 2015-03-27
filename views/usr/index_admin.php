@@ -41,13 +41,13 @@
 			<td class="min">
 				<div class="btn_group">
 					<?php
-					if (\Auth::has_access('\Controller_Usr::action_view')):
+					if (\Auth::has_access('\Controller_Usr/view')):
 						echo Html::anchor('usr/view/'.$item->id, '<span class="skip">'.$item->display_name.'を</span>閲覧', array('class' => 'view'));
 					endif;
-					if (\Auth::has_access('\Controller_Usr::action_edit')):
+					if (\Auth::has_access('\Controller_Usr/edit')):
 						echo Html::anchor('usr/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
-					if (\Auth::has_access('\Controller_Usr::action_delete')):
+					if (\Auth::has_access('\Controller_Usr/delete')):
 						if ($item->deleted_at):
 							echo Html::anchor('usr/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
 							echo Html::anchor('usr/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));

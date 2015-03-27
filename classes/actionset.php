@@ -138,8 +138,30 @@ class Actionset
 			if (\Arr::get($as, 'urls.0') || \Arr::get($as, 'dependencies.0'))
 			{
 				$realm = \Arr::get($as, 'realm', 'base');
-				$order = \Arr::get($as, 'order', 10);
-				$as['order'] = $order;
+				$as['order'] = \Arr::get($as, 'order', 10);
+
+				// auth check
+				foreach (\Arr::get($as, 'urls', array()) as $kk => $vv)
+				{
+					// \Controller/action/path/to/foo -> \Controller/action
+					$locomopath = join('/', array_slice(explode('/', $vv[0]), 0, 2));
+
+					// \Controller/action?foo=bar -> \Controller/action
+					$locomopath = strpos($locomopath, '?') !== false ? substr($locomopath, 0, strpos($locomopath, '?')) : $locomopath ;
+
+					if ( ! \Auth::has_access($locomopath))
+					{
+						unset($as['urls'][$kk]);
+					} else {
+						// generate url
+						$url  = \Inflector::ctrl_to_dir(\Arr::get($vv, 0, false));
+						$str  = \Arr::get($vv, 1, false);
+						$attr = \Arr::get($vv, 2, array());
+						if (! $url || ! $str) unset($as['urls'][$kk]);
+						$as['urls'][$kk] = \Html::anchor($url, $str, $attr);
+					}
+				}
+				if (isset($as['urls'])) $as['urls'] = array_unique($as['urls']);
 				static::$actions[$controller][$realm][$method] = $as;
 			}
 		}
@@ -176,45 +198,6 @@ class Actionset
 		 // orderが設定されてなければ10にする。
 		\Arr::set($arr, 'order', \Arr::get($arr, 'order', 10));
 		static::$actions[$controller][$realm]['added'] += $arr;
-	}
-
-	/**
-	 * generate_urls()
-	 */
-	public static function generate_urls($locomo_path, $actions, $exceptions = array(), $realm = 'base')
-	{
-		static $exists = array();
-
-		list($controller, $action) = explode('::', $locomo_path);
-
-		// check $exceptions
-		$urls = array();
-		$current_controller = \Inflector::add_head_backslash(\Request::main()->controller);
-		if ($current_controller == $controller && in_array(\Request::main()->action, $exceptions))
-		{
-			return $urls;
-		}
-
-		// check auth
-		if ( ! \Auth::has_access($locomo_path))
-		{
-			return $urls;
-		}
-
-		// $actions to uri
-		foreach($actions as $v)
-		{
-			$url  = \Inflector::ctrl_to_dir(\Arr::get($v, 0, false));
-			$str  = \Arr::get($v, 1, false);
-			$attr = \Arr::get($v, 2, array());
-//			if (! $url || ! $str || in_array($url, \Arr::get($exists, $realm, array()))) continue;
-//			$exists[$realm][] = $url;
-			if (! $url || ! $str) continue;
-			$urls[] = \Html::anchor($url, $str, $attr);
-		}
-		$urls = array_unique($urls);
-
-		return $urls;
 	}
 
 	/**

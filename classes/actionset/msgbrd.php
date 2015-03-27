@@ -12,8 +12,7 @@ class Actionset_Msgbrd extends \Actionset_Base
 	{
 		// urls
 		$count = \Model_Msgbrd::count(array('where' => array('is_draft' => 0)));
-		$actions = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
-		$urls = static::generate_urls($controller.'::action_index_admin', $actions);
+		$urls = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -24,7 +23,7 @@ class Actionset_Msgbrd extends \Actionset_Base
 			'acl_exp'      => 'メッセージボードの投稿一覧権限です。',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.'::action_index_admin',
+				$controller.'/index_admin',
 			)
 		);
 		return $retvals;
@@ -36,8 +35,7 @@ class Actionset_Msgbrd extends \Actionset_Base
 	public static function actionset_index_draft($controller, $obj = null, $id = null, $urls = array())
 	{
 		$count = \Model_Msgbrd::count(array('where' => array('is_draft' => 1)));
-		$actions = array(array($controller.DS."index_draft", "下書き ({$count})"));
-		$urls = static::generate_urls($controller.'::action_index_admin', $actions);
+		$urls = array(array($controller.DS."index_draft", "下書き ({$count})"));
 
 		$retvals = array(
 			'realm'        => 'index' ,
@@ -48,7 +46,7 @@ class Actionset_Msgbrd extends \Actionset_Base
 			'acl_exp'      => 'メッセージボードの下書きの一覧権限です。',
 			'order'        => 11,
 			'dependencies' => array(
-				$controller.'::action_index_draft',
+				$controller.'/index_draft',
 			)
 		);
 		return $retvals;
@@ -59,11 +57,10 @@ class Actionset_Msgbrd extends \Actionset_Base
 	 */
 	public static function actionset_edit_categories($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(
+		$urls = array(
 			array($controller.DS."edit_categories/", 'カテゴリの設定'),
 			array($controller.DS."edit_categories/?create=1", 'カテゴリの新規作成'),
 		);
-		$urls = static::generate_urls($controller.'::action_edit_categories', $actions);
 
 		$retvals = array(
 			'realm'        => 'option' ,
@@ -74,7 +71,7 @@ class Actionset_Msgbrd extends \Actionset_Base
 			'acl_exp'      => 'メッセージボードのカテゴリ設定権限です。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.'::action_edit_categories',
+				$controller.'/edit_categories',
 			)
 		);
 		return $retvals;

@@ -7,8 +7,10 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."create", '新規作成'));
-		$urls = static::generate_urls($controller.'::action_create', $actions, ['create']);
+		if (\Request::main()->action != 'create')
+		{
+			$urls = array(array($controller.DS."create", '新規作成'));
+		}
 
 		$retvals = array(
 			'realm'        => 'base',
@@ -19,8 +21,8 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '新規作成権限。',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.'::action_view',
-				$controller.'::action_create',
+				$controller.'/view',
+				$controller.'/create',
 			)
 		);
 
@@ -34,8 +36,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id)
 		{
-			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.'::action_view', $actions, ['create']);
+			$urls = array(array($controller.DS."view/".$id, '閲覧'));
 		}
 
 		$retvals = array(
@@ -46,7 +47,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '通常項目の個票の閲覧権限です。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.'::action_view',
+				$controller.'/view',
 			)
 		);
 		return $retvals;
@@ -59,8 +60,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'view' && $id)
 		{
-			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_urls($controller.'::action_edit', $actions, ['edit','create']);
+			$urls = array(array($controller.DS."edit/".$id, '編集'));
 		}
 
 		$retvals = array(
@@ -71,8 +71,8 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '通常項目の編集権限。',
 			'order'        => 30,
 			'dependencies' => array(
-				$controller.'::action_view',
-				$controller.'::action_edit',
+				$controller.'/view',
+				$controller.'/edit',
 			)
 		);
 		return $retvals;
@@ -85,8 +85,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'view' && $id)
 		{
-			$actions = array(array($controller.DS."edit/".$id, '編集'));
-			$urls = static::generate_urls($controller.'::action_edit_deleted', $actions, ['edit','create']);
+			$urls = array(array($controller.DS."edit/".$id, '編集'));
 		}
 
 		$retvals = array(
@@ -97,9 +96,9 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '削除された項目の編集権限です。削除された項目の閲覧権限も付与されます。',
 			'order'        => 30,
 			'dependencies' => array(
-				$controller.'::action_index_deleted',
-				$controller.'::action_view_deleted',
-				$controller.'::action_edit_deleted',
+				$controller.'/index_deleted',
+				$controller.'/view_deleted',
+				$controller.'/edit_deleted',
 			)
 		);
 		return $retvals;
@@ -110,10 +109,9 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
+		if (\Request::main()->action != 'create' && isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
 		{
-			$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
-			$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
+			$urls = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 		}
 
 		//retval
@@ -125,11 +123,11 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 40,
 			'dependencies' => array(
-				$controller.'::action_view',
-				$controller.'::action_view_deleted',
-				$controller.'::action_index_deleted',
-				$controller.'::action_delete',
-				$controller.'::action_confirm_delete',
+				$controller.'/view',
+				$controller.'/view_deleted',
+				$controller.'/index_deleted',
+				$controller.'/delete',
+				$controller.'/confirm_delete',
 			)
 		);
 		return $retvals;
@@ -142,8 +140,7 @@ class Actionset_Base extends Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id)
 		{
-			$actions = array(array($controller.DS."undelete/".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
-			$urls = static::generate_urls($controller.'::action_undelete', $actions, ['create']);
+			$urls = array(array($controller.DS."undelete/".$id, '復活', array('class' => 'confirm', 'data-jslcm-msg' => '項目を復活してよいですか？')));
 		}
 
 		$retvals = array(
@@ -154,10 +151,10 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '削除された項目を復活する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
-				$controller.'::action_view',
-				$controller.'::action_view_deleted',
-				$controller.'::action_index_deleted',
-				$controller.'::action_undelete',
+				$controller.'/view',
+				$controller.'/view_deleted',
+				$controller.'/index_deleted',
+				$controller.'/undelete',
 			)
 		);
 		return $retvals;
@@ -170,8 +167,7 @@ class Actionset_Base extends Actionset
 	{
 		if (isset($obj->deleted_at) && $obj->deleted_at && $id)
 		{
-			$actions = array(array($controller.DS."delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
-			$urls = static::generate_urls($controller.'::action_delete_deleted', $actions, ['create']);
+			$urls = array(array($controller.DS."delete_deleted/".$id, '完全削除', array('class' => 'confirm', 'data-jslcm-msg' => '完全に削除してよいですか？')));
 		}
 
 		$retvals = array(
@@ -182,10 +178,10 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
-				$controller.'::action_view',
-				$controller.'::action_view_deleted',
-				$controller.'::action_index_deleted',
-				$controller.'::action_delete_deleted',
+				$controller.'/view',
+				$controller.'/view_deleted',
+				$controller.'/index_deleted',
+				$controller.'/delete_deleted',
 			)
 		);
 		return $retvals;
@@ -196,10 +192,9 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_view_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (isset($obj->deleted_at) && $obj->deleted_at && $id)
+		if (\Request::main()->action != 'view' && isset($obj->deleted_at) && $obj->deleted_at && $id)
 		{
-			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.'::action_view_deleted', $actions, ['view','create']);
+			$urls = array(array($controller.DS."view/".$id, '閲覧'));
 		}
 
 		$retvals = array(
@@ -210,7 +205,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.'::action_view_deleted',
+				$controller.'/view_deleted',
 			)
 		);
 		return $retvals;
@@ -223,8 +218,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id)
 		{
-			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.'::action_view_expired', $actions, ['view','create']);
+			$urls = array(array($controller.DS."view/".$id, '閲覧'));
 		}
 
 		$retvals = array(
@@ -235,7 +229,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '期限切れ項目の閲覧権限です。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.'::action_view_expired',
+				$controller.'/view_expired',
 			)
 		);
 		return $retvals;
@@ -248,8 +242,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id)
 		{
-			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.'::action_view_yet', $actions, ['view','create']);
+			$urls = array(array($controller.DS."view/".$id, '閲覧'));
 		}
 
 		$retvals = array(
@@ -260,8 +253,8 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '予約項目の閲覧権限です。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.'::action_index_yet',
-				$controller.'::action_view_yet',
+				$controller.'/index_yet',
+				$controller.'/view_yet',
 			)
 		);
 		return $retvals;
@@ -274,8 +267,7 @@ class Actionset_Base extends Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id)
 		{
-			$actions = array(array($controller.DS."view/".$id, '閲覧'));
-			$urls = static::generate_urls($controller.'::action_view_invisible', $actions, ['view','create']);
+			$urls = array(array($controller.DS."view/".$id, '閲覧'));
 		}
 
 		$retvals = array(
@@ -286,8 +278,8 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '不可視項目の閲覧権限',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.'::action_index_invisible',
-				$controller.'::action_view_invisible',
+				$controller.'/index_invisible',
+				$controller.'/view_invisible',
 			)
 		);
 		return $retvals;
@@ -298,8 +290,7 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."index", '公開一覧'));
-		$urls = static::generate_urls($controller.'::action_index', $actions);
+		$urls = array(array($controller.DS."index", '公開一覧'));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -309,7 +300,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '通常項目の一覧の閲覧権限です。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.'::action_index',
+				$controller.'/index',
 			)
 		);
 		return $retvals;
@@ -327,8 +318,7 @@ class Actionset_Base extends Actionset
 
 		// urls
 		$count = $model::count();
-		$actions = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
-		$urls = static::generate_urls($controller.'::action_index_admin', $actions);
+		$urls = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -339,7 +329,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '通常項目の一覧（管理者向け）の閲覧権限です。管理者向けですが閲覧できるのは通常項目のみです。削除済み項目等は個別に権限を付与してください。',
 			'order'        => 10,
 			'dependencies' => array(
-				$controller.'::action_index_admin',
+				$controller.'/index_admin',
 			)
 		);
 		return $retvals;
@@ -361,8 +351,7 @@ class Actionset_Base extends Actionset
 		}
 
 		// urls
-		$actions = array(array($controller.DS."index_deleted", "ごみ箱 ({$count})"));
-		$urls = static::generate_urls($controller.'::action_index_deleted', $actions);
+		$urls = array(array($controller.DS."index_deleted", "ごみ箱 ({$count})"));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -372,7 +361,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '削除された項目一覧の権限です。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.'::action_index_deleted',
+				$controller.'/index_deleted',
 			)
 		);
 		return $retvals;
@@ -393,8 +382,7 @@ class Actionset_Base extends Actionset
 
 		// urls
 		$count = " ({$count})";
-		$actions = array(array($controller.DS."index_yet", "予約項目{$count}"));
-		$urls = static::generate_urls($controller.'::action_index_yet', $actions);
+		$urls = array(array($controller.DS."index_yet", "予約項目{$count}"));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -404,7 +392,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '予約項目一覧の権限です。',
 			'order'        => 30,
 			'dependencies' => array(
-				$controller.'::action_index_yet',
+				$controller.'/index_yet',
 			)
 		);
 		return $retvals;
@@ -425,8 +413,7 @@ class Actionset_Base extends Actionset
 
 		// urls
 		$count = " ({$count})";
-		$actions = array(array($controller.DS."index_expired", "期限切れ項目{$count}"));
-		$urls = static::generate_urls($controller.'::action_index_expired', $actions);
+		$urls = array(array($controller.DS."index_expired", "期限切れ項目{$count}"));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -436,7 +423,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '期限切れ項目一覧の権限です。',
 			'order'        => 40,
 			'dependencies' => array(
-				$controller.'::action_index_expired',
+				$controller.'/index_expired',
 			)
 		);
 		return $retvals;
@@ -457,8 +444,7 @@ class Actionset_Base extends Actionset
 
 		// urls
 		$count = " ({$count})";
-		$actions = array(array($controller.DS."index_invisible", "不可視項目{$count}"));
-		$urls = static::generate_urls($controller.'::action_index_invisible', $actions);
+		$urls = array(array($controller.DS."index_invisible", "不可視項目{$count}"));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -468,7 +454,7 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '不可視項目一覧の権限です。',
 			'order'        => 50,
 			'dependencies' => array(
-				$controller.'::action_index_invisible',
+				$controller.'/index_invisible',
 			)
 		);
 		return $retvals;
@@ -491,8 +477,7 @@ class Actionset_Base extends Actionset
 
 		// urls
 		$count = " ({$count})";
-		$actions = array(array($controller.DS."index_all", "すべて{$count}"));
-		$urls = static::generate_urls($controller.'::action_index_all', $actions);
+		$urls = array(array($controller.DS."index_all", "すべて{$count}"));
 
 		$retvals = array(
 			'realm'        => 'index',
@@ -502,12 +487,12 @@ class Actionset_Base extends Actionset
 			'acl_exp'      => '全項目項目一覧の権限です。この権限を許可するとすべてのインデクスへのアクセス権を付与されます。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.'::action_index_admin',
-				$controller.'::action_index_deleted',
-				$controller.'::action_index_expired',
-				$controller.'::action_index_yet',
-				$controller.'::action_index_invisible',
-				$controller.'::action_index_all',
+				$controller.'/index_admin',
+				$controller.'/index_deleted',
+				$controller.'/index_expired',
+				$controller.'/index_yet',
+				$controller.'/index_invisible',
+				$controller.'/index_all',
 			)
 		);
 		return $retvals;

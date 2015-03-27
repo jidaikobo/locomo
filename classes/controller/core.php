@@ -59,7 +59,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		static::$base_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller)).DS;
 		static::$base_url    = str_replace('locomo/', '' , static::$base_url); // locomo is not module
 		static::$current_url = static::$base_url.\Request::main()->action.DS;
-		$main_action = '::'.\Util::get_locomo($called_class, 'main_action');
+		$main_action = '/'.\Util::get_locomo($called_class, 'main_action');
 		static::$main_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller.$main_action)) ;
 		static::$nicename    = \Util::get_locomo($called_class, 'nicename') ?: @static::$config['nicename'];
 		static::$shortname   = strtolower(substr(\Inflector::denamespace(\Request::active()->controller), 11));
@@ -159,17 +159,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public function auth()
 	{
-		$current_action = '\\'.\Request::active()->controller.'::action_'.$this->request->action;
-
-		if ( ! method_exists(static::$controller, 'action_'.static::$action))
-		{
-			if (method_exists(static::$controller, 'get_'.static::$action))
-			{
-				$current_action = '\\'.\Request::active()->controller.'::get_'.$this->request->action;
-			} elseif (method_exists(static::$controller, 'post_'.static::$action)) {
-				$current_action = '\\'.\Request::active()->controller.'::post_'.$this->request->action;
-			}
-		}
+		$current_action = '\\'.\Request::active()->controller.'/'.$this->request->action;
 
 		// ordinary auth
 		$is_allow = \Auth::instance()->has_access($current_action);
@@ -323,7 +313,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		}
 		
 		// locomo path
-		$locomo['locomo_path'] = $controller.'::action_'.$action;
+		$locomo['locomo_path'] = $controller.DS.$action;
 
 		// current model
 		$locomo['model'] = $this->model_name;
@@ -338,15 +328,13 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		{
 			$main_action = \Arr::get($controller::$locomo, 'main_action');
 			$locomo['controller']['main_action'] = $main_action;
-			$locomo['controller']['main_url'] = \Uri::create(\Inflector::ctrl_to_dir($controller.'::action_'.$main_action));
-			$locomo['controller']['main_action_name'] = \Arr::get($controller::$locomo, 'main_action_name');
+			$locomo['controller']['main_url'] = \Uri::create(\Inflector::ctrl_to_dir($controller.DS.$main_action));
 			$locomo['controller']['nicename'] = \Arr::get($controller::$locomo, 'nicename');
 		}
 		else
 		{
 			$locomo['controller']['main_action'] = false;
 			$locomo['controller']['main_url'] = false;
-			$locomo['controller']['main_action_name'] = false;
 			$locomo['controller']['nicename'] = false;
 		}
 

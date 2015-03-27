@@ -10,11 +10,13 @@ class Actionset_Adrs extends \Actionset_Base
 	 */
 	public static function actionset_edit_adrsgrp($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(
-			array($controller.DS."edit_adrsgrp/", 'グループの設定'),
-			array($controller.DS."edit_adrsgrp/?create=1", 'グループの新規作成'),
-		);
-		$urls = static::generate_urls($controller.'::action_edit_adrsgrp', $actions, ['create']);
+		if (\Request::main()->action != 'create')
+		{
+			$urls = array(
+				array($controller.DS."edit_adrsgrp/", 'グループの設定'),
+				array($controller.DS."edit_adrsgrp/?create=1", 'グループの新規作成'),
+			);
+		}
 
 		$retvals = array(
 			'realm'        => 'option' ,
@@ -25,7 +27,7 @@ class Actionset_Adrs extends \Actionset_Base
 			'acl_exp'      => 'アドレス帳のグループ設定権限です。',
 			'order'        => 100,
 			'dependencies' => array(
-				$controller.'::action_edit_adrsgrp',
+				$controller.'/edit_adrsgrp',
 			)
 		);
 		return $retvals;

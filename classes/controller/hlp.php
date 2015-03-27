@@ -8,7 +8,7 @@ class Controller_Hlp extends \Controller_Base
 	// locomo
 	public static $locomo = array(
 		'nicename'     => 'ヘルプ', // for human's name
-		'main_action'  => 'action_view', // main action
+		'main_action'  => 'view', // main action
 		'show_at_menu' => false, // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 1000, // order of appearance
@@ -89,7 +89,7 @@ class Controller_Hlp extends \Controller_Base
 			$hlp = new $controller;
 			foreach ($hlp as $action => $v)
 			{
-				$key = \Inflector::ctrl_to_safestr($target.'::'.$action);
+				$key = \Inflector::ctrl_to_safestr($target.DS.$action);
 				$items[$key] = $action;
 			}
 			$content = \View::forge('hlp/index_each');
@@ -113,7 +113,7 @@ class Controller_Hlp extends \Controller_Base
 		if ($obj)
 		{
 			$add.= html_tag('h2', array(), '加筆されたヘルプ') ;
-			if (\Auth::has_access('\\Controller_Hlp::action_edit'))
+			if (\Auth::has_access('\\Controller_Hlp/edit'))
 			{
 				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($locomo_path_raw)), '編集する');
 			}
@@ -121,7 +121,7 @@ class Controller_Hlp extends \Controller_Base
 		}
 		else
 		{
-			if (\Auth::has_access('\\Help\\Controller_Hlp::action_edit'))
+			if (\Auth::has_access('\\Help\\Controller_Hlp/edit'))
 			{
 				$add.= ' | '.\Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($locomo_path_raw)), 'ヘルプを加筆する');
 			}

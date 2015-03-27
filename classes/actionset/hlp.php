@@ -25,9 +25,11 @@ class Actionset_Hlp extends \Actionset
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		$qstr = static::generate_qstr($obj, 'action');
-		$actions = array(array($controller.DS."edit".$qstr, '編集'));
-		$urls = static::generate_urls($controller.'::action_create', $actions, ['edit']);
+		if (\Request::main()->action != 'edit')
+		{
+			$qstr = static::generate_qstr($obj, 'action');
+			$urls = array(array($controller.DS."edit".$qstr, '編集'));
+		}
 
 		$retvals = array(
 			'urls'  => $urls,
@@ -35,7 +37,7 @@ class Actionset_Hlp extends \Actionset
 			'action_name' => '編集',
 			'acl_exp' => 'ヘルプの編集権限です。',
 			'dependencies' => array(
-				$controller.'::action_edit',
+				$controller.'/edit',
 			)
 		);
 
@@ -50,8 +52,7 @@ class Actionset_Hlp extends \Actionset
 		if ( ! in_array(\Request::main()->action, ['view', 'edit']))
 		{
 			$qstr = static::generate_qstr($obj, 'searches[action]');
-			$actions = array(array($controller.DS."view".$qstr, '閲覧'));
-			$urls = static::generate_urls($controller.'::action_create', $actions, ['edit']);
+			$urls = array(array($controller.DS."view".$qstr, '閲覧'));
 		}
 
 		$retvals = array(

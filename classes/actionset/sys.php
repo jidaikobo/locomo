@@ -9,8 +9,7 @@ class Actionset_Sys extends \Actionset
 	{
 		if (\Auth::is_root())
 		{
-			$actions = array(array($controller.DS."edit/".\Auth::get('id'), 'ダッシュボード編集'));
-			$urls = static::generate_urls($controller.'::action_edit', $actions);
+			$urls = array(array($controller.DS."edit/".\Auth::get('id'), 'ダッシュボード編集'));
 		}
 
 		$retvals = array(

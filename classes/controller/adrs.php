@@ -12,7 +12,7 @@ class Controller_Adrs extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename' => 'アドレス帳', // for human's name
 		'explanation' => 'アドレス帳のコントローラです', // use at admin/admin/home
-		'main_action' => 'action_index_admin', // main action
+		'main_action' => 'index_admin', // main action
 		'main_action_name' => '管理一覧', // main action's name
 		'main_action_explanation' => 'アドレス帳のトップです。', // explanation of top page
 		'show_at_menu' => true,  // true: show at admin bar and admin/home

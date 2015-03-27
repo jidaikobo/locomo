@@ -9,16 +9,16 @@ class Actionset_Usrgrp_Custom extends \Actionset
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-			$controller.'::action_index_admin',
-			$controller.'::action_create',
-			$controller.'::action_edit',
-			$controller.'::action_view',
-			$controller.'::action_delete',
-			$controller.'::action_index_deleted',
-			$controller.'::action_view_deleted',
-			$controller.'::action_edit_deleted',
-			$controller.'::action_undelete',
-			$controller.'::action_confirm_delete',
+			$controller.'/index_admin',
+			$controller.'/create',
+			$controller.'/edit',
+			$controller.'/view',
+			$controller.'/delete',
+			$controller.'/index_deleted',
+			$controller.'/view_deleted',
+			$controller.'/edit_deleted',
+			$controller.'/undelete',
+			$controller.'/confirm_delete',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'カスタムユーザグループへの基本権限');

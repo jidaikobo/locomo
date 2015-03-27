@@ -6,7 +6,7 @@ class Controller_Acl extends \Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'アクセス権', // for human's name
 		'explanation'  => 'ユーザやユーザグループにコントローラへのアクセス権を付与します。',
-		'main_action'  => 'action_controller_index', // main action
+		'main_action'  => 'controller_index', // main action
 		'main_action_name' => 'アクセス権管理', // main action's name
 		'main_action_explanation' => 'ユーザやユーザグループにコントローラへのアクセス権を付与します。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home
@@ -180,7 +180,7 @@ class Controller_Acl extends \Controller_Base
 							{
 								//format conditions
 								$each_action = \Inflector::add_head_backslash($each_action);
-								list($dpnd_controller, $dpnd_action) = explode('::', $each_action);
+								list($dpnd_controller, $dpnd_action) = explode(DS, $each_action);
 
 								//insert
 								$q = \DB::insert('lcm_acls');

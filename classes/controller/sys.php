@@ -5,14 +5,14 @@ class Controller_Sys extends \Controller_Base
 	// locomo
 	public static $locomo = array(
 		'nicename'     => 'システム', // for human's name
-		'main_action'  => 'action_admin', // main action
+		'main_action'  => 'admin', // main action
 		'show_at_menu' => false, // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 0, // order of appearance
 		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 		'widgets' =>array(
-			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys::action_admin'),
-			array('name' => '現在時刻', 'uri' => '\\Controller_Sys::action_clock'),
+			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys/admin'),
+			array('name' => '現在時刻', 'uri' => '\\Controller_Sys/clock'),
 		),
 	);
 
@@ -116,9 +116,9 @@ class Controller_Sys extends \Controller_Base
 					$home_name = \Arr::get($k::$locomo, 'main_action_name', $name);
 					$home_exp  = \Arr::get($k::$locomo, 'main_action_explanation', $name.'のトップです。');
 					$actionset[$k]['order'] = \Arr::get($k::$locomo, 'order', 10);
-					if ($home && \Auth::has_access($k.'::'.$home))
+					if ($home && \Auth::has_access($k.'/'.$home))
 					{
-						$url       = $k.'::'.$home;
+						$url       = $k.DS.$home;
 						$args = array(
 							'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($url), $home_name)),
 							'show_at_top' => true,

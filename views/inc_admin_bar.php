@@ -25,25 +25,17 @@ if (\Auth::check()):
 				$ctrl_index = '';
 				// Controller_Sys
 				if ($current_name == '-Controller_Sys'):
-					if(\Auth::has_access($locomo['controller']['name'].'::action_home')):
+					if(\Auth::has_access($locomo['controller']['name'].'/home')):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'), '管理トップ');
 					else:
 						$top_link = '管理トップ';
 					endif;
 				else:
-//					if(\Auth::has_access($locomo['controller']['name'].DS.'sys/admin')):
 					// 権限があればコントローラトップへのリンクを表示
-					if(\Auth::has_access($locomo['controller']['name'].'::'.\Arr::get($locomo, 'controller.main_action'))):
+					if(\Auth::has_access($locomo['controller']['name'].DS.\Arr::get($locomo, 'controller.main_action'))):
 						$top_link = \Html::anchor(\Uri::create('sys/admin/'.$current_name), $current_nicename).' ';
 					else:
 						$top_link = $current_nicename;
-					endif;
-					$action_name = $title ? $title : '';
-					if (isset($locomo['controller']['main'])):
-						$action_name = \Arr::get($locomo, 'controller.main_action_name') ?: 'トップ';
-						if(\Auth::has_access($locomo['controller']['name'].'::'.$locomo['controller']['main_action'])):
-							$ctrl_index = \Html::anchor($locomo['controller']['home'], $action_name);
-						endif;
 					endif;
 				endif;
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";

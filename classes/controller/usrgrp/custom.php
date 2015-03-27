@@ -10,7 +10,7 @@ class Controller_Usrgrp_Custom extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'カスタムユーザグループ', // for human's name
 		'explanation'  => 'カスタムユーザグループの編集をします。',
-		'main_action'  => 'action_index_admin', // main action
+		'main_action'  => 'index_admin', // main action
 		'main_action_name' => 'カスタムユーザグループ管理', // main action's name
 		'main_action_explanation' => 'カスタムユーザグループの編集をします。', // explanation of top page
 		'show_at_menu' => false, // true: show at admin bar and admin/home

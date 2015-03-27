@@ -9,12 +9,12 @@ class Actionset_Usrgrp extends \Actionset
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-			'\Controller_Usrgrp::action_index_admin',
-			'\Controller_Usrgrp::action_create',
-			'\Controller_Usrgrp::action_edit',
-			'\Controller_Usrgrp::action_view',
-			'\Controller_Usrgrp::action_delete',
-			'\Controller_Usrgrp::action_undelete',
+			'\Controller_Usrgrp/index_admin',
+			'\Controller_Usrgrp/create',
+			'\Controller_Usrgrp/edit',
+			'\Controller_Usrgrp/view',
+			'\Controller_Usrgrp/delete',
+			'\Controller_Usrgrp/undelete',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'ユーザグループへのアクセス権');
@@ -28,7 +28,7 @@ class Actionset_Usrgrp extends \Actionset
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
 		$retvals = array(
-			'urls'         => array(\Html::anchor(\Uri::create('usrgrp/index_admin?create=1'),'新規作成')) ,
+			'urls'         => array(array('usrgrp/index_admin?create=1', '新規作成')) ,
 			'action_name'  => '新規作成',
 			'show_at_top'  => true,
 			'explanation'  => 'ユーザグループを新規作成します。',
@@ -43,7 +43,7 @@ class Actionset_Usrgrp extends \Actionset
 	public static function actionset_index_revision($controller, $obj = null, $id = null, $urls = array())
 	{
 		$retvals = array(
-			'urls'         => array(\Html::anchor(\Uri::create('usrgrp/index_revision'),'履歴')) ,
+			'urls'         => array(array('usrgrp/index_revision', '履歴')) ,
 			'action_name'  => '履歴',
 			'show_at_top'  => true,
 			'explanation'  => 'ユーザグループの編集履歴です。',

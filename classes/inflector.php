@@ -20,7 +20,7 @@ class Inflector extends \Fuel\Core\Inflector
 			$strs = explode('::action_', $controller);
 		// if T_PAAMAYIM_NEKUDOTAYIM get exists
 		} elseif(strpos($controller, '::get_') !== false) {
-			$strs = explode('::action_', $controller);
+			$strs = explode('::get_', $controller);
 		} else {
 			$strs = explode('/', $controller);
 		}
@@ -125,7 +125,7 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function get_controllername($str = null, $default = false)
 	{
-		if (strpos($str, '::') !== false) return substr($str, 0, strpos($str, '::'));
+		if (strpos($str, DS) !== false) return substr($str, 0, strpos($str, DS));
 		return $str ?: $default;
 	}
 

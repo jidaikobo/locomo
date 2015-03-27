@@ -23,20 +23,20 @@ class Actionset_Scdl extends \Actionset
 	{
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
-				$controller.'::action_create',
-				$controller.'::action_edit',
-				$controller.'::action_delete',
-				$controller.'::action_copy',
-				$controller.'::action_viewdetail',
-				$controller.'::action_attend',
-				$controller.'::action_regchange',
-				$controller.'::action_somedelete',
-				$controller.'::action_calendar',
-				$controller.'::action_get_user_list',
-				$controller.'::action_get_building_list',
-				$controller.'::action_dashboard_week_calendar',
-				$controller.'::action_dashboard_today',
-				$controller.'::action_view_invisible', // action is not exist yet
+				$controller.'/create',
+				$controller.'/edit',
+				$controller.'/delete',
+				$controller.'/copy',
+				$controller.'/viewdetail',
+				$controller.'/attend',
+				$controller.'/regchange',
+				$controller.'/somedelete',
+				$controller.'/calendar',
+				$controller.'/get_user_list',
+				$controller.'/get_building_list',
+				$controller.'/dashboard_week_calendar',
+				$controller.'/dashboard_today',
+				$controller.'/view_invisible', // action is not exist yet
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'スケジューラの管理権限');
@@ -111,20 +111,19 @@ class Actionset_Scdl extends \Actionset
 		$ym_str = $y.DS.$m;
 
 		// uri
-		$actions = array(
+		$urls = array(
 			0 => array($controller.DS."calendar/", '今月'),
 			1 => array($controller.DS."calendar/".$ym_str, '月表示'),
 			3 => array($controller.DS."calendar/{$y}/{$m}/{$d}", '日表示'),
 		);
 		if ($controller == '\Controller_Scdl')
 		{
-			$actions[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member', '週表示');
+			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member', '週表示');
 		} else {
-			$actions[2] = array($controller.DS."calendar/".$week_1st_day.'/week/building', '週表示');
+			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/building', '週表示');
 		}
-		ksort($actions);
-		
-		$urls = static::generate_urls($controller.'::action_edit', $actions, ['create']);
+		ksort($urls);
+		$urls = \Request::main()->action == 'create' ? array() : $urls ;
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -142,8 +141,10 @@ class Actionset_Scdl extends \Actionset
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
-		$actions = array(array($controller.DS."create/", '新規作成'));
-		$urls = static::generate_urls($controller.'::action_create', $actions, ['create']);
+		if (\Request::main()->action != 'create')
+		{
+			$urls = array(array($controller.DS."create/", '新規作成'));
+		}
 
 		$retvals = array(
 			'urls'         => $urls ,
@@ -163,8 +164,7 @@ class Actionset_Scdl extends \Actionset
 	{
 		if(\Request::main()->action == 'edit' && $id)
 		{
-			$actions = array(array($controller.DS."viewdetail/" . $id, '閲覧'));
-			$urls = static::generate_urls($controller.'::action_viewdetail', $actions);
+			$urls = array(array($controller.DS."viewdetail/" . $id, '閲覧'));
 		}
 
 		$retvals = array(
@@ -184,8 +184,7 @@ class Actionset_Scdl extends \Actionset
 	{
 		if(\Request::main()->action == 'viewdetail' && $id)
 		{
-			$actions = array(array($controller.DS."edit/" . $id, '編集'));
-			$urls = static::generate_urls($controller.'::action_edit', $actions);
+			$urls = array(array($controller.DS."edit/" . $id, '編集'));
 		}
 
 		$retvals = array(
@@ -208,8 +207,7 @@ class Actionset_Scdl extends \Actionset
 			$schedule_data = \DB::select()->from("lcm_scdls_members")->where("schedule_id", $id)->where("user_id", \Auth::get('id'))->execute()->as_array();
 			// 自分がメンバーであった場合
 			if (count($schedule_data) > 0) {
-				$actions = array(array($controller.DS."attend/" . $id, '出席確認'));
-				$urls = static::generate_urls($controller.'::action_attend', $actions, ['']);
+				$urls = array(array($controller.DS."attend/" . $id, '出席確認'));
 			}
 		}
 
@@ -237,8 +235,7 @@ class Actionset_Scdl extends \Actionset
 			$d = \Uri::segment(6);
 			if ($datestr = strtotime("$y/$m/$d"))
 			{
-				$actions = array(array($controller.DS."somedelete/$id/".date('Y/m/d', $datestr), '部分削除', array('class' => 'confirm')));
-				$urls = static::generate_urls($controller.'::action_somedelete', $actions, ['']);
+				$urls = array(array($controller.DS."somedelete/$id/".date('Y/m/d', $datestr), '部分削除', array('class' => 'confirm')));
 			}
 		}
 
@@ -261,8 +258,7 @@ class Actionset_Scdl extends \Actionset
 
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb)
 		{
-			$actions = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
-			$urls = static::generate_urls($controller.'::action_regchange', $actions, ['']);
+			$urls = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
 		}
 
 		$retvals = array(
@@ -283,8 +279,7 @@ class Actionset_Scdl extends \Actionset
 	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array())
 	{
 		if (\Request::main()->action != 'edit' && $id) {
-			$actions = array(array($controller.DS."copy/?from=" . $id, 'コピー'));
-			$urls = static::generate_urls($controller.'::action_copy', $actions, []);
+			$urls = array(array($controller.DS."copy/?from=" . $id, 'コピー'));
 		}
 		$retvals = array(
 			'urls'         => $urls ,
@@ -324,8 +319,7 @@ class Actionset_Scdl extends \Actionset
 //			if (isset($obj->creator_id) && $obj->creator_id == \Auth::get('id'))
 //			if (isset($obj->user_id) && $obj->user_id == \Auth::get('id'))
 //			{
-				$actions = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
-				$urls = static::generate_urls($controller.'::action_delete', $actions, ['create']);
+				$urls = array(array($controller.DS."delete/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 //			}
 		}
 
@@ -348,9 +342,8 @@ class Actionset_Scdl extends \Actionset
 		$retvals = self::actionset_delete($controller, $obj, $id);
 		if (isset($obj->deleted_at) && is_null($obj->deleted_at) && $id)
 		{
-			$actions = array(array($controller.DS."delete_others/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
+			$urls = array(array($controller.DS."delete_others/".$id, '削除', array('class' => 'confirm', 'data-jslcm-msg' => '削除してよいですか？')));
 			// delete_othersのACLがなければ出さない
-			$urls = static::generate_urls($controller.'::action_delete_others', $actions, ['create']);
 		}
 
 		\Arr::set($retvals, 'urls', $urls);

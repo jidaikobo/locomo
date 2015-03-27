@@ -8,8 +8,11 @@ class Actionset_Acl extends \Actionset
 	public static function actionset_controller_index($controller, $obj = null, $id = null, $urls = array())
 	{
 		$retvals = array(
-			'urls'         => $urls ,
+			'urls'         => array(
+				array("\Controller_Acl/controller_index", 'アクセス権管理'),
+			) ,
 			'action_name'  => 'アクセス権管理',
+			'explanation'  => 'ユーザやユーザグループにコントローラへのアクセス権を付与します。',
 			'show_at_top'  => true,
 			'order'        => 1,
 		);

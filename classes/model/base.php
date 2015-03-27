@@ -122,7 +122,7 @@ class Model_Base extends \Orm\Model_Soft
 		static::add_authorize_methods();
 
 		// view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (\Auth::has_access($controller.'::action_view_anyway')) {
+		if (\Auth::has_access($controller.'/view_anyway')) {
 			static::disable_filter();
 		} else {
 			// モデルが持っている判定材料を、適宜$optionsに足す。
@@ -145,7 +145,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'::action_view_expired')
+			! \Auth::has_access($controller.'/view_expired')
 		)
 		{
 			$options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
@@ -174,7 +174,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'::action_index_yet')
+			! \Auth::has_access($controller.'/index_yet')
 		)
 		{
 			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
@@ -194,7 +194,7 @@ class Model_Base extends \Orm\Model_Soft
 		}
 		if (
 			(static::forge() instanceof \Orm\Model_Soft) &&
-			! \Auth::has_access($controller.'::action_view_deleted')
+			! \Auth::has_access($controller.'/view_deleted')
 		) {
 			static::enable_filter();
 		} else {
@@ -212,7 +212,7 @@ class Model_Base extends \Orm\Model_Soft
 
 		if (
 			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'::action_view_invisible')
+			! \Auth::has_access($controller.'/view_invisible')
 		) {
 			$options['where'][] = array($column, '=', true);
 		}

@@ -11,15 +11,15 @@ class Controller_Usr extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'ユーザ', // for human's name
 		'explanation'  => 'システムを利用するユーザの新規作成、編集、削除等を行います。',
-		'main_action'  => 'action_index_admin', // main action
+		'main_action'  => 'index_admin', // main action
 		'main_action_name' => 'ユーザ管理', // main action's name
 		'main_action_explanation' => '既存ユーザの一覧です。', // explanation of top page
 		'show_at_menu' => true, // true: show at admin bar and admin/home
 		'is_for_admin' => true, // true: hide from admin bar
 		'order'        => 1010, // order of appearance
 		'widgets' =>array(
-			array('name' => '新規ユーザ一覧', 'uri' => '\\Controller_Usr::action_index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
-			array('name' => '新規ユーザ登録', 'uri' => '\\Controller_Usr::action_create'),
+			array('name' => '新規ユーザ一覧', 'uri' => '\\Controller_Usr/index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
+			array('name' => '新規ユーザ登録', 'uri' => '\\Controller_Usr/create'),
 		),
 	);
 
@@ -87,9 +87,9 @@ class Controller_Usr extends \Locomo\Controller_Base
 	public static function user_auth_find($condition)
 	{
 		$checks = array(
-			'\Controller_Usr::action_view',
-			'\Controller_Usr::action_edit',
-			'\Controller_Usr::action_reset_paswd'
+			'\Controller_Usr/view',
+			'\Controller_Usr/edit',
+			'\Controller_Usr/reset_paswd'
 		);
 		if ( ! in_array($condition, $checks) || ! \Request::main()->controller == 'Controller_Usr')
 		{
@@ -109,8 +109,8 @@ class Controller_Usr extends \Locomo\Controller_Base
 
 		// add allowed to show links at actionset
 		\Auth::instance()->add_allowed(array(
-			'\Controller_Usr::action_edit',
-			'\Controller_Usr::action_view',
+			'\Controller_Usr/edit',
+			'\Controller_Usr/view',
 		));
 
 		return ($obj->id == \Auth::get('id')) ;
