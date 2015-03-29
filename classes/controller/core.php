@@ -112,10 +112,12 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 				return \Response::redirect(\Uri::create('auth/login?ret='.\Uri::string().$qstr));
 			}
 		}
+
 		// action not exists
 		$is_allow = true;
 		if (
 			! method_exists($called_class, 'action_'.$method) &&
+			! method_exists($called_class, 'post_'.$method) &&
 			! method_exists($called_class, 'get_'.$method)
 		)
 		{
