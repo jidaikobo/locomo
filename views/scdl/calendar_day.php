@@ -40,30 +40,32 @@
 					?>
 					<tr>
 						<?php foreach($schedule_data['schedules_list'] as $v) {?>
-						<?php $p_active = false; $s_active = false; $t_active = false; $f_active = false; ?>
+						<?php $p_active = ""; $s_active = ""; $t_active = ""; $f_active = ""; ?>
 						
 							<?php foreach ($v['data'] as $detail_data) {
 								foreach ($member_rowdata['data'] as $member_detail) {
 									if ($member_detail->id == $detail_data->schedule_id) {
+
 										if ($detail_data->primary)
-											$p_active = true;
+											$p_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
 										if ($detail_data->secondary)
-											$s_active = true;
+											$s_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
 										if ($detail_data->third)
-											$t_active = true;
+											$t_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
 										if ($detail_data->fourth)
-											$f_active = true;
+											$f_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
+											
 									}
 								}
 							}
 							?>
-						<td colspan="" class="<?php if ($p_active) { print "active"; } ?> bar" <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
+						<td colspan="" class="<?php if ($p_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($p_active) { print 'data-jslcm-tooltip-id="pop' . $p_active . '"'; } ?> <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
 						</td>
-						<td colspan="" class="<?php if ($s_active) { print "active"; } ?> bar" <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+						<td colspan="" class="<?php if ($s_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($s_active) { print 'data-jslcm-tooltip-id="pop' . $s_active . '"'; } ?> <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
 						</td>
-						<td colspan="" class="<?php if ($t_active) { print "active"; } ?> bar" <?php // if ($t_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+						<td colspan="" class="<?php if ($t_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($t_active) { print 'data-jslcm-tooltip-id="pop' . $t_active . '"'; } ?> <?php // if ($t_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
 						</td>
-						<td colspan="" class="<?php if ($f_active) { print "active"; } ?> bar" <?php // if ($f_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
+						<td colspan="" class="<?php if ($f_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($f_active) { print 'data-jslcm-tooltip-id="pop' . $f_active . '"'; } ?> <?php // if ($f_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
 						</td>
 						<?php } ?>
 					</tr>
