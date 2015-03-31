@@ -5,9 +5,6 @@ class Help_Scdl
 // index_admin
 public $index_admin = <<< EOF
 
-## アドレスの項目一覧
-
-
 ## 検索項目
 
 ### フリーワード
