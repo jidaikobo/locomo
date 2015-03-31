@@ -16,7 +16,7 @@
 <?php include("calendar_narrow.php"); ?>
 </div>
 <?php endif; ?>
-<table class="calendar week lcm_focus" title="カレンダ">
+<table class="calendar week <?php if (!\Request::is_hmvc()) echo 'lcm_focus" title="カレンダ';?>">
 <?php if(!\Request::is_hmvc()): ?>
 	<thead>
 		<tr>
