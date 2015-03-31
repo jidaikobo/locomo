@@ -207,7 +207,7 @@
 		<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
 	 </div><!-- /.legend.calendar -->
  <?php }else{ ?>
-予定の登録がありません
+<p tabindex="0">予定の登録がありません</p>
 <?php } ?>
 <?php if(!\Request::is_hmvc()): ?>
 </div><!-- /.field_wrapper -->
