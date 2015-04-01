@@ -558,6 +558,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 			\Session::set($model::$_kind_name . "narrow_bgid", "");
 			\Session::set($model::$_kind_name . "narrow_bid", "");
+			
 		}
 		if (\Input::get("uid", "not") != "not")
 			\Session::set($model::$_kind_name . "narrow_uid", \Input::get("uid"));
@@ -572,8 +573,19 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		if (\Input::get("bid", "not") != "not")
 			\Session::set($model::$_kind_name . "narrow_bid", \Input::get("bid"));
 
-
 		// 初期表示
+		if ($year == null || $year == "") {
+			// 指定がない場合
+			// 自分の代表グループIDを取得
+			$mydata = \Model_Usr::find(\Auth::get('id'));
+			if (\Input::get("ugid", "not") == "not" && $mydata->main_usergroup_id) {
+				\Session::set($model::$_kind_name . "narrow_ugid", $mydata->main_usergroup_id);
+				\Session::set($model::$_kind_name . "narrow_uid", "");
+
+				\Session::set($model::$_kind_name . "narrow_bgid", "");
+				\Session::set($model::$_kind_name . "narrow_bid", "");
+			}
+		}
 		if ($year == null || $year == "" || $year < 1000)
 			$year = date('Y');
 		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12)
@@ -644,7 +656,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
-		$view->set('narrow_user_group_list', \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false))), 'name'));
+
+		// ユーザーグループ一覧作成
+		$narrow_user_group_list = array();
+		// カスタムグループを先に作成
+//		$narrow_user_group_list = \Model_Usrgrp_Custom::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false))), 'name');
+//		// 一番上に見せるようにする
+		$narrow_user_group_list_custom = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', 'is not', null))), 'name');
+		$narrow_user_group_list_normal = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', null))), 'name');
+		foreach ($narrow_user_group_list_normal as $row) {
+			// array_mergeだとIDがおかしくなるためひとつずついれる
+			$narrow_user_group_list_custom[] = $row;
+		}
+		$view->set('narrow_user_group_list', $narrow_user_group_list_custom);
+
 		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
 
 		$view->set('narrow_user_list', \Model_Usr::find('all',
@@ -654,6 +679,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				'order_by' => 'pronunciation'
 				)
 			));
+
+
+		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		
 		if (\Session::get($model::$_kind_name . "narrow_bgid") > 0) {
@@ -669,6 +697,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				'where'=> $where
 				)
 			));
+
 		$view->set("model_name", $model);
 		$view->set('year', $year);
 		$view->set('mon', $mon);
