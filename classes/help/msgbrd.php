@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Help_Scdl
+class Help_Msgbrd
 {
 // index_admin
 public $index_admin = <<< EOF
