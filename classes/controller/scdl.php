@@ -558,7 +558,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 			\Session::set($model::$_kind_name . "narrow_bgid", "");
 			\Session::set($model::$_kind_name . "narrow_bid", "");
-			
+
 		}
 		if (\Input::get("uid", "not") != "not")
 			\Session::set($model::$_kind_name . "narrow_uid", \Input::get("uid"));
@@ -578,7 +578,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			// 指定がない場合
 			// 自分の代表グループIDを取得
 			$mydata = \Model_Usr::find(\Auth::get('id'));
-			if (\Input::get("ugid", "not") == "not" && $mydata->main_usergroup_id) {
+			if (\Input::get("ugid", "not") == "not" && $mydata && $mydata->main_usergroup_id) {
 				\Session::set($model::$_kind_name . "narrow_ugid", $mydata->main_usergroup_id);
 				\Session::set($model::$_kind_name . "narrow_uid", "");
 
