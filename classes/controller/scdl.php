@@ -187,6 +187,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						$errors[] = "同じ日時で重複しているデータが存在します。";
 					}
 					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
+var_dump( $this->_scdl_errors ) ;
+echo '</textarea>' ;
+
 					\Session::set_flash('error', $errors);
 				endif;
 			endif;
@@ -225,6 +230,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		} else {
 			$select_user_list = $this->template->content->item->user;
 			$select_building_list = $this->template->content->item->building;
+		}
+		
+		// $select_user_listがあれば編集と見なし、$cuurent_uidが通常のユーザであるか確認すして、初期値として足す
+		$cuurent_uid = \Auth::get('id');
+		if (empty($select_user_list) && $cuurent_uid >= 1)
+		{
+			// $select_user_listの配列に追加
+			$select_user_list[] = \Model_Usr::find($cuurent_uid);
 		}
 
 		$this->template->content->set("select_user_list", $select_user_list);
@@ -1606,21 +1619,24 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	private function check_error_scdl() {
 		$flg_exist = false;
 		$model = $this->model_name;
+		$target_id = "";
 		if ($model::$_kind_name == "scdl") {
 			// スケジューラの場合はメンバーが必須
 			$target_data = explode("/", \Input::post("hidden_members"));
 			$target_name = "メンバー";
+			$target_id = "kizon_members";
 		} else if ($model::$_kind_name == "reserve") {
 			// 施設予約の場合は施設が必須
 			$target_data = explode("/", \Input::post("hidden_buildings"));
 			$target_name = "施設";
+			$target_id = "kizon_buildings";
 		}
 		foreach ($target_data as $v) {
 			if ($v)
 				$flg_exist = true;
 		}
 		if (!$flg_exist) {
-			$this->_scdl_errors[] = $target_name . "を選択してください。";
+			$this->_scdl_errors[$target_id] = $target_name . "を選択してください。";
 		}
 		// 時間が反転
 		if (\Input::post("repeat_kb") == 0) {
