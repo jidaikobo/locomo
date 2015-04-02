@@ -63,11 +63,11 @@
  ?>
 		<td class="<?php print $class_str; ?>">
 			<div class="each_date lcm_focus" title="<?php echo $each_date_title_str ?>">
-				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $year, $mon, $schedule_row['day'])); ?>" class="title">
+				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])); ?>" class="title">
 					<span class="date_str"><?php print $date_str ?>日</span>
 					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
-				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $schedule_row['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
+				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 				<div class="events">
 					<?php
 					if (isset($schedule_row['day'])):

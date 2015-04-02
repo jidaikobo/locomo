@@ -16,7 +16,7 @@
 <?php include("calendar_narrow.php"); ?>
 </div>
 <?php endif; ?>
-<table class="calendar week lcm_focus" title="カレンダ">
+<table class="calendar week <?php if (!\Request::is_hmvc()) echo 'lcm_focus" title="カレンダ';?>">
 <?php if(!\Request::is_hmvc()): ?>
 	<thead>
 		<tr>
@@ -53,11 +53,11 @@ endif; ?>
 	<td class="week<?php echo $v['week']; echo $currentday == $v['day'] ? ' today' : '' ;?>">
 		<?php if (isset($v['day'])): ?>
 			<div class="each_date lcm_focus" title="<?php echo $each_date_title_str ?>">
-				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $year, $mon, $v['day'])); ?>" class="title">
+				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $v['year'], $v['mon'], $v['day'])); ?>" class="title">
 					<span class="date_str"><?php print $date_str ?>日</span>
 					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
-				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $v['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
+				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $v['year'], $v['mon'], $v['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 			
 			<div class="events">
 			<?php foreach ($v['data'] as $v2):
