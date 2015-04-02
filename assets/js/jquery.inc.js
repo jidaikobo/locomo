@@ -475,6 +475,7 @@ function set_lcm_focus(){
 	//?ない場合?：初回と、lcm_focus最上部で抜ける時。
 	var set_focus = function(target){
 		var target, parent, t; 
+		
 		$('.currentfocus').removeClass('currentfocus');
 		if(!esc){
 			$(document).set_tabindex();
@@ -485,15 +486,15 @@ function set_lcm_focus(){
 			$(document).set_tabindex();//重いかなあ。
 		}
 	
-	if(!esc){//抜けるリンクなどの準備
-		esc = $('<div id="esc_focus_wrapper" class="" style="display: none;" tabindex="0"><a id="esc_focus"  class="skip" href="javascript: void(0);" tabindex="-1" >抜ける</a></div>').appendTo($('body'));
+	if(!esc){//抜けるリンクなどの準備 //いったんtabindex="-1"をやめておく、あとでなおす
+		esc = $('<div id="esc_focus_wrapper" class="" style="display: none;" tabindex="0"><a id="esc_focus"  class="skip" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
 		lcm_focus.each(function(){
 			var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
 			$(this).attr('title', title_str+'エンターで入ります')
 		});
 	}
 
-		//targetの中にlcm_focusが中にあれば中身のtabindexを-1にする
+		//targetの中にlcm_focusがあれば中身のtabindexを-1にする
 		t = target ? target.find('.lcm_focus') : lcm_focus;
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
@@ -512,10 +513,10 @@ function set_lcm_focus(){
 			esc.hide();
 		}
 	}
-//チェックボックスにスペースキーでチェックを入れるとescが出せなくなる
 	/*=== esc_focus ===*/
 	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを1階層抜ける。
-	//おやを見られていない？
+	//クリックで抜けるが表示されると、リンクがうまく押せなかったりするので、なおす
+	//クリックの時がうまく抜けられていない（すべて抜けてしまう）
 	var esc_focus = function(e){
 		e = e ? e : event;//抜けるリンクはeがclickイベントになり、tが#esc_focusになる
 		e.preventDefault();
@@ -560,19 +561,6 @@ function set_lcm_focus(){
 			set_focus($(this));
 			e.stopPropagation();
 		}
-		/*
-		//IE6-9の場合、radioには-1を与えていても移動してしまう。lcm_fous上では次のtabbableに飛ばす
-		//逆タブ移動では、focus枠より先に中身にtabがあたるので、radio-1の場合の処理を書く
-		var body = $('body');
-		if(k == 9 && isLtie9){
-			var tabbable = $(':tabbable');
-			var index = tabbable.index(t);
-			if(!e.shiftKey){
-				tabbable.eq(index+1).focus();
-				e.preventDefault();
-			}
-		}
-		*/
 
 	});
 
@@ -581,10 +569,14 @@ function set_lcm_focus(){
 		e = e ? e : event;
 		var t, parent;
 		t = $(e.target);
-//	console.log($(t));
-		parent = t.closest('.lcm_focus')[0];
-		parent = parent ? $(parent) : $(document);
-		set_focus(parent);
+//		if(!t.is($('#esc_focus_wrapper'))){//escのクリックイベントが上に来るようだったらまずいけれど、inputのほうが先のようなので、とりあえず（ただしIEは要確認）
+			parent = t.closest('.lcm_focus')[0];
+//			if(!$(parent).hasClass('focusparent')){
+//				console.log($(t));
+//				parent = parent ? $(parent) : $(document);
+//				set_focus(parent);
+//			}
+//		}
 	})
 		
 //	$(document).on('focus', '#esc_focus', esc_focus);
