@@ -23,6 +23,9 @@ class Controller_Usr extends \Locomo\Controller_Base
 		),
 	);
 
+	// model_name
+	protected $model_name = '\Locomo\Model_Usr';
+
 	/**
 	 * before()
 	 */
@@ -78,6 +81,51 @@ class Controller_Usr extends \Locomo\Controller_Base
 
 		// to controller base
 		parent::index_admin();
+	}
+
+	/*
+	 * ajax グループIDからユーザリストを返す
+	 * shimizu@hinodeya-ecolife.com
+	 * @return users の配列
+	 */
+	public function post_user_list()
+	{
+		if (!\Input::is_ajax()) throw new \HttpNotFoundException;;
+		$where = array();
+
+		$gid = \Input::post("gid", 0);
+
+		switch ($gid)
+		{
+			// guest users - return nothing
+			case 0:
+				$where = array(array('usergroup.id', '=', 0));
+				break;
+			// all logged in users
+			case -10:
+				$where = array();
+				break;
+			// return users in group
+			default:
+				$where = array(array('usergroup.id', '=', $gid));
+				break;
+		}
+
+		$response = \Model_Usr::find('all',
+			array(
+				'related' => count($where) ? array('usergroup') : array(),
+				'where'=> $where,
+				'order_by' => array('username' => 'asc')
+				)
+			);
+		$result = array();
+		$index = 0;
+		foreach ($response as $row) {
+//			$row[0] = $index;
+			$index++;
+			$result[] = $row;
+		}
+		echo $this->response($result, 200); die();
 	}
 
 	/**

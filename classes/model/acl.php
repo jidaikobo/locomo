@@ -16,12 +16,12 @@ class Model_Acl extends \Orm\Model
 	/**
 	 * judge_set()
 	 *
-	 * @param str   $actions
-	 * @param array $actionsets
+	 * @param str   $controller
+	 * @param array $actions
 	 *
 	 * @return  array
 	 */
-	public static function judge_set($actions, $actionsets)
+	public static function judge_set($controller, $actions)
 	{
 		// 比較用にすべてのアクションセットを取得
 		// staticへの格納用にいったん取得までとする
@@ -36,20 +36,19 @@ class Model_Acl extends \Orm\Model
 
 		//アクションセットの条件を満たすものを抽出
 		$results = array();
-		foreach($all as $ctrl => $v)
+		foreach($all as $ctrl => $actionsets)
 		{
-			foreach($v as $realm => $actionsets)
+			foreach($actionsets as $actionset_name => $v)
 			{
-				foreach($actionsets as $actionset_name => $v)
+				if ( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
+				if ($controller != $ctrl) continue;
+				if ( ! array_diff($v['dependencies'], $actions))
 				{
-					if ( ! isset($v['dependencies']) || ! is_array($v['dependencies'])) continue;
-					if ( ! array_diff($v['dependencies'], $actions))
-					{
-						$results[] = $actionset_name;
-					}
+					$results[] = $actionset_name;
 				}
 			}
 		}
+
 		return $results;
 	}
 
@@ -61,26 +60,6 @@ class Model_Acl extends \Orm\Model
 		$usergroups = array('none' => '選択してください', 0 => 'ゲスト', '-10' => 'ログインユーザすべて');
 		$usergroups += \Model_Usrgrp::get_options(array('order_by' => array('seq' => 'ASC', 'name' => 'ASC') ), 'name') ?: array();
 		return $usergroups;
-	}
-
-	/**
-	 * get_users()
-	 */
-	public static function get_users()
-	{
-		$options['select'][] = 'username';
-//		$options['where'][] = array('is_visible', true);
-		$options['where'][] = array('created_at', '<', date('Y-m-d H:i:s'));
-		$options['where'][] = array(
-			array('expired_at', '>', date('Y-m-d H:i:s')),
-			'or' => array(
-				array('expired_at', 'is', null),
-			)
-		);
-		$users = array('none' => '選択してください');
-		$users += \Model_Usr::get_options($options, $label = 'username');
-
-		return $users;
 	}
 
 	/**

@@ -35,7 +35,6 @@ class Actionset_Hlp extends \Actionset
 			'urls'  => $urls,
 			'order' => 10,
 			'action_name' => '編集',
-			'acl_exp' => 'ヘルプの編集権限です。',
 			'dependencies' => array(
 				$controller.'/edit',
 			)

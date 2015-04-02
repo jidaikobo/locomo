@@ -22,12 +22,17 @@ class Model_Usr extends Model_Base
 		'username' => array(
 			'lcm_role' => 'subject',
 			'label' => 'ユーザ名',
-			'form' => array('type' => 'text', 'size' => 20, 'class' => 'username'),
+			'form' => array(
+				'type' => 'text',
+				'size' => 20,
+				'class' => 'username',
+				'description' => '半角英数字、ハイフン、アンダーバー、ドットで構成してください',
+			),
 			'validation' => array(
 				'required',
 				'max_length' => array(50),
 				'valid_string' => array(array('alpha','numeric','dot','dashes')),
-				'unique' => array("lcm_usrgrps.name"),
+				'unique' => array("lcm_usrs.username"),
 			),
 		),
 		'display_name' => array(
@@ -189,7 +194,7 @@ class Model_Usr extends Model_Base
 	public static function get_display_name($id)
 	{
 		// find()
-		if ($obj = \Model_Usr::find($id))
+		if ($obj = static::find($id))
 		{
 			return $obj->display_name;
 		// admins or empty
@@ -197,6 +202,26 @@ class Model_Usr extends Model_Base
 			$admins = [-1 => '管理者', -2 => 'root管理者'];
 			return \Arr::get($admins, $id, '');
 		}
+	}
+
+	/**
+	 * get_users()
+	 */
+	public static function get_users()
+	{
+		$options['select'][] = 'display_name';
+//		$options['where'][] = array('is_visible', true);
+		$options['where'][] = array('created_at', '<', date('Y-m-d H:i:s'));
+		$options['where'][] = array(
+			array('expired_at', '>', date('Y-m-d H:i:s')),
+			'or' => array(
+				array('expired_at', 'is', null),
+			)
+		);
+		$users = array('none' => '選択してください');
+		$users += static::get_options($options, $label = 'display_name');
+
+		return $users;
 	}
 
 	/**
@@ -320,12 +345,12 @@ class Model_Usr extends Model_Base
 
 		// 代表ユーザグループ
 		$form->field('main_usergroup_id')
+			->set_description('権限用ユーザグループは対象にならないので、所属していても候補にされません。')
 			->set_type('select')
 			->set_options($ugrps4main)
 			->set_value($obj->main_usergroup_id);
 
 		// usergroup can modified by admin only 
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', null))), 'name');
 		if (\Auth::is_admin())
 		{
 			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', null))), 'name');

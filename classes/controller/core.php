@@ -381,7 +381,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		\Profiler::mark('Locomo\\Controller_Core::base_assign() - actionset');
 		$default = ['index' => [], 'base' => [], 'ctrl' => []];
 		$actionset = \Actionset::get_actionset($controller, static::$obj, $default);
-		$actionset['index'] = \Arr::get($actionset, 'index', array());
+//		$actionset['index'] = \Arr::get($actionset, 'index', array());
 		$this->template->set_global('actionset', $actionset, false);
 
 		// Profiler

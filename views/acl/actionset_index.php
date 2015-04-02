@@ -1,4 +1,4 @@
-<h1>アクセス権の設定</h1>
+<h1>アクセス権の設定<?php if ($user): ?>（ユーザ単位）<?php else: ?>（ユーザグループ単位）<?php endif; ?></h1>
 
 <p><?php if ($user): ?>
 対象ユーザ：<code><?php echo $user ?></code><br />
@@ -7,33 +7,38 @@
 <?php endif; ?>
 対象コントローラ：<code><?php echo $ctrl_str ?></code></p>
 
+<ul>
+<?php if ($user): ?>
+	<li>ユーザグループ単位で許可されいてるアクションを不許可にはできません</li>
+<?php endif; ?>
+	<li>コンフィグで許可されいてるアクションを不許可にはできません</li>
+</ul>
+
 <?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_acl/')); ?>
-<h2>設定（ユーザグループ単位）</h2>
+<h2>設定</h2>
 
 <?php foreach($actionsets as $controller => $each_actionsets): ?>
-<h3><?php echo \Util::get_locomo($controller, 'nicename') ?></h3>
-	<?php foreach($each_actionsets as $realm => $each_actionset): ?>
 	<fieldset>
-	<legend><?php echo $realm ?></legend>
+	<legend><?php echo \Util::get_locomo($controller, 'nicename') ?></legend>
 	<table class="tbl2">
 	<?php
-		foreach($each_actionset as $action => $actionset):
+		foreach($each_actionsets as $action => $actionset):
 		if ( ! isset($actionset['action_name'])) continue;
-		?>
+		if ( ! isset($actionset['dependencies'])) continue;
+	?>
 		<tr>
 			<th style="width:30%">
 				<?php
-				$checked = in_array($action, $aprvd_actionset[$controller][$realm]) ? ' checked="checked"' : null ;
-				echo '<label>'.\Form::checkbox("acls[{$controller}][{$realm}][{$action}]", 1, array($checked)).' '.$actionset['action_name'].'</label><br />';
+				$checked = in_array($action, $aprvd_actionset[$controller]) ? ' checked="checked"' : null ;
+				echo '<label>'.\Form::checkbox("acls[{$controller}][{$action}]", 1, array($checked)).' '.$actionset['action_name'].'</label><br />';
 				?>
 			</th>
-			<td><?php echo @$actionset['acl_exp'] ?></td>
+			<td><?php echo @$actionset['explanation'] ?></td>
 		</tr>
 	<?php endforeach; ?>
 	</table>
 	</fieldset>
 	<?php
-	endforeach; 
 endforeach;
 ?>
 

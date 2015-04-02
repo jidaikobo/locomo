@@ -39,7 +39,6 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_404()
 	{
-//		\Session::delete_flash('error');
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
@@ -52,7 +51,6 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_403()
 	{
-//		\Session::delete_flash('error');
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
@@ -66,7 +64,9 @@ class Controller_Sys extends \Controller_Base
 	public function action_admin($ctrl = null)
 	{
 		$view = \View::forge('sys/admin');
+		$actionset = array();
 
+		// コントローラが与えられていなければ、システム全体のトップとして、コントローラ／モジュール一覧を表示
 		// if $ctrl is null, show link to modules and controllers
 		if (is_null($ctrl))
 		{
@@ -75,10 +75,12 @@ class Controller_Sys extends \Controller_Base
 		}
 		else
 		{
+			// コントローラが与えられているので、コントローラ／モジュールのアクションセットを表示
 			// show actionset of target module and controller
 			$ctrl = \Inflector::safestr_to_ctrl($ctrl);
 			$module = \Inflector::get_modulename($ctrl);
 
+			// モジュールなので複数のコントローラを相手にする
 			// is module's main controller or normal app controller?
 			if ($module)
 			{
@@ -93,47 +95,37 @@ class Controller_Sys extends \Controller_Base
 			}
 			else
 			{
+				// 通常のコントローラ
 				// this is not a module
 				$actionset[$ctrl] = \Actionset::get_actionset($ctrl);
 				$locomo = $ctrl::$locomo ;
 				$name = \Arr::get($locomo, 'nicename');
 			}
 
-			// if $actionset is not exist
-			if(! $actionset || ! $actionset[$ctrl])
-			{
-				$actionset = array($ctrl => array(
-					'base' => array()
-				));
-			}
-
 			// add 'main_action' action to actionset from controller::$locomo
-			if($actionset)
+			foreach ($actionset as $ctrl => $v)
 			{
-				foreach ($actionset as $k => $v)
+				$home      = \Arr::get($ctrl::$locomo, 'main_action');
+				$home_name = \Arr::get($ctrl::$locomo, 'main_action_name', $name);
+				$home_exp  = \Arr::get($ctrl::$locomo, 'main_action_explanation', $name.'のトップです。');
+				$actionset[$ctrl]['order'] = \Arr::get($ctrl::$locomo, 'order', 10);
+				if ($home && \Auth::has_access($ctrl.'/'.$home))
 				{
-					$home      = \Arr::get($k::$locomo, 'main_action');
-					$home_name = \Arr::get($k::$locomo, 'main_action_name', $name);
-					$home_exp  = \Arr::get($k::$locomo, 'main_action_explanation', $name.'のトップです。');
-					$actionset[$k]['order'] = \Arr::get($k::$locomo, 'order', 10);
-					if ($home && \Auth::has_access($k.'/'.$home))
-					{
-						$url       = $k.DS.$home;
-						$args = array(
-							'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($url), $home_name)),
-							'show_at_top' => true,
-							'explanation' => $home_exp
-						);
-						array_unshift($actionset[$k]['base'], $args); // add main action to top of base realm
-					}
+					$url = $ctrl.DS.$home;
+					$args = array(
+						'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($url), $home_name)),
+						'show_at_top' => true,
+						'explanation' => $home_exp
+					);
+					array_unshift($actionset[$ctrl], $args); // add main action to top
 				}
-
-				// order
-				$actionset = \Arr::multisort($actionset, array('order' => SORT_ASC));
 			}
+
+			// order
+			$actionset = \Arr::multisort($actionset, array('order' => SORT_ASC));
 
 			// assign
-			$view->set('actionset', $actionset, false);
+			$view->set('actionsets', $actionset, false);
 			$view->set_global('title', $name.' トップ');
 		}
 		$this->template->content = $view;

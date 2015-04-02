@@ -41,37 +41,41 @@ if (\Auth::check()):
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
 				$html.= '</div><!-- /.admin_controller -->';
 
-				$idxmenu = \Arr::get($actionset, 'index') ? \Actionset::generate_menu_html($actionset['index'], array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
-				if ($idxmenu):
+				// realmがbase,option,ctrl以外のアクションセットを取得
+				$indexes = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('base','option','ctrl'), $exclusive = true);
+				foreach ($indexes as $realm => $index):
+					$idxmenu = \Actionset::generate_menu_html($indexes[$realm], array('class'=>'semimodal menulist hidden_item boxshadow')) ;
 					$html.= '<div class="admin_index_list">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"インデクス一覧を開く\">インデクス<span class=\"skip\">エンターでメニューを開きます</span></a>";
 					$html.= $idxmenu;
 					$html.= '</div><!-- .admin_index_list -->';
-				endif;
+				endforeach;
 
-				$bases = \Arr::get($actionset, 'base', array());
+				$bases = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('base'));
 				// indexがない場合は、$ctrl_indexを表示
 				if ($ctrl_index && ! $idxmenu):
 					array_unshift($bases, array('urls' => array($ctrl_index)));
 				endif;
 				if ($bases):
 					$html.= '<div class="admin_context">';
-					$html.= \Actionset::generate_menu_html($bases, array('class'=>'horizontal_list'));
+					$html.= \Actionset::generate_menu_html($bases['base'], array('class'=>'horizontal_list'));
 					$html.= '</div><!-- .adminbar_context -->';
 				endif;
 
 			$html.= '</div><!-- .adminbar_main -->';
 
 			// context menu2
-			$html.= '<div class="adminbar_sub">';			
-			if (@$actionset['ctrl']):
+			$html.= '<div class="adminbar_sub">';
+			$ctrl = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('ctrl'));
+			if (@$ctrl):
 				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-				$html.= \Actionset::generate_menu_html($actionset['ctrl'], array('class'=>'horizontal_list'));
+				$html.= \Actionset::generate_menu_html($ctrl['ctrl'], array('class'=>'horizontal_list'));
 				$html.='</div><!-- /.admin_ctrl -->';
 			endif;
 			
 				// option menu
-				$optmenu = \Arr::get($actionset, 'option') ? \Actionset::generate_menu_html($actionset['option'], array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
+				$optmenu = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('option'));
+				$optmenu = $optmenu ? \Actionset::generate_menu_html($optmenu, array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
 
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';

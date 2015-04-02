@@ -22,7 +22,6 @@ class Actionset_Usrgrp_Custom extends \Actionset
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'カスタムユーザグループへの基本権限');
-		\Arr::set($retvals, 'acl_exp', 'カスタムユーザグループへの基本権限です。');
 		return $retvals;
 	}
 

@@ -16,7 +16,6 @@ trait Actionset_Traits_Revision
 			'urls'          => $urls ,
 			'action_name'  => '編集履歴',
 			'explanation'  => '編集履歴の閲覧。',
-			'acl_exp'      => '編集履歴閲覧の権限です。',
 			'order'        => 100,
 			'dependencies' => array(
 				$controller.'/view',

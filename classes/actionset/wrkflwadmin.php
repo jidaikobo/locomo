@@ -17,7 +17,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => 'ワークフロー閲覧',
 			'explanation'  => 'ワークフローを閲覧します。',
-			'acl_exp'      => 'ワークフローの閲覧権限です。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/view',
@@ -41,7 +40,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => 'ワークフロー名称の編集',
 			'explanation'  => 'ワークフロー名称の編集',
-			'acl_exp'      => 'ワークフロー名称の編集権限',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/view',
@@ -67,7 +65,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'action_name'  => '新規ワークフロー',
 			'show_at_top'  => true,
 			'explanation'  => '新規ワークフローを作成します。',
-			'acl_exp'      => '新規ワークフロー作成フォーム。管理者のみアクセス可能。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/view',
@@ -92,7 +89,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => '項目の削除',
 			'explanation'  => '項目を削除します。',
-			'acl_exp'      => '項目を削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 40,
 			'dependencies' => array(
 				$controller.'/view',
@@ -118,7 +114,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => '項目の復活',
 			'explanation'  => '削除された項目を復活します。',
-			'acl_exp'      => '削除された項目を復活する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.DS.'index',
@@ -144,7 +139,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'         => $urls,
 			'action_name'  => '項目の完全な削除',
 			'explanation'  => '削除された項目を復活できないように削除します。',
-			'acl_exp'      => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。',
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.'/view',
@@ -169,7 +163,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'         => $urls,
 			'action_name'  => '閲覧（削除された項目）',
 			'explanation'  => '削除された項目の閲覧します。',
-			'acl_exp'      => '削除された項目の閲覧権限です。削除権限、復活権限は別に設定する必要があります。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.'/view_deleted',
@@ -192,7 +185,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => 'ワークフローの設定',
 			'explanation'  => 'ワークフローの設定をします。',
-			'acl_exp'      => 'ワークフローの設定。管理者のみアクセス可能。',
 			'order'        => 10,
 			'dependencies' => array()
 		);
@@ -232,7 +224,6 @@ class Actionset_Wrkflwadmin extends \Actionset
 			'urls'          => $urls ,
 			'action_name'  => '一覧（削除された項目）',
 			'explanation'  => '削除された項目一覧です。',
-			'acl_exp'      => '削除された項目一覧の権限です。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.'/index_deleted',

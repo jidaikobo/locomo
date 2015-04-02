@@ -20,24 +20,14 @@ class Controller_Acl extends \Controller_Base
 	 */
 	public function action_controller_index()
 	{
-		// vals
-		$mod_or_ctrl = \Model_Acl::get_mod_or_ctrl();
-		$usergroups  = \Model_Acl::get_usergroups();
-		$users       = \Model_Acl::get_users();
-
-		// view
 		$view = \View::forge('acl/controller_index');
 		$view->set_global('title', 'コントローラ選択');
-		$view->set('mod_or_ctrl', $mod_or_ctrl);
-		$view->set('usergroups',  $usergroups);
-		$view->set('users',       $users);
 		$this->base_assign();
 		$this->template->content = $view;
 	}
 
 	/**
 	 * get_actionset()
-	 * 
 	 */
 	private static function get_actionset($mod_or_ctrl)
 	{
@@ -52,19 +42,6 @@ class Controller_Acl extends \Controller_Base
 			$actionsets[$ctrl] = \Actionset::get_actionset($ctrl);
 		}
 		if(empty($actionsets)) throw new \OutOfBoundsException('actionset not found');
-
-		// eliminate empty dependencies realm
-		foreach ($actionsets as $k => $v)
-		{
-			foreach ($v as $kk => $vv)
-			{
-				foreach ($vv as $kkk => $vvv)
-				{
-					if ( ! \Arr::get($vvv, 'dependencies')) unset($actionsets[$k][$kk][$kkk]);
-				}
-				if(empty($actionsets[$k][$kk])) unset($actionsets[$k][$kk]);
-			}
-		}
 		return $actionsets;
 	}
 
@@ -79,7 +56,7 @@ class Controller_Acl extends \Controller_Base
 		$usergroup_id = is_numeric(\Input::param('usergroup')) ? \Input::param('usergroup') : null;
 		$user_id      = is_numeric(\Input::param('user')) ? \Input::param('user') : null;
 
-		if (($mod_or_ctrl == null) || ($usergroup_id == null && $user_id == null))
+		if (($mod_or_ctrl == null) || ($mod_or_ctrl == 'none') || ($usergroup_id == null && $user_id == null))
 		{
 			\Session::set_flash('error', '必要項目を選択してから「次へ」を押してください。');
 			return \Response::redirect(\Uri::create('/acl/controller_index/'));
@@ -88,27 +65,49 @@ class Controller_Acl extends \Controller_Base
 		// vals
 		$controllers = \Model_Acl::get_mod_or_ctrl();
 		$usergroups  = \Model_Acl::get_usergroups();
-		$users       = \Model_Acl::get_users();
+		$users       = \Model_Usr::get_users();
 
 		// actionset
 		$actionsets = static::get_actionset($mod_or_ctrl);
 
+		// ユーザから所属ユーザグループを取得する
+		$usergroup_ids = array();
+		if ($user_id && ! $usergroup_id)
+		{
+			$usergroup_ids = \Model_Usrgrp::find('all',
+				array(
+					'related' => 'user',
+					'where' => array(array('user.id', '=', $user_id))
+				)
+			);
+			$usergroup_ids = array_keys($usergroup_ids);
+		}
+
 		// check database
 		$q = \DB::select('slug');
 		$q->from('lcm_acls');
-		$q->where('controller', 'IN', array_keys($actionsets));
-		if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
-		if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
+//		$q->where('controller', 'IN', array_keys($actionsets)); //これがあるとコントローラをまたがってACLを与えられない
+		if ($usergroup_ids && $user_id)
+		{
+			$q->where('usergroup_id', 'IN', $usergroup_ids);
+			$q->or_where('user_id', '=', $user_id);
+		} else {
+			if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
+			if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
+		}
 		$q->or_where('usergroup_id', '=', '-10');
 		$results = $q->execute()->as_array();
 		$results = \Arr::flatten($results, '_');
 
-		foreach($actionsets as $controller => $each_actionsets)
+		// Configで許されているアクションを取得
+		$always_allowed = \Config::get('always_allowed', array());
+		$always_user_allowed = \Config::get('always_user_allowed', array());
+		$results = array_merge($results, $always_allowed, $always_user_allowed);
+
+		// judge_set()
+		foreach($actionsets as $controller => $v)
 		{
-			foreach($each_actionsets as $realm => $actionset)
-			{
-				$aprvd_actionset[$controller][$realm] = \Model_Acl::judge_set($results, $actionset);
-			}
+			$aprvd_actionset[$controller] = \Model_Acl::judge_set($controller, $results);
 		}
 
 		// target controller name
@@ -157,43 +156,49 @@ class Controller_Acl extends \Controller_Base
 		if (\Input::method() == 'POST')
 		{
 			// CSRF
-			if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
+//			if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 			// delete all at first
-			$q = \DB::delete('lcm_acls');
-			$q->where('controller', 'IN', array_keys($actionsets));
-			if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
-			if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
-			$q->execute();
+			foreach ($actionsets as $ctrl => $actionset)
+			{
+				foreach ($actionset as $action_name => $v)
+				{
+					if ( ! isset($v['dependencies'])) continue;
+					$q = \DB::delete('lcm_acls');
+					$q->where('slug', 'IN', $v['dependencies']);
+					if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
+					if ( ! is_null($user_id)) $q->where('user_id', '=', $user_id);
+					$q->execute();
+				}
+			}
 
 			// update acl
-			if (is_array(\Input::post('acls')))
+			if (is_array($acls))
 			{
 				foreach($acls as $ctrl => $acl)
 				{
-					foreach($acl as $realm => $each_acls)
+					foreach($acl as $action => $v)
 					{
-						foreach($each_acls as $action => $v)
-						{
-							if ( ! \Arr::get($actionsets[$ctrl], $realm)) continue;
-							foreach($actionsets[$ctrl][$realm][$action]['dependencies'] as $each_action)
-							{
-								//format conditions
-								$each_action = \Inflector::add_head_backslash($each_action);
-								list($dpnd_controller, $dpnd_action) = explode(DS, $each_action);
+						if ( ! \Arr::get($actionsets[$ctrl], $action)) continue;
+						if ( ! isset($actionsets[$ctrl][$action]['dependencies'])) continue;
 
-								//insert
-								$q = \DB::insert('lcm_acls');
-								$q->set(array(
-									'controller'   => $dpnd_controller,
-									'action'       => $dpnd_action,
-									'slug'         => $each_action,
-									'usergroup_id' => $usergroup_id,
-									'user_id'      => $user_id
-									)
-								);
-								$q->execute();
-							}
+						foreach($actionsets[$ctrl][$action]['dependencies'] as $each_action)
+						{
+							//format conditions
+							$each_action = \Inflector::add_head_backslash($each_action);
+							list($dpnd_controller, $dpnd_action) = explode(DS, $each_action);
+
+							//insert
+							$q = \DB::insert('lcm_acls');
+							$q->set(array(
+								'controller'   => $dpnd_controller,
+								'action'       => $dpnd_action,
+								'slug'         => $each_action,
+								'usergroup_id' => $usergroup_id,
+								'user_id'      => $user_id
+								)
+							);
+							$q->execute();
 						}
 					}
 				}

@@ -20,7 +20,6 @@ class Actionset_Msgbrd extends \Actionset_Base
 			'action_name'  => '管理者向け一覧（通常項目）',
 			'show_at_top'  => false,
 			'explanation'  => 'メッセージボードの投稿一覧です。',
-			'acl_exp'      => 'メッセージボードの投稿一覧権限です。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/index_admin',
@@ -43,7 +42,6 @@ class Actionset_Msgbrd extends \Actionset_Base
 			'action_name'  => '下書き',
 			'show_at_top'  => true,
 			'explanation'  => 'メッセージボードの下書きの一覧です。',
-			'acl_exp'      => 'メッセージボードの下書きの一覧権限です。',
 			'order'        => 11,
 			'dependencies' => array(
 				$controller.'/index_draft',
@@ -68,7 +66,6 @@ class Actionset_Msgbrd extends \Actionset_Base
 			'action_name'  => 'カテゴリの設定',
 			'show_at_top'  => true,
 			'explanation'  => 'メッセージボードのカテゴリ設定です。',
-			'acl_exp'      => 'メッセージボードのカテゴリ設定権限です。',
 			'order'        => 100,
 			'dependencies' => array(
 				$controller.'/edit_categories',

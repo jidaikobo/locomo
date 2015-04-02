@@ -2,23 +2,19 @@
 namespace Locomo;
 class Actionset
 {
-	public static $actions     = array();
-	public static $mod_actions = array();
-	public static $disabled    = array();
+	public static $actions           = array();
+	public static $mod_actions       = array();
+	public static $disabled          = array();
 
 	/**
 	 * disabled()
-	 * @param array $args
+	 * @param array $args array('\Controller_FOO/bar',...)
 	 */
 	public static function disabled($args)
 	{
 		// add disabled
-		$controller = \Inflector::add_head_backslash(\Request::main()->controller);
-		foreach ($args as $realm => $action)
-		{
-			static::$disabled[$realm] = \Arr::get(static::$disabled, $realm, array());
-			\Arr::insert(static::$disabled[$realm], $action, 0);
-		}
+		$args = array_map(array('Inflector', 'ctrl_to_dir'), $args);
+		static::$disabled = array_merge(static::$disabled, $args);
 	}
 
 	/**
@@ -35,22 +31,60 @@ class Actionset
 		$actionsets = static::set_actionset($controller, $obj) ? static::$actions[$controller] : $default;
 
 		// check disabled
-		foreach (static::$disabled as $realm => $disables)
+		foreach ($actionsets as $action => $actionset)
 		{
-			foreach ($disables as $v)
+			if ( ! isset($actionset['urls']) || empty($actionset['urls'])) continue;
+			foreach (static::$disabled as $disabled_action)
 			{
-				\Arr::delete($actionsets[$realm], $v);
+				foreach ($actionset['urls'] as $k => $v)
+				{
+					if (strpos($v, $disabled_action)) unset($actionsets[$action]['urls'][$k]);
+				}
 			}
 		}
 
-		// set base realm first
-		$base = \Arr::get($actionsets, 'base');
-		$retvals = array();
-		if ($base) \Arr::set($retvals, 'base', $base);
-		foreach ($actionsets as $realm => $v)
+		// update
+		static::$actions[$controller] = $actionsets;
+		return $actionsets;
+	}
+
+	/**
+	 * get_actionset_by_realm()
+	 * @param string $controller controller full class name
+	 * @param array realm name
+	 * @param bool $exclusive
+	 * exclusiveで条件を反転
+	 * @return array()
+	 */
+	public static function get_actionset_by_realm($controller, $realms = array(), $exclusive = false)
+	{
+		// check existence
+		$controller = \Inflector::add_head_backslash($controller);
+		if ( ! isset(static::$actions[$controller])) throw new \Exception("this method must be called after \\Actionset::get_actionset()");
+
+		// retvals
+		$retvals = array() ;
+		if ($exclusive)
 		{
-			if ($realm == 'base') continue;
-			\Arr::set($retvals, $realm, $v);
+			foreach (static::$actions[$controller] as $ctrl => $action)
+			{
+				$retvals[$action['realm']][$ctrl] = $action;
+			}
+		}
+
+		// generate
+		foreach (static::$actions[$controller] as $ctrl => $action)
+		{
+			$realm = \Arr::get($action, 'realm');
+			if ($exclusive)
+			{
+				if (in_array($realm, $realms))
+				{
+					unset($retvals[$realm]);
+				}
+			} elseif (in_array($realm, $realms)) {
+				$retvals[$realm][$ctrl] = $action;
+			}
 		}
 
 		return $retvals;
@@ -137,7 +171,8 @@ class Actionset
 			// require "urls" or "dependencies"
 			if (\Arr::get($as, 'urls.0') || \Arr::get($as, 'dependencies.0'))
 			{
-				$realm = \Arr::get($as, 'realm', 'base');
+				$realm       = \Arr::get($as, 'realm', 'base');
+				$as['realm'] = $realm;
 				$as['order'] = \Arr::get($as, 'order', 10);
 
 				// auth check
@@ -162,7 +197,7 @@ class Actionset
 					}
 				}
 				if (isset($as['urls'])) $as['urls'] = array_unique($as['urls']);
-				static::$actions[$controller][$realm][$method] = $as;
+				static::$actions[$controller][$method] = $as;
 			}
 		}
 		if (empty(static::$actions[$controller])) return false;
@@ -170,9 +205,9 @@ class Actionset
 		// order
 		foreach (static::$actions[$controller] as $realm => $v)
 		{
-			static::$actions[$controller][$realm] = \Arr::multisort(
-				static::$actions[$controller][$realm],
-				array('order' => SORT_ASC,)
+			static::$actions[$controller] = \Arr::multisort(
+				static::$actions[$controller],
+				array('realm' => SORT_ASC, 'order' => SORT_ASC,)
 			);
 		}
 
@@ -191,13 +226,19 @@ class Actionset
 	public static function add_actionset($controller, $realm, $arr = array())
 	{
 		$controller = \Inflector::add_head_backslash($controller);
-		if ( ! isset(static::$actions[$controller][$realm]))
+		$key = md5(serialize($arr));
+
+		if ( ! isset(static::$actions[$controller]))
 		{
-			static::$actions[$controller][$realm]['added'] = array();
+			static::$actions[$controller][$key] = array();
 		}
-		 // orderが設定されてなければ10にする。
+
+		// set order and realm
 		\Arr::set($arr, 'order', \Arr::get($arr, 'order', 10));
-		static::$actions[$controller][$realm]['added'] += $arr;
+		\Arr::set($arr, 'realm', $realm);
+
+		// set value
+		static::$actions[$controller][$key] = $arr;
 	}
 
 	/**
@@ -214,6 +255,7 @@ class Actionset
 			}
 		}
 		if ( ! $arr) return false;
+		$arr = array_unique($arr);
 
 		return \Html::ul($arr, $ul_attr);
 	}
@@ -227,7 +269,7 @@ class Actionset
 			'urls'         => $urls,
 			'action_name'  => '管理権限',
 			'show_at_top'  => false,
-			'acl_exp'      => \Util::get_locomo($controller, 'nicename').'の管理権限です。すべての行為が許されます。',
+			'explanation'  => \Util::get_locomo($controller, 'nicename').'の管理権限です。',
 			'order'        => 0,
 		);
 		return $retvals;

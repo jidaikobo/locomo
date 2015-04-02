@@ -8,11 +8,10 @@ class Actionset_XXX extends \Actionset_Base
 
 	/*
 	(str)  realm         メニューの表示位置。デフォルトはbase
-	(arr)  urls          メニューに表示するリンク先
+	(arr)  urls          メニューに表示するリンク先。\Controller_Foo/actionの形式
 	(bool) show_at_top   モジュール／コントローラトップに表示するかどうか
 	(str)  action_name   ACL設定画面などで用いる
 	(str)  explanation   モジュール先頭画面等で用いる説明文
-	(str)  acl_exp       ACL設定画面などで用いる説明文
 	(int)  order         表示順
 	(arr)  dependencies  このアクションセットが依存するアクション
 	*/
@@ -30,9 +29,8 @@ class Actionset_XXX extends \Actionset_Base
 		$retvals = array(
 			'urls'         => $urls ,
 			'action_name'  => 'sample_action',
-			'show_at_top'  => true,
 			'explanation'  => 'explanation of sample_action',
-			'acl_exp'      => 'explanation of sample_action for acl',
+			'show_at_top'  => true,
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/sample_action',

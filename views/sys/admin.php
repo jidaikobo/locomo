@@ -3,26 +3,24 @@
 if ( ! isset($is_main_action)):
 	$html = '';
 	$html.= '<h1>'.$title.'</h1>';
-	if ($actionset):
-		foreach($actionset as $k => $v):
+	if ($actionsets):
+		foreach($actionsets as $ctrl => $actionset):
 			// 表示できるようなアクションセットがあるかどうかはまわしてみるまでわからないので、一度まわす。
 			$table = '';
-			foreach($v as $kk => $vv):
-			if ($kk == 'order') continue;
-				foreach($vv as $kkk => $vvv):
-					if (\Arr::get($vvv, 'show_at_top') == false) continue;
-					if (\Arr::get($vvv, 'urls') == false) continue;
-						$table.= '<tr>';
-							$table.= '<th class="ctrl">';
-							$table.= '<ul style="text-align: left;"><li>'.join('</li><li>',$vvv['urls']).'</ul>';
-							$table.= '</th>';
-							$table.= '<td>'.$vvv['explanation'].'</td>';
-						$table.= '</tr>';
-				endforeach;
+			foreach($actionset as $action => $v):
+				if ($action == 'order') continue;
+				if (\Arr::get($v, 'show_at_top') == false) continue;
+				if (\Arr::get($v, 'urls') == false) continue;
+					$table.= '<tr>';
+						$table.= '<th class="ctrl">';
+						$table.= '<ul style="text-align: left;"><li>'.join('</li><li>',$v['urls']).'</ul>';
+						$table.= '</th>';
+						$table.= '<td>'.$v['explanation'].'</td>';
+					$table.= '</tr>';
 			endforeach;
 
 			// 表示できるようなアクションセットがあれば、見出しを付けて表示
-			$html.= $table ? '<h2>'.$k::$locomo['nicename'].'</h2><table class="tbl2">'.$table.'</table>' : '';
+			$html.= $table ? '<h2>'.\Util::get_locomo($ctrl, 'nicename').'</h2><table class="tbl2">'.$table.'</table>' : '';
 		endforeach;
 	else:
 	endif;

@@ -13,13 +13,13 @@
 <p>
 <?php
 	echo \Form::label('コントローラをドロップダウンから選択', 'mod_or_ctrl');
-	echo \Form::select('mod_or_ctrl', 'none', $mod_or_ctrl);
+	echo \Form::select('mod_or_ctrl', 'none', \Model_Acl::get_mod_or_ctrl());
 ?>
 </p>
 <p>
 <?php
 	echo \Form::label('ユーザグループをドロップダウンから選択', 'usergroup');
-	echo \Form::select('usergroup', 'none', $usergroups);
+	echo \Form::select('usergroup', 'none', \Model_Acl::get_usergroups());
 ?>
 </p>
 <p>
@@ -38,13 +38,14 @@
 <p>
 <?php
 	echo \Form::label('コントローラをドロップダウンから選択', 'mod_or_ctrl');
-	echo \Form::select('mod_or_ctrl', 'none', $mod_or_ctrl);
+	echo \Form::select('mod_or_ctrl', 'none', \Model_Acl::get_mod_or_ctrl());
 ?>
 </p>
 <p>
 <?php
-	echo \Form::label('ユーザをドロップダウンから選択', 'user');
-	echo \Form::select('user', 'none', $users);
+	echo \Form::label('ユーザをドロップダウンから選択', 'usergroup');
+	echo \Form::select('group_list', 'none', \Model_Acl::get_usergroups());
+	echo \Form::select('user', 'none', \Model_Usr::get_users());
 ?>
 </p>
 <p>
@@ -56,3 +57,31 @@
 </fieldset>
 <?php echo \Form::close(); ?>
 
+<script>
+// ユーザグループによるユーザの絞り込み
+$("#form_group_list").change(function(event) {
+	get_group_user(event, $("#form_group_list").val(), "form_user");
+});
+
+var base_uri = $('body').data('uri');
+function get_group_user(e, groupId, targetEle) {
+
+	var targetEle = targetEle;
+	var group_id = groupId;
+
+	$.ajax({
+		url: base_uri + 'usr/user_list.json',
+		type: 'post',
+		data: 'gid=' + group_id,
+		success: function(res) {
+			exists = JSON.parse(res);
+
+			document.getElementById(targetEle).options.length=0;
+
+			for(var i in exists) {
+				$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
+			}
+		}
+	});
+}
+</script>

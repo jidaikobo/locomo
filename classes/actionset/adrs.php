@@ -24,7 +24,6 @@ class Actionset_Adrs extends \Actionset_Base
 			'action_name'  => 'グループの設定',
 			'show_at_top'  => true,
 			'explanation'  => 'アドレス帳のグループ設定です。',
-			'acl_exp'      => 'アドレス帳のグループ設定権限です。',
 			'order'        => 100,
 			'dependencies' => array(
 				$controller.'/edit_adrsgrp',

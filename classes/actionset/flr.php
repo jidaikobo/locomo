@@ -20,12 +20,11 @@ class Actionset_Flr extends \Actionset
 			'\Controller_Flr_File/purge_file',
 			'\Controller_Flr_File/upload',
 			'\Controller_Flr_File/view',
+			'\Controller_Flr_File/dl',
 			'\Controller_Flr_Sync/sync',
-			'\Controller_Flr_Sync/dl',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		\Arr::set($retvals, 'action_name', 'ファイラへのアクセス権');
-		\Arr::set($retvals, 'acl_exp', 'ファイラの個別のアクセス権は、ファイルがアップロードされるディレクトリごとに設定します。ここで管理権限を設定しても、ディレクトリで設定された権限が優先します。');
 		return $retvals;
 	}
 
@@ -40,7 +39,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ダウンロード',
 			'show_at_top'  => true,
 			'explanation'  => 'ダウンロードします。',
-			'acl_exp'      => 'ダウンロード権限。',
 			'order'        => 10,
 			'dependencies' => array(
 				'\Controller_Flr_File/dl',
@@ -88,7 +86,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => '同期',
 			'show_at_top'  => false,
 			'explanation'  => 'ディレクトリとデータベースの内容を同期します。',
-			'acl_exp'      => 'ディレクトリとデータベースの内容を同期する権限です。',
 			'order'        => 100,
 		);
 		return $retvals;
@@ -129,7 +126,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => '新規作成',
 			'show_at_top'  => false,
 			'explanation'  => '新しい項目を追加します。',
-			'acl_exp'      => '新規アップロード権限。',
 			'order'        => 20,
 		);
 		return $retvals;
@@ -153,7 +149,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ディレクトリ作成、編集、削除',
 			'show_at_top'  => true,
 			'explanation'  => '新しいディレクトリを追加します。',
-			'acl_exp'      => 'ディレクトリ作成、編集、削除権限。',
 			'order'        => 30,
 		);
 
@@ -223,7 +218,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ファイル編集',
 			'show_at_top'  => false,
 			'explanation'  => 'ファイル編集',
-			'acl_exp'      => 'ファイル編集（名称変更等）権限。',
 			'order'        => 50,
 		);
 
@@ -245,7 +239,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ファイル詳細',
 			'show_at_top'  => false,
 			'explanation'  => 'ファイル詳細',
-			'acl_exp'      => 'ファイル詳細閲覧権限。',
 			'order'        => 50,
 		);
 
@@ -270,7 +263,6 @@ class Actionset_Flr extends \Actionset
 			'action_name'  => 'ファイル削除',
 			'show_at_top'  => false,
 			'explanation'  => 'ファイル削除',
-			'acl_exp'      => 'ファイル削除権限。',
 			'order'        => 60,
 		);
 

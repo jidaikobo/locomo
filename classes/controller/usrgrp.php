@@ -18,6 +18,9 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 		'order'        => 1020, // order of appearance
 	);
 
+	// model_name
+	protected $model_name = '\Locomo\Model_Usrgrp';
+
 	/**
 	 * action_index_admin()
 	 */

@@ -39,7 +39,6 @@ trait Actionset_Traits_Wrkflw
 			'urls'         => $urls,
 			'action_name'  => 'ワークフロー承認項目一覧',
 			'explanation'  => '現在承認すべき項目の一覧です。',
-			'acl_exp'      => '現在承認すべき項目の一覧です。「ワークフロー作業」「ワークフロー承認」権限と同時に自動的に付与されます。',
 			'order'        => 100,
 			'dependencies' => array(
 				$controller.'/index_workflow',
@@ -56,7 +55,6 @@ trait Actionset_Traits_Wrkflw
 		$retvals = array(
 			'action_name'  => 'ワークフロー作業',
 			'explanation'  => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限を行います。',
-			'acl_exp'      => 'ワークフロー管理下コントローラにおける新規作成、申請、編集権限です。不可視項目の閲覧権限などに依存します。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/view',
@@ -83,7 +81,6 @@ trait Actionset_Traits_Wrkflw
 			'url'          => '',
 			'action_name'  => 'ワークフロー承認',
 			'explanation'  => 'ワークフロー管理下コントローラにおける承認権限です。',
-			'acl_exp'      => 'ワークフロー管理下コントローラにおける承認権限です。承認設定は、ワークフローコントローラの経路設定で別途設定します。',
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/index',
@@ -126,8 +123,8 @@ trait Actionset_Traits_Wrkflw
 			if (\Auth::has_access($controller.'/apply'))
 			{
 				$urls = array(
-					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/apply/{$obj->id}"), '承認申請'),
-					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/route/{$obj->id}"), '経路再設定')
+					array("{$controller}/apply/{$obj->id}", '承認申請'),
+					array("{$controller}/route/{$obj->id}", '経路再設定')
 				);
 			}
 		}
@@ -138,9 +135,9 @@ trait Actionset_Traits_Wrkflw
 			if ($obj->workflow_status == 'in_progress' && in_array($user_id, $members))
 			{
 				$urls = array(
-					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/approve/{$obj->id}"), '承認'),
-					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/remand/{$obj->id}"), '差戻し'),
-					\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/reject/{$obj->id}"), '却下'),
+					array("{$controller}/approve/{$obj->id}", '承認'),
+					array("{$controller}/remand/{$obj->id}", '差戻し'),
+					array("{$controller}/reject/{$obj->id}", '却下'),
 				);
 			}
 			$menu_str = '';
@@ -154,7 +151,10 @@ trait Actionset_Traits_Wrkflw
 		// ワークフロー進行中は編集と削除はできない
 		if ($obj->workflow_status == 'in_progress')
 		{
-			\Actionset::disabled(array('base' => array('edit','delete')));
+			\Actionset::disabled(array(
+				$controller.'/edit',
+				$controller.'/delete'
+			));
 		}
 
 		//経路が設定されていなければ、申請できない。経路設定URLを表示
@@ -164,14 +164,13 @@ trait Actionset_Traits_Wrkflw
 			$obj->workflow_status !== 'finish'
 		)
 		{
-			$urls = array(\Html::anchor(\Inflector::ctrl_to_dir("{$controller}/route/{$obj->id}"), '経路設定')) ;
+			$urls = array(array("{$controller}/route/{$obj->id}", '経路設定')) ;
 		}
 
 		$retvals = array(
 			'urls'         => $urls,
 			'action_name'  => 'ワークフロー作業（承認申請）',
 			'explanation'  => 'ワークフロー管理下コントローラにおける承認申請です。',
-			'acl_exp'      => 'ワークフロー管理下コントローラにおける承認申請です。「ワークフロー作業」を有効にすると自動的に有効になります。',
 			'order'        => 100,
 			'dependencies' => array()
 		);

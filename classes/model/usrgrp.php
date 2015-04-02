@@ -75,11 +75,13 @@ class Model_Usrgrp extends \Model_Base
 		)
 	);
 
+	//$_soft_delete
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
 		'mysql_timestamp' => true,
 	);
 
+	//$_observers
 	protected static $_observers = array(
 		"Orm\Observer_Self" => array(),
 		'Locomo\Observer_Created' => array(

@@ -118,7 +118,6 @@ return array(
 			'urls'         => $urls ,
 			'show_at_top'  => false,
 			'action_name'  => '編集（通常項目）',
-			'acl_exp'      => '通常項目の編集権限',
 			'explanation'  => '通常項目を編集します',
 			'help'         => '編集のヘルプ',
 			'order'        => 30,
