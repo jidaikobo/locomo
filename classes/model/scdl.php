@@ -112,6 +112,7 @@ class Model_Scdl extends \Model_Base
 								, '5' => '金'
 								, '6' => '土'),
 				'class' => 'int',
+				'title' => '曜日',
 			),
 		),
 		'week_index' => 
@@ -128,6 +129,7 @@ class Model_Scdl extends \Model_Base
 								, '5' => '5'
 								),
 				'class' => 'int',
+				'title' => '第何週',
 			),
 		),
 		'delete_day' => 

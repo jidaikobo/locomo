@@ -101,7 +101,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<div class="input_group">
 	<h2><span class="label_required">必須</span>メンバー</h2>
 		<div class="field">
-			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
+			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
 				<select id="group_list" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
 					<?php foreach($group_list as $key => $value) { ?>
@@ -138,7 +138,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<div class="input_group">
 		<h2><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</h2>
 		<div class="field">
-			<div id="building_panel" class="lcm_focus" title="施設の選択">
+			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<select id="building_group_list" title="施設グループ絞り込み">
 					<option value="">絞り込み：全施設
 					<?php foreach($building_group_list as $row) { ?>
@@ -323,23 +323,32 @@ function change_repeat_kb_area() {
 	}
 
 	//区分選択により時間入力欄を移動 tabindex制御されているときに別のブロックに移動する時のふるまいは個別に設定しないといけない？
-	var start_time, end_time, field;
-	start_time = $('#form_start_time');
-	end_time   = $('#form_end_time');
-	field      = $('#field_set_time');
-	if(repeat_kb == 0){
-		field.hide();
-		start_time.attr('tabindex', '-1').appendTo('#span_date_start');
-		end_time.attr('tabindex', '-1').appendTo('#span_date_end');
-	}else{
-		field.prepend(start_time).append(end_time).show();
-		if(field.closest('.lcm_focus').attr('tabindex') == '-1'){
-			start_time.attr('tabindex', '-1');
-			end_time.attr('tabindex', '-1');
+
+	setTimeout(move_time_inputfield, 250);
+//	move_inputfield();
+	//lcm_focusのフォーカス制御があるので、遅延させる
+	//タイムラグの間にキーボード操作(tab)を受け付けるとちょっとまずい？
+	function move_time_inputfield(){
+		var start_time, end_time, field, input;
+		start_time = $('#form_start_time');
+		end_time   = $('#form_end_time');
+		field      = $('#field_set_time');
+		input     = start_time.add(end_time);
+		if(repeat_kb == 0){
+			field.hide();
+			start_time.appendTo('#span_date_start');
+			end_time.appendTo('#span_date_end');
 		}else{
-			start_time.attr('tabindex', '0');
-			end_time.attr('tabindex', '0');
+			field.prepend(start_time).append(end_time).show();
 		}
+
+		input.each(function(){
+			if(repeat_kb == 0){
+				$(this).attr('tabindex', -1);
+			}else{
+				$(this).attr('tabindex', 0);
+			}
+		});
 	}
 
 	//区分選択により、期間の入力欄の種類を変更 //入力が未対応なのでコメントアウト
