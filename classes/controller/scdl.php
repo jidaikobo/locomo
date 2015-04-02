@@ -231,15 +231,26 @@ echo '</textarea>' ;
 			$select_user_list = $this->template->content->item->user;
 			$select_building_list = $this->template->content->item->building;
 		}
-		
-		// $select_user_listがあれば編集と見なし、$cuurent_uidが通常のユーザであるか確認すして、初期値として足す
-		$cuurent_uid = \Auth::get('id');
-		if (empty($select_user_list) && $cuurent_uid >= 1)
+
+		// $select_user_listがあれば編集と見なし、$default_uidがあれば初期値として足す
+		$default_uid = \Input::get('member_id');
+		if (empty($select_user_list) && $default_uid)
 		{
 			// $select_user_listの配列に追加
-			$select_user_list[] = \Model_Usr::find($cuurent_uid);
+			if(\Model_Usr::find(intval($default_uid))):
+				$select_user_list[$default_uid] = \Model_Usr::find($default_uid);
+			endif;
+		}
+		
+		// $default_uidが$cuurent_uidと異なれば、通常のユーザであるか確認して、初期値として足す
+		$cuurent_uid = \Auth::get('id');
+		if ( $cuurent_uid >= 1 && $default_uid != $cuurent_uid)
+		{
+			// $select_user_listの配列に追加
+			$select_user_list[$cuurent_uid] = \Model_Usr::find($cuurent_uid);
 		}
 
+		
 		$this->template->content->set("select_user_list", $select_user_list);
 		if (!$id && \Session::get($model::$_kind_name . "narrow_ugid") && $model::$_kind_name=="scdl" && count($select_user_list) == 0) {
 			$non_selected_user_list = \Model_Usr::find('all',
@@ -260,6 +271,16 @@ echo '</textarea>' ;
 		
 		$this->template->content->set("non_selected_user_list", $non_selected_user_list);
 
+
+		// $select_building_listがない場合、$default_bidがあれば初期値として足す
+		$default_bid = \Input::get('building_id');
+		if (empty($select_building_list) && $default_bid)
+		{
+			// $select_building_listの配列に追加
+			if(\Model_Scdl_Item::find(intval($default_bid))):
+				$select_building_list[$default_bid] = \Model_Scdl_Item::find($default_bid);
+			endif;
+		}
 		
 		if (!$id && \Session::get($model::$_kind_name . "narrow_bgid") && $model::$_kind_name=="reserve" && count($select_building_list) == 0) {
 			$non_selected_building_list = \Model_Scdl_Item::find('all',

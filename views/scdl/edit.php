@@ -362,6 +362,7 @@ function change_repeat_kb_area() {
 }
 
 //終日選択反映
+//終日選択されている時のinput.timeでtimepickerをよびだしたくない
 is_allday();
 $('#form_allday_kb').change(function(){
 	is_allday()
