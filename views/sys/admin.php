@@ -8,7 +8,7 @@ if ( ! isset($is_main_action)):
 			// 表示できるようなアクションセットがあるかどうかはまわしてみるまでわからないので、一度まわす。
 			$table = '';
 			foreach($actionset as $action => $v):
-				if ($action == 'order') continue;
+				if ($action === 'order') continue;
 				if (\Arr::get($v, 'show_at_top') == false) continue;
 				if (\Arr::get($v, 'urls') == false) continue;
 					$table.= '<tr>';
