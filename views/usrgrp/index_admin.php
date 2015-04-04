@@ -1,4 +1,4 @@
-<?php //echo $search_form; ?>
+<?php echo \Model_Usrgrp::search_form(); ?>
 
 <?php if ($items): ?>
 <table class="tbl datatable tbl_scrollable lcm_focus" title="項目一覧">

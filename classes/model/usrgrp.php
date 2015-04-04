@@ -92,4 +92,26 @@ class Model_Usrgrp extends \Model_Base
 			'events' => array('after_insert', 'after_save'),
 		),
 	);
+
+	/**
+	 * search_form()
+	*/
+	public static function search_form()
+	{
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('user', $config);
+
+		// 検索
+		$form->add(
+			'all',
+			'フリーワード',
+			array('type' => 'text', 'value' => \Input::get('all'))
+		);
+
+		// wrap
+		$parent = parent::search_form_base('ユーザグループ');
+		$parent->add_after($form, 'user', array(), array(), 'opener');
+
+		return $parent;
+	}
 }
