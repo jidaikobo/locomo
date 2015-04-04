@@ -33,6 +33,19 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 			),
 			'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
 		);
+
+		// free word search
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
+		{
+			\Model_Usrgrp::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+				'or' => array(
+					array('description', 'LIKE', $all),
+				) 
+			);
+		}
+
 		parent::index_admin();
 	}
 
