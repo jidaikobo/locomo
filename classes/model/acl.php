@@ -30,6 +30,13 @@ class Model_Acl extends \Orm\Model
 		{
 			foreach (\Util::get_mod_or_ctrl() as $ctrl => $v)
 			{
+				$module = \Inflector::get_modulename($controller, $default = '');
+				if ($module)
+				{
+					\Module::loaded($module) or \Module::load($module);
+					$all = array_merge($all, \Actionset::get_module_actionset($module));
+				}
+
 				$all[$ctrl] = \Actionset::get_actionset($ctrl);
 			}
 		}
@@ -48,7 +55,6 @@ class Model_Acl extends \Orm\Model
 				}
 			}
 		}
-
 		return $results;
 	}
 
