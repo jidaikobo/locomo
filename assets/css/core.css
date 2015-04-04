@@ -2089,6 +2089,16 @@ a.icon.zip:before {
 	right: 0;
 	background-color: #fff;
 }
+#esc_focus_wrapper:focus #esc_focus,
+#esc_focus:focus {
+	left: auto;
+	clip: auto;
+	dislay: block;
+	padding:5px 10px;
+	background-color: #fff;
+	text-decoration: none;
+}
+
 .menubar_icon {
 	width: 1.2em;
 }

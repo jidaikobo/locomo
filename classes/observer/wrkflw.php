@@ -80,13 +80,16 @@ class Observer_Wrkflw extends \Orm\Observer
 		foreach ($steps as $step)
 		{
 			$seq = $step['seq'];
-			$thead.= '<th>'.mb_substr($step['name'],0,5).'</th>';
+			$thead.= '<th tabindex="0">'.mb_substr($step['name'],0,5).'<span class="skip">';
 			if (isset(static::$logs[$seq]))
 			{
+				$thead.= '承認済み '.date('Y年n月j日', strtotime(static::$logs[$seq]->created_at)); 
 				$tbody.= '<td><div style="border:1px red solid;border-radius: 50%;width: 5em;height: 5em;text-align:center; overflow: hidden;white-space: nowrap;color: red;font-family: \'YuMincho\'; line-height: 1.4;padding-top:.75em;padding-bottom:.5em;box-sizing: border-box;font-size:.9em"><div style="border-bottom:1px red solid;font-size: .8em;">'.$step['name'].'</div><div style="border-bottom:1px red solid;font-size:.8em;">'.\Model_Usr::get_display_name(static::$logs[$seq]->did_user_id).'</div>'.'<div style="font-size: 0.8em">'.date('y.m.d', strtotime(static::$logs[$seq]->created_at)).'</div></div></td>';
 			} else {
+				$thead.= '未承認';
 				$tbody.= '<td></td>';
 			}
+			$thead.= '</span></th>';
 		}
 		$html.= '<table class="stamp_area">'.$thead.'</tr></thead>'.$tbody.'</tr></table>';
 		return str_replace('<div class="contents">', '<div class="contents">'.$html, $response);
