@@ -28,65 +28,49 @@ class Model_Base extends \Orm\Model_Soft
 		'auth_visibility',
 	);
 
-	// todo 不要 - workflow など add_authorize_methods() をつかうコントローラがあるので必要。
-	public function __construct(array $data = array(), $new = true, $view = null, $cache = true)
-	{
-		parent::__construct($data, $new, $view, $cache);
-
-		// add_authorize_methods
-		static::add_authorize_methods();
-	}
-
-	// todo 不要 - absdtract的にあってほしい。
-	/**
-	 * add_authorize_methods()
-	 */
-	public static function add_authorize_methods()
-	{
-// see sample at \Model_Traits_Wrkflw -マージでもいいか？
-// あるいは\EventだがtraitのEventをどう持ってくるか要検討
-//		if ( ! in_array('auth_sample', static::$_authorize_methods)):
-//			static::$_authorize_methods[] = 'auth_sample';
-//		endif;
-	}
-
-	// todo 不要
-	/*
-	 * get_table_name()
-	 */
-	public static function get_table_name()
-	{
-		return static::$_table_name;
-	}
-
-	// todo 不要? get_pk かどちらか一方で良い
-	/**
-	 * get_primary_keys()
-	 */
-	public static function get_primary_keys($mode = '')
-	{
-		if ($mode == 'first'):
-			return reset(static::$_primary_key);
-		endif;
-		return static::$_primary_key;
-	}
-
-
-	// todo 不要 ./packages/locomo/classes/actionset.php:
-	/**
-	 * get_pk()
-	 */
-	public function get_pk()
-	{
-		$pk = reset(static::$_primary_key);
-		return $this->$pk ?: false;
-	}
-
 	/*
 	 * _init()
 	 */
 	public static function _init()
 	{
+		// add_authorize_methods
+		static::add_authorize_methods();
+	}
+
+	/**
+	 * add_authorize_methods()
+	 * see sample at \Model_Traits_Wrkflw -マージでもいいか？
+	 */
+	public static function add_authorize_methods()
+	{
+	}
+
+	/**
+	 * get_primary_keys()
+	 */
+	public static function get_primary_keys($key = 1)
+	{
+		$key = $key ? intval($key) - 1 : 0 ;
+		return \Arr::get(static::$_primary_key, $key, false);
+	}
+
+	/**
+	 * get_pk_value()
+	 */
+	public function get_pk_value($mode = 'first')
+	{
+		if ($mode == 'first')
+		{
+			$pk = reset(static::$_primary_key);
+			return $this->$pk;
+		}
+
+		$retvals = array();
+		foreach (static::$_primary_key as $pk)
+		{
+			$retvals[] = $this->$pk;
+		}
+		return $retvals;
 	}
 
 	/**
@@ -592,14 +576,11 @@ class Model_Base extends \Orm\Model_Soft
 		return $r_arr;
 	}
 
-
-
-
 	/**
 	 * form_definition()
 	 */
-	public static function form_definition($factory = 'form', $obj = null) {
-
+	public static function form_definition($factory = 'form', $obj = null)
+	{
 		$form = \Fieldset::forge($factory);
 
 		$form->add_model($obj)->populate($obj, true);
@@ -705,8 +686,8 @@ class Model_Base extends \Orm\Model_Soft
 	/**
 	 * plain_definition()
 	 */
-	public static function plain_definition($factory = 'plain', $obj = null) {
+	public static function plain_definition($factory = 'plain', $obj = null)
+	{
 		return static::form_definition($factory, $obj);
 	}
-
 }

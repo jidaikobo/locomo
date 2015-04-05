@@ -310,15 +310,16 @@ trait Model_Traits_Wrkflw
 		$current_step = self::get_current_step($controller, $controller_id);
 
 		// current stepの変更
-		if ($status == 'init'):
+		if ($status == 'init')
+		{
 			$current_step = -1;
-		elseif ($status == 'approve' || $status == 'finish'):
+		} elseif ($status == 'approve' || $status == 'finish') {
 			$current_step++;
-		elseif ($status == 'reject'):
+		} elseif ($status == 'reject') {
 			$current_step = -3;
-		elseif ($status == 'remand'):
+		} elseif ($status == 'remand') {
 			$current_step = $target_step ? $target_step : $current_step - 1;
-		endif;
+		}
 
 		// 値の準備
 		$set = array(
@@ -420,10 +421,11 @@ trait Model_Traits_Wrkflw
 		if ($mode == 'edit')
 		{
 			// 作成権限があるユーザだったらin_progress以外を編集できる
-			if (\Auth::has_access($controller.'/create')):
+			if (\Auth::has_access($controller.'/create'))
+			{
 				$options['where'][] = array(array($column, '<>', 'in_progress'));
 				return $options;
-			endif;
+			}
 		}
 
 		// 承認のための閲覧
@@ -443,7 +445,7 @@ trait Model_Traits_Wrkflw
 		}
 
 		// 一般ユーザは閲覧できない
-		$pk = static::get_primary_keys('first');
+		$pk = static::get_primary_keys();
 		$options['where'][] = array(array($pk, '=', 'null'));
 		return $options;
 	}
