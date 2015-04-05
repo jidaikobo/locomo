@@ -4,7 +4,7 @@
 <h2 class="skip"><?php echo \Form::label('拡張oilコマンド書式', 'cmd'); ?></h2>
 <p>
 	<?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('style' => 'width:100%;height:10em;', 'placeholder'=>'拡張oilコマンド書式')); ?><br />
-	<?php echo \Form::select('type', isset($type) ? $type : '', array('all' => 'モジュールとしてすべてのファイルを生成する', 'all2' => '通常のコントローラ一式としてすべてのファイルを生成する', 'model' => 'モデルとマイグレーションのみ生成する', 'view' => 'viewsのファイル群のみ生成する')); ?>
+	<?php echo \Form::select('type', isset($type) ? $type : '', array('all2' => '通常のコントローラ一式としてすべてのファイルを生成する', 'all' => 'モジュールとしてすべてのファイルを生成する', 'model' => 'モデルとマイグレーションのみ生成する', 'view' => 'viewsのファイル群のみ生成する')); ?>
 </p>
 <div class="submit_button">
 	<?php echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
@@ -16,7 +16,7 @@
 <h2>使い方</h2>
 
 <h3>拡張oil書式例</h3>
-<textarea class="pre" style="width: 100%;height: 10em;">test(テストモジュール) 
+<textarea class="pre" style="width: 100%;height: 10em;">test(テスト) 
 title(表題):varchar[255]:default[title]
 body(本文):text:default['']
 is_bool(真偽値):bool:null:default[0]

@@ -145,6 +145,11 @@ class Controller_Scffld extends \Controller_Base
 				if ( ! file_exists($scfldpath.'/migrations')) \File::create_dir($scfldpath, 'migrations');
 				if ($type == 'all')
 				{
+					//config
+					if ( ! file_exists($scfldpath.'/config')) \File::create_dir($scfldpath, 'config');
+					\File::update($scfldpath.'/config', $filename, $config);
+
+					// migration
 					$migrate_file = '001_create_'.$filename;
 				}
 				\File::update($scfldpath.'/migrations', $migrate_file, $migration);
@@ -162,11 +167,7 @@ class Controller_Scffld extends \Controller_Base
 				//model
 				if ( ! file_exists($classpath.'/model')) \File::create_dir($classpath, 'model');
 				\File::update($classpath.'/model', $filename, $model);
-	
-				//config
-				if ( ! file_exists($scfldpath.'/config')) \File::create_dir($scfldpath, 'config');
-				\File::update($scfldpath.'/config', $filename, $config);
-	
+
 				//views
 				if ( ! file_exists($scfldpath.'/views')) \File::create_dir($scfldpath, 'views');
 				$viewpath = $scfldpath.'/views';
@@ -184,12 +185,14 @@ class Controller_Scffld extends \Controller_Base
 				if ($type == 'all2')
 				{
 					$messages[] = "各ファイルを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
-					$messages[] = "sudo chmod -R 777 ".APPPATH.'class';
-					$messages[] = "migrationとconfigを調整したら、コマンドラインで";
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'classes/controller/'.$name.'.php';
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'classes/model/'.$name.'.php';
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'classes/actionset/'.$name.'.php';
+					$messages[] = "sudo chmod -R 777 ".APPPATH.'views/'.$name;
+					$messages[] = "migrationを調整したら、コマンドラインで";
 					$messages[] = "cd ".DOCROOT;
 					$messages[] = "php oil refine migrate:up";
 					$messages[] = "を実行してください。";
-					$messages[] = "名前空間は適宜修正してください。";
 				}
 				else
 				{
