@@ -45,8 +45,10 @@ if (\Auth::check()):
 				$indexes = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('base','option','ctrl'), $exclusive = true);
 				foreach ($indexes as $realm => $index):
 					$idxmenu = \Actionset::generate_menu_html($indexes[$realm], array('class'=>'semimodal menulist hidden_item boxshadow')) ;
+					if(!$idxmenu) continue;
 					$html.= '<div class="admin_index_list">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"インデクス一覧を開く\">インデクス<span class=\"skip\">エンターでメニューを開きます</span></a>";
+					
 					$html.= $idxmenu;
 					$html.= '</div><!-- .admin_index_list -->';
 				endforeach;
