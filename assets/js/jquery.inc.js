@@ -90,9 +90,9 @@ $(function() {
 
 
 // ヘルプ呼び出し
-function show_help(flg,e){
+function show_help(e){
 	e = e ? e : event;
-	if(e) e.preventDefault();//クリックイベント以外(アクセスキー等)の場合を除外
+	if(!$.isPlainObject(e)) e.preventDefault();//クリックイベント以外(アクセスキー等)の場合を除外
 	var prepare_help = false;//重複読み込みの防止
 	$(function(){
 		if(!prepare_help){
@@ -108,7 +108,7 @@ function show_help(flg,e){
 		}
 
 		if($('#help_window').is(':visible')){
-			if(flg!=true){
+			if(!e.flg){
 				$('#help_window').lcm_close_window($('#help_window'));
 				$('#lcm_help').focus();
 			}
