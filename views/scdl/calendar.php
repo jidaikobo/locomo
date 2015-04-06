@@ -39,6 +39,7 @@
 //	include(APPPATH."modules/reserve/views/reserve/calendar_narrow.php");
 //endif;
 ?>
+
 </div>
 <table class="calendar month lcm_focus" title="カレンダ">
 	<thead>
@@ -91,6 +92,10 @@
 				//繰り返し区分
 				$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
 				$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']] : '';
+				// 時間
+				$event_time_display_data = $model_name::make_target_day_info($v2);
+				$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
+				$event_time = '<span class="scdl_time" style="display:' . $event_time_display . '">[' . $event_time_display_data['start_time'] . "〜" . $event_time_display_data['end_time'] . ']</span>';
 				//詳細区分
 				foreach($detail_kbs as $key => $value):
 					if($v2[$key]):
@@ -107,7 +112,8 @@
 				echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
 
 				echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">';
-				echo $eventtitle_icon.htmlspecialchars($v2['title_text']).$eventtitle_skip;
+
+				echo $eventtitle_icon.$event_time.htmlspecialchars($v2['title_text']).$eventtitle_skip;
 				echo '</a>';
 				
 				echo '</p>';
@@ -140,4 +146,5 @@
 	$detail_pop_data = $v;
 	include("detail_pop.php");
 endforeach ;?>
+
 

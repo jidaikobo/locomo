@@ -13,6 +13,18 @@
 </select>
 <input class="schedule_narrow button small primary" id="btn_user" type="button" value="絞り込み" onclick="javascript:location.href='?uid=' + $('#narrow_user_id').val() + '&ugid=' + $('#narrow_user_group_id').val()" />
 <input class="schedule_narrow button small" id="btn_user_reset" type="button" value="絞り込みを解除" onclick="javascript:location.href='?uid=&ugid='" />
+
+<?php 
+// 非表示のとき以外
+if (!(isset($day) && $day && $mode != "week")) {
+	if (\Session::get('scdl_display_time') == "1") { ?>
+<input type="button" class="schedule_narrow button small" value="時間表示をしない" id="scdl_time_button" />
+<?php } else { ?>
+<input type="button" class="schedule_narrow button small" value="時間表示をする" id="scdl_time_button" />
+<?php
+	}
+}
+?>
 <script>
 var base_uri = $('body').data('uri');
 
@@ -62,4 +74,27 @@ function get_group_building(e) {
 		}
 	});
 }
+
+$("#scdl_time_button").click(function(event) {
+
+	var scdl_display_time = <?php print \Session::get('scdl_display_time'); ?>;
+	var url = location.href;
+	// 以前を削除
+	url = url.replace("&scdl_display_time=1", "");
+	url = url.replace("&scdl_display_time=0", "");
+	url = url.replace("?scdl_display_time=1", "");
+	url = url.replace("?scdl_display_time=0", "");
+	if (url.match(/\?/)) {
+		url += "&scdl_display_time=";
+	} else {
+		url += "?scdl_display_time=";
+	}
+	if (scdl_display_time == 1) {
+		location.href = url + "0";
+	} else {
+		location.href = url + "1";
+	}
+});
+
+
 </script>

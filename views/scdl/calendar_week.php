@@ -75,6 +75,11 @@ endif; ?>
 							$eventtitle_skip.= ' '.$value;
 						endif;
 					endforeach;
+					// 時間
+					$event_time_display_data = $model_name::make_target_day_info($v2);
+					$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
+					$event_time = '<span class="scdl_time" style="display:' . $event_time_display . '">[' . $event_time_display_data['start_time'] . "〜" . $event_time_display_data['end_time'] . ']</span>';
+					
 					//重要度
 					$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
 					$eventtitle_icon.= '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
@@ -84,7 +89,7 @@ endif; ?>
 					echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
 					
 					echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">';
-					echo $eventtitle_icon.htmlspecialchars($v2['title_text']).$eventtitle_skip;
+					echo $eventtitle_icon.$event_time.htmlspecialchars($v2['title_text']).$eventtitle_skip;
 					echo '</a>';
 
 					echo '</p>';

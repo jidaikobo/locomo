@@ -664,6 +664,11 @@ class Model_Scdl extends \Model_Base
 		endif;
 		$date_detail['display_period_time'] = '<span class="display_inline_block">'.$data->display_starttime . " 〜 " . $data->display_endtime.'</span>';
 
+
+		// 時間を追加
+		$date_detail['start_time'] = $data->display_starttime;
+		$date_detail['end_time'] = $data->display_endtime;
+		
 		$date_detail['print'] = $print;
 		return $date_detail;
 	}

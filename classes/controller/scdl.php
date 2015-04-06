@@ -607,6 +607,10 @@ echo '</textarea>' ;
 		if (\Input::get("bid", "not") != "not")
 			\Session::set($model::$_kind_name . "narrow_bid", \Input::get("bid"));
 
+		if (\Input::get("scdl_display_time", "") != "") {
+			\Session::set("scdl_display_time", \Input::get("scdl_display_time"));
+		}
+
 		// 初期表示
 		if ($year == null || $year == "") {
 			// 指定がない場合
@@ -733,6 +737,7 @@ echo '</textarea>' ;
 			));
 
 		$view->set("model_name", $model);
+		$view->set("mode", $mode);
 		$view->set('year', $year);
 		$view->set('mon', $mon);
 		$view->set("day", $day);
