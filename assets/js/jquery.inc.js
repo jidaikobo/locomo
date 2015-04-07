@@ -371,34 +371,6 @@ $(document).on('keydown',function(e){
 
 })
 
-
-/*	lcm_focus.focus(function(){
-		var position;
-		position = $(this).offset().top - headerheight - 10;
-		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
-	});
-*/
-	/*
-	//スクロール
-$(document).on('click', 'a[href^=#]', function(e){
-	e = e ? e : event;
-	var href, t, position;
-	$(window).off('beforeunload');//ページ内リンクでは画面遷移の警告をキャンセル
-
-	href= $(this).attr("href");
-	if(href!='#'){
-		t = $(href == '' ? 'html' : href);
-		position = t.offset().top - headerheight - 10;
-		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
-		set_focus(t);
-		return false;
-	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ return？？ 
-		e.preventDefault();
-	}
-});
-	*/
-	
-
 //全体に対するクリックイベント。
 $(document).click(function(e){
 	e = e ? e : event;
@@ -436,14 +408,12 @@ $.fn.set_tabindex = function(){
 			$(this).attr('tabindex','-1').addClass('tabindex_ctrl');
 		}
 	});
-
 //	thisのなかはtabindexを有効に
 	$(this).reset_tabindex();
 	return this;
 }
 
 $.fn.reset_tabindex = function(){
-
 	//data-tabindexの値を見つつtabindexをリセットする
 	$(this).find('.tabindex_ctrl').each(function(){
 
@@ -453,10 +423,7 @@ $.fn.reset_tabindex = function(){
 		}else{
 			$(this).removeAttr('tabindex');
 		}
-
 	});
-
-
 	return this;
 }
 
@@ -485,11 +452,11 @@ function lcm_focus(){
 			$(document).set_tabindex();//重いかなあ。
 		}
 		
-		if(!esc){//抜けるリンクなどの準備 //いったんtabindex="-1"をやめておく、あとでなおす
+		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
 			elm.each(function(){
 				var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
-				$(this).attr('title', title_str+'エンターで入ります')
+				$(this).attr('title', title_str+' エンターで入ります')
 			});
 		}
 
@@ -514,8 +481,6 @@ function lcm_focus(){
 	}
 	/*=== lcm_focus_esc ===*/
 	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを1階層抜ける。
-	//クリックで抜けるが表示されると、リンクがうまく押せなかったりするので、なおす
-	//クリックの時がうまく抜けられていない（すべて抜けてしまう）
 	var lcm_focus_esc = function(e){
 		e = e ? e : event;//抜けるリンクはeがclickイベントになり、tが#esc_focusになる
 		e.preventDefault();
@@ -542,12 +507,13 @@ function lcm_focus(){
 		var t, k, parent;
 		t = $(e.target);
 		k = e.which;
-		if(t.hasClass('currentfocus') && k == 9 && e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
+		
+		if(k == 9 && e.shiftKey && t.hasClass('currentfocus')){ //現在のフォーカス枠上でshift+tabの場合、escに移動
 			esc.focus();
 			e.preventDefault();
 		}
 
-		if( k == 13 ){//enter
+		if( k == 13 ){//Enter
 			if(isie && !t.is('a') && !t.is(':input')){
 				e.preventDefault();
 			}
@@ -560,15 +526,36 @@ function lcm_focus(){
 			lcm_focus_set($(this));
 			e.stopPropagation();
 		}
-
+	});
+	
+	
+	//フォーカスの取り直し。クリックのほか、チェックボックスをスペースキーでチェックした際などにも走るので除外
+	$(document).on('click', lcm_focus_setparent);
+	
+	function lcm_focus_setparent(e){
+		e = e ? e : event;
+		var k, t, parent;
+		k = e.witch;
+		if(k == 32) return;
+		t = $(e.target);
+		parent = t.closest('.lcm_focus')[0];
+		if(!$(parent).hasClass('focusparent')){
+			parent = parent ? $(parent) : $(document);
+			lcm_focus_set(parent);
+		}
+	}
+	
+	//ページ内リンクの際のフォーカス //ページ内リンク以外の、外部からのidへのリンクに対応するなら、focusを取ったほうがよいのかも、でも重くなりそう。
+	$(document).on('click', 'a[href^=#]', function(e){
+		e = e ? e : event;
+		var href, t;
+		href= $(this).attr("href");
+		if(href!='#'){
+			t = $(href == '' ? 'html' : href);	
+			lcm_focus_setparent({target:t});
+		}
 	});
 
-
-	$(document).on('click', lcm_focus_setparent);
-		
-//	$(document).on('focus', '#esc_focus', lcm_focus_esc);
-//	$(document).on('click', '#esc_focus_wrapper', lcm_focus_esc);
-	
 	
 	$(document).on('keydown', function(e){
 	//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
@@ -591,6 +578,8 @@ function lcm_focus(){
 		e = e ? e : event;
 		lcm_focus_esc(e);
 	});
+	
+
 
 /*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
@@ -610,18 +599,6 @@ function lcm_focus(){
 	}
 */
 }
-	function lcm_focus_setparent(e){
-	//フォーカスの取り直し。クリックのほか、チェックボックスをスペースキーでチェックした際などにも。
-		e = e ? e : event;
-		var t, parent;
-		t = $(e.target);
-		parent = t.closest('.lcm_focus')[0];
-		if(!$(parent).hasClass('focusparent')){
-			parent = parent ? $(parent) : $(document);
-			lcm_focus_set(parent);
-		}
-	}
-
 /* ================================▲▲▲=============================== */
 
 
@@ -1095,12 +1072,6 @@ $('.lcm_multiple_select').each(function(){
 		to = selects.not(from);
 		lcm_multiple_select(from, to, hidden_items_id, selected);
 	});
-	/*
-	selects.click('option', function(e){
-		e = e ? e : event;
-		e.stopPropagation(lcm_focus_setparent);
-	});
-	*/
 	selects.dblclick(function(){
 		from = $(this);
 		to = selects.not(from);
