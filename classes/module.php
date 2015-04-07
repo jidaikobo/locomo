@@ -27,6 +27,7 @@ class Module extends \Fuel\Core\Module
 		catch (\CacheNotFoundException $e)
 		{
 			$finded = array();
+			$retvals = array();
 			foreach(\Config::get('module_paths') as $path):
 				foreach (glob($path.DS."*") as $modpath):
 					$module = strtolower(basename($modpath));
