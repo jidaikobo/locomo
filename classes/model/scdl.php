@@ -330,6 +330,15 @@ class Model_Scdl extends \Model_Base
 				'type' => 'hidden'
 			),
 		),
+		'parent_id' => 
+		array (
+			'label' => '部分編集元親ID',
+			'data_type' => 'int',
+			'form' => 
+			array (
+				'type' => 'hidden'
+			),
+		),
 		'creator_id' => array('form' => array('type' => false), 'default' => '', 'lcm_role' => 'creator_id'),
 		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 		'created_at' => 

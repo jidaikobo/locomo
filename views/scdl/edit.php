@@ -62,6 +62,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<div class="input_group">
 		<h2><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></h2>
 		<div id="field_repeat_kb" class="field">
+			<?php if (isset($is_someedit)) { print '<p>なし</p><input type="hidden" name="repeat_kb" value="0" />'; } ?>
 			<?php echo $form->field('repeat_kb')->set_template('{error_msg}{field}'); ?>
 			<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 			<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
@@ -246,7 +247,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
 	<?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
 	<?php echo $form->field('kind_flg')->set_template('{error_msg}{field}'); ?>
-	
+	<input type="hidden" id="is_someedit" name="is_someedit" value="<?php echo isset($is_someedit) ? $is_someedit : 0; ?>" />
 	<?php
 		// revision memo template - optional
 		//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
@@ -287,6 +288,20 @@ $("#form_group_detail").change(function(event) {
 function form_group_detail_change(e) {
 	$("#form_group_kb_1").val(['2']);
 }
+
+// 部分編集の場合
+if ($("#is_someedit").val() == 1) {
+	$("#form_repeat_kb").val(0);
+	//$("#form_start_date").prop("disabled", true);
+	//$("#form_end_date").prop("disabled", true);
+	$("#form_start_date").css("visibility", "hidden");
+	$("#form_end_date").css("visibility", "hidden");
+	$("#form_start_date").css("width", "0px");
+	$("#form_end_date").css("width", "0px");
+	change_repeat_kb_area();
+	$("#form_repeat_kb").css("display", "none");
+}
+
 
 /**
  * [change_repeat_kb_area description]
