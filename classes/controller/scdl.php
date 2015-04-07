@@ -149,6 +149,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 								, \Input::post("target_month")
 								, \Input::post("week_index"));
 			}
+
 			if (
 				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
 				 \Security::check_token() &&
@@ -167,6 +168,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 				//save
 				if ($obj->save(null, true)):
+
 					//success
 					\Session::set_flash(
 						'success',
@@ -174,12 +176,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					);
 
 					// 部分編集の場合はリダイレクトしない
-					if (\Uri::segment(2) == "someedit"):
+					if ($this->_someedit_id):
 						return $obj;
 					else:
 						return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
 					endif;
 				else:
+
 					//save failed
 					\Session::set_flash(
 						'error',
@@ -364,6 +367,7 @@ echo '</textarea>' ;
 
 			// 新規登録処理
 			$obj_edit = $this->action_edit();
+
 			// 変更不可項目を上書き
 			if ($obj_edit) {
 				$obj_edit->repeat_kb	 = 0;	// 繰り返しなしとする
@@ -394,6 +398,7 @@ echo '</textarea>' ;
 		//		$this->action_calendar();
 				\Response::redirect(static::$main_url);
 			}
+
 		} else {
 			$this->action_edit($id);
 		}
