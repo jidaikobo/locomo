@@ -77,7 +77,7 @@ function get_group_building(e) {
 
 $("#scdl_time_button").click(function(event) {
 
-	var scdl_display_time = <?php print \Session::get('scdl_display_time'); ?>;
+	var scdl_display_time = '<?php print \Session::get('scdl_display_time'); ?>';
 	var url = location.href;
 	// 以前を削除
 	url = url.replace("&scdl_display_time=1", "");
