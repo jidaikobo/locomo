@@ -72,7 +72,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	</div><!-- /.input_group -->
 	<div class="input_group">
 		<h2>期間</h2>
-		<div id="" class="lcm_focus field" title="必須 期間">
+		<div id="field_term" class="lcm_focus field" title="必須 期間">
 			<span id="span_date_start" class="display_inline_block">
 			<?php echo $form->field('start_date')->set_template('{error_msg}{field}'); ?>
 			<?php echo $form->field('start_time')->set_template('{error_msg}{field}'); ?>

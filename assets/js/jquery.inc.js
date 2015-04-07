@@ -453,7 +453,7 @@ function lcm_focus(){
 		}
 		
 		if(!esc){//抜けるリンクなどの準備
-			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
+			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
 			elm.each(function(){
 				var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
 				$(this).attr('title', title_str+' エンターで入ります')
@@ -512,7 +512,7 @@ function lcm_focus(){
 			esc.focus();
 			e.preventDefault();
 		}
-
+		
 		if( k == 13 ){//Enter
 			if(isie && !t.is('a') && !t.is(':input')){
 				e.preventDefault();
@@ -528,7 +528,19 @@ function lcm_focus(){
 		}
 	});
 	
-	
+	//スケジューラの期間の設定でうまくescにフォーカスが当たらない状況になっているので、一旦むりやりフォーカス（あとでみなおす）
+	$('#field_term *').focus(function(){
+		$('#field_term').find('input').last().on('keydown', function(e){
+			e = e ? e : event;
+			var t, k, parent;
+			t = $(e.target);
+			k = e.which;
+			if(k == 9 && !e.shiftKey){
+				esc.focus();
+				e.preventDefault();
+			}
+		});
+	});
 	//フォーカスの取り直し。クリックのほか、チェックボックスをスペースキーでチェックした際などにも走るので除外
 	$(document).on('click', lcm_focus_setparent);
 	
@@ -1049,8 +1061,23 @@ $('a:submit, input:submit, .confirm').click(function(){//該当する場合遷�
 		$(window).off('beforeunload');
 });
 
-//エラー時の入力エリアから一覧へのナビゲーション
-$('.validation_error :input').after('<a href="#anchor_alert_error" class="skip show_if_focus link_alert_error">エラー一覧にもどる</a>');
+//エラー時の入力エリアから一覧へのナビゲーション //複数の入力欄がある場合(開始・終了時刻等)はどうする？idを配列にしてしまって配列なら後者を参照できるようにして、その後ろに戻るリンクを作る、とか？
+//とりあえずスケジューラについては一旦個別対応
+//.validation_error が適切につくようならそれを見るとよいのかも
+$('#alert_error .link').find('a').each(function(){
+	var link = $('<a href="#anchor_alert_error" class="skip show_if_focus link_alert_error">エラー一覧にもどる</a>');
+	var t = $($(this).attr('href'));
+	if(t.closest('.lcm_multiple_select')[0]){
+		t.closest('.lcm_multiple_select').eq(0).append(link);
+		return;
+	}else if(t.is('#form_start_date')){
+		t = $('#form_end_date');
+	}else if(t.is('#form_start_time')){
+		t = $('#form_end_time');
+	}
+	t.after(link);
+
+});
 
 /*=== lcm_multiple_select ===*/
 
