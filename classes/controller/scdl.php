@@ -22,6 +22,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	private $_scdl_errors = array();	// エラー項目
 
+	private $_someedit_id = 0;	// someeditで利用します
+	private $_someedit_date = "";	// someeditで利用します。
+
 	/**
 	 * [action_create description]
 	 * @return [type]
@@ -81,7 +84,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $id
 	 * @return [type]
 	 */
-	public function action_edit($id = null)
+	public function action_edit($id = null, $year = null, $mon = null, $day = null)
 	{
 		$model = $this->model_name ;
 
@@ -104,17 +107,18 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$form = $model::form_definition('edit', $obj);
 
 		$overlap_result = array();
+
 		/*
 		 * save
 		 */
 		if (\Input::post()) :
 			// 重複チェックをここでセット
-			$syear = date('Y', strtotime(\Input::post("start_date")));
-			$smon  = date('m', strtotime(\Input::post("start_date")));
-			$sday  = date('d', strtotime(\Input::post("start_date")));
-			$eyear = date('Y', strtotime(\Input::post("end_date")));
-			$emon  = date('m', strtotime(\Input::post("end_date")));
-			$eday  = date('d', strtotime(\Input::post("end_date")));
+			$syear = date('Y', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("start_date")));
+			$smon  = date('m', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("start_date")));
+			$sday  = date('d', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("start_date")));
+			$eyear = date('Y', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("end_date")));
+			$emon  = date('m', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("end_date")));
+			$eday  = date('d', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("end_date")));
 			$shour = $smin = $ehour = $emin = 0;
 
 			if (preg_match("/:/", \Input::post("start_time"))) {
@@ -127,7 +131,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 			$overlap_result = array();
 			if (\Input::post("overlap_kb")) {
-				$overlap_result = $this->checkOverlap($id								
+				$overlap_result = $this->checkOverlap(
+								($this->_someedit_id ? $this->_someedit_id : $id)
 								, $syear
 								, $smon
 								, $sday
@@ -159,6 +164,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						$obj->__set($v, 0);
 					}
 				}
+
 				//save
 				if ($obj->save(null, true)):
 					//success
@@ -167,8 +173,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
 
-
-					return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
+					// 部分編集の場合はリダイレクトしない
+					if (\Uri::segment(2) == "someedit"):
+						return $obj;
+					else:
+						return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
+					endif;
 				else:
 					//save failed
 					\Session::set_flash(
@@ -334,7 +344,62 @@ echo '</textarea>' ;
 		}
 	}
 
+	/**
+	 * [action_someedit description]
+	 * @param  [type] $id   [description]
+	 * @param  [type] $year [description]
+	 * @param  [type] $mon  [description]
+	 * @param  [type] $day  [description]
+	 * @return [type]       [description]
+	 */
+	public function action_someedit($id, $year, $mon, $day) {
+		$this->_someedit_id = $id;
+		$this->_someedit_date = $year . "/" . $mon . "/" . $day;
+		$model = $this->model_name;
 
+
+		if (\Input::post()) {
+
+			\DB::start_transaction();
+
+			// 新規登録処理
+			$obj_edit = $this->action_edit();
+			// 変更不可項目を上書き
+			if ($obj_edit) {
+				$obj_edit->repeat_kb	 = 0;	// 繰り返しなしとする
+				$obj_edit->target_month	 = 0;
+				$obj_edit->target_day	 = 0;
+				$obj_edit->start_date	 = $year . "-" . $mon . "-" . $day;
+				$obj_edit->end_date		 = $year . "-" . $mon . "-" . $day;
+				$obj_edit->delete_day	 = "";
+				$obj_edit->week_kb		 = 0;
+				$obj_edit->parent_id	 = $id;
+				$obj_edit->save();
+
+				// 部分削除の処理をいれる
+				$obj = $model::find($id);
+				
+				// 部分削除処理
+				$obj->delete_day = $obj->delete_day . sprintf("[%04d/%02d/%02d]", $year, $mon, $day);
+
+				if ($obj->save())
+				{
+					\DB::commit_transaction();
+					\Session::set_flash('success', "部分編集をおこないました。");
+				} else {
+					\Session::set_flash('error', "部分編集に失敗しました。");
+				}
+
+				// カレンダー表示
+		//		$this->action_calendar();
+				\Response::redirect(static::$main_url);
+			}
+		} else {
+			$this->action_edit($id);
+		}
+
+		$this->template->content->set("is_someedit", 1);
+	}
 
 	/**
 	 * [action_detail]

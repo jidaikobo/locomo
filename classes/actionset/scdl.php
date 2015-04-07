@@ -30,6 +30,7 @@ class Actionset_Scdl extends \Actionset
 				$controller.'/attend',
 				$controller.'/regchange',
 				$controller.'/somedelete',
+				$controller.'/someedit',
 				$controller.'/calendar',
 				$controller.'/get_user_list',
 				$controller.'/get_building_list',
@@ -237,6 +238,37 @@ class Actionset_Scdl extends \Actionset
 			'action_name'  => '部分削除',
 			'show_at_top'  => true,
 			'explanation'  => '部分削除',
+			'order'        => 12
+		);
+		return $retvals;
+	}
+
+	/**
+	 * [actionset_someedit description]
+	 * @param  [type] $controller [description]
+	 * @param  [type] $obj        [description]
+	 * @param  [type] $id         [description]
+	 * @param  array  $urls       [description]
+	 * @return [type]             [description]
+	 */
+	public static function actionset_someedit($controller, $obj = null, $id = null, $urls = array())
+	{
+		if(\Request::main()->action == 'viewdetail' && $id && $obj->repeat_kb >= 1)
+		{
+			$y = \Uri::segment(4);
+			$m = \Uri::segment(5);
+			$d = \Uri::segment(6);
+			if ($datestr = strtotime("$y/$m/$d"))
+			{
+				$urls = array(array($controller.DS."someedit/$id/".date('Y/m/d', $datestr), '部分編集', array()));
+			}
+		}
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '部分編集',
+			'show_at_top'  => true,
+			'explanation'  => '部分編集',
 			'order'        => 12
 		);
 		return $retvals;
