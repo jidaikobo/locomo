@@ -2066,6 +2066,7 @@ a.icon.zip:before {
 }
 
 /*=== lcm_focus ===*/
+
 #esc_focus_wrapper {
 	position: absolute;
 	display: block;
@@ -2074,6 +2075,7 @@ a.icon.zip:before {
 	z-index: 1000;
 	background: transparent !important;
 }
+
 #esc_focus {
 	position: absolute;
 	display: block;
@@ -2089,6 +2091,7 @@ a.icon.zip:before {
 	right: 0;
 	background-color: #fff;
 }
+/*
 #esc_focus_wrapper:focus #esc_focus,
 #esc_focus:focus {
 	left: auto;
@@ -2098,7 +2101,7 @@ a.icon.zip:before {
 	background-color: #fff;
 	text-decoration: none;
 }
-
+*/
 .menubar_icon {
 	width: 1.2em;
 }

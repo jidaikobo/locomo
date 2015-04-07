@@ -463,19 +463,18 @@ $.fn.reset_tabindex = function(){
 
 //.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしい環境は除外
 if(tabindexCtrl && $('.lcm_focus')[0]){
-	set_lcm_focus();
+	lcm_focus();
 }
 
-function set_lcm_focus(){
-	var lcm_focus, esc;
-	lcm_focus    = $('.lcm_focus');
+function lcm_focus(){
+	var elm, esc;
+	elm = $('.lcm_focus');
 
 	/*=== set_focus ===*/
 	//フォーカス対象を指定して実行されている場合はそれを、なければlcm_focusを相手にする。
 	//?ない場合?：初回と、lcm_focus最上部で抜ける時。
-	var set_focus = function(target){
-		var target, parent, t; 
-		
+	lcm_focus_set = function(target){
+		var parent, t; 
 		$('.currentfocus').removeClass('currentfocus');
 		if(!esc){
 			$(document).set_tabindex();
@@ -485,17 +484,17 @@ function set_lcm_focus(){
 		}else{
 			$(document).set_tabindex();//重いかなあ。
 		}
-	
-	if(!esc){//抜けるリンクなどの準備 //いったんtabindex="-1"をやめておく、あとでなおす
-		esc = $('<div id="esc_focus_wrapper" class="" style="display: none;" tabindex="0"><a id="esc_focus"  class="skip" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
-		lcm_focus.each(function(){
-			var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
-			$(this).attr('title', title_str+'エンターで入ります')
-		});
-	}
+		
+		if(!esc){//抜けるリンクなどの準備 //いったんtabindex="-1"をやめておく、あとでなおす
+			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
+			elm.each(function(){
+				var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
+				$(this).attr('title', title_str+'エンターで入ります')
+			});
+		}
 
 		//targetの中にlcm_focusがあれば中身のtabindexを-1にする
-		t = target ? target.find('.lcm_focus') : lcm_focus;
+		t = target ? target.find('.lcm_focus') : elm;
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
 
@@ -513,11 +512,11 @@ function set_lcm_focus(){
 			esc.hide();
 		}
 	}
-	/*=== esc_focus ===*/
+	/*=== lcm_focus_esc ===*/
 	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを1階層抜ける。
 	//クリックで抜けるが表示されると、リンクがうまく押せなかったりするので、なおす
 	//クリックの時がうまく抜けられていない（すべて抜けてしまう）
-	var esc_focus = function(e){
+	var lcm_focus_esc = function(e){
 		e = e ? e : event;//抜けるリンクはeがclickイベントになり、tが#esc_focusになる
 		e.preventDefault();
 		e.stopPropagation();
@@ -531,11 +530,11 @@ function set_lcm_focus(){
 		if(parent){
 			parent.removeClass('focusparent').addClass('currentfocus');
 		}
-		set_focus(parent);
+		lcm_focus_set(parent);
 	}
 
 	//ひとまず実行 //lcm_focusが入れ子になっていてもここで一旦-1
-	setTimeout(set_focus, 0);
+	setTimeout(lcm_focus_set, 0);
 
 	//lcm_focus上でのキーボードイベント。
 	$('.lcm_focus').on('keydown', function(e){
@@ -558,29 +557,17 @@ function set_lcm_focus(){
 				e.stopPropagation();
 				return;
 			}
-			set_focus($(this));
+			lcm_focus_set($(this));
 			e.stopPropagation();
 		}
 
 	});
 
-	$(document).on('click', function(e){
-	//フォーカスの取り直し。クリックのほか、チェックボックスをスペースキーでチェックした際などにも。
-		e = e ? e : event;
-		var t, parent;
-		t = $(e.target);
-//		if(!t.is($('#esc_focus_wrapper'))){//escのクリックイベントが上に来るようだったらまずいけれど、inputのほうが先のようなので、とりあえず（ただしIEは要確認）
-			parent = t.closest('.lcm_focus')[0];
-//			if(!$(parent).hasClass('focusparent')){
-//				console.log($(t));
-//				parent = parent ? $(parent) : $(document);
-//				set_focus(parent);
-//			}
-//		}
-	})
+
+	$(document).on('click', lcm_focus_setparent);
 		
-//	$(document).on('focus', '#esc_focus', esc_focus);
-//	$(document).on('click', '#esc_focus_wrapper', esc_focus);
+//	$(document).on('focus', '#esc_focus', lcm_focus_esc);
+//	$(document).on('click', '#esc_focus_wrapper', lcm_focus_esc);
 	
 	
 	$(document).on('keydown', function(e){
@@ -594,14 +581,16 @@ function set_lcm_focus(){
 		if($('.currentfocus')[0]){
 			if((t.is('#esc_focus_wrapper') && k == 13) || 
 				(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
-//				console.log(e.target);
-				esc_focus(e);
+				lcm_focus_esc(e);
 				e.stopPropagation();
 			}
 		}
 	});
 	
-
+	$(document).on('focus', '#esc_focus', function(e){
+		e = e ? e : event;
+		lcm_focus_esc(e);
+	});
 
 /*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
@@ -620,8 +609,18 @@ function set_lcm_focus(){
 		});
 	}
 */
-
 }
+	function lcm_focus_setparent(e){
+	//フォーカスの取り直し。クリックのほか、チェックボックスをスペースキーでチェックした際などにも。
+		e = e ? e : event;
+		var t, parent;
+		t = $(e.target);
+		parent = t.closest('.lcm_focus')[0];
+		if(!$(parent).hasClass('focusparent')){
+			parent = parent ? $(parent) : $(document);
+			lcm_focus_set(parent);
+		}
+	}
 
 /* ================================▲▲▲=============================== */
 
@@ -1090,12 +1089,18 @@ $('.lcm_multiple_select').each(function(){
 		make_hidden_form_items(hidden_items_id, selected);
 	}
 	
-	
-	$(this).find(':button').on('click', parent ,function(e){
+	$(this).find(':button').click(function(e){
+		e = e ? e : event;
 		from = $(this).hasClass('add_item') ? select : selected;
 		to = selects.not(from);
 		lcm_multiple_select(from, to, hidden_items_id, selected);
 	});
+	/*
+	selects.click('option', function(e){
+		e = e ? e : event;
+		e.stopPropagation(lcm_focus_setparent);
+	});
+	*/
 	selects.dblclick(function(){
 		from = $(this);
 		to = selects.not(from);
