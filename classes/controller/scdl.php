@@ -201,10 +201,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
 
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;">' ;
-var_dump( $this->_scdl_errors ) ;
-echo '</textarea>' ;
-
 					\Session::set_flash('error', $errors);
 				endif;
 			endif;
@@ -1720,12 +1716,12 @@ echo '</textarea>' ;
 			// スケジューラの場合はメンバーが必須
 			$target_data = explode("/", \Input::post("hidden_members"));
 			$target_name = "メンバー";
-			$target_id = "kizon_members";
+			$target_id = "member_kizon";
 		} else if ($model::$_kind_name == "reserve") {
 			// 施設予約の場合は施設が必須
 			$target_data = explode("/", \Input::post("hidden_buildings"));
 			$target_name = "施設";
-			$target_id = "kizon_buildings";
+			$target_id = "building_kizon";
 		}
 		foreach ($target_data as $v) {
 			if ($v)
@@ -1739,28 +1735,28 @@ echo '</textarea>' ;
 			$start = strtotime(\Input::post("start_date") . " " . \Input::post("start_time"));
 			$end = strtotime(\Input::post("end_date") . " " . \Input::post("end_time"));
 			if ($start > $end) {
-				$this->_scdl_errors[] = "入力された期間が不正です。";
+				$this->_scdl_errors["start_time"] = "開始時間と終了時間の入力が不正です。";
 			} else if (\Input::post("start_date") == "" || \Input::post("end_date") == "") {
 				// 自動挿入しようかと思ったが、繰り返しなしの場合は全期間はおかしいのでエラーでとめておく
-				$this->_scdl_errors[] = "開始日付と終了日付を入力してください。";
+				$this->_scdl_errors["start_date"] = "開始日付と終了日付を入力してください。";
 			}
 		} else {
 			if (\Input::post("start_time") >= \Input::post("end_time")) {
-				$this->_scdl_errors[] = "入力された期間が不正です。";
+				$this->_scdl_errors["start_time"] = "開始時間と終了時間の入力が不正です。";
 			} else if (\Input::post("start_date") >= \Input::post("end_date")) {
-				$this->_scdl_errors[] = "入力された期間が不正です。";
+				$this->_scdl_errors["start_date"] = "開始日付と終了日付の入力が不正です。";
 			}
 		}
 		if (\Input::post("repeat_kb") == 4 
 			&& (\Input::post("target_day") < 1 || \Input::post("target_day") > 31 || \Input::post("target_day") == "")) {
-				$this->_scdl_errors[] = "対象の日を正しく入力してください。";
+				$this->_scdl_errors['target_day'] = "対象の日を正しく入力してください。";
 		}
 		if (\Input::post("repeat_kb") == 5) { 
 			if (\Input::post("target_month") < 1 || \Input::post("target_month") > 12 || \Input::post("target_month") == "") {
-				$this->_scdl_errors[] = "対象の月を正しく入力してください。";
+				$this->_scdl_errors['target_month'] = "対象の月を正しく入力してください。";
 			}
 			if (\Input::post("target_day") < 1 || \Input::post("target_day") > 31 || \Input::post("target_day") == "") {
-				$this->_scdl_errors[] = "対象の日を正しく入力してください。";
+				$this->_scdl_errors['target_day'] = "対象の日を正しく入力してください。";
 			}
 		}
 		return (count($this->_scdl_errors) == 0);

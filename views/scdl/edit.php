@@ -112,7 +112,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
-						<select id="member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
+						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
 						<?php foreach($select_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>
@@ -124,7 +124,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content">
 						<label for="member_new">ここから選択</label>
-						<select id="member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
+						<select id="form_member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
 						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>
@@ -149,7 +149,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 				<div class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
 					<div class="multiple_select_content">
 						<label for="building_kizon">選択済み</label>
-						<select id="building_kizon" name="building_kizon" class="selected" size="2" title="選択済み施設" multiple>
+						<select id="form_building_kizon" name="building_kizon" class="selected" size="2" title="選択済み施設" multiple>
 						<?php foreach($select_building_list as $row) { ?>
 							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 						<?php } ?>
@@ -161,7 +161,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content select_new">
 						<label for="building_new">ここから選択</label>
-						<select id="building_new" name="building_new" class="select_from" size="2" multiple title="施設選択肢">
+						<select id="form_building_new" name="building_new" class="select_from" size="2" multiple title="施設選択肢">
 						<?php foreach($non_select_building_list as $row) { ?>
 							<option value="<?php echo $row->item_id; ?>"><?php echo $row->item_name; ?></option>
 						<?php } ?>
@@ -219,7 +219,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
-						<select id="member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
+						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
 						<?php foreach($select_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>
@@ -231,7 +231,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 					</div><!-- /.multiple_select_content -->
 					<div class="multiple_select_content">
 						<label for="member_new">ここから選択</label>
-						<select id="member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
+						<select id="form_member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
 						<?php foreach($non_selected_user_list as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>
@@ -272,7 +272,7 @@ $("#form_repeat_kb").change(function(event){
 	change_repeat_kb_area();
 });
 $("#group_list").change(function(event) {
-	get_group_user(event, $("#group_list").val(), "member_new");
+	get_group_user(event, $("#group_list").val(), "form_member_new");
 });
 $("#group_list_create_user").change(function(event) {
 	get_group_user(event, $("#group_list_create_user").val(), "form_user_id");
@@ -404,7 +404,7 @@ function get_group_user(e, groupId, targetEle) {
 	var group_id = groupId;
 
 	var now_members = new Object();
-	var kizon_options = document.getElementById('member_kizon').options;
+	var kizon_options = document.getElementById('form_member_kizon').options;
 	for(var i = 0; i < kizon_options.length; i++){
 		now_members['member' + kizon_options[i].value] = 1;
 	};
@@ -440,7 +440,7 @@ function get_group_building(e) {
 	var group_id = $("#building_group_list").val();
 
 	var now_buildings = new Object();
-	var kizon_options = document.getElementById('building_kizon').options;
+	var kizon_options = document.getElementById('form_building_kizon').options;
 	for(var i = 0; i < kizon_options.length; i++){
 		now_buildings['building' + kizon_options[i].value] = 1;
 	};
@@ -453,11 +453,11 @@ function get_group_building(e) {
 
 			exists = JSON.parse(res);
 
-			document.getElementById("building_new").options.length=0;
+			document.getElementById("form_building_new").options.length=0;
 
 			for(var i in exists) {
 				if (!now_buildings['building' + exists[i]['item_id']]) {
-					$("#building_new").append($('<option>').html(exists[i]['item_name']).val(exists[i]['item_id']));
+					$("#form_building_new").append($('<option>').html(exists[i]['item_name']).val(exists[i]['item_id']));
 				}
 			}
 		
