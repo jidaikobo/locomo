@@ -103,7 +103,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<h2><span class="label_required">必須</span>メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
-				<select id="group_list" title="グループ絞り込み">
+				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
 					<option value="">絞り込み：全グループ
 					<?php foreach($group_list as $key => $value) { ?>
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
@@ -140,12 +140,14 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</h2>
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
-				<select id="building_group_list" title="施設グループ絞り込み">
+				<div id="building_select_wrapper">
+				<select id="building_group_list" title="施設グループ絞り込み" onchange="get_group_building()">
 					<option value="">絞り込み：全施設
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 					<?php } ?>
 				</select>
+				</div>
 				<div class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
 					<div class="multiple_select_content">
 						<label for="building_kizon">選択済み</label>
@@ -196,7 +198,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<div class="input_group">
 		<h2><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
-			<select id="group_list_create_user" title="グループ絞り込み">
+			<select id="group_list_create_user" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list_create_user').val(), 'form_user_id');})">
 				<option value="">絞り込み：全グループ
 				<?php foreach($group_list as $key => $value) { ?>
 					<option value="<?php print $key; ?>"><?php  print $value; ?>
@@ -210,7 +212,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2 class="ar">メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-				<select id="group_list" title="グループ絞り込み">
+				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
 					<option value="">絞り込み：全グループ
 				<?php foreach($group_list as $key => $value): ?>
 					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
@@ -268,6 +270,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 <script>
 <!-- JSに移す -->
 change_repeat_kb_area();
+/* いったんonchangeに変更。でも.attachEvent('onchange', ...)とかで書き直せる？
 $("#form_repeat_kb").change(function(event){
 	change_repeat_kb_area();
 });
@@ -284,6 +287,8 @@ $("#building_group_list").change(function(event) {
 $("#form_group_detail").change(function(event) {
 	form_group_detail_change(event);
 });
+*/
+
 
 function form_group_detail_change(e) {
 	$("#form_group_kb_1").val(['2']);
@@ -338,11 +343,22 @@ function change_repeat_kb_area() {
 	}
 
 	//区分選択により時間入力欄を移動 tabindex制御されているときに別のブロックに移動する時のふるまいは個別に設定しないといけない？
-
-	setTimeout(move_time_inputfield, 250);
-//	move_inputfield();
-	//lcm_focusのフォーカス制御があるので、遅延させる
+	//lcm_focusのフォーカス制御があるので、遅延させる(//NetReaderの実行は遅延させなくてよい)
+	//ひとまず外側で遅延させておく
 	//タイムラグの間にキーボード操作(tab)を受け付けるとちょっとまずい？
+	//ひとまず値を全部持ってくる。あとでせいり
+	var userAgent = window.navigator.userAgent;
+	var isNetReader   = userAgent.indexOf('NetReader') > 0 ? true : false;
+	var isTouchDevice = userAgent.indexOf('iPhone') > 0 || userAgent.indexOf('iPod') > 0 || userAgent.indexOf('iPad') > 0 || userAgent.indexOf('Android') > 0 ? true : false;
+	var isie          = !$('body').hasClass('lcm_ieversion_0') ? true : false;
+	var isLtie9       = $('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6') ? true : false;
+	var tabindexCtrl  = isNetReader || isLtie9 || isTouchDevice ? false : true;//この条件は増えたり減ったりするのかも。
+
+	if(isNetReader){
+		move_time_inputfield();
+	}else{
+		setTimeout(move_time_inputfield, 250);
+	}
 	function move_time_inputfield(){
 		var start_time, end_time, field, input;
 		start_time = $('#form_start_time');
@@ -356,14 +372,15 @@ function change_repeat_kb_area() {
 		}else{
 			field.prepend(start_time).append(end_time).show();
 		}
-
-		input.each(function(){
-			if(repeat_kb == 0){
-				$(this).attr('tabindex', -1);
-			}else{
-				$(this).attr('tabindex', 0);
-			}
-		});
+		if(tabindexCtrl){
+			input.each(function(){
+				if(repeat_kb == 0){
+					$(this).attr('tabindex', -1);
+				}else{
+					$(this).attr('tabindex', 0);
+				}
+			});
+		}
 	}
 
 	//区分選択により、期間の入力欄の種類を変更 //入力が未対応なのでコメントアウト
@@ -379,9 +396,7 @@ function change_repeat_kb_area() {
 //終日選択反映
 //終日選択されている時のinput.timeでtimepickerをよびだしたくない
 is_allday();
-$('#form_allday_kb').change(function(){
-	is_allday()
-});
+//$('#form_allday_kb').change(is_allday);
 function is_allday(){
 	if($('#form_allday_kb').prop('checked')){
 		$('#form_start_time').val('0:00');
@@ -398,7 +413,7 @@ function is_allday(){
 
 var base_uri = $('body').data('uri');
 
-function get_group_user(e, groupId, targetEle) {
+function get_group_user(groupId, targetEle) {
 
 	var targetEle = targetEle;
 	var group_id = groupId;
@@ -416,8 +431,6 @@ function get_group_user(e, groupId, targetEle) {
 		success: function(res) {
 			exists = JSON.parse(res);
 
-
-
 			document.getElementById(targetEle).options.length=0;
 
 			for(var i in exists) {
@@ -429,13 +442,12 @@ function get_group_user(e, groupId, targetEle) {
 					$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
 				}
 			}
-
 		
 		}
 	});
 }
 
-function get_group_building(e) {
+function get_group_building() {
 
 	var group_id = $("#building_group_list").val();
 

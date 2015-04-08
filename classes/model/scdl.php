@@ -27,7 +27,8 @@ class Model_Scdl extends \Model_Base
 								, '6' => '毎月(曜日指定)'
 								, '5' => '毎年'),
 				'class' => 'int',
-				'title' => '繰り返し区分'
+				'title' => '繰り返し区分',
+				'onchange' => 'change_repeat_kb_area()',
 			),
 		),
 		'target_month' => 
@@ -206,7 +207,8 @@ class Model_Scdl extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'checkbox',
-				'value' => 1
+				'value' => 1,
+				'onchange' => 'is_allday()',
 			),
 		),
 		'private_kb' => 
@@ -264,6 +266,7 @@ class Model_Scdl extends \Model_Base
 				'type' => 'select',
 				'class' => 'text',
 				'title' => 'グループ指定',
+				'onchange' => 'form_group_detail_change()',
 			),
 		),
 		'purpose_kb' => 

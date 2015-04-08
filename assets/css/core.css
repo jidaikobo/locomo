@@ -1436,7 +1436,8 @@ td.minimum {
 	padding: 5px 10px;
 }
 
-.narrow_user {
+.narrow_user,
+.narrow_building {
 	text-align: left;
 	margin: 16px auto 0;
 }

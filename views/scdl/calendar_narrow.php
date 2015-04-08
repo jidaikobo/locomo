@@ -1,4 +1,5 @@
-<select class="schedule_narrow" id="narrow_user_group_id" title="ユーザーグループ">
+<div class="narrow_user lcm_focus" title="絞り込み">
+<select class="schedule_narrow" id="narrow_user_group_id" title="ユーザーグループ" onchange="get_group_user()">
 	<option value="">-- ユーザーグループ --
 	<?php foreach($narrow_user_group_list as $key => $value) { ?>
 		<option value="<?php print $key; ?>" <?php if ($key == \Session::get($kind_name . "narrow_ugid")) { print "selected"; } ?>><?php  print $value; ?>
@@ -25,9 +26,10 @@ if (!(isset($day) && $day && $mode != "week")) {
 	}
 }
 ?>
+</div><!-- /.narrow_user -->
 <script>
 var base_uri = $('body').data('uri');
-
+/*
 $("#narrow_user_group_id").change(function(event) {
 	get_group_user(event);
 });
@@ -35,7 +37,8 @@ $("#narrow_user_group_id").change(function(event) {
 $("#narrow_building_group_id").change(function(event) {
 	get_group_building(event);
 });
-function get_group_user(e) {
+*/
+function get_group_user() {
 
 	var group_id = $("#narrow_user_group_id").val();
 	$.ajax({
@@ -55,7 +58,7 @@ function get_group_user(e) {
 	});
 }
 
-function get_group_building(e) {
+function get_group_building() {
 
 	var group_id = $("#narrow_building_group_id").val();
 

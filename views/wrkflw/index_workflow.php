@@ -20,9 +20,9 @@
 	<tr tabindex="-1">
 		<td><?php echo $n++; ?></td>
 		<td><div class="col_scrollable"><?php echo $item->{$subject_field} ?></div></td>
-		<td class="ctrl"><?php echo $item->workflow_apply_date ? date('Y-m-d', strtotime($item->workflow_apply_date)) : '-' ?></td>
+		<td class="ctrl"><?php echo $item->workflow_apply_date ? date('Y年n月j日', strtotime($item->workflow_apply_date)) : '-' ?></td>
 		<?php if ( ! \Request::is_hmvc()): ?>
-		<td class="ctrl"><?php echo $item->latest_action_date ? date('Y-m-d', strtotime($item->latest_action_date)) : '-' ?></td>
+		<td class="ctrl"><?php echo $item->latest_action_date ? date('Y年n月j日', strtotime($item->latest_action_date)) : '-' ?></td>
 		<td class="ctrl"><?php echo $item->workflow_step_status ?: '-' ?></td>
 		<?php endif; ?>
 		<td class="ctrl">
