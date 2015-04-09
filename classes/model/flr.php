@@ -792,9 +792,8 @@ class Model_Flr extends \Model_Base
 		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'display_name')->set_template('<div class="input_group">');
 		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'display_name')->set_template('</div>');
 
-
 		// === usergroup_id ===
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', 'is', null))), 'name');
 		$options = array('-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
 
 		// ルートディレクトリであれば、上記で取得した全項目をoptionsとしてよい
@@ -804,8 +803,20 @@ class Model_Flr extends \Model_Base
 			$g_permissions = array();
 			foreach ($parent->permission_usergroup as $k => $v)
 			{
-				if ( ! is_object($v->usrgrp)) continue;
-				$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
+				// logged in users - non object value
+				if ($v->usergroup_id === '-10')
+				{
+					$g_permissions[-10] = 'ログインユーザすべて';
+				}
+				// guest - non object value
+				elseif ($v->usergroup_id === '0')
+				{
+					$g_permissions[0] = 'ゲスト';
+				}
+				elseif (is_object($v->usrgrp))
+				{
+					$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
+				}
 			}
 			$options = array_intersect($g_permissions, $options);
 		}
