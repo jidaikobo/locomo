@@ -17,7 +17,8 @@ class Controller_Auth extends \Locomo\Controller_Base
 		// this action is for guest not logged in users
 		if (\Auth::check())
 		{
-			\Session::set_flash('error', 'あなたは既にログインしています');
+// Princess wants to delete this message :-(
+//			\Session::set_flash('error', 'あなたは既にログインしています');
 			return \Response::redirect($ret);
 		}
 

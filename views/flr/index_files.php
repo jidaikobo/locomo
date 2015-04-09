@@ -24,7 +24,11 @@
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
 				else:
-					echo Html::anchor('flr/file/view'.DS.$item->id, $item->name, array('class' => 'icon '.$item->genre));
+					if (\Controller_Flr::check_auth($item->path, 'read')):
+						echo Html::anchor('flr/file/view'.DS.$item->id, $item->name, array('class' => 'icon '.$item->genre));
+					else:
+						echo '<span class="icon '.$item->genre.'">'.$item->name.'</span>';
+					endif;
 				endif;
 			?>
 			</div></th>
@@ -32,7 +36,7 @@
 			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo dirname(urldecode($item->path)) ?></div></td>
 <?php endif; ?>
 			<td><?php
-				if ($item->genre !== 'dir'):
+				if ($item->genre !== 'dir' && \Controller_Flr::check_auth($item->path, 'read')):
 					echo \Html::anchor(\Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true)), 'ダウンロード', array('class' => 'button small'));
 				endif;
 			?></td>
