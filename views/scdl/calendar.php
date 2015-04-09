@@ -31,7 +31,6 @@
 
 </div>
 
-<div class="narrow_user lcm_focus" title="表示絞り込み">
 <?php
 //if (\Request::main()->controller == 'Controller_Scdl'):
 	include("calendar_narrow.php");
@@ -39,8 +38,6 @@
 //	include(APPPATH."modules/reserve/views/reserve/calendar_narrow.php");
 //endif;
 ?>
-
-</div>
 <table class="calendar month lcm_focus" title="カレンダ">
 	<thead>
 		<tr>

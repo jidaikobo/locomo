@@ -1,15 +1,9 @@
+<h1>メッセージ<?php echo $item->name ? '：'.$item->name : '' ?></h1>
 <table class="tbl">
 <?php
 	// use model's form plain definition instead of raw-like html
 	//echo $plain;
 ?>
-<?php if ($item->name): ?>
-<tr>
-	<th>表題</th>
-	<td><?php echo $item->name; ?></td>
-</tr>
-
-<?php endif; ?>
 <?php if ($item->contents): ?>
 <tr>
 	<th>本文</th>

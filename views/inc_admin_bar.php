@@ -3,7 +3,7 @@
 if (\Auth::check()):
 	$html = '';
 	$html.= '<nav id="adminbar" class="clearfix noprint">';
-		$html.= '<h2 class="skip"><a id="anchor_adminbar" tabindex="0">ここからツールバーです</a></h2>';
+		$html.= '<h2 class="skip"><a href="javascript:void(0);" id="anchor_adminbar" tabindex="0">ここからツールバーです</a></h2>';
 
 	// .adminbar_bottom
 		$html.='<div class="adminbar_bottom lcmbar_bottom">';

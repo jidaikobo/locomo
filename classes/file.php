@@ -10,7 +10,7 @@ class File extends \Fuel\Core\File
 	public static function get_file_genre($file)
 	{
 		$exts = array(
-			'image'   => array('gif','jpg','jpeg','png','bmp','tif','tiff',),
+			'image'   => array('gif','jpg','jpeg','png','bmp','tif','tiff', 'ai', 'psd'),
 			'audio'   => array('mp3','m4a','asf','asx','au','aif','dig','iff','mid','midi','wav','wma','oga',),
 			'movie'   => array('mp4','avi','ogv','mpeg','mpg',),
 			'braille' => array('bes', 'bet', 'ble', 'bls', 'bmt', 'brl', 'bs', 'bse', 'ebk', 'mbd', 'mse', 'nab', ),

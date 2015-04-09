@@ -529,18 +529,15 @@ function lcm_focus(){
 	});
 	
 	//スケジューラの期間の設定でうまくescにフォーカスが当たらない状況になっているので、一旦むりやりフォーカス（あとでみなおす）
-	$('#field_term *').focus(function(){
-		$('#field_term').find('input').last().on('keydown', function(e){
-			e = e ? e : event;
-			var t, k, parent;
-			t = $(e.target);
-			k = e.which;
-			if(k == 9 && !e.shiftKey){
+	$('#form_end_time, #form_end_date').blur(function(){
+		setTimeout(function(){
+			var elm = $(':focus');
+			if(!elm.is('input') && !elm.is('#esc_focus_wrapper')){
 				esc.focus();
-				e.preventDefault();
 			}
-		});
+		},0);
 	});
+	
 	//フォーカスの取り直し。クリックのほか、チェックボックスをスペースキーでチェックした際などにも走るので除外
 	$(document).on('click', lcm_focus_setparent);
 	

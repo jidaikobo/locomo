@@ -11,9 +11,7 @@
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
 	<?php print htmlspecialchars_decode($next_url); ?>
 </div>
-<div class="narrow_user lcm_focus" title="表示絞り込み">
 <?php include("calendar_narrow.php"); ?>
-</div>
 <?php endif; ?>
 <table class="calendar week lcm_focus" title="カレンダ">
 <?php if(!\Request::is_hmvc()): ?>
