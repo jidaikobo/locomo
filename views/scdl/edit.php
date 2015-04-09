@@ -118,10 +118,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
-					<div class="multiple_select_content button_group">
-						<input type="button" value="解除" class="remove_item button small">
-						<input type="button" value="選択" class="add_item button small primary">
-					</div><!-- /.multiple_select_content -->
+					<input type="button" value="解除" class="remove_item button small">
 					<div class="multiple_select_content">
 						<label for="member_new">ここから選択</label>
 						<select id="form_member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
@@ -130,6 +127,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
+					<input type="button" value="選択" class="add_item button small primary">
 				</div><!-- /.lcm_multiple_select -->
 				<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
 			</div>
@@ -157,10 +155,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<?php } ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
-					<div class="multiple_select_content button_group">
-						<input type="button" value="解除" class="button small remove_item">
-						<input type="button" value="選択" class="button small primary add_item">
-					</div><!-- /.multiple_select_content -->
+					<input type="button" value="解除" class="button small remove_item">
 					<div class="multiple_select_content select_new">
 						<label for="building_new">ここから選択</label>
 						<select id="form_building_new" name="building_new" class="select_from" size="2" multiple title="施設選択肢">
@@ -169,6 +164,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<?php } ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
+					<input type="button" value="選択" class="button small primary add_item">
 				</div><!-- /.lcm_multiple_select -->
 			</div>
 		</div>
@@ -227,10 +223,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
-					<div class="multiple_select_content button_group">
-						<input type="button" value="解除" class="remove_item button small">
-						<input type="button" value="選択" class="add_item button small primary">
-					</div><!-- /.multiple_select_content -->
+					<input type="button" value="解除" class="remove_item button small">
 					<div class="multiple_select_content">
 						<label for="member_new">ここから選択</label>
 						<select id="form_member_new" name="member_new" class="select_from" multiple size="2" title="メンバー選択肢">
@@ -239,6 +232,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->
+					<input type="button" value="選択" class="button small primary add_item">
 				</div><!-- /.lcm_multiple_select -->
 				<label for="form_attend_flg_0"><?php echo $form->field('attend_flg')->set_template('{error_msg}{field}'); ?>出席確認を取る</label>
 			</div>
