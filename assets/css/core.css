@@ -804,7 +804,7 @@ div.lcm_tooltip {
 	margin-left: -6px;
 }
 */
-.lcm_action_calendar .lcm_tooltip {
+div.lcm_tooltip {
 	font-size: .75em !important;
 }
 .lcm_action_calendar .lcm_tooltip th {
@@ -947,29 +947,19 @@ table + .index_toolbar {
 }
 
 /*=== multiple_select ===*/
-.lcm_form .select_multiple_wrapper,
 .lcm_multiple_select {
-	display: table;
-}
-.lcm_form .select_multiple_content,
-.lcm_multiple_select .multiple_select_content {
-	display: table-cell;
-	vertical-align: middle;
-}
-.lcm_form .select_multiple_content.button_group,
-.lcm_multiple_select .multiple_select_content.button_group {
-	width: 5em;
-	min-width: 5em;
 	position: relative;
+	height: 16em;
 }
-.lcm_form .select_multiple_content.button_group input,
-.lcm_multiple_select .multiple_select_content.button_group input {
+.lcm_multiple_select .remove_item,
+.lcm_multiple_select .add_item {
     position: absolute;
-	top: 7.5em;
-    left: 1.35em;
+    left: 13.5em;
 }
-.lcm_form .select_multiple_content.button_group input:first-child,
-.lcm_multiple_select .multiple_select_content.button_group input:first-child {
+.lcm_multiple_select .add_item {
+	top: 7.5em;
+}
+.lcm_multiple_select .remove_item {
     top: 10em;
 }
 .lcm_multiple_select label {
@@ -978,16 +968,27 @@ table + .index_toolbar {
 	font-weight: bold;
 	text-align: center;
 }
-.lcm_multiple_select .select_multiple_content ,
-.lcm_multiple_select .select_multiple_content select,
-.lcm_form .multiple_select_content select {
+.lcm_multiple_select .multiple_select_content,
+.lcm_multiple_select select,
+.lcm_multiple_select select[size] {
 	margin-bottom: .5em;
 	width: 11em;
 	height: 12.5em;
 }
-.lcm_multiple_select select:first-child {
+.lcm_multiple_select .multiple_select_content {
+	position: absolute;
+	top: 0;
+	left: 15.5em;
+}
+.lcm_multiple_select .multiple_select_content:first-child {
+	position: relative;
+	top: auto;
+	left: auto;
+}
+.lcm_multiple_select .selected {
 	margin-left: 0;
 }
+
 .lcm_form textarea {
 	width: 98%;
 	max-width: 800px;
@@ -1829,42 +1830,18 @@ table.schedule_day .graydown {
 	background-color: #CCC;
 }
 /*=== filer ===*/
-a.icon.dir:before {
-	content: url('../img/led-icons/folder.png')' ';
-}
-a.icon.file:before {
-	content: url('../img/led-icons/page.png')' ';
-}
-a.icon.braille:before {
-	content: url('../img/led-icons/page_braille.png')' ';
-}
-a.icon.image:before {
-	content: url('../img/led-icons/picture.png')' ';
-}
-a.icon.pdf:before {
-	content: url('../img/led-icons/doc_pdf.png')' ';
-}
-a.icon.ppt:before {
-	content: url('../img/led-icons/page_white_powerpoint.png')' ';
-}
-a.icon.txt:before {
-	content: url('../img/led-icons/page_white_text.png')' ';
-}
-a.icon.doc:before {
-	content: url('../img/led-icons/page_white_word.png')' ';
-}
-a.icon.xls:before {
-	content: url('../img/led-icons/page_white_excel.png')' ';
-}
-a.icon.audio:before {
-	content: url('../img/led-icons/doc_music.png')' ';
-}
-a.icon.movie:before {
-	content: url('../img/led-icons/doc_film.png')' ';
-}
-a.icon.zip:before {
-	content: url('../img/led-icons/doc_film.png')' ';
-}
+a.icon.dir:before,     span.icon.dir:before     { content: url('../img/led-icons/folder.png')' ';}
+a.icon.file:before,    span.icon.file:before    { content: url('../img/led-icons/page.png')' ';}
+a.icon.braille:before, span.icon.braille:before { content: url('../img/led-icons/page_braille.png')' ';}
+a.icon.image:before,   span.icon.image:before   { content: url('../img/led-icons/picture.png')' ';}
+a.icon.pdf:before,     span.icon.pdf:before     { content: url('../img/led-icons/doc_pdf.png')' ';}
+a.icon.ppt:before,     span.icon.ppt:before     { content: url('../img/led-icons/page_white_powerpoint.png')' ';}
+a.icon.txt:before,     span.icon.txt:before     { content: url('../img/led-icons/page_white_text.png')' ';}
+a.icon.doc:before,     span.icon.doc:before     { content: url('../img/led-icons/page_white_word.png')' ';}
+a.icon.xls:before,     span.icon.xls:before     { content: url('../img/led-icons/page_white_excel.png')' ';}
+a.icon.audio:before,   span.icon.audio:before   { content: url('../img/led-icons/doc_music.png')' ';}
+a.icon.movie:before,   span.icon.movie:before   { content: url('../img/led-icons/doc_film.png')' ';}
+a.icon.zip:before,     span.icon.zip:before     { content: url('../img/led-icons/doc_film.png')' ';}
 
 /*=== contents ===*/
 .contents > h1 {
