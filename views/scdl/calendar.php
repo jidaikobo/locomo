@@ -137,9 +137,16 @@
 ?>
 	 </div><!-- /.legend.calendar -->
 </div><!-- /.field_wrapper -->
-<?php foreach($detail_pop_array as $v):
-	$detail_pop_data = $v;
-	include("detail_pop.php");
-endforeach ;?>
+<?php
+if($detail_pop_array):
+	echo '<section class="detail_pop_wrapper" style="display: none;">';
+	echo '<h1>予定詳細一覧</h1>';
+	foreach($detail_pop_array as $v):
+		$detail_pop_data = $v;
+		include("detail_pop.php");
+	endforeach;
+	echo '</section>';
+endif;
+;?>
 
 

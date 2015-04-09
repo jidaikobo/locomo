@@ -1,8 +1,6 @@
 
-
-
 <?php if (isset($detail_pop_data->title_text)) { ?>
-<div id="pop<?php print $detail_pop_data->scdlid.$detail_pop_data->target_year.$detail_pop_data->target_mon.$detail_pop_data->target_day; ?>" aria-hidden="true" style="display:none;">
+<div id="pop<?php print $detail_pop_data->scdlid.$detail_pop_data->target_year.$detail_pop_data->target_mon.$detail_pop_data->target_day; ?>" aria-hidden="true">
 <table class="tbl2">
 	<thead>
 	<tr>

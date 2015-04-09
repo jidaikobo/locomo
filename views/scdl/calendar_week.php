@@ -118,9 +118,15 @@ endif; ?>
 	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
 ?>
 	 </div><!-- /.legend.calendar -->
-<?php foreach($detail_pop_array as $v):
-	$detail_pop_data = $v;
-	include("detail_pop.php");
-endforeach; ?>
-
+<?php
+if($detail_pop_array):
+	echo '<section class="detail_pop_wrapper" style="display: none;">';
+	echo '<h1>予定詳細一覧</h1>';
+	foreach($detail_pop_array as $v):
+		$detail_pop_data = $v;
+		include("detail_pop.php");
+	endforeach;
+	echo '</section>';
+endif;
+;?>
 
