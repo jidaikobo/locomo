@@ -4,9 +4,14 @@
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
-<h1><?php print $year; ?>年<?php print (int)$mon; ?>月 カレンダ</h1>
-
-
+<h1><?php print $year; ?>年<?php print (int)$mon; ?>月 月間カレンダ</h1>
+<?php
+//if (\Request::main()->controller == 'Controller_Scdl'):
+	include("calendar_narrow.php");
+//else:
+//	include(APPPATH."modules/reserve/views/reserve/calendar_narrow.php");
+//endif;
+?>
 <div class="field_wrapper calendar">
 <div class="select_period lcm_focus pagination" title="月を選択">
 	<?php print htmlspecialchars_decode($prev_url); ?> 
@@ -30,14 +35,7 @@
 	<?php print htmlspecialchars_decode($next_year_url); ?>
 
 </div>
-
-<?php
-//if (\Request::main()->controller == 'Controller_Scdl'):
-	include("calendar_narrow.php");
-//else:
-//	include(APPPATH."modules/reserve/views/reserve/calendar_narrow.php");
-//endif;
-?>
+<h2 class="skip">カレンダ</h2>
 <table class="calendar month lcm_focus" title="カレンダ">
 	<thead>
 		<tr>

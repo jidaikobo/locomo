@@ -6,12 +6,13 @@
 ?>
 <?php if(!\Request::is_hmvc()): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
+<?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar">
 <div class="select_period" title="週の選択">
 	<?php print htmlspecialchars_decode($prev_url); ?> / 
 	<?php print htmlspecialchars_decode($next_url); ?>
 </div>
-<?php include("calendar_narrow.php"); ?>
+<h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week lcm_focus" title="カレンダ">
 <?php if(!\Request::is_hmvc()): ?>

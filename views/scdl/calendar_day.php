@@ -5,10 +5,8 @@
 ?>
 
 <?php if(!\Request::is_hmvc()): ?>
-<h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 カレンダ一日詳細</h1>
-
-
-
+<h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 一日詳細カレンダ</h1>
+<?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar_detail">
 	<div class="select_period lcm_focus" title="表示する日を変更">
 		<?php print htmlspecialchars_decode($prev_url); ?> / 
@@ -17,7 +15,6 @@
 	</div>
 <!--	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 -->	
-	<?php include("calendar_narrow.php"); ?>
 	<h2 class="skip">タイムテーブル グラフ</h2>
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
 	<table class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">

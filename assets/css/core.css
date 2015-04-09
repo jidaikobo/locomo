@@ -1440,10 +1440,10 @@ td.minimum {
 .narrow_user,
 .narrow_building {
 	text-align: left;
-	margin: 16px auto 0;
+	margin: 16px auto 1.5em;
 }
 table.calendar {
-	margin-top: 2em;
+	margin-top: 1em;
 	table-layout: fixed;
 	text-align: left;
 	-webkit-box-sizing : border-box ;
