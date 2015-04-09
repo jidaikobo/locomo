@@ -58,26 +58,6 @@ function get_group_user() {
 	});
 }
 
-function get_group_building() {
-
-	var group_id = $("#narrow_building_group_id").val();
-
-	$.ajax({
-		url: base_uri + 'scdl/get_building_list.json',
-		type: 'post',
-		data: 'bid=' + group_id,
-		success: function(res) {
-			exists = JSON.parse(res);
-			document.getElementById("narrow_building_id").options.length=0;
-			$("#narrow_building_id").append($('<option>').html('-- 施設 --').val(""));
-			for(var i in exists) {
-				$("#narrow_building_id").append($('<option>').html(exists[i]['item_name']).val(exists[i]['item_id']));
-			}
-		
-		}
-	});
-}
-
 $("#scdl_time_button").click(function(event) {
 
 	var scdl_display_time = '<?php print \Session::get('scdl_display_time'); ?>';
