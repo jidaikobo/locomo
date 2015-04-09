@@ -353,7 +353,7 @@ class Model_Usr extends Model_Base
 		// usergroup can modified by admin only 
 		if (\Auth::is_admin())
 		{
-			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', '', null))), 'name');
+			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', 'is', null))), 'name');
 			if ($options) {
 			$checked = $obj->usergroup ? array_keys($obj->usergroup) : array();
 			$form->add_after(
