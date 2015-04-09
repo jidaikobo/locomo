@@ -1830,42 +1830,18 @@ table.schedule_day .graydown {
 	background-color: #CCC;
 }
 /*=== filer ===*/
-a.icon.dir:before {
-	content: url('../img/led-icons/folder.png')' ';
-}
-a.icon.file:before {
-	content: url('../img/led-icons/page.png')' ';
-}
-a.icon.braille:before {
-	content: url('../img/led-icons/page_braille.png')' ';
-}
-a.icon.image:before {
-	content: url('../img/led-icons/picture.png')' ';
-}
-a.icon.pdf:before {
-	content: url('../img/led-icons/doc_pdf.png')' ';
-}
-a.icon.ppt:before {
-	content: url('../img/led-icons/page_white_powerpoint.png')' ';
-}
-a.icon.txt:before {
-	content: url('../img/led-icons/page_white_text.png')' ';
-}
-a.icon.doc:before {
-	content: url('../img/led-icons/page_white_word.png')' ';
-}
-a.icon.xls:before {
-	content: url('../img/led-icons/page_white_excel.png')' ';
-}
-a.icon.audio:before {
-	content: url('../img/led-icons/doc_music.png')' ';
-}
-a.icon.movie:before {
-	content: url('../img/led-icons/doc_film.png')' ';
-}
-a.icon.zip:before {
-	content: url('../img/led-icons/doc_film.png')' ';
-}
+a.icon.dir:before,     span.icon.dir:before     { content: url('../img/led-icons/folder.png')' ';}
+a.icon.file:before,    span.icon.file:before    { content: url('../img/led-icons/page.png')' ';}
+a.icon.braille:before, span.icon.braille:before { content: url('../img/led-icons/page_braille.png')' ';}
+a.icon.image:before,   span.icon.image:before   { content: url('../img/led-icons/picture.png')' ';}
+a.icon.pdf:before,     span.icon.pdf:before     { content: url('../img/led-icons/doc_pdf.png')' ';}
+a.icon.ppt:before,     span.icon.ppt:before     { content: url('../img/led-icons/page_white_powerpoint.png')' ';}
+a.icon.txt:before,     span.icon.txt:before     { content: url('../img/led-icons/page_white_text.png')' ';}
+a.icon.doc:before,     span.icon.doc:before     { content: url('../img/led-icons/page_white_word.png')' ';}
+a.icon.xls:before,     span.icon.xls:before     { content: url('../img/led-icons/page_white_excel.png')' ';}
+a.icon.audio:before,   span.icon.audio:before   { content: url('../img/led-icons/doc_music.png')' ';}
+a.icon.movie:before,   span.icon.movie:before   { content: url('../img/led-icons/doc_film.png')' ';}
+a.icon.zip:before,     span.icon.zip:before     { content: url('../img/led-icons/doc_film.png')' ';}
 
 /*=== contents ===*/
 .contents > h1 {
