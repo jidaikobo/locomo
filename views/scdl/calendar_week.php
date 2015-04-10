@@ -120,13 +120,13 @@ endif; ?>
 	 </div><!-- /.legend.calendar -->
 <?php
 if($detail_pop_array):
-	echo '<section class="detail_pop_wrapper" style="display: none;">';
+	echo '<div style="display: none;"><section class="detail_pop_wrapper">';
 	echo '<h1>予定詳細一覧</h1>';
 	foreach($detail_pop_array as $v):
 		$detail_pop_data = $v;
 		include("detail_pop.php");
 	endforeach;
-	echo '</section>';
+	echo '</section></div>';
 endif;
 ;?>
 
