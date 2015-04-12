@@ -190,7 +190,6 @@ class Controller_Scffld extends \Controller_Base
 					$messages[] = "sudo chmod -R 777 ".APPPATH.'classes/actionset/'.$name.'.php';
 					$messages[] = "sudo chmod -R 777 ".APPPATH.'views/'.$name;
 					$messages[] = "migrationを調整したら、コマンドラインで";
-					$messages[] = "cd ".DOCROOT;
 					$messages[] = "php oil refine migrate:up";
 					$messages[] = "を実行してください。";
 				}
@@ -199,7 +198,6 @@ class Controller_Scffld extends \Controller_Base
 					$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
 					$messages[] = "sudo chmod -R 777 {$scfldpath}";
 					$messages[] = "migrationとconfigを調整したら、コマンドラインで";
-					$messages[] = "cd ".DOCROOT;
 					$messages[] = "php oil refine migrate:up --modules={$name}";
 					$messages[] = "を実行してください。";
 				}
