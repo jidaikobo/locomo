@@ -170,7 +170,7 @@ class Controller_Scffld extends \Controller_Base
 
 				//views
 				if ( ! file_exists($scfldpath.'/views')) \File::create_dir($scfldpath, 'views');
-				$viewpath = $scfldpath.'/views';
+				$viewpath = $scfldpath.'/views/'.$name;
 				if ($type == 'all2')
 				{
 					if ( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
