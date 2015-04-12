@@ -24,6 +24,7 @@ return array(
 	// menu_separators - add separators
 	'menu_separators' => array(
 		//'\Controller_Name' => '[has_top_separator|has_bottom_separator]',
+		'\Controller_Scdl' => 'has_top_separator',
 	),
 
 	// identity
@@ -81,7 +82,6 @@ return array(
 		'\\Controller_Sys/home',
 		'\\Controller_Sys/403',
 		'\\Controller_Sys/404',
-		'\\Controller_Sys/fetch_view',
 		'\\Controller_Flr/dl',
 	),
 

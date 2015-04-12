@@ -4,8 +4,8 @@
 
 // mv configs
 
-LOCOMOPATH.config/to_app_config のファイルを APPPATH.configに移動してください。
-packageconfigをオーバライドするためには、APPPATH.configにlocomo.phpとリネームして移動してください。
+LOCOMOPATH._to_app_dir/config のファイルを APPPATH.configに移動してください。
+packageconfigをオーバライドするためには、LOCOMOPATH.config/packageconfig.phpをAPPPATH.configにlocomo.phpとリネームして移動してください。
 
 // database
 
@@ -13,7 +13,15 @@ APPPATH.configのdb.php（development内など適切なもの）に、データ�
 
 // APPPATH.config/config.php
 
-always_loadに、locomoを足してください。
+always_loadに、locomoを足してください。Locomoはormに依存しているので、以下のようになります。
+always_loadはデフォルトでは配列ごとコメントアウトされているので、これを解除してください。
+
++quote start-----------------------------+
+		'packages'  => array(
+			'orm',
+			'locomo',
+		),
++-------------------------------quote end+
 
 security設定をしてください。
 
@@ -33,3 +41,27 @@ php oil refine migrate --packages=locomo --version=100
 パッケージのバージョンダウンは以下の通り。
 
 php oil refine migrate --packages=locomo --version=0
+
+// assets
+
+publicディレクトリ（あるいはそのシステムの公開ディレクトリ）に移動し、packages/locomo/assetsを複製するか、シンボリックリンクをはってください。複製すると、バージョンアップの旅に複製が必要なので、原則、シンボリックリンクを推奨します。複製の場合でも、ディレクトリの名称はlcm_assetsにしてください。
+
+ln -s path/to/packages/locomo/assets lcm_assets
+
+LOCOMOPATH._to_app_dir/locomo のファイルを APPPATHに移動してください。
+Fuelのデフォルトのassetsディレクトリの名称を変更してください。
+
+ln -s path/to/app/locomo/assets assets
+
+で、app内のassetsを対象にできます。このファイルももちろん実体をpublicに置いてもいいのですが、appをgitで管理することも多いので、シンボリックリンクで行っています。
+
+// access
+
+ブラウザでアクセスし、動作確認してください。
+Locomoが有効であれば、
+
+http://example.com/auth/login
+
+で、ログイン画面にアクセスできます。
+
+デフォルトの管理者はAPPPATH/config/locomo.phpの冒頭にあります。ここを編集して、ログインしてみてください。
