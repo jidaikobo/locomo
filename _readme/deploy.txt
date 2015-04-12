@@ -4,14 +4,19 @@
 
 // mv configs
 
-LOCOMOPATH._to_app_dir/config のファイルを APPPATH.configに移動してください。
-packageconfigをオーバライドするためには、LOCOMOPATH.config/packageconfig.phpをAPPPATH.configにlocomo.phpとリネームして移動してください。
+LOCOMOPATH/_to_app_dir/config のファイルを APPPATH/configに移動してください。
+packageconfigをオーバライドするためには、LOCOMOPATH/config/packageconfig.phpをAPPPATH/configにlocomo.phpとリネームして移動してください。
+
+// mv files and create dir
+
+LOCOMOPATH/_to_app_dir/locomoのディレクトリをそのままAPPPATH直下に置いてください。
+また、APPPATH/classes/にactionsetというディレクトリを設置してください。
 
 // database
 
-APPPATH.configのdb.php（development内など適切なもの）に、データベースの接続情報を記述してください。
+APPPATH/configのdb.php（development内など適切なもの）に、データベースの接続情報を記述してください。
 
-// APPPATH.config/config.php
+// APPPATH/config/config.php
 
 always_loadに、locomoを足してください。Locomoはormに依存しているので、以下のようになります。
 always_loadはデフォルトでは配列ごとコメントアウトされているので、これを解除してください。
@@ -48,7 +53,7 @@ publicディレクトリ（あるいはそのシステムの公開ディレク�
 
 ln -s path/to/packages/locomo/assets lcm_assets
 
-LOCOMOPATH._to_app_dir/locomo のファイルを APPPATHに移動してください。
+LOCOMOPATH/_to_app_dir/locomo のファイルを APPPATHに移動してください。
 Fuelのデフォルトのassetsディレクトリの名称を変更してください。
 
 ln -s path/to/app/locomo/assets assets
