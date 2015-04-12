@@ -175,6 +175,8 @@ class Controller_Scffld extends \Controller_Base
 				{
 					if ( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
 					$viewpath = APPPATH.'views/'.$name;
+				} else {
+					if ( ! file_exists($viewpath)) \File::create_dir($scfldpath.'/views', $name);
 				}
 				\File::update($viewpath, 'index.php', $tpl_index);
 				\File::update($viewpath, 'index_admin.php', $tpl_index_admin);
