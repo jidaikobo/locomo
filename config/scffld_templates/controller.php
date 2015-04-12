@@ -29,7 +29,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	public function index_core()
 	{
 		parent::index_core();
-		$search_form = \Model_XXX::search_form();
+		$search_form = Model_XXX::search_form();
 		$this->template->content->set_safe('search_form', $search_form);
 	}
 
