@@ -301,7 +301,7 @@ class Actionset_Scdl extends \Actionset
 	 */
 	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array())
 	{
-		if (\Request::main()->action != 'edit' && $id) {
+		if ($id) {
 			$urls = array(array($controller.DS."copy/?from=" . $id, 'コピー'));
 		}
 		$retvals = array(
