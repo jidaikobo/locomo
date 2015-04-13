@@ -4,6 +4,17 @@ trait Model_Traits_Wrkflw
 {
 	protected static $_default_workflow_field_name   = 'workflow_status';
 
+	/*
+	 * _init()
+	 */
+	public static function _init()
+	{
+		if ( ! in_array('auth_workflow', static::$_authorize_methods))
+		{
+			static::$_authorize_methods[] = 'auth_workflow';
+		}
+	}
+
 	/**
 	 * get_current_step()
 	*/
@@ -379,17 +390,6 @@ trait Model_Traits_Wrkflw
 		}
 
 		return;
-	}
-
-	/**
-	 * add_authorize_methods()
-	 */
-	public static function add_authorize_methods()
-	{
-		if ( ! in_array('auth_workflow', static::$_authorize_methods))
-		{
-			static::$_authorize_methods[] = 'auth_workflow';
-		}
 	}
 
 	/*

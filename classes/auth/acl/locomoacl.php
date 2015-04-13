@@ -48,7 +48,7 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		$module && \Module::loaded($module) == false and \Module::load($module);
 
 		// controller and action
-		if ( ! \Util::method_exists($condition)) return false;
+//		if ( ! \Util::method_exists($condition)) return false;
 
 		// admins are all allowed even if class and method is not exist.
 		if (in_array(\Auth::get('id'), array(-1, -2))) return true;

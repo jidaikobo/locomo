@@ -305,6 +305,9 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// data-uri
 		$this->template->set_global('body_data', 'data-uri='.\Uri::base(false));
+
+		// affected_id for index template - from session
+		$this->template->set_global('affected_id', \Session::get('affected_id'));
 		
 		// locomo - for logged in users'
 		$locomo = array();
