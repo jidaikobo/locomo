@@ -269,10 +269,10 @@ body.loggedin {
 }
 
 .default_bg .lcmbar_top {
-	background-color: #0e3664;
+	background-color: #1f1210;
 	background-image: url('../img/system/adminbar_bg.png');
 	background-position: center top;
-	background-repeat: no-repeat;
+	background-repeat: repeat;
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
 	vertical-align: middle;
