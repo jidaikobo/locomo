@@ -44,7 +44,7 @@ class Create_Scdl
 
 		), array('id'));
 		$query = \DB::delete("lcm_scdls")->execute();
-		
+
 
 
 		echo "create lcm_scdls_buildings table.\n";
@@ -58,8 +58,8 @@ class Create_Scdl
 
 		), array('id'));
 
-		
-		
+
+
 
 		echo "create lcm_scdls_members table.\n";
 		\DBUtil::create_table('lcm_scdls_members', array(
@@ -408,7 +408,7 @@ class Create_Scdl
 		echo "drop scdl related tables.\n";
 		\DBUtil::drop_table('lcm_scdls');
 		\DBUtil::drop_table('lcm_scdls_buildings');
-		\DB::delete("items")->where("category", "schedule_building")->execute();
+//		\DB::delete("items")->where("category", "schedule_building")->execute();
 		\DBUtil::drop_table('lcm_scdls_members');
 		\DBUtil::drop_table('lcm_scdls_items');
 		\DBUtil::drop_table('lcm_scdls_attends');

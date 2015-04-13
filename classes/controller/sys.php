@@ -168,7 +168,7 @@ class Controller_Sys extends \Controller_Base
 			// auth
 			if( ! \Auth::has_access($acts[0])) continue;
 
-			// querystring 
+			// querystring
 			$qstr = \Arr::get($acts, 1);
 
 			// method exists?
