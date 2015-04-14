@@ -1755,6 +1755,7 @@ schedule_day.graph td {
 .text_icon.repeat_kb_1:before {
 	content: '日';
 }
+
 /*  毎日（土日除く）  */
 .text_icon.repeat_kb_2 {
 	background-color: #1a518e;
