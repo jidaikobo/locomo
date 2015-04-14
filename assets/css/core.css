@@ -122,7 +122,7 @@ body.lcm_action_login {
 }
 .lcm_action_login .flash_alert {
 	position: absolute;
-	top: 4em;
+	top: 3em;
 	left: 0;
 	right: 0;
 	width: 20em;
