@@ -1755,6 +1755,9 @@ schedule_day.graph td {
 .text_icon.repeat_kb_1:before {
 	content: '日';
 }
+.legend .text_icon.repeat_kb_1 + span:before {
+	content: '毎日';
+}
 
 /*  毎日（土日除く）  */
 .text_icon.repeat_kb_2 {
@@ -1763,12 +1766,19 @@ schedule_day.graph td {
 .text_icon.repeat_kb_2:before {
 	content: '平';
 }
+.legend .text_icon.repeat_kb_2 + span:before {
+	content: '平日';
+}
 /*  毎週  */
 .text_icon.repeat_kb_3 {
 	background-color: #c60;
 }
 .text_icon.repeat_kb_3:before {
 	content: '週';
+}
+.legend .text_icon.repeat_kb_3 + span:before {
+	content: '毎週';
+	color: #333;
 }
 /*  毎月  */
 .text_icon.repeat_kb_4 {
@@ -1777,6 +1787,9 @@ schedule_day.graph td {
 .text_icon.repeat_kb_4:before {
 	content: '月';
 }
+.legend .text_icon.repeat_kb_4 + span:before {
+	content: '毎月';
+}
 /*  毎月(曜日指定)  */
 .text_icon.repeat_kb_6 {
 	background-color: #c0a000;
@@ -1784,12 +1797,19 @@ schedule_day.graph td {
 .text_icon.repeat_kb_6:before {
 	content: '月';
 }
+.legend .text_icon.repeat_kb_6 + span:before {
+	content: '毎月(曜日指定)';
+}
+
 /*  毎年  */
 .text_icon.repeat_kb_5 {
 	background-color: #17a8a0;
 }
 .text_icon.repeat_kb_5:before {
 	content: '年';
+}
+.legend .text_icon.repeat_kb_5 + span:before {
+	content: '毎年';
 }
 
 /*== 詳細設定 ==*/
@@ -1800,12 +1820,19 @@ schedule_day.graph td {
 .text_icon.provisional_kb:before {
 	content: '仮';
 }
+.legend .text_icon.provisional_kb + span:after {
+	content: '仮予約';
+}
+
 /*  時間指定無し  */
 .text_icon.unspecified_kb {
 	background-color: #3a6;
 }
 .text_icon.unspecified_kb:before {
 	content: '無';
+}
+.legend .text_icon.unspecified_kb + span:after {
+	content: '時間指定無し';
 }
 /*  終日  */
 .text_icon.allday_kb {
@@ -1814,13 +1841,34 @@ schedule_day.graph td {
 .text_icon.allday_kb:before {
 	content: '終';
 }
+.legend .text_icon.allday_kb + span:after {
+	content: '終日';
+}
+/* 重要度 */
+.legend .icon.mark_importance.kb_0:after {
+	content: '重要度 高';
+}
+.legend .icon.mark_importance.kb_1 + span:after {
+	content: '重要度 中';
+}
+.legend .icon.mark_importance.kb_2 + span:after {
+	content: '重要度 低';
+}
+/* 公開状態 */
+.legend .icon.mark_private + span:after {
+	content: '非公開';
+}
 
-/*== 登録者関係 ==*/
+
+/* 登録者関係 */
 .text_icon.proxy {
 	background-color: #804000;
 }
 .text_icon.proxy:before {
 	content: '代';
+}
+.text_icon.proxy + span:after {
+	content: '代理登録';
 }
 
 /*== 時間グラフ ==*/
