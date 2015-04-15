@@ -45,11 +45,7 @@ $(function() {
 		e.preventDefault();
 		checkboxes.prop('checked', false).trigger('change');
 	});
-/*
-	checkboxes.each(function(){
-		$(this).closest('tr').addClass('has_checkbox');
-	});
-*/	
+
 	$(document).on('click', '.has_checkbox tr' ,function(e){
 		var t, tr, checkbox, prop;
 		e = e ? e : event;
@@ -430,12 +426,20 @@ $.fn.reset_tabindex = function(){
 
 //.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしい環境は除外
 if(tabindexCtrl && $('.lcm_focus')[0]){
+	/* 閲覧状態のフォーム内のlcm_focusを外す */
+	if($('.lcm_form.view')[0]){
+		$('.lcm_focus').each(function(){
+			if($(this).closest($('.lcm_form.view')[0])){
+					$(this).removeClass('lcm_focus').removeAttr('tabindex');//ブロック説明用に、lcm_focusとは別にフォーカスを与えることを想定してlcm_form内のinput_groupはtabindexを持っている。そもそもこの措置は妥当？
+			}
+		});
+	}
 	lcm_focus();
 }
 
 function lcm_focus(){
 	var elm, esc;
-	elm = $('.lcm_focus');
+	elm = $(document).find('.lcm_focus');
 
 	/*=== set_focus ===*/
 	//フォーカス対象を指定して実行されている場合はそれを、なければlcm_focusを相手にする。
@@ -446,7 +450,7 @@ function lcm_focus(){
 		if(!esc){
 			$(document).set_tabindex();
 		}else if(target){
-			parents = target.parents('.lcm_focus').addClass('focusparent');
+			parents = target.parents(elm).addClass('focusparent');
 			target.addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}else{
 			$(document).set_tabindex();//重いかなあ。
@@ -502,7 +506,7 @@ function lcm_focus(){
 	setTimeout(lcm_focus_set, 0);
 
 	//lcm_focus上でのキーボードイベント。
-	$('.lcm_focus').on('keydown', function(e){
+	elm.on('keydown', function(e){
 		e = e ? e : event;
 		var t, k, parent;
 		t = $(e.target);
@@ -547,7 +551,7 @@ function lcm_focus(){
 		k = e.witch;
 		if(k == 32) return;
 		t = $(e.target);
-		parent = t.closest('.lcm_focus')[0];
+		parent = t.closest(elm)[0];
 		if(!$(parent).hasClass('focusparent')){
 			parent = parent ? $(parent) : $(document);
 			lcm_focus_set(parent);
@@ -588,7 +592,6 @@ function lcm_focus(){
 		lcm_focus_esc(e);
 	});
 	
-
 
 /*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
@@ -734,7 +737,7 @@ $('.toggle_item').on('click', function(e){
 	var t = $('.hidden_item').eq($('.toggle_item').index(this));//切り替えの相手
 
 	if($(this).hasClass('disclosure')){//ディスクロージャならスライド
-		t.slideToggle(125);//ここでターゲットにフォーカスする？
+		t.slideToggle(125);
 	}
 	
 	if($('.semimodal.on')[0] ){//モーダルが開いている場合は閉じる
@@ -1073,8 +1076,8 @@ $('#alert_error .link').find('a').each(function(){
 		t = $('#form_end_time');
 	}
 	t.after(link);
-
 });
+
 
 /*=== lcm_multiple_select ===*/
 
@@ -1084,7 +1087,6 @@ $('.lcm_multiple_select').each(function(){
 	selected = $($(this).find('.selected'));
 	selects = select.add(selected);
 	
-	//スケジューラ用hidden
 	var hidden_items_id = $(this).data('hiddenItemId');
 	if(hidden_items_id){
 		make_hidden_form_items(hidden_items_id, selected);
@@ -1113,7 +1115,6 @@ function lcm_multiple_select(from, to, hidden_items_id, selected){
 		item.appendTo(to).attr('selected',false);
 	}
 
-	//スケジューラ用hidden
 	if(hidden_items_id){
 		make_hidden_form_items(hidden_items_id, selected)
 	};
@@ -1163,6 +1164,7 @@ $(document).on('click', '.switch_mce', function(){
 		tinymce.EditorManager.execCommand('mceAddEditor', true, id);
 	}
 });
+
 
 /* jQuery UI */
 
@@ -1237,21 +1239,13 @@ function set_startdate_to_enddate(el){
 		$('#form_end_date').val($(el).val());
 	}
 }
-/*function val_compare(el1, el2){
-	if(el1.val()==el2.val()){
-		el2.addClass('same_value');
-	}else{
-		el2.removeClass('same_value');
-	}
-}
-*/
 
 //通常の日付選択
 $('input.date , input[type=date]').datepicker({
 	firstDay       : 1,
-	dateFormat: 'yy-mm-dd',
-	changeMonth: true,
-	changeYear: true,
+	dateFormat     : 'yy-mm-dd',
+	changeMonth    : true,
+	changeYear     : true,
 	showButtonPanel: true,
 });
 
@@ -1269,7 +1263,7 @@ $('input.datetime.min30, input[type=datetime].min30').datetimepicker({
 });
 //通常の日付＋時間選択
 $('input.datetime,  input[type=datetime]').datetimepicker({
-		firstDay       : 1,
+		firstDay: 1,
 });
 
 //時間選択
@@ -1310,8 +1304,8 @@ var jslcm_times = $( '#form_start_time, #form_end_time' ).timepicker( {
 $('input.time.min15').timepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 15,
-	beforeShow: function(){
-		if( $(this).attr('readonly') ) return false;
+	beforeShow: function(input){
+		if( $(input).attr('readonly') ) return false;
 	}
 });
 //30分区切り
@@ -1319,14 +1313,14 @@ $('input.time.min30').timepicker({
 	timeFormat: 'HH:mm',
 	stepMinute: 30,
 	beforeShow: function(){
-		if( $(this).attr('readonly') ) return;
+		if( $(this).attr('readonly') ) return false;
 	}
 });
 //通常の時間選択
 $('input.time').timepicker({
 	timeFormat: 'HH:mm',
-	beforeShow: function(){
-		if( $(this).attr('readonly') ) return;
+	beforeShow: function(input){
+		if( $(input).attr('readonly') ) return false;
 	}
 });
 

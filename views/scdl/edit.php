@@ -1,7 +1,7 @@
 <?php
 if (isset($overlap_result) && count($overlap_result)) {
 ?>
-<table class="tbl datatable" tabindex="0">
+<table class="tbl datatable lcm_focus" title="重複一覧">
 	<thead>
 	<tr>
 		<th>
@@ -66,7 +66,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<?php echo $form->field('repeat_kb')->set_template('{error_msg}{field}'); ?>
 			<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 			<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
-			<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+			<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?></span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
 			<div id="field_set_time" style="display: none;"> から </div>
 		</div>
 	</div><!-- /.input_group -->
@@ -381,10 +381,19 @@ $('#form_allday_kb').change(is_allday);
 function is_allday(){
 	if($('#form_allday_kb').prop('checked')){
 		$('#form_start_time').val('0:00');
-		$('#form_end_time').val('23:59');
-		$('#form_start_time, #form_end_time').attr('readonly',true);
+		$('#form_end_time').val('23:59').on('blur', function(){
+			$(this).val('23:59');
+		});
+		$('#form_start_time, #form_end_time').attr('readonly',true).removeClass('time');
 	}else{
-		$('#form_start_time, #form_end_time').attr('readonly',false);
+		$('#form_start_time, #form_end_time').attr('readonly',false).addClass('time');
+		$('#form_start_time, #form_end_time').timepicker({
+			timeFormat: 'HH:mm',
+			stepMinute: 15,
+			beforeShow: function(input){
+				if( $(input).attr('readonly') ) return false;
+			}
+		});
 	}
 }
 /*
