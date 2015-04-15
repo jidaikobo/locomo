@@ -33,9 +33,10 @@
 		</tr>
 <?php endforeach; ?>
 	</tbody>
-	<tfoot>
+	<tfoot class="thead">
 		<tr>
 ###THEAD###
+			<th>操作</th>
 		</tr>
 	</tfoot>
 </table>

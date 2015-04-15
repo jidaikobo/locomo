@@ -182,7 +182,7 @@ class Model_Usr extends Model_Base
 		} elseif ($this->password) {
 			// POST以外の更新であれば生値を送ったものと見なしてハッシュ処理
 			$this->password = \Auth::hash_password($this->password);
-		
+
 		}
 	}
 
@@ -350,7 +350,7 @@ class Model_Usr extends Model_Base
 			->set_options($ugrps4main)
 			->set_value($obj->main_usergroup_id);
 
-		// usergroup can modified by admin only 
+		// usergroup can modified by admin only
 		if (\Auth::is_admin())
 		{
 			$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', 'IS', null))), 'name');

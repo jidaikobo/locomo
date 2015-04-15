@@ -103,7 +103,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<h2><span class="label_required">必須</span>メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
-				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
+				<select id="group_list" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
 					<?php foreach($group_list as $key => $value) { ?>
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
@@ -139,7 +139,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
-				<select id="building_group_list" title="施設グループ絞り込み" onchange="get_group_building()">
+				<select id="building_group_list" title="施設グループ絞り込み">
 					<option value="">絞り込み：全施設
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
@@ -194,7 +194,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<div class="input_group">
 		<h2><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
-			<select id="group_list_create_user" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list_create_user').val(), 'form_user_id');})">
+			<select id="group_list_create_user" title="グループ絞り込み">
 				<option value="">絞り込み：全グループ
 				<?php foreach($group_list as $key => $value) { ?>
 					<option value="<?php print $key; ?>"><?php  print $value; ?>
@@ -208,7 +208,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2 class="ar">メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
+				<select id="group_list" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
 				<?php foreach($group_list as $key => $value): ?>
 					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
@@ -264,25 +264,12 @@ if (isset($overlap_result) && count($overlap_result)) {
 <script>
 <!-- JSに移す -->
 change_repeat_kb_area();
-/* いったんonchangeに変更。でも.attachEvent('onchange', ...)とかで書き直せる？
-$("#form_repeat_kb").change(function(event){
-	change_repeat_kb_area();
-});
-$("#group_list").change(function(event) {
-	get_group_user(event, $("#group_list").val(), "form_member_new");
-});
-$("#group_list_create_user").change(function(event) {
-	get_group_user(event, $("#group_list_create_user").val(), "form_user_id");
-});
-
-$("#building_group_list").change(function(event) {
-	get_group_building(event);
-});
-$("#form_group_detail").change(function(event) {
-	form_group_detail_change(event);
-});
-*/
-
+//select.changeはNetReaderでうまく取得できないので、onchangeを使用
+document.getElementById('form_repeat_kb').onchange = function(){change_repeat_kb_area();};
+document.getElementById('group_list').onchange = function(){get_group_user($('#group_list').val(), 'form_member_new');};
+document.getElementById('group_list_create_user').onchange = function(){get_group_user($('#group_list_create_user').val(), 'form_user_id');};
+document.getElementById('building_group_list').onchange = function(){get_group_building();};
+document.getElementById('form_group_detail').onchange = function(){form_group_detail_change();};
 
 function form_group_detail_change(e) {
 	$("#form_group_kb_1").val(['2']);
@@ -337,7 +324,7 @@ function change_repeat_kb_area() {
 	}
 
 	//区分選択により時間入力欄を移動 tabindex制御されているときに別のブロックに移動する時のふるまいは個別に設定しないといけない？
-	//lcm_focusのフォーカス制御があるので、遅延させる(//NetReaderの実行は遅延させなくてよい)
+	//lcm_focusのフォーカス制御があるので、遅延させる(//NetReaderでは遅延させなくてよい)
 	//ひとまず外側で遅延させておく
 	//タイムラグの間にキーボード操作(tab)を受け付けるとちょっとまずい？
 	//ひとまず値を全部持ってくる。あとでせいり
@@ -390,7 +377,7 @@ function change_repeat_kb_area() {
 //終日選択反映
 //終日選択されている時のinput.timeでtimepickerをよびだしたくない
 is_allday();
-//$('#form_allday_kb').change(is_allday);
+$('#form_allday_kb').change(is_allday);
 function is_allday(){
 	if($('#form_allday_kb').prop('checked')){
 		$('#form_start_time').val('0:00');

@@ -170,11 +170,13 @@ class Controller_Scffld extends \Controller_Base
 
 				//views
 				if ( ! file_exists($scfldpath.'/views')) \File::create_dir($scfldpath, 'views');
-				$viewpath = $scfldpath.'/views';
+				$viewpath = $scfldpath.'/views/'.$name;
 				if ($type == 'all2')
 				{
 					if ( ! file_exists(APPPATH.'views/'.$name)) \File::create_dir(APPPATH.'views', $name);
 					$viewpath = APPPATH.'views/'.$name;
+				} else {
+					if ( ! file_exists($viewpath)) \File::create_dir($scfldpath.'/views', $name);
 				}
 				\File::update($viewpath, 'index.php', $tpl_index);
 				\File::update($viewpath, 'index_admin.php', $tpl_index_admin);
@@ -190,7 +192,6 @@ class Controller_Scffld extends \Controller_Base
 					$messages[] = "sudo chmod -R 777 ".APPPATH.'classes/actionset/'.$name.'.php';
 					$messages[] = "sudo chmod -R 777 ".APPPATH.'views/'.$name;
 					$messages[] = "migrationを調整したら、コマンドラインで";
-					$messages[] = "cd ".DOCROOT;
 					$messages[] = "php oil refine migrate:up";
 					$messages[] = "を実行してください。";
 				}
@@ -199,7 +200,6 @@ class Controller_Scffld extends \Controller_Base
 					$messages[] = "モジュールを生成しました。編集するためにコマンドラインからパーミッションを調整してください。";
 					$messages[] = "sudo chmod -R 777 {$scfldpath}";
 					$messages[] = "migrationとconfigを調整したら、コマンドラインで";
-					$messages[] = "cd ".DOCROOT;
 					$messages[] = "php oil refine migrate:up --modules={$name}";
 					$messages[] = "を実行してください。";
 				}

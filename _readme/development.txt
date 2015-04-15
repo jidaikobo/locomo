@@ -2,6 +2,21 @@
  * development
  */
 
+// scaffold
+
+開発にあたってLocomoには、Locomo用のアプリケーション開発のためのscaffold（足場組み）があります。
+FuelとLocomoを展開した後、rootでログインします。画面上右上のスパナのアイコンからゆける項目の中に「足場組み」があるので、画面の指示に従って、アプリケーションを作ってみてください。アプリケーションはappに展開されます。
+
+なお、scaffoldのためには以下パスへのパーミッションが必要です。scaffoldに失敗したら、chmodでパーミッションを調整してください。
+chmod -R 777 /path/to/app/migrations/
+chmod -R 777 /path/to/app/classes/controller
+chmod -R 777 /path/to/app/classes/model
+chmod -R 777 /path/to/app/classes/actionset
+chmod -R 777 /path/to/app/views
+
+モジュールを生成する場合は、このディレクトリのパーミッションも調整してください。
+chmod -R 777 /path/to/app/modules
+
 // locomoパス
 
 Locomoパッケージ（以下locomo）では、モジュールやコントローラを起動するためのURI（パス）を、しばしば以下のように記述します。

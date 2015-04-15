@@ -305,7 +305,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// data-uri
 		$this->template->set_global('body_data', 'data-uri='.\Uri::base(false));
-		
+
 		// locomo - for logged in users'
 		$locomo = array();
 		if ( ! \Auth::check())
@@ -313,7 +313,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			$this->template->set_global('locomo', $locomo);
 			return;
 		}
-		
+
 		// locomo path
 		$locomo['locomo_path'] = $controller.DS.$action;
 
@@ -323,7 +323,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// ua
 //		$locomo['ua']['browser'] = \Agent::browser();
 //		$locomo['ua']['version'] = \Agent::version();
-		
+
 		// current controller
 		$locomo['controller']['name'] = $controller;
 		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'main_action'))
@@ -395,4 +395,3 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		static::$obj = $obj;
 	}
 }
-

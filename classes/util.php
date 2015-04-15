@@ -88,7 +88,7 @@ class Util
 				$retvals[$ctrl]['widgets'] = \Arr::get($ctrl::$locomo, 'widgets') ;
 				$retvals[$ctrl]['order'] = \Arr::get($ctrl::$locomo, 'order', 100) ;
 			endforeach;
-	
+
 			// order
 			$retvals = \Arr::multisort($retvals, array('order' => SORT_ASC,));
 
@@ -165,7 +165,7 @@ class Util
 			if ( ! \Str::ends_with($basename, '.') && substr($basename, 0, 1) == '.') continue; // invisible file
 			$list[] = $path;
 		}
-		
+
 		return $list;
 	}
 

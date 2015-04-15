@@ -52,9 +52,9 @@ class Controller_Hlp extends \Controller_Base
 		$help = '';
 		$locomo_path = \Input::get('action');
 		$controller = $locomo_path;
-		if (strpos($locomo_path, '::'))
+		if (strpos($locomo_path, '/'))
 		{
-			list($controller, $action) = explode('::', $locomo_path);
+			list($controller, $action) = explode('/', $locomo_path);
 			$action = strtolower(str_replace('action_', '', $action));
 		}
 		$controller = str_replace('-Controller_', '\Help_', $controller);

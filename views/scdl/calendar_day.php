@@ -190,33 +190,24 @@
 <?php } ?>
 		</tbody>
 	</table>
-	<div class="legend calendar" aria-hidden=true>
-<?php
-	foreach($repeat_kbs as $k => $v){
-		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	}
-	foreach($detail_kbs as $k => $v){
-		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	}
-	if(!\Request::is_hmvc()): //重要度
-		foreach($importance_kbs as $k => $v){
-			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
-		}
-	endif;
-?>
-		<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
-	 </div><!-- /.legend.calendar -->
+<?php include("inc_legend.php"); //カレンダ凡例 ?>
  <?php }else{ ?>
 <p tabindex="0">予定の登録がありません</p>
 <?php } ?>
 <?php if(!\Request::is_hmvc()): ?>
 </div><!-- /.field_wrapper -->
 <?php endif; ?>
-<?php foreach($schedule_data['unique_schedule_data'] as $v) { 
-	$detail_pop_data = $v;
-	include("detail_pop.php");
-	
-} ?>
+<?php
+if($schedule_data['unique_schedule_data']):
+	echo '<div style="display: none;"><section class="detail_pop_wrapper">';
+	echo '<h1>予定詳細一覧</h1>';
+	foreach($schedule_data['unique_schedule_data'] as $v):
+		$detail_pop_data = $v;
+		include("detail_pop.php");
+	endforeach;
+	echo '</section></div>';
+endif;
+;?>
 
 <script>
 function move_date(){
