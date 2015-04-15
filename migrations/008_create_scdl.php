@@ -47,6 +47,16 @@ class Create_Scdl
 		
 
 
+		echo "スケジューラにparent_idカラムを追加します。\n";
+		if (\DBUtil::field_exists('lcm_scdls', array('parent_id')))
+		{
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `parent_id`;')->execute();
+		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `parent_id` int(10) DEFAULT NULL;')->execute();
+		echo "parent_idフィールドを追加しました。\n";
+
+
+
 		echo "create lcm_scdls_buildings table.\n";
 		\DBUtil::create_table('lcm_scdls_buildings', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
@@ -405,6 +415,11 @@ class Create_Scdl
 
 	public function down()
 	{
+		// 追加フィールドを消す
+		\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `parent_id`;')->execute();
+		echo "スケジューラのparent_idを削除しました\n";
+
+
 		echo "drop scdl related tables.\n";
 		\DBUtil::drop_table('lcm_scdls');
 		\DBUtil::drop_table('lcm_scdls_buildings');

@@ -9,6 +9,7 @@ class Create_Wrkflw
 		\DBUtil::create_table('lcm_wrkflws', array(
 			'id'         => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'       => array('constraint' => 50, 'type' => 'varchar'),
+			'created_at' => array('type' => 'datetime', 'null' => true),
 			'deleted_at' => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 		\DBUtil::create_index('lcm_wrkflws', array('deleted_at'), 'wf_deleted_at');

@@ -6,6 +6,7 @@ class Create_adrs
 	{
 		\DBUtil::create_table('lcm_adrs', array(
 			'id' => array('constraint' => 11, 'type' => 'int', /*'auto_increment' => true, */'unsigned' => true),
+			'group_id' => array('constraint' => 11, 'type' => 'int', 'default' => 0),
 			'kana' => array('constraint' => 255, 'type' => 'varchar', 'default' => ''),
 			'name' => array('constraint' => 255, 'type' => 'varchar', 'default' => ''),
 			'company_kana' => array('constraint' => 255, 'type' => 'varchar', 'default' => ''),

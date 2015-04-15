@@ -17,7 +17,7 @@ class Create_Usr
 			'activation_key'    => array('constraint' => 50, 'type' => 'varchar', 'null' => true),
 			'profile_fields'    => array('type' => 'text'),
 			'is_visible'        => array('constraint' => 1, 'type' => 'int'),
-			'main_usergroup_id' => array('constraint' => 11, 'type' => 'int'),
+			'main_usergroup_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'deleted_at'        => array('type' => 'datetime', 'null' => true),
 			'created_at'        => array('type' => 'datetime', 'null' => true),
 			'expired_at'        => array('type' => 'datetime', 'null' => true),
@@ -70,6 +70,7 @@ class Create_Usr
 			'is_available'    => array('constraint' => 1, 'type' => 'tinyint'),
 			'is_for_acl'      => array('constraint' => 1, 'type' => 'tinyint'),
 			'customgroup_uid' => array('constraint' => 11, 'type' => 'tinyint', 'null' => true),
+			'created_at'      => array('type' => 'datetime', 'null' => true),
 			'deleted_at'      => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 		\DBUtil::create_index('lcm_usrgrps', array('seq'), 'usergroups_seq');
