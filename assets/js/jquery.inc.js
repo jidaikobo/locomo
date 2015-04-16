@@ -45,7 +45,6 @@ $(function() {
 		e.preventDefault();
 		checkboxes.prop('checked', false).trigger('change');
 	});
-
 	$(document).on('click', '.has_checkbox tr' ,function(e){
 		var t, tr, checkbox, prop;
 		e = e ? e : event;
@@ -70,15 +69,11 @@ $(function() {
 
 	function set_class(){
 		var t = $.isWindow(this) ? $('.checkbox_binded:checked') : this;
-		$(t).each(function(){
-			var tr = $(this).closest('tr');
-			var prop = $(this).prop('checked');
-			if(prop){
-				tr.addClass('checked');
-			}else{
-				tr.removeClass('checked');
-			}
-		});
+		if(!$.isWindow(this)){
+			$(this).closest('tr').toggleClass('checked');
+		}else{
+			$(document).find('tr').has($('input[type="checkbox"]:checked')).toggleClass('checked');
+		}
 	}
 	set_class();
 	checkboxes.change(set_class);
@@ -195,13 +190,28 @@ $(function(){
 
 /*=== 環境の取得 ===*/
 //UA
-var userAgent = window.navigator.userAgent;
+userAgent = window.navigator.userAgent;
 isNetReader   = userAgent.indexOf('NetReader') > 0 ? true : false;
+$('body').addClass(isNetReader ? 'netreader' : '');
 isTouchDevice = userAgent.indexOf('iPhone') > 0 || userAgent.indexOf('iPod') > 0 || userAgent.indexOf('iPad') > 0 || userAgent.indexOf('Android') > 0 ? true : false;
 isie          = !$('body').hasClass('lcm_ieversion_0') ? true : false;
 isLtie9       = $('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6') ? true : false;
-tabindexCtrl  = isNetReader || isLtie9 || isTouchDevice ? false : true;//この条件は増えたり減ったりするのかも。
-$('body').addClass(isNetReader ? 'netreader' : '');
+
+/*=== フォーカス制御の是否 ===*/
+tabindexCtrl  = true;
+query = window.location.search.substring(1);
+if(query!=''){
+	var params = query.split('&');
+	for(var len = params.length, n = len-1  ; n > 0; n--){
+		var param = params[n];
+		if( param.indexOf('limit') == 0 ){
+			param_val = param.split('=')[1]
+			if(param_val >= 50) tabindexCtrl = false;
+		}
+	}
+}
+tabindexCtrl  = isNetReader || isLtie9 || isTouchDevice || $('body').hasClass('nofocusctrl') ? false : tabindexCtrl;
+
 
 //スクロールバーのサイズ取得
 //table_scrollableのために用意したけど止めているので今のところ不使用
@@ -428,11 +438,8 @@ $.fn.reset_tabindex = function(){
 if(tabindexCtrl && $('.lcm_focus')[0]){
 	/* 閲覧状態のフォーム内のlcm_focusを外す */
 	if($('.lcm_form.view')[0]){
-		$('.lcm_focus').each(function(){
-			if($(this).closest($('.lcm_form.view')[0])){
-					$(this).removeClass('lcm_focus').removeAttr('tabindex');//ブロック説明用に、lcm_focusとは別にフォーカスを与えることを想定してlcm_form内のinput_groupはtabindexを持っている。そもそもこの措置は妥当？
-			}
-		});
+		$('.lcm_form.view .lcm_focus').removeClass('lcm_focus').removeAttr('tabindex');
+		//ブロック説明用に、lcm_focusとは別にフォーカスを与えることを想定してlcm_form内のinput_groupはtabindexを持っている。そもそも妥当？
 	}
 	lcm_focus();
 }
@@ -458,10 +465,12 @@ function lcm_focus(){
 		
 		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
-			elm.each(function(){
-				var title_str = $(this).attr('title') ? $(this).attr('title')+' ' : '';
-				$(this).attr('title', title_str+' エンターで入ります')
-			});
+			var len = elm.length;
+			for( var n = len ; n > 0 ; n-- ){
+				el = elm.eq(n);
+				var title_str = el.attr('title') ? el.attr('title') : '';
+				el.attr('title', title_str+' エンターで入ります')
+			}
 		}
 
 		//targetの中にlcm_focusがあれば中身のtabindexを-1にする
@@ -760,22 +769,24 @@ $('.toggle_item').on('click', function(e){
 	return false;
 });
 function replace_info(){
-	$(document).find('.toggle_item').each(function(){
-		var title, skip;
-		title = $(this).attr('title');
-		skip = $(this).find('.skip').text();
-		if($(this).hasClass('on')){
+	var els, len, el, title, skip;
+	els = $(document).find('.toggle_item');
+	len  = els.length;
+	for(var n = len; n > 0; n--){
+		el = els.eq(n);
+		title = el.attr('title');
+		skip  = el.find('.skip').text();
+		if(el.hasClass('on')){
 			title = title ? title.replace('開く', '閉じる') : null;
 			skip  = skip  ? skip.replace('開きます', '閉じます') : null;
 		}else{
 			title = title ? title.replace('閉じる', '開く') : null;
 			skip  = skip  ? skip.replace('閉じます', '開きます') : null;
 		}
-		if(title) $(this).attr('title', title);
-		if(skip)  $(this).find('.skip').text(skip);
-	});
+		if(title) el.attr('title', title);
+		if(skip)  el.find('.skip').text(skip);
+	}
 }
-
 
 //キーボード操作の制御
 
@@ -1029,20 +1040,21 @@ $('.confirm').click(function(){
 //ページ遷移時の警告
 //エラー時には必ず。//フォームと無関係のエラーは？
 //login画面とsubmitがない場合(編集履歴など)では出さない。編集履歴はむしろdisableにするほうがよい？
-function confirm_beforeunload(){
-	$(window).on('beforeunload', function(){
-		return '変更内容は保存されていません。';
-	});
-}
+function check_formchange(){
+	var input_time, len, el;
+	input_time = $('.datetime','.time');//datetimeの枠にフォーカスした際のchange周りのなにか。あとでもういちど確認
+	len = input_time.length;
+	for( var n = len; n > 0; n--){
+		el = input_time.eq(0);
+		el.data('val',el.val());
+	}
 
-var btn_submit = $('a:submit, input:submit');
-if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
-	var datetime = $('.datetime');
-	datetime.each(function(){
-		var val = $(this).val();
-		$(this).data('val',val);
-	});
-	
+	function confirm_beforeunload(){
+		$(window).on('beforeunload', function(){
+			return '変更内容は保存されていません。';
+		});
+	}
+
 	$('form').change( function(e){
 		e = e ? e : event;
 		var t = $(e.target);
@@ -1054,6 +1066,10 @@ if(btn_submit[0] && !$('body').hasClass('lcm_action_login')){
 	if($('#alert_error').children('ul.list')[0] || $('.lcm_module_reserve #alert_error')[0] || $('.lcm_ctrl_-controller_scdl #alert_error')[0]){
 		confirm_beforeunload();
 	}
+}
+
+if($('a:submit, input:submit')[0] && !$('body').hasClass('lcm_action_login')){
+	check_formchange();
 }
 
 //ページ遷移警告抑止
@@ -1132,10 +1148,11 @@ function make_hidden_form_items(hidden_items_id, selected){
 		}).appendTo('form');
 	}
 	var hidden_str = "";
+	var els = $(selected).find('option');
 	// 配列に入れる
-	$(selected).find('option').each(function(){
-		hidden_str += "/" + $(this).val();
-    });
+	for( var len = els.length, n = 0; n < len ; n++){
+		hidden_str += "/" + els.eq(n).val();
+	}
 	hidden_item.val(hidden_str);
 }
 
