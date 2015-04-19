@@ -41,7 +41,7 @@ if (\Auth::check()):
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
 				$html.= '</div><!-- /.admin_controller -->';
 
-				// realmがbase,option,ctrl以外のアクションセットを取得
+				// realmがbase, option, ctrl以外のアクションセットを取得
 				$indexes = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('base','option','ctrl'), $exclusive = true);
 				foreach ($indexes as $realm => $index):
 					$idxmenu = \Actionset::generate_menu_html($indexes[$realm], array('class'=>'semimodal menulist hidden_item boxshadow')) ;
@@ -77,7 +77,7 @@ if (\Auth::check()):
 			
 				// option menu
 				$optmenu = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('option'));
-				$optmenu = $optmenu ? \Actionset::generate_menu_html($optmenu, array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
+				$optmenu = $optmenu ? \Actionset::generate_menu_html($optmenu['option'], array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
 
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';
