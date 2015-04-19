@@ -28,11 +28,13 @@ class Pagination extends \Fuel\Core\Pagination
 	 * @param $field フィールド名 もしくは リレーション .フィールド名( alias.field_name )
 	 * @param $reset ページネーションを 1ページ目に戻すかどうか
 	 */
-	public static function sort($field, $label, $reset = true) {
-
+	public static function sort($field, $label, $reset = true)
+	{
 		$input_get = \Input::get();
-		if (isset($input_get['orders'][$field])) {
-			switch($input_get['orders'][$field]) {
+		if (isset($input_get['orders'][$field]))
+		{
+			switch($input_get['orders'][$field])
+			{
 				case 'asc':
 					$input_get['orders'][$field] = 'desc';
 					$class = 'asc';
@@ -46,29 +48,39 @@ class Pagination extends \Fuel\Core\Pagination
 					$class = '';
 					break;
 			}
-		} else {
+		}
+		else
+		{
 			unset($input_get['orders']);
 			$input_get['orders'][$field] = 'asc';
 			$class = '';
 		}
 
 		$p_seg = static::instance()->config['uri_segment'];
-		if ($reset) {
-			if ($p_seg and is_int($p_seg)) {
+		if ($reset)
+		{
+			if ($p_seg and is_int($p_seg))
+			{
 				$url = \Uri::base();
 				$segments = \Uri::segments();
 				$p_seg--;
-				for ($i = 0; $i < count($segments); $i ++) {
-					if ($i == $p_seg) {
+				for ($i = 0; $i < count($segments); $i ++)
+				{
+					if ($i == $p_seg)
+					{
 						$url .= '1/';
-					} else {
+					}
+					else
+					{
 						$url .= $segments[$i] . '/';
 					}
 				}
 				$url = \Uri::create($url, array(), $input_get);
 				return \Html::anchor($url, $label ?: $field, array('class' => $class));
 
-			} elseif (is_string($p_seg)) {
+			}
+			elseif (is_string($p_seg))
+			{
 				unset($input_get[$p_seg]);
 			}
 		}
@@ -81,7 +93,8 @@ class Pagination extends \Fuel\Core\Pagination
 	*/
 	public function render_sort_info()
 	{
-		if ( is_null( \Input::get('orders')) ) {
+		if ( is_null( \Input::get('orders')) )
+		{
 			return null;
 		}
 
@@ -91,41 +104,50 @@ class Pagination extends \Fuel\Core\Pagination
 		$sort = \Input::get('orders')[$field];
 		if (isset(static::$_sort_info_label[$field])) $label = static::$_sort_info_label[$field];
 
-		if (($dot_pos = strpos($field, '.')) > 0) {
+		if (($dot_pos = strpos($field, '.')) > 0)
+		{
 			// var_dump($model::relations( substr($field, 0, $dot_pos) )->model_to); die();
 			$model = $model::relations( substr($field, 0, $dot_pos) )->model_to;
 			$field = substr($field, $dot_pos+1);
 		}
 
-		if (!isset($label)) {
-			if ($model::primary_key()[0] == $field) {
+		if (!isset($label))
+		{
+			if ($model::primary_key()[0] == $field)
+			{
 				$label = 'ID';
-			} else {
-				if (isset($model::properties()[$field]['label'])) {
+			}
+			else
+			{
+				if (isset($model::properties()[$field]['label']))
+				{
 					$label = $model::properties()[$field]['label'];
-				} else {
+				}
+				else
+				{
 					$label = $field;
 				}
 			}
 		}
 
-		if ($sort == 'asc') {
-			return $label . ' を 昇順 で並べ替えています。';
-		} else {
-			return $label . ' を 降順 で並べ替えています。';
-		}
-
+		return $sort == 'asc' ? "{$label}を昇順で並べ替えています。" : "{$label}を降順で並べ替えています。";
 	}
 
 	/*
 	 * __set()
 	*/
-	public function __set($name, $value = null) {
-		if ($name == 'sort_info_model') {
+	public function __set($name, $value = null)
+	{
+		if ($name == 'sort_info_model')
+		{
 			static::$_sort_info_model = $value;
-		} else if ($name == 'sort_info_label') {
+		}
+		else if ($name == 'sort_info_label')
+		{
 			is_array($value) and static::$_sort_info_label = $value;
-		} else {
+		}
+		else
+		{
 			parent::__set($name, $value);
 		}
 	}
@@ -164,7 +186,6 @@ class Pagination extends \Fuel\Core\Pagination
 		$total_strlen = strlen((string)$this->total_items);
 		$input = $this->input ?: \Form::input('paged', '', array('id' => 'pagination_input', 'size' => $total_strlen));
 
-
 		$form_open = $form_close = $wrap_start = $wrap_end = '';
 		// if (is_string($this->uri_segment)) {
 		if (true) {
@@ -184,8 +205,59 @@ class Pagination extends \Fuel\Core\Pagination
 		);
 		$html .= $wrap_end;
 
-
 		return $raw ? $this->raw_results : $html;
 	}
-}
 
+	/**
+	 * set_options()
+	 */
+	static public function set_options($model)
+	{
+		// クエリ文字列の場合
+		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
+
+		// order
+		if (\Input::get('orders'))
+		{
+			$orders = array();
+			foreach (\Input::get('orders') as $k => $v)
+			{
+				// invalid argument
+				if ( ! in_array(strtolower($v), array('asc', 'desc'))) continue;
+
+				// リレーションを見る
+				if (($dot_pos = strpos($k, '.')) > 0)
+				{
+					$model = static::relations(substr($k, 0, $dot_pos))->model_to;
+					$relate = substr($k, 0, $dot_pos);
+					$k = substr($k, $dot_pos+1);
+					if ( ! in_array($k, array_keys($model::properties()))) continue;
+					$model::$_options['related'][$relate]['where'][] = array('id', '!=', 0);
+					$model::$_options['related'][$relate]['order_by'][$k] = $v;
+					$model::$_options['related'][$relate]['order_by']['t0.id'] = 'asc';
+					// 既存の order_by を キャンセル
+					$model::$_options['order_by'] = $orders;
+				}
+				else
+				{
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
+					$orders[$k] = $v;
+					$model::$_options['order_by'] = $orders;
+					if (count(\Input::get('orders')) == 1 and $k != 'id') $model::$_options['order_by']['id'] = 'asc';
+				}
+			}
+			// $_conditionsをリセット
+			$model::$_conditions['order_by'] = array();
+		}
+
+		// limit
+		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
+		$model::$_options['rows_limit'] = \Pagination::get('per_page');
+		$model::$_options['rows_offset'] = \Pagination::get('offset');
+
+		// count
+		$count = $model::count($model::$_options);
+		\Pagination::set('total_items', $count);
+		\Pagination::$refined_items = $count;
+	}
+}
