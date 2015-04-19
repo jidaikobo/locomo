@@ -9,10 +9,8 @@ trait Actionset_Traits_Testdata
 	{
 		if (\Fuel::$env != 'development') return array();
 
-		$usergroup_ids = \Auth::get_groups();
-
 		// only for root
-		if (in_array(-2, $usergroup_ids))
+		if (\Auth::is_root())
 		{
 			$urls = array(array($controller.DS."add_testdata", 'テストデータの追加', array('class' => 'confirm', 'data-jslcm-msg' => 'テストデータを追加してよいですか？')));
 		}

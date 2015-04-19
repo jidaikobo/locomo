@@ -327,9 +327,12 @@ class Actionset_Base extends Actionset
 	 */
 	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
+		// exception
+		$model = str_replace('Controller', 'Model', $controller);
+		if ( ! is_subclass_of($model, '\Orm\Model_Soft')) return array();
+
 		// count
 		static $count;
-		$model = str_replace('Controller', 'Model', $controller);
 		if (class_exists($model) && isset($model::properties()['deleted_at']))
 		{
 			$model::disable_filter();

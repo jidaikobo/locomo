@@ -77,6 +77,13 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 			static::$config = \Config::load(static::$shortname, true);
 		}
 		static::$config = static::$config ?: array();
+
+		// pagination_config
+		if (is_null($this->pagination_config))
+		{
+			$suspicious_segment = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
+			\Pagination::set_config('uri_segment', $suspicious_segment);
+		}
 	}
 
 	/**

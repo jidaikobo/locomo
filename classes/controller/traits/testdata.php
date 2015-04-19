@@ -11,18 +11,24 @@ trait Controller_Traits_Testdata
 		if (\Fuel::$env != 'development') die();
 		if (\Auth::get('id') !== -2) throw new \Exception('You are not allowed.');
 
+		// presenter
+		$content = \Presenter::forge(static::$shortname.'/index_admin');
+
 		//$test_datas
 		$model = $this->model_name;
-		$form = $model::form_definition('add_testdata', $model::forge());
-		if ( ! $form):
+		$form = $content::form($model::forge());
+		if ( ! $form)
+		{
 			\Session::set_flash('error', 'form_definition failed.');
 			\Response::redirect($this->request->module);
-		endif;
+		}
 
 		//save
 		$args = array();
-		for ($n = 1; $n <= $num; $n++):
-			foreach ($form->field() as $property => $v):
+		for ($n = 1; $n <= $num; $n++)
+		{
+			foreach ($form->field() as $property => $v)
+			{
 				if ( ! property_exists($v, 'rules')) continue;
 				if (
 					\Arr::search($v->rules, 'required', null, true) != true &&
@@ -91,17 +97,20 @@ trait Controller_Traits_Testdata
 	
 				$args[$property] = $str;
 	
-			endforeach;
+			}
 			if ( ! $args) continue;
 			$obj = $model::forge($args);
 			$obj->save();
-		endfor;
+		}
 
-		if ( ! $args):
+		if ( ! $args)
+		{
 			\Session::set_flash('error', 'couldn not add datas');
-		else:
+		}
+		else
+		{
 			\Session::set_flash('success', 'added '.$num.' datas.');
-		endif;
+		}
 		return \Response::redirect(static::$base_url);
 	}
 }

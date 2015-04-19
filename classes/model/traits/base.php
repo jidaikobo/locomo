@@ -585,19 +585,6 @@ trait Model_Traits_Base
 		return $r_arr;
 	}
 
-	/**
-	 * form_definition()
-	 */
-	public static function form_definition($factory = 'form', $obj = null)
-	{
-		$form = \Fieldset::forge($factory);
-
-		$form->add_model($obj)->populate($obj, true);
-
-		$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');;
-
-		return $form;
-	}
 
 	/**
 	 * search_form_base()

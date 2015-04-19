@@ -18,7 +18,7 @@ namespace Locomo;
 class Pagination extends \Fuel\Core\Pagination
 {
 	// 絞り込まれたページあたりの項目数
-	public static $refined_items = 0;
+	public static $refined_items = false;
 
 	protected static $_sort_info_model = '';
 
@@ -246,18 +246,17 @@ class Pagination extends \Fuel\Core\Pagination
 					if (count(\Input::get('orders')) == 1 and $k != 'id') $model::$_options['order_by']['id'] = 'asc';
 				}
 			}
-			// $_conditionsをリセット
+			// reset $_conditions
 			$model::$_conditions['order_by'] = array();
 		}
+
+		// set total before use offset
+		$count = $model::count($model::$_options);
+		\Pagination::set('total_items', $count);
 
 		// limit
 		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
 		$model::$_options['rows_limit'] = \Pagination::get('per_page');
 		$model::$_options['rows_offset'] = \Pagination::get('offset');
-
-		// count
-		$count = $model::count($model::$_options);
-		\Pagination::set('total_items', $count);
-		\Pagination::$refined_items = $count;
 	}
 }

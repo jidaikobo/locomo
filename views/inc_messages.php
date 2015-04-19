@@ -4,11 +4,14 @@
 			<p>
 			<?php
 				$flash_massages = Session::get_flash('message');
-				if (\Arr::is_multi($flash_massages)):
+				if (is_array($flash_massages) && \Arr::is_multi($flash_massages)):
 					foreach ($flash_massages as $v):
 						echo '<a href="'.$v[1].'">'.$v[0].'</a>';
 					endforeach;
 				else:
+					if ( ! is_array($flash_massages)):
+						$flash_massages = array($flash_massages);
+					endif;
 					echo implode('</p><p>', e((array) $flash_massages));
 				endif;
 			?>
