@@ -64,7 +64,7 @@ body.lcm_action_login {
 	min-width: 23em;
 	height: 23.75em !important;
 	padding: 0 1.5em;
-	margin: 9em auto 50px;
+	margin: 7.5em auto 50px;
 	background-color: #fff;
 	border: 1px solid #ccc;
 	border-radius: 3px;
@@ -122,7 +122,7 @@ body.lcm_action_login {
 }
 .lcm_action_login .flash_alert {
 	position: absolute;
-	top: 4em;
+	top: 2.5em;
 	left: 0;
 	right: 0;
 	width: 20em;
@@ -223,6 +223,7 @@ body.loggedin {
 	font-size: .9em;
 	-webkit-font-smoothing: subpixel-antialiased; /* Safariでのテキストのアンチエイリアス処理調整、薄くなるのを防ぐ */
 }
+
 #adminbar a {
 	text-decoration: none;
 	display: inline-block;
@@ -267,12 +268,14 @@ body.loggedin {
 	text-shadow: 1px 1px 0 #333;
 	vertical-align: middle;
 }
-
+.default_bg #adminbar {
+	border-color: #998;
+}
 .default_bg .lcmbar_top {
-	background-color: #0e3664;
+	background-color: #1f1210;
 	background-image: url('../img/system/adminbar_bg.png');
 	background-position: center top;
-	background-repeat: no-repeat;
+	background-repeat: repeat;
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
 	vertical-align: middle;
@@ -1752,12 +1755,19 @@ schedule_day.graph td {
 .text_icon.repeat_kb_1:before {
 	content: '日';
 }
+.legend .text_icon.repeat_kb_1 + span:before {
+	content: '毎日';
+}
+
 /*  毎日（土日除く）  */
 .text_icon.repeat_kb_2 {
 	background-color: #1a518e;
 }
 .text_icon.repeat_kb_2:before {
 	content: '平';
+}
+.legend .text_icon.repeat_kb_2 + span:before {
+	content: '平日';
 }
 /*  毎週  */
 .text_icon.repeat_kb_3 {
@@ -1766,12 +1776,19 @@ schedule_day.graph td {
 .text_icon.repeat_kb_3:before {
 	content: '週';
 }
+.legend .text_icon.repeat_kb_3 + span:before {
+	content: '毎週';
+	color: #333;
+}
 /*  毎月  */
 .text_icon.repeat_kb_4 {
 	background-color: #666;
 }
 .text_icon.repeat_kb_4:before {
 	content: '月';
+}
+.legend .text_icon.repeat_kb_4 + span:before {
+	content: '毎月';
 }
 /*  毎月(曜日指定)  */
 .text_icon.repeat_kb_6 {
@@ -1780,12 +1797,19 @@ schedule_day.graph td {
 .text_icon.repeat_kb_6:before {
 	content: '月';
 }
+.legend .text_icon.repeat_kb_6 + span:before {
+	content: '毎月(曜日指定)';
+}
+
 /*  毎年  */
 .text_icon.repeat_kb_5 {
 	background-color: #17a8a0;
 }
 .text_icon.repeat_kb_5:before {
 	content: '年';
+}
+.legend .text_icon.repeat_kb_5 + span:before {
+	content: '毎年';
 }
 
 /*== 詳細設定 ==*/
@@ -1796,12 +1820,19 @@ schedule_day.graph td {
 .text_icon.provisional_kb:before {
 	content: '仮';
 }
+.legend .text_icon.provisional_kb + span:after {
+	content: '仮予約';
+}
+
 /*  時間指定無し  */
 .text_icon.unspecified_kb {
 	background-color: #3a6;
 }
 .text_icon.unspecified_kb:before {
 	content: '無';
+}
+.legend .text_icon.unspecified_kb + span:after {
+	content: '時間指定無し';
 }
 /*  終日  */
 .text_icon.allday_kb {
@@ -1810,13 +1841,34 @@ schedule_day.graph td {
 .text_icon.allday_kb:before {
 	content: '終';
 }
+.legend .text_icon.allday_kb + span:after {
+	content: '終日';
+}
+/* 重要度 */
+.legend .icon.mark_importance.kb_0:after {
+	content: '重要度 高';
+}
+.legend .icon.mark_importance.kb_1 + span:after {
+	content: '重要度 中';
+}
+.legend .icon.mark_importance.kb_2 + span:after {
+	content: '重要度 低';
+}
+/* 公開状態 */
+.legend .icon.mark_private + span:after {
+	content: '非公開';
+}
 
-/*== 登録者関係 ==*/
+
+/* 登録者関係 */
 .text_icon.proxy {
 	background-color: #804000;
 }
 .text_icon.proxy:before {
 	content: '代';
+}
+.text_icon.proxy + span:after {
+	content: '代理登録';
 }
 
 /*== 時間グラフ ==*/

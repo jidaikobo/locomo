@@ -18,31 +18,159 @@ class Controller_Base extends Controller_Core
 	}
 
 	/**
-	 * action_admin()
-	 * this action is placeholder for actionset. DON'T DELETE.
+	 * index()
 	 */
-	public function action_admin(){}
-
-	/**
-	 * index_core()
-	 */
-	protected function index_core()
+	protected function index($page)
 	{
+		// vals
 		$model = $this->model_name;
 
-//		$dir = substr(strtolower(\Inflector::denamespace(\Request::active()->controller)), 11).DS;
-		$dir = substr(\Inflector::ctrl_to_dir(\Inflector::denamespace(\Request::active()->controller)), 1);
+		// genereate paginated option and links of \Pagination::create_links()
+		\Pagination::set_options($model);
 
-		if (!$this->_content_template) {
-			if (!\Request::is_hmvc()) {
-				$this->_content_template = $dir.'/index_admin';
-			} else {
-				$this->_content_template = $dir.'/index_admin_widget';
-			}
+/*
+		// free word search - sample
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
+		{
+			$model::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+				'or' => array(
+					array('kana', 'LIKE', $all),
+					'or' => array(
+					) 
+				) 
+			);
 		}
-		$content = \View::forge($this->_content_template);
+*/
 
-		// hmvc gives args by \Request::forge()->execute($args)
+		// view
+		$content = \View::forge($this->_content_template ?: static::$shortname.'/index');
+		$content->set('items', $model::find('all', $model::$_options));
+		$content->set_safe('search_form', $model::search_form());
+		$this->template->content = $content;
+		$this->template->set_global('title', static::$nicename.'一覧');
+	}
+
+	/**
+	 * index_admin()
+	 */
+	protected function index_admin($page)
+	{
+		$this->_content_template = static::$shortname.'/index_admin';
+		static::index($page);
+		$this->template->set_global('title', static::$nicename.'管理一覧');
+	}
+
+	/**
+	 * index_yet()
+	 * 予約項目
+	 * created_at が未来のもの
+	 */
+	protected function index_yet()
+	{
+		// exception
+		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
+
+		// vals
+		$model = $this->model_name;
+
+		// genereate paginated option and links of \Pagination::create_links()
+		\Pagination::set_options($model);
+		$model::$_options['where'][] = array('created_at', '>=', date('Y-m-d H:i:s'));
+		$model::$_options['where'][] = array('expired_at', 'is', null);
+
+		// view
+		$content = \View::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content->set('items', $model::find('all', $model::$_options));
+		$content->set_safe('search_form', $model::search_form());
+		$this->template->content = $content;
+		$this->template->set_global('title', static::$nicename.'予約項目');
+	}
+
+	/**
+	 * index_expired()
+	 */
+	protected function index_expired()
+	{
+		// exception
+		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
+
+		// vals
+		$model = $this->model_name;
+
+		// genereate paginated option and links of \Pagination::create_links()
+		\Pagination::set_options($model);
+		$model::$_options['where'][] = array('expired_at', '<', date('Y-m-d H:i:s'));
+
+		// view
+		$content = \View::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content->set('items', $model::find('all', $model::$_options));
+		$content->set_safe('search_form', $model::search_form());
+		$this->template->content = $content;
+		$this->template->set_global('title', static::$nicename.'の期限切れ項目');
+	}
+
+	/**
+	 * index_invisible()
+	 */
+	protected function index_invisible()
+	{
+		// exception
+		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
+
+		// vals
+		$model = $this->model_name;
+
+		// genereate paginated option and links of \Pagination::create_links()
+		\Pagination::set_options($model);
+		$model::$_options['where'][] = array('is_visible', '=', 0);
+
+		// view
+		$content = \View::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content->set('items', $model::find('all', $model::$_options));
+		$content->set_safe('search_form', $model::search_form());
+		$this->template->content = $content;
+		$this->template->set_global('title', static::$nicename.'の不可視項目');
+	}
+
+	/**
+	 * index_deleted()
+	 */
+	protected function index_deleted()
+	{
+		// exception
+		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
+
+		// vals
+		$model = $this->model_name;
+
+		// genereate paginated option and links of \Pagination::create_links()
+		$deleted_column = $model::soft_delete_property('deleted_field', 'deletd_at');
+		\Pagination::set_options($model);
+		$model::$_options['where'][] = array($deleted_column, 'IS NOT', null);
+
+		// disable_filter() before find()
+		$model::disable_filter();
+
+		// view
+		$content = \View::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content->set('items', $model::find('all', $model::$_options));
+		$content->set_safe('search_form', $model::search_form());
+		$this->template->content = $content;
+		$this->template->set_global('title', static::$nicename.'の削除済み項目');
+	}
+
+	/**
+	 * index_widget()
+	 * widget sample
+	 */
+	protected function index_widget()
+	{
+		// vals
+		$model = $this->model_name;
+
+		// widgets gives args by \Request::forge()->execute($args)
 		if ($args = func_get_args())
 		{
 			if (is_array($args[0]))
@@ -59,153 +187,12 @@ class Controller_Base extends Controller_Core
 		{
 			$options = $model::$_options;
 		}
-//		$model::$_options = array();
-//		$options = array('expired_at', '>', date('Y-m-d H:i:s'));
 
-		// affected_id
-		$content->set('affected_id', \Session::get('affected_id'));
-
-		$content->set('items',  $model::paginated_find($options));
-
+		// view
+		$content = \View::forge(static::$shortname.'/index_admin_widget');
+		$content->set('items', $model::find('all', $options));
 		$this->template->content = $content;
-
-		// search_form
-/*
-		$search_form = '<h1>項目一覧</h1>';
-		if (method_exists($model, 'search_form'))
-		{
-			$search_form = $model::search_form();
-			$this->template->content->set_safe('search_form', $search_form);
-		}
-*/
-	}
-
-	/**
-	 * index_admin()
-	 */
-	protected function index_admin()
-	{
-		$model = $this->model_name;
-
-/*
-		if (isset($model::properties()['created_at']))
-		{
-			$model::$_options['where'][] = array('created_at', '<=', date('Y-m-d H:i:s'));
-		}
-		if (isset($model::properties()['expired_at']))
-		{
-			$model::$_options['where'][] = array('expired_at', 'is', null);
-		}
-		if (isset($model::properties()['is_visible']))
-		{
-			$model::$_options['where'][] = array('is_visible', '=', true);
-		}
-*/
-
-		// モデルが持っている判定材料を、反映する。
-		$model::add_authorize_methods();
-		foreach($model::$_authorize_methods as $authorize_method)
-		{
-			if ( ! method_exists($model, $authorize_method)) continue;
-			$model::$_options = $model::$authorize_method(
-				\Inflector::add_head_backslash(get_called_class()), // controller
-				$model::$_options, // conditions
-				$mode = 'index' // mode
-			);
-		}
-
-		static::index_core();//$options, $model, $deleted);
 		$this->template->set_global('title', static::$nicename.'管理一覧');
-	}
-
-	/**
-	 * index()
-	 */
-	protected function index()
-	{
-		$this->_content_template = 'index';
-		static::index_core();//$options, $model, $deleted);
-		$this->template->set_global('title', static::$nicename.'一覧');
-	}
-
-	/**
-	 * index_yet()
-	 * 予約項目
-	 * created_at が未来のもの
-	 */
-	protected function index_yet()
-	{
-		$model = $this->model_name;
-
-		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
-
-		$model::$_options['where'][] = array('created_at', '>=', date('Y-m-d H:i:s'));
-		$model::$_options['where'][] = array('expired_at', 'is', null);
-/*
-		$model::$_options['where'] = array(
-			array('expired_at', '>=', date('Y-m-d H:i:s')),
-			'or' =>  array('expired_at', 'is', null),
-		);
-*/
-		static::index_core();
-		$this->template->set_global('title', static::$nicename . '予約項目');
-	}
-
-	/**
-	 * index_expired()
-	 */
-	protected function index_expired()
-	{
-		$model = $this->model_name;
-		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
-
-//		$model::$_options['where'][] = array('created_at', '<=', date('Y-m-d'));
-		$model::$_options['where'][] = array('expired_at', '<', date('Y-m-d H:i:s'));
-
-		static::index_core();
-		$this->template->set_global('title', static::$nicename . 'の期限切れ項目');
-	}
-
-	/**
-	 * index_invisible()
-	 */
-	protected function index_invisible()
-	{
-		$model = $this->model_name;
-		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
-		$model::$_options['where'][] = array('is_visible', '=', 0);
-		static::index_core();
-		$this->template->set_global('title', static::$nicename . 'の不可視項目');
-	}
-
-	/**
-	 * index_deleted()
-	 */
-	protected function index_deleted()
-	{
-		$model = $this->model_name;
-		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
-
-		$deleted_column = $model::soft_delete_property('deleted_field', 'deletd_at');
-		$model::$_options['where'][] = array($deleted_column, 'IS NOT', null);
-
-		$model::disable_filter();
-		//static::enable_filter();
-
-		static::index_core();
-		$this->template->set_global('title', static::$nicename . 'の削除済み項目');
-	}
-
-	/*
-	 * index_all()
-	 */
-	protected function index_all()
-	{
-		$model = $this->model_name;
-		if ($model instanceof \Orm\Model_Soft) throw new \HttpNotFoundException;
-		$model::disable_filter();
-		static::index_core();
-		$this->template->set_global('title', static::$nicename . 'の全項目');
 	}
 
 	/**
@@ -213,76 +200,58 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function view($id = null)
 	{
-		$model = $this->model_name;
-
+		// redirect
 		is_null($id) and \Response::redirect(static::$main_url);
 
-		$authorized_option = $model::authorized_option();
+		// vals
+		$model = $this->model_name;
 
-		if ( ! $item = $model::find($id, $authorized_option)):
-			\Session::set_flash(
-				'error',
-				sprintf('%1$s #%2$d は表示できません', self::$nicename, $id)
-			);
-			\Response::redirect(static::$main_url);
-		endif;
+		// find()
+		if ( ! $item = $model::find($id, $model::$_options))
+		{
+				// event
+			$event = 'locomo_view_not_found';
+			if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event);
 
-		if ($this->_content_template) {
-			$content = \View::forge($this->_content_template);
-		} else {
-			$tmp = str_replace('_', DS, static::$shortname).'/view';
-			// var_dump(\Finder::search('views', $tmp)); die();
-			$content = \View::forge(
-				\Finder::search('views', $tmp) ? $tmp : 'defaults/view'
-			);
+			// 403
+			$page = \Request::forge('sys/403')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 403);
 		}
 
+		// set_object() - to generate menu at parent::base_assign()
+		static::set_object($item);
+
+		// view
+		$content = \View::forge(static::$shortname.'/view');
 		$content->set_safe('plain', $model::plain_definition('view', $item)->build_plain());
 		$content->set('item', $item);
 		$content->set_global('title', self::$nicename.'閲覧');
 		$this->template->content = $content;
-		static::set_object($item);
-	}
-
-	/**
-	 * create()
-	 */
-	protected function create($id = null, $redirect = null)
-	{
-		$redirect = $redirect ?: str_replace('create', 'edit', static::$current_url);
-		static::edit($id, $redirect);
 	}
 
 	/*
 	 * edit()
 	 */
-	protected function edit($id = null, $redirect = null)
+	protected function edit($id = null)
 	{
 		// vals
 		$model = $this->model_name ;
+		$errors = array();
 
-		if ($this->_content_template) {
-			$content = \View::forge($this->_content_template);
-		} else {
-			$tmp = str_replace('_', DS, static::$shortname).'/edit';
-			// var_dump(\Finder::search('views', $tmp)); die();
-			$content = \View::forge(
-				\Finder::search('views', $tmp) ? $tmp : 'defaults/edit'
-			);
-		}
-
+		// create or update
 		if ($id)
 		{
-			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
-			// not found
-			if ( ! $obj)
-			{
-				// locomo_edit_not_found
-				if (\Event::instance()->has_events('locomo_edit_not_found'))
-				{
-					\Event::instance()->trigger('locomo_edit_not_found');
-				}
+			$item = $model::find($id, $model::$_options);
 
+			// not found
+			if ( ! $item)
+			{
+				// event
+				$event = 'locomo_edit_not_found';
+				if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event);
+
+				// 403
 				$page = \Request::forge('sys/403')->execute();
 				$this->template->set_safe('content', $page);
 				return new \Response($page, 403);
@@ -291,67 +260,52 @@ class Controller_Base extends Controller_Core
 		}
 		else
 		{
-			$obj = $model::forge();
+			$item = $model::forge();
 			$title = self::$nicename . '新規作成';
 		}
-		$form = $model::form_definition('edit', $obj);
 
-		// save
+		// prepare form and population
+		$form = $model::form_definition('edit', $item);
+
+		// try to save
 		if (\Input::post())
 		{
-			if (
-				$obj->cascade_set(\Input::post(), $form, $repopulate = true) &&
-				\Security::check_token()
-			)
+			$item->cascade_set(\Input::post(), $form, $repopulate = true);
+	
+			// set errors
+			$messages = array('ワンタイムトークンが失効しています。送信し直してみてください。');
+			$errors = $form->error() ?: array() ;
+			$errors = ! \Security::check_token() ? $errors + $messages : $errors ;
+	
+			// save
+			if ( ! $errors && $item->save(null, true))
 			{
-				//save
-				if ($obj->save(null, true))
-				{
-					//success
-					\Session::set_flash('success', '更新しました。');
-
-					// locomo_edit_succeed
-					if (\Event::instance()->has_events('locomo_edit_succeed'))
-					{
-						$obj = \Event::instance()->trigger('locomo_edit_succeed', $obj);
-					}
-
-					// redirect
-					// idセグメント込みのredirectを渡されるとちょっと間抜けな帰り先になるがとりあえずこのまま
-					static::$redirect = $redirect ? trim($redirect, DS).DS.$obj->id: static::$current_url.$obj->id;
-					return $obj;
-				} else {
-
-					// locomo_edit_failed
-					if (\Event::instance()->has_events('locomo_edit_failed'))
-					{
-						\Event::instance()->trigger('locomo_edit_failed');
-					}
-
-					//save failed
-					\Session::set_flash('error', '更新を失敗しました。');
-				}
-			} else {
-				//edit view or validation failed of CSRF suspected
-				if (\Input::method() == 'POST')
-				{
-					$errors = $form->error();
-					// いつか、エラー番号を与えて詳細を説明する。そのときに二重送信でもこのエラーが出ることを忘れず言う。
-					if ( ! \Security::check_token()) $errors[] = 'ワンタイムトークンが失効しています。送信し直してみてください。';
-					\Session::set_flash('error', $errors);
-				}
+				// event
+				$event = 'locomo_edit_succeed';
+				$item = \Event::instance()->has_events($event) ? \Event::instance()->trigger($event, $item) : $item ;
+				\Session::set_flash('success', '更新しました。');
+			}
+			else
+			{
+				// event
+				$event = 'locomo_edit_failed';
+				if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event);
+				$errors[] = '更新を失敗しました。';
 			}
 		}
 
-		//view
-		$this->template->set_global('title', $title);
-		$content->set_global('item', $obj, false);
-		$content->set_global('form', $form, false);
-		$this->template->content = $content;
-		static::set_object($obj);
+		// set_flash()
+		if ($errors) \Session::set_flash('error', $errors);
 
-		// falseが正常処理
-		return false;
+		// set_object() - to generate menu at parent::base_assign()
+		static::set_object($item);
+
+		// view
+		$content = \View::forge(static::$shortname.'/edit');
+		$content->set_global('item', $item, false);
+		$content->set_global('form', $form, false);
+		$this->template->set_global('title', $title);
+		$this->template->content = $content;
 	}
 
 	/**
@@ -360,33 +314,47 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function delete($id = null)
 	{
+		// redirect
+		is_null($id) and \Response::redirect(static::$main_url);
+
+		// vals
 		$model = $this->model_name ;
-		if ($obj = $model::find($id))
+
+		// find()
+		if ( ! $item = $model::find($id, $model::$_options))
 		{
-			// event
-			if (\Event::instance()->has_events('locomo_delete'))
-			{
-				\Event::instance()->trigger('locomo_delete', $obj, 'none');
-			}
+			// 403
+			$page = \Request::forge('sys/403')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 403);
+		}
 
-			// try to delete
-			try {
-				$obj->delete(null, true);
-			}
-			catch (\Exception $e) {
-				\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
-				return \Response::redirect(static::$main_url);
-			}
+		// event
+		$event = 'locomo_delete';
+		if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event, $item, 'none');
 
-			\Session::set_flash(
-				'success',
-				sprintf('%1$sの #%2$d を削除しました', self::$nicename, $id)
-			);
+		// try to delete
+		try {
+			$item->delete(null, true);
+		}
+		catch (\Exception $e)
+		{
+			\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
+			return \Response::redirect(static::$main_url);
+		}
 
-			// affected_id
-			\Session::set_flash('affected_id', $id);
+		// set_flash()
+		\Session::set_flash('success', "#{$id}を削除しました");
+		\Session::set_flash('affected_id', $id);
 
+		// redirect
+		if (method_exists(get_called_class(), 'action_index_deleted'))
+		{
 			return \Response::redirect(static::$base_url.'index_deleted');
+		}
+		else
+		{
+			return \Response::redirect(static::$main_url);
 		}
 	}
 
@@ -396,29 +364,48 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function undelete($id = null)
 	{
-		$model = $this->model_name;
-		if ($obj = $model::find_deleted($id)) {
+		// redirect
+		is_null($id) and \Response::redirect(static::$main_url);
 
-			try {
-				$obj->undelete();
-			}
-			catch (\Exception $e) {
-				\Session::set_flash('error', '復活中にエラーが発生しました。');
-				return \Response::redirect(static::$base_url.'index_deleted');
-			}
-			\Session::set_flash(
-				'success',
-				sprintf('%1$sの #%2$d を復活しました', self::$nicename, $id)
-			);
+		// vals
+		$model = $this->model_name ;
 
-			// affected_id
-			\Session::set_flash('affected_id', $id);
-
+		// check model instance
+		if ( ! $model instanceof \Orm\Model_Soft)
+		{
+			\Session::set_flash('error', 'モデルが対応していないため削除された項目は復活できません');
 			return \Response::redirect(static::$main_url);
 		}
 
-		\Session::set_flash('error', '項目の復活中にエラーが発生しました。');
-		return \Response::redirect(static::$base_url.'index_deleted');
+		// find()
+		if ( ! $item = $model::find($id, $model::$_options))
+		{
+			// 403
+			$page = \Request::forge('sys/403')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 403);
+		}
+
+		// event
+		$event = 'locomo_undelete';
+		if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event, $item, 'none');
+
+		// try to undelete
+		try {
+			$item->undelete(null, true);
+		}
+		catch (\Exception $e)
+		{
+			\Session::set_flash('error', '項目の復活中にエラーが発生しました。');
+			return \Response::redirect(static::$main_url);
+		}
+
+		// set_flash()
+		\Session::set_flash('success', "#{$id}を復活しました");
+		\Session::set_flash('affected_id', $id);
+
+		// redirect
+		return \Response::redirect(static::$main_url);
 	}
 
 	/**
@@ -426,7 +413,18 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function purge_confirm ($id = null)
 	{
-		$model = $this->model_name;
+		// redirect
+		is_null($id) and \Response::redirect(static::$main_url);
+
+		// vals
+		$model = $this->model_name ;
+
+		// check model instance
+		if ( ! $model instanceof \Orm\Model_Soft)
+		{
+			\Session::set_flash('error', 'モデルが対応していないため完全な削除はできません。');
+			return \Response::redirect(static::$main_url);
+		}
 
 		// purgable check
 		$is_purgable = true;
@@ -441,28 +439,19 @@ class Controller_Base extends Controller_Core
 			return \Response::redirect(static::$main_url);
 		}
 
-		// purge
-		$content = \View::forge($this->_content_template ?: 'defaults/purge');
+		// set_object() - to generate menu at parent::base_assign()
+		static::set_object($item);
 
-		// plain_definition
-		$plain = $model::plain_definition('purge_confirm', $item);
-		$content->set_safe('plain', $plain->build_plain());
-
-		// form definition
+		// form
 		$form = \Fieldset::forge('confirm_submit');
-		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
-			->set_value(\Security::fetch_token());
-		$form->add(
-			'submit',
-			'',
-			array('type'=>'submit', 'value' => '完全削除する', 'class' => 'button primary')
-		);
-		$content->set_safe('form', $form->build(static::$base_url . 'purge/' . $item->id));
 
+		// view
+		$content = \View::forge('defaults/purge');
+		$content->set_safe('form', $form->build(static::$base_url.'purge/'.$item->id));
+		$content->set_safe('plain', $model::plain_definition('purge_confirm', $item)->build_plain());
 		$this->template->set_global('action', static::$base_url.'purge/'.$item->id);
 		$this->template->set_global('title', self::$nicename.'完全削除');
 		$this->template->content = $content;
-		static::set_object($item);
 	}
 
 	/**
@@ -470,31 +459,52 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function purge($id = null)
 	{
-		$model = $this->model_name;
+		// redirect
+		is_null($id) and \Response::redirect(static::$main_url);
 
-		$model::disable_filter();
+		// vals
+		$model = $this->model_name ;
+
+		// check model instance
+		if ( ! $model instanceof \Orm\Model_Soft)
+		{
+			\Session::set_flash('error', 'モデルが対応していないため完全な削除はできません。');
+			return \Response::redirect(static::$main_url);
+		}
+
+		// try to purge
 		if (
 			\Auth::is_root()
 			and \Input::post()
 			and \Security::check_token()
-			and $obj = $model::find($id)
-		) {
-
+			and $obj = $model::find_deleted($id)
+		)
+		{
 			try {
 				// 現状 Cascading deleteの恩恵を受けられない？ 要実装
-				$obj->purge(null, true);
+				$item->purge(null, true);
 			}
-			catch (\Exception $e) {
+			catch (\Exception $e)
+			{
 				\Session::set_flash('error', '完全削除中にエラーが発生しました');
 				return \Response::redirect(static::$base_url.'index_deleted');
 			}
 
 			\Session::set_flash('success', '項目を完全に削除しました');
-
-			return \Response::redirect(static::$base_url.'index_deleted');
-		} else {
+		}
+		else
+		{
 			\Session::set_flash('error', '項目の完全削除中にエラーが発生しました');
+		}
+
+		// redirect
+		if (method_exists(get_called_class(), 'action_index_deleted'))
+		{
 			return \Response::redirect(static::$base_url.'index_deleted');
+		}
+		else
+		{
+			return \Response::redirect(static::$main_url);
 		}
 	}
 }

@@ -23,7 +23,7 @@ Locomoパッケージ（以下locomo）では、モジュールやコントロ�
 
 [\Namespace]\Controller_Name/action
 
-完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。
+完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。定数のLOCOMOPATHは、package/locomoの物理パスを指します。
 
 // $locomo
 
@@ -157,7 +157,7 @@ workflow_status:varchar[50]
 seq:int[n]
 orderはいちおうMySQLの予約語なので、表示順を制御する際は、seqを使ってください。
 
-これらの条件は、Model::authorized_option()等で判定材料にされ、tableの構成とユーザの権限にあわせて、表示権限等を制御します。
+これらの条件は、Model::$_optionsに反映され、tableの構成とユーザの権限にあわせて、表示権限等を制御します。
 
 // Model::cascade_set()
 
