@@ -241,23 +241,28 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$select_building_list = $this->template->content->item->building;
 		}
 
-		// $select_user_listがあれば編集と見なし、$default_uidがあれば初期値として足す
-		$default_uid = \Input::get('member_id');
-		if (empty($select_user_list) && $default_uid)
-		{
-			// $select_user_listの配列に追加
-			if(\Model_Usr::find(intval($default_uid))):
-				$select_user_list[$default_uid] = \Model_Usr::find($default_uid);
-			endif;
+		// $select_user_listがあれば編集と見なす
+		if ($model::$_kind_name=='scdl' && empty($select_user_list)){
+			$default_uid = \Input::get('member_id');
+			if ($default_uid){//$default_uidがあれば初期値として追加
+				if(\Model_Usr::find(intval($default_uid))){
+					$select_user_list[$default_uid] = \Model_Usr::find($default_uid);
+				}
+			}
+			
+			// $default_uidが$cuurent_uidと異なる場合初期値として足す（通常のユーザか判定）
+			$cuurent_uid = \Auth::get('id');
+			
+			if ($cuurent_uid >= 1 && $default_uid != $cuurent_uid){
+				{
+					// $select_user_listの配列に追加
+					$select_user_list[$cuurent_uid] = \Model_Usr::find($cuurent_uid);
+				}
+			}
 		}
+
 		
-		// $default_uidが$cuurent_uidと異なれば、通常のユーザであるか確認して、初期値として足す
-		$cuurent_uid = \Auth::get('id');
-		if ( $cuurent_uid >= 1 && $default_uid != $cuurent_uid)
-		{
-			// $select_user_listの配列に追加
-			$select_user_list[$cuurent_uid] = \Model_Usr::find($cuurent_uid);
-		}
+
 
 		
 		$this->template->content->set("select_user_list", $select_user_list);
