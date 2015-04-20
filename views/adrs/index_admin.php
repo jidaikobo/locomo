@@ -1,6 +1,7 @@
 <?php echo $search_form; ?>
 
 <?php if ($items): ?>
+<?php echo \Pagination::create_links(); ?>
 <table class="tbl datatable">
 	<thead>
 		<tr>
@@ -57,7 +58,6 @@
 <?php endforeach; ?>
 	</tbody>
 </table>
-<?php echo \Pagination::create_links(); ?>
 <?php else: ?>
-<p>adrsが存在しません。</p>
+<p>項目が存在しません</p>
 <?php endif; ?>
