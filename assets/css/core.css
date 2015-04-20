@@ -1587,7 +1587,7 @@ table.calendar {
 .calendar .holiday_name {
 	font-weight: normal;
 	display: inline-block;
-	padding-right: 1.5em;
+	fomt-size: .8em;
 }
 .calendar .add_new {
 	position: absolute;
