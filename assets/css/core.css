@@ -2216,11 +2216,27 @@ h1 .sort_info {
 	margin-left: 3px;
 }
 /*=== for_screenreader ===*/
-span.add_bracket:before {
+span.sr_replace span {
+	position: absolute !important;
+	left: auto;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+}
+span.sr_replace.to:before {
+	content: '〜';
+}
+
+
+span.add_bracket:before,
+span.sr_add.bracket:before {
  content: '[';
 }
-span.add_bracket:after {
- content: ']';
+span.add_bracket:after,
+span.sr_add.bracket:after {
+ content: '] ';
 }
 
 .aria_nd {

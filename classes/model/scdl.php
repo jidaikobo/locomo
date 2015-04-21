@@ -619,11 +619,11 @@ class Model_Scdl extends \Model_Base
 			if ($data->allday_kb && $data->display_enddate=='') {
 				$print .= $data->display_startdate;
 			} else {
-				$print .= $data->display_startdate . ' ' . $data->display_starttime . " 〜 " . $data->display_enddate . " " . $data->display_endtime;
+				$print .= $data->display_startdate . ' ' . $data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_enddate . " " . $data->display_endtime;
 			}
 		} else {
 			$print .= $data->target_year . "年" . $data->target_mon . "月" . $data->target_day . "日";
-			$print .= '　' . $data->display_starttime . " 〜 " . $data->display_endtime;
+			$print .= '　' . $data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime;
 		}
 		$date_detail['display_target_date'] = $print;
 
@@ -657,21 +657,21 @@ class Model_Scdl extends \Model_Base
 		}
 		$print .= "</p>";
 		if ($data->repeat_kb == 0) {
-			$print .= '<span class="display_inline_block">' . $data->display_startdate . " " . $data->display_starttime . ' 〜</span> <span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime . "</span>";
+			$print .= '<span class="display_inline_block">' . $data->display_startdate . " " . $data->display_starttime . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime . "</span>";
 			
 //			$data->display_enddate = $data->display_startdate == $data->display_enddate ? '' : $data->display_enddate;
-			$date_detail['display_period'] = '<span class="display_inline_block">'.$data->display_startdate . " " . $data->display_starttime . ' 〜</span> <span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime.'</span>';
+			$date_detail['display_period'] = '<span class="display_inline_block">'.$data->display_startdate . " " . $data->display_starttime . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime.'</span>';
 		} else {
-			$print .= '<span class="display_inline_block">' . $data->display_startdate . ' 〜</span> <span class="display_inline_block">' . $data->display_enddate . "</span>";
-			$print .= '<span class="display_inline_block">' . $data->display_starttime . ' 〜</span> <span class="display_inline_block">' . $data->display_endtime . "</span>";
-			$date_detail['display_period'] = $data->display_startdate . " 〜 " . $data->display_enddate . " " . $data->display_starttime . " 〜 " . $data->display_endtime;
+			$print .= '<span class="display_inline_block">' . $data->display_startdate . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_enddate . "</span>";
+			$print .= '<span class="display_inline_block">' . $data->display_starttime . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_endtime . "</span>";
+			$date_detail['display_period'] = $data->display_startdate . " <span class='sr_replace to'><span>から</span></span> " . $data->display_enddate . " " . $data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime;
 		}
 		if($data->repeat_kb == 0 && $data->display_enddate == ''):
 			$date_detail['display_period_day'] = '<span class="display_inline_block">'.$data->display_startdate.'</span>';
 		else:
-			$date_detail['display_period_day'] = '<span class="display_inline_block">'.$data->display_startdate . " 〜 " . $data->display_enddate.'</span>';
+			$date_detail['display_period_day'] = '<span class="display_inline_block">'.$data->display_startdate . " <span class='sr_replace to'><span>から</span></span> " . $data->display_enddate.'</span>';
 		endif;
-		$date_detail['display_period_time'] = '<span class="display_inline_block">'.$data->display_starttime . " 〜 " . $data->display_endtime.'</span>';
+		$date_detail['display_period_time'] = '<span class="display_inline_block">'.$data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime.'</span>';
 
 
 		// 時間を追加

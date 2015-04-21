@@ -112,7 +112,6 @@
 					date('G時', strtotime($detaildata->end_date . " " . $detaildata->end_time)) :
 					preg_replace("/時0/", "時", date('G時i分', strtotime($detaildata->start_date . " " . $detaildata->end_time)));
 
-				//"〜"は、前後にスペースを持ち、前方の文字列に含めて扱う。もしかすると適当なクラス、skipと疑似要素で〜(から)の読み上げが達成できるかもしれないが、あとで
 				//表の上にもう一度日付を出したほうが迷わない？？
 				
 				if ($detaildata->repeat_kb == 0 && $detaildata->display_startdate != $detaildata->display_enddate) { //期間の予定。開始日終了日同日の場合は単日予定として除外
@@ -127,15 +126,15 @@
 					endif;
 
 					if($detaildata->allday_kb):
-						echo '<span class="nowrap">'.$detaildata->display_startdate.' 〜</span> <span class="nowrap">'.$detaildata->display_enddate.'</span>';
+						echo '<span class="nowrap">'.$detaildata->display_startdate.'<span class="sr_replace to"><span>から</span></span></span><span class="nowrap">'.$detaildata->display_enddate.'</span>';
 					else:
-						echo '<span class="nowrap">'.$detaildata->display_startdate.' '.$detaildata->display_starttime.' 〜</span> <span class="nowrap">'.$detaildata->display_enddate.' '.$detaildata->display_endtime.'</span>';
+						echo '<span class="nowrap">'.$detaildata->display_startdate.' '.$detaildata->display_starttime.'<span class="sr_replace to"><span>から</span></span></span><span class="nowrap">'.$detaildata->display_enddate.' '.$detaildata->display_endtime.'</span>';
 					endif;
 				} else {
 					if($detaildata->allday_kb){
 						echo '<span class="nowrap">終日</span>';
 					}else{
-						echo '<span class="nowrap">'.$detaildata->display_starttime . ' 〜</span> <span class="nowrap">' . $detaildata->display_endtime.'</span>';
+						echo '<span class="nowrap">'.$detaildata->display_starttime . '<span class="sr_replace to"><span>から</span></span></span><span class="nowrap">' . $detaildata->display_endtime.'</span>';
 					}
 				}
 			?>

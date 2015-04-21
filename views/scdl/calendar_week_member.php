@@ -103,7 +103,7 @@
 										// 時間
 										$event_time_display_data = $model_name::make_target_day_info($v2);
 										$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
-										$event_time = '<span class="scdl_time" style="display:' . $event_time_display . '">[' . $event_time_display_data['start_time'] . "〜" . $event_time_display_data['end_time'] . ']</span>';
+										$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
 					
 										echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
 										

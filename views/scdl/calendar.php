@@ -90,7 +90,7 @@
 				// 時間
 				$event_time_display_data = $model_name::make_target_day_info($v2);
 				$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
-				$event_time = '<span class="scdl_time" style="display:' . $event_time_display . '">[' . $event_time_display_data['start_time'] . "〜" . $event_time_display_data['end_time'] . ']</span>';
+				$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
 				//詳細区分
 				foreach($detail_kbs as $key => $value):
 					if($v2[$key]):
