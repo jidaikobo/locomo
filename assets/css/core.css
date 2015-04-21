@@ -774,8 +774,6 @@ div.flash_alert.alert_error {
 div.lcm_tooltip {
 	background: rgba(255, 255, 255, .97) !important;
 	font-size: .9em !important;
-}
-div.lcm_tooltip {
 	-moz-box-shadow: 0 0 2px #aaa;
 	-o-box-shadow: 0 0 2px rgba(128, 128, 128, .5) ;
 	-ms-box-shadow: 0 0 2px rgba(128, 128, 128, .5);
@@ -809,6 +807,9 @@ div.lcm_tooltip {
 */
 div.lcm_tooltip {
 	font-size: .75em !important;
+}
+div.ui-tooltip-content {
+
 }
 .lcm_action_calendar .lcm_tooltip th {
 	min-width: 6em;
