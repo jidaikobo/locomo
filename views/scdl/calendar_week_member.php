@@ -38,7 +38,11 @@
 		</th>
 		<?php
 		foreach($schedule_data['schedules_list'] as $schedule_row):
-			$class_str =  'week'.$schedule_row['week'];
+			if (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) {
+				$class_str = "week_holiday";
+			} else {
+				$class_str =  'week'.$schedule_row['week'];
+			}
 			$class_str.= $currentday == $schedule_row['day'] ? ' today' : '';
 //			$class_str.= $currentday ==  ? ' holiday' : ''; //祝日のとき
 			//each_date_title_strはフォーカス移動時読み上げ文字列
