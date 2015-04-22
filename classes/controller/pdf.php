@@ -185,7 +185,8 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		$cell = array(2, 5),
 		$margin = array(21, 19, 21, 19),
 		$cr = "",
-		$change_format = false
+		$change_format = false,
+		$font = 'kozminproregular'
 	) {
 
 		if (!$customers) {return;} // throw error;
@@ -202,7 +203,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 
 		// pdf init
 		$pdf = $this->pdf;
-		$pdf->setFont('kozminproregular');
+		$pdf->setFont($font);
 		$pdf->setPrintHeader(false);
 		$pdf->setPrintFooter(false);
 		$pdf->SetAutoPageBreak(false);
