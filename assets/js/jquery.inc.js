@@ -16,18 +16,20 @@ $(function(){
 		var host, body, str, info, topinfo;
 		host = location.host;
 		body = $('body');
-		if(host == 'www.kyoto-lighthouse.org'){
-			body.addClass('testserver');
-			str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
-		}else if(host!='kyoto-lighthouse.org'){
-			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
-		}
-		if(str){
-			info = $('<p class="develop_info">').prepend(str);
-			body.append(info);
-			if($('body').hasClass('loggedin testserver')){
-				topinfo = info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
-				$('#main_content').prepend(topinfo);
+		if(!str && host!='kyoto-lighthouse.org'){
+			if(host == 'www.kyoto-lighthouse.org'){
+				body.addClass('testserver');
+				str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
+			}else{
+				str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
+			}
+			if(str){
+				info = $('<p class="develop_info"/>').prepend(str);
+				body.append(info);
+				if($('body').hasClass('loggedin testserver')){
+					topinfo = info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
+					$('#main_content').prepend(topinfo);
+				}
 			}
 		}
 	})();

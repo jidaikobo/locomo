@@ -14,6 +14,7 @@ IE8,MacIE5,Opera9以下 html:first-child
 	right: 0;
 	color: #000;
 	font-size: .9em;
+	height: 1.5em;
 	opacity: .55;
 	overflow-x: hidden;
 	white-space: nowrap;
@@ -773,13 +774,14 @@ div.flash_alert.alert_error {
 /* tooltip */
 div.lcm_tooltip {
 	background: rgba(255, 255, 255, .97) !important;
-	font-size: .9em !important;
+	font-size: .75em !important;
 	-moz-box-shadow: 0 0 2px #aaa;
 	-o-box-shadow: 0 0 2px rgba(128, 128, 128, .5) ;
 	-ms-box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	border: 1px solid #aaa !important;
 }
+
 .lcm_tooltip:after,
 .lcm_tooltip:before {
 	top: 100%;
@@ -805,11 +807,8 @@ div.lcm_tooltip {
 	margin-left: -6px;
 }
 */
-div.lcm_tooltip {
-	font-size: .75em !important;
-}
-div.ui-tooltip-content {
-
+.lcm_action_calendar .lcm_tooltip table {
+	max-width: 30em;
 }
 .lcm_action_calendar .lcm_tooltip th {
 	min-width: 6em;
