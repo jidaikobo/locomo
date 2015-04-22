@@ -1144,12 +1144,27 @@ $('.lcm_tooltip_parent').tooltip({
 	delay        : 1500,
 	hide         : 'fade',
 	relative     : true,
+	track        : false,
 	position     : {
 		             my : 'left bottom-8',
 		             at : 'left top'
 		            },
 });
 
+//スケジュールの1日詳細のグラフのcolspanひとまず。不要になれば削除
+/*if($('body').hasClass('lcm_ctrl_-controller_scdl')){
+	$('.schedule_day.graph').find('tr').each(function(){
+		var bar = $(this).find('.active');
+		if(bar[1]){
+			bar.eq(0).attr('colspan',bar.length);
+			bar.not(bar[0]).remove();
+		}
+	});
+	$('.schedule_day.graph .lcm_tooltip_parent').tooltip({
+		track: true,
+	});
+}
+*/
 //resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい
 $('.lcm_floatwindow').resizable({
 	'handles' : 'all',

@@ -44,13 +44,12 @@
 				$class_str =  'week'.$schedule_row['week'];
 			}
 			$class_str.= $currentday == $schedule_row['day'] ? ' today' : '';
-//			$class_str.= $currentday ==  ? ' holiday' : ''; //祝日のとき
 			//each_date_title_strはフォーカス移動時読み上げ文字列
 			//date_str, each_date_title_skip は枠内タイトル読み上げ文字列
 			
 			$each_date_title_str = $currentday == $schedule_row['day'] ? '今日 ' : '';
 			$each_date_title_str.=  $schedule_row['day'].'日 '.$week_name[$schedule_row['week']].'曜日 ';
-//			$each_date_title_str.=  ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
+			$each_date_title_str.= (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
 			$schedule_num = 0;
 			foreach($row as $member_rowdata):
 				if (!isset($member_rowdata['data'])) continue;
@@ -65,7 +64,7 @@
 			$each_date_title_str .= $schedule_num!=0 ? $schedule_num . '件の登録' : ' 登録なし';
 			$date_str = $schedule_row['day'] < 10 ? '&nbsp;'.$schedule_row['day'] : $schedule_row['day'];
 			$each_date_title_skip = $week_name[$schedule_row['week']] . '曜日';
-//			$each_date_title_skip.=  ? '祝日</span><span class="holiday_name">'..'</span><span class="skip">' : '';
+			$each_date_title_skip.= (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) ? '祝日</span><span class="holiday_name">'.'祝日'.'</span><span class="skip">' : '';
 			$each_date_title_skip.= $schedule_num!=0 ? ' '.$schedule_num . '件の登録' : ' 登録なし';
 			?>
 		<td class="<?php echo $class_str ?>">

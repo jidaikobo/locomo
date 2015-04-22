@@ -56,16 +56,15 @@
 		if (isset($v['is_holiday']) && $v['is_holiday']) { $class_str = "week_holiday"; }
 		if(isset($v['day'])):
 			$class_str.= $currentday == $v['day'] ? ' today' : '';
-//			$class_str.= $currentday == $v['day'] ? ' holiday' : ''; //祝日のとき
 			//each_date_title_strはフォーカス移動時読み上げ文字列
 			//date_str, each_date_title_skip は枠内フォーカス時タイトル読み上げ文字列
 			$each_date_title_str = $currentday == $v['day'] ? '今日 ' : '';
 			$each_date_title_str .= $v['day'].'日'.$week_name[$v['week']].'曜日 ';
-//			$each_date_title_str.=  ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
+			$each_date_title_str.=  (isset($v['is_holiday']) && $v['is_holiday']) ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
 			$each_date_title_str .= (count($v['data']) > 0) ? count($v['data']) . '件の登録' : '登録なし';
 			$date_str = $v['day'] < 10 ? '&nbsp;'.$v['day'] : $v['day'];
 			$each_date_title_skip = $week_name[$v['week']] . '曜日';
-//			$each_date_title_skip.=  ? '祝日</span><span class="holiday_name">'..'</span><span class="skip">' : '';//祝日の名前。
+			$each_date_title_skip.= (isset($v['is_holiday']) && $v['is_holiday']) ? '祝日</span><span class="holiday_name">'.'祝日'.'</span><span class="skip">' : '';//祝日の名前。
 			$each_date_title_skip.= (count($v['data']) > 0) ? count($v['data']) . '件の登録' : '登録なし';
 		else:
 			$class_str.= '';

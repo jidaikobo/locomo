@@ -1504,7 +1504,7 @@ table.calendar {
 	background-color: #f6f6e6;
 }
 .calendar td.week0.today,
-.calendar td.holiday.today {
+.calendar td.week_holiday.today {
 	background-color: #faf0da;
 }
 
@@ -1520,7 +1520,7 @@ table.calendar {
 	border-color: indianred;
 }
 .calendar td.week0,
-.calendar tbody td.holiday {
+.calendar tbody td.week_holiday {
 	background-color: #faf0ea;
 }
 .calendar td {
@@ -1548,7 +1548,7 @@ table.calendar {
 }
 .calendar th.week0,
 .calendar td.week0 .title ,
-.calendar tbody td.holiday .title {
+.calendar tbody td.week_holiday .title {
 	color: indianred;
 }
 
@@ -1563,7 +1563,7 @@ table.calendar {
 	transition: .3s;
 }
 .week0 .title:hover,
-.holiday .title:hover ,
+.week_holiday .title:hover ,
 .week0 .events a:hover {
 	background-color: #f3e6e3;
 }
