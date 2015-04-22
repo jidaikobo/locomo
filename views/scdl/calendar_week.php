@@ -32,7 +32,11 @@
 <tr>
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data['schedules_list'] as $v):
-	$class_str =  'week'.$v['week'];
+	if (isset($v['is_holiday']) && $v['is_holiday']) {
+		$class_str = "week_holiday";
+	} else {
+		$class_str =  'week'.$v['week'];
+	}
 	$class_str.= $currentday == $v['day'] ? ' today' : '';
 //			$class_str.= $currentday ==  ? ' holiday' : ''; //祝日のとき
 	//each_date_title_strはフォーカス移動時読み上げ文字列
@@ -48,7 +52,7 @@ if (isset($v['day'])):
 //			$each_date_title_skip.=  ? '祝日</span><span class="holiday_name">'..'</span><span class="skip">' : '';
 	$each_date_title_skip.=  (count($v['data']) > 0) ? ' '. count($v['data']) . '件の登録' : ' 登録なし';
 endif; ?>
-	<td class="week<?php echo $v['week']; echo $currentday == $v['day'] ? ' today' : '' ;?>">
+	<td class="<?php print $class_str; ?>">
 		<?php if (isset($v['day'])): ?>
 			<div class="each_date lcm_focus" title="<?php echo $each_date_title_str ?>">
 				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $v['year'], $v['mon'], $v['day'])); ?>" class="title">

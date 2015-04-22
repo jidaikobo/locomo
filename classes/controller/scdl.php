@@ -1028,6 +1028,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		
 		$user_exist = array();
 		$building_exist = array();
+
+		// 祝日を取得
+		$holidays = \Model_Scdl_Item::query()
+							->where("item_group", "holiday")
+							->get();
+		$holidays_hash = array();
+		foreach ($holidays as $v) {
+			$holidays_hash["d" . $v['item_name']] = $v['item_name'];
+		}
+
 		for ($i = 0; $i < 7; $i++) {
 			$row = array();
 			$row['year']	 = (int)date('Y', strtotime(sprintf("%04d-%02d-%02d 00:00:00", $year, $mon, $day) . " + " . $i . "days"));
@@ -1035,6 +1045,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$row['day']		 = (int)date('d', strtotime(sprintf("%04d-%02d-%02d 00:00:00", $year, $mon, $day) . " + " . $i . "days"));
 			$row['week']	 = date('w', strtotime(sprintf("%04d/%02d/%02d", $row['year'], $row['mon'], $row['day'])));
 			$row['data']	 = array();
+			$row['is_holiday'] = isset($holidays_hash["d" . sprintf("%04d/%02d/%02d", $row['year'], $row['mon'], $row['day'])]);
+
 			foreach ($schedule_data as $r) {
 				// 対象の日付のデータか判断
 				if ($this->is_target_day($row['year'], $row['mon'], $row['day'], $r)) {
@@ -1160,6 +1172,16 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$schedules[] = $row;
 		}
 
+		// 祝日を取得
+		$holidays = \Model_Scdl_Item::query()
+							->where("item_group", "holiday")
+							->get();
+		$holidays_hash = array();
+		foreach ($holidays as $v) {
+			$holidays_hash["d" . $v['item_name']] = $v['item_name'];
+		}
+
+
 		for ($i = 1; $i <= $last_day; $i++) {
 			$row = array();
 			// 日付
@@ -1168,6 +1190,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$row['day']		 = $i;
 			$row['week']	 = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $i)));
 			$row['data']	 = array();
+			$row['is_holiday'] = isset($holidays_hash["d" . sprintf("%04d/%02d/%02d", $year, $mon, $i)]);
+
 //			$row['link_day'] = \Html::anchor('schedules/calendar/' . $row['year'] . "/" . $row['mon'] . "/" . $row['day'], $row['day']);
 			foreach ($schedules_data as $r) {
 				// 対象の日付のデータか判断
