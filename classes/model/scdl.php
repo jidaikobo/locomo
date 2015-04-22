@@ -513,6 +513,14 @@ class Model_Scdl extends \Model_Base
 			}
 		}
 
+		// 時間の整形
+		if (preg_match('/^([0-9]{2}):([0-9]{2}):[0-9]{2}$/', $obj->start_time, $match)) {
+			$form->field("start_time")->set_value($match[1] . ":" . $match[2]);
+		}
+		if (preg_match('/^([0-9]{2}):([0-9]{2}):[0-9]{2}$/', $obj->end_time, $match)) {
+			$form->field("end_time")->set_value($match[1] . ":" . $match[2]);
+		}
+
 		return $form;
 	}
 
