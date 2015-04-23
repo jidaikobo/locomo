@@ -959,6 +959,7 @@ $(document).on('click', '.switch_mce', function(){
 $('input.month').datepicker({
 	firstDay       : 1,
 	dateFormat     : 'yy-mm',
+	yearRange      : 'c-20:c+20',
 	changeMonth    : true,
 	changeYear     : true,
 	showButtonPanel: true,
@@ -1030,11 +1031,21 @@ function set_startdate_to_enddate(el){
 $('input.date , input[type=date]').datepicker({
 	firstDay       : 1,
 	dateFormat     : 'yy-mm-dd',
+	yearRange     : 'c-20:c+20',
 	changeMonth    : true,
 	changeYear     : true,
 	showButtonPanel: true,
 });
 
+//通常の日付選択
+$('input.birthat').datepicker({
+	firstDay       : 1,
+	dateFormat     : 'yy-mm-dd',
+	yearRange     : 'c-50:c+0',
+	changeMonth    : true,
+	changeYear     : true,
+	showButtonPanel: true,
+});
 
 //日付＋時間
 //15分区切り
@@ -1049,7 +1060,8 @@ $('input.datetime.min30, input[type=datetime].min30').datetimepicker({
 });
 //通常の日付＋時間選択
 $('input.datetime,  input[type=datetime]').datetimepicker({
-		firstDay: 1,
+		firstDay : 1,
+		yearRange: 'c-20:c+20',
 });
 
 //時間選択
