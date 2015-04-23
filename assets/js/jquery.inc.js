@@ -1038,7 +1038,7 @@ $('input.date , input[type=date]').datepicker({
 });
 
 //通常の日付選択
-$('input.birthat').datepicker({
+$('input.birth_at').datepicker({
 	firstDay       : 1,
 	dateFormat     : 'yy-mm-dd',
 	yearRange     : 'c-50:c+0',
