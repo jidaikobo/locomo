@@ -11,7 +11,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public static $shortname   = ''; // '[\Modname]\Controller_Example' to 'example'
 	public static $base_url    = ''; // http(s)://example.com/path/to/controller
 	public static $main_url    = ''; // http(s)://example.com/path/to/controller/main_action
-	public static $current_url = ''; // http(s)://example.com/path/to/controller/current_action
+	public static $current_url = ''; // http(s)://example.com/path/to/controller/current_action/
 
 	/**
 	* @var string template

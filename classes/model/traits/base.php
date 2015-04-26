@@ -28,13 +28,253 @@ trait Model_Traits_Base
 	 */
 	public static function _init()
 	{
+		// $controller - to know access rights - overridable
+		$controller = \Request::main()->controller;
+
 		// prepare $_options
-		static::$_options = static::authorized_option();
+		static::authorized_option($controller);
+	}
+
+	/*
+	 * find_options()
+	 */
+	public static function find_options($label = null, $options = array())
+	{
+		if(is_null($label)) throw new \InvalidArgumentException('optionsのラベル名称をフィールド名で設定してください。');
+
+		$primary_key = reset(self::$_primary_key);
+		$items = self::find('all', $options);
+		$items = \Arr::assoc_to_keyval($items, $primary_key, $label);
+		return $items;
+	}
+
+	/**
+	 * set_search_options()
+	 */
+	public static function set_search_options()
+	{
+	}
+
+	/**
+	 * set_public_options()
+	 * @param array() $exception
+	 * @return array()
+	 */
+	public static function set_public_options($exception = array())
+	{
+		$options = array();
+
+		// $_options - created_at
+		if (empty($exception) || ! in_array('created_at', $exception))
+		{
+			$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
+			if (isset(static::properties()[$column]))
+			{
+				$options['where'][] = array($column, '<=', date('Y-m-d H:i:s'));
+			}
+		}
+
+		// $_options - expired_at
+		if (empty($exception) || ! in_array('expired_at', $exception))
+		{
+			$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
+			if (isset(static::properties()[$column]))
+			{
+				$options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
+				$max = max(array_keys($options['where']));
+				$options['where'][$max]['or'] = array($column, 'is', null);
+			}
+		}
+
+		// $_options - deleted_at
+		if (empty($exception) || ! in_array('deleted_at', $exception))
+		{
+			$column = \Arr::get(static::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
+			if (
+				is_subclass_of(get_called_class(), '\Orm\Model_Soft') &&
+				isset(static::properties()[$column])
+			)
+			{
+				$options['where'][] = array($column, 'is', null);
+			}
+		}
+
+		// $_options - is_visible
+		if (empty($exception) || ! in_array('is_visible', $exception))
+		{
+			$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
+			if (isset(static::properties()[$column]))
+			{
+				$options['where'][] = array($column, '=', true);
+			}
+		}
+
+		// array_merge
+		static::$_options = array_merge_recursive(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
+	 * set_deleted_options()
+	 * @return array()
+	 */
+	public static function set_deleted_options()
+	{
+		$options = array();
+
+		// $_options - deleted_at
+		$column = \Arr::get(static::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
+		if (
+			is_subclass_of(get_called_class(), '\Orm\Model_Soft') &&
+			isset(static::properties()[$column])
+		)
+		{
+			$options['where'][] = array($column, 'is not', null);
+		}
+
+		// array_merge
+		static::$_options = array_merge_recursive(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
+	 * set_yet_options()
+	 * @return array()
+	 */
+	public static function set_yet_options()
+	{
+		$options = array();
+
+		// set public options
+		$options = static::set_public_options(array('created_at'));
+
+		// $_options - created_at
+		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
+		if (isset(static::properties()[$column]))
+		{
+			$options['where'][] = array($column, '>', date('Y-m-d H:i:s'));
+		}
+
+		// array_merge
+		static::$_options = array_merge_recursive(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
+	 * set_expired_options()
+	 * @return array()
+	 */
+	public static function set_expired_options()
+	{
+		$options = array();
+
+		// set public options
+		$options = static::set_public_options(array('expired_at'));
+
+		// $_options - expired_at
+		$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
+		if (isset(static::properties()[$column]))
+		{
+			$options['where'][] = array($column, 'is not', null);
+		}
+
+		// array_merge
+		static::$_options = array_merge_recursive(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
+	 * set_invisible_options()
+	 * @return array()
+	 */
+	public static function set_invisible_options()
+	{
+		$options = array();
+
+		// set public options
+		$options = static::set_public_options(array('is_visible'));
+
+		// $_options - created_at
+		$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'created_at');
+		if (isset(static::properties()[$column]))
+		{
+			$options['where'][] = array($column, '=', false);
+		}
+
+		// array_merge
+		static::$_options = array_merge_recursive(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+
+	/**
+	 * set_paginated_options()
+	 * genereate paginated option and links of \Pagination::create_links()
+	 * @return void
+	 */
+	static public function set_paginated_options()
+	{
+		// クエリ文字列の場合
+		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
+
+		// order
+		if (\Input::get('orders'))
+		{
+			$orders = array();
+			foreach (\Input::get('orders') as $k => $v)
+			{
+				// invalid argument
+				if ( ! in_array(strtolower($v), array('asc', 'desc'))) continue;
+
+				// リレーションを見る
+				if (($dot_pos = strpos($k, '.')) > 0)
+				{
+					$model = static::relations(substr($k, 0, $dot_pos))->model_to;
+					$relate = substr($k, 0, $dot_pos);
+					$k = substr($k, $dot_pos+1);
+					if ( ! in_array($k, array_keys($model::properties()))) continue;
+					static::$_options['related'][$relate]['where'][] = array('id', '!=', 0);
+					static::$_options['related'][$relate]['order_by'][$k] = $v;
+					static::$_options['related'][$relate]['order_by']['t0.id'] = 'asc';
+					// 既存の order_by を キャンセル
+					static::$_options['order_by'] = $orders;
+				}
+				else
+				{
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
+					$orders[$k] = $v;
+					static::$_options['order_by'] = $orders;
+					if (count(\Input::get('orders')) == 1 and $k != 'id') static::$_options['order_by']['id'] = 'asc';
+				}
+			}
+			// reset $_conditions
+			static::$_conditions['order_by'] = array();
+		}
+
+		// set total before use offset
+		$count = static::count(static::$_options);
+		\Pagination::set('total_items', $count);
+
+		// limit
+		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
+		static::$_options['rows_limit'] = \Pagination::get('per_page');
+		static::$_options['rows_offset'] = \Pagination::get('offset');
 	}
 
 	/**
 	 * get_primary_keys()
 	 */
+/*parentにもある？*/
 	public static function get_primary_keys($key = 1)
 	{
 		$key = $key ? intval($key) - 1 : 0 ;
@@ -44,6 +284,7 @@ trait Model_Traits_Base
 	/**
 	 * get_pk_value()
 	 */
+/*implode_pk（）*/
 	public function get_pk_value($mode = 'first')
 	{
 		if ($mode == 'first')
@@ -82,36 +323,30 @@ trait Model_Traits_Base
 
 	/*
 	 * authorized_option()
-	 * adjust Model::find(#, $options)
 	 */
-	public static function authorized_option($options = array(), $mode = null)
+	public static function authorized_option($controller)
 	{
-		// $controller - to know access rights
-		$controller = \Request::main()->controller;
-
 		// \Model_Softを使っていて、view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
 		if (
-			(static::forge() instanceof \Orm\Model_Soft) &&
+			is_subclass_of(get_class(), '\Orm\Model_Soft') &&
 			\Auth::has_access($controller.'/view_anyway')
 		)
 		{
 			static::disable_filter();
 		} else {
-			// モデルが持っている判定材料を、適宜$optionsに足す。
+			// モデルが持っている判定材料を、適宜$_optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method)
 			{
 				if ( ! method_exists(get_called_class(), $authorize_method)) continue;
-				$options = static::$authorize_method($controller, $options, $mode);
+				static::$authorize_method($controller);
 			}
 		}
-
-		return $options;
 	}
 
 	/*
 	 * auth_expired()
 	 */
-	public static function auth_expired($controller = null, $options = array(), $mode = null)
+	public static function auth_expired($controller)
 	{
 		// column name
 		$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
@@ -121,46 +356,33 @@ trait Model_Traits_Base
 			! \Auth::has_access($controller.'/view_expired')
 		)
 		{
-			$options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
-			$max = max(array_keys($options['where']));
-			$options['where'][$max]['or'] = array($column, 'is', null);
-/*
-	$options['where'][] = array(
-		array($column, '>', date('Y-m-d H:i:s') )
-			, 'or' => array($column, 'is', null));
-*/
+			static::$_options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
+			$max = max(array_keys(static::$_options['where']));
+			static::$_options['where'][$max]['or'] = array($column, 'is', null);
 		}
-		return $options;
 	}
 
 	/*
 	 * auth_created()
 	 */
-	public static function auth_created($controller = null, $options = array(), $mode = null)
+	public static function auth_created($controller)
 	{
 		// column name
 		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
-
-		if ($mode == 'index')
-		{
-			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
-			return $options;
-		}
 
 		if (
 			isset(static::properties()[$column]) &&
 			! \Auth::has_access($controller.'/index_yet')
 		)
 		{
-			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
+			static::$_options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
 		}
-		return $options;
 	}
 
 	/*
 	 * auth_deleted()
 	 */
-	public static function auth_deleted($controller = null, $options = array(), $mode = null)
+	public static function auth_deleted($controller)
 	{
 		// column name
 		if (isset(static::$_soft_delete))
@@ -170,12 +392,8 @@ trait Model_Traits_Base
 			$column = \Arr::get(static::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
 		}
 
-		if ($mode == 'index') {
-			return $options;
-		}
-
 		// in case \Orm\Model_Soft
-		if ((static::forge() instanceof \Orm\Model_Soft))
+		if (is_subclass_of(get_class(), '\Orm\Model_Soft'))
 		{
 			if ( ! \Auth::has_access($controller.'/view_deleted'))
 			{
@@ -187,19 +405,17 @@ trait Model_Traits_Base
 		} elseif (isset(static::properties()[$column])) {
 			if ( ! \Auth::has_access($controller.'/view_deleted'))
 			{
-				$options['where'][][] = array($column, 'IS NOT', null);
+				static::$_options['where'][][] = array($column, 'IS NOT', null);
 			} else {
-				$options['where'][][] = array($column, 'IS', null);
+				static::$_options['where'][][] = array($column, 'IS', null);
 			}
 		}
-
-		return $options;
 	}
 
 	/*
 	 * auth_visibility()
 	 */
-	public static function auth_visibility($controller = null, $options = array(), $mode = null)
+	public static function auth_visibility($controller)
 	{
 		$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
 
@@ -208,13 +424,9 @@ trait Model_Traits_Base
 			! \Auth::has_access($controller.'/view_invisible')
 		)
 		{
-			$options['where'][][] = array($column, '=', true);
+			static::$_options['where'][][] = array($column, '=', true);
 		}
-		return $options;
 	}
-
-	public static $_hm_delete_else = false;
-	public static $_mm_delete_else = true;
 
 	/*
 	 * @param   array     $input_post
@@ -226,14 +438,12 @@ trait Model_Traits_Base
 	 *
 	 * @important   \Response::redirect() after save() or Regenerate Fieldset instance
 	 */
+	public static $_hm_delete_else = false;
+	public static $_mm_delete_else = true;
 	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $hm_delete_else = null, $mm_delete_else = null)
 	{
-
 		is_null($hm_delete_else) and $hm_delete_else = static::$_hm_delete_else;
 		is_null($mm_delete_else) and $mm_delete_else = static::$_mm_delete_else;
-
-
-
 
 		if (!$input_post) $input_post = \Input::post();
 		$validated = array();
@@ -370,107 +580,10 @@ trait Model_Traits_Base
 
 	}
 
-	/*
-	 * get_options()
-	 */
-	public static function get_options($options = array(), $label = 'name')
-	{
-		$primary_key = reset(self::$_primary_key);
-		$items = self::find('all', $options);
-		$items = \Arr::assoc_to_keyval($items, $primary_key, $label);
-		return $items;
-	}
 
 
-	/*
-	 * @param array    $options conditions for find. limit は pagination_config['perpage'] を使うため無視される
-	 * @param str      $model model class name
-	 * @param bool     $use_get_query use get query paramaters
-	 * @param array    $pagination_config overwrite $this->pagination_config
-	 *
-	 * @return Model finded
-	 */
-	public static function paginated_find($options = array(), $use_get_query = true)
-	{
-		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
-		$input_get = $use_get_query ? \Input::get() : array();
 
-		if ($use_get_query and \Input::get()) {
-			if (\Input::get('orders')) {
 
-				$orders = array();
-				foreach (\Input::get('orders') as $k => $v) {
-					if (($dot_pos = strpos($k, '.')) > 0) { // リレーションを見る
-						$model = static::relations( substr($k, 0, $dot_pos) )->model_to;
-						$relate = substr($k, 0, $dot_pos);
-						$k = substr($k, $dot_pos+1);
-						if ( ! in_array($k, array_keys($model::properties()))) continue;
-						$options['related'][$relate]['where'][] = array('id', '!=', 0);
-						$options['related'][$relate]['order_by'][$k] = $v;
-						$options['related'][$relate]['order_by']['t0.id'] = 'asc';
-						// 既存の conditions の order_by を キャンセル
-						$options['order_by'] = $orders;
-					} else {
-						if ( ! in_array($k, array_keys(static::properties()))) continue;
-						$orders[$k] = $v;
-						$options['order_by'] = $orders;
-						if (count(\Input::get('orders')) == 1 and $k != 'id') $options['order_by']['id'] = 'asc';
-					}
-				}
-				// ここは $_conditions
-				static::$_conditions['order_by'] = array();
-			}
-			if (\Input::get('searches')) {
-				foreach (\Input::get('searches') as $k => $v) {
-					if ($v == false) continue;
-					if ( ! in_array($k, array_keys(static::properties()))) continue;
-					$options['where'][] = array($k, '=', $v);
-				}
-			}
-			if (\Input::get('likes')) {
-				$likes = array();
-				foreach (\Input::get('likes') as $k => $v) {
-					if ($v == false) continue;
-					if ( ! in_array($k, array_keys(static::properties()))) continue;
-					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
-				}
-			}
-
-/*
-			if (\Input::get('all')) {
-				foreach (static::$_properties as $k => $v) {
-					if (in_array($v, static::$_primary_key)) continue;
-					$field = is_array($v) ? $k : $v;// properties sometimes only has key without value
-					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
-				}
-			}
-*/
-		}
-
-		$options+= static::$_options;
-
-		$count_all = static::count();
-		$count = static::count($options);
-
-		\Pagination::set('total_items', $count);
-
-		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
-		$options['rows_limit'] = \Pagination::get('per_page');
-		$options['rows_offset'] = \Pagination::get('offset');
-
-/* 不具合有りました
-		foreach (static::relations() as $ref => $v) {
-			// var_dump($ref);
-			// レイジーロードしない
-			$options['related'][] = $ref;
-		}
- */
-
-		$objs = static::find('all', $options);
-		\Pagination::$refined_items = count($objs);
-
-		return $objs;
-	}
 
 
 	/*
@@ -584,6 +697,100 @@ trait Model_Traits_Base
 
 		return $r_arr;
 	}
+
+// 以降、削除予定
+
+	/*
+	 * @param array    $options conditions for find. limit は pagination_config['perpage'] を使うため無視される
+	 * @param str      $model model class name
+	 * @param bool     $use_get_query use get query paramaters
+	 * @param array    $pagination_config overwrite $this->pagination_config
+	 *
+	 * @return Model finded
+	 */
+	public static function paginated_find($options = array(), $use_get_query = true)
+	{
+		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
+		$input_get = $use_get_query ? \Input::get() : array();
+
+		if ($use_get_query and \Input::get()) {
+			if (\Input::get('orders')) {
+
+				$orders = array();
+				foreach (\Input::get('orders') as $k => $v) {
+					if (($dot_pos = strpos($k, '.')) > 0) { // リレーションを見る
+						$model = static::relations( substr($k, 0, $dot_pos) )->model_to;
+						$relate = substr($k, 0, $dot_pos);
+						$k = substr($k, $dot_pos+1);
+						if ( ! in_array($k, array_keys($model::properties()))) continue;
+						$options['related'][$relate]['where'][] = array('id', '!=', 0);
+						$options['related'][$relate]['order_by'][$k] = $v;
+						$options['related'][$relate]['order_by']['t0.id'] = 'asc';
+						// 既存の conditions の order_by を キャンセル
+						$options['order_by'] = $orders;
+					} else {
+						if ( ! in_array($k, array_keys(static::properties()))) continue;
+						$orders[$k] = $v;
+						$options['order_by'] = $orders;
+						if (count(\Input::get('orders')) == 1 and $k != 'id') $options['order_by']['id'] = 'asc';
+					}
+				}
+				// ここは $_conditions
+				static::$_conditions['order_by'] = array();
+			}
+			if (\Input::get('searches')) {
+				foreach (\Input::get('searches') as $k => $v) {
+					if ($v == false) continue;
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
+					$options['where'][] = array($k, '=', $v);
+				}
+			}
+			if (\Input::get('likes')) {
+				$likes = array();
+				foreach (\Input::get('likes') as $k => $v) {
+					if ($v == false) continue;
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
+					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
+				}
+			}
+
+/*
+			if (\Input::get('all')) {
+				foreach (static::$_properties as $k => $v) {
+					if (in_array($v, static::$_primary_key)) continue;
+					$field = is_array($v) ? $k : $v;// properties sometimes only has key without value
+					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
+				}
+			}
+*/
+		}
+
+		$options+= static::$_options;
+
+		$count_all = static::count();
+		$count = static::count($options);
+
+		\Pagination::set('total_items', $count);
+
+		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
+		$options['rows_limit'] = \Pagination::get('per_page');
+		$options['rows_offset'] = \Pagination::get('offset');
+
+/* 不具合有りました
+		foreach (static::relations() as $ref => $v) {
+			// var_dump($ref);
+			// レイジーロードしない
+			$options['related'][] = $ref;
+		}
+ */
+
+		$objs = static::find('all', $options);
+		\Pagination::$refined_items = count($objs);
+
+		return $objs;
+	}
+
+
 
 
 	/**

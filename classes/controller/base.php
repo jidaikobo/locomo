@@ -5,70 +5,16 @@ class Controller_Base extends Controller_Core
 	public $_content_template = null;
 
 	/**
-	 * set_search_options()
-	 */
-	public static function set_search_options($model)
-	{
-/*
-		// use other set_search_options() sample
-		\Controller_Foo::set_search_options($model);
-
-		// free word search - sample
-		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
-		if ($all)
-		{
-			$model::$_options['where'][] = array(
-				array('title', 'LIKE', $all),
-				'or' => array(
-					array('body', 'LIKE', $all)
-				) 
-			);
-		}
-*/
-	}
-
-	/**
-	 * set_public_options()
-	 */
-	public static function set_public_options($model)
-	{
-		// $_options - created_at
-		$column = \Arr::get($model::get_field_by_role('created_at'), 'lcm_field', 'created_at');
-		if (isset($model::properties()[$column]))
-		{
-			$model::$_options['where'][] = array($column, '<=', date('Y-m-d H:i:s'));
-		}
-
-		// $_options - expired_at
-		$column = \Arr::get($model::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
-		if (isset($model::properties()[$column]))
-		{
-			$model::$_options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
-			$max = max(array_keys($model::$_options['where']));
-			$model::$_options['where'][$max]['or'] = array($column, 'is', null);
-		}
-
-		// $_options - is_visible
-		$column = \Arr::get($model::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
-		if (isset($model::properties()[$column]))
-		{
-			$model::$_options['where'][] = array($column, '=', true);
-		}
-	}
-
-	/**
 	 * index()
 	 */
-	protected function index($page)
+	protected function index($page = 1)
 	{
 		// vals
 		$model = $this->model_name;
 
 		// set options
-		static::set_public_options($model);
-
-		// genereate paginated option and links of \Pagination::create_links()
-		\Pagination::set_options($model);
+		$model::set_public_options();
+		$model::set_paginated_options();
 
 		// find()
 		$items = $model::find('all', $model::$_options) ;
@@ -93,17 +39,15 @@ class Controller_Base extends Controller_Core
 	/**
 	 * index_admin()
 	 */
-	protected function index_admin($page)
+	protected function index_admin($page = 1)
 	{
 		// vals
 		$model = $this->model_name;
 
 		// set options
-		static::set_public_options($model);
-		static::set_search_options($model);
-
-		// genereate paginated option and links of \Pagination::create_links()
-		\Pagination::set_options($model);
+		$model::set_public_options();
+		$model::set_search_options();
+		$model::set_paginated_options();
 
 		// find()
 		$items = $model::find('all', $model::$_options) ;
@@ -128,7 +72,7 @@ class Controller_Base extends Controller_Core
 	/**
 	 * index_yet()
 	 */
-	protected function index_yet()
+	protected function index_yet($page = 1)
 	{
 		// vals
 		$model = $this->model_name;
@@ -137,12 +81,9 @@ class Controller_Base extends Controller_Core
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
 		// set options
-		$model::$_options['where'][] = array('created_at', '>=', date('Y-m-d H:i:s'));
-		$model::$_options['where'][] = array('expired_at', 'is', null);
-		static::set_search_options($model);
-
-		// genereate paginated option and links of \Pagination::create_links()
-		\Pagination::set_options($model);
+		$model::set_yet_options();
+		$model::set_search_options();
+		$model::set_paginated_options();
 
 		// find()
 		$items = $model::find('all', $model::$_options) ;
@@ -167,7 +108,7 @@ class Controller_Base extends Controller_Core
 	/**
 	 * index_expired()
 	 */
-	protected function index_expired()
+	protected function index_expired($page = 1)
 	{
 		// vals
 		$model = $this->model_name;
@@ -176,11 +117,9 @@ class Controller_Base extends Controller_Core
 		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
 
 		// set options
-		$model::$_options['where'][] = array('expired_at', '<', date('Y-m-d H:i:s'));
-		static::set_search_options($model);
-
-		// genereate paginated option and links of \Pagination::create_links()
-		\Pagination::set_options($model);
+		$model::set_expired_options();
+		$model::set_search_options();
+		$model::set_paginated_options();
 
 		// find()
 		$items = $model::find('all', $model::$_options) ;
@@ -205,7 +144,7 @@ class Controller_Base extends Controller_Core
 	/**
 	 * index_invisible()
 	 */
-	protected function index_invisible()
+	protected function index_invisible($page = 1)
 	{
 		// vals
 		$model = $this->model_name;
@@ -214,11 +153,9 @@ class Controller_Base extends Controller_Core
 		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
 
 		// set options
-		$model::$_options['where'][] = array('is_visible', '=', 0);
-		static::set_search_options($model);
-
-		// genereate paginated option and links of \Pagination::create_links()
-		\Pagination::set_options($model);
+		$model::set_invisible_options();
+		$model::set_search_options();
+		$model::set_paginated_options();
 
 		// find()
 		$items = $model::find('all', $model::$_options) ;
@@ -243,7 +180,7 @@ class Controller_Base extends Controller_Core
 	/**
 	 * index_deleted()
 	 */
-	protected function index_deleted()
+	protected function index_deleted($page = 1)
 	{
 		// vals
 		$model = $this->model_name;
@@ -260,10 +197,47 @@ class Controller_Base extends Controller_Core
 		$model::$_options['where'][] = array($deleted_column, 'IS NOT', null);
 
 		// set options
-		static::set_search_options($model);
+		$model::set_search_options();
+		$model::set_paginated_options();
 
-		// genereate paginated option and links of \Pagination::create_links()
-		\Pagination::set_options($model);
+		// find()
+		$items = $model::find('all', $model::$_options) ;
+		if ( ! $items) \Session::set_flash('message', '項目が存在しません。');
+
+		// refined count
+		\Pagination::$refined_items = count($items);
+
+		// presenter
+		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+
+		// title
+		$title = static::$nicename.'の削除済み項目';
+
+		// view
+		$content->get_view()->set('items', $items);
+		$content->get_view()->set_global('title', $title);
+		$content->get_view()->set_safe('search_form', $content::search_form($title));
+		$this->template->content = $content;
+	}
+
+	/**
+	 * index_all()
+	 */
+	protected function index_all($page = 1)
+	{
+		// vals
+		$model = $this->model_name;
+
+		// disable_filter() before find()
+		if (is_subclass_of($model, '\Orm\Model_Soft'))
+		{
+			$model::disable_filter();
+		}
+
+		// set options
+		$model::$_options = array();
+		$model::set_search_options();
+		$model::set_paginated_options();
 
 		// find()
 		$items = $model::find('all', $model::$_options) ;
@@ -358,6 +332,14 @@ class Controller_Base extends Controller_Core
 	}
 
 	/*
+	 * create()
+	 */
+	protected function create()
+	{
+		$this->edit();
+	}
+
+	/*
 	 * edit()
 	 */
 	protected function edit($id = null)
@@ -399,19 +381,19 @@ class Controller_Base extends Controller_Core
 		if (\Input::post())
 		{
 			$item->cascade_set(\Input::post(), $form, $repopulate = true);
-	
+
 			// set errors
 			$messages = array('ワンタイムトークンが失効しています。送信し直してみてください。');
 			$errors = $form->error() ?: array() ;
 			$errors = ! \Security::check_token() ? $errors + $messages : $errors ;
-	
+
 			// save
 			if ( ! $errors && $item->save(null, true))
 			{
 				// event
 				$event = 'locomo_edit_succeed';
 				$item = \Event::instance()->has_events($event) ? \Event::instance()->trigger($event, $item) : $item ;
-				\Session::set_flash('success', '更新しました。');
+				\Session::set_flash('success', $id ? '更新しました。' : '新規作成しました。');
 			}
 			else
 			{
@@ -420,10 +402,16 @@ class Controller_Base extends Controller_Core
 				if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event);
 				$errors[] = '更新を失敗しました。';
 			}
-		}
 
-		// set_flash()
-		if ($errors) \Session::set_flash('error', $errors);
+			// set_flash()
+			if ($errors) \Session::set_flash('error', $errors);
+
+			// redirection
+			if ( ! $errors && ($item->id || $id))
+			{
+				return \Response::redirect(static::$base_url.'edit/'.$item->id);
+			}
+		}
 
 		// set_object() - to generate menu at parent::base_assign()
 		static::set_object($item);
@@ -466,6 +454,7 @@ class Controller_Base extends Controller_Core
 		}
 		catch (\Exception $e)
 		{
+			if (\Auth::is_root()) throw $e;
 			\Session::set_flash('error', '項目の削除中にエラーが発生しました。');
 			return \Response::redirect(static::$main_url);
 		}
@@ -522,6 +511,7 @@ class Controller_Base extends Controller_Core
 		}
 		catch (\Exception $e)
 		{
+			if (\Auth::is_root()) throw $e;
 			\Session::set_flash('error', '項目の復活中にエラーが発生しました。');
 			return \Response::redirect(static::$main_url);
 		}
@@ -548,16 +538,21 @@ class Controller_Base extends Controller_Core
 		// check model instance
 		if ( ! is_subclass_of($model, '\Orm\Model_Soft'))
 		{
-			throw new \Exception('対象モデルが\Orm\Model_Softを継承していないので、デフォルトのpurge()は使えません。\Orm\Model_Softを継承するか、コントローラごとに実装してください。');
-		}
-
-		// purgable check
-		$is_purgable = true;
-		$is_purgable = $item = $model::find_deleted($id) ?: false;
-		if ( ! $is_purgable)
-		{
+			// Model_Softを使っていない場合
 			$is_purgable = $item = $model::find($id) ?: false;
 		}
+		else
+		{
+			// Model_Softを使っている場合はパージできるかチェック
+			$is_purgable = true;
+			$is_purgable = $item = $model::find_deleted($id) ?: false;
+			if ( ! $is_purgable)
+			{
+				$is_purgable = $item = $model::find($id) ?: false;
+			}
+		}
+
+		// redirect
 		if ( ! $is_purgable)
 		{
 			\Session::set_flash('error', '完全削除中にエラーが発生しました。');
@@ -574,9 +569,9 @@ class Controller_Base extends Controller_Core
 		\Session::set_flash('message', '完全に削除した項目は復活できません。この項目を完全に削除してもいいですか？');
 
 		// view
-		$content = \View::forge('defaults/purge');
+		$content = \Presenter::forge('defaults/purge');
 		$content->set_safe('form', $form->build(static::$base_url.'purge/'.$item->id));
-		$content->set_safe('plain', $model::plain_definition('purge_confirm', $item)->build_plain());
+		$content->set_safe('plain', $content::plain($item));
 		$content->set_safe('item', $item);
 		$this->template->set_global('action', static::$base_url.'purge');
 		$this->template->set_global('title', self::$nicename.'完全削除');
@@ -590,7 +585,10 @@ class Controller_Base extends Controller_Core
 	{
 		// redirect
 		$id = \Input::post('id');
-		is_null($id) and \Response::redirect(static::$main_url);
+		if ( ! \Auth::is_root() || is_null($id) || ! \Security::check_token())
+		{
+			\Response::redirect(static::$main_url);
+		}
 
 		// vals
 		$model = $this->model_name ;
@@ -598,32 +596,31 @@ class Controller_Base extends Controller_Core
 		// check model instance
 		if ( ! is_subclass_of($model, '\Orm\Model_Soft'))
 		{
-			throw new \Exception('対象モデルが\Orm\Model_Softを継承していないので、デフォルトのpurge()は使えません。\Orm\Model_Softを継承するか、コントローラごとに実装してください。');
-		}
-
-		// try to purge
-		if (
-			\Auth::is_root()
-			and \Input::post()
-			and \Security::check_token()
-			and $item = $model::find_deleted($id)
-		)
-		{
-			try {
-				// 現状 Cascading deleteの恩恵を受けられない？ 要実装
-				$item->purge(null, true);
-			}
-			catch (\Exception $e)
-			{
-				\Session::set_flash('error', '完全削除中にエラーが発生しました');
-				return \Response::redirect(static::$base_url.'index_deleted');
-			}
-
-			\Session::set_flash('success', '項目を完全に削除しました');
+			// Model_Softを継承していない時には、そのまま削除を試みる
+			$this->delete($id);
 		}
 		else
 		{
-			\Session::set_flash('error', '項目の完全削除中にエラーが発生しました');
+			// try to purge
+			if ($item = $model::find_deleted($id))
+			{
+				try {
+					// 現状 Cascading deleteの恩恵を受けられない？ 要実装
+					$item->purge(null, true);
+				}
+				catch (\Exception $e)
+				{
+					if (\Auth::is_root()) throw $e;
+					\Session::set_flash('error', '完全削除中にエラーが発生しました');
+					return \Response::redirect(static::$base_url.'index_deleted');
+				}
+	
+				\Session::set_flash('success', '項目を完全に削除しました');
+			}
+			else
+			{
+				\Session::set_flash('error', '項目の完全削除中にエラーが発生しました');
+			}
 		}
 
 		// redirect
