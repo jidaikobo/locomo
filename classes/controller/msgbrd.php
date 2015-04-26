@@ -3,8 +3,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 {
 	// traits
 	use \Controller_Traits_Bulk;
-	use \Controller_Traits_Crud;
-//	use \Controller_Traits_Testdata;
+	use \Controller_Traits_Testdata;
 //	use \Controller_Traits_Wrkflw;
 //	use \Controller_Traits_Revision;
 
@@ -25,54 +24,133 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	);
 
 	/**
-	 * index_core()
-	 */
-	public function index_core()
-	{
-		parent::index_core();
-		$search_form = \Model_Msgbrd::search_form();
-		$this->template->content->set_safe('search_form', $search_form);
-	}
-
-	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin()
 	{
-		// 下書きを除外
-		if (\Request::main()->action !== 'index_draft')
-		{
-			\Model_Msgbrd::$_options['where'][] = array(
-				array('is_draft', '=', 0)
-			);
-		}
-
-		// free word search
-		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
-		if ($all)
-		{
-			\Model_Msgbrd::$_options['where'][] = array(
-				array('name', 'LIKE', $all),
-				'or' => array(
-					array('contents', 'LIKE', $all),
-				)
-			);
-		}
-
-		// to controller base
 		parent::index_admin();
 	}
 
 	/**
-	 * action_index_admin()
+	 * action_index_draft()
 	 */
 	public function action_index_draft()
 	{
-		\Model_Msgbrd::$_options['where'][] = array(
-			array('is_draft', '=', 1)
-		);
+		// vals
+		$model = $this->model_name;
 
-		$this->action_index_admin();
+		// set options
+		$options = \Model_Msgbrd::set_public_options(array('is_draft'));
+		\Model_Msgbrd::$_options['where'][] = array('is_draft' => 1);
+		$model::set_search_options();
+		$model::set_paginated_options();
+
+		// find()
+		$items = $model::find('all', $model::$_options) ;
+		if ( ! $items) \Session::set_flash('message', '項目が存在しません。');
+
+		// refined count
+		\Pagination::$refined_items = count($items);
+
+		// presenter
+		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+
+		// title
+		$title = static::$nicename.'の不可視項目';
+
+		// view
+		$content->get_view()->set('items', $items);
+		$content->get_view()->set_global('title', $title);
+		$content->get_view()->set_safe('search_form', $content::search_form($title));
+		$this->template->content = $content;
+	}
+
+	/**
+	 * action_index_yet()
+	 */
+	public function action_index_yet()
+	{
+		parent::index_yet();
+	}
+
+	/**
+	 * action_index_expired()
+	 */
+	public function action_index_expired()
+	{
+		parent::index_expired();
+	}
+
+	/**
+	 * action_index_deleted()
+	 */
+	public function action_index_deleted()
+	{
+		parent::index_deleted();
+	}
+
+	/*
+	 * action_index_all()
+	 */
+	public function action_index_all()
+	{
+		parent::index_all();
+	}
+
+	/**
+	 * action_view()
+	 */
+	public function action_view($id = null)
+	{
+		parent::view($id);
+	}
+
+	/**
+	 * action_create()
+	 */
+	public function action_create()
+	{
+		parent::create();
+	}
+
+	/**
+	 * action_edit()
+	 */
+	public function action_edit($id = null)
+	{
+		parent::edit($id);
+	}
+
+	/**
+	 * action_delete()
+	 */
+	public function action_delete($id = null)
+	{
+		parent::delete($id);
+	}
+
+	/**
+	 * action_undelete()
+	 */
+	public function action_undelete($id = null)
+	{
+		parent::undelete($id);
+	}
+
+	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm($id = null)
+	{
+		parent::purge_confirm($id);
+	}
+
+	/**
+	 * action_purge()
+	 */
+	public function action_purge($id = null)
+	{
+		parent::purge($id);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-class Model_Msgbrd extends \Model_Base
+class Model_Msgbrd extends \Model_Base_Soft
 {
 //	use \Model_Traits_Wrkflw;
 
@@ -8,9 +8,6 @@ class Model_Msgbrd extends \Model_Base
 
 	// $_conditions
 	protected static $_conditions = array();
-
-	// $_options
-	public static $_options = array();
 
 	// $_properties
 	protected static $_properties =
@@ -99,7 +96,7 @@ class Model_Msgbrd extends \Model_Base
 			'form' => 
 			array (
 				'type' => 'text',
-				'class' => 'text',
+				'class' => 'datetime',
 			),
 		),
 
@@ -166,13 +163,9 @@ class Model_Msgbrd extends \Model_Base
 			'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-//		't'Locomo\Observer_Workflow' => array(
-//			'events' => array('before_insert', 'before_save','after_load'),
-//		),
 //		't'Locomo\Observer_Revision' => array(
 //			'events' => array('after_insert', 'after_save', 'before_delete'),
 //		),
-
 	);
 
 	/**
@@ -180,7 +173,11 @@ class Model_Msgbrd extends \Model_Base
 	 */
 	 public static function _init()
 	{
-// add_authorize_methods もここに書ける？
+		// set $_authorize_methods
+		static::$_authorize_methods[] = 'auth_msgbrd';
+
+		// parent
+		parent::_init();
 
 		// properties
 		self::$_properties['expired_at'] = array(
@@ -191,14 +188,6 @@ class Model_Msgbrd extends \Model_Base
 			),
 		);
 
-/*
-		self::$_properties['hoge'] = array(
-			'label' => 'test',
-			'form' => array(
-				'type' => 'select'
-			)
-		);
-*/
 		// usergroup_id
 		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
 		$options+= \Model_Usrgrp_Custom::get_options();
@@ -216,108 +205,58 @@ class Model_Msgbrd extends \Model_Base
 	}
 
 	/**
-	 * form_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
+	 * set_search_options()
 	 */
-	public static function form_definition($factory = 'msgbrd', $obj = null)
+	public static function set_search_options()
 	{
-		if (static::$_cache_form_definition && $obj == null)
+		// free word search
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
 		{
-			return static::$_cache_form_definition;
+			static::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+				'or' => array(
+					array('contents', 'LIKE', $all),
+				)
+			);
 		}
-
-		$form = parent::form_definition($factory, $obj);
-
-		// usergroup_id
-/*
-		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
-		$options+= \Model_Usrgrp::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
-		$form->field('usergroup_id')
-			->add_rule('required')
-			->set_options($options)
-			->set_value($obj->usergroup_id);
-*/
-		// categories
-		$options = array('' => '選択してください');
-		$options+= \Model_Msgbrd_Categories::get_options(array('where' => array(array('is_available', 1)), 'order_by' => array('seq' => 'ASC', 'name' => 'ASC')), 'name');
-		$form->field('category_id')
-			->set_options($options)
-			->set_value($obj->category_id);
-
-		static::$_cache_form_definition = $form;
-		return $form;
 	}
 
 	/**
-	 * plain_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
+	 * set_public_options()
+	 * @param array() $exception
+	 * @return array()
 	 */
-	public static function plain_definition($factory = 'msgbrd', $obj = null)
+	public static function set_public_options($exception = array())
 	{
-		$form = static::form_definition($factory, $obj);
-/*
-		$form->field('created_at')
-			->set_attribute(array('type' => 'text'));
-*/
+		$options = parent::set_public_options($exception);
 
-		return $form;
-	}
-
-	/*
-	 * search_form
-	 */
-	public static function search_form()
-	{
-		$config = \Config::load('form_search', 'form_search', true, true);
-		$form = \Fieldset::forge('msgbrd_search_form', $config);
-
-		// 検索
-		$form->add(
-			'all',
-			'フリーワード',
-			array('type' => 'text', 'value' => \Input::get('all'))
-		);
-
-		// wrap
-		$parent = parent::search_form_base('');
-		$parent->add_after($form, 'msgbrd_search_form', array(), array(), 'opener');
-
-		return $parent;
-	}
-
-	/**
-	 * add_authorize_methods()
-	 */
-	public static function add_authorize_methods()
-	{
-		if ( ! in_array('auth_msgbrd', static::$_authorize_methods))
+		// $_options - is_draft
+		if (empty($exception) || ! in_array('is_draft', $exception))
 		{
-			static::$_authorize_methods[] = 'auth_msgbrd';
+			$options['where'][] = array('is_draft', '=', false);
 		}
+
+		// array_merge
+		static::$_options = array_merge_recursive(static::$_options, $options);
+
+		//return
+		return $options;
 	}
 
 	/*
 	 * auth_msgbrd()
 	 */
-	public static function auth_msgbrd($controller = null, $options = array(), $mode = null)
+	public static function auth_msgbrd($controller)
 	{
 		// draftカラムがなければ、対象にしない
 		$column = \Arr::get(static::get_field_by_role('draft'), 'lcm_field', 'is_draft');
-		if (! isset(static::properties()[$column])) return $options;
+		if (! isset(static::properties()[$column])) return;
+		if (in_array(\Auth::get('id'), [-1, -2])) return;
 
-		if (in_array(\Auth::get('id'), [-1, -2])) return $options;
-
-		// logic
-		$options['where'][] = array(
-			// draftでなく、公開範囲内か？
+		// static::$_options
+		static::$_options['where'][] = array(
+			// draftでなく、公開範囲内なら許可
 			array(
 				array($column, '=', '0'),
 				array('usergroup_id', 'IN', \Auth::get_groups()),
@@ -328,7 +267,5 @@ class Model_Msgbrd extends \Model_Base
 				array('creator_id', '=', \Auth::get('id')),
 			)
 		);
-
-		return $options;
 	}
 }
