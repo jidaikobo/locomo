@@ -33,11 +33,11 @@ class Actionset_Usrgrp extends \Actionset
 	}
 
 	/**
-	 * actionset_delete()
+	 * actionset_purge_confirm()
 	 */
-	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_purge_confirm($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_delete($controller, $obj, $id, $urls);
+		return \Actionset_Base::actionset_purge_confirm($controller, $obj, $id, $urls);
 	}
 
 
