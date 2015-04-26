@@ -12,10 +12,7 @@ class Model_Usrgrp extends \Model_Base
 		'order_by' => array('seq' => 'acs'),
 	);
 
-	//$_options
-	public static $_options = array();
-
-	//$_properties
+	// $_properties
 	protected static $_properties = array(
 		'id' => array(
 			'label' => 'ID',
@@ -52,16 +49,9 @@ class Model_Usrgrp extends \Model_Base
 			'form' => array('type' => 'select', 'options' => array(0 => '通常', 1 => '権限用グループ')),
 			'default' => 1,
 		),
-		'created_at' => array(
-			'label' => '作成日',
-			'form' => array('type' => false),
-		),
-		'deleted_at' => array(
-			'label' => '削除日',
-			'form' => array('type' => false),
-		),
 	);
 
+	// relations
 	protected static $_many_many = array(
 		'user' => array(
 			'key_from' => 'id',
@@ -75,13 +65,7 @@ class Model_Usrgrp extends \Model_Base
 		)
 	);
 
-	//$_soft_delete
-	protected static $_soft_delete = array(
-		'deleted_field'   => 'deleted_at',
-		'mysql_timestamp' => true,
-	);
-
-	//$_observers
+	// $_observers
 	protected static $_observers = array(
 		"Orm\Observer_Self" => array(),
 		'Locomo\Observer_Created' => array(
@@ -92,26 +76,4 @@ class Model_Usrgrp extends \Model_Base
 			'events' => array('after_insert', 'after_save'),
 		),
 	);
-
-	/**
-	 * search_form()
-	*/
-	public static function search_form()
-	{
-		$config = \Config::load('form_search', 'form_search', true, true);
-		$form = \Fieldset::forge('user', $config);
-
-		// 検索
-		$form->add(
-			'all',
-			'フリーワード',
-			array('type' => 'text', 'value' => \Input::get('all'))
-		);
-
-		// wrap
-		$parent = parent::search_form_base('ユーザグループ');
-		$parent->add_after($form, 'user', array(), array(), 'opener');
-
-		return $parent;
-	}
 }

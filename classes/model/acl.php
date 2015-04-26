@@ -64,15 +64,15 @@ class Model_Acl extends \Orm\Model
 	public static function get_usergroups()
 	{
 		$usergroups = array('none' => '選択してください', 0 => 'ゲスト', '-10' => 'ログインユーザすべて');
-		$usergroups += \Model_Usrgrp::get_options(
+		$usergroups += \Model_Usrgrp::find_options(
+			'name',
 			array(
 				'where' => array(
 					array('is_available', '=', true),
 					array('customgroup_uid', 'is', null)
 				),
 				'order_by' => array('seq' => 'ASC', 'name' => 'ASC')
-			),
-			'name'
+			)
 		) ?: array();
 		return $usergroups;
 	}

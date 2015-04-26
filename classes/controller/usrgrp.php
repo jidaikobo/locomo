@@ -74,6 +74,22 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 	}
 
 	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm($id = null)
+	{
+		parent::purge_confirm($id);
+	}
+
+	/**
+	 * action_purge()
+	 */
+	public function action_purge()
+	{
+		parent::purge();
+	}
+
+	/**
 	 * action_bulk()
 	 */
 	public function action_bulk($page_num = 1)
