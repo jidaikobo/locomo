@@ -1,4 +1,4 @@
-<?php echo \Model_Usrgrp::search_form(); ?>
+<?php echo $search_form; ?>
 
 <?php if ($items): ?>
 <table class="tbl datatable tbl_scrollable lcm_focus" title="項目一覧">
@@ -9,9 +9,6 @@
 			<?php if (\Auth::is_admin()): ?>
 			<th class="min"><?php echo \Pagination::sort('is_for_acl', '権限用'); ?></th>
 			<?php endif; ?>
-			<?php if (\Request::main()->action == 'index_deleted'): ?>
-				<th class="min">削除された日</th>
-			<?php endif; ?>
 			<th class="min">操作</th>
 		</tr>
 	</thead>
@@ -21,10 +18,7 @@
 		<td class="ar"><?php echo $item->id; ?></td>
 		<td><a href="<?php echo \Uri::create('/usrgrp/view/'.$item->id) ?>"><?php echo $item->name; ?></a></td>
 		<?php if (\Auth::is_admin()): ?>
-		<td class="ac"><div class="col_scrollable" tabindex="-1"><?php echo $item->is_for_acl ? 'yes' : 'no' ; ?></div></td>
-		<?php endif; ?>
-		<?php if (\Request::main()->action == 'index_deleted'): ?>
-			<td><?php echo $item->deleted_at; ?></td>
+		<td class="ac"><?php echo $item->is_for_acl ? '権限用' : '表示用' ; ?></td>
 		<?php endif; ?>
 		<td class="min">
 			<div class="btn_group">
@@ -36,12 +30,7 @@
 					echo Html::anchor('usrgrp/edit/'.$item->id, '編集', array('class' => 'edit'));
 				endif;
 				if (\Auth::has_access('\Controller_Usrgrp/delete')):
-					if ($item->deleted_at):
-						echo Html::anchor('usrgrp/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
-						echo Html::anchor('usrgrp/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
-					else:
-						echo Html::anchor('usrgrp/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
-					endif;
+					echo Html::anchor('usrgrp/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
 				endif;
 				?>
 			</div>

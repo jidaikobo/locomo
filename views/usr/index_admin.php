@@ -1,4 +1,4 @@
-<?php echo \Model_Usr::search_form(); ?>
+<?php echo $search_form; ?>
 
 <?php if ($items): ?>
 <div class="index_toolbar clearfix">

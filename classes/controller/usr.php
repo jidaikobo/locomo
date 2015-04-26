@@ -4,7 +4,6 @@ class Controller_Usr extends \Locomo\Controller_Base
 {
 	// traits
 	use \Controller_Traits_Testdata;
-	use \Controller_Traits_Crud;
 	use \Controller_Traits_Revision;
 
 	// locomo
@@ -37,50 +36,108 @@ class Controller_Usr extends \Locomo\Controller_Base
 	}
 
 	/**
-	 * action_index()
-	 * user module is not for public.
-	 */
-	public function action_index()
-	{
-		return \Response::redirect(\Uri::create('usr/index_admin'));
-	}
-
-	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin()
 	{
-		// free word search
-		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
-		if ($all)
-		{
-			\Model_Usr::$_options['where'][] = array(
-				array('username', 'LIKE', $all),
-				'or' => array(
-					array('email', 'LIKE', $all),
-					'or' => array(
-						array('display_name', 'LIKE', $all), 
-					)
-				) 
-			);
-		}
-
-		// group
-		$usergroup = \Input::get('usergroup', null) ;
-		if ($usergroup)
-		{
-			\Model_Usr::$_options['related']['usergroup']['join_type'] = 'inner';
-			\Model_Usr::$_options['related']['usergroup']['where'] = array(
-				array('id', $usergroup),
-			);
-		}
-
-		// span
-		if (\Input::get('from')) \Model_Usr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
-		if (\Input::get('to'))   \Model_Usr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
-
-		// to controller base
 		parent::index_admin();
+	}
+
+
+	/**
+	 * action_index_yet()
+	 */
+	public function action_index_yet()
+	{
+		parent::index_yet();
+	}
+
+	/**
+	 * action_index_expired()
+	 */
+	public function action_index_expired()
+	{
+		parent::index_expired();
+	}
+
+	/**
+	 * action_index_invisible()
+	 */
+	public function action_index_invisible()
+	{
+		parent::index_invisible();
+	}
+
+	/**
+	 * action_index_deleted()
+	 */
+	public function action_index_deleted()
+	{
+		parent::index_deleted();
+	}
+
+	/*
+	 * action_index_all()
+	 */
+	public function action_index_all()
+	{
+		parent::index_all();
+	}
+
+	/**
+	 * action_view()
+	 */
+	public function action_view($id = null)
+	{
+		parent::view($id);
+	}
+
+	/**
+	 * action_create()
+	 */
+	public function action_create()
+	{
+		parent::create();
+	}
+
+	/**
+	 * action_edit()
+	 */
+	public function action_edit($id = null)
+	{
+		parent::edit($id);
+	}
+
+	/**
+	 * action_delete()
+	 */
+	public function action_delete($id = null)
+	{
+		parent::delete($id);
+	}
+
+	/**
+	 * action_undelete()
+	 */
+	public function action_undelete($id = null)
+	{
+		parent::undelete($id);
+	}
+
+	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm($id = null)
+	{
+		parent::purge_confirm($id);
+	}
+
+	/**
+	 * action_purge()
+	 */
+	public function action_purge($id = null)
+	{
+		parent::purge($id);
 	}
 
 	/*
