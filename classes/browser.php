@@ -16,7 +16,7 @@ class Browser
 	 */
 	public static function getIEVersion()
 	{
-		if(stristr($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
+		if(isset($_SERVER['HTTP_USER_AGENT']) and stristr($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
 			preg_match('/MSIE\s([\d.]+)/i', $_SERVER['HTTP_USER_AGENT'], $ver);
 			$ver = @floor($ver[1]);
 		} elseif (stristr($_SERVER['HTTP_USER_AGENT'], "Trident")){
