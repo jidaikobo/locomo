@@ -636,7 +636,7 @@ class Model_Scdl extends \Model_Base
 	 * @return [type] [description]
 	 */
 	public static function get_repeat_kbs() {
-		return array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年');
+		return array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月', '5' => '毎年');
 	}
 
 	/**
@@ -703,15 +703,17 @@ class Model_Scdl extends \Model_Base
 			}
 		} else {
 			$print .= $data->target_year . "年" . $data->target_mon . "月" . $data->target_day . "日";
-			$print .= '　' . $data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime;
+			$print .= ' ' . $data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime;
 		}
+		$print .= '</td></tr>';
 		$date_detail['display_target_date'] = $print;
 
 		// 登録データ
 		$week = array('日', '月', '火', '水', '木', '金', '土');
 		$repeat_kbs = self::get_repeat_kbs($data->repeat_kb);
-		$print .= "<p>■登録条件</p>";
-		$print .= "<p>繰り返し：" . $repeat_kbs[$data->repeat_kb];
+		$print .= "<tr>";
+		$print .= "<th>登録条件：</th>";
+		$print .= "<td><p>繰り返し：" . $repeat_kbs[$data->repeat_kb];
 		
 		$date_detail['display_repeat_kb'] = $repeat_kbs[$data->repeat_kb];
 		if ($data->repeat_kb == 3){
@@ -732,17 +734,17 @@ class Model_Scdl extends \Model_Base
 				$print .= "毎週";
 				$date_detail['display_repeat_kb'] .= "毎週";
 			}
-			$print .= $week[$data->week_kb] . "曜日)";
+			$print .= $week[$data->week_kb] . "曜日";
 			$date_detail['display_repeat_kb'] .= $week[$data->week_kb] . "曜日";
-			if ($data->week_kb_option1) {
-				$print .= "(第" . $data->week_index_option1 . $week[$data->week_kb_option1] . "曜日)";
-				$date_detail['display_repeat_kb'] .= " 第" . $data->week_index_option1 . $week[$data->week_kb_option1] . "曜日";
+			if ($data->week_kb_option1 != '') {
+				$print .= ", 第" . $data->week_index_option1 . $week[$data->week_kb_option1] . "曜日";
+				$date_detail['display_repeat_kb'] .= ", 第" . $data->week_index_option1 . $week[$data->week_kb_option1] . "曜日";
 			}
-			if ($data->week_kb_option2) {
-				$print .= "(第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日)";
-				$date_detail['display_repeat_kb'] .= " 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
+			if ($data->week_kb_option2 != '') {
+				$print .= ", 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
+				$date_detail['display_repeat_kb'] .= ", 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
 			}
-
+			if ($data->repeat_kb == 6) $print .= ')';
 		}
 		$print .= "</p>";
 		if ($data->repeat_kb == 0) {
@@ -752,7 +754,7 @@ class Model_Scdl extends \Model_Base
 			$date_detail['display_period'] = '<span class="display_inline_block">'.$data->display_startdate . " " . $data->display_starttime . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime.'</span>';
 		} else {
 			$print .= '<span class="display_inline_block">' . $data->display_startdate . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_enddate . "</span>";
-			$print .= '<span class="display_inline_block">' . $data->display_starttime . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_endtime . "</span>";
+			$print .= ' <span class="display_inline_block">' . $data->display_starttime . ' <span class="sr_replace to"><span>から</span></span></span> <span class="display_inline_block">' . $data->display_endtime . "</span>";
 			$date_detail['display_period'] = $data->display_startdate . " <span class='sr_replace to'><span>から</span></span> " . $data->display_enddate . " " . $data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime;
 		}
 		if($data->repeat_kb == 0 && $data->display_enddate == ''):
@@ -760,13 +762,12 @@ class Model_Scdl extends \Model_Base
 		else:
 			$date_detail['display_period_day'] = '<span class="display_inline_block">'.$data->display_startdate . " <span class='sr_replace to'><span>から</span></span> " . $data->display_enddate.'</span>';
 		endif;
-		$date_detail['display_period_time'] = '<span class="display_inline_block">'.$data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime.'</span>';
+		$date_detail['display_period_time'] = ' <span class="display_inline_block">'.$data->display_starttime . " <span class='sr_replace to'><span>から</span></span> " . $data->display_endtime.'</span>';
 
 
 		// 時間を追加
 		$date_detail['start_time'] = $data->display_starttime;
 		$date_detail['end_time'] = $data->display_endtime;
-		
 		$date_detail['print'] = $print;
 		return $date_detail;
 	}

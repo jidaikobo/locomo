@@ -13,8 +13,8 @@
 		<?php print htmlspecialchars_decode($next_url); ?> / 
 		<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date" id="move_date" title="表示年月日" /><input class="button small" id="btn_move_date" type="button" value="指定の日を表示" onclick="move_date()" />
 	</div>
-<!--	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
--->	
+	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
+
 	<h2 class="skip">タイムテーブル グラフ</h2>
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
 	<table class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
