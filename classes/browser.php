@@ -19,7 +19,7 @@ class Browser
 		if(isset($_SERVER['HTTP_USER_AGENT']) and stristr($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
 			preg_match('/MSIE\s([\d.]+)/i', $_SERVER['HTTP_USER_AGENT'], $ver);
 			$ver = @floor($ver[1]);
-		} elseif (stristr($_SERVER['HTTP_USER_AGENT'], "Trident")){
+		} elseif (isset($_SERVER['HTTP_USER_AGENT']) and stristr($_SERVER['HTTP_USER_AGENT'], "Trident")){
 			preg_match('/rv\:([\d.]+)/i', $_SERVER['HTTP_USER_AGENT'], $ver);
 			$ver = $ver[1];
 		} else {
