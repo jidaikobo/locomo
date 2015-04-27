@@ -1141,7 +1141,6 @@ $('.validation_error :input').tooltip({
 
 //通常のツールチップ
 $('.lcm_tooltip_parent').tooltip({
-
 	items: '[data-jslcm-tooltip-id]',
 	content: function() {
 		var el = document.getElementById($(this).data('jslcmTooltipId'));
@@ -1149,7 +1148,11 @@ $('.lcm_tooltip_parent').tooltip({
 		return el
 	},
 	open: function (event, ui) {
+		console.log(event);
 		ui.tooltip.css({'width': 'auto','max-width': '100%'});
+	},
+	close: function (event, ui) {
+		ui.tooltip.css({'display': 'none'});
 	},
 	tooltipClass : 'lcm_tooltip',
 	show         : 200,
