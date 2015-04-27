@@ -784,9 +784,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 //		// 一番上に見せるようにする
 		$narrow_user_group_list_custom = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', 'is not', null))), 'name');
 		$narrow_user_group_list_normal = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', null))), 'name');
-		foreach ($narrow_user_group_list_normal as $row) {
+		foreach ($narrow_user_group_list_normal as $key => $row) {
 			// array_mergeだとIDがおかしくなるためひとつずついれる
-			$narrow_user_group_list_custom[] = $row;
+			$narrow_user_group_list_custom[$key] = $row;
 		}
 		$view->set('narrow_user_group_list', $narrow_user_group_list_custom);
 
