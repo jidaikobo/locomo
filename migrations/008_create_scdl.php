@@ -60,15 +60,19 @@ class Create_Scdl
 		if (\DBUtil::field_exists('lcm_scdls', array('week_kb_option1'))) {
 			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_kb_option1`;')->execute();			
 		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_kb_option1` text DEFAULT NULL;')->execute();
 		if (\DBUtil::field_exists('lcm_scdls', array('week_kb_option2'))) {
 			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_kb_option2`;')->execute();			
 		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_kb_option2` text DEFAULT NULL;')->execute();
 		if (\DBUtil::field_exists('lcm_scdls', array('week_index_option1'))) {
 			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_index_option1`;')->execute();			
 		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_index_option1` int(11) DEFAULT NULL;')->execute();
 		if (\DBUtil::field_exists('lcm_scdls', array('week_index_option2'))) {
 			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_index_option2`;')->execute();			
 		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_index_option2` int(11) DEFAULT NULL;')->execute();
 		echo "スケジューラに毎月第何曜日の区分を追加しました。";
 
 		echo "create lcm_scdls_buildings table.\n";
