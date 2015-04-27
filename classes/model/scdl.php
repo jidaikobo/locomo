@@ -132,6 +132,78 @@ class Model_Scdl extends \Model_Base
 				'title' => '第何週',
 			),
 		),
+		'week_kb_option1' => 
+		array (
+			'label' => '繰り返し曜日2',
+			'data_type' => 'int',
+			'form' => 
+			array (
+				'type' => 'select',
+				'options' => array('' => '---',
+								'0' => '日曜'
+								, '1' => '月曜'
+								, '2' => '火曜'
+								, '3' => '水曜'
+								, '4' => '木曜'
+								, '5' => '金曜'
+								, '6' => '土曜'),
+				'class' => 'int',
+				'title' => '曜日',
+			),
+		),
+		'week_index_option1' => 
+		array (
+			'label' => '第何週2',
+			'data_type' => 'int',
+			'form' => 
+			array (
+				'type' => 'select',
+				'options' => array('1' => '1'
+								, '2' => '2'
+								, '3' => '3'
+								, '4' => '4'
+								, '5' => '5'
+								),
+				'class' => 'int',
+				'title' => '第何週',
+			),
+		),
+		'week_kb_option2' => 
+		array (
+			'label' => '繰り返し曜日3',
+			'data_type' => 'int',
+			'form' => 
+			array (
+				'type' => 'select',
+				'options' => array('' => '---'
+								,'0' => '日曜'
+								, '1' => '月曜'
+								, '2' => '火曜'
+								, '3' => '水曜'
+								, '4' => '木曜'
+								, '5' => '金曜'
+								, '6' => '土曜'),
+				'class' => 'int',
+				'title' => '曜日',
+			),
+		),
+		'week_index_option2' => 
+		array (
+			'label' => '第何週2',
+			'data_type' => 'int',
+			'form' => 
+			array (
+				'type' => 'select',
+				'options' => array('1' => '1'
+								, '2' => '2'
+								, '3' => '3'
+								, '4' => '4'
+								, '5' => '5'
+								),
+				'class' => 'int',
+				'title' => '第何週',
+			),
+		),
 		'delete_day' => 
 		array (
 			'label' => '部分削除日',
@@ -662,6 +734,15 @@ class Model_Scdl extends \Model_Base
 			}
 			$print .= $week[$data->week_kb] . "曜日)";
 			$date_detail['display_repeat_kb'] .= $week[$data->week_kb] . "曜日";
+			if ($data->week_kb_option1) {
+				$print .= "(第" . $data->week_index_option1 . $week[$data->week_kb_option1] . "曜日)";
+				$date_detail['display_repeat_kb'] .= " 第" . $data->week_index_option1 . $week[$data->week_kb_option1] . "曜日";
+			}
+			if ($data->week_kb_option2) {
+				$print .= "(第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日)";
+				$date_detail['display_repeat_kb'] .= " 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
+			}
+
 		}
 		$print .= "</p>";
 		if ($data->repeat_kb == 0) {

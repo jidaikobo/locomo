@@ -56,7 +56,20 @@ class Create_Scdl
 		echo "parent_idフィールドを追加しました。\n";
 
 
-
+		echo "スケジューラに毎月第何曜日の区分を増やします。\n";
+		if (\DBUtil::field_exists('lcm_scdls', array('week_kb_option1'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_kb_option1`;')->execute();			
+		}
+		if (\DBUtil::field_exists('lcm_scdls', array('week_kb_option2'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_kb_option2`;')->execute();			
+		}
+		if (\DBUtil::field_exists('lcm_scdls', array('week_index_option1'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_index_option1`;')->execute();			
+		}
+		if (\DBUtil::field_exists('lcm_scdls', array('week_index_option2'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_index_option2`;')->execute();			
+		}
+		
 		echo "create lcm_scdls_buildings table.\n";
 		\DBUtil::create_table('lcm_scdls_buildings', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),

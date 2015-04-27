@@ -147,7 +147,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 								, \Input::post("week_kb")
 								, \Input::post("target_day")
 								, \Input::post("target_month")
-								, \Input::post("week_index"));
+								, \Input::post("week_index")
+								, \Input::post("week_kb_option1")
+								, \Input::post("week_index_option1")
+								, \Input::post("week_kb_option2")
+								, \Input::post("week_index_option2")
+								);
 			}
 
 			if (
@@ -340,7 +345,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
+									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index"
+									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2');
 				foreach ($setcolumns as $v) {
 					$this->template->content->form->field($v)->set_value($from_data->$v);
 				}
@@ -378,6 +384,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$obj_edit->end_date		 = $year . "-" . $mon . "-" . $day;
 				$obj_edit->delete_day	 = "";
 				$obj_edit->week_kb		 = 0;
+				$obj_edit->week_index 	 = 0;
+				$obj_edit->week_kb_option1 = 0;
+				$obj_edit->week_kb_option2 = 0;
+				$obj_edit->week_index_option1 = 0;
+				$obj_edit->week_index_option2 = 0;
 				$obj_edit->parent_id	 = $id;
 				$obj_edit->save();
 
@@ -1401,6 +1412,21 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$result = (ceil($target_day / 7) == $row['week_index']);
 						}
 					}
+
+					if ($target_week == $row['week_kb_option1'] && $result == false) {
+						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
+						if ($result && $row['week_index_option1']) {
+							// 第何週指定がある場合
+							$result = (ceil($target_day / 7) == $row['week_index_option1']);
+						}
+					}
+					if ($target_week == $row['week_kb_option2'] && $result == false) {
+						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
+						if ($result && $row['week_index_option2']) {
+							// 第何週指定がある場合
+							$result = (ceil($target_day / 7) == $row['week_index_option2']);
+						}
+					}
 				}
 				break;
 		}
@@ -1464,7 +1490,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $target_month [description]
 	 * @return [type]               [description]
 	 */
-	private function checkOverlap($id, $syear, $smon, $sday, $shour, $smin, $eyear, $emon, $eday, $ehour, $emin, $repeat_kb, $week_kb = null, $target_day = null, $target_month = null, $week_index = null) {
+	private function checkOverlap($id, $syear, $smon, $sday, $shour, $smin, $eyear, $emon, $eday, $ehour, $emin, $repeat_kb, $week_kb = null, $target_day = null, $target_month = null, $week_index = null, $week_kb_option1 = null, $week_index_option1 = null, $week_kb_option2 = null, $week_index_option2 = null) {
 		$model = $this->model_name;
 
 		$arrUsers = explode("/", \Input::post("hidden_members"));
@@ -1558,11 +1584,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 					break;
 				case 6:
-					if ($target_week != $week_kb && (ceil($target_day / 7) != $week_index)) {
+					if (
+						(($target_week == $week_kb) && (ceil($target_day_from / 7) == $week_index))
+						|| (($target_week == $week_kb_option1) && (ceil($target_day_from / 7) == $week_index_option1))
+						|| (($target_week == $week_kb_option2) && (ceil($target_day_from / 7) == $week_index_option2))
+						) {
+					} else {
 				 		$flgContinue = true;
 					}
 					break;
-
 	 		}
 	 		if ($flgContinue) { continue; }
 
