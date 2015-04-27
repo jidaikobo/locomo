@@ -321,7 +321,7 @@ class Controller_Base extends Controller_Core
 		static::set_object($item);
 
 		// plain
-		$content = \Presenter::forge(static::$shortname.'/view');
+		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/view');
 		$plain = $content::plain($item);
 
 		// view
@@ -374,7 +374,7 @@ class Controller_Base extends Controller_Core
 		}
 
 		// prepare form and population
-		$content = \Presenter::forge(static::$shortname.'/edit');
+		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/edit');
 		$form = $content::form($item);
 
 		// try to save
@@ -569,7 +569,7 @@ class Controller_Base extends Controller_Core
 		\Session::set_flash('message', '完全に削除した項目は復活できません。この項目を完全に削除してもいいですか？');
 
 		// view
-		$content = \Presenter::forge('defaults/purge');
+		$content = \Presenter::forge($this->_content_template ?: 'defaults/purge');
 		$content->set_safe('form', $form->build(static::$base_url.'purge/'.$item->id));
 		$content->set_safe('plain', $content::plain($item));
 		$content->set_safe('item', $item);
