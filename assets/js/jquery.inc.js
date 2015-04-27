@@ -1148,7 +1148,6 @@ $('.lcm_tooltip_parent').tooltip({
 		return el
 	},
 	open: function (event, ui) {
-		console.log(event);
 		ui.tooltip.css({'width': 'auto','max-width': '100%'});
 	},
 	close: function (event, ui) {
