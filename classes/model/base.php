@@ -152,7 +152,9 @@ class Model_Base extends \Orm\Model_Soft
 		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
 
 		if ($mode == 'index') {
-			$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
+			if (isset(static::properties()[$column])) {
+				$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
+			}
 			return $options;
 		}
 
