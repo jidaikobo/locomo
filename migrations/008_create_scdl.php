@@ -69,7 +69,8 @@ class Create_Scdl
 		if (\DBUtil::field_exists('lcm_scdls', array('week_index_option2'))) {
 			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_index_option2`;')->execute();			
 		}
-		
+		echo "スケジューラに毎月第何曜日の区分を追加しました。";
+
 		echo "create lcm_scdls_buildings table.\n";
 		\DBUtil::create_table('lcm_scdls_buildings', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
