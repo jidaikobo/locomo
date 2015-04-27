@@ -7,6 +7,94 @@ class Actionset_Usr extends \Actionset_Base
 	use \Actionset_Traits_Testdata;
 
 	/**
+	 * actionset_create()
+	 */
+	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::create($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_view()
+	 */
+	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::view($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_edit()
+	 */
+	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::edit($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_delete()
+	 */
+	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::delete($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_undelete()
+	 */
+	public static function actionset_undelete($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::undelete($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_index_admin()
+	 */
+	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_admin($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_index_deleted()
+	 */
+	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_deleted($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_index_yet()
+	 */
+	public static function actionset_index_yet($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_yet($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_index_expired()
+	 */
+	public static function actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_expired($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_index_invisible()
+	 */
+	public static function actionset_index_invisible($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_invisible($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * actionset_index_all()
+	 */
+	public static function actionset_index_all($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_all($controller, $obj, $id, $urls);
+	}
+
+	/**
 	 * actionset_reset_paswd()
 	 */
 	public static function actionset_reset_paswd($controller, $obj = null, $id = null, $urls = array())
