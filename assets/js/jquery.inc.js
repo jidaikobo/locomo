@@ -449,8 +449,9 @@ function lcm_focus(){
 		$('.currentfocus').removeClass('currentfocus');
 		if(!esc){
 			$(document).set_tabindex();
-		}else if(target){
-			parents = target.parents(elm).addClass('focusparent');
+		}else if(target && target.hasClass('lcm_focus')){
+			target.parents('.lcm_focus');
+			parents = target.parents('.lcm_focus').addClass('focusparent');
 			target.addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}else{
 			$(document).set_tabindex();//重いかなあ。
