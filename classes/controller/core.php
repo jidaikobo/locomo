@@ -9,6 +9,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	public static $controller  = ''; // \Request::main()->controller
 	public static $action      = ''; // \Request::main()->action
 	public static $shortname   = ''; // '[\Modname]\Controller_Example' to 'example'
+	public static $dir         = ''; // '[\Modname]\Controller_Exp_Example' to 'exp/example/'
 	public static $base_url    = ''; // http(s)://example.com/path/to/controller
 	public static $main_url    = ''; // http(s)://example.com/path/to/controller/main_action
 	public static $current_url = ''; // http(s)://example.com/path/to/controller/current_action/
@@ -63,6 +64,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		static::$main_url    = \Uri::create(\Inflector::ctrl_to_dir(\Request::main()->controller.$main_action)) ;
 		static::$nicename    = \Util::get_locomo($called_class, 'nicename') ?: @static::$config['nicename'];
 		static::$shortname   = strtolower(substr(\Inflector::denamespace(\Request::active()->controller), 11));
+		static::$dir         = str_replace('_', DS, static::$shortname).DS;
 
 		// load config and set model_name
 		$module = \Request::is_hmvc() ? \Request::active()->module : \Request::main()->module;

@@ -24,7 +24,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'admin');
 
 		// title
 		$title = static::$nicename.'一覧';
@@ -57,7 +57,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
 
 		// title
 		$title = static::$nicename.'管理一覧';
@@ -93,7 +93,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
 
 		// title
 		$title = static::$nicename.'予約項目';
@@ -129,7 +129,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
 
 		// title
 		$title = static::$nicename.'の期限切れ項目';
@@ -165,7 +165,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
 
 		// title
 		$title = static::$nicename.'の不可視項目';
@@ -208,7 +208,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
 
 		// title
 		$title = static::$nicename.'の削除済み項目';
@@ -247,7 +247,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/index_admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
 
 		// title
 		$title = static::$nicename.'の削除済み項目';
@@ -287,7 +287,7 @@ class Controller_Base extends Controller_Core
 		}
 
 		// view
-		$content = \View::forge(static::$shortname.'/index_admin_widget');
+		$content = \View::forge(static::$dir.'index_admin_widget');
 		$content->set('items', $model::find('all', $options));
 		$this->template->content = $content;
 		$this->template->set_global('title', static::$nicename.'管理一覧');
@@ -321,7 +321,7 @@ class Controller_Base extends Controller_Core
 		static::set_object($item);
 
 		// plain
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/view');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'view');
 		$plain = $content::plain($item);
 
 		// view
@@ -374,7 +374,7 @@ class Controller_Base extends Controller_Core
 		}
 
 		// prepare form and population
-		$content = \Presenter::forge($this->_content_template ?: static::$shortname.'/edit');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'edit');
 		$form = $content::form($item);
 
 		// try to save
