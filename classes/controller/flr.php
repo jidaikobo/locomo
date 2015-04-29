@@ -37,6 +37,8 @@ class Controller_Flr extends \Locomo\Controller_Base
 			// get default permission from config
 			$config = \Config::load('upload');
 			$default_permission = \Arr::get($config, 'default_permission', array());
+			$default_permission['usergroup'] = @$default_permission['usergroup'] ?: array();
+			$default_permission['user'] = @$default_permission['user'] ?: array();
 
 			// readble arr to machine-like arr.
 			$group = \Model_Flr::modify_intersects_arr_to_modellike_arr($default_permission['usergroup'], 'usergroup');
@@ -77,7 +79,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		}
 
 		// current dir
-		$current_obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'index_files'));
+		$current_obj = \Model_Flr::find($id);
 
 		// show current dir items. when search ingnore this.
 		// 現在のディレクトリを表示。
@@ -148,19 +150,19 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 		// count
 		$current = count($objs);
+		\Pagination::$refined_items = $current;
 
 		// view
-		$content = \View::forge('flr/index_files');
+		$content = \Presenter::forge('flr/index/files');
 		$this->template->content = $content;
 
 		// search_form
-		$search_form = \Model_Flr::search_form();
-		$this->template->content->set_safe('search_form', $search_form);
+		$this->template->content->set_safe('search_form', $content::search_form('ファイル一覧'));
 
 		// assign
-		$content->set_global('current', $current_obj);
-		$content->set_safe('breadcrumbs', self::breadcrumbs($current_obj->path));
-		$content->set('items', $objs);
+		$content->get_view()->set_global('current', $current_obj);
+		$content->get_view()->set_safe('breadcrumbs', self::breadcrumbs($current_obj->path));
+		$content->get_view()->set('items', $objs);
 		$this->template->set_global('title', 'ファイル一覧');
 
 		// set object

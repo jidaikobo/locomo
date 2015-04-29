@@ -43,7 +43,6 @@ class Controller_Usr extends \Locomo\Controller_Base
 		parent::index_admin();
 	}
 
-
 	/**
 	 * action_index_yet()
 	 */

@@ -114,18 +114,16 @@ trait Controller_Traits_Revision
 		if ($data)
 		{
 			$obj->set($data);
-			$plain = $model::plain_definition('revision', $obj);
-			$val = $plain->build_plain();
 		}
 
 		// assign
-		$content = \View::forge('revision/view_revision');
-		$content->set_safe('comment', $revisions->comment);
-		$content->set_safe('user', \Model_Usr::get_display_name($revisions->user_id));
-		$content->set_safe('plain', $val);
-		$content->set_global('item', $obj);
-		$content->set_global('title', '履歴個票');
-		$content->set_global('is_revision', true);
+		$content = \Presenter::forge($this->_content_template ?: 'revision/view_revision');
+		$content->get_view()->set_safe('comment', $revisions->comment);
+		$content->get_view()->set_safe('user', \Model_Usr::get_display_name($revisions->user_id));
+		$content->get_view()->set_safe('plain', $content::plain($obj));
+		$content->get_view()->set_global('item', $obj);
+		$content->get_view()->set_global('title', '履歴個票');
+		$content->get_view()->set_global('is_revision', true);
 
 		// add_actionset
 		$action['urls'][] = \Html::anchor(static::$base_url.'each_index_revision/'.$revisions->pk_id, '履歴一覧へ');

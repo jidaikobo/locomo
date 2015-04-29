@@ -203,7 +203,7 @@ trait Model_Traits_Base
 		$options = static::set_public_options(array('is_visible'));
 
 		// $_options - created_at
-		$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'created_at');
+		$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
 		if (isset(static::properties()[$column]))
 		{
 			$options['where'][] = array($column, '=', false);
@@ -884,13 +884,5 @@ trait Model_Traits_Base
 			);
 
 		return $form;
-	}
-
-	/**
-	 * plain_definition()
-	 */
-	public static function plain_definition($factory = 'plain', $obj = null)
-	{
-		return static::form_definition($factory, $obj);
 	}
 }

@@ -195,7 +195,6 @@ class Model_Usr extends Model_Base_Soft
 		if (\Input::get('to'))   static::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
 	}
 
-
 	/**
 	 * _event_before_save()
 	 */

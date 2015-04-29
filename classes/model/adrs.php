@@ -1,13 +1,18 @@
 <?php
-class Model_Adrs extends \Model_Base
+class Model_Adrs extends \Model_Base_Soft
 {
 	protected static $_table_name = 'lcm_adrs';
 
 	protected static $_properties =
 	array (
 		'id',
+		'group_id' => array (
+			'label' => 'グループ',
+			'default' => ''
+		),
 		'name' => array(
 			'label' => '氏名',
+			'lcm_role' => 'subject',
 			'data_type' => 'varchar(255)',
 			'form' => 
 			array (
@@ -53,6 +58,7 @@ class Model_Adrs extends \Model_Base
 				'size' => 30,
 				'class' => 'varchar',
 			),
+			'default' => ''
 		),
 		'company_kana' => 
 		array (
@@ -64,6 +70,7 @@ class Model_Adrs extends \Model_Base
 				'size' => 30,
 				'class' => 'varchar',
 			),
+			'default' => ''
 		),
 		'tel' => 
 		array (
@@ -75,6 +82,7 @@ class Model_Adrs extends \Model_Base
 				'size' => 30,
 				'class' => 'varchar',
 			),
+			'default' => ''
 		),
 		'fax' => 
 		array (
@@ -86,6 +94,7 @@ class Model_Adrs extends \Model_Base
 				'size' => 30,
 				'class' => 'varchar',
 			),
+			'default' => ''
 		),
 		'mail' => 
 		array (
@@ -97,6 +106,7 @@ class Model_Adrs extends \Model_Base
 				'size' => 30,
 				'class' => 'varchar',
 			),
+			'default' => ''
 		),
 		'mobile' => 
 		array (
@@ -108,6 +118,7 @@ class Model_Adrs extends \Model_Base
 				'size' => 30,
 				'class' => 'varchar',
 			),
+			'default' => ''
 		),
 		'zip3' => array(
 			'label' => '郵便番号',
@@ -144,6 +155,7 @@ class Model_Adrs extends \Model_Base
 				'size' => 30,
 				'class' => 'varchar',
 			),
+			'default' => ''
 		),
 		'memo' => 
 		array (
@@ -156,25 +168,13 @@ class Model_Adrs extends \Model_Base
 				'style' => 'width:100%;',
 				'class' => 'text',
 			),
+			'default' => ''
 		),
-
-		'group_id' => 
+		'created_at' => 
 		array (
 			'form' => 
 			array (
 				'type' => false,
-			),
-		),
-
-		'created_at' => 
-		array (
-			'label' => '作成日時',
-			'data_type' => 'datetime',
-			'form' => 
-			array (
-				'type' => 'text',
-				'size' => 20,
-				'class' => 'datetime',
 			),
 		),
 		'updated_at' => 
@@ -207,22 +207,10 @@ class Model_Adrs extends \Model_Base
 		),
 	) ;
 
-
-
 	//$_conditions
 	protected static $_conditions = array();
 	public static $_options = array();
-/*
-	protected static $_has_many = array(
-		'foo' => array(
-			'key_from' => 'id',
-			'model_to' => 'Model_Foo',
-			'key_to' => 'bar_id',
-			'cascade_save' => true,
-			'cascade_delete' => false
-		)
-	);
- */
+
 	protected static $_belongs_to = array(
 		'group' => array(
 			'key_from' => 'group_id',
@@ -231,8 +219,7 @@ class Model_Adrs extends \Model_Base
 			'cascade_save' => true,
 			'cascade_delete' => false,
 		)
-);
-
+	);
 
 	//_soft_delete
 	protected static $_soft_delete = array(
@@ -254,13 +241,12 @@ class Model_Adrs extends \Model_Base
 			'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-//		't'Locomo\Observer_Workflow' => array(
+		'Locomo\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save', 'before_delete'),
+		),
+//		'Locomo\Observer_Workflow' => array(
 //			'events' => array('before_insert', 'before_save','after_load'),
 //		),
-//		't'Locomo\Observer_Revision' => array(
-//			'events' => array('after_insert', 'after_save', 'before_delete'),
-//		),
-
 	);
 
 	// _event_before_save
@@ -272,110 +258,44 @@ class Model_Adrs extends \Model_Base
 	}
 
 	/**
-	 * form_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
+	 * set_search_options()
 	 */
-	public static function form_definition($factory = 'adrs', $obj = null)
+	public static function set_search_options()
 	{
-		if (static::$_cache_form_definition && $obj == null)
+		// free word search
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
 		{
-			return static::$_cache_form_definition;
+			static::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+				'or' => array(
+					array('kana', 'LIKE', $all),
+					'or' => array(
+						array('company_name', 'LIKE', $all), 
+						'or' => array(
+							array('company_kana', 'LIKE', $all),
+							'or' => array(
+								array('mail', 'LIKE', $all),
+								'or' => array(
+									array('address', 'LIKE', $all),
+									'or' => array(
+										array('memo', 'LIKE', $all),
+									)
+								)
+							)
+						)
+					)
+				) 
+			);
 		}
 
-		$form = parent::form_definition($factory, $obj);
-
-		//Adrsgrp
-		$options = \Model_Adrsgrp::get_options(
-			array(
-				'where' => array(array('is_available', 1)),
-				'order_by' => array('seq' => 'ASC')
-			),
-			'name'
-		);
-		$form->add_after('adrsgrp', 'グループ', array('type' => 'select', 'options' => $options), array(), 'name')
-			->set_value(@$obj->group_id);
-
-		$form->field('zip3')
-			->set_template("
-				\t\t<div class=\"input_group\">\n
-				\t\t\t<h2>{required}{label}</h2>\n
-				\t\t\t<div class=\"field\">\n
-				\t\t\t\t<em class=\"exp\">{error_msg}{description}</em>\n
-				\t\t\t\t{field}{error_alert_link}\n
-				\t\t\t\t-\n
-			");
-		$form->field('zip4')
-			->set_template("
-					\t\t\t\t<em class=\"exp\">{error_msg}{description}</em>\n
-					\t\t\t\t{field}{error_alert_link}\n
-				\t\t\t</div>\n
-				\t\t</div>\n
-				");
-
-
-/*
-		if ( ! \Auth::is_admin())
+		// group
+		$group = \Input::get('group', null) ;
+		if ($group)
 		{
-			$form->field('is_visible')->set_type('hidden')->set_value($obj->is_visible ?: 1);
+			static::$_options['where'][] = array(
+				array('group_id', '=', $group),
+			);
 		}
-*/
-
-		static::$_cache_form_definition = $form;
-		return $form;
-	}
-
-	/**
-	 * plain_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
-	 */
-	public static function plain_definition($factory = 'adrs', $obj = null)
-	{
-		$form = static::form_definition($factory, $obj);
-/*
-		$form->field('created_at')
-			->set_attribute(array('type' => 'text'));
-*/
-
-		return $form;
-	}
-
-	/*
-	 * search_form
-	 */
-	public static function search_form()
-	{
-		$config = \Config::load('form_search', 'form_search', true, true);
-		$form = \Fieldset::forge('adrs_search_form', $config);
-
-		// 検索
-		$form->add(
-			'all',
-			'フリーワード',
-			array('type' => 'text', 'value' => \Input::get('all'))
-		);
-
-		// グループ
-		$options = array('' => '選択してください');
-		$options+= \Model_Adrsgrp::get_options(array('order_by' => array('name')), 'name');
-		$form->add(
-				'group',
-				'グループ',
-				array('type' => 'select', 'options' => $options)
-			)
-			->set_value(\Input::get('group'));
-
-		// wrap
-		$parent = parent::search_form_base('アドレス');
-		$parent->add_after($form, 'adrs_search_form', array(), array(), 'opener');
-
-		return $parent;
 	}
 }

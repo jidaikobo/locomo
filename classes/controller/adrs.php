@@ -2,11 +2,10 @@
 class Controller_Adrs extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Crud;
 	use \Controller_Traits_Bulk;
-//	use \Controller_Traits_Testdata;
+	use \Controller_Traits_Testdata;
+	use \Controller_Traits_Revision;
 //	use \Controller_Traits_Wrkflw;
-//	use \Controller_Traits_Revision;
 
 	// locomo
 	public static $locomo = array(
@@ -24,58 +23,83 @@ class Controller_Adrs extends \Locomo\Controller_Base
 	);
 
 	/**
-	 * index_core()
-	 */
-	public function index_core()
-	{
-		parent::index_core();
-		$search_form = \Model_Adrs::search_form();
-		$this->template->content->set_safe('search_form', $search_form);
-	}
-
-	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin()
 	{
-		// free word search
-		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
-		if ($all)
-		{
-			\Model_Adrs::$_options['where'][] = array(
-				array('name', 'LIKE', $all),
-				'or' => array(
-					array('kana', 'LIKE', $all),
-					'or' => array(
-						array('company_name', 'LIKE', $all), 
-						'or' => array(
-							array('company_kana', 'LIKE', $all),
-							'or' => array(
-								array('mail', 'LIKE', $all),
-								'or' => array(
-									array('address', 'LIKE', $all),
-									'or' => array(
-										array('memo', 'LIKE', $all),
-									)
-								)
-							)
-						)
-					)
-				) 
-			);
-		}
-
-		// group
-		$group = \Input::get('group', null) ;
-		if ($group)
-		{
-			\Model_Adrs::$_options['where'][] = array(
-				array('group_id', '=', $group),
-			);
-		}
-
-		// to controller base
 		parent::index_admin();
+	}
+
+	/**
+	 * action_index_deleted()
+	 */
+	public function action_index_deleted()
+	{
+		parent::index_deleted();
+	}
+
+	/*
+	 * action_index_all()
+	 */
+	public function action_index_all()
+	{
+		parent::index_all();
+	}
+
+	/**
+	 * action_view()
+	 */
+	public function action_view($id = null)
+	{
+		parent::view($id);
+	}
+
+	/**
+	 * action_create()
+	 */
+	public function action_create()
+	{
+		parent::create();
+	}
+
+	/**
+	 * action_edit()
+	 */
+	public function action_edit($id = null)
+	{
+		parent::edit($id);
+	}
+
+	/**
+	 * action_delete()
+	 */
+	public function action_delete($id = null)
+	{
+		parent::delete($id);
+	}
+
+	/**
+	 * action_undelete()
+	 */
+	public function action_undelete($id = null)
+	{
+		parent::undelete($id);
+	}
+
+	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm($id = null)
+	{
+		parent::purge_confirm($id);
+	}
+
+	/**
+	 * action_purge()
+	 */
+	public function action_purge($id = null)
+	{
+		parent::purge($id);
 	}
 
 	/**
@@ -84,17 +108,11 @@ class Controller_Adrs extends \Locomo\Controller_Base
 	public function action_edit_adrsgrp()
 	{
 		// bulk
-		\Model_Adrsgrp::disable_filter();
 		$option = array(
 			'where' => array(array('is_available', 'is not', null)),
 			'order_by' => array('seq' => 'ASC'),
 		);
-		\Model_Adrsgrp::$_options = array();
 		$form = $this->bulk($option, '\Model_Adrsgrp');
-
-		// add_actionset - back to index at edit
-		$action['urls'][] = \Html::anchor(static::$main_url, '一覧へ');
-		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// assign
 		$view = \View::forge('bulk/bulk');

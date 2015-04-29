@@ -19,8 +19,9 @@ class Bulk {
 		return new static($name);
 	}
 
-	public function add_model($model) {//, $define_function = null) {
-
+	public function add_model($model)
+	//, $define_function = null) {
+	{
 		if (is_array($model)) {
 			foreach ($model as $model_obj) {
 				$this->add_model($model_obj);
@@ -47,14 +48,22 @@ class Bulk {
 			if ($model->is_new()) {
 
 				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
-				!$model::get_filter_status() and $this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+
+				if (method_exists($model, 'get_filter_status'))
+				{
+					!$model::get_filter_status() and $this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+				}
+
 			} else {
 				if (is_null($model->{$model::soft_delete_property('deleted_field')})) { // 削除済みでない
 					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
-					!$model::get_filter_status() and $this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+					if (method_exists($model, 'get_filter_status'))
+					{
+						!$model::get_filter_status() and $this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+					}
 				} else { // 削除済み
 					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true,))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
-					if (!$model::get_filter_status()) {
+					if (method_exists($model, 'get_filter_status') && !$model::get_filter_status()) {
 						$this->forms[$key]->add('_restore', '復活・完全削除', array(
 							'type' => 'select',
 							'options' => array(
@@ -67,7 +76,6 @@ class Bulk {
 
 				}
 			}
-
 			$this->forms[$key]->set_input_name_array($key);
 		}
 

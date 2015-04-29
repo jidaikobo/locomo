@@ -39,7 +39,6 @@ class Model_Adrsgrp extends \Model_Base
 		'description',
 		'seq',
 		'is_available',
-		'deleted_at',
 	);
 
 	protected static $_has_many = array(
@@ -51,7 +50,6 @@ class Model_Adrsgrp extends \Model_Base
 			'cascade_delete' => false
 		)
 	);
-
 
 	/**
 	 * form_definition()

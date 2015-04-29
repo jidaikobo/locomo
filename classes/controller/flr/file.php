@@ -79,7 +79,6 @@ class Controller_Flr_File extends Controller_Flr
 						$errors[] = 'アップロードに失敗をしました。';
 						\File::delete($fullpath);
 					}
-
 				}
 			}
 			else
@@ -89,6 +88,7 @@ class Controller_Flr_File extends Controller_Flr
 		}
 
 		// parent::edit()
+		$this->_content_template = 'flr/file/upload';
 		$obj = parent::edit($id);
 
 		// error
@@ -127,12 +127,14 @@ class Controller_Flr_File extends Controller_Flr
 			\Response::redirect(static::$main_url);
 		}
 
-		$plain = \Model_Flr::plain_definition('view_file', $obj)->build_plain();
+		// set_object
+		$this->set_object($obj);
+
+		// presenter
+		$content = \Presenter::forge('flr/file/view');
 
 		// view
-		$this->set_object($obj);
-		$content = \View::forge('flr/view_file');
-		$content->set_safe('plain', $plain);
+		$content->set_safe('plain', $content::plain($obj));
 		$content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
 		$this->template->content = $content;
 		$this->template->set_global('title', 'ファイル詳細');

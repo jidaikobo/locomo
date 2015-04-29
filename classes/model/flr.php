@@ -400,7 +400,7 @@ class Model_Flr extends \Model_Base
 				array('path', '=', $p_path),
 			),
 		);
-		return static::find('first', \Model_Flr::authorized_option($option, 'index_files'));
+		return static::find('first');
 	}
 
 	/**
@@ -422,7 +422,7 @@ class Model_Flr extends \Model_Base
 				'created_at' => 'DESC'
 			),
 		);
-		return static::find('all', \Model_Flr::authorized_option($option, 'index_files'));
+		return static::find('all');
 	}
 
 	/**
@@ -527,9 +527,6 @@ class Model_Flr extends \Model_Base
 		// create or move
 		if (in_array(\Request::active()->action, array('create', 'move')))
 		{
-			$form = static::directory_list($form, $obj);
-			$form = static::add_genre_to_dir($form, $obj);
-			$form->delete('is_sticky');
 		}
 
 		// move or delete
@@ -570,13 +567,6 @@ class Model_Flr extends \Model_Base
 			$form = static::upload($form, $obj);
 		}
 
-		// modify_name
-		if (\Request::active()->controller == 'Controller_Flr_File' && in_array(\Request::active()->action, array('edit')))
-		{
-			$form = static::modify_name($form, $obj);
-			$form->field('is_sticky')->set_description('画像の場合はダッシュボードの「ギャラリー」に表示されます。');
-		}
-
 		// purge_file
 		if (\Request::active()->controller == 'Controller_Flr_File' && in_array(\Request::active()->action, array('purge')))
 		{
@@ -611,71 +601,9 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * plain_definition()
-	 * for view and download.
-	 */
-	public static function plain_definition($factory = 'form', $obj = null)
-	{
-		$form = parent::plain_definition($factory, $obj);
-
-		// uri
-		$url  = \Uri::create('flr/file/dl/?p='.static::enc_url($obj->path, true));
-		$url = \Inflector::get_root_relative_path($url);
-
-		// html
-		$html = '';
-		if (\Locomo\File::get_file_genre($url) == 'image')
-		{
-			// name add image
-			$html = '<a href="'.$url.'" class="lb">'.$obj->name.'</a>';
-			$html2show = '<a href="'.$url.'" class="lb" style="
-				display: block;
-				height: 150px;
-				width: 150px;
-				border: 1px #eee solid;
-				background-image: url(\''.$url.'\');
-				background-repeat: no-repeat;
-				background-color: #fff;
-			"><span class="skip">'.$obj->name.'を拡大</span></a><a href="'.$url.'&dl=1">'.$obj->name.'をダウンロード</a>';
-
-			$tpl = \Config::get('form')['field_template'];
-			$tpl.= $html2show;
-			$form->field('name')->set_template($tpl);
-		} else {
-			// name add download link
-			$html = '<a href="'.$url.'">'.$obj->name.'</a>';
-			$tpl = \Config::get('form')['field_template'];
-			$tpl = str_replace('{field}', '<a href="'.$url.'">{field}</a>', $tpl);
-			$form->field('name')->set_template($tpl);
-		}
-		$html = htmlspecialchars($html);
-
-		// download_url
-		$form->add_after(
-			'download_url',
-			'ダウンロードURL用文字列',
-			array('type' => 'text'),
-			array(),
-			'name'
-		)
-		->set_value('<textarea class="textarea" id="download_str" style="height:5em;font-family:monospace;">'.$url.'</textarea><!--<div class="ar"><a href="">クリップボードにコピーする</a></div>-->');
-
-		// download_html
-		$form->add_after(
-			'download_html',
-			'HTML',
-			array('type' => 'text'),
-			array(),
-			'download_url'
-		)
-		->set_value('<textarea class="textarea" style="height:5em;font-family:monospace;">'.$html.'</textarea><!--<div class="ar"><a href="">クリップボードにコピーする</a></div>-->');
-
-		return $form;
-	}
-
-	/**
 	 * modify_name()
 	 */
+/*
 	public static function modify_name($form, $obj)
 	{
 		$form->field('name')->set_type('hidden');
@@ -683,7 +611,7 @@ class Model_Flr extends \Model_Base
 //		$form->field('name')->set_label('ファイル名');
 		return $form;
 	}
-
+*/
 	/**
 	 * hide_current_name()
 	 */
@@ -691,62 +619,6 @@ class Model_Flr extends \Model_Base
 	{
 		$form->field('name')->set_type('hidden');
 		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
-		return $form;
-	}
-
-	/**
-	 * add_genre_to_dir()
-	 */
-	public static function add_genre_to_dir($form, $obj)
-	{
-		$form->field('genre')->set_type('hidden')->set_value('dir');
-		return $form;
-	}
-
-	/**
-	 * directory_list()
-	 */
-	public static function directory_list($form, $obj)
-	{
-		// list of upload directories - for choose parent dir.
-		$selected_id = \Request::main()->id;
-		$selected_path = '';
-		if ($selected_id)
-		{
-			$selected_obj = static::find($selected_id);
-			$selected_path = $selected_obj ? $selected_obj->path : $selected_path;
-		}
-
-		$current_dir = @$obj->path ?: '';
-		$selected = $selected_path ?: $current_dir ;
-		$dirs = \Util::get_file_list(LOCOMOUPLOADPATH, $type = 'dir');
-		$options = array();
-
-		foreach ($dirs as $dir)
-		{
-			$dir = substr($dir, strlen(LOCOMOUPLOADPATH));
-
-			// is exist on database
-			if( ! \Model_Flr::find('first', array('where' => array(array('path', $dir))))) continue;
-
-			// cannot choose myself and children
-			if ($current_dir && substr($dir, 0, strlen($current_dir)) == $current_dir) continue;
-
-			// check auth
-			if ( ! \Controller_Flr::check_auth($dir, 'create_dir')) continue;
-
-			$options[$dir] = urldecode($dir);
-		}
-
-		$form->add_after(
-				'parent',
-				'親ディレクトリ',
-				array('type' => 'select', 'options' => $options, 'style' => 'width: 10em;'),
-				array(),
-				'name'
-			)
-			->set_value($selected);
-
 		return $form;
 	}
 
@@ -874,25 +746,6 @@ class Model_Flr extends \Model_Base
 		return $form;
 	}
 
-	/**
-	 * upload()
-	 */
-	public static function upload($form, $obj)
-	{
-		$form->field('name')->set_type('hidden');
-		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
-		$form->add_after(
-			'upload',
-			'アップロード',
-			array('type' => 'file'),
-			array(),
-			'display_name'
-		)
-		->add_rule(array('valid_string' => array('alpha','numeric','dot','dashes')));
-
-		$form->field('submit')->set_value('アップロード');
-		return $form;
-	}
 
 	/**
 	 * purge_file()
@@ -908,73 +761,5 @@ class Model_Flr extends \Model_Base
 		$back = \Html::anchor(\Uri::create('flr/view_file/'.$obj->id), '戻る', array('class' => 'button'));
 		$form->field('submit')->set_value('完全に削除する')->set_template('<div class="submit_button">'.$back.'{field}</div>');
 		return $form;
-	}
-
-	/**
-	 * search_form()
-	*/
-	public static function search_form()
-	{
-		$config = \Config::load('form_search', 'form_search', true, true);
-		$form = \Fieldset::forge('flr_search_form', $config);
-
-		// 検索
-		$form->add(
-			'all',
-			'フリーワード',
-			array('type' => 'text', 'value' => \Input::get('all'))
-		);
-
-		// 登録日 - 開始
-		$form->add(
-				'from',
-				'登録日',
-				array(
-					'type'        => 'text',
-					'value'       => \Input::get('from'),
-					'id'          => 'registration_date_start',
-					'class'       => 'date',
-					'placeholder' => date('Y-n-j', time() - 86400 * 365),
-					'title'       => '登録日 開始 ハイフン区切りで入力してください',
-				)
-			)
-			->set_template('
-				<div class="input_group">
-				<h2>登録日</h2>
-				{field}&nbsp;から
-			');
-
-		// 登録日 - ここまで
-		$form->add(
-				'to',
-				'登録日',
-				array(
-					'type'        => 'text',
-					'value'       => \Input::get('to'),
-					'id'          => 'registration_date_end',
-					'class'       => 'date',
-					'placeholder' => date('Y-n-j'),
-					'title'       => '登録日 ここまで ハイフン区切りで入力してください',
-				)
-			)
-			->set_template('
-				{field}</div><!--/.input_group-->
-			');
-
-		// wrap
-		$parent = parent::search_form_base('ファイル');
-
-		if ( ! \Input::get('submit'))
-		{
-			$pattern  = '/<span class="sort_info">.+?<\/span>/';
-			$replace  = '<span class="sort_info">全'.\Model_Flr::count().'件のファイルがあります。</span>';
-			$subject  = (string) $parent->field('opener');
-			$template = preg_replace($pattern, $replace, $subject);
-			$parent->field('opener')->set_template($template);
-		}
-
-		$parent->add_after($form, 'flr_search_form', array(), array(), 'opener');
-
-		return $parent;
 	}
 }

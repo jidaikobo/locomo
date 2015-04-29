@@ -44,7 +44,17 @@ class Create_Scdl
 
 		), array('id'));
 		$query = \DB::delete("lcm_scdls")->execute();
-		
+
+
+
+		echo "スケジューラにparent_idカラムを追加します。\n";
+		if (\DBUtil::field_exists('lcm_scdls', array('parent_id')))
+		{
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `parent_id`;')->execute();
+		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `parent_id` int(10) DEFAULT NULL;')->execute();
+		echo "parent_idフィールドを追加しました。\n";
+
 
 
 		echo "create lcm_scdls_buildings table.\n";
@@ -58,8 +68,8 @@ class Create_Scdl
 
 		), array('id'));
 
-		
-		
+
+
 
 		echo "create lcm_scdls_members table.\n";
 		\DBUtil::create_table('lcm_scdls_members', array(
@@ -405,10 +415,18 @@ class Create_Scdl
 
 	public function down()
 	{
+		// 追加フィールドを消す
+		if (\DBUtil::field_exists('lcm_scdls', array('parent_id')))
+		{
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `parent_id`;')->execute();
+		}
+		echo "スケジューラのparent_idを削除しました\n";
+
+
 		echo "drop scdl related tables.\n";
 		\DBUtil::drop_table('lcm_scdls');
 		\DBUtil::drop_table('lcm_scdls_buildings');
-		\DB::delete("items")->where("category", "schedule_building")->execute();
+//		\DB::delete("items")->where("category", "schedule_building")->execute();
 		\DBUtil::drop_table('lcm_scdls_members');
 		\DBUtil::drop_table('lcm_scdls_items');
 		\DBUtil::drop_table('lcm_scdls_attends');

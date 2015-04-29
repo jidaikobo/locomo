@@ -174,6 +174,7 @@ class Presenter_Usr_Edit extends \Presenter_Base
 			->set_label('作成日')
 			->set_type('text')
 			->set_attribute('placeholder', date('Y-m-d H:i:s'))
+			->set_attribute('class', 'datetime')
 			->add_rule('non_zero_datetime');
 
 		// expired_at
@@ -181,6 +182,7 @@ class Presenter_Usr_Edit extends \Presenter_Base
 			->set_label('有効期日')
 			->set_type('text')
 			->set_attribute('placeholder', date('Y-m-d H:i:s'))
+			->set_attribute('class', 'datetime')
 			->add_rule('non_zero_datetime');
 
 		// is_visible and created_at

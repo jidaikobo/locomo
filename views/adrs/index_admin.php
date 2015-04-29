@@ -20,7 +20,7 @@
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr>
-	<td><?php echo $item->group->name; ?></td>
+	<td><?php echo $item->group['name']; ?></td>
 	<td><div class="col_scrollable" style="min-width: 4em;"><?php echo $item->name; ?></div></td>
 <!--	<td><div class="col_scrollable"><?php echo $item->kana; ?></div></td>-->
 	<td><div class="col_scrollable" style="min-width: 8em;"><?php echo $item->tel; ?></div></td>
