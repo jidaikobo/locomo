@@ -272,6 +272,24 @@ trait Model_Traits_Base
 	}
 
 	/**
+	 * properties_cached()
+	 * flrなどで使用
+	 */
+	public static function properties_cached()
+	{
+		return static::$_properties_cached;
+	}
+
+	/**
+	 * set_properties_cached()
+	 * flrなどで使用
+	 */
+	public static function set_properties_cached($args = array())
+	{
+		static::$_properties_cached = array_merge_recursive(static::$_properties_cached, $args);
+	}
+
+	/**
 	 * get_primary_keys()
 	 */
 /*parentにもある？*/

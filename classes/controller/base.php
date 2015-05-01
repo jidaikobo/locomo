@@ -341,8 +341,9 @@ class Controller_Base extends Controller_Core
 
 	/*
 	 * edit()
+	 * @return mix succeed:object not found:null false:false
 	 */
-	protected function edit($id = null)
+	protected function edit($id = null, $is_redirect = true)
 	{
 		// vals
 		$model = $this->model_name ;
@@ -361,9 +362,16 @@ class Controller_Base extends Controller_Core
 				if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event);
 
 				// 403
-				$page = \Request::forge('sys/403')->execute();
-				$this->template->set_safe('content', $page);
-				return new \Response($page, 403);
+				if ($is_redirect)
+				{
+					$page = \Request::forge('sys/403')->execute();
+					$this->template->set_safe('content', $page);
+					return new \Response($page, 403);
+				}
+				else
+				{
+					return null;
+				}
 			}
 			$title = '#' . $id . ' ' . self::$nicename . '編集';
 		}
@@ -406,10 +414,13 @@ class Controller_Base extends Controller_Core
 			// set_flash()
 			if ($errors) \Session::set_flash('error', $errors);
 
-			// redirection
-			if ( ! $errors && ($item->id || $id))
+			// redirection or return
+			if ( ! $errors && $item->id)
 			{
-				return \Response::redirect(static::$base_url.'edit/'.$item->id);
+				if ($is_redirect)
+				{
+					return \Response::redirect(static::$base_url.'edit/'.$item->id);
+				}
 			}
 		}
 
@@ -421,6 +432,9 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set_global('form', $form, false);
 		$content->get_view()->set_global('title', $title);
 		$this->template->content = $content;
+
+		// return
+		return $errors ? false : $item;
 	}
 
 	/**

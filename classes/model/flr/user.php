@@ -42,6 +42,7 @@ class Model_Flr_User extends \Model_Base
 					'4' => 'ディレクトリ名称変更／移動権限',
 					'5' => 'ディレクトリ削除権限',
 				),
+				'style' => 'width: 12em;',
 			),
 			'default' => 0,
 		),

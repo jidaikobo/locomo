@@ -17,7 +17,6 @@ class Model_Flr extends \Model_Base
 	);
 	public static $_options = array();
 
-
 	/**
 	 * $_properties
 	 */
@@ -152,7 +151,7 @@ class Model_Flr extends \Model_Base
 			}
 		}
 		$this->path = static::enc_url($this->path);
-		$fullpath = LOCOMOUPLOADPATH.$this->path;
+		$fullpath = LOCOMOFLRUPLOADPATH.$this->path;
 
 		// modify name - currently directory only
 		// 名称変更。今のところディレクトリのみ
@@ -164,7 +163,7 @@ class Model_Flr extends \Model_Base
 			{
 				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
 				$this->name = $new_name;
-				$fullpath = LOCOMOUPLOADPATH.$this->path;
+				$fullpath = LOCOMOFLRUPLOADPATH.$this->path;
 			}
 		}
 		$this->name = urldecode($this->name);
@@ -422,7 +421,7 @@ class Model_Flr extends \Model_Base
 				'created_at' => 'DESC'
 			),
 		);
-		return static::find('all');
+		return static::find('all', $option);
 	}
 
 	/**
@@ -432,10 +431,10 @@ class Model_Flr extends \Model_Base
 	{
 		// current
 		if ( ! $obj) return false;
-		$current = static::fetch_hidden_info(LOCOMOUPLOADPATH.$obj->path);
+		$current = static::fetch_hidden_info(LOCOMOFLRUPLOADPATH.$obj->path);
 
 		// target
-		$path = LOCOMOUPLOADPATH.$obj->path;
+		$path = LOCOMOFLRUPLOADPATH.$obj->path;
 		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
 
 		// get myself and children
@@ -464,7 +463,7 @@ class Model_Flr extends \Model_Base
 		// tidy up current
 		foreach ($current as $k => $v)
 		{
-			if( ! file_exists(LOCOMOUPLOADPATH.\Arr::get($v, 'data.path')))
+			if( ! file_exists(LOCOMOFLRUPLOADPATH.\Arr::get($v, 'data.path')))
 			{
 				unset($current[$k]);
 			}
@@ -512,254 +511,5 @@ class Model_Flr extends \Model_Base
 			$retval = array();
 		}
 		return $retval;
-	}
-
-	/**
-	 * form_definition()
-	 */
-	public static function form_definition($factory = 'form', $obj = null)
-	{
-		$id = isset($obj->id) ? $obj->id : '';
-
-		// forge
-		$form = parent::form_definition($factory, $obj);
-
-		// create or move
-		if (in_array(\Request::active()->action, array('create', 'move')))
-		{
-		}
-
-		// move or delete
-		if (\Request::active()->controller == 'Controller_Flr_Dir' && in_array(\Request::active()->action, array('move', 'purge', 'permission')))
-		{
-			$form = static::hide_current_name($form, $obj);
-			$form->delete('is_sticky');
-		}
-
-		// edit
-		if (\Request::active()->controller == 'Controller_Flr_Dir' && in_array(\Request::active()->action, array('edit')))
-		{
-			$form = static::hide_current_name($form, $obj);
-			$form->delete('is_sticky');
-		}
-
-		// rename
-		if (in_array(\Request::active()->action, array('rename')))
-		{
-			$form = static::rename_dir($form, $obj);
-		}
-
-		// permission_dir
-		if (in_array(\Request::active()->action, array('permission')))
-		{
-			$form = static::permission_dir($form, $obj);
-		}
-
-		// purge_dir
-		if (in_array(\Request::active()->action, array('purge')))
-		{
-			$form = static::purge_dir($form, $obj);
-		}
-
-		// upload
-		if (in_array(\Request::active()->action, array('upload')))
-		{
-			$form = static::upload($form, $obj);
-		}
-
-		// purge_file
-		if (\Request::active()->controller == 'Controller_Flr_File' && in_array(\Request::active()->action, array('purge')))
-		{
-			$form = static::purge_file($form, $obj);
-		}
-
-		return $form;
-	}
-
-	/**
-	 * sync_definition()
-	 */
-	public static function sync_definition($factory = 'form', $obj = null)
-	{
-		$form = \Fieldset::forge($factory);
-
-		$form->add(\Config::get('security.csrf_token_key'), '', array('type' => 'hidden'))
-			->set_value(\Security::fetch_token());
-
-		$form->add('submit', '', array('type' => 'submit', 'value' => '同期する', 'class' => 'button primary'))
-			->set_template('<div class="submit_button">{field}</div>');
-
-		$messages = array(
-			'ファイルやディレクトリの実際の状況とデータベースの内容に矛盾が生じているようでしたら、これを実行してください。',
-			'また、この同期によって、ファイルシステム上にある不正なファイル名（全角文字等）が修正されます。',
-			'ファイルやディレクトリの数によっては時間がかかることがあります。',
-			'この処理は、時々自動的に行われますので、原則、明示的な実行は不要です。',
-		);
-		\Session::set_flash('message', $messages);
-
-		return $form;
-	}
-
-	/**
-	 * modify_name()
-	 */
-/*
-	public static function modify_name($form, $obj)
-	{
-		$form->field('name')->set_type('hidden');
-		$form->add_after('display_file_name', 'ファイル名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name)->set_description('ファイル名を変更したい場合はアップし直してください。');
-//		$form->field('name')->set_label('ファイル名');
-		return $form;
-	}
-*/
-	/**
-	 * hide_current_name()
-	 */
-	public static function hide_current_name($form, $obj)
-	{
-		$form->field('name')->set_type('hidden');
-		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
-		return $form;
-	}
-
-	/**
-	 * rename_dir()
-	 */
-	public static function rename_dir($form, $obj)
-	{
-		//$tpl = \Config::get('form')['field_template'];
-		$form->field('name')->set_description('現在の名前：'.$obj->name);
-		$form->delete('explanation');
-		$form->delete('is_sticky');
-
-		// parent dir
-		$current_dir = @$obj->path ?: '';
-		$current_dir = $current_dir ? rtrim(dirname($current_dir), '/').DS : '';
-
-		$form->add_after(
-				'parent',
-				'親ディレクトリ',
-				array('type' => 'text', 'disabled' => 'disabled', 'style' => 'width:100%;'),
-				array(),
-				'name'
-			)
-			->set_value(urldecode($current_dir));
-
-		return $form;
-	}
-
-	/**
-	 * permission_dir()
-	 */
-	public static function permission_dir($form, $obj)
-	{
-		$form->field('explanation')->set_type('hidden');
-
-		\Session::set_flash('message', [
-			'親以上の権限は選択しても有効になりません。',
-			'親以上の権限を設定しようとすると、自動的に親以下の権限に調整されます。',
-			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
-		]);
-
-		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'display_name')->set_template('<div class="input_group">');
-		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'display_name')->set_template('</div>');
-
-		// === usergroup_id ===
-		$options = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('customgroup_uid', 'is', null))), 'name');
-		$options = array('-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
-
-		// ルートディレクトリであれば、上記で取得した全項目をoptionsとしてよい
-		if ($obj->path !== '/')
-		{
-			$parent = static::get_parent($obj);
-			$g_permissions = array();
-			foreach ($parent->permission_usergroup as $k => $v)
-			{
-				// logged in users - non object value
-				if ($v->usergroup_id === '-10')
-				{
-					$g_permissions[-10] = 'ログインユーザすべて';
-				}
-				// guest - non object value
-				elseif ($v->usergroup_id === '0')
-				{
-					$g_permissions[0] = 'ゲスト';
-				}
-				elseif (is_object($v->usrgrp))
-				{
-					$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
-				}
-			}
-			$options = array_intersect($g_permissions, $options);
-		}
-
-		// $formset
-		$options = array(''=>'選択してください') + $options;
-		$formset = array('type' => 'select', 'options' => $options, 'class' => 'varchar usergroup',);
-
-		// static::$_properties_cachedに値を足すのは少々奇怪だが、static::get_parent()で関係テーブルにアクセスすると、モデルの初期状態でキャッシュされるため、これを上書きしないと、Model::properties()がキャッシュしか返さないので。
-		\Model_Flr_Usergroup::$_properties['usergroup_id']['form'] = $formset;
-		if (isset(static::$_properties_cached['Locomo\Model_Flr_Usergroup']['usergroup_id']['form'])){
-			static::$_properties_cached['Locomo\Model_Flr_Usergroup']['usergroup_id']['form'] = $formset;
-		}
-		$usergroup_id = \Fieldset::forge('permission_usergroup')->set_tabular_form('\Model_Flr_Usergroup', 'permission_usergroup', $obj, 2);
-		$form->add_after($usergroup_id, 'ユーザグループ権限', array(), array(), 'explanation');
-
-		// === user_id ===
-		$options = \Model_Usr::get_options(array(), 'display_name');
-		if ($obj->path !== '/')
-		{
-			$u_permissions = array();
-			foreach ($parent->permission_user as $k => $v)
-			{
-				if ( ! is_object($v->usr)) continue;
-				$g_permissions[$v->user_id] = $v->usr->display_name;
-			}
-			$options = array_intersect($u_permissions, $options);
-		}
-
-		// $formset
-		$options = array(''=>'選択してください') + $options;
-		$formset = array('type' => 'select', 'options' => $options, 'class' => 'varchar usergroup',);
-
-		\Model_Flr_User::$_properties['user_id']['form'] = $formset;
-		if (isset(static::$_properties_cached['Locomo\Model_Flr_User']['user_id']['form'])){
-			static::$_properties_cached['Locomo\Model_Flr_User']['user_id']['form'] = $formset;
-		}
-		$user_id = \Fieldset::forge('permission_user')->set_tabular_form('\Model_Flr_User', 'permission_user', $obj, 2);
-		$form->add_after($user_id, 'ユーザ権限', array(), array(), 'permission_usergroup');
-
-		return $form;
-	}
-
-	/**
-	 * purge_dir()
-	 */
-	public static function purge_dir($form, $obj)
-	{
-		\Session::set_flash('message', ['ディレクトリの完全削除です。','ディレクトリを削除すると、そのディレクトリの中に含まれるものもすべて削除されます。','この削除は取り消しができません。注意してください。']);
-		$form->field('name')->set_type('hidden');
-		$form->field('explanation')->set_type('hidden');
-
-		$back = \Html::anchor(\Uri::create('flr/index_files/'.$obj->id), '戻る', array('class' => 'button'));
-		$form->field('submit')->set_value('完全に削除する')->set_template('<div class="submit_button">'.$back.'{field}</div>');
-		return $form;
-	}
-
-
-	/**
-	 * purge_file()
-	 */
-	public static function purge_file($form, $obj)
-	{
-		\Session::set_flash('message', ['ファイルの削除は取り消しできませんので、ご注意ください。']);
-		$form->field('name')->set_type('hidden');
-		$form->field('explanation')->set_type('hidden');
-		$form->field('is_sticky')->set_type('hidden');
-		$form->add_after('display_name', 'ファイル名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
-
-		$back = \Html::anchor(\Uri::create('flr/view_file/'.$obj->id), '戻る', array('class' => 'button'));
-		$form->field('submit')->set_value('完全に削除する')->set_template('<div class="submit_button">'.$back.'{field}</div>');
-		return $form;
 	}
 }

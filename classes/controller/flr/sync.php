@@ -25,10 +25,7 @@ class Controller_Flr_Sync extends Controller_Flr
 		}
 
 		// view
-		$form = \Model_Flr::sync_definition();
-		$content = \View::forge('defaults/edit');
-		$content->set_safe('breadcrumbs', self::breadcrumbs(LOCOMOUPLOADPATH));
-		$content->set_safe('form', $form);
+		$content = \Presenter::forge('flr/sync');
 		$this->template->content = $content;
 		$this->template->set_global('title', '同期');
 	}
@@ -38,8 +35,8 @@ class Controller_Flr_Sync extends Controller_Flr
 	 */
 	public static function sync()
 	{
-		$items = \Util::get_file_list(LOCOMOUPLOADPATH);
-		$basepath_len = strlen(LOCOMOUPLOADPATH);
+		$items = \Util::get_file_list(LOCOMOFLRUPLOADPATH);
+		$basepath_len = strlen(LOCOMOFLRUPLOADPATH);
 
 		// tmp - clone flr table
 		if (\DBUtil::table_exists('lcm_flrs_tmp')) \DBUtil::drop_table('lcm_flrs_tmp');
@@ -56,7 +53,7 @@ class Controller_Flr_Sync extends Controller_Flr
 		// eliminate invalid filenames
 		foreach ($items as $k => $fullpath)
 		{
-			if ($fullpath == LOCOMOUPLOADPATH.DS) continue; //root dir
+			if ($fullpath == LOCOMOFLRUPLOADPATH.DS) continue; //root dir
 			$enc_name = \Model_Flr::enc_url($fullpath);
 
 			// too long file name
@@ -104,7 +101,7 @@ class Controller_Flr_Sync extends Controller_Flr
 		}
 
 		// reload
-		$items = \Util::get_file_list(LOCOMOUPLOADPATH);
+		$items = \Util::get_file_list(LOCOMOFLRUPLOADPATH);
 
 		// save
 		foreach ($items as $fullpath)

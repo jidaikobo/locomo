@@ -30,9 +30,12 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if ( ! file_exists(LOCOMOUPLOADPATH)) throw new \Exception("LOCOMOUPLOADPATH not found. create '".LOCOMOUPLOADPATH."'");
 		if (\Str::ends_with(LOCOMOUPLOADPATH, DS)) throw new \Exception("LOCOMOUPLOADPATH must not be terminated with '/'");
 
+		// LOCOMOFLRUPLOADPATH
+		define('LOCOMOFLRUPLOADPATH', LOCOMOUPLOADPATH.DS.'flr');
+
 		// check permission and set default permission
 		// ディレクトリパーミッションの確認と、デフォルトパーミッションの設定
-		if ( ! file_exists(LOCOMOUPLOADPATH.DS.'.LOCOMO_DIR_INFO'))
+		if ( ! file_exists(LOCOMOFLRUPLOADPATH.DS.'.LOCOMO_DIR_INFO'))
 		{
 			// get default permission from config
 			$config = \Config::load('upload');
@@ -57,9 +60,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 			// put file
 			try
 			{
-				\File::create(LOCOMOUPLOADPATH.DS, '.LOCOMO_DIR_INFO', serialize($arr));
+				\File::create(LOCOMOFLRUPLOADPATH.DS, '.LOCOMO_DIR_INFO', serialize($arr));
 			} catch (\Fuel\Core\InvalidPathException $e) {
-				throw new \Fuel\Core\InvalidPathException("'".LOCOMOUPLOADPATH."', cannot create file at this location. アップロードディレクトリの書き込み権限かファイルオーナを確認してください。");
+				throw new \Fuel\Core\InvalidPathException("'".LOCOMOFLRUPLOADPATH."', cannot create file at this location. アップロードディレクトリの書き込み権限かファイルオーナを確認してください。");
 			}
 		}
 	}
@@ -95,7 +98,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			{
 				foreach ($objs as $obj)
 				{
-					$path = LOCOMOUPLOADPATH.$obj->path;
+					$path = LOCOMOFLRUPLOADPATH.$obj->path;
 					if ( ! file_exists($path))
 					{
 						$not_found = true;
@@ -139,18 +142,21 @@ class Controller_Flr extends \Locomo\Controller_Base
 					'created_at' => 'desc'
 				);
 			}
-	
+
+			// eliminate root dir
+			\Model_Flr::$_options['where'][] = array('depth', '!=', '0');
+
 			// span
 			if (\Input::get('from')) \Model_Flr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
 			if (\Input::get('to'))   \Model_Flr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
 
-			// overwrite objs
-			$objs = \Model_Flr::paginated_find();
+			// set_paginated_options
+			\Model_Flr::set_paginated_options();
+			$objs = \Model_Flr::find('all', \Model_Flr::$_options) ;
 		}
 
 		// count
-		$current = count($objs);
-		\Pagination::$refined_items = $current;
+		\Pagination::$refined_items = count($objs);
 
 		// view
 		$content = \Presenter::forge('flr/index/files');
@@ -160,7 +166,6 @@ class Controller_Flr extends \Locomo\Controller_Base
 		$this->template->content->set_safe('search_form', $content::search_form('ファイル一覧'));
 
 		// assign
-		$content->get_view()->set_global('current', $current_obj);
 		$content->get_view()->set_safe('breadcrumbs', self::breadcrumbs($current_obj->path));
 		$content->get_view()->set('items', $objs);
 		$this->template->set_global('title', 'ファイル一覧');
@@ -278,7 +283,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if (in_array('-1', $usergroups) || in_array('-2', $usergroups) ) return true;
 
 		// when file, check parent dir
-		$fullpath = LOCOMOUPLOADPATH.$path;
+		$fullpath = LOCOMOFLRUPLOADPATH.$path;
 		$path = is_dir($fullpath) ? $path : rtrim(dirname($path),DS).DS;
 		$obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
 		if ( ! $obj) return false;

@@ -36,7 +36,7 @@ class Controller_Flr_File extends Controller_Flr
 			if (\Input::file())
 			{
 				// upload
-				$fullpath = LOCOMOUPLOADPATH.$obj->path;
+				$fullpath = LOCOMOFLRUPLOADPATH.$obj->path;
 				$config = array(
 					'path' => $fullpath,
 				);
@@ -177,7 +177,7 @@ class Controller_Flr_File extends Controller_Flr
 		if (\Input::post())
 		{
 			$is_error = false;
-			$path = \Model_Flr::enc_url(LOCOMOUPLOADPATH.\Input::post('path'));
+			$path = \Model_Flr::enc_url(LOCOMOFLRUPLOADPATH.\Input::post('path'));
 			$target = \Model_Flr::find($id);
 			$parent = \Model_Flr::get_parent($target);
 
@@ -215,6 +215,7 @@ class Controller_Flr_File extends Controller_Flr
 		}
 
 		// parent::edit()
+		$this->_content_template = 'flr/file/purge';
 		$edit_obj = parent::edit($id);
 
 		// assign
@@ -249,7 +250,7 @@ class Controller_Flr_File extends Controller_Flr
 		}
 
 		// Download or view
-		$fullpath = LOCOMOUPLOADPATH.$obj->path;
+		$fullpath = LOCOMOFLRUPLOADPATH.$obj->path;
 		if (\Locomo\File::get_file_genre($fullpath) != 'image' || \Input::get('dl'))
 		{
 			try

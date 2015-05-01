@@ -22,7 +22,7 @@ class Controller_Flr_Dir extends Controller_Flr
 			$path = \Model_Flr::enc_url($parent.$dirnname).DS;
 			$tmp_obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
 
-			if ($tmp_obj && file_exists(LOCOMOUPLOADPATH.$path))
+			if ($tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
 			{
 				\Session::set_flash('error', 'そのディレクトリは既に存在します。');
 				\Response::redirect(\Uri::create('flr/dir/create/'.$id));
@@ -31,11 +31,11 @@ class Controller_Flr_Dir extends Controller_Flr
 
 		// parent::edit()
 		$this->model_name = '\\Model_Flr';
-		$edit_obj = parent::edit();
+		$edit_obj = parent::edit(null, $is_redirect = false);
 
 		// at database: not found, save: success, file existing
 		// データベースには存在しなかったが、物理ディレクトリが存在していて、データベースへの保存が成功したとき。
-		if ( $edit_obj && ! $tmp_obj && file_exists(LOCOMOUPLOADPATH.$path))
+		if ( $edit_obj && ! $tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
 		{
 			\Session::set_flash('success', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 			\Response::redirect(\Uri::create('flr/dir/create/'.$id));
@@ -46,7 +46,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		if (is_object($edit_obj))
 		{
 			// try to create dir
-			if ( ! \File::create_dir(LOCOMOUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
+			if ( ! \File::create_dir(LOCOMOFLRUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
 			{
 				// 失敗したのでデータベースから削除
 				$edit_obj->purge();
@@ -78,6 +78,13 @@ class Controller_Flr_Dir extends Controller_Flr
 		if ( ! $obj)
 		{
 			\Session::set_flash('error', "ファイル／ディレクトリが見つかりませんでした");
+			\Response::redirect(static::$main_url);
+		}
+
+		// root directory
+		if (LOCOMOFLRUPLOADPATH.$obj->path == LOCOMOFLRUPLOADPATH.DS)
+		{
+			\Session::set_flash('error', "基底ディレクトリは編集できません。");
 			\Response::redirect(static::$main_url);
 		}
 
@@ -116,7 +123,7 @@ class Controller_Flr_Dir extends Controller_Flr
 			\Response::redirect(static::$current_url.$id);
 		}
 
-		$obj = \Model_Flr::find($id, \Model_Flr::authorized_option(array(), 'edit'));
+		$obj = \Model_Flr::find($id, \Model_Flr::$_options);
 
 		// not exist
 		if ( ! $obj)
@@ -126,7 +133,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		}
 
 		// root directory
-		if (LOCOMOUPLOADPATH.$obj->path == LOCOMOUPLOADPATH.DS)
+		if (LOCOMOFLRUPLOADPATH.$obj->path == LOCOMOFLRUPLOADPATH.DS)
 		{
 			\Session::set_flash('error', "基底ディレクトリは名称変更できません。");
 			\Response::redirect(static::$main_url);
@@ -144,7 +151,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		{
 			$prev_name = $obj->name;
 			$new_name = \Input::post('name');
-			$parent = LOCOMOUPLOADPATH.dirname($obj->path);
+			$parent = LOCOMOFLRUPLOADPATH.dirname($obj->path);
 
 			// rename
 			if ($prev_name != $new_name)
@@ -184,11 +191,12 @@ class Controller_Flr_Dir extends Controller_Flr
 
 		// parent::edit()
 		$this->model_name = '\\Model_Flr';
-		$edit_obj = parent::edit($id);
+		$this->_content_template = 'flr/dir/rename';
+		$edit_obj = parent::edit($id, $is_redirect = false);
 
 		// rewrite message
 		$success = \Session::get_flash('success');
-		if ($edit_obj && $success)
+		if (\Input::post() && $edit_obj && $success)
 		{
 			\Session::set_flash('success', "ディレクトリをリネームしました。");
 			\Response::redirect(\Uri::create('flr/dir/rename/'.$obj->id.DS.'sync'));
@@ -217,7 +225,8 @@ class Controller_Flr_Dir extends Controller_Flr
 		}
 
 		// parent::edit()
-		$edit_obj = parent::edit($id);
+		$this->_content_template = 'flr/dir/permission';
+		$edit_obj = parent::edit($id, $is_redirect = false);
 
 		// to load \Model_Flr::_event_after_update() and \Model_Flr::embed_hidden_info().
 		// no update cause no load observer_after_update
@@ -275,7 +284,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		if (\Input::post())
 		{
 			$is_error = false;
-			$path = \Model_Flr::enc_url(LOCOMOUPLOADPATH.\Input::post('path'));
+			$path = \Model_Flr::enc_url(LOCOMOFLRUPLOADPATH.\Input::post('path'));
 			$target = \Model_Flr::find($id);
 			$parent = \Model_Flr::get_parent($target);
 
@@ -314,6 +323,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		}
 
 		// parent::edit()
+		$this->_content_template = 'flr/dir/purge';
 		$edit_obj = parent::edit($id);
 
 		// assign
