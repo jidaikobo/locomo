@@ -439,7 +439,7 @@ class Actionset_Base extends Actionset
 		$model = str_replace('Controller', 'Model', $controller);
 		if (class_exists($model) && ! $count)
 		{
-			$pk = $model::get_primary_keys();
+			$pk = $model::primary_key()[0];
 			if (is_subclass_of($model, '\Orm\Model_Soft')) $model::disable_filter();
 			$count = $model::count(array('where' => array(array($pk, 'is not' , null))));
 		}

@@ -21,6 +21,7 @@ trait Model_Traits_Base
 		'auth_created',
 		'auth_deleted',
 		'auth_visibility',
+		'auth_availability',
 	);
 
 	/*
@@ -53,6 +54,60 @@ trait Model_Traits_Base
 	 */
 	public static function set_search_options()
 	{
+	}
+
+	/**
+	 * set_paginated_options()
+	 * genereate paginated option and links of \Pagination::create_links()
+	 * @return void
+	 */
+	static public function set_paginated_options()
+	{
+		// クエリ文字列の場合
+		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
+
+		// order
+		if (\Input::get('orders'))
+		{
+			$orders = array();
+			foreach (\Input::get('orders') as $k => $v)
+			{
+				// invalid argument
+				if ( ! in_array(strtolower($v), array('asc', 'desc'))) continue;
+
+				// リレーションを見る
+				if (($dot_pos = strpos($k, '.')) > 0)
+				{
+					$model = static::relations(substr($k, 0, $dot_pos))->model_to;
+					$relate = substr($k, 0, $dot_pos);
+					$k = substr($k, $dot_pos+1);
+					if ( ! in_array($k, array_keys($model::properties()))) continue;
+					static::$_options['related'][$relate]['where'][] = array('id', '!=', 0);
+					static::$_options['related'][$relate]['order_by'][$k] = $v;
+					static::$_options['related'][$relate]['order_by']['t0.id'] = 'asc';
+					// 既存の order_by を キャンセル
+					static::$_options['order_by'] = $orders;
+				}
+				else
+				{
+					if ( ! in_array($k, array_keys(static::properties()))) continue;
+					$orders[$k] = $v;
+					static::$_options['order_by'] = $orders;
+					if (count(\Input::get('orders')) == 1 and $k != 'id') static::$_options['order_by']['id'] = 'asc';
+				}
+			}
+			// reset $_conditions
+			static::$_conditions['order_by'] = array();
+		}
+
+		// set total before use offset
+		$count = static::count(static::$_options);
+		\Pagination::set('total_items', $count);
+
+		// limit
+		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
+		static::$_options['rows_limit'] = \Pagination::get('per_page');
+		static::$_options['rows_offset'] = \Pagination::get('offset');
 	}
 
 	/**
@@ -216,61 +271,6 @@ trait Model_Traits_Base
 		return $options;
 	}
 
-
-	/**
-	 * set_paginated_options()
-	 * genereate paginated option and links of \Pagination::create_links()
-	 * @return void
-	 */
-	static public function set_paginated_options()
-	{
-		// クエリ文字列の場合
-		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
-
-		// order
-		if (\Input::get('orders'))
-		{
-			$orders = array();
-			foreach (\Input::get('orders') as $k => $v)
-			{
-				// invalid argument
-				if ( ! in_array(strtolower($v), array('asc', 'desc'))) continue;
-
-				// リレーションを見る
-				if (($dot_pos = strpos($k, '.')) > 0)
-				{
-					$model = static::relations(substr($k, 0, $dot_pos))->model_to;
-					$relate = substr($k, 0, $dot_pos);
-					$k = substr($k, $dot_pos+1);
-					if ( ! in_array($k, array_keys($model::properties()))) continue;
-					static::$_options['related'][$relate]['where'][] = array('id', '!=', 0);
-					static::$_options['related'][$relate]['order_by'][$k] = $v;
-					static::$_options['related'][$relate]['order_by']['t0.id'] = 'asc';
-					// 既存の order_by を キャンセル
-					static::$_options['order_by'] = $orders;
-				}
-				else
-				{
-					if ( ! in_array($k, array_keys(static::properties()))) continue;
-					$orders[$k] = $v;
-					static::$_options['order_by'] = $orders;
-					if (count(\Input::get('orders')) == 1 and $k != 'id') static::$_options['order_by']['id'] = 'asc';
-				}
-			}
-			// reset $_conditions
-			static::$_conditions['order_by'] = array();
-		}
-
-		// set total before use offset
-		$count = static::count(static::$_options);
-		\Pagination::set('total_items', $count);
-
-		// limit
-		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
-		static::$_options['rows_limit'] = \Pagination::get('per_page');
-		static::$_options['rows_offset'] = \Pagination::get('offset');
-	}
-
 	/**
 	 * properties_cached()
 	 * flrなどで使用
@@ -287,36 +287,6 @@ trait Model_Traits_Base
 	public static function set_properties_cached($args = array())
 	{
 		static::$_properties_cached = array_merge_recursive(static::$_properties_cached, $args);
-	}
-
-	/**
-	 * get_primary_keys()
-	 */
-/*parentにもある？*/
-	public static function get_primary_keys($key = 1)
-	{
-		$key = $key ? intval($key) - 1 : 0 ;
-		return \Arr::get(static::$_primary_key, $key, false);
-	}
-
-	/**
-	 * get_pk_value()
-	 */
-/*implode_pk（）*/
-	public function get_pk_value($mode = 'first')
-	{
-		if ($mode == 'first')
-		{
-			$pk = reset(static::$_primary_key);
-			return $this->$pk;
-		}
-
-		$retvals = array();
-		foreach (static::$_primary_key as $pk)
-		{
-			$retvals[] = $this->$pk;
-		}
-		return $retvals;
 	}
 
 	/**
@@ -440,6 +410,22 @@ trait Model_Traits_Base
 		if (
 			isset(static::properties()[$column]) &&
 			! \Auth::has_access($controller.'/view_invisible')
+		)
+		{
+			static::$_options['where'][][] = array($column, '=', true);
+		}
+	}
+
+	/*
+	 * auth_availability()
+	 */
+	public static function auth_availability($controller)
+	{
+		$column = \Arr::get(static::get_field_by_role('is_available'), 'lcm_field', 'is_available');
+
+		if (
+			isset(static::properties()[$column]) &&
+			! \Auth::has_access($controller.'/view_unavailable')
 		)
 		{
 			static::$_options['where'][][] = array($column, '=', true);

@@ -88,7 +88,7 @@ trait Controller_Traits_Wrkflw
 		// assign
 		$view->set_global('title', '関連ワークフロー項目');
 		$view->set('controller_uri', \Inflector::ctrl_to_dir($controller));
-		$view->set('pk', $model::get_primary_keys());
+		$view->set('pk', $model::primary_key()[0]);
 		$view->set('model', $model);
 		$view->set('count', $count);
 		$view->set('subject_field', \Arr::get($model::get_field_by_role('subject'), 'lcm_field'));

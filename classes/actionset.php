@@ -151,7 +151,8 @@ class Actionset
 
 		// primary key
 		$obj = is_object($obj) ? $obj : (object) array() ;
-		$id = method_exists($obj, 'get_pk_value') ? $obj->get_pk_value() : null ;
+		$pk = method_exists($obj, 'primary_key') ? $obj::primary_key()[0] : null;
+		$id = $pk ? $obj->$pk : null ;
 
 		// get controllers actions - search prefixed 'action_'
 		$act_methods = array_flip(get_class_methods($controller));

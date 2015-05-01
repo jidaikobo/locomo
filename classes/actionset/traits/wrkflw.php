@@ -12,7 +12,7 @@ trait Actionset_Traits_Wrkflw
 		$model = str_replace('Controller', 'Model', $controller);
 		if (class_exists($model) && ! $count)
 		{
-			$pk = $model::get_primary_keys();
+			$pk = $model::primary_key()[0];
 			$options = array();
 			$options[] = array($pk, 'is not' , null);
 			if (isset($model::properties()['created_at']))

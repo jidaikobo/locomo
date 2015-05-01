@@ -2,7 +2,8 @@
 <?php
 echo \Form::open(array('action' => $action, 'class'=>'lcm_form form_group'));
 echo $plain;
-echo \Form::hidden('id', $item->get_pk_value());
+$pk = $item::primary_key()[0];
+echo \Form::hidden('id', $item->$pk);
 echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 ?>
 <div class="submit_button">

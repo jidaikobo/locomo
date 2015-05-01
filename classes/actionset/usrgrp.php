@@ -18,9 +18,11 @@ class Actionset_Usrgrp extends \Actionset
 			'\Controller_Usrgrp/view',
 			'\Controller_Usrgrp/delete',
 			'\Controller_Usrgrp/undelete',
+			'\Controller_Usrgrp/view_revision',
+			'\Controller_Usrgrp/index_revision',
+			'\Controller_Usrgrp/each_index_revision',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
-		\Arr::set($retvals, 'action_name', 'ユーザグループへのアクセス権');
 		return $retvals;
 	}
 
@@ -29,7 +31,7 @@ class Actionset_Usrgrp extends \Actionset
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_index_admin($controller, $obj, $id, $urls);
+		return \Actionset_Base::index_admin($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -37,7 +39,7 @@ class Actionset_Usrgrp extends \Actionset
 	 */
 	public static function actionset_purge_confirm($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_purge_confirm($controller, $obj, $id, $urls);
+		return \Actionset_Base::purge_confirm($controller, $obj, $id, $urls);
 	}
 
 
@@ -46,7 +48,7 @@ class Actionset_Usrgrp extends \Actionset
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_create($controller, $obj, $id, $urls);
+		return \Actionset_Base::create($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -54,7 +56,7 @@ class Actionset_Usrgrp extends \Actionset
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_edit($controller, $obj, $id, $urls);
+		return \Actionset_Base::edit($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -62,6 +64,6 @@ class Actionset_Usrgrp extends \Actionset
 	 */
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_view($controller, $obj, $id, $urls);
+		return \Actionset_Base::view($controller, $obj, $id, $urls);
 	}
 }

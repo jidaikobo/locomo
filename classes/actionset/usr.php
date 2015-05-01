@@ -7,6 +7,34 @@ class Actionset_Usr extends \Actionset_Base
 	use \Actionset_Traits_Testdata;
 
 	/**
+	 * actionset_admin()
+	 */
+	public static function actionset_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = parent::actionset_admin($controller, $obj, $id);
+		$actions = array(
+			'\Controller_Usr/index_admin',
+			'\Controller_Usr/index_deleted',
+			'\Controller_Usr/index_yet',
+			'\Controller_Usr/index_expired',
+			'\Controller_Usr/index_invisible',
+			'\Controller_Usr/index_all',
+			'\Controller_Usr/create',
+			'\Controller_Usr/edit',
+			'\Controller_Usr/view',
+			'\Controller_Usr/delete',
+			'\Controller_Usr/confirm_delete',
+			'\Controller_Usr/view_deleted',
+			'\Controller_Usr/undelete',
+			'\Controller_Usr/view_revision',
+			'\Controller_Usr/index_revision',
+			'\Controller_Usr/each_index_revision',
+		);
+		\Arr::set($retvals, 'dependencies', $actions);
+		return $retvals;
+	}
+
+	/**
 	 * actionset_create()
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())

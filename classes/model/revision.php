@@ -72,7 +72,7 @@ class Model_Revision extends \Model_Base
 		if( ! \DBUtil::table_exists($table)) return false;
 		$subject = \Arr::get($model::get_field_by_role('subject'), 'lcm_field');
 		$subject = $table.'.'.$subject; // relation table name
-		$pk = $table.'.'.$model::get_primary_keys(); // relation table name
+		$pk = $table.'.'.$model::primary_key()[0]; // relation table name
 
 		//リビジョンの一覧を取得
 		$q = \DB::select(

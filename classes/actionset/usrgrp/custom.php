@@ -16,12 +16,10 @@ class Actionset_Usrgrp_Custom extends \Actionset
 			$controller.'/delete',
 			$controller.'/index_deleted',
 			$controller.'/view_deleted',
-			$controller.'/edit_deleted',
 			$controller.'/undelete',
 			$controller.'/confirm_delete',
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
-		\Arr::set($retvals, 'action_name', 'カスタムユーザグループへの基本権限');
 		return $retvals;
 	}
 
@@ -30,7 +28,7 @@ class Actionset_Usrgrp_Custom extends \Actionset
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_create($controller, $obj, $id, $urls);
+		return \Actionset_Base::create($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -38,7 +36,7 @@ class Actionset_Usrgrp_Custom extends \Actionset
 	 */
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_view($controller, $obj, $id, $urls);
+		return \Actionset_Base::view($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -46,23 +44,15 @@ class Actionset_Usrgrp_Custom extends \Actionset
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_edit($controller, $obj, $id, $urls);
+		return \Actionset_Base::edit($controller, $obj, $id, $urls);
 	}
 
-	/**
-	 * edit_deleted()
-	 */
-	public static function actionset_edit_deleted($controller, $obj = null, $id = null, $urls = array())
-	{
-		return \Actionset_Base::actionset_edit_deleted($controller, $obj, $id, $urls);
-	}
-	
 	/**
 	 * delete()
 	 */
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_delete($controller, $obj, $id, $urls);
+		return \Actionset_Base::delete($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -70,14 +60,14 @@ class Actionset_Usrgrp_Custom extends \Actionset
 	 */
 	public static function actionset_undelete($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_undelete($controller, $obj, $id, $urls);
+		return \Actionset_Base::undelete($controller, $obj, $id, $urls);
 	}
 
 	/**
-	 * delete_deleted()
+	 * purge_confirm()
 	 */
-	public static function actionset_delete_deleted($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_purge_confirm($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_delete_deleted($controller, $obj, $id, $urls);
+		return \Actionset_Base::purge_confirm($controller, $obj, $id, $urls);
 	}
 }

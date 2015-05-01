@@ -445,7 +445,7 @@ trait Model_Traits_Wrkflw
 		}
 
 		// 一般ユーザは閲覧できない
-		$pk = static::get_primary_keys();
+		$pk = static::primary_key()[0];
 		$options['where'][] = array(array($pk, '=', 'null'));
 		return $options;
 	}
