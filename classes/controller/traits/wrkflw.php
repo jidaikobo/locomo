@@ -83,7 +83,7 @@ trait Controller_Traits_Wrkflw
 
 		// 表示権限を厳密にとるためモデルのキャッシュを削除しauthorized_option()を設定する
 //		$model::clear_cached_objects();
-		$model::$_options = $model::authorized_option(array(), 'index');
+//		$model::$_options = $model::authorized_option(array(), 'index');
 
 		// assign
 		$view->set_global('title', '関連ワークフロー項目');
@@ -164,8 +164,13 @@ trait Controller_Traits_Wrkflw
 		$action['urls'][] = \Html::anchor(static::$base_url.'edit/'.$id,'戻る');
 		\Actionset::add_actionset(\Request::active()->controller, 'ctrl', $action);
 
+		// subject
+		$subject = \Arr::get($model::get_field_by_role('subject'), 'lcm_field', '');
+		if ( ! $subject) throw new \Exception('対象modelで、lcm_roleがsubjectになったものを設定してください。');
+
 		// assign
 		$view->set_global('title', 'ルート設定');
+		$view->set('subject', $subject);
 		$view->set('obj', $obj);
 		$view->set('button', '申請');
 		$view->set('items', $items);

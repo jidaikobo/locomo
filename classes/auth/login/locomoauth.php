@@ -145,10 +145,11 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 					)
 				);
 				$related_controllers = array();
-				foreach($acl_tmp as $v):
+				foreach($acl_tmp as $v)
+				{
 					$related_controllers[] = $v->controller;
 					$acls[] = $v->slug;
-				endforeach;
+				}
 
 				// always_user_allowed
 				$acls_user = \Config::get('always_user_allowed');

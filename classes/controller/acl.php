@@ -22,7 +22,6 @@ class Controller_Acl extends \Controller_Base
 	{
 		$view = \View::forge('acl/controller_index');
 		$view->set_global('title', 'コントローラ選択');
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -129,7 +128,6 @@ class Controller_Acl extends \Controller_Base
 		$view->set('hidden_user',       $user_id);
 		$view->set('actionsets',        $actionsets);
 		$view->set('aprvd_actionset',   $aprvd_actionset);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 

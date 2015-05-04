@@ -36,9 +36,10 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 		}
 
 		// check related controller first - for speed up
+		$related_controllers = \Auth::get('related_controllers') ?: array();
 		if (
 			! in_array(\Auth::get('id'), array(-1, -2)) &&
-			! in_array(\Inflector::get_controllername($condition), \Auth::get('related_controllers')))
+			! in_array(\Inflector::get_controllername($condition), $related_controllers))
 		{
 			return false;
 		}

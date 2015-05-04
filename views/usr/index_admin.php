@@ -65,7 +65,9 @@
 			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
 			<th><?php echo \Pagination::sort('username', 'ユーザ名');?></th>
 			<th><?php echo \Pagination::sort('display_name', '表示名'); ?></th>
+<?php if (\Auth::is_admin()): ?>
 			<th><?php echo \Pagination::sort('email', 'Email'); ?></th>
+<?php endif; ?>
 			<th><?php echo \Pagination::sort('last_login_at', '最後のログイン日時'); ?></th>
 			<?php if (\Request::main()->action == 'index_deleted'): ?>
 				<th>削除された日</th>

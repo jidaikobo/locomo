@@ -13,6 +13,31 @@ trait Model_Traits_Wrkflw
 		{
 			static::$_authorize_methods[] = 'auth_workflow';
 		}
+		parent::_init();
+	}
+
+	/**
+	 * set_public_options()
+	 */
+	public static function set_public_options($exception = array())
+	{
+		$options = parent::set_public_options($exception);
+
+		// $_options - workflow_status
+		if (empty($exception) || ! in_array('workflow_status', $exception))
+		{
+			$column = \Arr::get(static::get_field_by_role('workflow_status'), 'lcm_field', 'workflow_status');
+			if (isset(static::properties()[$column]))
+			{
+				$options['where'][] = array($column, '=', 'finish');
+			}
+		}
+
+		// array_merge
+		static::$_options = array_merge_recursive(static::$_options, $options);
+
+		//return
+		return $options;
 	}
 
 	/**
@@ -394,59 +419,61 @@ trait Model_Traits_Wrkflw
 
 	/*
 	 * auth_workflow()
-	 * \Model_Base::add_authorize_methods()から呼ばれる
 	 */
-	public static function auth_workflow($controller = null, $options = array(), $mode = null)
+	public static function auth_workflow($controller = null)
 	{
 		// workflow_statusカラムがなければ、対象にしない
 		$column = \Arr::get(static::get_field_by_role('workflow'), 'lcm_field', 'workflow_status');
-		if ( ! isset(static::properties()[$column])) return $options;
+		if ( ! isset(static::properties()[$column])) return;
 
 		// index_deleted など disable_filter がかかっている場合は return する。
-		if (method_exists(get_called_class(), 'get_filter_status') and ! static::get_filter_status()) return $options;
+		if (method_exists(get_called_class(), 'get_filter_status') and ! static::get_filter_status()) return;
 
 		// 一覧にはfinish以外表示しない
+/*
 		if ($mode == 'index')
 		{
-			$options['where'][] = array(array($column, '=', 'finish'));
+			static::$_options['where'][] = array(array($column, '=', 'finish'));
 		}
+*/
 
 		// 作成ユーザと管理者はどんな条件でも閲覧できる - いったん一番上に
 		if (\Auth::has_access($controller.'/create'))
 		{
-			return $options;
+			return;
 		}
 
 		// 編集
+/*
 		if ($mode == 'edit')
 		{
+*/
 			// 作成権限があるユーザだったらin_progress以外を編集できる
 			if (\Auth::has_access($controller.'/create'))
 			{
-				$options['where'][] = array(array($column, '<>', 'in_progress'));
-				return $options;
+				static::$_options['where'][] = array(array($column, '<>', 'in_progress'));
+				return;
 			}
-		}
+//		}
 
 		// 承認のための閲覧
 		if (\Auth::has_access($controller.'/approve'))
 		{
 			// 承認ユーザはin_progressとfinishを閲覧できる
-			$options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
-			return $options;
+			static::$_options['where'][] = array(array($column, 'IN', ['in_progress','finish']));
+			return;
 		}
 
 		// 閲覧ユーザはfinishを閲覧できる
 //		if (\Auth::has_access($controller.'/view'))
 		if (\Auth::check())
 		{
-			$options['where'][] = array(array($column, '=', 'finish'));
-			return $options;
+			static::$_options['where'][] = array(array($column, '=', 'finish'));
+			return;
 		}
 
 		// 一般ユーザは閲覧できない
 		$pk = static::primary_key()[0];
-		$options['where'][] = array(array($pk, '=', 'null'));
-		return $options;
+		static::$_options['where'][] = array(array($pk, '=', 'null'));
 	}
 }

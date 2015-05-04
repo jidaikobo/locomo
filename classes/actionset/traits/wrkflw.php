@@ -40,6 +40,7 @@ trait Actionset_Traits_Wrkflw
 			'action_name'  => 'ワークフロー承認項目一覧',
 			'explanation'  => '現在承認すべき項目の一覧です。',
 			'order'        => 100,
+			'show_at_top'  => true,
 			'dependencies' => array(
 				$controller.'/index_workflow',
 			)

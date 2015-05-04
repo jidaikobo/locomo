@@ -31,11 +31,11 @@ class Controller_Hlp extends \Controller_Base
 	public function action_edit($id = NULL)
 	{
 		$action = \Input::param('action');
-		$ctrl = \Inflector::words_to_upper(substr($action, 0, strpos($action, '%')));
-		$obj = \Model_Hlp::find('first', array('where'=>array(array('ctrl', $ctrl))));
+		$obj = \Model_Hlp::find('first', array('where'=>array(array('ctrl', $action))));
 		$id = @$obj->id ?: $id;
-		$obj = parent::edit($id);
-		if ($obj)
+
+		$obj = parent::edit($id, $is_redirect = false);
+		if ($obj && \Input::post())
 		{
 			static::$redirect = '/hlp/edit/'.$obj->id;
 		}
@@ -72,7 +72,6 @@ class Controller_Hlp extends \Controller_Base
 		if( ! $controller)
 		{
 			$content = \View::forge('hlp/index_admin');
-			$this->base_assign();
 			$content->set_global('title', 'ヘルプインデクス');
 			$this->template->content = $content;
 			return;
@@ -104,7 +103,7 @@ class Controller_Hlp extends \Controller_Base
 		$help = html_tag('div', array('class' => 'txt'), \Markdown::parse($help));
 
 		// additional help
-		$controller_safe = \Inflector::ctrl_to_safestr($controller);
+		$controller_safe = substr($locomo_path, 0, strpos($locomo_path, '/'));
 		$obj = \Model_Hlp::find('first', array('where'=>array(array('ctrl', $controller_safe))));
 
 		// link to add additional help
@@ -115,7 +114,7 @@ class Controller_Hlp extends \Controller_Base
 			$add.= html_tag('h2', array(), '加筆されたヘルプ') ;
 			if (\Auth::has_access('\\Controller_Hlp/edit'))
 			{
-				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($locomo_path_raw)), '編集する');
+				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), '編集する');
 			}
 			$add.= html_tag('div', array('class' => 'add_body'), $obj->body) ;
 		}
@@ -123,7 +122,7 @@ class Controller_Hlp extends \Controller_Base
 		{
 			if (\Auth::has_access('\\Help\\Controller_Hlp/edit'))
 			{
-				$add.= ' | '.\Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($locomo_path_raw)), 'ヘルプを加筆する');
+				$add.= ' | '.\Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), 'ヘルプを加筆する');
 			}
 		}
 		$help.= $add ;

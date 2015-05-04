@@ -134,8 +134,8 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		{
 			$observers.= "\t\t\t'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
 		}
-		$observers.= "//\t\t't'Locomo\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
-		$observers.= "//\t\t't'Locomo\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
+		$observers.= "//\t\t\t'Locomo\Observer_Wrkflw' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
+		$observers.= "//\t\t\t'Locomo\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
 
 		// error
 		if ($model == 'Model_Soft' && ! in_array('deleted_at', $cmd_mods))

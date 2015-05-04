@@ -1,4 +1,4 @@
-<h1><?php echo $obj->name ?>のルート設定</h1>
+<h1><?php echo $obj->$subject ?>のルート設定</h1>
 
 <?php echo \Form::open(); ?>
 

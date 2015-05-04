@@ -47,7 +47,6 @@ class Controller_Auth extends \Locomo\Controller_Base
 		$view = \View::forge('auth/login');
 		$view->set('ret', $ret);
 		$view->set_global('title', 'ログイン');
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 

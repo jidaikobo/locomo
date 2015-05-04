@@ -151,7 +151,7 @@ class Presenter_Usr_Edit extends \Presenter_Base
 			$usergroup = $obj->usergroup;
 			unset($usergroup[-10]); // 自分自身を参照するログインユーザーグループ
 			$obj->usergroup = $usergroup;
-			static::$_mm_delete_else = false;
+			\Model_Usr::$_mm_delete_else = false;
 
 			$usergroup_str = array();
 			foreach ($usergroup as $k => $v)

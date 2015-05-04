@@ -217,7 +217,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 			'\Controller_Usr/view',
 		));
 
-		return ($obj->id == \Auth::get('id')) ;
+		return ($obj->id == \Auth::get('id')) ? 1 : 0 ;
 	}
 
 	/**
