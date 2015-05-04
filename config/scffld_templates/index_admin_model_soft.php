@@ -19,8 +19,13 @@
 					if (\Auth::has_access('\Controller_XXX/edit')):
 						echo Html::anchor('xxx/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
-					if (\Auth::has_access('\Controller_XXX/purge')):
-						echo Html::anchor('xxx/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
+					if (\Auth::has_access('\Controller_XXX/delete')):
+						if ($item->deleted_at):
+							echo Html::anchor('xxx/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
+							echo Html::anchor('xxx/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
+						else:
+							echo Html::anchor('xxx/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
+						endif;
 					endif;
 					?>
 				</div>

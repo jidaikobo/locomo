@@ -2,10 +2,13 @@
 <h1>足場組み</h1>
 <div class="form_group">
 <h2 class="skip"><?php echo \Form::label('拡張oilコマンド書式', 'cmd'); ?></h2>
-<p>
-	<?php echo \Form::textarea('cmd', Input::post('cmd', isset($cmd) ? $cmd : ''), array('style' => 'width:100%;height:10em;', 'placeholder'=>'拡張oilコマンド書式')); ?><br />
-	<?php echo \Form::select('type', isset($type) ? $type : '', array('all2' => '通常のコントローラ一式としてすべてのファイルを生成する', 'all' => 'モジュールとしてすべてのファイルを生成する', 'model' => 'モデルとマイグレーションのみ生成する', 'view' => 'viewsのファイル群のみ生成する')); ?>
-</p>
+
+<p><?php echo \Form::textarea('cmd', Input::post('cmd', \Session::get_flash('scfld_cmd') ?: ''), array('style' => 'width:100%;height:10em;', 'placeholder'=>'拡張oilコマンド書式')); ?><br /></p>
+
+<p><?php echo \Form::select('type', \Session::get_flash('scfld_type') ?: '', array('app' => '通常のコントローラ一式としてすべてのファイルを生成する', 'module' => 'モジュールとしてすべてのファイルを生成する', 'model' => 'モデルとマイグレーションのみ生成する', 'view' => 'viewsとpresenterのファイル群のみ生成する')); ?></p>
+
+<p><?php echo \Form::select('model', \Session::get_flash('scfld_model') ?: '', array('Model_Base' => '\Orm\Model', 'Model_Base_Soft' => '\Orm\Model_Soft', 'Model_Base_Temporal' => '\Orm\Model_Temporal (experiment)', 'Model_Base_Nestedset' => '\Orm\Model_Nestedset (experiment)')); ?>（モデル生成時のみ）</p>
+
 <div class="submit_button">
 	<?php echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 	<?php echo \Form::submit('submit', 'Scaffold', array('class' => 'button primary')); ?>
@@ -24,11 +27,11 @@ created_at(作成日時):datetime:null
 updated_at(更新日時):datetime:null
 expired_at(有効期日):datetime:null
 deleted_at(削除日):datetime:null
-is_visible(可視属性):int:null
 creator_id:int[5]
 updater_id:int[5]
 workflow_status:enum[init,before_progress,in_progress,finish]:null
 </textarea>
+<!--is_visible(可視属性):int:null-->
 
 <h3>足場組み</h3>
 <p>拡張oil書式をpostしたあと、所定の場所にファイル群が展開されます。</p>

@@ -5,21 +5,21 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 	/**
 	 * generate()
 	 */
-	public static function generate($name, $cmd_orig, $type)
+	public static function generate($name, $cmd_orig, $type, $model)
 	{
-		//vals
+		// vals
 		$cmd_mods = array();
 		$cmds = explode(' ', $cmd_orig);
-		array_shift($cmds);//remove name
+		array_shift($cmds);// remove name
 		$name = ucfirst($name);
 		$table_name = \Inflector::tableize($name);
-		$admins  = array('is_visible');
 		$banned = array('modified_at', 'updated_at', 'deleted_at', 'workflow_status', 'creator_id', 'updater_id');
 
-		//fieldset
+		// fieldset
 		$field_str = '';
-		$properties['id'] = '';//fuel's spec
-		foreach($cmds as $field):
+		$properties['id'] = '';// fuel's spec
+		foreach($cmds as $field)
+		{
 			$is_required = strpos($field, 'null') !== false ? false : true;
 			list($field, $attr) = explode(':', $field);
 			$nicename = self::get_nicename($field);
@@ -27,7 +27,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 			$class    = ", 'class' => '".self::remove_length($attr)."'";
 			$cmd_mods[] = $field;
 
-			//attribute
+			// attribute
 			$default = '';
 			$size = 0;
 			$max = 0;
@@ -40,42 +40,42 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 					$size = ($max == 0)  ? 30 : $size;
 				}
 				else
-				//scalar
+				// scalar
 				{
 					$default = $m[1];
 				}
 			}
 
-			//field_str
+			// field_str
 			$items = array();
 
 			if ( ! in_array($field, $banned))
 			{
-				//label
+				// label
 				if ($nicename)
 				{
 					$properties[$field]['label'] = $nicename;
 				}
 	
-				//data_type
+				// data_type
 				if ($attr)
 				{
 					$properties[$field]['data_type'] = str_replace(array('[',']'), array('(',')'), $attr);
 				}
 	
-				//form
+				// form
 				$form = array();
 				if (in_array($field, array('text', 'memo', 'body', 'content', 'etc', 'message'))):
-					//textarea
+					// textarea
 					$form = array('type' => 'textarea', 'rows' => 7, 'style' => 'width:100%;');
 				elseif (substr($field,0,3)=='is_'):
-					//bool
+					// bool
 					$form = array('type' => 'select', 'options' => array(0, 1));
 				elseif (substr($field,-3)=='_at'):
-					//date
+					// date
 					$form = array('type' => 'text', 'size' => 20);
 				else:
-					//text
+					// text
 					$form = array('type' => 'text', 'size' => $size);
 				endif;
 				if ($form)
@@ -84,17 +84,17 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 					$properties[$field]['form'] = $form;
 				}
 	
-				//validation
+				// validation
 				$validation = array();
 				if (in_array($field, array('name', 'title', 'subject')) || $is_required)
 				{
-					//require
+					// require
 					$validation['required'] ='';
 				}
 	
 				if ($max)
 				{
-					//max
+					// max
 					$validation['max_length'] = array($max => '');
 				}
 	
@@ -107,55 +107,58 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 			{
 				$properties[$field] = array('form' => array('type' => false));
 			}
-		endforeach;
+		}
 
-		//soft_delete
+		// soft_delete
 		$dlt_fld = '';
-		if (in_array('deleted_at', $cmd_mods)):
+		if (in_array('deleted_at', $cmd_mods))
+		{
 			$dlt_fld = "\tprotected static \$_soft_delete = array(\n\t\t'deleted_field'   => 'deleted_at',\n\t\t'mysql_timestamp' => true,\n\t);\n";
-		endif;
+		}
 
-		//observers
+		// observers
 		$observers = '';
-		if (in_array('updated_at', $cmd_mods)):
+		if (in_array('updated_at', $cmd_mods))
+		{
 			$observers.= "\t\t'Orm\Observer_UpdatedAt' => array(\n\t\t\t\t'events' => array('before_update'),\n\t\t\t\t'mysql_timestamp' => true,\n\t\t\t),\n";
-		endif;
-		if (in_array('created_at', $cmd_mods)):
+		}
+		if (in_array('created_at', $cmd_mods))
+		{
 			$observers.= "\t\t'Locomo\Observer_Created' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t'mysql_timestamp' => true,\n\t\t),\n";
-		endif;
-		if (in_array('expired_at', $cmd_mods)):
+		}
+		if (in_array('expired_at', $cmd_mods))
+		{
 			$observers.= "\t\t'Locomo\Observer_Expired' => array(\n\t\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t\t\t'properties' => array('expired_at'),\n\t\t\t),\n";
-		endif;
-		if (in_array('creator_id', $cmd_mods) || in_array('updater_id', $cmd_mods)):
+		}
+		if (in_array('creator_id', $cmd_mods) || in_array('updater_id', $cmd_mods))
+		{
 			$observers.= "\t\t\t'Locomo\Observer_Userids' => array(\n\t\t\t'events' => array('before_insert', 'before_save'),\n\t\t),\n";
-		endif;
+		}
 		$observers.= "//\t\t't'Locomo\Observer_Workflow' => array(\n//\t\t\t'events' => array('before_insert', 'before_save','after_load'),\n//\t\t),\n";
 		$observers.= "//\t\t't'Locomo\Observer_Revision' => array(\n//\t\t\t'events' => array('after_insert', 'after_save', 'before_delete'),\n//\t\t),\n";
 
-		//admins
-		$frmdfn = '';
-		foreach ($admins as $admin)
+		// error
+		if ($model == 'Model_Soft' && ! in_array('deleted_at', $cmd_mods))
 		{
-			$frmdfn.= "\t\t\t\$form->field('{$admin}')->set_type('hidden')->set_value(\$obj->{$admin} ?: 1);\n";
-		}
-		if ($frmdfn)
-		{
-			$frmdfn = "\t\tif ( ! \Auth::is_admin())\n\t\t{\n".$frmdfn."\n\t\t}\n";
+			return 'model_soft_error';
 		}
 
-		//$field_str
+		// $field_str
 		$field_str = var_export($properties, true);
 		$field_str = str_replace('  ', "\t", $field_str);
 		$field_str = preg_replace("/^/m", "\t", $field_str);
 		$field_str = str_replace(" => '',", ",", $field_str);
 
-		//template
+		// template
 		$str = static::fetch_temlpate('model.php');
+
+		// $model
+		$str = str_replace("Model_Base", $model, $str);
+
 		// モジュール以外では名前空間を削除
-		$str = $type !== 'all' ? str_replace("namespace XXX;\n", '', $str) : $str ;
+		$str = $type !== 'module' ? str_replace("namespace XXX;\n", '', $str) : $str ;
 		$str = self::replaces($name, $str);
 		$str = str_replace ('###NICENAME###',  $nicename, $str);
-		$str = str_replace('###FRMDFN###',     $frmdfn,     $str);
 		$str = str_replace('###DLT_FLD###',    $dlt_fld,    $str);
 		$str = str_replace('###OBSRVR###',     $observers,  $str);
 		$str = str_replace('###TABLE_NAME###', $table_name, $str);

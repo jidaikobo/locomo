@@ -5,7 +5,7 @@ class Controller_Scffld_Helper_Views_Index extends Controller_Scffld_Helper
 	/**
 	 * generate()
 	 */
-	public static function generate($name, $cmd_orig, $is_admin = false)
+	public static function generate($name, $cmd_orig, $is_admin = false, $model = 'Model_Base')
 	{
 		$cmds = explode(' ', $cmd_orig);
 		array_shift($cmds);//remove name
@@ -41,7 +41,8 @@ class Controller_Scffld_Helper_Views_Index extends Controller_Scffld_Helper
 		}
 		
 		//mold
-		$tpl = $is_admin ? 'index_admin.php' : 'index.php';
+		$tpl_adm = $model == 'Model_Base_Soft' ? 'index_admin_model_soft.php' : 'index_admin.php';
+		$tpl = $is_admin ? $tpl_adm : 'index.php';
 		$val = static::fetch_temlpate($tpl);
 		$val = self::replaces($name, $val);
 		$val = str_replace ('###THEAD###', $thead, $val);

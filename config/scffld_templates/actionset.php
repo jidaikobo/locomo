@@ -17,19 +17,11 @@ class Actionset_XXX extends \Actionset
 	*/
 
 	/**
-	 * actionset_index_admin()
-	 */
-	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
-	{
-		return \Actionset_Base::actionset_index_admin($controller, $obj, $id, $urls);
-	}
-
-	/**
 	 * actionset_create()
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_create($controller, $obj, $id, $urls);
+		return \Actionset_Base::create($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -37,7 +29,7 @@ class Actionset_XXX extends \Actionset
 	 */
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_view($controller, $obj, $id, $urls);
+		return \Actionset_Base::view($controller, $obj, $id, $urls);
 	}
 
 	/**
@@ -45,25 +37,17 @@ class Actionset_XXX extends \Actionset
 	 */
 	public static function actionset_edit($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_edit($controller, $obj, $id, $urls);
+		return \Actionset_Base::edit($controller, $obj, $id, $urls);
 	}
-
+###ACTIONSET_ACTION###
 	/**
-	 * actionset_delete()
+	 * actionset_index_admin()
 	 */
-	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
-		return \Actionset_Base::actionset_delete($controller, $obj, $id, $urls);
+		return \Actionset_Base::index_admin($controller, $obj, $id, $urls);
 	}
-
-	/**
-	 * actionset_undelete()
-	 */
-	public static function actionset_undelete($controller, $obj = null, $id = null, $urls = array())
-	{
-		return \Actionset_Base::actionset_undelete($controller, $obj, $id, $urls);
-	}
-
+###ACTIONSET_INDEX###
 	/**
 	 * actionset_sample_action()
 	 */
