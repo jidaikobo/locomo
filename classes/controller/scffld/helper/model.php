@@ -145,6 +145,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 
 		// $field_str
 		$field_str = var_export($properties, true);
+		$field_str = preg_replace("/=> \n +array \(/m", "=> array (", $field_str); // konagai request :-)
 		$field_str = str_replace('  ', "\t", $field_str);
 		$field_str = preg_replace("/^/m", "\t", $field_str);
 		$field_str = str_replace(" => '',", ",", $field_str);
