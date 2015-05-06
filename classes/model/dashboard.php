@@ -22,7 +22,7 @@ class Model_Dashboard extends Model_Base
 			'label' => 'アクション',
 			'form' => array(
 				'type' => 'select',
-				'options' => array(),// defined at \Admin\Model_User::form_definition()
+				'options' => array(),
 			),
 		),
 		'size' => array(
@@ -41,5 +41,35 @@ class Model_Dashboard extends Model_Base
 		),
 	);
 
+	/**
+	* _init()
+	*/
+	public static function _init()
+	{
+		// widgets
+		$widgets = array('' => '選択してください');
+		foreach (\Util::get_mod_or_ctrl() as $k => $v)
+		{
+			if ( ! $widget = \Arr::get($v, 'widgets')) continue;
+
+			$tmps = array();
+
+			// auth
+			foreach ($widget as $kk => $vv)
+			{
+				if(\Auth::has_access($vv['uri']))
+				{
+					$tmps[$vv['uri']] = $vv['name'];
+				}
+			}
+			if (empty($tmps)) continue;
+
+			// values
+			$key = \Arr::get($v, 'nicename');
+			$widgets[$key] = \Arr::get($widgets, $key) ?: array();
+			$widgets[$key] = $tmps;
+		}
+		static::$_properties['action']['form']['options'] = $widgets ;
+	}
 }
 

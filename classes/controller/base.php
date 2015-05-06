@@ -273,24 +273,19 @@ class Controller_Base extends Controller_Core
 		{
 			if (is_array($args[0]))
 			{
-				$options = $args;
-			}
-			else
-			{
-				parse_str($args[0], $q);
-				$options = $q;
+				$options = parse_str($args[0][1]);
 			}
 		}
-		else
-		{
-			$options = $model::$_options;
-		}
+		$options = $options ?: $model::$_options;
 
 		// view
 		$content = \View::forge(static::$dir.'index_admin_widget');
 		$content->set('items', $model::find('all', $options));
 		$this->template->content = $content;
 		$this->template->set_global('title', static::$nicename.'管理一覧');
+
+		// size
+		$this->template->content->set('widget_size', $args[0][0]);
 	}
 
 	/**

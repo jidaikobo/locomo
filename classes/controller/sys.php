@@ -11,7 +11,7 @@ class Controller_Sys extends \Controller_Base
 		'order'        => 0, // order of appearance
 		'no_acl'       => true, // true: admin's action. it will not appear at acl.
 		'widgets' =>array(
-			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys/admin'),
+			array('name' => 'コントローラ一覧', 'uri' => '\\Controller_Sys/admin_dashboard'),
 			array('name' => '現在時刻', 'uri' => '\\Controller_Sys/clock'),
 		),
 	);
@@ -55,6 +55,18 @@ class Controller_Sys extends \Controller_Base
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
 		$this->template->content = $view;
+	}
+
+	/**
+	* action_admin_dashboard()
+	*/
+	public function action_admin_dashboard()
+	{
+		// get controllers
+		$this->action_admin();
+
+		// size
+		$this->template->content->set('widget_size', func_get_args()[0]);
 	}
 
 	/**
@@ -168,6 +180,10 @@ class Controller_Sys extends \Controller_Base
 			// auth
 			if( ! \Auth::has_access($acts[0])) continue;
 
+			// size
+			$size = $obj->size ?: 1 ;// default small
+			$size = intval($size);
+
 			// querystring 
 			$qstr = \Arr::get($acts, 1);
 
@@ -175,11 +191,8 @@ class Controller_Sys extends \Controller_Base
 			if ( ! \Util::method_exists($acts[0])) continue;
 
 			// hmvc
-/*
-hmvcにサイズを渡すと、widget側でサイズごとの表示を返すことができるようなので、そのような措置を考える。
-*/
-			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute(array($qstr));
-			$actions[$k]['size'] = $obj->size ?: 1 ;// default small
+			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute(array($size, $qstr));
+			$actions[$k]['size'] = $size;
 			$actions[$k]['title'] = array_search($act, $widget_names);
 		}
 
@@ -216,5 +229,8 @@ hmvcにサイズを渡すと、widget側でサイズごとの表示を返すこ�
 		$view = \View::forge('sys/clock');
 		$view->set_global('title', 'アナログ時計');
 		$this->template->content = $view;
+
+		// size
+		$this->template->content->set('widget_size', func_get_args()[0]);
 	}
 }

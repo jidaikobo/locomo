@@ -17,7 +17,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 		'is_for_admin' => true, // true: hide from admin bar
 		'order'        => 1010, // order of appearance
 		'widgets' =>array(
-			array('name' => '新規ユーザ一覧', 'uri' => '\\Controller_Usr/index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
+			array('name' => '新規ユーザ一覧', 'uri' => '\\Controller_Usr/index_widget?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
 			array('name' => '新規ユーザ登録', 'uri' => '\\Controller_Usr/create'),
 		),
 	);
@@ -81,6 +81,14 @@ class Controller_Usr extends \Locomo\Controller_Base
 	public function action_index_all()
 	{
 		parent::index_all();
+	}
+
+	/**
+	 * action_index_widget()
+	 */
+	public function action_index_widget()
+	{
+		parent::index_widget(func_get_args());
 	}
 
 	/**
