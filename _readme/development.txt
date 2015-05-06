@@ -229,7 +229,6 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
 		$view->set_global('title', 'ユーザグループ設定');
 		$view->set_global('form', $form, false);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 +-------------------------------quote end+

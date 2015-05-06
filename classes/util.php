@@ -22,7 +22,7 @@ class Util
 	 * get_mod_or_ctrl()
 	 * Locomo配下にある対象コントローラ／モジュールの取得
 	 * controllerがlocomoメンバ変数を持っているときにLocomo配下と見なす
-	 * \Locomo\View::base_assign()で毎回呼ぶのでcacheする
+	 * \Locomo\Presenter_Header::view()で毎回呼ぶのでcacheする
 	 * get locomo related modules and controllers
 	 * @return array()
 	 */

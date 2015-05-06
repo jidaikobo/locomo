@@ -92,7 +92,6 @@ class Controller_Hlp extends \Controller_Base
 				$items[$key] = $action;
 			}
 			$content = \View::forge('hlp/index_each');
-			$this->base_assign();
 			$content->set_global('title', $title.'ヘルプインデクス');
 			$content->set('items', $items);
 			$this->template->content = $content;
@@ -139,7 +138,6 @@ class Controller_Hlp extends \Controller_Base
 
 		// assign
 		$content = \View::forge('hlp/view');
-		$this->base_assign();
 		$content->set_global('title', $title);
 		$content->set_safe('content', $help);
 		$this->template->content = $content;

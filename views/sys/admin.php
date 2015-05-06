@@ -1,5 +1,5 @@
 <?php
-echo $widget_size;
+// echo $widget_size;
 // モジュール／コントローラトップ
 if ( ! isset($is_main_action)):
 	$html = '';

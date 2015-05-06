@@ -312,7 +312,7 @@ class Controller_Base extends Controller_Core
 			return new \Response($page, 403);
 		}
 
-		// set_object() - to generate menu at parent::base_assign()
+		// set_object() - to generate menu at \Presenter_header::view() called at parent::after()
 		static::set_object($item);
 
 		// plain
@@ -419,7 +419,7 @@ class Controller_Base extends Controller_Core
 			}
 		}
 
-		// set_object() - to generate menu at parent::base_assign()
+		// set_object() - to generate menu at \Presenter_header::view() called at parent::after()
 		static::set_object($item);
 
 		// view
@@ -568,7 +568,7 @@ class Controller_Base extends Controller_Core
 			return \Response::redirect(static::$main_url);
 		}
 
-		// set_object() - to generate menu at parent::base_assign()
+		// set_object() - to generate menu at \Presenter_header::view() called at parent::after()
 		static::set_object($item);
 
 		// form

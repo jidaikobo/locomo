@@ -28,7 +28,6 @@ trait Controller_Traits_Revision
 		$view->set_global('title', static::$locomo['nicename'].'履歴一覧');
 		$view->set_global('base_url', static::$base_url);
 		$view->set_global('subject', \Arr::get($model::get_field_by_role('subject'), 'lcm_field'));
-		$this->base_assign();
 		$this->template->content = $view;
 		$this->template->content->set_safe('search_form', $search_form);
 	}
@@ -87,7 +86,6 @@ trait Controller_Traits_Revision
 		$view->set_global('base_url', static::$base_url);
 		$view->set_global('title', '履歴一覧');
 		$view->set_global('subject', $subject);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
@@ -130,7 +128,6 @@ trait Controller_Traits_Revision
 		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// view
-		$this->base_assign();
 		$this->template->content = $content;
 	}
 }

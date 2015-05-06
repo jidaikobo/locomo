@@ -8,7 +8,7 @@ class Module extends \Fuel\Core\Module
 	/**
 	 * get_exists()
 	 * get all modules
-	 * called from \Util::get_mod_or_ctrl() by \Locomo\Controller_Core::base_assign()
+	 * called from \Util::get_mod_or_ctrl() by \Locomo\Presenter_Header::view()
 	 * @return array
 	 */
 	public static function get_exists()

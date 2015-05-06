@@ -94,7 +94,7 @@ class Presenter_Header extends \Presenter
 		}
 
 		// get accessible controller
-		\Profiler::mark('Locomo\\Controller_Core::base_assign() - get accessible controller');
+		\Profiler::mark('Locomo\\Presenter_Header::view() - get accessible controller');
 		$all_ctrls = \Util::get_mod_or_ctrl();
 		foreach($all_ctrls as $k => $v)
 		{
@@ -108,7 +108,7 @@ class Presenter_Header extends \Presenter
 		$this->_view->set_global('locomo', $locomo);
 
 		// actionset
-		\Profiler::mark('Locomo\\Controller_Core::base_assign() - actionset');
+		\Profiler::mark('Locomo\\Presenter_Header::view() - actionset');
 		$actionset = \Actionset::get_actionset($controller, $controller::get_object());
 //		$actionset['index'] = \Arr::get($actionset, 'index', array());
 		$this->_view->set_global('actionset', $actionset, false);

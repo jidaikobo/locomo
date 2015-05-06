@@ -175,7 +175,6 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 		$view = \View::forge('bulk/bulk');
 		$view->set_global('title', 'カテゴリ設定');
 		$view->set_global('form', $form, false);
-		$this->base_assign();
 		$this->template->content = $view;
 	}
 
