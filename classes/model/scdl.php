@@ -544,7 +544,7 @@ class Model_Scdl extends \Model_Base
 	{
 		$form = parent::form_definition($factory, $obj);
 
-		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true))), 'name');
+		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true),array('is_for_acl', false))), 'name');
 		$form->field('group_detail')->set_options($usergroups);
 		
 		$form->field('kind_flg')->set_value(self::$_kind_flg);

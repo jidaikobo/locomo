@@ -1,3 +1,4 @@
+<h1>カスタムユーザグループ</h1>
 <?php //echo $search_form; ?>
 
 <?php if ($items): ?>
@@ -48,7 +49,7 @@
 		</td>
 		</tr><?php endforeach; ?>
 	</tbody>
-	<tfoot class="thead">
+<!--	<tfoot class="thead">
 		<tr>
 			<th class="min"><?php echo \Pagination::sort('id', 'ID');?></th>
 			<th><?php echo \Pagination::sort('name', 'グループ名');?></th>
@@ -61,6 +62,7 @@
 			<th class="min">操作</th>
 		</tr>
 	</tfoot>
+-->
 </table>
 <?php echo \Pagination::create_links(); ?>
 

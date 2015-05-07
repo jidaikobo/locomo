@@ -160,8 +160,8 @@ $(function(){
 $(function(){
 /*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
-$('.hide_if_no_js').removeClass('hide_if_no_js');
-$('.hide_if_no_js').find(':disabled').prop("disabled", false);
+$('.hide_if_no_js').removeClass('hide_if_no_js').find(':disabled').prop("disabled", false);
+
 
 //.show_if_no_js noscript的な扱い?
 $('.show_if_no_js').remove();
@@ -204,7 +204,7 @@ tabindexCtrl  = true;
 query = window.location.search.substring(1);
 if(query!=''){
 	var params = query.split('&');
-	for(var len = params.length, n = len-1  ; n > 0; n--){
+	for(var len = params.length, n = len-1  ; n >= 0; n--){
 		var param = params[n];
 		if( param.indexOf('limit') == 0 ){
 			param_val = param.split('=')[1]
@@ -460,10 +460,10 @@ function lcm_focus(){
 		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
 			var len = elm.length;
-			for( var n = len ; n > 0 ; n-- ){
+			for( var n = len-1 ; n >= 0 ; n-- ){
 				el = elm.eq(n);
 				var title_str = el.attr('title') ? el.attr('title') : '';
-				el.attr('title', title_str+' エンターで入ります')
+				el.attr('title', title_str+' エンターで入ります');
 			}
 		}
 
@@ -703,6 +703,10 @@ $('.toggle_item').on('click', function(e){
 	$(this).toggleClass('on').focus();
 
 	if(t.is('.semimodal.on')){//tabindex制御
+// はみ出し対策
+//		var t_padding = t.outerHeight()-t.height();
+//		var t_offset  = t.offset().top-$(window).scrollTop();
+//		t.css('max-height',$(window).height()-t_offset-t_padding);
 		t.set_tabindex();
 		//targetの中とtoggleの要素だけtabindexを元に。//data('tabindex')を見る？
 		$(this).removeAttr('tabindex');
@@ -712,11 +716,26 @@ $('.toggle_item').on('click', function(e){
 	e.stopPropagation();
 	return false;
 });
+/*
+// はみ出し対策
+$(window).resize(function(){
+	var el = $('.semimodal.on').eq(0);
+	var e_t = el.offset().top-$(window).scrollTop();
+	if(el[0] && el.outerHeight()+e_t - $(window).height() > 0){
+		el.outerHeight($(window).height()-e_t);
+	}else if(el[0]){
+		console.log(el.outerHeight()+e_t - $(window).height());
+		el.css('height','auto');
+	}
+});
+*/
+
+
 function replace_info(){
 	var els, len, el, title, skip;
 	els = $(document).find('.toggle_item');
 	len  = els.length;
-	for(var n = len; n > 0; n--){
+	for(var n = len-1; n >= 0; n--){
 		el = els.eq(n);
 		title = el.attr('title');
 		skip  = el.find('.skip').text();
@@ -814,7 +833,7 @@ function check_formchange(){
 	var input_time, len, el;
 	input_time = $('.datetime','.time');//datetimeの枠にフォーカスした際のchange周りのなにか。あとでもういちど確認
 	len = input_time.length;
-	for( var n = len; n > 0; n--){
+	for( var n = len-1; n >= 0; n--){
 		el = input_time.eq(0);
 		el.data('val',el.val());
 	}
