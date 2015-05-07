@@ -36,12 +36,7 @@
 					echo Html::anchor('usrgrp/custom/edit/'.$item->id, '編集', array('class' => 'edit'));
 				endif;
 				if (\Auth::has_access('\Controller_Usrgrp_Custom/delete')):
-					if ($item->deleted_at):
-						echo Html::anchor('usrgrp/custom/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
-						echo Html::anchor('usrgrp/custom/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
-					else:
-						echo Html::anchor('usrgrp/custom/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
-					endif;
+					echo Html::anchor('usrgrp/custom/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
 				endif;
 				?>
 			</div>

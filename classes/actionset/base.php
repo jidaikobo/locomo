@@ -430,6 +430,35 @@ class Actionset_Base extends Actionset
 	}
 
 	/**
+	 * index_unavailable()
+	 */
+	public static function index_unavailable($controller, $obj = null, $id = null, $urls = array())
+	{
+		// count
+		static $count;
+		$model = str_replace('Controller', 'Model', $controller);
+		if (class_exists($model) && ! $count && isset($model::properties()['is_available']))
+		{
+			$count = $model::count(array('where' => array(array('is_available', '=' , false))));
+		}
+
+		// urls
+		$urls = array(array($controller.DS."index_unavailable", "停止中項目 ({$count})"));
+
+		$retvals = array(
+			'realm'        => 'index',
+			'urls'         => $urls ,
+			'action_name'  => '一覧（停止中項目）',
+			'explanation'  => '停止中項目一覧です。',
+			'order'        => 60,
+			'dependencies' => array(
+				$controller.'/index_unavailable',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
 	 * index_all()
 	 */
 	public static function index_all($controller, $obj = null, $id = null, $urls = array())
@@ -459,6 +488,7 @@ class Actionset_Base extends Actionset
 				$controller.'/index_expired',
 				$controller.'/index_yet',
 				$controller.'/index_invisible',
+				$controller.'/index_unavailable',
 				$controller.'/index_all',
 			)
 		);

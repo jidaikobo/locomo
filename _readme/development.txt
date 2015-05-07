@@ -241,7 +241,7 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 
 +quote start-----------------------------+
 		'widgets' =>array(
-			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_admin?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
+			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_widget?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
 			array('name' => '新規ユーザ登録', 'uri' => '\\User\\Controller_User/create'),
 		),
 +-------------------------------quote end+
@@ -257,3 +257,13 @@ order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc
 $q = \Uri::build_query_string(array('order_by' => array(array('id', 'desc')))) ;
 
 ウィジェットもaclの対象です。コントローラがウィジェットを宣言していても、アクセス権がなければ、そのユーザのウィジェットの候補にも挙がりません。
+
+また、ウィジェットを作るときには、引数の順番にも注意をしてください。ウィジェット用のアクションの一番最初の引数は必ずウィジェットのサイズ（1〜3）になります。
+
+// 特別なAuth
+
+Authをoverrideしたいときに参考になるのは、\Locomo\Controller_Usr::before()と、\Locomo\Controller_Usrgrp_Custom::before() です。
+
+原理的には、before()で、Authの判定材料である\Auth::get('allowed')の値をあらかじめ改変しておくという手法をとります。
+
+\Auth::has_access()には、locomo_has_accessというEventもあり、こちらも利用できますが、controllerのなかで処理が完結するような場合は、before()で十分間に合うと思われます。

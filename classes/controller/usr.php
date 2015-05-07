@@ -30,9 +30,27 @@ class Controller_Usr extends \Locomo\Controller_Base
 	 */
 	public function before()
 	{
+		// parent
 		parent::before();
-		// locomo_has_access
-		\Event::register('locomo_has_access', '\Controller_Usr::user_auth_find');
+
+		// check item's creator_id
+		$pkid = \Request::main()->id;
+		$obj = \Model_Usr::find($pkid);
+		if ( ! $obj) return false;
+
+		// actions
+		$actions = array(
+			'\Controller_Usr/view',
+			'\Controller_Usr/edit',
+			'\Controller_Usr/reset_paswd'
+		);
+
+		// modify \Auth::get('allowed')
+		\Auth::instance()->remove_allowed($actions);
+		if ($obj->id == \Auth::get('id'))
+		{
+			\Auth::instance()->add_allowed($actions);
+		}
 	}
 
 	/**
@@ -190,42 +208,6 @@ class Controller_Usr extends \Locomo\Controller_Base
 			$result[] = $row;
 		}
 		echo $this->response($result, 200); die();
-	}
-
-	/**
-	 * user_auth_find()
-	 * Event at locomo_has_access of \Auth\Auth_Acl_Locomoacl::has_access()
-	 */
-	public static function user_auth_find($condition)
-	{
-		$checks = array(
-			'\Controller_Usr/view',
-			'\Controller_Usr/edit',
-			'\Controller_Usr/reset_paswd'
-		);
-		if ( ! in_array($condition, $checks) || ! \Request::main()->controller == 'Controller_Usr')
-		{
-			return 'through';
-		}
-		$checks = array('view', 'edit', 'reset_paswd');
-		if ( ! in_array(self::$action, $checks))
-		{
-			return 'through';
-		}
-
-		// honesty at this case, ($pkid == \Auth::get('id')) is make sence.
-		// this is a sort of sample code.
-		$pkid = \Request::main()->id;
-		$obj = \Model_Usr::find($pkid);
-		if ( ! $obj) return false;
-
-		// add allowed to show links at actionset
-		\Auth::instance()->add_allowed(array(
-			'\Controller_Usr/edit',
-			'\Controller_Usr/view',
-		));
-
-		return ($obj->id == \Auth::get('id')) ? 1 : 0 ;
 	}
 
 	/**

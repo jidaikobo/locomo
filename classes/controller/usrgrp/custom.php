@@ -19,19 +19,46 @@ class Controller_Usrgrp_Custom extends \Locomo\Controller_Base
 	);
 
 	/**
+	 * before()
+	 */
+	public function before()
+	{
+		// parent
+		parent::before();
+
+		// check item's creator_id
+		$pkid = \Request::main()->id;
+		$obj = \Model_Usrgrp_Custom::find($pkid);
+		if ( ! $obj) return false;
+
+		// actions
+		$actions = array(
+			'\Controller_Usrgrp_Custom/edit',
+			'\Controller_Usrgrp_Custom/view',
+		);
+
+		// modify \Auth::get('allowed')
+		\Auth::instance()->remove_allowed($actions);
+		if ($obj->customgroup_uid == \Auth::get('id'))
+		{
+			\Auth::instance()->add_allowed($actions);
+		}
+	}
+
+	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin($pagenum = 1)
 	{
-		\Model_Usrgrp_Custom::$_options = array(
-			'where' => array(
-				array('is_available', true),
-				array('is_for_acl', false),
-				array('customgroup_uid', \Auth::get('id')),
-			),
-			'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
-		);
-		parent::index_admin();
+		parent::index_admin($pagenum);
+	}
+
+	/**
+	 * action_index_unavailable()
+	 */
+	public function action_index_unavailable($pagenum = 1)
+	{
+		parent::index_unavailable($pagenum);
 	}
 
 	/**

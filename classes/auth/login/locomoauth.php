@@ -496,6 +496,23 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	{
 		$allowed = \Arr::get($this->user, 'allowed', array());
 		$this->user['allowed'] = array_merge($allowed, $locomo_paths);
+
+		// add related_controllers
+		$related_controllers = array_map(function($a){return substr($a, 0, strpos($a, '/'));}, $locomo_paths);
+		$related_controllers = array_unique($related_controllers);
+		$this->user['related_controllers'] = array_merge(
+			$this->user['related_controllers'],
+			$related_controllers
+		);
+	}
+
+	/**
+	 * remove_allowed()
+	 */
+	public function remove_allowed($locomo_paths = array())
+	{
+		$allowed = \Arr::get($this->user, 'allowed', array());
+		$this->user['allowed'] = array_diff($allowed, $locomo_paths);
 	}
 
 	/**

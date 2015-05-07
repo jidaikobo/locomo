@@ -164,8 +164,18 @@ trait Model_Traits_Base
 			}
 		}
 
+		// $_options - is_available
+		if (empty($exception) || ! in_array('is_available', $exception))
+		{
+			$column = \Arr::get(static::get_field_by_role('is_available'), 'lcm_field', 'is_available');
+			if (isset(static::properties()[$column]))
+			{
+				$options['where'][] = array($column, '=', true);
+			}
+		}
+
 		// array_merge
-		static::$_options = array_merge_recursive(static::$_options, $options);
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
 
 		//return
 		return $options;
@@ -190,7 +200,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = array_merge_recursive(static::$_options, $options);
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
 
 		//return
 		return $options;
@@ -215,7 +225,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = array_merge_recursive(static::$_options, $options);
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
 
 		//return
 		return $options;
@@ -240,7 +250,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = array_merge_recursive(static::$_options, $options);
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
 
 		//return
 		return $options;
@@ -265,7 +275,32 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = array_merge_recursive(static::$_options, $options);
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
+	 * set_unavailable_options()
+	 * @return array()
+	 */
+	public static function set_unavailable_options()
+	{
+		$options = array();
+
+		// set public options
+		$options = static::set_public_options(array('is_available'));
+
+		// $_options - created_at
+		$column = \Arr::get(static::get_field_by_role('is_available'), 'lcm_field', 'is_available');
+		if (isset(static::properties()[$column]))
+		{
+			$options['where'][] = array($column, '=', false);
+		}
+
+		// array_merge
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
 
 		//return
 		return $options;
@@ -286,7 +321,7 @@ trait Model_Traits_Base
 	 */
 	public static function set_properties_cached($args = array())
 	{
-		static::$_properties_cached = array_merge_recursive(static::$_properties_cached, $args);
+		static::$_properties_cached = \Arr::merge_assoc(static::$_properties_cached, $args);
 	}
 
 	/**
@@ -321,7 +356,9 @@ trait Model_Traits_Base
 		)
 		{
 			static::disable_filter();
-		} else {
+		}
+		else
+		{
 			// モデルが持っている判定材料を、適宜$_optionsに足す。
 			foreach(self::$_authorize_methods as $authorize_method)
 			{

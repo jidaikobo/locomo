@@ -34,7 +34,7 @@ trait Model_Traits_Wrkflw
 		}
 
 		// array_merge
-		static::$_options = array_merge_recursive(static::$_options, $options);
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
 
 		//return
 		return $options;

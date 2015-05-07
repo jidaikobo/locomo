@@ -10,6 +10,7 @@ class Actionset_Usrgrp_Custom extends \Actionset
 		$retvals = parent::actionset_admin($controller, $obj, $id);
 		$actions = array(
 			$controller.'/index_admin',
+			$controller.'/index_unavailable',
 			$controller.'/create',
 			$controller.'/edit',
 			$controller.'/view',
@@ -69,5 +70,21 @@ class Actionset_Usrgrp_Custom extends \Actionset
 	public static function actionset_purge_confirm($controller, $obj = null, $id = null, $urls = array())
 	{
 		return \Actionset_Base::purge_confirm($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * index_admin()
+	 */
+	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_admin($controller, $obj, $id, $urls);
+	}
+
+	/**
+	 * index_unavailable()
+	 */
+	public static function actionset_index_unavailable($controller, $obj = null, $id = null, $urls = array())
+	{
+		return \Actionset_Base::index_unavailable($controller, $obj, $id, $urls);
 	}
 }

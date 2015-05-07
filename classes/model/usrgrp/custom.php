@@ -44,11 +44,36 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 	}
 
 	/**
-	 * get_options($option, $name)
+	 * set_public_options()
+	 * @param array() $exception
+	 * @return array()
+	 */
+	public static function set_public_options($exception = array())
+	{
+		$options = parent::set_public_options($exception);
+
+		// $_options
+		if (empty($exception) || ! in_array('is_available', $exception))
+		{
+			$options['where'][] = array('is_available', '=', true);
+		}
+		$options['where'][] = array('customgroup_uid', '=', \Auth::get('id'));
+		$options['where'][] = array('is_for_acl', '=', false);
+		$options['order_by'] = array('seq' => 'ASC', 'name' => 'ASC');
+
+		// array_merge
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
+	 * find_options()
 	 * ユーザグループに加えて、カスタムユーザグループを取得する
 	 * get usergroups and user's custom groups
 	 */
-	public static function get_options($options = array(), $label = 'name')
+	public static function find_options($label = 'name', $options = array())
 	{
 		$items = static::find(
 			'all',

@@ -178,6 +178,43 @@ class Controller_Base extends Controller_Core
 	}
 
 	/**
+	 * index_unavailable()
+	 */
+	protected function index_unavailable($page = 1)
+	{
+		// vals
+		$model = $this->model_name;
+
+		// exception
+//		$column = \Arr::get($model::get_field_by_role('is_available'), 'lcm_field');
+		if (!isset($model::properties()['is_available'])) throw new \HttpNotFoundException;
+
+		// set options
+		$model::set_unavailable_options();
+		$model::set_search_options();
+		$model::set_paginated_options();
+
+		// find()
+		$items = $model::find('all', $model::$_options) ;
+		if ( ! $items) \Session::set_flash('message', '項目が存在しません。');
+
+		// refined count
+		\Pagination::$refined_items = count($items);
+
+		// presenter
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
+
+		// title
+		$title = static::$nicename.'の停止中項目';
+
+		// view
+		$content->get_view()->set('items', $items);
+		$content->get_view()->set_global('title', $title);
+		$content->get_view()->set_safe('search_form', $content::search_form($title));
+		$this->template->content = $content;
+	}
+
+	/**
 	 * index_deleted()
 	 */
 	protected function index_deleted($page = 1)

@@ -190,7 +190,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 
 		// usergroup_id
 		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
-		$options+= \Model_Usrgrp_Custom::get_options();
+		$options+= \Model_Usrgrp_Custom::find_options();
 		self::$_properties['usergroup_id'] = array(
 			'label' => '公開範囲',
 			'form' => array(
@@ -238,7 +238,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 		}
 
 		// array_merge
-		static::$_options = array_merge_recursive(static::$_options, $options);
+		static::$_options = \Arr::merge_assoc(static::$_options, $options);
 
 		//return
 		return $options;

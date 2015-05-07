@@ -64,7 +64,7 @@ return array(
 	'default_dashboard' => array(
 		array(
 			'name' => 'コントローラ一覧',
-			'action' => '\\Controller_Sys/admin',
+			'action' => '\\Controller_Sys/admin_dashboard',
 			'size' => 1,
 		),
 		array(
@@ -88,6 +88,7 @@ return array(
 	// always user allowed actions
 	'always_user_allowed' => array(
 		'\\Controller_Hlp/view',
+		'\\Controller_Sys/admin_dashboard',
 		'\\Controller_Sys/admin',
 		'\\Controller_Sys/dashboard',
 		'\\Controller_Sys/edit',

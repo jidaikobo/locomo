@@ -10,7 +10,7 @@ echo $form;
 	<h2>ユーザ選択</h2>
 	<div class="field label_fb lcm_focus" title="ユーザ選択">
 	<?php
-	foreach (\Model_Usr::get_options(array(), 'display_name') as $uid => $v):
+	foreach (\Model_Usr::find_options('display_name') as $uid => $v):
 		echo '<label>'.\Form::checkbox('user[]', $uid, array_key_exists($uid, $item->user)).$v.'</label>';
 	endforeach;
 	?>
@@ -25,7 +25,7 @@ echo $form;
 <div id="member_panel" class="lcm_focus field" title="メンバーの選択">
 	<select id="group_list" title="グループ絞り込み">
 		<option value="">絞り込み：全グループ</option>
-		<?php foreach(\Model_Usrgrp::get_options(array(), 'name') as $gid => $name): ?>
+		<?php foreach(\Model_Usrgrp::find_options('name') as $gid => $name): ?>
 		<option value="<?php print $gid; ?>"><?php  print $name; ?></option>
 		<?php endforeach; ?>
 	</select>
@@ -46,7 +46,7 @@ echo $form;
 			<h3 class="ac">ここから選択</h3>
 			<select id="member_new" name="member_new" size="2" style="width:11em;height:200px;" title="メンバー選択肢" multiple>
 			<?php
-				foreach(\Model_Usr::get_options(array(), 'display_name') as $uid => $name) :
+				foreach(\Model_Usr::find_options('display_name') as $uid => $name) :
 				if (array_key_exists($uid, $item->user)) continue;
 			?>
 				<option value="<?php echo $uid; ?>"><?php echo $name; ?></option>
