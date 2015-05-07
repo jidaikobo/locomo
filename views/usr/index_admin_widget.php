@@ -4,6 +4,9 @@
 		<tr>
 			<th>ID</th>
 			<th><?php echo \Model_Usr::property('username')['label']; ?></th>
+<?php if ($widget_size >= 2): ?>
+			<th><?php echo \Model_Usr::property('display_name')['label']; ?></th>
+<?php endif; ?>
 		</tr>
 	</thead>
 	<tbody>
@@ -11,11 +14,10 @@
 <?php foreach ($items as $item): ?>
 		<tr tabindex="-1">
 			<td class="minimum num"><?php echo $item->id; ?></td>
-			<td style="min-width: 6em;" ><div class="col_scrollable">
-			<?php 
-					echo Html::anchor('usr/view'.'/'.$item->id, $item->display_name, array('class' => 'view'));
-			?>
-			</div></td>
+			<td><?php echo Html::anchor('usr/view'.'/'.$item->id, $item->username, array('class' => 'view'));?></td>
+<?php if ($widget_size >= 2): ?>
+			<td><?php echo $item->display_name; ?></td>
+<?php endif; ?>
 		</tr>
 <?php endforeach; ?>
 	</tbody>

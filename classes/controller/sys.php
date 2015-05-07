@@ -194,6 +194,7 @@ class Controller_Sys extends \Controller_Base
 			$actions[$k]['content'] = \Request::forge(\Inflector::ctrl_to_dir($acts[0]))->execute(array($size, $qstr));
 			$actions[$k]['size'] = $size;
 			$actions[$k]['title'] = array_search($act, $widget_names);
+			$actions[$k]['blockname'] = strtolower(str_replace('/', '_', str_replace('\\Controller_', '', ($acts[0]))));
 		}
 
 		// assign

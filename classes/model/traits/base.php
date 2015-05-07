@@ -9,11 +9,6 @@ trait Model_Traits_Base
 	public static $_options = array();
 
 	/*
-	 * _cache_form_definition
-	 */
-	protected static $_cache_form_definition;
-
-	/*
 	 * default authorize options
 	 */
 	public static $_authorize_methods = array(
@@ -26,18 +21,25 @@ trait Model_Traits_Base
 
 	/*
 	 * _init()
+	 * いま使っているユーザ向けに最適化した$_optionsの設定。
+	 * prepare static::$_options for current user
+	 * @return void
 	 */
 	public static function _init()
 	{
 		// $controller - to know access rights - overridable
 		$controller = \Request::main()->controller;
 
-		// prepare $_options
+		// prepare static::$_options
 		static::authorized_option($controller);
 	}
 
 	/*
 	 * find_options()
+	 * selectやcheckboxで使うKeyValの状態になった値を返す。
+	 * @param string label: field name
+	 * @param array() options: for find('all')
+	 * @return array()
 	 */
 	public static function find_options($label = null, $options = array())
 	{
@@ -45,12 +47,13 @@ trait Model_Traits_Base
 
 		$primary_key = reset(self::$_primary_key);
 		$items = self::find('all', $options);
-		$items = \Arr::assoc_to_keyval($items, $primary_key, $label);
-		return $items;
+		return \Arr::assoc_to_keyval($items, $primary_key, $label);
 	}
 
 	/**
 	 * set_search_options()
+	 * prepare static::$_options
+	 * @return void
 	 */
 	public static function set_search_options()
 	{
@@ -308,7 +311,8 @@ trait Model_Traits_Base
 
 	/**
 	 * properties_cached()
-	 * flrなどで使用
+	 * \Orm\Modelは、いったんrelationなどにアクセスすると、その内容をキャッシュする。キャッシュされたpropaertiesでformを生成すると、内容が追いつかないことがあり、いまのところflrでこのメソッドを使用している。将来的にはなくしたい。
+	 * \Orm\Model caches properties.
 	 */
 	public static function properties_cached()
 	{
@@ -317,7 +321,7 @@ trait Model_Traits_Base
 
 	/**
 	 * set_properties_cached()
-	 * flrなどで使用
+	 * flrで使用
 	 */
 	public static function set_properties_cached($args = array())
 	{
@@ -326,6 +330,7 @@ trait Model_Traits_Base
 
 	/**
 	 * get_field_by_role()
+	 * some properties expected that it has 'lcm_role'.
 	 * @return array()
 	 */
 	public static function get_field_by_role($role)
@@ -470,6 +475,7 @@ trait Model_Traits_Base
 	}
 
 	/*
+	 * cascade_set()
 	 * @param   array     $input_post
 	 * @param   Fieldset  $form (for validation)
 	 * @param   bool      $repopulate populate input value
@@ -667,8 +673,6 @@ trait Model_Traits_Base
 				$skip_keys[] = $vv;
 			}
 		}
-
-
 
 		// 並べ替えと join
 		foreach ($options['select'] as $v) {

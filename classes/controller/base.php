@@ -78,7 +78,15 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// exception
-		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
+		$column_created_at = \Arr::get($model::get_field_by_role('created_at'), 'lcm_field', 'created_at');
+		$column_expired_at = \Arr::get($model::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
+		if (
+			! isset($model::properties()[$column_created_at]) or
+			! isset($model::properties()[$column_expired_at])
+		)
+		{
+			throw new \HttpNotFoundException;
+		}
 
 		// set options
 		$model::set_yet_options();
@@ -114,7 +122,16 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// exception
-		if (!isset($model::properties()['created_at']) or !isset($model::properties()['expired_at'])) throw new \HttpNotFoundException;
+		$column_created_at = \Arr::get($model::get_field_by_role('created_at'), 'lcm_field', 'created_at');
+		$column_expired_at = \Arr::get($model::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
+		if (
+			! isset($model::properties()[$column_created_at]) or
+			! isset($model::properties()[$column_expired_at])
+		)
+		{
+			throw new \HttpNotFoundException;
+		}
+
 
 		// set options
 		$model::set_expired_options();
@@ -150,7 +167,8 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// exception
-		if (!isset($model::properties()['is_visible'])) throw new \HttpNotFoundException;
+		$column = \Arr::get($model::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
+		if (!isset($model::properties()[$column])) throw new \HttpNotFoundException;
 
 		// set options
 		$model::set_invisible_options();
@@ -186,8 +204,8 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// exception
-//		$column = \Arr::get($model::get_field_by_role('is_available'), 'lcm_field');
-		if (!isset($model::properties()['is_available'])) throw new \HttpNotFoundException;
+		$column = \Arr::get($model::get_field_by_role('is_available'), 'lcm_field', 'is_available');
+		if (!isset($model::properties()[$column])) throw new \HttpNotFoundException;
 
 		// set options
 		$model::set_unavailable_options();

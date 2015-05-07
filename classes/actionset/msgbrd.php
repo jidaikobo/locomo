@@ -14,7 +14,6 @@ class Actionset_Msgbrd extends \Actionset_Base
 
 		// urls
 		$options = \Model_Msgbrd::set_public_options();
-		$options['where'][] = array('is_draft' => 0);
 		$count = \Model_Msgbrd::count($options);
 		$urls = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
 		\Arr::set($retvals, 'urls', $urls);
