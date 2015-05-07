@@ -70,7 +70,7 @@ $(function() {
 	function set_class(){
 		var t = $.isWindow(this) ? $('.checkbox_binded:checked') : this;
 		if(!$.isWindow(this)){
-			$(this).closest('tr').toggleClass('checked');
+			$(this).closest('tr').toggleClass('checked');//トグルだとページを戻ってきたときにおかしくなる
 		}else{
 			$(document).find('tr').has($('input[type="checkbox"]:checked')).toggleClass('checked');
 		}

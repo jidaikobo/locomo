@@ -225,12 +225,12 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		\Profiler::mark('Locomo\\Controller_Core::forge header - Called');
 		$tpl = $this->_template == 'admin' ? 'header/admin' : 'header';
 		$header = \Presenter::forge($tpl);
-		$this->template->header = $header;
+		$this->template->set_safe('header', $header);
 		\Profiler::mark('Locomo\\Controller_Core::forge header - done');
 
 		// footer
 		$tpl = $this->_template == 'admin' ? 'footer/admin' : 'footer';
-		$this->template->footer = \Presenter::forge($tpl);
+		$this->template->set_safe('footer', \Presenter::forge($tpl));
 
 		// event
 		if (\Event::instance()->has_events('locomo_after'))

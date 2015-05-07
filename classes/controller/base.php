@@ -33,7 +33,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
 		$content->get_view()->set_global('title', $title);
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -155,7 +155,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -192,7 +192,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -229,7 +229,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -272,7 +272,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -311,7 +311,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -336,7 +336,7 @@ class Controller_Base extends Controller_Core
 		// view
 		$content = \View::forge(static::$dir.'index_admin_widget');
 		$content->set('items', $model::find('all', $options));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', static::$nicename.'管理一覧');
 
 		// size
@@ -378,7 +378,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set_safe('plain', $plain);
 		$content->get_view()->set('item', $item);
 		$content->get_view()->set_global('title', self::$nicename.'閲覧');
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/*
@@ -481,7 +481,7 @@ class Controller_Base extends Controller_Core
 		$content->get_view()->set_global('item', $item, false);
 		$content->get_view()->set_global('form', $form, false);
 		$content->get_view()->set_global('title', $title);
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 
 		// return
 		return $errors ? false : $item;
@@ -639,7 +639,7 @@ class Controller_Base extends Controller_Core
 		$content->set_safe('item', $item);
 		$this->template->set_global('action', static::$base_url.'purge');
 		$this->template->set_global('title', self::$nicename.'完全削除');
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**

@@ -766,8 +766,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// カスタムグループを先に作成
 //		$narrow_user_group_list = \Model_Usrgrp_Custom::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false))), 'name');
 //		// 一番上に見せるようにする
-		$narrow_user_group_list_custom = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', 'is not', null))), 'name');
-		$narrow_user_group_list_normal = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', null))), 'name');
+		$narrow_user_group_list_custom = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', 'is not', null))));
+		$narrow_user_group_list_normal = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', null))));
 		foreach ($narrow_user_group_list_normal as $row) {
 			// array_mergeだとIDがおかしくなるためひとつずついれる
 			$narrow_user_group_list_custom[] = $row;
