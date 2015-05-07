@@ -125,7 +125,7 @@ trait Model_Traits_Base
 			$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
 			if (isset(static::properties()[$column]))
 			{
-				$options['where'][] = array($column, '<=', date('Y-m-d H:i:s'));
+				$options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
 			}
 		}
 
@@ -150,7 +150,7 @@ trait Model_Traits_Base
 				isset(static::properties()[$column])
 			)
 			{
-				$options['where'][] = array($column, 'is', null);
+				$options['where'][][] = array($column, 'is', null);
 			}
 		}
 
@@ -160,7 +160,7 @@ trait Model_Traits_Base
 			$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
 			if (isset(static::properties()[$column]))
 			{
-				$options['where'][] = array($column, '=', true);
+				$options['where'][][] = array($column, '=', true);
 			}
 		}
 
@@ -170,7 +170,7 @@ trait Model_Traits_Base
 			$column = \Arr::get(static::get_field_by_role('is_available'), 'lcm_field', 'is_available');
 			if (isset(static::properties()[$column]))
 			{
-				$options['where'][] = array($column, '=', true);
+				$options['where'][][] = array($column, '=', true);
 			}
 		}
 

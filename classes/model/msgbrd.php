@@ -234,7 +234,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 		// $_options - is_draft
 		if (empty($exception) || ! in_array('is_draft', $exception))
 		{
-			$options['where'][] = array('is_draft', '=', false);
+			$options['where'][][] = array('is_draft', '=', false);
 		}
 
 		// array_merge

@@ -44,7 +44,7 @@ trait Controller_Traits_Wrkflw
 	/**
 	 * action_index_workflow()
 	 */
-	public function action_index_workflow($controller = null)
+	public function action_index_workflow($size = 1, $controller = null)
 	{
 		// model and view
 		$view = \View::forge('wrkflw/index_workflow');
