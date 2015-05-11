@@ -678,7 +678,7 @@ class Controller_Base extends Controller_Core
 					\Session::set_flash('error', '完全削除中にエラーが発生しました');
 					return \Response::redirect(static::$base_url.'index_deleted');
 				}
-	
+
 				\Session::set_flash('success', '項目を完全に削除しました');
 			}
 			else

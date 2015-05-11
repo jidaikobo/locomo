@@ -178,7 +178,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+		static::$_options = \Arr::merge(static::$_options, $options);
 
 		//return
 		return $options;
@@ -203,7 +203,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+		static::$_options = \Arr::merge(static::$_options, $options);
 
 		//return
 		return $options;
@@ -228,7 +228,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+		static::$_options = \Arr::merge(static::$_options, $options);
 
 		//return
 		return $options;
@@ -253,7 +253,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+		static::$_options = \Arr::merge(static::$_options, $options);
 
 		//return
 		return $options;
@@ -278,7 +278,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+		static::$_options = \Arr::merge(static::$_options, $options);
 
 		//return
 		return $options;
@@ -303,7 +303,7 @@ trait Model_Traits_Base
 		}
 
 		// array_merge
-		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+		static::$_options = \Arr::merge(static::$_options, $options);
 
 		//return
 		return $options;
@@ -325,7 +325,7 @@ trait Model_Traits_Base
 	 */
 	public static function set_properties_cached($args = array())
 	{
-		static::$_properties_cached = \Arr::merge_assoc(static::$_properties_cached, $args);
+		static::$_properties_cached = \Arr::merge(static::$_properties_cached, $args);
 	}
 
 	/**
@@ -856,14 +856,14 @@ trait Model_Traits_Base
 			'index'           => '公開一覧',
 			'index_all'       => 'すべて',
 		);
-		
+
 		$title .= $title=='' ? '' : 'の';
-		
+
 		if (array_key_exists(\Request::active()->action, $titles))
 		{
 			$title.= $titles[\Request::active()->action];
 		} else {
-			$title .= '項目一覧'; 
+			$title .= '項目一覧';
 		}
 
 		// add opener before unrefine
