@@ -47,7 +47,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 
 		// modify \Auth::get('allowed')
 		\Auth::instance()->remove_allowed($actions);
-		if ($obj->id == \Auth::get('id'))
+		if ($obj->id === \Auth::get('id'))
 		{
 			\Auth::instance()->add_allowed($actions);
 		}

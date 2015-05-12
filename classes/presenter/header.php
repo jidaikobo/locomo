@@ -109,8 +109,6 @@ class Presenter_Header extends \Presenter
 
 		// actionset
 		\Profiler::mark('Locomo\\Presenter_Header::view() - actionset');
-		$actionset = \Actionset::get_actionset($controller, $controller::get_object());
-//		$actionset['index'] = \Arr::get($actionset, 'index', array());
-		$this->_view->set_global('actionset', $actionset, false);
+		\Actionset::get_actionset($controller, $controller::get_object());
 	}
 }

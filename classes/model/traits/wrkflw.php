@@ -29,7 +29,7 @@ trait Model_Traits_Wrkflw
 			$column = \Arr::get(static::get_field_by_role('workflow_status'), 'lcm_field', 'workflow_status');
 			if (isset(static::properties()[$column]))
 			{
-				$options['where'][] = array($column, '=', 'finish');
+				$options['where'][][] = array($column, '=', 'finish');
 			}
 		}
 

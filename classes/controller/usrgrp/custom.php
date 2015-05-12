@@ -39,7 +39,7 @@ class Controller_Usrgrp_Custom extends \Locomo\Controller_Base
 
 		// modify \Auth::get('allowed')
 		\Auth::instance()->remove_allowed($actions);
-		if ($obj->customgroup_uid == \Auth::get('id'))
+		if ($obj->customgroup_uid === \Auth::get('id'))
 		{
 			\Auth::instance()->add_allowed($actions);
 		}
