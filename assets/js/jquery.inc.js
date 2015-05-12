@@ -71,9 +71,9 @@ $(function() {
 		var t = $.isWindow(this) ? $('.checkbox_binded:checked') : this;
 		if(!$.isWindow(this)){
 			if($(this).prop('checked')){
-				$(this).closest('tr').addClass('checked');//トグルだとページを戻ってきたときにおかしくなる
+				$(this).closest('tr').addClass('checked');
 			}else{
-				$(this).closest('tr').removeClass('checked');//トグルだとページを戻ってきたときにおかしくなる
+				$(this).closest('tr').removeClass('checked');
 			}
 		}else{
 			$(document).find('tr').has($('input[type="checkbox"]:checked')).addClass('checked');
