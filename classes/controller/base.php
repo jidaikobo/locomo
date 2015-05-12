@@ -557,7 +557,7 @@ class Controller_Base extends Controller_Core
 		}
 
 		// find()
-		if ( ! $item = $model::find($id, $model::$_options))
+		if ( ! $item = $model::find_deleted($id, $model::$_options))
 		{
 			// 403
 			$page = \Request::forge('sys/403')->execute();

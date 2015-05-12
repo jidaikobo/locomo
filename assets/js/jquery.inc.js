@@ -70,9 +70,13 @@ $(function() {
 	function set_class(){
 		var t = $.isWindow(this) ? $('.checkbox_binded:checked') : this;
 		if(!$.isWindow(this)){
-			$(this).closest('tr').toggleClass('checked');//トグルだとページを戻ってきたときにおかしくなる
+			if($(this).prop('checked')){
+				$(this).closest('tr').addClass('checked');//トグルだとページを戻ってきたときにおかしくなる
+			}else{
+				$(this).closest('tr').removeClass('checked');//トグルだとページを戻ってきたときにおかしくなる
+			}
 		}else{
-			$(document).find('tr').has($('input[type="checkbox"]:checked')).toggleClass('checked');
+			$(document).find('tr').has($('input[type="checkbox"]:checked')).addClass('checked');
 		}
 	}
 	set_class();
