@@ -8,6 +8,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 
 	// $_conditions
 	protected static $_conditions = array();
+	public static $_options = array();
 
 	// $_properties
 	protected static $_properties =
@@ -35,7 +36,8 @@ class Model_Msgbrd extends \Model_Base_Soft
 		'usergroup_id' =>
 		array(
 			'label' => '公開範囲',
-			'form' => array('type' => 'select')
+			'form' => array('type' => 'select'),
+			'validation' => array ('required',),
 		),
 		'category_id' =>
 		array(
@@ -178,30 +180,6 @@ class Model_Msgbrd extends \Model_Base_Soft
 
 		// parent
 		parent::_init();
-
-		// properties
-		self::$_properties['expired_at'] = array(
-			'label' => '公開期限',
-			'form' => array(
-				'type' => 'text',
-				'class' => 'datetime',
-			),
-		);
-
-		// usergroup_id
-		$options = array('' => '選択してください', '0' => '一般公開', '-10' => 'ログインユーザすべて');
-		$options+= \Model_Usrgrp_Custom::find_options();
-		self::$_properties['usergroup_id'] = array(
-			'label' => '公開範囲',
-			'form' => array(
-				'type' => 'select',
-				'options' => $options,
-			),
-			'validation' => array(
-				'required',
-			),
-			'default' => ''
-		);
 	}
 
 	/**
@@ -253,7 +231,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 		$column = \Arr::get(static::get_field_by_role('draft'), 'lcm_field', 'is_draft');
 		if (! isset(static::properties()[$column])) return;
 		if (in_array(\Auth::get('id'), [-1, -2])) return;
-
+		
 		// static::$_options
 		static::$_options['where'][] = array(
 			// draftでなく、公開範囲内なら許可
@@ -261,11 +239,10 @@ class Model_Msgbrd extends \Model_Base_Soft
 				array($column, '=', '0'),
 				array('usergroup_id', 'IN', \Auth::get_groups()),
 			), 
-			 // draftでもcreator_idが一致しているか
+			 // 公開範囲ではないが、creator_idが一致する。下書きかどうかは問わない。
 			'or' => array(
-				array($column, '=', '1'),
 				array('creator_id', '=', \Auth::get('id')),
-			)
+			),
 		);
 	}
 }

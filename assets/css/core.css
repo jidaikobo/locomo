@@ -1319,6 +1319,7 @@ td.minimum {
 }
 .datatable tr.current th,
 .datatable tr.affected th,
+.datatable tr.affected:nth-child(even) th,
 .datatable tbody tr:hover th,
 .datatable tfoot tr:hover th {
 	background-color: #f0f0dd;

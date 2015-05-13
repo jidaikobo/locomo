@@ -24,6 +24,32 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	);
 
 	/**
+	 * before()
+	 */
+	public function before()
+	{
+		parent::before();
+
+		// check item's creator_id
+		$pkid = \Request::main()->id;
+		$obj = \Model_Msgbrd::find($pkid);
+		if ( ! $obj) return false;
+
+		// actions
+		$actions = array(
+			'\Controller_Msgbrd/delete',
+			'\Controller_Msgbrd/edit',
+		);
+
+		// modify \Auth::get('allowed')
+		\Auth::instance()->remove_allowed($actions);
+		if ($obj->creator_id === \Auth::get('id'))
+		{
+			\Auth::instance()->add_allowed($actions);
+		}
+	}
+
+	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin()

@@ -37,7 +37,7 @@ class Presenter_Header extends \Presenter
 		$this->_view->set_global('body_data', 'data-uri='.\Uri::base(false));
 
 		// affected_id for index template - from session
-		$this->_view->set_global('affected_id', \Session::get('affected_id'));
+		$this->_view->set_global('affected_id', \Session::get_flash('affected_id'));
 		
 		// locomo - for logged in users'
 		$locomo = array();
@@ -108,7 +108,25 @@ class Presenter_Header extends \Presenter
 		$this->_view->set_global('locomo', $locomo);
 
 		// actionset
+		$obj = $controller::get_object();
 		\Profiler::mark('Locomo\\Presenter_Header::view() - actionset');
-		\Actionset::get_actionset($controller, $controller::get_object());
+		\Actionset::get_actionset($controller, $obj);
+		
+
+/*		
+		$status = array();
+		if (isset($obj->deleted_at) && ! is_null($obj->deleted_at))
+		{
+			$status[] = '削除済み';
+		}
+		
+		
+		if ($status)
+		{
+			$message = \Session::get_flash('message');
+			\Session::set_flash('message', $status + $message);
+		}
+*/
+
 	}
 }

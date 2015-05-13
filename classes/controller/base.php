@@ -430,7 +430,7 @@ class Controller_Base extends Controller_Core
 			$item = $model::forge();
 			$title = self::$nicename . '新規作成';
 		}
-
+		
 		// prepare form and population
 		$content = \Presenter::forge($this->_content_template ?: static::$dir.'edit');
 		$form = $content::form($item);
