@@ -24,6 +24,9 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 			'validation' => array('required'),
 			'default' => \Auth::get('id'),
 		);
+
+		// parent - this must be placed at the end of _init()
+		parent::_init();
 	}
 
 	/**

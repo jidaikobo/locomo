@@ -176,9 +176,6 @@ class Model_Msgbrd extends \Model_Base_Soft
 		// set $_authorize_methods
 		static::$_authorize_methods[] = 'auth_msgbrd';
 
-		// parent
-		parent::_init();
-
 		// properties
 		self::$_properties['expired_at'] = array(
 			'label' => '公開期限',
@@ -202,6 +199,9 @@ class Model_Msgbrd extends \Model_Base_Soft
 			),
 			'default' => ''
 		);
+
+		// parent - this must be placed at the end of _init()
+		parent::_init();
 	}
 
 	/**
