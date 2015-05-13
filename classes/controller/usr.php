@@ -254,7 +254,7 @@ $is_sendmail = true;
 		$this->template->set_global('title', 'パスワードリセット');
 		$content->set_global('item', $obj, false);
 		$content->set_global('form', $form, false);
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 		static::set_object($obj);
 	}
 
@@ -306,7 +306,7 @@ $is_sendmail = true;
 		//view
 		$this->template->set_global('title', 'パスワードリセット');
 		$content->set_global('form', $form, false);
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**

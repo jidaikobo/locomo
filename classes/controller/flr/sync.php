@@ -26,7 +26,7 @@ class Controller_Flr_Sync extends Controller_Flr
 
 		// view
 		$content = \Presenter::forge('flr/sync');
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', '同期');
 	}
 

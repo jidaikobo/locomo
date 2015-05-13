@@ -215,8 +215,21 @@ class Model_Msgbrd extends \Model_Base_Soft
 			$options['where'][][] = array('is_draft', '=', false);
 		}
 
+		// static::$_options
+		$options['where'][] = array(
+			// draftでなく、公開範囲内なら許可
+			array(
+				array('is_draft', '=', '0'),
+				array('usergroup_id', 'IN', \Auth::get_groups()),
+			), 
+			 // 公開範囲ではないが、creator_idが一致する。下書きかどうかは問わない。
+			'or' => array(
+				array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)),
+			),
+		);
+
 		// array_merge
-		static::$_options = \Arr::merge_assoc(static::$_options, $options);
+		static::$_options = \Arr::merge(static::$_options, $options);
 
 		//return
 		return $options;
@@ -241,7 +254,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 			), 
 			 // 公開範囲ではないが、creator_idが一致する。下書きかどうかは問わない。
 			'or' => array(
-				array('creator_id', '=', \Auth::get('id')),
+				array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)),
 			),
 		);
 	}

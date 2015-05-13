@@ -160,7 +160,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 		// view
 		$content = \Presenter::forge('flr/index/files');
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 
 		// search_form
 		$this->template->content->set_safe('search_form', $content::search_form('ファイル一覧'));
@@ -204,7 +204,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// view
 		$content = \View::forge('flr/common_files');
 		$content->set('items', $objs);
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', 'ファイル一覧');
 	}
 
@@ -225,7 +225,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// view
 		$content = \View::forge('flr/gallery');
 		$content->set('items', $objs);
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', 'ファイル一覧');
 	}
 

@@ -13,6 +13,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// set options
+		$model::$_options = array();
 		$model::set_public_options();
 		$model::set_paginated_options();
 
@@ -45,6 +46,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// set options
+		$model::$_options = array();
 		$model::set_public_options();
 		$model::set_search_options();
 		$model::set_paginated_options();
@@ -89,6 +91,7 @@ class Controller_Base extends Controller_Core
 		}
 
 		// set options
+		$model::$_options = array();
 		$model::set_yet_options();
 		$model::set_search_options();
 		$model::set_paginated_options();
@@ -132,8 +135,8 @@ class Controller_Base extends Controller_Core
 			throw new \HttpNotFoundException;
 		}
 
-
 		// set options
+		$model::$_options = array();
 		$model::set_expired_options();
 		$model::set_search_options();
 		$model::set_paginated_options();
@@ -171,6 +174,7 @@ class Controller_Base extends Controller_Core
 		if (!isset($model::properties()[$column])) throw new \HttpNotFoundException;
 
 		// set options
+		$model::$_options = array();
 		$model::set_invisible_options();
 		$model::set_search_options();
 		$model::set_paginated_options();
@@ -208,6 +212,7 @@ class Controller_Base extends Controller_Core
 		if (!isset($model::properties()[$column])) throw new \HttpNotFoundException;
 
 		// set options
+		$model::$_options = array();
 		$model::set_unavailable_options();
 		$model::set_search_options();
 		$model::set_paginated_options();
@@ -248,10 +253,10 @@ class Controller_Base extends Controller_Core
 
 		// disable_filter() before find()
 		$model::disable_filter();
-		$deleted_column = $model::soft_delete_property('deleted_field', 'deletd_at');
-		$model::$_options['where'][] = array($deleted_column, 'IS NOT', null);
 
 		// set options
+		$model::$_options = array();
+		$model::set_deleted_options();
 		$model::set_search_options();
 		$model::set_paginated_options();
 
@@ -355,6 +360,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// find()
+		$model::$_options['from_cache'] = false;
 		if ( ! $item = $model::find($id, $model::$_options))
 		{
 				// event
@@ -402,6 +408,7 @@ class Controller_Base extends Controller_Core
 		// create or update
 		if ($id)
 		{
+			$model::$_options['from_cache'] = false;
 			$item = $model::find($id, $model::$_options);
 
 			// not found
@@ -500,6 +507,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name ;
 
 		// find()
+		$model::$_options['from_cache'] = false;
 		if ( ! $item = $model::find($id, $model::$_options))
 		{
 			// 403
@@ -557,6 +565,7 @@ class Controller_Base extends Controller_Core
 		}
 
 		// find()
+		$model::$_options['from_cache'] = false;
 		if ( ! $item = $model::find_deleted($id, $model::$_options))
 		{
 			// 403

@@ -16,7 +16,7 @@ class Create_Flrs
 			'is_sticky'    => array('constraint' => 5,   'type' => 'int'),
 			'ext'          => array('constraint' => 10,  'type' => 'varchar'),
 			'mimetype'     => array('constraint' => 20,  'type' => 'varchar'),
-			'genre'        => array('constraint' => "'dir', 'file', 'txt', 'image', 'audio', 'movie', 'braille', 'doc', 'xls', 'ppt', 'pdf'",  'type' => "enum"),
+			'genre'        => array('constraint' => "'dir', 'file', 'txt', 'image', 'audio', 'movie', 'braille', 'doc', 'xls', 'ppt', 'pdf', 'compressed'",  'type' => "enum"),
 			'deleted_at'   => array('type' => 'datetime', 'null' => true),
 			'created_at'   => array('type' => 'datetime', 'null' => true),
 			'expired_at'   => array('type' => 'datetime', 'null' => true),

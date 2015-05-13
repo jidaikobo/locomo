@@ -128,6 +128,6 @@ trait Controller_Traits_Revision
 		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// view
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 }

@@ -73,7 +73,7 @@ class Controller_Hlp extends \Controller_Base
 		{
 			$content = \View::forge('hlp/index_admin');
 			$content->set_global('title', 'ヘルプインデクス');
-			$this->template->content = $content;
+			$this->template->set_safe('content', $content);
 			return;
 		}
 		elseif (class_exists($controller) && $action)
@@ -94,7 +94,7 @@ class Controller_Hlp extends \Controller_Base
 			$content = \View::forge('hlp/index_each');
 			$content->set_global('title', $title.'ヘルプインデクス');
 			$content->set('items', $items);
-			$this->template->content = $content;
+			$this->template->set_safe('content', $content);
 			return;
 		}
 
@@ -140,6 +140,6 @@ class Controller_Hlp extends \Controller_Base
 		$content = \View::forge('hlp/view');
 		$content->set_global('title', $title);
 		$content->set_safe('content', $help);
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 }

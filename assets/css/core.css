@@ -1894,7 +1894,7 @@ a.icon.doc:before,     span.icon.doc:before     { content: url('../img/led-icons
 a.icon.xls:before,     span.icon.xls:before     { content: url('../img/led-icons/page_white_excel.png')' ';}
 a.icon.audio:before,   span.icon.audio:before   { content: url('../img/led-icons/doc_music.png')' ';}
 a.icon.movie:before,   span.icon.movie:before   { content: url('../img/led-icons/doc_film.png')' ';}
-a.icon.zip:before,     span.icon.zip:before     { content: url('../img/led-icons/doc_film.png')' ';}
+a.icon.compressed:before,     span.icon.compressed:before     { content: url('../img/led-icons/page_zip.png')' ';}
 
 /*=== contents ===*/
 .contents > h1 {

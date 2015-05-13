@@ -377,6 +377,7 @@ class Model_Flr extends \Model_Base
 		$tmps = array();
 		foreach ($permissions as $v)
 		{
+			$v['access_level'] = @$v['access_level'] ?: 1;
 			for ($n = 1; $n <= $v['access_level']; $n++)
 			{
 				$tmps[] = $v[$relation.'_id'].DS.$n;

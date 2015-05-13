@@ -136,7 +136,7 @@ class Controller_Flr_File extends Controller_Flr
 		// view
 		$content->set_safe('plain', $content::plain($obj));
 		$content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', 'ファイル詳細');
 	}
 
