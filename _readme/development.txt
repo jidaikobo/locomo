@@ -5,13 +5,14 @@
 // scaffold
 
 開発にあたってLocomoには、Locomo用のアプリケーション開発のためのscaffold（足場組み）があります。
-FuelとLocomoを展開した後、rootでログインします。画面上右上のスパナのアイコンからゆける項目の中に「足場組み」があるので、画面の指示に従って、アプリケーションを作ってみてください。アプリケーションはappに展開されます。
+FuelとLocomoを展開した後、rootでログインします。画面上右上のスパナのアイコンの項目の中に「足場組み」があるので、画面の指示に従って、アプリケーションを作ってみてください。アプリケーションはappに展開されます。
 
 なお、scaffoldのためには以下パスへのパーミッションが必要です。scaffoldに失敗したら、chmodでパーミッションを調整してください。
 chmod -R 777 /path/to/app/migrations/
 chmod -R 777 /path/to/app/classes/controller
 chmod -R 777 /path/to/app/classes/model
 chmod -R 777 /path/to/app/classes/actionset
+chmod -R 777 /path/to/app/classes/presenter
 chmod -R 777 /path/to/app/views
 
 モジュールを生成する場合は、このディレクトリのパーミッションも調整してください。
@@ -27,9 +28,7 @@ Locomoパッケージ（以下locomo）では、モジュールやコントロ�
 
 // $locomo
 
-LocomoはFuelPHPのcontrollerとmoduleを基礎にしています。
-scaffoldを使うとモジュールが生成されますが、APPPATH/classes/controllerにコントローラを配置しても機能します。
-その際、コントローラは必要に応じて、\Locomo\Controller_Baseを継承してください。\Locomo\Controller_Baseを継承しない場合、モジュールにアクセスはできますが、アクセス権限管理の対象から外れます。
+Locomoで開発をする際、各コントローラは必要に応じて、\Locomo\Controller_Baseを継承してください。\Locomo\Controller_Baseを継承しない場合、コントローラにアクセスはできますが、アクセス権限管理の対象から外れます。
 
 またLocomo管理下に置かれるコントローラ／モジュールには、$locomoというメンバ変数があることを期待されます。
 
@@ -80,7 +79,7 @@ return array(
 +------------------------------------+
 |global admin bar                    |
 +------------------------------------+
-|[base][index]         [ctrl][option]|
+|[index][base]         [ctrl][option]|
 +------------------------------------+
 |                                    |
 
@@ -89,40 +88,32 @@ return array(
 [option]: コントローラやモジュールの設定を変更するリンクです。ギアマークのドロップダウンに格納されます。
 [index] : base, ctrl, option以外のrealmは、ドロップダウンを作るグループとして扱われます。
 
+// actionset - prepare user interface
+
+アクションセットのメソッドはactionset_という接頭辞を必要とします。この接頭辞がない場合は、アクションセットとして機能しませんので、一旦停止したい場合などは、_actionset_というようにすることもできます。接頭辞の後には、識別名を書きます。識別名はとくに決まりはありません。自由に命名してください。
+
 // actionset - disable default actionset
 
-基本的なアクションセットのクラスを少しだけ改変したい場合は、Actionset_Baseから呼んでください。
+アクションセットを使う際は、＼Locomo\Actionset_Baseを継承します。ここには、基本的なアクションセットが定義されているので、実装の際は、actionset_のprefixをもったメソッドからActionset_Baseのメソッドを呼びます。基本的なアクションセットの振る舞いを少しだけ改変したい場合も、以下のような記述をすると楽です。
 
 +quote start-----------------------------+
 	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
 	{
 		$urls = array(array($controller.DS."index_XXX", 'リンク文字列'),);
-		$retvals = \Actionset::actionset_index($controller, $obj, $id, $urls);
+		$retvals = \Actionset::index($controller, $obj, $id, $urls);
 		\Arr::set($retvals, 'urls', $urls);
 		return $retvals;
 	}
 +-------------------------------quote end+
 
-// actionset - prepare user interface
-
-アクションセットのメソッドはactionset_という接頭辞を必要とします。この接頭辞がない場合は、アクションセットとして機能しませんので、一旦停止したい場合などは、_actionset_というようにすることもできます。接頭辞の後には、アクション名を書きます。
-
 // actionset - acl
 
-アクションセットで設定されているdependenciesは、アクションセットのリンクを表示する上で必要なアクションです。ここにはlocomo-pathのuriを配列で渡します。ここで設定したものがlocomoのaclの画面に表示され、管理の対象になります。
+アクションセットで設定されているdependenciesは、アクションセットのリンクを表示する上で必要なアクションです。ここにはlocomo-pathの文字列を配列で渡します。ここで設定したものがlocomoのaclの画面に表示され、管理の対象になります。
 
 // config
 
 configにnicenameとmain_controllerを設定してください。nicenameは人間用にコントローラ（モジュール）名を読みやすくしたもの。main_controllerは、これを使って、モジュールの代表画面を設定します。
 モジュールの場合は、モジュールディレクトリのconfigのなか、モジュールでない場合は、APPPATH.configにあるコントローラ名と同名のconfigを参照します。
-
-// exclusive acl
-
-configでは、通常のaclと異なったアクセス権管理を行いたい際のメソッドを指定する項目があります。controllerの_init()かbefore()で、Eventのlocomo_has_accessにメソッドを登録してください。
-
-▼ここから────────────────
-		\Event::register('locomo_has_access', '\Controller_Usr::user_auth_find');
-────────────────ここまで▲
 
 // template override
 
@@ -131,12 +122,16 @@ Locomoの基本コントローラのテンプレートだけオーバライド�
 // column name
 
 tableを作るとき、以下のカラム名は特別な仕事をします。
+あるいはモデルの$_propertiesで、lcm_roleが設定されている場合、所与のフィールドが代替の仕事をします（しかし多くの場合は、lcm_roleとauthorized_optionを使うよりも、自分で実装したほうが早いでしょう）。
 
 is_visible:int:null
 可視属性フラグです。
 
+is_available:int:null
+有効属性フラグです。
+
 deleted_at:datetime:null
-削除フラグです。nullのときは表示され、dateが入っているときには削除されたことになります。
+削除フラグです。nullのときは表示され、dateが入っているときには削除されたことになります。これは\Orm\Model_Softの利用が前提になっています。
 
 created_at:datetime:null
 作成日です。未来の日付が入っていると予約項目になります。

@@ -13,6 +13,8 @@ trait Model_Traits_Wrkflw
 		{
 			static::$_authorize_methods[] = 'auth_workflow';
 		}
+
+		// parent - this must be placed at the end of _init()
 		parent::_init();
 	}
 

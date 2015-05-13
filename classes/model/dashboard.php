@@ -70,6 +70,9 @@ class Model_Dashboard extends Model_Base
 			$widgets[$key] = $tmps;
 		}
 		static::$_properties['action']['form']['options'] = $widgets ;
+
+		// parent - this must be placed at the end of _init()
+		parent::_init();
 	}
 }
 

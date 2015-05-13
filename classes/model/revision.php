@@ -52,6 +52,9 @@ class Model_Revision extends \Model_Base
 
 		// properties
 		\Arr::set(static::$pagination_config, 'uri_segment', $segment);
+
+		// parent - this must be placed at the end of _init()
+		parent::_init();
 	}
 
 	/**

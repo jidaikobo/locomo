@@ -46,4 +46,18 @@ class Model_XXX extends \Model_Base
 		"Orm\Observer_Self" => array(),
 ###OBSRVR###
 	);
+
+	/**
+	 * _init
+	 */
+	 public static function _init()
+	{
+		// set $_authorize_methods
+		// static::$_authorize_methods[] = 'auth_xxx';
+
+		// do something before call parent::_init()
+
+		// parent - this must be placed at the end of _init()
+		parent::_init();
+	}
 }
