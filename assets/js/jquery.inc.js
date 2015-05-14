@@ -23,7 +23,7 @@ $(function(){
 			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
 		}
 		if(str){
-			info = $('<p class="develop_info">').prepend(str);
+			info = $('<p class="develop_info through_click">').prepend(str);
 			body.append(info);
 			if($('body').hasClass('loggedin testserver')){
 				topinfo = info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
@@ -33,6 +33,23 @@ $(function(){
 	})();
 });
 
+//クリックイベントを下の要素に適用する。
+//:hover等の擬似要素はjsからは操作できないので対応していない。
+//するなら、mousemoveを取得して.hoverのようなクラスを付与? でもいちいちの:hoverに.hoverを併記するのは非効率なので。
+$(function() {
+	$('.through_click').on('click', function(e){
+		e = e ? e : event;
+		e.preventDefault();
+		var x, y, el;
+		x = e.clientX;
+		y = e.clientY;
+		
+		$(this).hide();//いったん非表示にすることで、直下の要素を座標から取得
+		el = document.elementFromPoint(x,y); 
+		$(this).show();
+		el.click();
+	});
+});
 
 //チェックボックス全選択
 $(function() {
