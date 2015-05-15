@@ -1099,6 +1099,7 @@ $('#alert_error .link').find('a').each(function(){
 });
 
 
+
 /*=== lcm_multiple_select ===*/
 
 $('.lcm_multiple_select').each(function(){
