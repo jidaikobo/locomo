@@ -162,11 +162,11 @@ $(function(){
 $(function(){
 /*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
-$('.hide_if_no_js').removeClass('hide_if_no_js');
+$('.hide_if_no_js').removeClass('hide_if_no_js').addClass('show_if_js');
 $('.hide_if_no_js').find(':disabled').prop("disabled", false);
 
 //.show_if_no_js noscript的な扱い?
-$('.show_if_no_js').remove();
+$('.show_if_no_js').hide();
 
 //for NetReader
 //NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
@@ -1102,52 +1102,70 @@ $('#alert_error .link').find('a').each(function(){
 /*=== lcm_multiple_select ===*/
 
 $('.lcm_multiple_select').each(function(){
-	var select, selected, selects, to, from;
+	var select, selected, selects, to, from, hidden_items;
 	select = $($(this).find('.select_from'));
 	selected = $($(this).find('.selected'));
 	selects = select.add(selected);
+	hidden_items = $(this).data('hiddenItemId') ?
+		$(this).data('hiddenItemId') :
+		$(this).closest('.show_if_js').prevAll('.show_if_no_js').last();//スケジューラはnoscript用のチェックボックス未対応。ベットhiddenの値をしようしている
 	
-	var hidden_items_id = $(this).data('hiddenItemId');
-	if(hidden_items_id){
-		make_hidden_form_items(hidden_items_id, selected);
+	if(typeof hidden_items !== 'object'){//スケジューラの場合data-hidden-item-idを取っているので・noscript対応の場合はcheckboxが最初からチェックされているのでここは不要
+		make_hidden_form_items(hidden_items, selected);
 	}
 	
 	$(this).find(':button').click(function(e){
 		e = e ? e : event;
 		from = $(this).hasClass('add_item') ? select : selected;
 		to = selects.not(from);
-		lcm_multiple_select(from, to, hidden_items_id, selected);
+		lcm_multiple_select(from, to, hidden_items, selected);
 	});
 	selects.dblclick(function(){
 		from = $(this);
 		to = selects.not(from);
-		lcm_multiple_select(from, to, hidden_items_id, selected);
+		lcm_multiple_select(from, to, hidden_items, selected);
 	});
 });
 
-function lcm_multiple_select(from, to, hidden_items_id, selected){
+function lcm_multiple_select(from, to, hidden_items, selected){
 	//引数selectedはhidden_itemがなくなれば不要
-	var from, to, val, item, hidden_items_id;
-	val = from.val();
-	if ( val == "" || !val) return;
-	for(var i=0, len = val.length; i < len; i++){
-		item = from.find('option[value='+val[i]+']');
+	var from, to, vals, v, item, hidden_items;
+	vals = from.val();
+	if ( vals == "" || !vals) return;
+	
+	//相手のセレクトボックスに移動
+	for(var i=0, len = vals.length; i < len; i++){
+		v = vals[i];
+		item = from.find('option[value='+v+']');
 		item.appendTo(to).attr('selected',false);
+		
+		if(typeof hidden_items == 'object'){//この判定は、スケジューラ用の措置がなくなれば不要
+			change_hidden_inputs(from, hidden_items, v);
+		}
 	}
-
-	if(hidden_items_id){
-		make_hidden_form_items(hidden_items_id, selected)
-	};
+	
+	//スケジューラ用。hidden_itemがnoscript用のチェックボックスでない場合に。
+	if(typeof hidden_items !== 'object'){
+		make_hidden_form_items(hidden_items, selected);
+	}	
 }
 
+//selectedの中身をチェックボックスに反映
+function change_hidden_inputs(from, hidden_items, v){
+	var prop, item;
+	prop = from.hasClass('selected') ? false : true;
+	item = $(hidden_items.find('input[value='+v+']'));
+	item.prop('checked', prop);
+	}
+
 //スケジューラ用hidden
-function make_hidden_form_items(hidden_items_id, selected){
-	var hidden_item = $('#'+hidden_items_id);
+function make_hidden_form_items(hidden_items, selected){
+	var hidden_item = $('#'+hidden_items);
 	if (!hidden_item[0]) {
 		hidden_item = $('<input>').attr({
 		    type : 'hidden',
-		    id   : hidden_items_id,
-		    name : hidden_items_id,
+		    id   : hidden_items,
+		    name : hidden_items,
 		    value: '',
 		}).appendTo('form');
 	}
