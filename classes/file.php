@@ -14,10 +14,11 @@ class File extends \Fuel\Core\File
 			'audio'   => array('mp3','m4a','asf','asx','au','aif','dig','iff','mid','midi','wav','wma','oga',),
 			'movie'   => array('mp4','avi','ogv','mpeg','mpg',),
 			'braille' => array('bes', 'bet', 'ble', 'bls', 'bmt', 'brl', 'bs', 'bse', 'ebk', 'mbd', 'mse', 'nab', 'hebk', ),
-			'doc' => array('doc', 'docx',),
-			'xls' => array('xls', 'xlsx',),
-			'ppt' => array('ppt', 'pptx',),
-			'pdf' => array('pdf',),
+			'doc'     => array('doc', 'docx',),
+			'xls'     => array('xls', 'xlsx',),
+			'ppt'     => array('ppt', 'pptx',),
+			'pdf'     => array('pdf',),
+			'compressed' => array('zip', 'lzh',),
 		);
 		$ext = substr($file, strrpos($file, '.') + 1);
 

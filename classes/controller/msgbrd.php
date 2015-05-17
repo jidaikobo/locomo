@@ -88,7 +88,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 		$content->get_view()->set('items', $items);
 		$content->get_view()->set_global('title', $title);
 		$content->get_view()->set_safe('search_form', $content::search_form($title));
-		$this->template->content = $content;
+		$this->template->set_safe('content', $content);
 	}
 
 	/**
@@ -212,6 +212,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 		\Model_Msgbrd::$_options['where'][] = array(
 			array('is_sticky', '=', 1)
 		);
+		$this->_content_template = 'msgbrd/index_admin_widget';
 		$this->action_index_admin();
 	}
 }

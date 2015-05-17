@@ -2,6 +2,9 @@
 namespace Locomo;
 class Presenter_Base extends \Presenter
 {
+	// $model_name
+	public static $model_name = '';
+
 	/**
 	 * plain()
 	 * @return obj instanceof \Form
@@ -41,7 +44,8 @@ class Presenter_Base extends \Presenter
 		$form = \Fieldset::forge($form_name, $config);
 
 		// add opener before unrefine
-		\Pagination::set_config('sort_info_model', get_called_class());
+		$model = static::$model_name ?: str_replace('Controller_', 'Model_', \Request::main()->controller);
+		\Pagination::set_config('sort_info_model', $model);
 		$sortinfo     = \Pagination::sort_info();
 		$total        = \Pagination::get("total_items");
 		$current_page = \Pagination::get("current_page");
