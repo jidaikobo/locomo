@@ -1038,13 +1038,11 @@ textarea {
 	margin-left: .33em;
 
 }
-select {
-	height: 1.95em;
-}
-select[size]{
+select[size] {
 	height: auto;
 }
-select[size=0] {
+select,
+select[size="0"] {
 	height: 1.95em;
 }
 div.submit_button {
