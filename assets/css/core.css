@@ -595,7 +595,6 @@ ul.horizontal_list {
 }
 .sys_admin_dashboard ul a:hover {
 	background-color: #d8ebfc;
-	transition: 0.3s;
 }
 .sys_admin_dashboard ul a {
 	display: block;
