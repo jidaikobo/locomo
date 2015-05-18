@@ -108,6 +108,7 @@ function show_help(e){
 	var prepare_help = false;//重複読み込みの防止
 	$(function(){
 		if(!prepare_help){
+			$('#help_window').appendTo('.admin_help');
 			var uri = $('#lcm_help').data('uri');
 			$.ajax({
 				url: uri,
