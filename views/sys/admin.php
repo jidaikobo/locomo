@@ -30,7 +30,7 @@ else:
 // 管理ホーム
 ?>
 	<?php if (\Request::is_hmvc()): ?>
-		<ul class="float_list">
+		<ul class="float_list clearfix">
 		<?php foreach($locomo['controllers'] as $k => $v): ?>
 		<?php if (\Arr::get($v, 'show_at_menu') == false) continue; ?>
 		<li><a href="<?php echo \Uri::create('sys/admin/').\Inflector::ctrl_to_safestr($k) ?>"><?php echo $v['nicename'] ?></a></li>

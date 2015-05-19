@@ -1098,6 +1098,15 @@ div.submit_button {
 	margin: 1em 0 .5em;
 }
 
+.input[type="checkbox"] {
+	width: 1em;
+	height: 1em;
+}
+
+.lcm_ieversion_0 .input[type="checkbox"]{
+	width: inherit;
+	height: inherit;
+}
 .label_required {
 	font-weight: normal;
 	font-size: .75em;

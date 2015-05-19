@@ -1,9 +1,20 @@
 <div class="narrow_user lcm_focus" title="絞り込み">
-<select class="schedule_narrow" id="narrow_user_group_id" title="ユーザーグループ" onchange="get_group_user()">
+<select class="schedule_narrow select_narrow_down" id="narrow_user_group_id" title="ユーザーグループ" data-target-id="narrow_user_id">
 	<option value="">-- ユーザーグループ --
-	<?php foreach($narrow_user_group_list as $key => $value) { ?>
-		<option value="<?php print $key; ?>" <?php if ($key == \Session::get($kind_name . "narrow_ugid")) { print "selected"; } ?>><?php  print $value; ?>
-	<?php } ?>
+	<?php foreach(\Model_Usrgrp::find_options('name',
+		array(
+			'where' => array(
+				array(
+					array('is_available', true),
+					array('is_for_acl', false),
+					array('customgroup_uid', 'is', null)
+				),
+				'or' => array(array('customgroup_uid', \Auth::get('id')))
+			),
+		)
+		) as $gid => $name): ?>
+		<option value="<?php print $gid; ?>" <?php if ($gid == \Session::get($kind_name . "narrow_ugid")) { print "selected"; } ?>><?php  print $name; ?></option>
+	<?php endforeach; ?>
 </select>
 
 <select class="schedule_narrow" id="narrow_user_id" name="narrow_user_list" title="ユーザー">
@@ -27,37 +38,8 @@ if (!(isset($day) && $day && $mode != "week")) {
 }
 ?>
 </div><!-- /.narrow_user -->
+
 <script>
-var base_uri = $('body').data('uri');
-/*
-$("#narrow_user_group_id").change(function(event) {
-	get_group_user(event);
-});
-
-$("#narrow_building_group_id").change(function(event) {
-	get_group_building(event);
-});
-*/
-function get_group_user() {
-
-	var group_id = $("#narrow_user_group_id").val();
-	$.ajax({
-		url: base_uri + 'scdl/get_user_list.json',
-		type: 'post',
-		data: 'gid=' + group_id,
-
-		success: function(res) {
-			exists = JSON.parse(res);
-			document.getElementById("narrow_user_id").options.length=0;
-			$("#narrow_user_id").append($('<option>').html('-- ユーザー --').val(""));
-			for(var i in exists) {
-				$("#narrow_user_id").append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
-			}
-		
-		}
-	});
-}
-
 $("#scdl_time_button").click(function(event) {
 
 	var scdl_display_time = '<?php print \Session::get('scdl_display_time'); ?>';

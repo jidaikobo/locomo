@@ -22,9 +22,20 @@ echo $form;
 <h2>ユーザ選択</h2>
 	<div class="field">
 			<div id="member_panel" class="lcm_focus" title="ユーザの選択">
-				<select id="group_list" class="narrow_down_list" title="グループ絞り込み">
+				<select id="group_list" class="multiple_select_narrow_down" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ</option>
-					<?php foreach(\Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true),array('is_for_acl', false)))) as $gid => $name): ?>
+					<?php foreach(\Model_Usrgrp::find_options('name',
+						array(
+							'where' => array(
+								array(
+									array('is_available', true),
+									array('is_for_acl', false),
+									array('customgroup_uid', 'is', null)
+								),
+								'or' => array(array('customgroup_uid', \Auth::get('id')))
+							),
+						)
+						) as $gid => $name): ?>
 					<option value="<?php print $gid; ?>"><?php  print $name; ?></option>
 					<?php endforeach; ?>
 				</select>

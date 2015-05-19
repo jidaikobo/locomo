@@ -1197,6 +1197,60 @@ function make_hidden_form_items(hidden_items, selected){
 	hidden_item.val(hidden_str);
 }
 
+/*=== グループ絞り込み ===*/
+var base_uri = $('body').data('uri');
+function lcm_select_narrow_down(group_id, uri, select, selected){
+	var now_items, selected_items, label_item, name, id;
+	label_item = $(select).find('option[value=""]');//valueが空のものをラベルとみなす？
+	now_items = new Object();
+	if(selected){
+		selected_items = selected.find('option');
+		for(var i = 0, len = selected_items.length; i < len; i++){
+			now_items[selected_items[i].value] = 1;
+		};
+	}
+	
+	$.ajax({
+		url: uri,
+		type: 'post',
+		data: 'gid=' + group_id,
+		success: function(res) {
+			var exists = JSON.parse(res);
+			select_items = '';
+			for(var i in exists) {
+				if (selected && now_items[exists[i]['id']]) continue;
+				name = (exists[i]['display_name']!=null) ? exists[i]['display_name'] : exists[i]['item_name'];
+				id = (exists[i]['item_id']!=null) ? exists[i]['item_id'] : exists[i]['item_id'];
+				select_items += '<option value="'+id+'">'+name+'</option>';
+			}
+			select.html(select_items).prepend(label_item);
+		}
+	});
+}
+
+//通常の選択ボックス
+$('.select_narrow_down').each(function(){
+	var select, uri;
+	select = $('#'+$(this).data('targetId'));
+	uri = base_uri;
+	uri += $(this).data('uri') ? $(this).data('uri') : 'usr/user_list.json';
+	this.onchange = function(){
+		lcm_select_narrow_down($(this).val(), uri, select);
+	};
+});
+
+//複数選択ボックスを持つ場合
+$('.multiple_select_narrow_down').each(function(){
+	var uri, selects, select, seleced; 
+	uri = base_uri;
+	uri += $(this).data['uri'] ? $(this).data['uri'] : 'usr/user_list.json';
+	selects  = $(this).nextAll('.lcm_multiple_select').first().find('select');
+	selected = selects.eq(0);
+	select   = selects.eq(1);
+	this.onchange = function(){
+		lcm_select_narrow_down($(this).val(), uri, select, selected);
+	};
+});
 
 
 /* Tiny MCE  */
