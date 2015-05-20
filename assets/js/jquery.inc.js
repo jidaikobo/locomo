@@ -1220,7 +1220,7 @@ function lcm_select_narrow_down(group_id, uri, select, selected){
 			for(var i in exists) {
 				if (selected && now_items[exists[i]['id']]) continue;
 				name = (exists[i]['display_name']!=null) ? exists[i]['display_name'] : exists[i]['item_name'];
-				id = (exists[i]['item_id']!=null) ? exists[i]['item_id'] : exists[i]['item_id'];
+				id = (exists[i]['item_id']!=null) ? exists[i]['item_id'] : exists[i]['id'];
 				select_items += '<option value="'+id+'">'+name+'</option>';
 			}
 			select.html(select_items).prepend(label_item);

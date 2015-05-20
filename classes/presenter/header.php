@@ -111,7 +111,7 @@ class Presenter_Header extends \Presenter
 		$obj = $controller::get_object();
 		\Profiler::mark('Locomo\\Presenter_Header::view() - actionset');
 		\Actionset::get_actionset($controller, $obj);
-		
+		\Profiler::mark('Locomo\\Presenter_Header::view() - actionset done');
 
 /*		
 		$status = array();

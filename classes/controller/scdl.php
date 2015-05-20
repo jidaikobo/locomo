@@ -1655,6 +1655,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * ajax グループIDからユーザリストを返す
 	 * @return users の配列
 	 */
+	 /* usrに統合
 	public function action_get_user_list()
 	{
 		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
@@ -1681,7 +1682,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		}
 		echo $this->response($result, 200); die();
 	}
-
+*/
 	/*
 	 * ajax IDから施設リストを返す
 	 * @return users の配列

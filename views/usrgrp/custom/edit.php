@@ -15,7 +15,8 @@ echo $form;
 	endforeach;
 	?>
 	</div>
-</div>	
+</div>
+
 <!--/checkboxes for noscript-->
 
 <div class="input_group hide_if_no_js">

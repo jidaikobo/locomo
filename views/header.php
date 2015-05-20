@@ -40,6 +40,17 @@
 	<!-- favicon -->
 	<link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>">
 
+	<script>
+		<!--
+		setTimeout(
+			function(){var show_if_no_js = document.getElementsByClassName('show_if_no_js');
+				for(var i = show_if_no_js.length-1 ; i >= 0; i--){
+				show_if_no_js[i].style.display = 'none';
+				}
+			}
+		,0);
+		-->
+	</script>
 </head>
 <body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
 <?php 

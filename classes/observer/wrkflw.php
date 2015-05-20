@@ -100,6 +100,7 @@ class Observer_Wrkflw extends \Orm\Observer
 	 */
 	public function after_load(\Orm\Model $obj)
 	{
+		\Profiler::mark('Locomo\\Observer_Wrkflw::after_load() - Called');
 		if (in_array(\Request::active()->action, ['view','edit']))
 		{
 			$controller = \Request::active()->controller;
@@ -116,8 +117,13 @@ class Observer_Wrkflw extends \Orm\Observer
 				$total_step = static::$total_step;
 				$current_step = static::$current_step;
 
-				// event
-				\Event::register('locomo_after', '\Locomo\Observer_Wrkflw::progress');
+				static $is_called = false;
+				if ( ! $is_called)
+				{
+					// event
+					\Event::register('locomo_after', '\Locomo\Observer_Wrkflw::progress');
+					$is_called = true;
+				}
 
 				// set message
 				if (static::$route_id)

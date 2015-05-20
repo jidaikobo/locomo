@@ -14,9 +14,9 @@
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
-	<tr>
+	<tr title="<?php echo $item->name; ?>" tabindex="-1">
 		<td class="ar"><?php echo $item->id; ?></td>
-		<td><a href="<?php echo \Uri::create('/usrgrp/view/'.$item->id) ?>"><?php echo $item->name; ?></a></td>
+		<td><div class="col_scrollable" style="min-width: 10em;"><a href="<?php echo \Uri::create('/usrgrp/view/'.$item->id) ?>"><?php echo $item->name; ?></a></div></td>
 		<?php if (\Auth::is_admin()): ?>
 		<td class="ac"><?php echo $item->is_for_acl ? '権限用' : '表示用' ; ?></td>
 		<?php endif; ?>
