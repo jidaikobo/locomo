@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Model_Wrkflwadmin extends \Model_Base
+class Model_Wrkflwadmin extends \Model_Base_Soft
 {
 	protected static $_table_name = 'lcm_wrkflws';
 

@@ -615,7 +615,9 @@ ul.horizontal_list {
 	position: relative;
 }
 
-
+.scdl_dashboard_today td.time{
+	min-width: 6.5em;
+}
 /* button */
 .btn,
 .button {

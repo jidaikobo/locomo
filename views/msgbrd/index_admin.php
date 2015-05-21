@@ -23,7 +23,15 @@
 <?php foreach ($items as $item): ?>
 		<tr title="<?php echo $item->name.'：'.\Model_Usr::get_display_name($item->creator_id); ?>" tabindex="-1" class="<?php if ($affected_id == $item->id) echo 'affected'; ?>">
 			<td class="ar"><?php echo $item->id; ?></td>
-			<th><div class="col_scrollable" style="min-width: 12em;"><?php echo $item->is_sticky ? '<span class="icon" style="font-size: .5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_pin.png" alt=""></span>' : '' ?><?php echo $item->name; ?></div></th>
+			<th><div class="col_scrollable" style="min-width: 12em;">
+				<?php echo $item->is_sticky ? '<span class="icon" style="font-size: .5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_pin.png" alt=""></span>' : '' ?>
+				<?php if (\Auth::has_access('\Controller_Msgbrd/view')):
+					echo Html::anchor('msgbrd/view/'.$item->id, $item->name.'<span class="skip"> 作成日時 '.date('Y年n月j日 G時i分', strtotime($item->created_at)).' 投稿者 '.\Model_Usr::get_display_name($item->creator_id).'</span>', array('class' => 'view'));
+				else:
+					echo $item->name;
+				endif;
+				?>
+				</div></th>
 		<!--	<td><div class="col_scrollable"><?php echo $item->contents; ?></div></td>-->
 			<td><div class="col_scrollable" style="min-width: 3em;"><?php echo $item->categories['name']; ?></div></td>
 			<td><?php echo date('Y年n月j日 G時i分', strtotime($item->created_at)) ?></td>
@@ -37,9 +45,6 @@
 				<td>
 				<div class="btn_group">
 					<?php
-					if (\Auth::has_access('\Controller_Msgbrd/view')):
-						echo Html::anchor('msgbrd/view/'.$item->id, '<span class="skip">'.$item->name.' 作成日時 '.date('Y年n月j日 G時i分', strtotime($item->created_at)).' 投稿者 '.\Model_Usr::get_display_name($item->creator_id).'を</span>閲覧', array('class' => 'view'));
-					endif;
 					if (\Auth::has_access('\Controller_Msgbrd/edit') && $item->creator_id == \Auth::get('id')):
 						echo Html::anchor('msgbrd/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
