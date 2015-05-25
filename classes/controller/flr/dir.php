@@ -13,6 +13,10 @@ class Controller_Flr_Dir extends Controller_Flr
 	 */
 	public function action_create($id = null)
 	{
+		// parent::edit()
+		$this->model_name = '\\Model_Flr';
+		$edit_obj = parent::edit(null, $is_redirect = false);
+
 		// check dir existence before db connection
 		// postがあったらまず物理ディレクトリを確認する
 		if (\Input::post())
@@ -27,38 +31,35 @@ class Controller_Flr_Dir extends Controller_Flr
 				\Session::set_flash('error', 'そのディレクトリは既に存在します。');
 				\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 			}
-		}
 
-		// parent::edit()
-		$this->model_name = '\\Model_Flr';
-		$edit_obj = parent::edit(null, $is_redirect = false);
-
-		// at database: not found, save: success, file existing
-		// データベースには存在しなかったが、物理ディレクトリが存在していて、データベースへの保存が成功したとき。
-		if ( $edit_obj && ! $tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
-		{
-			\Session::set_flash('success', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
-			\Response::redirect(\Uri::create('flr/dir/create/'.$id));
-		}
-
-		// create physical dir
-		// parent::edit()がobjectを返したらDBアップデートが成功したので、ディレクトリを作る
-		if (is_object($edit_obj))
-		{
-			// try to create dir
-			if ( ! \File::create_dir(LOCOMOFLRUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
+			// at database: not found, save: success, file existing
+			// データベースには存在しなかったが、物理ディレクトリが存在していて、データベースへの保存が成功したとき。
+			if ($edit_obj && ! $tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
 			{
-				// 失敗したのでデータベースから削除
-				$edit_obj->purge();
-				\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
+				\Session::set_flash('success', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 				\Response::redirect(\Uri::create('flr/dir/create/'.$id));
-			} else {
-				\Session::set_flash('success', "ディレクトリを新規作成しました。");
-				$pobj = \Model_flr::get_parent($edit_obj);
-				$id = is_object($pobj) ? $pobj->id : 1 ;//root
-				\Response::redirect(\Uri::create('flr/dir/index_files/'.$id));
+			}
+
+			// create physical dir
+			// parent::edit()がobjectを返したらDBアップデートが成功したので、ディレクトリを作る
+			if (is_object($edit_obj))
+			{
+				// try to create dir
+				if ( ! \File::create_dir(LOCOMOFLRUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
+				{
+					// 失敗したのでデータベースから削除
+					$edit_obj->purge();
+					\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
+					\Response::redirect(\Uri::create('flr/dir/create/'.$id));
+				} else {
+					\Session::set_flash('success', "ディレクトリを新規作成しました。");
+					$pobj = \Model_flr::get_parent($edit_obj);
+					$id = is_object($pobj) ? $pobj->id : 1 ;//root
+					\Response::redirect(\Uri::create('flr/dir/index_files/'.$id));
+				}
 			}
 		}
+
 
 		// assign
 		$parent = \Model_Flr::find($id);
