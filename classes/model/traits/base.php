@@ -21,14 +21,10 @@ trait Model_Traits_Base
 
 	/*
 	 * _init()
-	 * いま使っているユーザ向けに最適化した$_optionsの設定。
-	 * prepare static::$_options for current user
 	 * @return void
 	 */
 	public static function _init()
 	{
-		// prepare static::$_options
-		static::authorized_option();
 	}
 
 	/*
