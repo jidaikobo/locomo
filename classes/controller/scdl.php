@@ -92,7 +92,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$content = \View::forge($model::$_kind_name . "/edit");
 
 		if ($id) {
-			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
+			$model::authorized_option();
+			$obj = $model::find($id, $model::$_options);
 
 			if ( ! $obj)
 			{
@@ -104,7 +105,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$obj = $model::forge();
 			$title = self::$nicename . '新規作成';
 		}
-		$form = $model::form_definition('edit', $obj);
+		$content = \Presenter::forge(static::$dir.'edit');
+		$form = $content::form($obj);
 
 		$overlap_result = array();
 
@@ -212,8 +214,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		//view
 		$this->template->set_global('title', $title);
-		$content->set_global('item', $obj, false);
-		$content->set_global('form', $form, false);
+		$content->get_view()->set_global('item', $obj, false);
+		$content->get_view()->set_global('form', $form, false);
 		$this->template->set_safe('content', $content);
 		static::set_object($obj);
 
@@ -314,7 +316,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
-		$usergroups = \Model_Usrgrp::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false))), 'name');
+		$usergroups = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false))));
 		$this->template->content->set("group_list", $usergroups);
 		$this->template->content->set("kind_name", $model::$_kind_name);
 
@@ -764,7 +766,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// ユーザーグループ一覧作成
 		$narrow_user_group_list = array();
 		// カスタムグループを先に作成
-//		$narrow_user_group_list = \Model_Usrgrp_Custom::get_options(array('where' => array(array('is_available', true), array('is_for_acl', false))), 'name');
+//		$narrow_user_group_list = \Model_Usrgrp_Custom::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false))));
 //		// 一番上に見せるようにする
 		$narrow_user_group_list_custom = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', 'is not', null))));
 		$narrow_user_group_list_normal = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', null))));

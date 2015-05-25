@@ -419,7 +419,7 @@ function get_group_user(groupId, targetEle) {
 	};
 
 	$.ajax({
-		url: base_uri + 'scdl/get_user_list.json',
+		url: base_uri + 'usr/user_list.json',
 		type: 'post',
 		data: 'gid=' + group_id,
 		success: function(res) {

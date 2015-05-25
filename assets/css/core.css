@@ -358,7 +358,7 @@ body.loggedin {
 	font-size: .9em;
 	line-height: 2.3em;
 }
-.adminbar_top div > a {
+.adminbar_top .menu > a {
 	display: block;
 	line-height: 2em;
 	vertical-align: middle;

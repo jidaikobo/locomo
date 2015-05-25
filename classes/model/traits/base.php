@@ -27,11 +27,8 @@ trait Model_Traits_Base
 	 */
 	public static function _init()
 	{
-		// $controller - to know access rights - overridable
-		$controller = \Request::main()->controller;
-
 		// prepare static::$_options
-		static::authorized_option($controller);
+		static::authorized_option();
 	}
 
 	/*
@@ -352,8 +349,11 @@ trait Model_Traits_Base
 	/*
 	 * authorized_option()
 	 */
-	public static function authorized_option($controller)
+	public static function authorized_option($controller = NULL)
 	{
+		// $controller - to know access rights - overridable
+		$controller = $controller ?: \Request::main()->controller;
+
 		// \Model_Softを使っていて、view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
 		if (
 			is_subclass_of(get_class(), '\Orm\Model_Soft') &&
