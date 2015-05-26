@@ -29,6 +29,7 @@ class Presenter_Flr_File_View extends \Presenter_Base
 				border: 1px #eee solid;
 				background-image: url(\''.$url.'\');
 				background-repeat: no-repeat;
+				background-size: contain;
 				background-color: #fff;
 			"><span class="skip">'.$obj->name.'を拡大</span></a><a href="'.$url.'&dl=1">'.$obj->name.'をダウンロード ('.$size.')</a>';
 

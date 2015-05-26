@@ -32,23 +32,26 @@
 <tr>
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data['schedules_list'] as $v):
-	$class_str =  'week'.$v['week'];
+	if (isset($v['is_holiday']) && $v['is_holiday']) {
+		$class_str = "week_holiday";
+	} else {
+		$class_str =  'week'.$v['week'];
+	}
 	$class_str.= $currentday == $v['day'] ? ' today' : '';
-//			$class_str.= $currentday ==  ? ' holiday' : ''; //祝日のとき
 	//each_date_title_strはフォーカス移動時読み上げ文字列
 	//date_str, each_date_title_skip は枠内タイトル読み上げ文字列
 if (isset($v['day'])):
 	$each_date_title_str = $currentday == $v['day'] ? '今日 ' : '';
-	$each_date_title_str.=  $v['day'].'日 '.$week_name[$v['week']].'曜日 ';
-//			$each_date_title_str.=  ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
+	$each_date_title_str.= $v['day'].'日 '.$week_name[$v['week']].'曜日 ';
+	$each_date_title_str.= (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
 
 	$each_date_title_str .= (count($v['data']) > 0) ?  count($v['data']) . '件の登録' : ' 登録なし';
 	$date_str = $v['day'] < 10 ? '&nbsp;'.$v['day'] : $v['day'];
 	$each_date_title_skip = $week_name[$v['week']] . '曜日';
-//			$each_date_title_skip.=  ? '祝日</span><span class="holiday_name">'..'</span><span class="skip">' : '';
+	$each_date_title_skip.= (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) ? '祝日</span><span class="holiday_name">'.'祝日'.'</span><span class="skip">' : '';
 	$each_date_title_skip.=  (count($v['data']) > 0) ? ' '. count($v['data']) . '件の登録' : ' 登録なし';
 endif; ?>
-	<td class="week<?php echo $v['week']; echo $currentday == $v['day'] ? ' today' : '' ;?>">
+	<td class="<?php print $class_str; ?>">
 		<?php if (isset($v['day'])): ?>
 			<div class="each_date lcm_focus" title="<?php echo $each_date_title_str ?>">
 				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $v['year'], $v['mon'], $v['day'])); ?>" class="title">
@@ -76,8 +79,7 @@ endif; ?>
 					// 時間
 					$event_time_display_data = $model_name::make_target_day_info($v2);
 					$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
-					$event_time = '<span class="scdl_time" style="display:' . $event_time_display . '">[' . $event_time_display_data['start_time'] . "〜" . $event_time_display_data['end_time'] . ']</span>';
-					
+					$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
 					//重要度
 					$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
 					$eventtitle_icon.= '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
@@ -100,24 +102,10 @@ endif; ?>
 </tr>
 </tbody>
 </table>
+<?php include("inc_legend.php"); //カレンダ凡例 ?>
 <?php if(!\Request::is_hmvc()): ?>
 </div><!-- /.field_wrapper.calendar -->
 <?php endif; ?>
-	<div class="legend calendar" aria-hidden=true>
-<?php
-	foreach($repeat_kbs as $k => $v):
-		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	endforeach;
-	foreach($detail_kbs as $k => $v):
-		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	endforeach;
-	//重要度
-	foreach($importance_kbs as $k => $v):
-		echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
-	endforeach;
-	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
-?>
-	 </div><!-- /.legend.calendar -->
 <?php
 if($detail_pop_array):
 	echo '<div style="display: none;"><section class="detail_pop_wrapper">';

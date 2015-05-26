@@ -52,18 +52,19 @@
 <?php foreach($schedule_data as $v): ?>
 	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
 	<?php $class_str = 'week'.$v['week'];
+		// 祝日対応
+		if (isset($v['is_holiday']) && $v['is_holiday']) { $class_str = "week_holiday"; }
 		if(isset($v['day'])):
 			$class_str.= $currentday == $v['day'] ? ' today' : '';
-//			$class_str.= $currentday == $v['day'] ? ' holiday' : ''; //祝日のとき
 			//each_date_title_strはフォーカス移動時読み上げ文字列
 			//date_str, each_date_title_skip は枠内フォーカス時タイトル読み上げ文字列
 			$each_date_title_str = $currentday == $v['day'] ? '今日 ' : '';
 			$each_date_title_str .= $v['day'].'日'.$week_name[$v['week']].'曜日 ';
-//			$each_date_title_str.=  ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
+			$each_date_title_str.=  (isset($v['is_holiday']) && $v['is_holiday']) ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
 			$each_date_title_str .= (count($v['data']) > 0) ? count($v['data']) . '件の登録' : '登録なし';
 			$date_str = $v['day'] < 10 ? '&nbsp;'.$v['day'] : $v['day'];
 			$each_date_title_skip = $week_name[$v['week']] . '曜日';
-//			$each_date_title_skip.=  ? '祝日</span><span class="holiday_name">'..'</span><span class="skip">' : '';//祝日の名前。
+			$each_date_title_skip.= (isset($v['is_holiday']) && $v['is_holiday']) ? '祝日</span><span class="holiday_name">'.'祝日'.'</span><span class="skip">' : '';//祝日の名前。
 			$each_date_title_skip.= (count($v['data']) > 0) ? count($v['data']) . '件の登録' : '登録なし';
 		else:
 			$class_str.= '';
@@ -90,7 +91,7 @@
 				// 時間
 				$event_time_display_data = $model_name::make_target_day_info($v2);
 				$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
-				$event_time = '<span class="scdl_time" style="display:' . $event_time_display . '">[' . $event_time_display_data['start_time'] . "〜" . $event_time_display_data['end_time'] . ']</span>';
+				$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
 				//詳細区分
 				foreach($detail_kbs as $key => $value):
 					if($v2[$key]):
@@ -120,22 +121,7 @@
 	<?php if ($v['week'] == 0) { print '</tr>'; } ?>
 <?php endforeach; ?>
 </table>
-	<div class="legend calendar" aria-hidden=true>
-<?php
-	foreach($repeat_kbs as $k => $v):
-		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	endforeach;
-	foreach($detail_kbs as $k => $v):
-		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	endforeach;
-	if(!\Request::is_hmvc()): //重要度
-		foreach($importance_kbs as $k => $v):
-			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
-		endforeach;
-	endif;
-	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>' : '';
-?>
-	 </div><!-- /.legend.calendar -->
+<?php include("inc_legend.php"); //カレンダ凡例 ?>
 </div><!-- /.field_wrapper -->
 <?php
 if($detail_pop_array):
