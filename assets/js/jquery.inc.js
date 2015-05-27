@@ -403,6 +403,13 @@ $(document).on('keydown',function(e){
 $(document).click(function(e){
 	e = e ? e : event;
 	var t = e.target;
+
+//modalの枠外伝播防止	
+	if($(t).is($('#modal_wrapper'))){
+		e.stopPropagation();
+		return false;
+	}
+	
 //リストの開け閉め
 	close_semimodal(t);
 	replace_info();//開く・閉じる説明文切り替え
@@ -417,7 +424,6 @@ $(document).click(function(e){
 $.fn.set_tabindex = function(){
 	//tabindexを一旦dataに格納し、現在の要素のみtabindex制御をリセットする。
 	//毎回全体そうさすべきなのかなあ？？
-	
 	$(document).find(':focusable').each(function(){
 			var tabindex;
 	
@@ -622,7 +628,6 @@ function lcm_focus(){
 		e = e ? e : event;
 		lcm_focus_esc(e);
 	});
-	
 
 /*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
@@ -815,20 +820,7 @@ function replace_info(){
 //NetReaderでうまく取得できないので、なにか考える
 //.lcm_focusのようにまず枠にフォーカスを当てる場合のShift+Tabの動作のことも
 //フォーカス枠のある時の表示位置の調整もかんがえる(ページ内リンクのスクロールと同じ)
-/*
-$(document).on('keyup',function(e){
-	console.log(e.which);
-	if(e.which == 27) $('<p>').text('up_esc').prependTo('.container');
-});
-$(document).on('keydown',function(e){
-	console.log(e.which);
-	if(e.which == 27) $('<p>').text('down_esc').prependTo('.container');
-});
-$(document).on('keypress',function(e){
-	console.log(e.which);
-	if(e.which == 27) $('<p>').text('press_esc').prependTo('.container');
-});
-*/
+
 
 
 $(document).on('keydown',function(e){
@@ -839,9 +831,9 @@ $(document).on('keydown',function(e){
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	index = null;
 	
-	modal = $(document).find('.lcm_modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？
-	if(modal){
-		tabbable = $(document).find(':tabbable');
+	modal = $(document).find('.lcm_modal.on, .toggle_item.on, .semimodal.on, .currentfocus');//これらが混在することがある？
+	if($(modal)[0]){
+		tabbable = $(modal).find(':tabbable').add($(modal).filter(':tabbable'));
 		first    = tabbable.first()[0];
 		last     = tabbable.last()[0];
 		switch(k){
@@ -880,162 +872,6 @@ $(document).on('keydown',function(e){
 });
 
 
-
-
-//表内スクロール - 各ブラウザでの挙動が怪しいのでもうちょっと
-/*
-if( !isNetReader && $('.tbl_scrollable')[0] ){ //複数ある時のことを考える。
-//ここで、対象内のrowspan・colspanの有無を判定して、なければdisplay:block等を設定する方法に分岐してみる？ それ用のクラスを与える。
-//ということは、そもそも簡単な表ではそのクラスを与えてもらうようにするとよい？
-//……rosplan・colspanがあってscrollableでなければいけない表は少なそう。
-//…………ということは、デフォルトのcssのはtbl_scrollableに対して設定してしまって、jslcmで分岐した際にclass名を変更するのがよいのかも。
-//noscript環境のことを考えておく
-
-//スクロールバーの幅ぶん調整したい
-//現状だと右端は最終列にかぶり、下端はスクロールバー分はみ出る（margin-bottm: -{スクロールバー};）
-//おなじく、ボーダーの幅
-//wrapperに枠を表示できる？
-	var tbl_scrollable = function(){
-		var thead, tfoot, h, tbl_wrapper, thead_wrapper, tbody_wrapper, tfoot_wrapper, fixed_thead, fixed_tfoot;
-		thead = $(this).find('thead').clone();
-		tfoot = $(this).find('tfoot').clone();
-		if(thead[0] || tfoot[0]){
-			tbl_wrapper = $('<div>').addClass('jslcm_tbl_wrapper');
-			tbody_wrapper = $('<div>').addClass('jslcm_tbody_wrapper');
-			if(thead[0]){
-				thead_wrapper = $('<div>').addClass('jslcm_thead_wrapper');
-				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(thead);
-				$(fixed_thead).find('a, button').attr('tabindex', '-1');
-			}
-			if(tfoot[0]){
-				tfoot_wrapper = $('<div>').addClass('jslcm_tfoot_wrapper');
-				fixed_tfoot = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_tfoot').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(tfoot);
-				$(fixed_tfoot).find(':tabbable').attr('tabindex', '-1');
-			}
-			$(this).addClass('jslcm_tbl_scrollable')
-				.wrap(tbl_wrapper)
-				.after(fixed_tfoot)
-				.after(fixed_thead)
-				.wrap(tbody_wrapper);
-			adjust_columns(this);
-		}
-	}
-	
-	var  adjust_columns = function(tbl, ws){
-		//exresizeで変更を取得しているときには、そちらのサイズを使う……のでなければならなかったのかは、要確認。
-		//フォントサイズの変更はどうにか取れなかったかなあ……も要確認
-		//読み込み時に動いていないのも要確認
-		var thead, tfoot, fixed_thead, fixed_tfoot, thead_cols, tfoot_cols, fixed_thead_cols, fixed_tfoot_cols, thead_len, tfoot_len, w;
-		thead = $(tbl).find('thead');
-		tfoot = $(tbl).find('tfoot');
-		//重複を整理したい、というより一回でできる？
-		if(thead[0]){
-			thead_cols = $(tbl).children('thead').find('th, td');
-			thead_len = thead_cols[0];
-			fixed_thead = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_thead');
-			fixed_thead_cols = $(fixed_thead).find('th, td');
-			set_colswidth(thead_cols, thead_len, fixed_thead_cols, ws);
-		}
-		if(tfoot[0]){
-			tfoot_cols = $(tbl).children('tfoot').find('th, td');
-			tfoot_len = tfoot_cols[0];
-			fixed_tfoot = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_tfoot');
-			fixed_tfoot_cols = $(fixed_tfoot).find('th, td');
-			set_colswidth(tfoot_cols, tfoot_len, fixed_tfoot_cols, ws);
-		}
-	}
-	var  set_colswidth = function(cols, len, fixed_cols, ws){
-		for(i=0; i<len-1; i++){
-			if(ws){
-				w = ws[i];
-			}else{
-				w = $(cols[i]).width();
-			}
-			$(fixed_cols[i]).width(w+1);//borderの太さを足す。とりあえず1pxで
-		}
-	}
-	*/
-/*
-	if($('.tbl_scrollable').find('th[rowspan], th[colspan], td[rowspan], td[colspan]')){
-		//colspan_rowspanの分岐。なんにしても中身の幅を指定する必要がありそうなので、元の値を見るadjust的な振る舞いは必要。その後addClassする。
-		//要素が少なくなる分ちょっと軽かったり、フォーカス周りの処置が楽になる、といいなあ
-		//でも、ヘッダ・フッタとボディのレイアウトが分かれてしまうので、セルの幅を取るのがむずかしくなる可能性あり。とくにリサイズ時注意
-		adjust_columns($('.tbl_scrollable'));
-		$('.tbl_scrollable').addClass('nocelspan');
-	}else{
-*/
-//	$(document).find('.tbl_scrollable').each(tbl_scrollable);
-/*	
-	$.fn.el_overflow_y = function(){
-		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
-		//ウィジェットや指定の枠がある場合は親にする。自分より小さな祖先ブロック要素を見つけてあわせる、ほうがいいのかなあ
-		parent = $(this).closest('.widget, .parent_tbl_scrollable')[0] ? $(this).closest('.widget, .parent_tbl_scrollable')[0] : $('.container');
-		tbl = $(this).find('.jslcm_tbl_scrollable');
-		h = parseInt($(tbl)[0].scrollHeight, 10)+2;
-		t = parseInt($(tbl).offset().top, 10);
-		parent_h = parseInt($(parent).height(), 10);
-		parent_t = parseInt($(parent).offset().top, 10);
-		overflow = t - parent_t + h - parent_h;
-		min_h = $(tbl).find('thead').height()+$(tbl).find('tfoot').height()+($(tbl).find('tbody tr').height()*2);
-		if(overflow > 0){
-			h = (h - overflow) > min_h ? h - overflow : min_h;
-			$(tbl).height($(tbl).height()-scrollbar_s);//スクロールバー分引く
-		}else{
-		
-		}
-		$(this).height(h);
-		return overflow ;
-	}
-	
-	var resize_col = $('.jslcm_tbl_scrollable thead th, .jslcm_tbl_scrollable thead td, .jslcm_tbl_scrollable tfoot th .jslcm_tbl_scrollable tfoot td' ).exResize({
-		api : true,
-		callback :function(){
-			var fixed_thead, tbl, ws, i;
-			tbl = $(this).closest('table');
-			var index = $(document).find('.jslcm_tbl_scrollable').index(tbl);
-			fixed_thead = $(document).find('.jslcm_fixed_thead').eq(index);
-			ws = new Array();
-			i = 0;
-			resize_col.each(function(){
-				ws[i] = this.getSize().width;
-				i++;
-			});
-			adjust_columns(tbl, ws);
-		}
-	});
-	
-	if($('.jslcm_tbody_wrapper')[0]){
-		$('.jslcm_tbody_wrapper').el_overflow_y();	
-		//ウィンドウリサイズ時やフォントサイズ変更時に追随したい（exResizeの挙動を再確認）
-		//ブラウザによって、リサイズを捕捉できなかったりする？ ひとまず、Safariの拡大縮小要確認
-		$(window).resize(function(){
-			$('.jslcm_tbody_wrapper').el_overflow_y();
-		});
-		$('.jslcm_tbl_scrollable').exResize(function(){
-			is_resize = true;
-			$('.jslcm_tbody_wrapper').el_overflow_y(
-				$(this).closest('.widget , .parent_tbl_scrollable')[0] ? $(this).closest('.widget , .parent_tbl_scrollable') : null
-			);
-		});
-		$('.jslcm_tbl_wrapper').exResize(function(){
-		//この辺もふだんの幅あわせでやることなのかも
-			var tbl , tbody_wrapper, fixed_tbl, cols, fixed_cols, tbl_w, w;
-			tbl = $(this).find('.jslcm_tbl_scrollable');
-			tbody_wrapper = $(this).find('.jslcm_tbody_wrapper');
-			fixed_tbl = $(this).find('.jslcm_fixed_thead, .jslcm_fixed_tfoot');
-			if(tbl.width() - $('.jslcm_tbody_wrapper').width() > 0 ){
-				cols = $(tbl).find('thead th, thead td, tfoot th, tfoot td');
-				fixed_cols = $(fixed_tbl).find('th, td');
-				tbl_w = $(tbl).width();
-				$(fixed_tbl).css('min-width', tbl_w+scrollbar_s+'px');
-				$(tbody_wrapper).css('min-width', tbl_w+scrollbar_s+'px');
-				set_colswidth(cols, cols[0], fixed_cols);
-			}
-		});
-	}
-//	}//colspan, rowspan分岐終わり
-}
-*/
 
 //確認メッセージ
 $('.confirm').click(function(){

@@ -743,6 +743,13 @@ fieldset[disabled] a.button {
 	background-color: #fff3f3;
 	outline-color: rgba(238,153,153,.6);
 }
+
+.no_appearance {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
 input[disabled],
 select[disabled],
 textarea[disabled] {
@@ -2121,15 +2128,17 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 	overflow: hidden;
 }
 .lcm_floatwindow_title {
-	cursor: move;
 	margin-top: -2em !important;
 	z-index: 2;
 	position: relative;
 }
+.draggable .lcm_floatwindow_title {
+	cursor: move;
+}
 #help_window {
 	font-size: 1.125em;
  }
-#help_txt {
+.modal_content {
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
 	box-sizing : border-box ;
@@ -2141,19 +2150,19 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 	color: #333 !important;
 	text-shadow: none;
 }
-#help_txt h2 {
+.modal_content h2 {
 	margin: 1.5em 0 .25em;
 	border-bottom: 1px solid #aaa;
 	text-shadow: 1px 1px 0 #fff;
 	box-shadow: 0 1px 0 #fff;
 }
-#help_txt h2:first-of-type {
+.modal_content h2:first-of-type {
 	margin-top: .5em;
 }
-#help_txt h3 {
+.modal_content h3 {
 	margin-top: .5em;
 }
-#help_txt p {
+.modal_content p {
 	margin-bottom: .5em;
 }
 .lcm_close_window {
@@ -2320,7 +2329,7 @@ span.add_bracket:after {
 	width: 100%;
 	height: 100%;
 	z-index: 9999;
-	background-color: rgba(60, 60, 60, .75);
+	background-color: rgba(60, 60, 60, .5);/* あとでpngに差し替え */
 }
 /*=== jQuery UI ===*/
 .ui-widget {
