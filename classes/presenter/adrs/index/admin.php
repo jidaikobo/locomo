@@ -6,7 +6,7 @@ class Presenter_Adrs_Index_Admin extends \Presenter_Base
 	 */
 	public static function search_form($title)
 	{
-		// parent
+		// Fieldset::forge
 		$config = \Config::load('form_search', 'form_search', true, true);
 		$form = \Fieldset::forge('msgbrd', $config);
 

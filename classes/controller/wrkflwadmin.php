@@ -2,9 +2,6 @@
 namespace Locomo;
 class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 {
-	// traits
-	use \Controller_Traits_Crud;
-
 	// locomo
 	public static $locomo = array(
 		'nicename'     => 'ワークフロー', // for human's name
@@ -19,7 +16,7 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 	);
 
 	/**
-	 * action_setup()
+	 * before()
 	 */
 	public function before()
 	{
@@ -33,8 +30,70 @@ class Controller_Wrkflwadmin extends \Locomo\Controller_Base
 	public function action_index_admin()
 	{
 		parent::index_admin();
-		$search_form = \Model_Wrkflwadmin::search_form();
-		$this->template->content->set_safe('search_form', $search_form);
+	}
+
+	/**
+	 * action_index_deleted()
+	 */
+	public function action_index_deleted()
+	{
+		parent::index_deleted();
+	}
+
+	/**
+	 * action_view()
+	 */
+	public function action_view($id = null)
+	{
+		parent::view($id);
+	}
+
+	/**
+	 * action_create()
+	 */
+	public function action_create()
+	{
+		parent::create();
+	}
+
+	/**
+	 * action_edit()
+	 */
+	public function action_edit($id = null)
+	{
+		parent::edit($id);
+	}
+
+	/**
+	 * action_delete()
+	 */
+	public function action_delete($id = null)
+	{
+		parent::delete($id);
+	}
+
+	/**
+	 * action_undelete()
+	 */
+	public function action_undelete($id = null)
+	{
+		parent::undelete($id);
+	}
+
+	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm($id = null)
+	{
+		parent::purge_confirm($id);
+	}
+
+	/**
+	 * action_purge()
+	 */
+	public function action_purge($id = null)
+	{
+		parent::purge($id);
 	}
 
 	/**

@@ -11,6 +11,7 @@ class Model_Wrkflwadmin extends \Model_Base_Soft
 			'form' => array('type' => 'text', 'class' => 'text'),
 			'validation' => array(
 				'required',
+				'unique' => array("lcm_wrkflws.name"),
 			),
 		),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),
@@ -22,39 +23,19 @@ class Model_Wrkflwadmin extends \Model_Base_Soft
 	);
 
 	/**
-	 * form_definition()
+	 * set_search_options()
 	*/
-	public static function form_definition($factory = 'user', $obj = null)
+	public static function set_search_options()
 	{
-		$id = isset($obj->id) ? $obj->id : '';
-
-		//forge
-		$form = parent::form_definition($factory, $obj);
-
-		//name
-		$form->field('name')->add_rule('unique', "lcm_wrkflws.name.{$id}");
-
-		return $form;
+		// free word search
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
+		{
+			static::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+			);
+		}
 	}
-
-	/**
-	 * search_form()
-	*/
-	public static function search_form()
-	{
-		$config = \Config::load('form_search', 'form_search', true, true);
-		$form = \Fieldset::forge('wkflwadm', $config);
-
-		$form
-			->add('all', '検索', array('type' => 'text','value' => \Input::get('all')));
-
-		// wrapper
-		$parent = parent::search_form_base('ワークフロー一覧');
-		$parent->add_after($form, 'wkflwadm', array(), array(), 'opener');
-
-		return $parent;
-	}
-
 
 	/**
 	 * find_workflow_setting()
