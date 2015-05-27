@@ -20,7 +20,7 @@ $(function(){
 			body.addClass('testserver');
 			str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
 		}else if(host!='kyoto-lighthouse.org'){
-			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
+			str = '---(dev) ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
 		}
 		if(str){
 			info = $('<p class="develop_info through_click">').prepend(str);
@@ -154,7 +154,7 @@ $(function(){
 			wrapper = document.createElement('div');
 			closelink = document.createElement('a');
 			wrapper.id = 'modal_wrapper';
-			wrapper.dataset.modalid = id;
+			wrapper.dataset.lcm_modalid = id;
 			closelink.id = 'close_modal';
 			closelink.href = 'javascript: void(0);';
 			closelink.innerHTML = '閉じる';
@@ -608,10 +608,10 @@ function lcm_focus(){
 		t = $(e.target);
 		k = e.which;
 		
-//		console.log($('.modal.on, .semimodal.on'));
+//		console.log($('.lcm_modal.on, .semimodal.on'));
 		if($('.currentfocus')[0]){
 			if((t.is('#esc_focus_wrapper') && k == 13) || 
-				(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
+				(!t.is(':input') && !$('.lcm_modal.on, .semimodal.on')[0] && k == 27 )){
 				lcm_focus_esc(e);
 				e.stopPropagation();
 			}
@@ -656,7 +656,7 @@ $.fn.set_center = function(){
 	return this;
 }
 $(window).resize(function(){
-	var el = $('.set_center, .modal.on');
+	var el = $('.set_center, .lcm_modal.on');
 	if(el){
 		el.set_center();
 	}
@@ -755,7 +755,7 @@ function close_semimodal(el){
 	return false;
 }
 $(document).on('click', '#close_modal' ,function(){
-	close_modal($('.modal_parent'), $('.modal_on'));
+	close_modal($('.modal_parent'), $('.lcm_modal_on'));
 });
 $(document).on('click', '.semimodal.on, modal.on', function(e){
 	e = e ? e : event;
@@ -839,7 +839,7 @@ $(document).on('keydown',function(e){
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	index = null;
 	
-	modal = $(document).find('.modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？
+	modal = $(document).find('.lcm_modal.on, .semimodal.on, .currentfocus')[0];//これらが混在することがある？
 	if(modal){
 		tabbable = $(document).find(':tabbable');
 		first    = tabbable.first()[0];
@@ -1471,8 +1471,8 @@ $('.lcm_tooltip_parent').tooltip({
 		            },
 });
 
-//resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい
-$('.lcm_floatwindow').resizable({
+//resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい?
+$('.resizable').resizable({
 	'handles' : 'all',
 	'containment' : 'document',
 	start:function(e, ui) {
@@ -1484,8 +1484,9 @@ $('.lcm_floatwindow').resizable({
 		e = e ? e : event;
 		var el = $(e.target);
 	}
-}).draggable({
-	'handle'      : '.lcm_floatwindow_title',
+});
+$('.draggable').draggable({
+	'handle'      : '.lcm_floatwindow_title',//このハンドルをどう決めるか、ちょっとかんがえる。
 	'containment' : 'document',
 	'scroll' : true,
 	stop:function(e, ui) {
