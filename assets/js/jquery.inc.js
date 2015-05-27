@@ -721,9 +721,11 @@ $('#modal_wrapper').on('click', function(){
 });
 
 //親を閉じる
-$('.lcm_close_window').on('click', function(){
+$('.lcm_close_window').on('click', function(e){
+	e = e ? e : event;
 	var w = $(this).parent();
 	$(this).lcm_close_window(w);
+	e.preventDefault();//抑止しておかないとIEでページ遷移前の警告が出る
 });
 
 $.fn.lcm_close_window = function(w){
@@ -830,10 +832,11 @@ $(document).on('keydown',function(e){
 	k = e.which;
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	index = null;
-	
-	modal = $(document).find('.lcm_modal.on, .toggle_item.on, .semimodal.on, .currentfocus');//これらが混在することがある？
+
+	trigger = $(document).find('.toggle_item.on');
+	modal = $(document).find('.lcm_modal.on, .semimodal.on, .currentfocus');//これらが混在することがある？
 	if($(modal)[0]){
-		tabbable = $(modal).find(':tabbable').add($(modal).filter(':tabbable'));
+		tabbable = $(trigger).add($(modal).find(':tabbable'));
 		first    = tabbable.first()[0];
 		last     = tabbable.last()[0];
 		switch(k){

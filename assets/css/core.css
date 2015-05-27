@@ -2329,7 +2329,7 @@ span.add_bracket:after {
 	width: 100%;
 	height: 100%;
 	z-index: 9999;
-	background-color: rgba(60, 60, 60, .5);/* あとでpngに差し替え */
+	background-image: url( '../img/system/bg_overlay_g.png' );
 }
 /*=== jQuery UI ===*/
 .ui-widget {
