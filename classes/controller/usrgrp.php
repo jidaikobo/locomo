@@ -95,19 +95,15 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 	public function action_bulk($page_num = 1)
 	{
 		// bulk
-		\Model_Usrgrp::disable_filter();
 		$option = array('where' => array(array('is_available', 'is not', null)));
 		\Model_Usrgrp::$_options = array();
-		$form = $this->bulk($option, '\Model_Usrgrp');
+		parent::bulk($page_num);
 
 		// add_actionset - back to index at edit
 		$action['urls'][] = \Html::anchor(static::$main_url, '一覧へ');
 		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
 		// assign
-		$view = \View::forge('bulk/bulk');
-		$view->set_global('title', 'ユーザグループ設定');
-		$view->set_global('form', $form, false);
-		$this->template->content = $view;
+		$this->template->set_global('title', 'ユーザグループ設定');
 	}
 }

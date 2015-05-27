@@ -7,7 +7,7 @@ class Bulk {
 
 	protected $models = array();
 
-	protected static $_define_function = null;
+	public static $_presenter = null;
 
 	protected static $_enable_deleted = false;
 
@@ -33,18 +33,11 @@ class Bulk {
 			} else {
 				$key = 'bulk_' . $model[$model::primary_key()[0]];
 			}
+
 			$this->models[$key] = $model;
-			if (method_exists($model, static::$_define_function)) {
-				$this->forms[$key] = $model->{static::$_define_function}($key, $model);
-			} elseif (method_exists($model, 'bulk_definition')) {
-				$this->forms[$key] = $model::bulk_definition($key, $model);
-				// if ($this->forms[$key]->field('submit')) $this->forms[$key]->delete('submit');
-			} elseif (method_exists($model, 'form_definition')) {
-				$this->forms[$key] = $model::form_definition($key, $model);
-			} else {
-				$this->forms[$key] = \Fieldset::forge($key)->add_model($model)->populate($model);
-			}
-			
+			$presenter = \Presenter::forge(static::$_presenter);
+			$this->forms[$key] = $presenter::bulk($key, $model);
+
 			if ($model->is_new()) {
 
 				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
@@ -55,6 +48,7 @@ class Bulk {
 				}
 
 			} else {
+				/*
 				if (is_null($model->{$model::soft_delete_property('deleted_field')})) { // 削除済みでない
 					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
 					if (method_exists($model, 'get_filter_status'))
@@ -75,6 +69,7 @@ class Bulk {
 					}
 
 				}
+				 */
 			}
 			$this->forms[$key]->set_input_name_array($key);
 		}
