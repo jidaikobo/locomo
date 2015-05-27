@@ -1,9 +1,12 @@
 <?php echo $search_form; ?>
 
 <?php if ($items): ?>
+<!--ページネーション-->
 <div class="index_toolbar clearfix">
 <?php echo \Pagination::create_links(); ?>
 </div>
+
+<!--一覧-->
 <table class="tbl datatable tbl_scrollable lcm_focus" title="ユーザ一覧">
 	<thead>
 		<tr>

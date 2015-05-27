@@ -2,6 +2,11 @@
 namespace Locomo;
 class Presenter_Header extends \Presenter
 {
+	/**
+	 * view()
+	 * assign basic values:
+
+	 */
 	public function view()
 	{
 		// module and controller

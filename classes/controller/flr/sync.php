@@ -4,6 +4,7 @@ class Controller_Flr_Sync extends Controller_Flr
 {
 	// locomo
 	public static $locomo = array(
+		'main_controller'  => '\Controller_Flr',
 		'no_acl' => true,
 	);
 
