@@ -679,8 +679,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			\Session::set("scdl_display_time", \Input::get("scdl_display_time"));
 		}
 
-		// 初期表示
-		if ($year == null || $year == "") {
+		// 初期表示 スケジューラのときだけメインユーザグループIDを見る
+		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
+		{
 			// 指定がない場合
 			// 自分の代表グループIDを取得
 			$mydata = \Model_Usr::find(\Auth::get('id'));
