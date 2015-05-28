@@ -393,7 +393,6 @@ $(document).click(function(e){
 
 
 
-/* ================================▼▼▼=============================== */
 
 //tabindex制御
 $.fn.set_tabindex = function(){
