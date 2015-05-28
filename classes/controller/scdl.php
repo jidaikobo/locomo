@@ -694,7 +694,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		}
 
 		// 初期表示
-		if ($year == null || $year == "") {
+		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
+		{
 			// 指定がない場合
 			// 自分の代表グループIDを取得
 			$mydata = \Model_Usr::find(\Auth::get('id'));
