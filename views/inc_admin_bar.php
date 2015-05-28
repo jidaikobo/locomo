@@ -18,8 +18,10 @@ if (\Auth::check()):
 				}
 				else
 				{
-					$current_name = \Inflector::ctrl_to_safestr(\Arr::get($locomo, 'controller.name'));
-					$current_nicename = \Arr::get($locomo, 'controller.nicename') ;
+					$controller_name = \Arr::get($locomo, 'controller.name');
+					$controller_name = \Util::get_locomo($controller_name, 'main_controller') ?: $controller_name ;
+					$current_name = \Inflector::ctrl_to_safestr($controller_name);
+					$current_nicename = \Util::get_locomo($controller_name, 'nicename') ;
 				}
 
 				$ctrl_index = '';
@@ -41,7 +43,7 @@ if (\Auth::check()):
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
 				$html.= '</div><!-- /.admin_controller -->';
 
-				// realmがbase,option,ctrl以外のアクションセットを取得
+				// realmがbase, option, ctrl以外のアクションセットを取得
 				$indexes = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('base','option','ctrl'), $exclusive = true);
 				foreach ($indexes as $realm => $index):
 					$idxmenu = \Actionset::generate_menu_html($indexes[$realm], array('class'=>'semimodal menulist hidden_item boxshadow')) ;
@@ -77,7 +79,7 @@ if (\Auth::check()):
 			
 				// option menu
 				$optmenu = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('option'));
-				$optmenu = $optmenu ? \Actionset::generate_menu_html($optmenu, array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
+				$optmenu = $optmenu ? \Actionset::generate_menu_html($optmenu['option'], array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
 
 				if ($optmenu):
 					$html.= '<div class="admin_module_option">';
@@ -92,7 +94,7 @@ if (\Auth::check()):
 		// adminbar_top  -- logo(sitetop), mainmenu, renderinfo, option, user
 		$html.= '<div class="adminbar_top lcmbar_top">'; 
 			$html.=  \Asset::img('system/logo_s.png', array('id' => 'adminbar_logo', 'alt' => '')) ;
-			$html.= '<div class="adminbar_main">';
+			$html.= '<div class="adminbar_main menu">';
 			$html.= \Config::get('no_home') ? '' : '<a href="'.\Uri::base().'" title="ホーム"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_home.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ホーム</span></a>';
 			$html.= '<a href="'.\Uri::base().'sys/dashboard/" title="ダッシュボード"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_dashboard.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ダッシュボード</span></a>';
 			$html.= '<h3 class="skip">ここからメインメニューです</h3>';
@@ -107,7 +109,7 @@ if (\Auth::check()):
 				}
 			endforeach;
 			if ($controller_menu):
-				$html.= '<div class="admin_menu">';
+				$html.= '<div class="admin_menu menu">';
 				$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー<span class="skip"> エンターでメニューを開きます</span></span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
 				$html.= '<ul class="semimodal hidden_item menulist">';
@@ -123,7 +125,7 @@ if (\Auth::check()):
 
 			// help
 			$help_uri = \Uri::base().'hlp/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
-			$html.= '<div class="admin_help">';
+			$html.= '<div class="admin_help menu">';
 			$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_help.png\" alt=\"\">".'<span class="skip">ヘルプ エンターでヘルプを開きます</span></span></a>';
 			$html.= '</div><!-- /.admin_help -->';
 
@@ -136,7 +138,7 @@ if (\Auth::check()):
 				endif;
 			endforeach;
 			if ($admin_menu):
-				$html.= '<div class="admin_option">';
+				$html.= '<div class="admin_option menu">';
 				$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_option.png\" alt=\"\"><span class=\"skip\">管理者設定 エンターでメニューを開きます</span></span></a>";
 				$html.= '<ul class="semimodal menulist hidden_item">'.$admin_menu.'</ul>';
 				$html.= '</div><!-- /.admin_option -->';
@@ -147,7 +149,7 @@ if (\Auth::check()):
 			$root_prefix = \Auth::is_root() ? '_root' : $root_prefix ;
 		
 			// user menu
-			$html.= '<div class="adminbar_user">';
+			$html.= '<div class="adminbar_user menu">';
 			$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログイン中"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'<span class="skip"> エンターでメニューを開きます</span></span></a>';
 			$html.= '<ul class="semimodal menulist hidden_item">';
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
@@ -180,11 +182,11 @@ endif;
 // is_user?
 ?>
 
-<div id="help_window" class="lcm_floatwindow" style=" display: none;">
+<div id="help_window" class="lcm_floatwindow resizable draggable" style=" display: none;">
 	<h1 id="help_title" class="lcmbar_top lcmbar_top_title lcm_floatwindow_title">
 		<a href="javascript:show_help({flg: true});void(0);" tabindex="0" id="help_title_anchor" class="has_accesskey" >ヘルプ<span class="accesskey">(H)</span></a>
 	</h1>
-	<div id="help_txt">
+	<div id="help_txt" class="modal_content">
 		<img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/mark_loading_m.gif" class="mark_loading" alt="" role="presentation">
 	</div>
 	<a href="javascript: void(0);" role="button" class="lcm_close_window lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ヘルプウィンドウを閉じる"></a>
