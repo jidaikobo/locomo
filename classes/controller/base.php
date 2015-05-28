@@ -703,7 +703,6 @@ class Controller_Base extends Controller_Core
 		}
 	}
 
-
 	/**
 	 * bulk()
 	 */
@@ -711,6 +710,7 @@ class Controller_Base extends Controller_Core
 	{
 		$model = $this->model_name;
 		$action = \Request::main()->action;
+		$is_model_soft = is_subclass_of($model, '\Orm\Model_Soft');
 
 		$model::authorized_option();
 
@@ -719,12 +719,13 @@ class Controller_Base extends Controller_Core
 		{
 			$model::$_options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
 			// $pagination_config['per_page'] = count(\Input::get('ids')) * 2;
-			// $model::disable_filter();
+
+			if ($is_model_soft) $model::disable_filter();
 
 			$model::set_paginated_options();
 			$objects = $model::find('all', $model::$_options);
 
-			// if (!$model::get_filter_status()) $model::enable_filter();
+			if ($is_model_soft && ! $model::get_filter_status()) $model::enable_filter();
 		// edit create 分岐
 		}
 		// create
@@ -742,7 +743,8 @@ class Controller_Base extends Controller_Core
 			$model::set_paginated_options();
 			$objects = $model::find('all', $model::$_options);
 			// $total = max($total - count($objects), 1);
-			if ($add = \Input::get('add', 3)) {
+			if ($add = \Input::get('add', 3))
+			{
 				for ($i = 0; $i < $add; $i++)
 				{
 					$objects[] = $model::forge();
@@ -757,11 +759,10 @@ class Controller_Base extends Controller_Core
 		}
 
 		$bulk = \Locomo\Bulk::forge();
-
 		$bulk::$_presenter = $this->_content_template ?: static::$dir.'bulk';
 		$bulk->add_model($objects);
 
-		/* deletedも保持 */
+		// deletedも保持
 		$ids = array();
 		foreach ($objects as $object)
 		{
@@ -802,11 +803,10 @@ class Controller_Base extends Controller_Core
 			}
 		}
 
-		$form = $bulk->build();
-
 		$content = \View::forge(static::$dir.'bulk');
-		$content->set_global('form', $form, false);
 		$this->template->content = $content;
+		$this->template->set_global('form', $bulk->build(), false);
+		$this->template->set_global('title', self::$nicename.'の一括処理');
 	}
 
 }
