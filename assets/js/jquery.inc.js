@@ -614,10 +614,10 @@ function lcm_focus(){
 		t = $(e.target);
 		k = e.which;
 		
-//		console.log($('.lcm_modal.on, .semimodal.on'));
+//		console.log($('.modal.on, .semimodal.on'));
 		if($('.currentfocus')[0]){
 			if((t.is('#esc_focus_wrapper') && k == 13) || 
-				(!t.is(':input') && !$('.lcm_modal.on, .semimodal.on')[0] && k == 27 )){
+				(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
 				lcm_focus_esc(e);
 				e.stopPropagation();
 			}
@@ -628,6 +628,7 @@ function lcm_focus(){
 		e = e ? e : event;
 		lcm_focus_esc(e);
 	});
+	
 
 /*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
