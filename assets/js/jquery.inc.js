@@ -614,10 +614,10 @@ function lcm_focus(){
 		t = $(e.target);
 		k = e.which;
 		
-//		console.log($('.modal.on, .semimodal.on'));
+//		console.log($('.lcm_modal.on, .semimodal.on'));
 		if($('.currentfocus')[0]){
 			if((t.is('#esc_focus_wrapper') && k == 13) || 
-				(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
+				(!t.is(':input') && !$('.lcm_modal.on, .semimodal.on')[0] && k == 27 )){
 				lcm_focus_esc(e);
 				e.stopPropagation();
 			}
@@ -628,7 +628,6 @@ function lcm_focus(){
 		e = e ? e : event;
 		lcm_focus_esc(e);
 	});
-	
 
 /*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
@@ -722,11 +721,9 @@ $('#modal_wrapper').on('click', function(){
 });
 
 //親を閉じる
-$('.lcm_close_window').on('click', function(e){
-	e = e ? e : event;
+$('.lcm_close_window').on('click', function(){
 	var w = $(this).parent();
 	$(this).lcm_close_window(w);
-	e.preventDefault();//抑止しておかないとIEでページ遷移前の警告が出る
 });
 
 $.fn.lcm_close_window = function(w){
@@ -833,11 +830,10 @@ $(document).on('keydown',function(e){
 	k = e.which;
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	index = null;
-
-	trigger = $(document).find('.toggle_item.on');
-	modal = $(document).find('.lcm_modal.on, .semimodal.on, .currentfocus');//これらが混在することがある？
+	
+	modal = $(document).find('.lcm_modal.on, .toggle_item.on, .semimodal.on, .currentfocus');//これらが混在することがある？
 	if($(modal)[0]){
-		tabbable = $(trigger).add($(modal).find(':tabbable'));
+		tabbable = $(modal).find(':tabbable').add($(modal).filter(':tabbable'));
 		first    = tabbable.first()[0];
 		last     = tabbable.last()[0];
 		switch(k){
