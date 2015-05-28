@@ -217,7 +217,6 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 	public function action_bulk($page_num = 1)
 	{
 		// bulk
-		\Model_Usrgrp::disable_filter();
 		$form = $this->bulk(array(), array(), '\Model_Usrgrp');
 
 		//assin
@@ -227,6 +226,30 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 		$this->template->content = $view;
 	}
 +-------------------------------quote end+
+
+	public function action_bulk ()
+	{
+		$date = \Input::get('date', date('Y-m-d'));
+		$options = array(
+			'where' => array(
+				array('date_at', 'LIKE', $date . '%'),
+			),
+			'related' => array(
+				'staff' => array(
+					'where' => array(
+						array('category', '=', 'staff'),
+					),
+				),
+			),
+		);
+
+		$defaults = array(
+			'date_at' => $date,
+		);
+
+		$this->conditioned_bulk($options, $defaults);
+	}
+
 
 バルク編集に関しては、\Admin\Controller_Admin::action_edit()にもちょっと違ったサンプルがあります。こちらはtabular formを使ったサンプルで、\Admin\Model_Adminや\Admin\Model_Userなど、専用のリレーションモデルを対象にした事例です。
 

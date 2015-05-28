@@ -19,12 +19,12 @@ class Bulk {
 		return new static($name);
 	}
 
-	public function add_model($model)
+	public function add_model($model, $add_delete_field = true)
 	//, $define_function = null) {
 	{
 		if (is_array($model)) {
 			foreach ($model as $model_obj) {
-				$this->add_model($model_obj);
+				$this->add_model($model_obj, $add_delete_field);
 			}
 
 		} else {
@@ -38,39 +38,8 @@ class Bulk {
 			$presenter = \Presenter::forge(static::$_presenter);
 			$this->forms[$key] = $presenter::bulk($key, $model);
 
-			if ($model->is_new()) {
+			if ($add_delete_field) $this->add_delete_field($this->forms[$key], $model);
 
-				$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
-
-				if (method_exists($model, 'get_filter_status'))
-				{
-					!$model::get_filter_status() and $this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
-				}
-
-			} else {
-				/*
-				if (is_null($model->{$model::soft_delete_property('deleted_field')})) { // 削除済みでない
-					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
-					if (method_exists($model, 'get_filter_status'))
-					{
-						!$model::get_filter_status() and $this->forms[$key]->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
-					}
-				} else { // 削除済み
-					$this->forms[$key]->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true,))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
-					if (method_exists($model, 'get_filter_status') && !$model::get_filter_status()) {
-						$this->forms[$key]->add('_restore', '復活・完全削除', array(
-							'type' => 'select',
-							'options' => array(
-								0 => '= 選択 =',
-								1 => '復活させる',
-								2 => '完全に削除する',
-							),
-						));
-					}
-
-				}
-				 */
-			}
 			$this->forms[$key]->set_input_name_array($key);
 		}
 
@@ -79,6 +48,48 @@ class Bulk {
 		return $this;
 	}
 
+	/*
+	 * add_delete_field()
+	 * $field の対象の $model を判定して、適切な削除フィールドを付ける
+	 */
+	private function add_delete_field($field, $model) {
+		if ($model->is_new()) {
+
+			$field->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
+
+			if (method_exists($model, 'get_filter_status'))
+			{
+				!$model::get_filter_status() and $field->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+			}
+
+		} else {
+
+			// softdelete
+			if (method_exists($model, 'get_filter_status')) {
+				if (is_null($model->{$model::soft_delete_property('deleted_field')})) { // 削除済みでない
+					$field->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>");
+					if (method_exists($model, 'get_filter_status'))
+					{
+						!$model::get_filter_status() and $field->add('_restore', '復活・完全削除', array('type' => 'select', 'options' => array(0 => '== 未削除項目 ==',),'disabled' => true,)); // disable
+					}
+				} else { // 削除済み
+					$field->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true,))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
+					if (method_exists($model, 'get_filter_status') && !$model::get_filter_status()) {
+						$field->add('_restore', '復活・完全削除', array(
+							'type' => 'select',
+							'options' => array(
+								0 => '= 選択 =',
+								1 => '復活させる',
+								2 => '完全に削除する',
+							),
+						));
+					}
+				}
+			} else {
+				$field->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1,))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
+			}
+		}
+	}
 
 
 	public function __get($name) {

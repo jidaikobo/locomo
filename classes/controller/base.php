@@ -809,4 +809,82 @@ class Controller_Base extends Controller_Core
 		$this->template->set_global('title', self::$nicename.'の一括処理');
 	}
 
+
+
+	/*
+	 *
+	 * 条件1 $options related の一つ目にマスタの relaten
+	 */
+	protected function conditioned_bulk($options, $defaults = array(), $belongs_to_display_name = 'name', $is_redirect = true)
+	{
+
+		$model = $this->model_name;
+		$model::authorized_option();
+
+
+		$related =  array_keys($options['related'])[0];
+		$rel_model = $model::relations($related)->model_to;
+		$rel_key_from = $model::relations($related)->key_from[0];
+		$rel_key_to = $model::relations($related)->key_to[0];
+
+		$rel_datas = $rel_model::find('all', $options['related'][$related]);
+
+
+	//	($rel_model::primary_key()[0]);
+
+		$objects = array();
+
+		foreach ($rel_datas as $data) {
+
+			$master_options = $options;
+			$master_options['where'][] = array($rel_key_from, '=', $data->{$rel_key_to});
+			$master_options['related'][$related]['from_cache'] = false;//[] = array($rel_key_to, '=', $data->{$rel_key_to});
+			$model_options = \Arr::merge($model::$_options, $master_options);
+			$model_options['from_cache'] = false;
+
+			$row = $model::find('first', $model_options, false);
+			if (!$row) {
+				$row = $model::forge(array(
+					$rel_key_from => $data->{$rel_key_to},
+				));
+			}
+			foreach ($defaults as $key => $default) {
+				$row->{$key} = $default;
+			}
+
+			$objects[] = $row;
+		}
+
+		$bulk = \Locomo\Bulk::forge();
+		$bulk::$_presenter = $this->_content_template ?: static::$dir.'bulk';
+		$bulk->add_model($objects, false);
+
+		if (\Input::post() && \Security::check_token())
+		{
+			if ($bulk->save())
+			{
+
+				\Session::set_flash('success', self::$nicename . 'への変更を保存しました');
+
+				$action = \Request::main()->action;
+
+				$url = \Uri::create(static::$base_url.$action, array(), \Input::get());
+				if ($is_redirect) return \Response::redirect($url);
+			}
+			else
+			{
+				\Session::set_flash('error', self::$nicename . 'の保存に失敗しました。エラーメッセージを参照して下さい。');
+			}
+		}
+
+
+		$content = \View::forge(static::$dir.'bulk');
+		$this->template->content = $content;
+		$this->template->set_global('form', $bulk->build(), false);
+		$this->template->set_global('title', self::$nicename.'の一括処理');
+
+
+	}
+
+
 }
