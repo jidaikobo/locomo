@@ -18,8 +18,10 @@ if (\Auth::check()):
 				}
 				else
 				{
-					$current_name = \Inflector::ctrl_to_safestr(\Arr::get($locomo, 'controller.name'));
-					$current_nicename = \Arr::get($locomo, 'controller.nicename') ;
+					$controller_name = \Arr::get($locomo, 'controller.name');
+					$controller_name = \Util::get_locomo($controller_name, 'main_controller') ?: $controller_name ;
+					$current_name = \Inflector::ctrl_to_safestr($controller_name);
+					$current_nicename = \Util::get_locomo($controller_name, 'nicename') ;
 				}
 
 				$ctrl_index = '';

@@ -76,4 +76,14 @@ class Model_Usrgrp extends \Model_Base
 			'events' => array('after_insert', 'after_save'),
 		),
 	);
+
+
+	public static function _init()
+	{
+		if (\Request::main()->action == 'bulk' ) {
+			static::$_properties['name']['validation'] = array(
+				'max_length' => array(50),
+			);
+		}
+	}
 }

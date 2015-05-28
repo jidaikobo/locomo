@@ -33,6 +33,18 @@ class Presenter_Base extends \Presenter
 	}
 
 	/**
+	 * bulk()
+	 * @return obj instanceof \Form
+	 */
+	public static function bulk($name = null, $obj = null) {
+		$form = \Fieldset::forge($name);
+
+		$form->add_model($obj)->populate($obj, true);
+
+		return $form;
+	}
+
+	/**
 	 * search_form()
 	 * @return obj instanceof \Form
 	 */
