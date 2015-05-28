@@ -16,18 +16,20 @@ $(function(){
 		var host, body, str, info, topinfo;
 		host = location.host;
 		body = $('body');
-		if(host == 'www.kyoto-lighthouse.org'){
-			body.addClass('testserver');
-			str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
-		}else if(host!='kyoto-lighthouse.org'){
-			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
-		}
-		if(str){
-			info = $('<p class="develop_info">').prepend(str);
-			body.append(info);
-			if($('body').hasClass('loggedin testserver')){
-				topinfo = info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
-				$('#main_content').prepend(topinfo);
+		if(!str && host!='kyoto-lighthouse.org'){
+			if(host == 'www.kyoto-lighthouse.org'){
+				body.addClass('testserver');
+				str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
+			}else{
+				str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
+			}
+			if(str){
+				info = $('<p class="develop_info"/>').prepend(str);
+				body.append(info);
+				if($('body').hasClass('loggedin testserver')){
+					topinfo = info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
+					$('#main_content').prepend(topinfo);
+				}
 			}
 		}
 	})();
@@ -162,11 +164,11 @@ $(function(){
 $(function(){
 /*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
-$('.hide_if_no_js').removeClass('hide_if_no_js').addClass('show_if_js');
+$('.hide_if_no_js').removeClass('hide_if_no_js');
 $('.hide_if_no_js').find(':disabled').prop("disabled", false);
 
 //.show_if_no_js noscript的な扱い?
-$('.show_if_no_js').hide();
+$('.show_if_no_js').remove();
 
 //for NetReader
 //NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
@@ -259,13 +261,6 @@ function set_focus(t){
 	$('h1').first().not(':has(>a)').attr('tabindex', '0');
 })();
 
-
-/* 不要なh2を削除するためのいったんのスタイル 
-$('h2').first().each(function(){
-	if(!$(this).prevAll('h1')[0])
-		$(this).css('background-color', '#fcc');
-});
-*/
 
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
@@ -391,8 +386,7 @@ $(document).click(function(e){
 } );
 
 
-
-
+/* ================================▼▼▼=============================== */
 
 //tabindex制御
 $.fn.set_tabindex = function(){
@@ -459,8 +453,9 @@ function lcm_focus(){
 		$('.currentfocus').removeClass('currentfocus');
 		if(!esc){
 			$(document).set_tabindex();
-		}else if(target){
-			parents = target.parents(elm).addClass('focusparent');
+		}else if(target && target.hasClass('lcm_focus')){
+			target.parents('.lcm_focus');
+			parents = target.parents('.lcm_focus').addClass('focusparent');
 			target.addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}else{
 			$(document).set_tabindex();//重いかなあ。
@@ -627,8 +622,6 @@ function lcm_focus(){
 
 
 
-
-
 //要素の中央配置
 $.fn.set_center = function(){
 	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
@@ -642,54 +635,6 @@ $(window).resize(function(){
 		el.set_center();
 	}
 });
-
-
-/*
-//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行う。確実にサイト内に表示されている要素でサイズが変化するもの。
-//
-var fontsize_h, fontsize_ratio, window_resized;
-fontsize_h =  adminbar.height();
-var font_resize = setInterval(function(){
-	if(!window_resized && fontsize_h != adminbar.height()){
-		 fontsize_ratio = adminbar.height()/fontsize_h;
-		 fontsize_h = adminbar.height();
-//		 console.log(fontsize_ratio);
-		if(fontsize_ratio != 1 && !window_resized){
-//			console.log('フォントリサイズ')
-		}
-		window_resized = false;
-	}else
-	if(window_resized){
-//		console.log('ウィンドウのリサイズ');
-	}
-}, 200);
-//window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
-//モーダルウィンドウも同じことになる？
-var resize_timer = false;
-$(window).resize(function(){
-	if (resize_timer !== false) clearTimeout(resize_timer);
-	resize_timer = setTimeout(function(){
-	//リサイズ終了待ちの処理
-	
-	}, 200);
-	$(document).find('#help_window:visible').each(function(e){
-		var pw, w, l, r;
-		w  = parseInt($(this).width());
-		pw = $(document).width();
-		l  = parseInt(this.offsetLeft);
-		r  = pw-l-w;
-		if(pw < w){
-//			console.log('pw < w');
-			$(this).css({'width': pw, 'left' : 0});
-		}else if(r < 0){
-			$(this).css({'left' : pw-w});
-		}
-	});
-	window_resize = true;
-});
-
-*/
-
 
 //モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
 $('#modal_wrapper').on('click', function(){
@@ -794,23 +739,6 @@ function replace_info(){
 //キーボード操作の制御
 
 //NetReaderでうまく取得できないので、なにか考える
-//.lcm_focusのようにまず枠にフォーカスを当てる場合のShift+Tabの動作のことも
-//フォーカス枠のある時の表示位置の調整もかんがえる(ページ内リンクのスクロールと同じ)
-/*
-$(document).on('keyup',function(e){
-	console.log(e.which);
-	if(e.which == 27) $('<p>').text('up_esc').prependTo('.container');
-});
-$(document).on('keydown',function(e){
-	console.log(e.which);
-	if(e.which == 27) $('<p>').text('down_esc').prependTo('.container');
-});
-$(document).on('keypress',function(e){
-	console.log(e.which);
-	if(e.which == 27) $('<p>').text('press_esc').prependTo('.container');
-});
-*/
-
 
 $(document).on('keydown',function(e){
 	e = e ? e : event;
@@ -860,163 +788,6 @@ $(document).on('keydown',function(e){
 	}
 });
 
-
-
-
-//表内スクロール - 各ブラウザでの挙動が怪しいのでもうちょっと
-/*
-if( !isNetReader && $('.tbl_scrollable')[0] ){ //複数ある時のことを考える。
-//ここで、対象内のrowspan・colspanの有無を判定して、なければdisplay:block等を設定する方法に分岐してみる？ それ用のクラスを与える。
-//ということは、そもそも簡単な表ではそのクラスを与えてもらうようにするとよい？
-//……rosplan・colspanがあってscrollableでなければいけない表は少なそう。
-//…………ということは、デフォルトのcssのはtbl_scrollableに対して設定してしまって、jslcmで分岐した際にclass名を変更するのがよいのかも。
-//noscript環境のことを考えておく
-
-//スクロールバーの幅ぶん調整したい
-//現状だと右端は最終列にかぶり、下端はスクロールバー分はみ出る（margin-bottm: -{スクロールバー};）
-//おなじく、ボーダーの幅
-//wrapperに枠を表示できる？
-	var tbl_scrollable = function(){
-		var thead, tfoot, h, tbl_wrapper, thead_wrapper, tbody_wrapper, tfoot_wrapper, fixed_thead, fixed_tfoot;
-		thead = $(this).find('thead').clone();
-		tfoot = $(this).find('tfoot').clone();
-		if(thead[0] || tfoot[0]){
-			tbl_wrapper = $('<div>').addClass('jslcm_tbl_wrapper');
-			tbody_wrapper = $('<div>').addClass('jslcm_tbody_wrapper');
-			if(thead[0]){
-				thead_wrapper = $('<div>').addClass('jslcm_thead_wrapper');
-				fixed_thead = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_thead').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(thead);
-				$(fixed_thead).find('a, button').attr('tabindex', '-1');
-			}
-			if(tfoot[0]){
-				tfoot_wrapper = $('<div>').addClass('jslcm_tfoot_wrapper');
-				fixed_tfoot = $('<table>').addClass($(this).attr('class')+' jslcm_fixed_tfoot').removeClass('tbl_scrollable').removeClass('lcm_focus').attr('aria-hidden','true').append(tfoot);
-				$(fixed_tfoot).find(':tabbable').attr('tabindex', '-1');
-			}
-			$(this).addClass('jslcm_tbl_scrollable')
-				.wrap(tbl_wrapper)
-				.after(fixed_tfoot)
-				.after(fixed_thead)
-				.wrap(tbody_wrapper);
-			adjust_columns(this);
-		}
-	}
-	
-	var  adjust_columns = function(tbl, ws){
-		//exresizeで変更を取得しているときには、そちらのサイズを使う……のでなければならなかったのかは、要確認。
-		//フォントサイズの変更はどうにか取れなかったかなあ……も要確認
-		//読み込み時に動いていないのも要確認
-		var thead, tfoot, fixed_thead, fixed_tfoot, thead_cols, tfoot_cols, fixed_thead_cols, fixed_tfoot_cols, thead_len, tfoot_len, w;
-		thead = $(tbl).find('thead');
-		tfoot = $(tbl).find('tfoot');
-		//重複を整理したい、というより一回でできる？
-		if(thead[0]){
-			thead_cols = $(tbl).children('thead').find('th, td');
-			thead_len = thead_cols[0];
-			fixed_thead = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_thead');
-			fixed_thead_cols = $(fixed_thead).find('th, td');
-			set_colswidth(thead_cols, thead_len, fixed_thead_cols, ws);
-		}
-		if(tfoot[0]){
-			tfoot_cols = $(tbl).children('tfoot').find('th, td');
-			tfoot_len = tfoot_cols[0];
-			fixed_tfoot = $(tbl).closest('.jslcm_tbl_wrapper').find('.jslcm_fixed_tfoot');
-			fixed_tfoot_cols = $(fixed_tfoot).find('th, td');
-			set_colswidth(tfoot_cols, tfoot_len, fixed_tfoot_cols, ws);
-		}
-	}
-	var  set_colswidth = function(cols, len, fixed_cols, ws){
-		for(i=0; i<len-1; i++){
-			if(ws){
-				w = ws[i];
-			}else{
-				w = $(cols[i]).width();
-			}
-			$(fixed_cols[i]).width(w+1);//borderの太さを足す。とりあえず1pxで
-		}
-	}
-	*/
-/*
-	if($('.tbl_scrollable').find('th[rowspan], th[colspan], td[rowspan], td[colspan]')){
-		//colspan_rowspanの分岐。なんにしても中身の幅を指定する必要がありそうなので、元の値を見るadjust的な振る舞いは必要。その後addClassする。
-		//要素が少なくなる分ちょっと軽かったり、フォーカス周りの処置が楽になる、といいなあ
-		//でも、ヘッダ・フッタとボディのレイアウトが分かれてしまうので、セルの幅を取るのがむずかしくなる可能性あり。とくにリサイズ時注意
-		adjust_columns($('.tbl_scrollable'));
-		$('.tbl_scrollable').addClass('nocelspan');
-	}else{
-*/
-//	$(document).find('.tbl_scrollable').each(tbl_scrollable);
-/*	
-	$.fn.el_overflow_y = function(){
-		var parent, parent_h, parent_t, tbl, h, t, overflow, min_h;
-		//ウィジェットや指定の枠がある場合は親にする。自分より小さな祖先ブロック要素を見つけてあわせる、ほうがいいのかなあ
-		parent = $(this).closest('.widget, .parent_tbl_scrollable')[0] ? $(this).closest('.widget, .parent_tbl_scrollable')[0] : $('.container');
-		tbl = $(this).find('.jslcm_tbl_scrollable');
-		h = parseInt($(tbl)[0].scrollHeight, 10)+2;
-		t = parseInt($(tbl).offset().top, 10);
-		parent_h = parseInt($(parent).height(), 10);
-		parent_t = parseInt($(parent).offset().top, 10);
-		overflow = t - parent_t + h - parent_h;
-		min_h = $(tbl).find('thead').height()+$(tbl).find('tfoot').height()+($(tbl).find('tbody tr').height()*2);
-		if(overflow > 0){
-			h = (h - overflow) > min_h ? h - overflow : min_h;
-			$(tbl).height($(tbl).height()-scrollbar_s);//スクロールバー分引く
-		}else{
-		
-		}
-		$(this).height(h);
-		return overflow ;
-	}
-	
-	var resize_col = $('.jslcm_tbl_scrollable thead th, .jslcm_tbl_scrollable thead td, .jslcm_tbl_scrollable tfoot th .jslcm_tbl_scrollable tfoot td' ).exResize({
-		api : true,
-		callback :function(){
-			var fixed_thead, tbl, ws, i;
-			tbl = $(this).closest('table');
-			var index = $(document).find('.jslcm_tbl_scrollable').index(tbl);
-			fixed_thead = $(document).find('.jslcm_fixed_thead').eq(index);
-			ws = new Array();
-			i = 0;
-			resize_col.each(function(){
-				ws[i] = this.getSize().width;
-				i++;
-			});
-			adjust_columns(tbl, ws);
-		}
-	});
-	
-	if($('.jslcm_tbody_wrapper')[0]){
-		$('.jslcm_tbody_wrapper').el_overflow_y();	
-		//ウィンドウリサイズ時やフォントサイズ変更時に追随したい（exResizeの挙動を再確認）
-		//ブラウザによって、リサイズを捕捉できなかったりする？ ひとまず、Safariの拡大縮小要確認
-		$(window).resize(function(){
-			$('.jslcm_tbody_wrapper').el_overflow_y();
-		});
-		$('.jslcm_tbl_scrollable').exResize(function(){
-			is_resize = true;
-			$('.jslcm_tbody_wrapper').el_overflow_y(
-				$(this).closest('.widget , .parent_tbl_scrollable')[0] ? $(this).closest('.widget , .parent_tbl_scrollable') : null
-			);
-		});
-		$('.jslcm_tbl_wrapper').exResize(function(){
-		//この辺もふだんの幅あわせでやることなのかも
-			var tbl , tbody_wrapper, fixed_tbl, cols, fixed_cols, tbl_w, w;
-			tbl = $(this).find('.jslcm_tbl_scrollable');
-			tbody_wrapper = $(this).find('.jslcm_tbody_wrapper');
-			fixed_tbl = $(this).find('.jslcm_fixed_thead, .jslcm_fixed_tfoot');
-			if(tbl.width() - $('.jslcm_tbody_wrapper').width() > 0 ){
-				cols = $(tbl).find('thead th, thead td, tfoot th, tfoot td');
-				fixed_cols = $(fixed_tbl).find('th, td');
-				tbl_w = $(tbl).width();
-				$(fixed_tbl).css('min-width', tbl_w+scrollbar_s+'px');
-				$(tbody_wrapper).css('min-width', tbl_w+scrollbar_s+'px');
-				set_colswidth(cols, cols[0], fixed_cols);
-			}
-		});
-	}
-//	}//colspan, rowspan分岐終わり
-}
-*/
 
 //確認メッセージ
 $('.confirm').click(function(){
@@ -1098,74 +869,55 @@ $('#alert_error .link').find('a').each(function(){
 });
 
 
-
 /*=== lcm_multiple_select ===*/
 
 $('.lcm_multiple_select').each(function(){
-	var select, selected, selects, to, from, hidden_items;
+	var select, selected, selects, to, from;
 	select = $($(this).find('.select_from'));
 	selected = $($(this).find('.selected'));
 	selects = select.add(selected);
-	hidden_items = $(this).data('hiddenItemId') ?
-		$(this).data('hiddenItemId') :
-		$(this).closest('.show_if_js').prevAll('.show_if_no_js').last();//スケジューラはnoscript用のチェックボックス未対応。ベットhiddenの値をしようしている
 	
-	if(typeof hidden_items !== 'object'){//スケジューラの場合data-hidden-item-idを取っているので・noscript対応の場合はcheckboxが最初からチェックされているのでここは不要
-		make_hidden_form_items(hidden_items, selected);
+	var hidden_items_id = $(this).data('hiddenItemId');
+	if(hidden_items_id){
+		make_hidden_form_items(hidden_items_id, selected);
 	}
 	
 	$(this).find(':button').click(function(e){
 		e = e ? e : event;
 		from = $(this).hasClass('add_item') ? select : selected;
 		to = selects.not(from);
-		lcm_multiple_select(from, to, hidden_items, selected);
+		lcm_multiple_select(from, to, hidden_items_id, selected);
 	});
 	selects.dblclick(function(){
 		from = $(this);
 		to = selects.not(from);
-		lcm_multiple_select(from, to, hidden_items, selected);
+		lcm_multiple_select(from, to, hidden_items_id, selected);
 	});
 });
 
-function lcm_multiple_select(from, to, hidden_items, selected){
+function lcm_multiple_select(from, to, hidden_items_id, selected){
 	//引数selectedはhidden_itemがなくなれば不要
-	var from, to, vals, v, item, hidden_items;
-	vals = from.val();
-	if ( vals == "" || !vals) return;
-	
-	//相手のセレクトボックスに移動
-	for(var i=0, len = vals.length; i < len; i++){
-		v = vals[i];
-		item = from.find('option[value='+v+']');
+	var from, to, val, item, hidden_items_id;
+	val = from.val();
+	if ( val == "" || !val) return;
+	for(var i=0, len = val.length; i < len; i++){
+		item = from.find('option[value='+val[i]+']');
 		item.appendTo(to).attr('selected',false);
-		
-		if(typeof hidden_items == 'object'){//この判定は、スケジューラ用の措置がなくなれば不要
-			change_hidden_inputs(from, hidden_items, v);
-		}
 	}
-	
-	//スケジューラ用。hidden_itemがnoscript用のチェックボックスでない場合に。
-	if(typeof hidden_items !== 'object'){
-		make_hidden_form_items(hidden_items, selected);
-	}	
+
+	if(hidden_items_id){
+		make_hidden_form_items(hidden_items_id, selected)
+	};
 }
 
-//selectedの中身をチェックボックスに反映
-function change_hidden_inputs(from, hidden_items, v){
-	var prop, item;
-	prop = from.hasClass('selected') ? false : true;
-	item = $(hidden_items.find('input[value='+v+']'));
-	item.prop('checked', prop);
-	}
-
 //スケジューラ用hidden
-function make_hidden_form_items(hidden_items, selected){
-	var hidden_item = $('#'+hidden_items);
+function make_hidden_form_items(hidden_items_id, selected){
+	var hidden_item = $('#'+hidden_items_id);
 	if (!hidden_item[0]) {
 		hidden_item = $('<input>').attr({
 		    type : 'hidden',
-		    id   : hidden_items,
-		    name : hidden_items,
+		    id   : hidden_items_id,
+		    name : hidden_items_id,
 		    value: '',
 		}).appendTo('form');
 	}
@@ -1212,6 +964,7 @@ $(document).on('click', '.switch_mce', function(){
 $('input.month').datepicker({
 	firstDay       : 1,
 	dateFormat     : 'yy-mm',
+	yearRange      : 'c-20:c+20',
 	changeMonth    : true,
 	changeYear     : true,
 	showButtonPanel: true,
@@ -1283,11 +1036,21 @@ function set_startdate_to_enddate(el){
 $('input.date , input[type=date]').datepicker({
 	firstDay       : 1,
 	dateFormat     : 'yy-mm-dd',
+	yearRange     : 'c-20:c+20',
 	changeMonth    : true,
 	changeYear     : true,
 	showButtonPanel: true,
 });
 
+//通常の日付選択
+$('input.birth_at').datepicker({
+	firstDay       : 1,
+	dateFormat     : 'yy-mm-dd',
+	yearRange     : 'c-50:c+0',
+	changeMonth    : true,
+	changeYear     : true,
+	showButtonPanel: true,
+});
 
 //日付＋時間
 //15分区切り
@@ -1302,7 +1065,8 @@ $('input.datetime.min30, input[type=datetime].min30').datetimepicker({
 });
 //通常の日付＋時間選択
 $('input.datetime,  input[type=datetime]').datetimepicker({
-		firstDay: 1,
+		firstDay : 1,
+		yearRange: 'c-20:c+20',
 });
 
 //時間選択
@@ -1388,16 +1152,38 @@ $('.lcm_tooltip_parent').tooltip({
 		el = $(el).html();
 		return el
 	},
+	open: function (event, ui) {
+		ui.tooltip.css({'width': 'auto','max-width': '100%'});
+	},
+	close: function (event, ui) {
+		ui.tooltip.css({'display': 'none'});
+	},
 	tooltipClass : 'lcm_tooltip',
 	show         : 200,
+	delay        : 1500,
 	hide         : 'fade',
 	relative     : true,
+	track        : false,
 	position     : {
 		             my : 'left bottom-8',
 		             at : 'left top'
 		            },
 });
 
+//スケジュールの1日詳細のグラフのcolspanひとまず。不要になれば削除
+/*if($('body').hasClass('lcm_ctrl_-controller_scdl')){
+	$('.schedule_day.graph').find('tr').each(function(){
+		var bar = $(this).find('.active');
+		if(bar[1]){
+			bar.eq(0).attr('colspan',bar.length);
+			bar.not(bar[0]).remove();
+		}
+	});
+	$('.schedule_day.graph .lcm_tooltip_parent').tooltip({
+		track: true,
+	});
+}
+*/
 //resizable, draggable //画面の上下はみ出してドラッグしたときのふるまい
 $('.lcm_floatwindow').resizable({
 	'handles' : 'all',
