@@ -831,9 +831,10 @@ $(document).on('keydown',function(e){
 	// k = 9:tab, 13:enter,16:shift 27:esc, 37:←, 38:↑, 40:↓, 39:→
 	index = null;
 	
-	modal = $(document).find('.lcm_modal.on, .toggle_item.on, .semimodal.on, .currentfocus');//これらが混在することがある？
+	modal = $(document).find('.lcm_modal.on, .semimodal.on, .currentfocus');//これらが混在することがある？
+	triger = $('.toggle_item.on');
 	if($(modal)[0]){
-		tabbable = $(modal).find(':tabbable').add($(modal).filter(':tabbable'));
+		tabbable = triger.add($(modal).find(':tabbable'));
 		first    = tabbable.first()[0];
 		last     = tabbable.last()[0];
 		switch(k){
