@@ -52,11 +52,12 @@ class Controller_Hlp extends \Controller_Base
 		$help = '';
 		$locomo_path = \Input::get('action');
 		$controller = $locomo_path;
-		if (strpos($locomo_path, '::'))
+		if (strpos($locomo_path, '/'))
 		{
-			list($controller, $action) = explode('::', $locomo_path);
+			list($controller, $action) = explode('/', $locomo_path);
 			$action = strtolower(str_replace('action_', '', $action));
 		}
+		$controller_original = \Inflector::safestr_to_ctrl($controller);
 		$controller = str_replace('-Controller_', '\Help_', $controller);
 		$controller = \Inflector::safestr_to_ctrl($controller);
 
@@ -107,7 +108,7 @@ class Controller_Hlp extends \Controller_Base
 
 		// link to add additional help
 		$add = '';
-		$add.= $action ? \Html::anchor(\Uri::create('/hlp/view?action='.$controller_safe), 'コントローラヘルプ') : '' ;
+		$add.= $action ? \Html::anchor(\Uri::create('/hlp/view?action='.$controller_safe), \Util::get_locomo($controller_original, 'nicename').'ヘルプ一覧') : '' ;
 		if ($obj)
 		{
 			$add.= html_tag('h2', array(), '加筆されたヘルプ') ;
