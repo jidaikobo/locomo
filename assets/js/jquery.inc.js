@@ -277,14 +277,6 @@ function set_focus(t){
 	$('h1').first().not(':has(>a)').attr('tabindex', '0');
 })();
 
-
-/* 不要なh2を削除するためのいったんのスタイル 
-$('h2').first().each(function(){
-	if(!$(this).prevAll('h1')[0])
-		$(this).css('background-color', '#fcc');
-});
-*/
-
 //管理バーの高さ+αのヘッダーの高さを確保
 function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );
@@ -494,7 +486,7 @@ function lcm_focus(){
 		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
 			var len = elm.length;
-			for( var n = len ; n > 0 ; n-- ){
+			for( var n = len-1 ; n >= 0 ; n-- ){
 				el = elm.eq(n);
 				var title_str = el.attr('title') ? el.attr('title') : '';
 				el.attr('title', title_str+' エンターで入ります')
@@ -721,9 +713,11 @@ $('#modal_wrapper').on('click', function(){
 });
 
 //親を閉じる
-$('.lcm_close_window').on('click', function(){
+$('.lcm_close_window').on('click', function(e){
+	e = e ? e : event;
 	var w = $(this).parent();
 	$(this).lcm_close_window(w);
+	e.preventDefault();//抑止しておかないとIEでページ遷移前の警告が出る
 });
 
 $.fn.lcm_close_window = function(w){
