@@ -2,10 +2,9 @@
 namespace Fuel\Migrations;
 class Create_Flrs
 {
-	public function up()
+	// create_table_flrs
+	public function create_table_flrs()
 	{
-		// lcm_flrs
-		echo "create lcm_flrs table.\n";
 		\DBUtil::create_table('lcm_flrs', array(
 			'id'           => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'         => array('constraint' => 1024, 'type' => 'varchar'),
@@ -25,9 +24,11 @@ class Create_Flrs
 			'updater_id'   => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 		\DBUtil::create_index('lcm_flrs', array('path'), 'flrs_path');
+	}
 
-		// lcm_flr_permissions
-		echo "create lcm_flr_permissions table.\n";
+	// create_table_permissions
+	public function create_table_permissions()
+	{
 		\DBUtil::create_table('lcm_flr_permissions', array(
 			'id'           => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'flr_id'       => array('constraint' => 11, 'type' => 'int'),
@@ -40,6 +41,17 @@ class Create_Flrs
 		), array('id'));
 		\DBUtil::create_index('lcm_flr_permissions', array('flr_id','user_id'), 'flrs_perm_uid');
 		\DBUtil::create_index('lcm_flr_permissions', array('flr_id','usergroup_id'), 'flrs_perm_gid');
+	}
+
+	public function up()
+	{
+		// lcm_flrs
+		echo "create lcm_flrs table.\n";
+		self::create_table_flrs();
+
+		// lcm_flr_permissions
+		echo "create lcm_flr_permissions table.\n";
+		self::create_table_permissions();
 	}
 
 	public function down()
