@@ -26,6 +26,19 @@ class Controller_Flr extends \Locomo\Controller_Base
 		parent::before();
 
 		// check env.
+		// dbの存在確認（同期途中のトラブルなどでデータベースが失われていたりする場合の処理）
+		require(LOCOMOPATH.'migrations/007_create_flrs.php');
+		if ( ! \DBUtil::table_exists('lcm_flrs'))
+		{
+			$obj = new \Fuel\Migrations\Create_Flrs;
+			$obj->create_table_flrs();
+		}
+		if ( ! \DBUtil::table_exists('lcm_flr_permissions'))
+		{
+			$obj = new \Fuel\Migrations\Create_Flrs;
+			$obj->create_table_permissions();
+		}
+
 		// ディレクトリの存在確認
 		if ( ! file_exists(LOCOMOUPLOADPATH)) throw new \Exception("LOCOMOUPLOADPATH not found. create '".LOCOMOUPLOADPATH."'");
 		if (\Str::ends_with(LOCOMOUPLOADPATH, DS)) throw new \Exception("LOCOMOUPLOADPATH must not be terminated with '/'");
