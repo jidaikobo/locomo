@@ -211,7 +211,7 @@ trait Model_Traits_Base
 		$options = array();
 
 		// set public options
-		$options = static::set_public_options(array('created_at'));
+		$options = static::set_public_options(array('created_at', 'expired_at'));
 
 		// $_options - created_at
 		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
@@ -236,7 +236,7 @@ trait Model_Traits_Base
 		$options = array();
 
 		// set public options
-		$options = static::set_public_options(array('expired_at'));
+		$options = static::set_public_options(array('expired_at', 'created_at'));
 
 		// $_options - expired_at
 		$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
@@ -349,6 +349,16 @@ trait Model_Traits_Base
 	{
 		// $controller - to know access rights - overridable
 		$controller = $controller ?: \Request::main()->controller;
+
+		// editが許されているユーザにはいろいろ許す
+		if (\Auth::has_access($controller.'/edit'))
+		{
+			if (is_subclass_of(get_class(), '\Orm\Model_Soft'))
+			{
+				static::disable_filter();
+			}
+			return;
+		}
 
 		// \Model_Softを使っていて、view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
 		if (

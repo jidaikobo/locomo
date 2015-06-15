@@ -26,7 +26,7 @@ class Actionset_Msgbrd extends \Actionset_Base
 	 */
 	public static function actionset_index_draft($controller, $obj = null, $id = null, $urls = array())
 	{
-		$options = \Model_Msgbrd::set_public_options(array('is_draft'));
+		$options = \Model_Msgbrd::set_public_options(array('is_draft', 'created_at', 'expired_at'));
 		$options['where'][] = array('is_draft' => 1);
 		$count = \Model_Msgbrd::count($options);
 		$urls = array(array($controller.DS."index_draft", "下書き ({$count})"));

@@ -302,7 +302,7 @@ class Controller_Base extends Controller_Core
 		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin');
 
 		// title
-		$title = static::$nicename.'の削除済み項目';
+		$title = static::$nicename.'のすべての項目';
 
 		// view
 		$content->get_view()->set('items', $items);

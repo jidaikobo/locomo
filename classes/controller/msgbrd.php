@@ -66,7 +66,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 		$model = $this->model_name;
 
 		// set options
-		$options = \Model_Msgbrd::set_public_options(array('is_draft'));
+		$options = \Model_Msgbrd::set_public_options(array('is_draft', 'created_at', 'expired_at'));
 		\Model_Msgbrd::$_options['where'][] = array('is_draft' => 1);
 		$model::set_search_options();
 		$model::set_paginated_options();

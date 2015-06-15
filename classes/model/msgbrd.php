@@ -177,9 +177,6 @@ class Model_Msgbrd extends \Model_Base_Soft
 	{
 		// set $_authorize_methods
 		static::$_authorize_methods[] = 'auth_msgbrd';
-
-		// parent
-		parent::_init();
 	}
 
 	/**
@@ -216,17 +213,49 @@ class Model_Msgbrd extends \Model_Base_Soft
 		}
 
 		// static::$_options
-		$options['where'][] = array(
-			// draftでなく、公開範囲内なら許可
-			array(
-				array('is_draft', '=', '0'),
-				array('usergroup_id', 'IN', \Auth::get_groups()),
-			), 
-			 // 公開範囲ではないが、creator_idが一致する。下書きかどうかは問わない。
-			'or' => array(
-				array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)),
-			),
-		);
+		// 管理者は下書き以外見られる
+		// また管理者は、他人の下書きも見られる（つまり管理者が見るときには余計な条件設定をしない）
+		if ( ! \Auth::is_admin())
+		{
+			$options['where'][] = array(
+				// draftでなく、公開範囲内なら許可
+				array(
+					array('is_draft', '=', '0'),
+					array('usergroup_id', 'IN', \Auth::get_groups()),
+				), 
+				 // 公開範囲ではないが、creator_idが一致する。下書きかどうかは問わない。
+				'or' => array(
+					array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)),
+				),
+			);
+		}
+
+		// array_merge
+		static::$_options = \Arr::merge(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
+	 * set_deleted_options()
+	 * @param array() $exception
+	 * @return array()
+	 */
+	public static function set_deleted_options()
+	{
+		$options = parent::set_deleted_options();
+
+		// static::$_options
+		// また管理者は、他人の下書きも見られる（つまり管理者が見るときには余計な条件設定をしない）
+		if ( ! \Auth::is_admin())
+		{
+			$options['where'][] = array(
+				array(
+					array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)),
+				), 
+			);
+		}
 
 		// array_merge
 		static::$_options = \Arr::merge(static::$_options, $options);
