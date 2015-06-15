@@ -440,6 +440,7 @@ class Model_Scdl extends \Model_Base
 	);
 
 	protected static $_observers = array(
+		"Orm\Observer_Self" => array(),
 		'Locomo\Observer_Creatorid' => array(
 			'events' => array('before_insert'),
 		),
@@ -463,6 +464,13 @@ class Model_Scdl extends \Model_Base
 		),
 	);
 
+	/**
+	 * _event_before_save()
+	 */
+	public function _event_before_save()
+	{
+		$this->user_id = is_null($this->user_id) ? \Auth::get('id') : $this->user_id;
+	}
 
 	/**
 	 * plain_definition()
