@@ -25,7 +25,6 @@ class Model_Usrgrp extends \Model_Base
 			'validation' => array(
 				'required',
 				'max_length' => array(50),
-				'unique' => array("lcm_usrgrps.name"),
 			)
 		),
 		'description' => array(
