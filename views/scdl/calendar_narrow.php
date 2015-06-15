@@ -1,19 +1,8 @@
 <div class="narrow_user lcm_focus" title="絞り込み">
 <select class="schedule_narrow select_narrow_down" id="narrow_user_group_id" title="ユーザーグループ" data-target-id="narrow_user_id">
-	<option value="">-- ユーザーグループ --
-	<?php foreach(\Model_Usrgrp::find_options('name',
-		array(
-			'where' => array(
-				array(
-					array('is_available', true),
-					array('is_for_acl', false),
-					array('customgroup_uid', 'is', null)
-				),
-				'or' => array(array('customgroup_uid', \Auth::get('id')))
-			),
-		)
-		) as $gid => $name): ?>
-		<option value="<?php print $gid; ?>" <?php if ($gid == \Session::get($kind_name . "narrow_ugid")) { print "selected"; } ?>><?php  print $name; ?></option>
+	<option value="">-- ユーザーグループ --</option>
+	<?php foreach ($narrow_user_group_list as $k => $v): ?>
+		<option value="<?php print $k; ?>" <?php if ($k == \Session::get($kind_name . "narrow_ugid")) { print "selected"; } ?>><?php  print $v; ?></option>
 	<?php endforeach; ?>
 </select>
 

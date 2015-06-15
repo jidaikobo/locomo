@@ -90,8 +90,18 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 					)
 				),
 				'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
+				'from_cache' => false
 			)
 		);
+
+		// カスタムユーザグループ名を特別な表示に変更する
+		foreach ($items as $k => $item)
+		{
+			if ($item['customgroup_uid'])
+			{
+				$items[$k]['name'] = '['.$items[$k]['name'].']';
+			}
+		}
 		$items = \Arr::assoc_to_keyval($items, 'id', 'name');
 		return $items;
 	}

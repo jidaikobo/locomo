@@ -316,7 +316,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
-		$usergroups = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false))));
+//		$usergroups = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false))));
+		$usergroups = \Model_Usrgrp_Custom::find_options();
 		$this->template->content->set("group_list", $usergroups);
 		$this->template->content->set("kind_name", $model::$_kind_name);
 
@@ -765,17 +766,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set_global("detail_pop_data", array());
 
 		// ユーザーグループ一覧作成
-		$narrow_user_group_list = array();
-		// カスタムグループを先に作成
-//		$narrow_user_group_list = \Model_Usrgrp_Custom::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false))));
-//		// 一番上に見せるようにする
-		$narrow_user_group_list_custom = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', 'is not', null))));
-		$narrow_user_group_list_normal = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('is_for_acl', false), array('customgroup_uid', null))));
-		foreach ($narrow_user_group_list_normal as $row) {
-			// array_mergeだとIDがおかしくなるためひとつずついれる
-			$narrow_user_group_list_custom[] = $row;
-		}
-		$view->set('narrow_user_group_list', $narrow_user_group_list_custom);
+		$view->set('narrow_user_group_list', \Model_Usrgrp_Custom::find_options());
 
 		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
 

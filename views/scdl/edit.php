@@ -262,7 +262,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 
 
 <script>
-<!-- JSに移す -->
+<!-- jsに移す -->
 change_repeat_kb_area();
 /* いったんonchangeに変更。でも.attachEvent('onchange', ...)とかで書き直せる？
 $("#form_repeat_kb").change(function(event){
