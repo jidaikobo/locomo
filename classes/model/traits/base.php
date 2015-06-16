@@ -48,9 +48,7 @@ trait Model_Traits_Base
 	 * prepare static::$_options
 	 * @return void
 	 */
-	public static function set_search_options()
-	{
-	}
+	public static function set_search_options(){}
 
 	/**
 	 * set_paginated_options()
@@ -115,7 +113,7 @@ trait Model_Traits_Base
 	{
 		$options = array();
 
-		// $_options - created_at
+		// created_at
 		if (empty($exception) || ! in_array('created_at', $exception))
 		{
 			$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
@@ -125,7 +123,7 @@ trait Model_Traits_Base
 			}
 		}
 
-		// $_options - expired_at
+		// expired_at
 		if (empty($exception) || ! in_array('expired_at', $exception))
 		{
 			$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
@@ -137,7 +135,7 @@ trait Model_Traits_Base
 			}
 		}
 
-		// $_options - deleted_at
+		// deleted_at
 		if (empty($exception) || ! in_array('deleted_at', $exception))
 		{
 			$column = \Arr::get(static::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
@@ -150,7 +148,7 @@ trait Model_Traits_Base
 			}
 		}
 
-		// $_options - is_visible
+		// is_visible
 		if (empty($exception) || ! in_array('is_visible', $exception))
 		{
 			$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
@@ -160,7 +158,7 @@ trait Model_Traits_Base
 			}
 		}
 
-		// $_options - is_available
+		// is_available
 		if (empty($exception) || ! in_array('is_available', $exception))
 		{
 			$column = \Arr::get(static::get_field_by_role('is_available'), 'lcm_field', 'is_available');
@@ -185,7 +183,7 @@ trait Model_Traits_Base
 	{
 		$options = array();
 
-		// $_options - deleted_at
+		// deleted_at
 		$column = \Arr::get(static::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
 		if (
 			is_subclass_of(get_called_class(), '\Orm\Model_Soft') &&
@@ -208,12 +206,10 @@ trait Model_Traits_Base
 	 */
 	public static function set_yet_options()
 	{
-		$options = array();
-
 		// set public options
 		$options = static::set_public_options(array('created_at', 'expired_at'));
 
-		// $_options - created_at
+		// created_at
 		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
 		if (isset(static::properties()[$column]))
 		{
@@ -233,8 +229,6 @@ trait Model_Traits_Base
 	 */
 	public static function set_expired_options()
 	{
-		$options = array();
-
 		// set public options
 		$options = static::set_public_options(array('expired_at', 'created_at'));
 
@@ -258,8 +252,6 @@ trait Model_Traits_Base
 	 */
 	public static function set_invisible_options()
 	{
-		$options = array();
-
 		// set public options
 		$options = static::set_public_options(array('is_visible'));
 
@@ -283,8 +275,6 @@ trait Model_Traits_Base
 	 */
 	public static function set_unavailable_options()
 	{
-		$options = array();
-
 		// set public options
 		$options = static::set_public_options(array('is_available'));
 
@@ -300,6 +290,137 @@ trait Model_Traits_Base
 
 		//return
 		return $options;
+	}
+
+	/*
+	 * set_authorized_options()
+	 */
+	public static function set_authorized_options($controller = NULL)
+	{
+		// $controller - to know access rights - overridable
+		$controller = $controller ?: \Request::main()->controller;
+
+		// モデルが持っている判定材料を、適宜$_optionsに足す。
+		foreach(self::$_authorize_methods as $authorize_method)
+		{
+			if ( ! method_exists(get_called_class(), $authorize_method)) continue;
+			static::$authorize_method($controller);
+		}
+	}
+
+	/*
+	 * auth_expired()
+	 */
+	public static function auth_expired($controller)
+	{
+		// editが許されているユーザなので、期限切れ項目も編集できるように許す
+		if(\Auth::has_access($controller.'/edit')) return;
+
+		// column name
+		$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
+		if( ! isset(static::properties()[$column])) return;
+
+		// condition
+		if ( ! \Auth::has_access($controller.'/view_expired'))
+		{
+			static::$_options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
+			$max = max(array_keys(static::$_options['where']));
+			static::$_options['where'][$max]['or'] = array($column, 'is', null);
+		}
+	}
+
+	/*
+	 * auth_created()
+	 */
+	public static function auth_created($controller)
+	{
+		// editが許されているユーザなので、予約項目も編集できるように許す
+		if(\Auth::has_access($controller.'/edit')) return;
+
+		// column name
+		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
+		if( ! isset(static::properties()[$column])) return;
+
+		// condition
+		if ( ! \Auth::has_access($controller.'/index_yet'))
+		{
+			static::$_options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
+		}
+	}
+
+	/*
+	 * auth_deleted()
+	 */
+	public static function auth_deleted($controller)
+	{
+		// editが許されているユーザなので、削除済み項目も編集できるように許す
+		if(\Auth::has_access($controller.'/edit')) return;
+
+		// column name
+		if (isset(static::$_soft_delete))
+		{
+			$column = \Arr::get(static::$_soft_delete, 'deleted_field');
+		} else {
+			$column = \Arr::get(static::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
+		}
+		if( ! isset(static::properties()[$column])) return;
+
+		// in case \Orm\Model_Soft
+		if (is_subclass_of(get_class(), '\Orm\Model_Soft'))
+		{
+			if ( ! \Auth::has_access($controller.'/view_deleted'))
+			{
+				static::enable_filter();
+			} else {
+				static::disable_filter();
+			}
+		// other model
+		} elseif (isset(static::properties()[$column])) {
+			if ( ! \Auth::has_access($controller.'/view_deleted'))
+			{
+				static::$_options['where'][][] = array($column, 'IS NOT', null);
+			} else {
+				static::$_options['where'][][] = array($column, 'IS', null);
+			}
+		}
+	}
+
+	/*
+	 * auth_visibility()
+	 */
+	public static function auth_visibility($controller)
+	{
+		// editが許されているユーザなので、不可視項目も編集できるように許す
+		if(\Auth::has_access($controller.'/edit')) return;
+
+		// column
+		$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
+		if( ! isset(static::properties()[$column])) return;
+
+		// condition
+		if ( ! \Auth::has_access($controller.'/view_invisible'))
+		{
+			static::$_options['where'][][] = array($column, '=', true);
+		}
+	}
+
+	/*
+	 * auth_availability()
+	 */
+	public static function auth_availability($controller)
+	{
+		// editが許されているユーザなので、無効項目も編集できるように許す
+		if(\Auth::has_access($controller.'/edit')) return;
+
+		// column
+		$column = \Arr::get(static::get_field_by_role('is_available'), 'lcm_field', 'is_available');
+		if( ! isset(static::properties()[$column])) return;
+
+		// condition
+		if ( ! \Auth::has_access($controller.'/view_unavailable'))
+		{
+			static::$_options['where'][][] = array($column, '=', true);
+		}
 	}
 
 	/**
@@ -340,144 +461,6 @@ trait Model_Traits_Base
 		}
 		if (empty($field)) return array();
 		return array('lcm_field' => $field) + static::properties()[$field];
-	}
-
-	/*
-	 * authorized_option()
-	 */
-	public static function authorized_option($controller = NULL)
-	{
-		// $controller - to know access rights - overridable
-		$controller = $controller ?: \Request::main()->controller;
-
-		// editが許されているユーザにはいろいろ許す
-		if (\Auth::has_access($controller.'/edit'))
-		{
-			if (is_subclass_of(get_class(), '\Orm\Model_Soft'))
-			{
-				static::disable_filter();
-			}
-			return;
-		}
-
-		// \Model_Softを使っていて、view_anywayが許されているユーザにはsoft_delete判定を外してすべて返す
-		if (
-			is_subclass_of(get_class(), '\Orm\Model_Soft') &&
-			\Auth::has_access($controller.'/view_anyway')
-		)
-		{
-			static::disable_filter();
-		}
-		else
-		{
-			// モデルが持っている判定材料を、適宜$_optionsに足す。
-			foreach(self::$_authorize_methods as $authorize_method)
-			{
-				if ( ! method_exists(get_called_class(), $authorize_method)) continue;
-				static::$authorize_method($controller);
-			}
-		}
-	}
-
-	/*
-	 * auth_expired()
-	 */
-	public static function auth_expired($controller)
-	{
-		// column name
-		$column = \Arr::get(static::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
-
-		if (
-			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'/view_expired')
-		)
-		{
-			static::$_options['where'][][] = array($column, '>', date('Y-m-d H:i:s'));
-			$max = max(array_keys(static::$_options['where']));
-			static::$_options['where'][$max]['or'] = array($column, 'is', null);
-		}
-	}
-
-	/*
-	 * auth_created()
-	 */
-	public static function auth_created($controller)
-	{
-		// column name
-		$column = \Arr::get(static::get_field_by_role('created_at'), 'lcm_field', 'created_at');
-
-		if (
-			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'/index_yet')
-		)
-		{
-			static::$_options['where'][][] = array($column, '<=', date('Y-m-d H:i:s'));
-		}
-	}
-
-	/*
-	 * auth_deleted()
-	 */
-	public static function auth_deleted($controller)
-	{
-		// column name
-		if (isset(static::$_soft_delete))
-		{
-			$column = \Arr::get(static::$_soft_delete, 'deleted_field');
-		} else {
-			$column = \Arr::get(static::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
-		}
-
-		// in case \Orm\Model_Soft
-		if (is_subclass_of(get_class(), '\Orm\Model_Soft'))
-		{
-			if ( ! \Auth::has_access($controller.'/view_deleted'))
-			{
-				static::enable_filter();
-			} else {
-				static::disable_filter();
-			}
-		// other model
-		} elseif (isset(static::properties()[$column])) {
-			if ( ! \Auth::has_access($controller.'/view_deleted'))
-			{
-				static::$_options['where'][][] = array($column, 'IS NOT', null);
-			} else {
-				static::$_options['where'][][] = array($column, 'IS', null);
-			}
-		}
-	}
-
-	/*
-	 * auth_visibility()
-	 */
-	public static function auth_visibility($controller)
-	{
-		$column = \Arr::get(static::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
-
-		if (
-			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'/view_invisible')
-		)
-		{
-			static::$_options['where'][][] = array($column, '=', true);
-		}
-	}
-
-	/*
-	 * auth_availability()
-	 */
-	public static function auth_availability($controller)
-	{
-		$column = \Arr::get(static::get_field_by_role('is_available'), 'lcm_field', 'is_available');
-
-		if (
-			isset(static::properties()[$column]) &&
-			! \Auth::has_access($controller.'/view_unavailable')
-		)
-		{
-			static::$_options['where'][][] = array($column, '=', true);
-		}
 	}
 
 	/*

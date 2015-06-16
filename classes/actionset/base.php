@@ -284,15 +284,13 @@ class Actionset_Base extends Actionset
 	 */
 	public static function index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
-		static $count;
+		// model
+		$model = str_replace('Controller', 'Model', $controller);
+		if ( ! class_exists($model)) return array();
 
 		// count
-		$model = str_replace('Controller', 'Model', $controller);
-		if (class_exists($model) && ! $count)
-		{
-			$options = $model::set_public_options();
-			$count = $model::count($options);
-		}
+		static $count;
+		$count = $count ?: $model::count($model::set_public_options());
 
 		// urls
 		$urls = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
@@ -316,14 +314,14 @@ class Actionset_Base extends Actionset
 	 */
 	public static function index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
-		static $count;
-
-		// count
+		// this actionset is for subclass of \Orm\Model_Soft
 		$model = str_replace('Controller', 'Model', $controller);
 		if ( ! is_subclass_of($model, '\Orm\Model_Soft')) return array();
+
+		// count
+		static $count;
 		$model::disable_filter();
-		$options = $model::set_deleted_options();
-		$count = $model::count($options);
+		$count = $count ?: $model::count($model::set_deleted_options());
 
 		// urls
 		$urls = array(array($controller.DS."index_deleted", "ごみ箱 ({$count})"));
@@ -346,14 +344,15 @@ class Actionset_Base extends Actionset
 	 */
 	public static function index_yet($controller, $obj = null, $id = null, $urls = array())
 	{
+		// this actionset is for which has created_at role field
+		$model = str_replace('Controller', 'Model', $controller);
+		if ( ! class_exists($model)) return array();
+		$column = \Arr::get($model::get_field_by_role('created_at'), 'lcm_field', 'created_at');
+		if( ! isset($model::properties()[$column])) return array();
+
 		// count
 		static $count;
-		$model = str_replace('Controller', 'Model', $controller);
-		if (class_exists($model) && ! $count && isset($model::properties()['created_at']))
-		{
-			$options = $model::set_yet_options();
-			$count = $model::count($options);
-		}
+		$count = $count ?: $model::count($model::set_yet_options());
 
 		// urls
 		$urls = array(array($controller.DS."index_yet", "予約項目 ({$count})"));
@@ -376,13 +375,15 @@ class Actionset_Base extends Actionset
 	 */
 	public static function index_expired($controller, $obj = null, $id = null, $urls = array())
 	{
+		// this actionset is for which has expired_at role field
+		$model = str_replace('Controller', 'Model', $controller);
+		if ( ! class_exists($model)) return array();
+		$column = \Arr::get($model::get_field_by_role('expired_at'), 'lcm_field', 'expired_at');
+		if( ! isset($model::properties()[$column])) return array();
+
 		// count
 		static $count;
-		$model = str_replace('Controller', 'Model', $controller);
-		if (class_exists($model) && ! $count && isset($model::properties()['expired_at']))
-		{
-			$count = $model::count(array('where' => array(array('expired_at', '<' , date('Y-m-d H:i:s')))));
-		}
+		$count = $count ?: $model::count($model::set_expired_options());
 
 		// urls
 		$urls = array(array($controller.DS."index_expired", "期限切れ項目 ({$count})"));
@@ -405,13 +406,15 @@ class Actionset_Base extends Actionset
 	 */
 	public static function index_invisible($controller, $obj = null, $id = null, $urls = array())
 	{
+		// this actionset is for which has is_visible role field
+		$model = str_replace('Controller', 'Model', $controller);
+		if ( ! class_exists($model)) return array();
+		$column = \Arr::get($model::get_field_by_role('is_visible'), 'lcm_field', 'is_visible');
+		if( ! isset($model::properties()[$column])) return array();
+
 		// count
 		static $count;
-		$model = str_replace('Controller', 'Model', $controller);
-		if (class_exists($model) && ! $count && isset($model::properties()['is_visible']))
-		{
-			$count = $model::count(array('where' => array(array('is_visible', '=' , false))));
-		}
+		$count = $count ?: $model::count($model::set_invisible_options());
 
 		// urls
 		$urls = array(array($controller.DS."index_invisible", "不可視項目 ({$count})"));
@@ -434,13 +437,15 @@ class Actionset_Base extends Actionset
 	 */
 	public static function index_unavailable($controller, $obj = null, $id = null, $urls = array())
 	{
+		// this actionset is for which has is_available role field
+		$model = str_replace('Controller', 'Model', $controller);
+		if ( ! class_exists($model)) return array();
+		$column = \Arr::get($model::get_field_by_role('is_available'), 'lcm_field', 'is_available');
+		if( ! isset($model::properties()[$column])) return array();
+
 		// count
 		static $count;
-		$model = str_replace('Controller', 'Model', $controller);
-		if (class_exists($model) && ! $count && isset($model::properties()['is_available']))
-		{
-			$count = $model::count(array('where' => array(array('is_available', '=' , false))));
-		}
+		$count = $count ?: $model::count($model::set_unavailable_options());
 
 		// urls
 		$urls = array(array($controller.DS."index_unavailable", "停止中項目 ({$count})"));
@@ -463,6 +468,17 @@ class Actionset_Base extends Actionset
 	 */
 	public static function index_all($controller, $obj = null, $id = null, $urls = array())
 	{
+		// this actionset is for which has is_available role field
+		$model = str_replace('Controller', 'Model', $controller);
+		if ( ! class_exists($model)) return array();
+
+		// count
+		static $count;
+		if (is_subclass_of($model, '\Orm\Model_Soft')) $model::disable_filter();
+		$pk = $model::primary_key()[0];
+		$count = $count ?: $model::count(array('where' => array(array($pk, 'is not' , null))));
+
+
 		// count
 		static $count;
 		$model = str_replace('Controller', 'Model', $controller);

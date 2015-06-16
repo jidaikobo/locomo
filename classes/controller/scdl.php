@@ -92,7 +92,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$content = \View::forge($model::$_kind_name . "/edit");
 
 		if ($id) {
-			$model::authorized_option();
+			$model::set_authorized_options();
 			$obj = $model::find($id, $model::$_options);
 
 			if ( ! $obj)

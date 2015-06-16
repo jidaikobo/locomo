@@ -352,7 +352,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// find()
-		$model::authorized_option();
+		$model::set_authorized_options();
 		$model::$_options['from_cache'] = false;
 		if ( ! $item = $model::find($id, $model::$_options))
 		{
@@ -401,7 +401,7 @@ class Controller_Base extends Controller_Core
 		// create or update
 		if ($id)
 		{
-			$model::authorized_option();
+			$model::set_authorized_options();
 			$model::$_options['from_cache'] = false;
 			$item = $model::find($id, $model::$_options);
 
@@ -501,7 +501,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name ;
 
 		// find()
-		$model::authorized_option();
+		$model::set_authorized_options();
 		$model::$_options['from_cache'] = false;
 		if ( ! $item = $model::find($id, $model::$_options))
 		{
@@ -560,7 +560,7 @@ class Controller_Base extends Controller_Core
 		}
 
 		// find()
-		$model::authorized_option();
+		$model::set_authorized_options();
 		$model::$_options['from_cache'] = false;
 		if ( ! $item = $model::find_deleted($id, $model::$_options))
 		{
@@ -712,7 +712,7 @@ class Controller_Base extends Controller_Core
 		$action = \Request::main()->action;
 		$is_model_soft = is_subclass_of($model, '\Orm\Model_Soft');
 
-		$model::authorized_option();
+		$model::set_authorized_options();
 
 		// save から戻ってきた時の処理
 		if (\Input::get('ids'))
@@ -819,7 +819,7 @@ class Controller_Base extends Controller_Core
 	{
 
 		$model = $this->model_name;
-		$model::authorized_option();
+		$model::set_authorized_options();
 
 
 		$related =  array_keys($options['related'])[0];

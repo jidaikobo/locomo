@@ -81,9 +81,9 @@ trait Controller_Traits_Wrkflw
 		// 進行中の件数
 		$count = $model::count(array('where'=>array(array('workflow_status', '<>', 'finish')),));
 
-		// 表示権限を厳密にとるためモデルのキャッシュを削除しauthorized_option()を設定する
+		// 表示権限を厳密にとるためモデルのキャッシュを削除しset_authorized_options()を設定する
 //		$model::clear_cached_objects();
-//		$model::$_options = $model::authorized_option(array(), 'index');
+//		$model::set_authorized_options(); $model::$_options;
 
 		// assign
 		$view->set_global('title', '関連ワークフロー項目');

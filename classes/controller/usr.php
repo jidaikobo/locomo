@@ -221,7 +221,8 @@ class Controller_Usr extends \Locomo\Controller_Base
 
 		if ($id)
 		{
-			$obj = $model::find($id, $model::authorized_option(array(), 'edit'));
+			$model::set_authorized_options();
+			$obj = $model::find($id, $model::$_options);
 			// not found
 			if ( ! $obj)
 			{

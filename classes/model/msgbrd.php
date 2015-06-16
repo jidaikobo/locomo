@@ -213,7 +213,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 		}
 
 		// static::$_options
-		// 管理者は下書き以外見られる
+		// 管理者は下書き以外であっても見られる
 		// また管理者は、他人の下書きも見られる（つまり管理者が見るときには余計な条件設定をしない）
 		if ( ! \Auth::is_admin())
 		{
@@ -238,8 +238,24 @@ class Model_Msgbrd extends \Model_Base_Soft
 	}
 
 	/**
+	 * set_draft_options()
+	 * @return array()
+	 */
+	public static function set_draft_options()
+	{
+		$options = static::set_public_options(array('is_draft', 'created_at', 'expired_at'));
+		$options['where'][] = array('is_draft' => 1);
+
+		// array_merge
+		static::$_options = \Arr::merge(static::$_options, $options);
+
+		//return
+		return $options;
+	}
+
+	/**
 	 * set_deleted_options()
-	 * @param array() $exception
+	 * 自分専用のごみ箱
 	 * @return array()
 	 */
 	public static function set_deleted_options()
@@ -247,7 +263,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 		$options = parent::set_deleted_options();
 
 		// static::$_options
-		// また管理者は、他人の下書きも見られる（つまり管理者が見るときには余計な条件設定をしない）
+		// 管理者は、他人のごみ箱も見られる（つまり管理者が見るときには余計な条件設定をしない）
 		if ( ! \Auth::is_admin())
 		{
 			$options['where'][] = array(

@@ -122,7 +122,7 @@ Locomoの基本コントローラのテンプレートだけオーバライド�
 // column name
 
 tableを作るとき、以下のカラム名は特別な仕事をします。
-あるいはモデルの$_propertiesで、lcm_roleが設定されている場合、所与のフィールドが代替の仕事をします（しかし多くの場合は、lcm_roleとauthorized_optionを使うよりも、自分で実装したほうが早いでしょう）。
+あるいはモデルの$_propertiesで、lcm_roleが設定されている場合、所与のフィールドが代替の仕事をします（しかし多くの場合は、lcm_roleとset_authorized_optionsを使うよりも、自分で実装したほうが早いでしょう）。
 
 is_visible:int:null
 可視属性フラグです。

@@ -10,15 +10,7 @@ class Actionset_Msgbrd extends \Actionset_Base
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())
 	{
-		$retvals = parent::index_admin($controller, $obj, $id);
-
-		// urls
-		$options = \Model_Msgbrd::set_public_options();
-		$count = \Model_Msgbrd::count($options);
-		$urls = array(array($controller.DS."index_admin", "管理一覧 ({$count})"));
-		\Arr::set($retvals, 'urls', $urls);
-
-		return $retvals;
+		return parent::index_admin($controller, $obj, $id);
 	}
 
 	/**
@@ -26,9 +18,8 @@ class Actionset_Msgbrd extends \Actionset_Base
 	 */
 	public static function actionset_index_draft($controller, $obj = null, $id = null, $urls = array())
 	{
-		$options = \Model_Msgbrd::set_public_options(array('is_draft', 'created_at', 'expired_at'));
-		$options['where'][] = array('is_draft' => 1);
-		$count = \Model_Msgbrd::count($options);
+		static $count;
+		$count = $count ?: \Model_Msgbrd::count(\Model_Msgbrd::set_draft_options());
 		$urls = array(array($controller.DS."index_draft", "下書き ({$count})"));
 
 		$retvals = array(
