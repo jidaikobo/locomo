@@ -397,7 +397,7 @@ class Create_Scdl
 			))->execute();
 
 
-		\DB::query('INSERT INTO  `lcm_scdls_items` (
+		\DB::query("INSERT INTO  `lcm_scdls_items` (
 `id` ,
 `item_id` ,
 `item_name` ,
@@ -491,7 +491,7 @@ NULL ,  '1',  '2015/01/01',  'holiday', NULL ,  '1', NULL , NULL , NULL),
 (NULL ,  '1',  '2019/11/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
 (NULL ,  '1',  '2019/11/04',  'holiday', NULL ,  '1', NULL , NULL , NULL),
 (NULL ,  '1',  '2019/11/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
-(NULL ,  '1',  '2019/12/23',  'holiday', NULL ,  '1', NULL , NULL , NULL);')->execute();
+(NULL ,  '1',  '2019/12/23',  'holiday', NULL ,  '1', NULL , NULL , NULL);")->execute();
 
 		echo "create lcm_scdls_attends table.\n";
 		\DBUtil::create_table('lcm_scdls_attends', array(
