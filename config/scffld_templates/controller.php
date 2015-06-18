@@ -3,7 +3,6 @@ namespace XXX;
 class Controller_XXX extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Crud;
 	use \Controller_Traits_Testdata;
 //	use \Controller_Traits_Wrkflw;
 //	use \Controller_Traits_Revision;
@@ -24,48 +23,114 @@ class Controller_XXX extends \Locomo\Controller_Base
 	);
 
 	/**
-	 * index_core()
-	 */
-	public function index_core()
-	{
-		parent::index_core();
-		$search_form = Model_XXX::search_form();
-		$this->template->content->set_safe('search_form', $search_form);
-	}
-
-	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin()
 	{
-		// free word search
-		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
-		if ($all)
-		{
-			\Model_XXX::$_options['where'][] = array(
-				array('name', 'LIKE', $all),
-				'or' => array(
-					array('kana', 'LIKE', $all),
-					'or' => array(
-						array('company_name', 'LIKE', $all), 
-						'or' => array(
-							array('company_kana', 'LIKE', $all),
-							'or' => array(
-								array('mail', 'LIKE', $all),
-								'or' => array(
-									array('address', 'LIKE', $all),
-									'or' => array(
-										array('memo', 'LIKE', $all),
-									)
-								)
-							)
-						)
-					)
-				) 
-			);
-		}
-
-		// to controller base
 		parent::index_admin();
+	}
+
+	/**
+	 * action_index_yet()
+	 */
+	public function action_index_yet()
+	{
+		parent::index_yet();
+	}
+
+	/**
+	 * action_index_expired()
+	 */
+	public function action_index_expired()
+	{
+		parent::index_expired();
+	}
+
+	/**
+	 * action_index_invisible()
+	 */
+	public function action_index_invisible()
+	{
+		parent::index_invisible();
+	}
+
+	/**
+	 * action_index_deleted()
+	 */
+	public function action_index_deleted()
+	{
+		parent::index_deleted();
+	}
+
+	/*
+	 * action_index_all()
+	 */
+	public function action_index_all()
+	{
+		parent::index_all();
+	}
+
+	/**
+	 * action_index_widget()
+	 */
+	public function action_index_widget()
+	{
+		parent::index_widget(func_get_args());
+	}
+
+	/**
+	 * action_view()
+	 */
+	public function action_view($id = null)
+	{
+		parent::view($id);
+	}
+
+	/**
+	 * action_create()
+	 */
+	public function action_create()
+	{
+		parent::create();
+	}
+
+	/**
+	 * action_edit()
+	 */
+	public function action_edit($id = null)
+	{
+		parent::edit($id);
+	}
+
+	/**
+	 * action_delete()
+	 */
+	public function action_delete($id = null)
+	{
+		parent::delete($id);
+	}
+
+	/**
+	 * action_undelete()
+	 */
+	public function action_undelete($id = null)
+	{
+		parent::undelete($id);
+	}
+
+	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm($id = null)
+	{
+		parent::purge_confirm($id);
+	}
+
+	/**
+	 * action_purge()
+	 */
+	public function action_purge($id = null)
+	{
+		parent::purge($id);
 	}
 }

@@ -39,7 +39,7 @@ class Controller_Scffld_Helper_Views_Index extends Controller_Scffld_Helper
 				$tbody.= "\t<td>{$tdv}</td>\n";
 			endif;
 		}
-		
+
 		//mold
 		$tpl_adm = $model == 'Model_Base_Soft' ? 'index_admin_model_soft.php' : 'index_admin.php';
 		$tpl = $is_admin ? $tpl_adm : 'index.php';

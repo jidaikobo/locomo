@@ -57,12 +57,12 @@ class Controller_Scffld extends \Controller_Base
 			// post
 			$cmd_raw = \Input::post('cmd');
 			$type = \Input::post('type', 'app');
-			$model = \Input::post('model', 'model');
+			$scfld_model = \Input::post('model', 'model');
 
 			// populate
 			\Session::set_flash('scfld_cmd', $cmd_raw);
 			\Session::set_flash('scfld_type', $type);
-			\Session::set_flash('scfld_model', $model);
+			\Session::set_flash('scfld_model', $scfld_model);
 
 			// vals
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw);
@@ -78,7 +78,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// invalid model
-			if ( ! in_array($model, array('Model_Base','Model_Base_Soft','Model_Base_Temporal','Model_Base_Nestedset')))
+			if ( ! in_array($scfld_model, array('Model_Base', 'Model_Base_Soft', 'Model_Base_Temporal', 'Model_Base_Nestedset')))
 			{
 				throw new \Exception('invalid model choosen.');
 			}
@@ -92,9 +92,9 @@ class Controller_Scffld extends \Controller_Base
 
 			// molding - logic
 			$migration  = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
-			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig, $type, $model);
-			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name, $cmd_orig, $type, $model);
-			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig, $type, $model);
+			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig, $type, $scfld_model);
+			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name, $cmd_orig, $type, $scfld_model);
+			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig, $type, $scfld_model);
 			$config     = \Controller_Scffld_Helper_Config::generate($name, $cmd_orig);
 
 			// error
@@ -111,7 +111,7 @@ class Controller_Scffld extends \Controller_Base
 
 			// molding - view
 			$tpl_index       = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig);
-			$tpl_index_admin = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig, true, $model);
+			$tpl_index_admin = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig, true, $scfld_model);
 			$tpl_view        = \Controller_Scffld_Helper_Views_View::generate($name, $cmd_orig);
 			$tpl_edit        = \Controller_Scffld_Helper_Views_Edit::generate($name, $cmds);
 

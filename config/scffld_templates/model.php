@@ -60,4 +60,27 @@ class Model_XXX extends \Model_Base
 		// parent - this must be placed at the end of _init()
 		parent::_init();
 	}
+
+	/**
+	 * set_search_options()
+	 */
+	public static function set_search_options()
+	{
+		// free word search
+/*
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
+		{
+			static::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+				'or' => array(
+					array('body', 'LIKE', $all),
+					'or' => array(
+						array('memo', 'LIKE', $all), 
+					)
+				) 
+			);
+		}
+*/
+	}
 }
