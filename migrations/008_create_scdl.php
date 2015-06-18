@@ -56,6 +56,24 @@ class Create_Scdl
 		echo "parent_idフィールドを追加しました。\n";
 
 
+		echo "スケジューラに毎月第何曜日の区分を増やします。\n";
+		if (\DBUtil::field_exists('lcm_scdls', array('week_kb_option1'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_kb_option1`;')->execute();			
+		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_kb_option1` text DEFAULT NULL;')->execute();
+		if (\DBUtil::field_exists('lcm_scdls', array('week_kb_option2'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_kb_option2`;')->execute();			
+		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_kb_option2` text DEFAULT NULL;')->execute();
+		if (\DBUtil::field_exists('lcm_scdls', array('week_index_option1'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_index_option1`;')->execute();			
+		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_index_option1` int(11) DEFAULT NULL;')->execute();
+		if (\DBUtil::field_exists('lcm_scdls', array('week_index_option2'))) {
+			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `week_index_option2`;')->execute();			
+		}
+		\DB::query('ALTER TABLE `lcm_scdls` ADD `week_index_option2` int(11) DEFAULT NULL;')->execute();
+		echo "スケジューラに毎月第何曜日の区分を追加しました。";
 
 		echo "create lcm_scdls_buildings table.\n";
 		\DBUtil::create_table('lcm_scdls_buildings', array(
@@ -378,6 +396,103 @@ class Create_Scdl
 				'updated_at' => \DB::expr("NOW()")
 			))->execute();
 
+
+		\DB::query("INSERT INTO  `lcm_scdls_items` (
+`id` ,
+`item_id` ,
+`item_name` ,
+`item_group` ,
+`item_group2` ,
+`item_sort` ,
+`created_at` ,
+`updated_at` ,
+`deleted_at`
+)
+VALUES (
+NULL ,  '1',  '2015/01/01',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/01/12',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/02/11',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/03/21',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/04/29',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/05/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/05/04',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/05/05',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/07/20',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/09/21',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/09/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/10/12',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/11/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/11/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2015/12/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/01/01',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/01/11',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/02/11',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/03/20',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/03/21',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/04/29',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/05/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/05/04',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/05/05',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/07/18',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/09/19',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/09/22',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/10/10',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/11/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/11/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2016/12/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/01/01',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/01/02',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/01/09',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/02/11',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/03/20',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/04/29',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/05/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/05/04',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/05/05',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/07/17',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/07/18',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/09/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/10/09',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/11/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/11/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2017/12/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/01/01',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/01/08',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/02/11',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/02/12',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/03/21',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/04/29',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/04/30',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/05/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/05/04',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/05/05',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/07/16',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/09/17',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/09/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/09/24',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/10/08',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/11/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/11/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/12/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2018/12/24',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/01/01',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/01/14',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/02/11',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/03/21',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/04/29',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/05/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/05/04',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/05/05',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/05/06',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/07/15',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/09/16',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/09/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/10/14',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/11/03',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/11/04',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/11/23',  'holiday', NULL ,  '1', NULL , NULL , NULL),
+(NULL ,  '1',  '2019/12/23',  'holiday', NULL ,  '1', NULL , NULL , NULL);")->execute();
+
 		echo "create lcm_scdls_attends table.\n";
 		\DBUtil::create_table('lcm_scdls_attends', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
@@ -416,10 +531,7 @@ class Create_Scdl
 	public function down()
 	{
 		// 追加フィールドを消す
-		if (\DBUtil::field_exists('lcm_scdls', array('parent_id')))
-		{
-			\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `parent_id`;')->execute();
-		}
+		\DB::query('ALTER TABLE `lcm_scdls` DROP COLUMN `parent_id`;')->execute();
 		echo "スケジューラのparent_idを削除しました\n";
 
 

@@ -37,6 +37,18 @@ security設定をしてください。
 		 'csrf_expiration'  => 1800,
 +-------------------------------quote end+
 
+// assets
+
+publicディレクトリ（あるいはそのシステムの公開ディレクトリ）に移動し、packages/locomo/assetsを複製するか、シンボリックリンクをはってください。複製すると、バージョンアップの旅に複製が必要なので、原則、シンボリックリンクを推奨します。複製の場合でも、ディレクトリの名称はlcm_assetsにしてください。
+
+ln -s path/to/packages/locomo/assets lcm_assets
+
+LOCOMOPATH/_to_app_dir/locomo のファイルを APPPATHに移動してください。
+
+ln -s path/to/app/locomo/assets app_assets
+
+で、app内のassetsを対象にできます。このファイルももちろん実体をpublicに置いてもいいのですが、appをgitで管理することも多いので、シンボリックリンクで行っています。
+
 // oil
 
 dbの設定後、oilコマンドで基礎モジュールのmigrationを実行してください。
@@ -46,19 +58,6 @@ php oil refine migrate --packages=locomo --version=100
 パッケージのバージョンダウンは以下の通り。
 
 php oil refine migrate --packages=locomo --version=0
-
-// assets
-
-publicディレクトリ（あるいはそのシステムの公開ディレクトリ）に移動し、packages/locomo/assetsを複製するか、シンボリックリンクをはってください。複製すると、バージョンアップの旅に複製が必要なので、原則、シンボリックリンクを推奨します。複製の場合でも、ディレクトリの名称はlcm_assetsにしてください。
-
-ln -s path/to/packages/locomo/assets lcm_assets
-
-LOCOMOPATH/_to_app_dir/locomo のファイルを APPPATHに移動してください。
-Fuelのデフォルトのassetsディレクトリの名称を変更してください。
-
-ln -s path/to/app/locomo/assets assets
-
-で、app内のassetsを対象にできます。このファイルももちろん実体をpublicに置いてもいいのですが、appをgitで管理することも多いので、シンボリックリンクで行っています。
 
 // access
 
