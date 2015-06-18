@@ -66,11 +66,13 @@ return array(
 			'name' => 'コントローラ一覧',
 			'action' => '\\Controller_Sys/admin_dashboard',
 			'size' => 1,
+			'seq' => 1,
 		),
 		array(
 			'name' => '現在時刻',
 			'action' => '\\Controller_Sys/clock',
 			'size' => 1,
+			'seq' => 2,
 		),
 	),
 

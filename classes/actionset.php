@@ -139,6 +139,7 @@ class Actionset
 			);
 		}
 		$finder = \Finder::forge($paths);
+
 		$actionset = $finder->locate('actionset', str_replace('_', DS, $name));
 		if ( ! $actionset) return;
 
