@@ -21,14 +21,17 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		foreach($cmds as $field)
 		{
 			$is_required = strpos($field, 'null') !== false ? false : true;
-			list($field, $attr) = explode(':', $field);
-			$nicename = self::get_nicename($field);
-			$field    = self::remove_nicename($field);
-			$class    = ", 'class' => '".self::remove_length($attr)."'";
+			$vals    = explode(':', $field);
+			$field   = $vals[0];
+			$attr    = $vals[1];
+			$default = isset($vals[2]) ? self::modify_default($vals[2]) : '' ;
+			$nicename   = self::get_nicename($field);
+			$field      = self::remove_nicename($field);
+			$attr_nolen = self::remove_length($attr);
+			$class      = ", 'class' => '".$attr_nolen."'";
 			$cmd_mods[] = $field;
 
 			// attribute
-			$default = '';
 			$size = 0;
 			$max = 0;
 			if (preg_match('/\[(.*?)\]/', $attr, $m))
@@ -38,11 +41,6 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 					$max  = $m[1] ? intval($m[1]) : 0;
 					$size = ($max >= 30) ? 30 : $max;
 					$size = ($max == 0)  ? 30 : $size;
-				}
-				else
-				// scalar
-				{
-					$default = $m[1];
 				}
 			}
 
@@ -56,11 +54,11 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 				{
 					$properties[$field]['label'] = $nicename;
 				}
-	
+
 				// data_type
 				if ($attr)
 				{
-					$properties[$field]['data_type'] = str_replace(array('[',']'), array('(',')'), $attr);
+					$properties[$field]['data_type'] = $attr_nolen;
 				}
 	
 				// form
@@ -80,7 +78,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 				endif;
 				if ($form)
 				{
-					$form['class'] = self::remove_length($attr);
+					$form['class'] = $attr_nolen;
 					$properties[$field]['form'] = $form;
 				}
 	
@@ -101,6 +99,11 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 				if ($validation)
 				{
 					$properties[$field]['validation'] = $validation;
+				}
+
+				if ($default)
+				{
+					$properties[$field]['default'] = $default;
 				}
 			}
 			else
@@ -149,6 +152,9 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		$field_str = str_replace('  ', "\t", $field_str);
 		$field_str = preg_replace("/^/m", "\t", $field_str);
 		$field_str = str_replace(" => '',", ",", $field_str);
+		$field_str = str_replace("'default' => '\\'\\'',", "'default' => '',", $field_str);
+		$field_str = str_replace("'default' => 'null',", "'default' => null,", $field_str);
+		$field_str = preg_replace("/array \(\n\t+?(\d+),\n\t+?\),/m", "array ($1),", $field_str);
 
 		// template
 		$str = static::fetch_temlpate('model.php');

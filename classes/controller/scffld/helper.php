@@ -50,10 +50,37 @@ class Controller_Scffld_Helper
 	 */
 	public static function remove_length($str)
 	{
-		if (preg_match('/(.*?)\[.\d+\]/', $str, $m)){
+		if (preg_match('/(.*?)\[\d+\]/', $str, $m))
+		{
 			return @$m[1];
 		}else{
 			return $str;
+		}
+	}
+
+	/**
+	 * modify_default()
+	 */
+	public static function modify_default($str)
+	{
+		// null
+		if (strtolower($str) == 'null')
+		{
+			return 'null';
+		}
+
+		// other value
+		if (preg_match('/default\[(.*?)\]/', $str, $m))
+		{
+//			if ( ! $m[1]) throw new \Exception('invalid default value');
+			if ($m[1] == '')
+			{
+				return '';
+			} elseif (is_numeric($m[1])) {
+				return intval($m[1]);
+			} else {
+				return $m[1];
+			}
 		}
 	}
 }

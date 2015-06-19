@@ -21,7 +21,7 @@ class Controller_Scffld extends \Controller_Base
 	public static function _init()
 	{
 		// only at development
-		if (\Fuel::$env != 'development') throw new \Exception('scaffold is only worked under development environment.');;
+		if (\Fuel::$env != 'development') throw new \Exception('scaffold is only worked under development environment.');
 
 		// permission check
 		$arrs = array(
