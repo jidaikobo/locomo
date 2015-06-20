@@ -129,4 +129,52 @@ class Presenter_Base extends \Presenter
 
 		return $form;
 	}
+
+	/**
+	 * create_ctrls()
+	 */
+	public static function create_ctrls($obj)
+	{
+		$html = '';
+		$crtl = \Inflector::ctrl_to_dir(\Request::main()->controller);
+		$crtl_name = \Inflector::add_head_backslash(\Request::main()->controller);
+
+		if (\Auth::has_access($crtl_name.'/view'))
+		{
+			$html.= \Html::anchor($crtl.'/view/'.$obj->id, '閲覧', array('class' => 'view'));
+		}
+		if (\Auth::has_access($crtl_name.'/edit'))
+		{
+			$html.= \Html::anchor($crtl.'/edit/'.$obj->id, '編集', array('class' => 'edit'));
+		}
+
+		if (is_subclass_of($obj, '\Orm\Model_Soft'))
+		{
+			if (\Auth::has_access($crtl_name.'/delete'))
+			{
+				if ($obj['deleted_at'])
+				{
+					$html.= \Html::anchor($crtl.'/undelete/'.$obj->id, '復活', array('class' => 'undelete confirm'));
+					if (\Auth::has_access($crtl_name.'/purge_confirm'))
+					{
+						$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm'));
+					}
+				}
+				else
+				{
+					$html.= \Html::anchor($crtl.'/delete/'.$obj->id, '削除', array('class' => 'delete confirm'));
+				}
+			}
+		}
+		else
+		{
+			if (\Auth::has_access($crtl_name.'/purge_confirm'))
+			{
+				$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm'));
+			}
+		}
+		$html = $html ? '<div class="btn_group">'.$html.'</div>' : '' ;
+
+		return $html;
+	}
 }
