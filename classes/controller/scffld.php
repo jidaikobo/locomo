@@ -55,14 +55,9 @@ class Controller_Scffld extends \Controller_Base
 		if (\Input::method() == 'POST' && \Security::check_token())
 		{
 			// post
-			$cmd_raw = \Input::post('cmd');
-			$type = \Input::post('type', 'app');
+			$cmd_raw     = \Input::post('cmd');
+			$scfld_type  = \Input::post('scfld_type', 'app');
 			$scfld_model = \Input::post('model', 'model');
-
-			// populate
-			\Session::set_flash('scfld_cmd', $cmd_raw);
-			\Session::set_flash('scfld_type', $type);
-			\Session::set_flash('scfld_model', $scfld_model);
 
 			// vals
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw);
@@ -92,9 +87,9 @@ class Controller_Scffld extends \Controller_Base
 
 			// molding - logic
 			$migration  = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
-			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig, $type, $scfld_model);
-			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name, $cmd_orig, $type, $scfld_model);
-			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig, $type, $scfld_model);
+			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig, $scfld_type, $scfld_model);
+			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name, $cmd_orig, $scfld_type, $scfld_model);
+			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig, $scfld_type, $scfld_model);
 			$config     = \Controller_Scffld_Helper_Config::generate($name, $cmd_orig);
 
 			// error
@@ -105,9 +100,9 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// molding presenter
-			$presenter_index = \Controller_Scffld_Helper_Presenter::generate($name, $type, 'index');
-			$presenter_edit  = \Controller_Scffld_Helper_Presenter::generate($name, $type, 'edit');
-			$presenter_view  = \Controller_Scffld_Helper_Presenter::generate($name, $type, 'view');
+			$presenter_index = \Controller_Scffld_Helper_Presenter::generate($name, $scfld_type, 'index');
+			$presenter_edit  = \Controller_Scffld_Helper_Presenter::generate($name, $scfld_type, 'edit');
+			$presenter_view  = \Controller_Scffld_Helper_Presenter::generate($name, $scfld_type, 'view');
 
 			// molding - view
 			$tpl_index       = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig);
@@ -116,7 +111,7 @@ class Controller_Scffld extends \Controller_Base
 			$tpl_edit        = \Controller_Scffld_Helper_Views_Edit::generate($name, $cmds);
 
 			// path - module
-			if ($type == 'module')
+			if ($scfld_type == 'module')
 			{
 				$scfldpath = APPPATH.'modules/';
 				if (\File::create_dir($scfldpath, $name))        $scfldpath = APPPATH.'modules/'.$name.DS;
@@ -134,7 +129,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// path - app
-			if ($type == 'app' || $type == 'view')
+			if ($scfld_type == 'app' || $scfld_type == 'view')
 			{
 				$scfldpath      = APPPATH;
 				$migrationpath  = APPPATH.'migrations/';
@@ -157,7 +152,7 @@ class Controller_Scffld extends \Controller_Base
 			$migrate_file = $latest.'_create_'.$filename;
 
 			// model and migration
-			if ($type == 'model' || $type == 'app' || $type == 'module')
+			if ($scfld_type == 'model' || $scfld_type == 'app' || $scfld_type == 'module')
 			{
 				// migrations
 				\File::update($migrationpath, $migrate_file, $migration);
@@ -172,7 +167,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// views
-			if ($type == 'view' || $type == 'app' || $type == 'module')
+			if ($scfld_type == 'view' || $scfld_type == 'app' || $scfld_type == 'module')
 			{
 				\File::update($viewpath, 'index.php', $tpl_index);
 				\File::update($viewpath, 'index_admin.php', $tpl_index_admin);
@@ -189,7 +184,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// controller and actionset
-			if ($type == 'app' || $type == 'module')
+			if ($scfld_type == 'app' || $scfld_type == 'module')
 			{
 				\File::update($controllerpath, $filename, $controller);
 				\File::update($actionsetpath, $filename, $actionset);
@@ -199,7 +194,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// config
-			if ($type == 'module')
+			if ($scfld_type == 'module')
 			{
 				\File::update($configpath, $filename, $config);
 
@@ -211,17 +206,12 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// messages
-			if ($type == 'app')
+			if ($scfld_type == 'app')
 			{
 				$messages[] = "migrationを調整したら、コマンドラインで";
 				$messages[] = "php oil refine migrate:up";
 				$messages[] = "を実行してください。";
 			}
-
-			// clear population
-			\Session::set_flash('scfld_type', '');
-			\Session::set_flash('scfld_cmd', '');
-			\Session::set_flash('scfld_model', '');
 
 			// log
 			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scffld/'.$name);
