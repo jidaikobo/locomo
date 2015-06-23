@@ -303,7 +303,7 @@ $('.hidden_item').each(function(){
 		if(query!=''){
 			params = query.split('&');
 			for(var i=0, len = params.length ; i < len; i++){
-				if( params[i].indexOf('orders') !== 0 ){
+				if( params[i].indexOf('orders') !== 0 && params[i].indexOf('page') !== 0 ){//ordersとpagesの場合は無視
 					v = true;
 					break;
 				}
@@ -1286,6 +1286,7 @@ $('.validation_error :input').tooltip({
 
 //通常のツールチップ
 $('.lcm_tooltip_parent').tooltip({
+	relative     : true,
 	items: '[data-jslcm-tooltip-id]',
 	content: function() {
 		var el = document.getElementById($(this).data('jslcmTooltipId'));
@@ -1295,7 +1296,6 @@ $('.lcm_tooltip_parent').tooltip({
 	tooltipClass : 'lcm_tooltip',
 	show         : 200,
 	hide         : 'fade',
-	relative     : true,
 	position     : {
 		             my : 'left bottom-8',
 		             at : 'left top'
