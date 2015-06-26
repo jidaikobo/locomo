@@ -3,7 +3,7 @@ namespace XXX;
 class Controller_XXX extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Testdata;
+//	use \Controller_Traits_Testdata;
 //	use \Controller_Traits_Wrkflw;
 //	use \Controller_Traits_Revision;
 

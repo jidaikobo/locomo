@@ -1,6 +1,16 @@
 <?php echo $search_form; ?>
 
 <?php if ($items): ?>
+
+<!--.index_toolbar-->
+<div class="index_toolbar clearfix">
+<!--.index_toolbar_buttons-->
+<div class="index_toolbar_buttons">
+</div><!-- /.index_toolbar_buttons -->
+<?php echo \Pagination::create_links(); ?>
+</div><!-- /.index_toolbar -->
+
+<!--.datatable-->
 <table class="tbl datatable">
 	<thead>
 		<tr>
@@ -39,8 +49,7 @@
 			<th>操作</th>
 		</tr>
 	</tfoot>
-</table>
-<?php echo \Pagination::create_links(); ?>
+</table><!--/.datatable-->
 <?php else: ?>
 <p>項目が存在しません。</p>
 <?php endif; ?>
