@@ -141,6 +141,91 @@ class Util
 		return \DB::expr('"' . $year . '-04-01 00:00:00"' . ' and ' . '"' . ($year+1) . '-03-31 23:59:59"');
 	}
 
+	/*
+	 * convert_jp_era()
+	 * 西暦と和暦の変換
+	 * @return string
+	 */
+	public static function convert_jp_era($str, $ad2jp = TRUE)
+	{
+		$str = mb_convert_kana($str, "a", "UTF-8");
+	
+		//4文字だけだったら年のみと見なして1月1日で換算する
+		$is_short_way = FALSE;
+		if (strlen($str))
+		{
+			$str.= '-01-01';
+			$is_short_way = TRUE;
+		}
+	
+		//vals
+		$timestr = strtotime($str);
+		$date = date('Ymd', $timestr);
+		$y = date('Y', $timestr);
+		$m = date('m', $timestr);
+		$d = date('d', $timestr);
+		$date = intval($date) ;
+		$y = intval($y) ;
+		$retvals = array() ;
+	
+		//西暦 -> 和暦
+		if ($ad2jp)
+		{
+			if ($date <= '19120729')
+			{
+				$jpk = '明治';
+				$jp = 'M';
+				$yy = $y - 1867;
+			}
+			elseif ($date >= '19120730' && $date <= '19261224')
+			{
+				$jpk = '大正';
+				$jp = 'T';
+				$yy = $y - 1911;
+			}
+			elseif ($date >= '19261225' && $date <= '19890107')
+			{
+				$jpk = '昭和';
+				$jp = 'S';
+				$yy = $y - 1925;
+			}
+			elseif ($date >= '19890108')
+			{
+				$jpk = '平成';
+				$jp = 'H';
+				$yy = $y - 1988;
+			}
+	
+			//平成元年を特別扱い
+			$jpk2 = '' ;
+			$jp2 = '' ;
+			$yy2 = '' ;
+			if ($y == 1989)
+			{
+				$jpk2 = ' - 平成';
+				$jp2 = ' - H';
+				$yy2 = $y - 1988;
+			}
+		}
+		//和暦 -> 西暦
+		else
+		{
+			//準備中
+		}
+	
+		//retval
+		$retvals['jp']['full']    = $jpk.$yy.'年'.$m.'月'.$d.'日' ;
+		$retvals['jp']['full2']   = $jp.$yy.'年'.$m.'月'.$d.'日' ;
+		$retvals['jp']['y']       = $jpk.$yy.'年' ;
+		$retvals['jp']['y2']      = $jp.$yy.'年' ;
+		$retvals['jp']['y3']      = $jp.$yy ;
+		$retvals['jp']['y_long']  = $jpk2 ? $jpk.$yy.'年'.$jpk2.$yy2.'年' : $jpk.$yy.'年' ;
+		$retvals['jp']['y2_long'] = $jpk2 ? $jp.$yy.'年'.$jp2.$yy2.'年' : $jp.$yy.'年' ;
+		$retvals['jp']['y3_long'] = $jpk2 ? $jp.$yy.$jp2.$yy2 : $jp.$yy ;
+	
+		return $retvals;
+	}
+
 	/**
 	 * get_file_list
 	 */
@@ -162,7 +247,7 @@ class Util
 			$basename = basename($path);
 			if (substr($basename, 0, 2) == '..') continue;
 			$path = \Str::ends_with($basename, '.') ? substr($path, 0, -1) : $path; // current dir
-			if ( ! \Str::ends_with($basename, '.') && substr($basename, 0, 1) == '.') continue; // invisible file
+			if (! \Str::ends_with($basename, '.') && substr($basename, 0, 1) == '.') continue; // invisible file
 			$list[] = $path;
 		}
 		

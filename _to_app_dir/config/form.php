@@ -10,7 +10,6 @@
  * @link       http://fuelphp.com
  */
 
-
 return array(
 	// regular form definitions
 	'prep_value'                 => true,
@@ -77,7 +76,6 @@ return array(
 	'opener_template' => "<div class='input_group opener'>",
 	'closer_template' => "</div>",
 
-
 	/*
 	 * build_plain_template
 	 * suffix "_plain"
@@ -106,8 +104,6 @@ return array(
 	// build_plain 時間を出力する時のフォーマット 時間が 00:00:00 に評価される時は無視
 	'date_format_plain'                => 'Y年 n月 j日 H:i:s',
 );
-
-
 
 $default = array(
 	// regular form definitions

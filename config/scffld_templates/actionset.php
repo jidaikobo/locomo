@@ -2,9 +2,9 @@
 namespace XXX;
 class Actionset_XXX extends \Actionset
 {
-//	use \Actionset_Traits_Revision;
-//	use \Actionset_Traits_Wrkflw;
 //	use \Actionset_Traits_Testdata;
+//	use \Actionset_Traits_Wrkflw;
+//	use \Actionset_Traits_Revision;
 
 	/*
 	(str)  realm         メニューの表示位置。省略するとbase

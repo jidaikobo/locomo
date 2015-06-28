@@ -56,7 +56,7 @@ class Controller_Scffld extends \Controller_Base
 		{
 			// post
 			$cmd_raw     = \Input::post('cmd');
-			$scfld_type  = \Input::post('scfld_type', 'app');
+			$scfld_type  = \Input::post('type', 'app');
 			$scfld_model = \Input::post('model', 'model');
 
 			// vals

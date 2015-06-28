@@ -1,15 +1,17 @@
 <?php echo \Form::open(); ?>
 
 <!--form_group-->
-<div class="form_group">
+<div class="lcm_form form_group">
 <?php
 	// use model's form definition instead of raw-like html
-	//echo $form;
+	echo $form;
 ?>
 
+<!--
 <table class="formtable">
 ###FIELDS###
 </table>
+-->
 
 <?php
 	// revision memo template - optional

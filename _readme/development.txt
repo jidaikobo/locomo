@@ -91,6 +91,9 @@ return array(
 // actionset - prepare user interface
 
 アクションセットのメソッドはactionset_という接頭辞を必要とします。この接頭辞がない場合は、アクションセットとして機能しませんので、一旦停止したい場合などは、_actionset_というようにすることもできます。接頭辞の後には、識別名を書きます。識別名はとくに決まりはありません。自由に命名してください。
+ただし、actionsetのclass名と同じactionsetを書いてしまうと、PHPの仕様上、コンストラクタとして動いてしまうので、気をつけて下さい。
+
+例）Actionset_Log::actionset_log();
 
 // actionset - disable default actionset
 
