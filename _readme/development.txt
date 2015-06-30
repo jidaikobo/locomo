@@ -1,0 +1,290 @@
+/**
+ * development
+ */
+
+// scaffold
+
+開発にあたってLocomoには、Locomo用のアプリケーション開発のためのscaffold（足場組み）があります。
+FuelとLocomoを展開した後、rootでログインします。画面上右上のスパナのアイコンの項目の中に「足場組み」があるので、画面の指示に従って、アプリケーションを作ってみてください。アプリケーションはappに展開されます。
+
+なお、scaffoldのためには以下パスへのパーミッションが必要です。scaffoldに失敗したら、chmodでパーミッションを調整してください。
+chmod -R 777 /path/to/app/migrations/
+chmod -R 777 /path/to/app/classes/controller
+chmod -R 777 /path/to/app/classes/model
+chmod -R 777 /path/to/app/classes/actionset
+chmod -R 777 /path/to/app/classes/presenter
+chmod -R 777 /path/to/app/views
+
+モジュールを生成する場合は、このディレクトリのパーミッションも調整してください。
+chmod -R 777 /path/to/app/modules
+
+// locomoパス
+
+Locomoパッケージ（以下locomo）では、モジュールやコントローラを起動するためのURI（パス）を、しばしば以下のように記述します。
+
+[\Namespace]\Controller_Name/action
+
+完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。定数のLOCOMOPATHは、package/locomoの物理パスを指します。
+
+// $locomo
+
+Locomoで開発をする際、各コントローラは必要に応じて、\Locomo\Controller_Baseを継承してください。\Locomo\Controller_Baseを継承しない場合、コントローラにアクセスはできますが、アクセス権限管理の対象から外れます。
+
+またLocomo管理下に置かれるコントローラ／モジュールには、$locomoというメンバ変数があることを期待されます。
+
++quote start-----------------------------+
+	// locomo
+	public static $locomo = array(
+		// (str)	name for human
+		'nicename' => 'ユーザ',
+		// (bool)	show at menus
+		'show_at_menu' => true,
+		// (int)	order at menu
+		'order' => 10,
+		// (bool)	true: not appear to acl menu
+		'is_for_admin' => true,
+		// (bool)	true: not appear to acl menu
+		'no_acl' => true,
+		 // (str)	explanation of controller
+		'explanation'  => 'システムを利用するユーザの新規作成、編集、削除等を行います。',
+		 // (str)	main action
+		'main_action'  => 'index_admin',
+		 // (str)	main action's name
+		'main_action_name' => 'ユーザ管理',
+		 // (str)	explanation of top page
+		'main_action_explanation' => '既存ユーザの一覧です。',
+		// (arr)	widgets
+		'widgets' =>array(
+		),
+	);
++-------------------------------quote end+
+
+モジュールの場合は、Locomoは、モジュール名と同名のconfigが存在することを期待します。configでは、最低限、一つの項目、main_controllerを持っている必要があります。configのnicename、explanation、orderは推奨項目です。
+なお、モジュールがconfigを持っていない場合、\Locomo\Controller_Baseを継承していても、モジュールは管理画面のコントローラリストやアクセス権限管理コントローラの対象になりません。しかし、\Locomo\Controller_Baseを継承するとアクセス権限チェックは行われるので、別途アクセス権限管理を実装する必要があります。
+
++quote start-----------------------------+
+return array(
+	'main_controller' => '\\Mod\\Controller_Mod', // required
+	'nicename'        => 'MODULE NICENAME',
+	'explanation'     => 'XXを行います。',
+	'order'           => 10,
+);
++-------------------------------quote end+
+
+// actionset - overview
+
+アクションセットは、ユーザインタフェイスの提供とアクセス権管理の設定用クラスです。
+ユーザインタフェイス（リンク）が表示される画面上のデフォルトの領域（レルム）が4つあります。
+
++------------------------------------+
+|global admin bar                    |
++------------------------------------+
+|[index][base]         [ctrl][option]|
++------------------------------------+
+|                                    |
+
+[base]  : 基本的な操作系のリンクです。
+[ctrl]  : アクション固有のリンクです。「戻る」などのリンクが主です。
+[option]: コントローラやモジュールの設定を変更するリンクです。ギアマークのドロップダウンに格納されます。
+[index] : base, ctrl, option以外のrealmは、ドロップダウンを作るグループとして扱われます。
+
+// actionset - prepare user interface
+
+アクションセットのメソッドはactionset_という接頭辞を必要とします。この接頭辞がない場合は、アクションセットとして機能しませんので、一旦停止したい場合などは、_actionset_というようにすることもできます。接頭辞の後には、識別名を書きます。識別名はとくに決まりはありません。自由に命名してください。
+ただし、actionsetのclass名と同じactionsetを書いてしまうと、PHPの仕様上、コンストラクタとして動いてしまうので、気をつけて下さい。
+
+例）Actionset_Log::actionset_log();
+
+// actionset - disable default actionset
+
+アクションセットを使う際は、＼Locomo\Actionset_Baseを継承します。ここには、基本的なアクションセットが定義されているので、実装の際は、actionset_のprefixをもったメソッドからActionset_Baseのメソッドを呼びます。基本的なアクションセットの振る舞いを少しだけ改変したい場合も、以下のような記述をすると楽です。
+
++quote start-----------------------------+
+	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
+	{
+		$urls = array(array($controller.DS."index_XXX", 'リンク文字列'),);
+		$retvals = \Actionset::index($controller, $obj, $id, $urls);
+		\Arr::set($retvals, 'urls', $urls);
+		return $retvals;
+	}
++-------------------------------quote end+
+
+// actionset - acl
+
+アクションセットで設定されているdependenciesは、アクションセットのリンクを表示する上で必要なアクションです。ここにはlocomo-pathの文字列を配列で渡します。ここで設定したものがlocomoのaclの画面に表示され、管理の対象になります。
+
+// config
+
+configにnicenameとmain_controllerを設定してください。nicenameは人間用にコントローラ（モジュール）名を読みやすくしたもの。main_controllerは、これを使って、モジュールの代表画面を設定します。
+モジュールの場合は、モジュールディレクトリのconfigのなか、モジュールでない場合は、APPPATH.configにあるコントローラ名と同名のconfigを参照します。
+
+// template override
+
+Locomoの基本コントローラのテンプレートだけオーバライドする場合は、APPPATH.views/CONTROLLER/views/に同じ名前のファイルで設置してください。inc_header等のオーバライドに関しては、APPPATH.views/に設置できます。
+
+// column name
+
+tableを作るとき、以下のカラム名は特別な仕事をします。
+あるいはモデルの$_propertiesで、lcm_roleが設定されている場合、所与のフィールドが代替の仕事をします（しかし多くの場合は、lcm_roleとset_authorized_optionsを使うよりも、自分で実装したほうが早いでしょう）。
+
+is_visible:int:null
+可視属性フラグです。
+
+is_available:int:null
+有効属性フラグです。
+
+deleted_at:datetime:null
+削除フラグです。nullのときは表示され、dateが入っているときには削除されたことになります。これは\Orm\Model_Softの利用が前提になっています。
+
+created_at:datetime:null
+作成日です。未来の日付が入っていると予約項目になります。
+
+updated_at:datetime:null
+更新日です。
+
+expired_at:datetime:null
+表示期日です。過去の日付が入っていると表示終了になります。
+
+creator_id:int[5]
+updater_id:int[5]
+作成者idと編集者idが格納されます。
+
+workflow_status:varchar[50]
+ワークフローを適用するコントローラでは必要です。
+
+seq:int[n]
+orderはいちおうMySQLの予約語なので、表示順を制御する際は、seqを使ってください。
+
+これらの条件は、Model::$_optionsに反映され、tableの構成とユーザの権限にあわせて、表示権限等を制御します。
+
+// Model::cascade_set()
+
+モデルでORM用のリレーションを設定している場合、Model::cascade_set()でsave()に適した形のオブジェクトを生成できます。また、このメソッドは、リレーション先のバリデーションを同時に行うので、bool値を返します。
+
+// revision
+
+revisionを適用したいコントローラとアクションセットで、Traitを追加します。
+scaffoldを使った場合はコメントアウトされています。
+
+	use \Controller_Traits_Revision;
+	use \Actionset_Traits_Revision;
+
+モデルでは、observerを足してください。
+
+		'\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
+
+またモデルで、そのモデルの項目の表題名にあたるフィールド名を設定してください。
+$_propertiesの当該fieldに、
+			'lcm_role' => 'subject',
+を設定します。
+
+以上でコントローラでの編集履歴が有効になります。
+
+// workflow
+
+ワークフローを適用したいコントローラとモデルとアクションセットで、Traitを追加します。
+scaffoldを使った場合はコメントアウトされています。
+
+	use \Controller_Traits_Wrkflw;
+	use \Model_Traits_Wrkflw;
+	use \Actionset_Traits_Wrkflw;
+
+最初からワークフロー想定の場合は、migrationに追加する。
+
+'workflow_status' => array('constraint' => '"init","in_progress","before_progress","finish"', 'type' => 'enum', 'null' => true),
+
+なければ、MySQLで直接足す。
+
+ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_progress', 'finish');
+
+対象モデルの$_propertiesにworkflow_statusを足します。
+
+		'workflow_status' => array ('form' => array ('type' => false,),),
+
+対象モデルにobserverを追加します。
+
+		'Locomo\Observer_Wrkflw' => array(
+			'events' => array('before_insert', 'before_save','after_load'),
+		),
+
+以上でコントローラでのワークフロー管理が有効になります。
+
+// bulk edit
+
+バルク編集（複数項目の一括編集）をするためには、バルク編集用のアクションを作ります。
+バルク編集用のアクションでは、対象となるモデルを設定してください。以下の例はユーザモジュールのユーザグループです。モデルは、\Model_Usrgrpとなっています。
+
++quote start-----------------------------+
+	public function action_bulk($page_num = 1)
+	{
+		// bulk
+		$form = $this->bulk(array(), array(), '\Model_Usrgrp');
+
+		//assin
+		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
+		$view->set_global('title', 'ユーザグループ設定');
+		$view->set_global('form', $form, false);
+		$this->template->content = $view;
+	}
++-------------------------------quote end+
+
+	public function action_bulk ()
+	{
+		$date = \Input::get('date', date('Y-m-d'));
+		$options = array(
+			'where' => array(
+				array('date_at', 'LIKE', $date . '%'),
+			),
+			'related' => array(
+				'staff' => array(
+					'where' => array(
+						array('category', '=', 'staff'),
+					),
+				),
+			),
+		);
+
+		$defaults = array(
+			'date_at' => $date,
+		);
+
+		$this->conditioned_bulk($options, $defaults);
+	}
+
+
+バルク編集に関しては、\Admin\Controller_Admin::action_edit()にもちょっと違ったサンプルがあります。こちらはtabular formを使ったサンプルで、\Admin\Model_Adminや\Admin\Model_Userなど、専用のリレーションモデルを対象にした事例です。
+
+// dashboard widget
+
+コントローラクラスの$locomoにwidgetsを宣言すると、ダッシュボードウィジェットの候補にできます。以下はuserモジュールの例です。
+
++quote start-----------------------------+
+		'widgets' =>array(
+			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_widget?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
+			array('name' => '新規ユーザ登録', 'uri' => '\\User\\Controller_User/create'),
+		),
++-------------------------------quote end+
+
+原則、ウィジェット件名をキーとして、locomo-pathと引数をクエリストリングスの形式で渡します。一点注意が必要なのは、index_adminに渡すようなクエリストリングスでなくfind()に渡すような形式で渡す必要がある、ということです。
+
+この例では、
+
+order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc
+
+ですが、これは以下のように生成した文字列です。
+
+$q = \Uri::build_query_string(array('order_by' => array(array('id', 'desc')))) ;
+
+ウィジェットもaclの対象です。コントローラがウィジェットを宣言していても、アクセス権がなければ、そのユーザのウィジェットの候補にも挙がりません。
+
+また、ウィジェットを作るときには、引数の順番にも注意をしてください。ウィジェット用のアクションの一番最初の引数は必ずウィジェットのサイズ（1〜3）になります。
+
+// 特別なAuth
+
+Authをoverrideしたいときに参考になるのは、\Locomo\Controller_Usr::before()と、\Locomo\Controller_Usrgrp_Custom::before() です。
+
+原理的には、before()で、Authの判定材料である\Auth::get('allowed')の値をあらかじめ改変しておくという手法をとります。
+
+\Auth::has_access()には、locomo_has_accessというEventもあり、こちらも利用できますが、controllerのなかで処理が完結するような場合は、before()で十分間に合うと思われます。

@@ -1,0 +1,181 @@
+<?php
+class Model_Msgbrd_Categories extends \Model_Base
+{
+//	use \Model_Traits_Wrkflw;
+
+	// $_table_name
+	protected static $_table_name = 'lcm_msgbrds_categories';
+
+	// $_conditions
+	protected static $_conditions = array();
+
+	// $_options
+	public static $_options = array();
+
+	//$_properties
+	protected static $_properties = array(
+		'id',
+		'name' => array(
+			'lcm_role' => 'subject',
+			'label' => '名称',
+		),
+		'description',
+		'seq',
+		'is_available',
+		'deleted_at',
+	);
+
+
+/*
+	// $_has_many
+	protected static $_has_many = array(
+		'foo' => array(
+			'key_from' => 'id',
+			'model_to' => 'Model_Foo',
+			'key_to' => 'bar_id',
+			'cascade_save' => true,
+			'cascade_delete' => false
+		)
+	);
+	// $_belongs_to
+	protected static $_belongs_to = array(
+		'foo' => array(
+						'key_from' => 'foo_id',
+						'model_to' => 'Model_Foo',
+						'key_to' => 'id',
+						'cascade_save' => true,
+						'cascade_delete' => false,
+					)
+	);
+*/
+
+	// observers
+	protected static $_soft_delete = array(
+		'deleted_field'   => 'deleted_at',
+		'mysql_timestamp' => true,
+	);
+
+	protected static $_observers = array(
+		"Orm\Observer_Self" => array(),
+		'Orm\Observer_UpdatedAt' => array(
+				'events' => array('before_update'),
+				'mysql_timestamp' => true,
+			),
+		'Locomo\Observer_Created' => array(
+			'events' => array('before_insert', 'before_save'),
+			'mysql_timestamp' => true,
+		),
+		'Locomo\Observer_Expired' => array(
+				'events' => array('before_insert', 'before_save'),
+				'properties' => array('expired_at'),
+			),
+//		't'Locomo\Observer_Workflow' => array(
+//			'events' => array('before_insert', 'before_save','after_load'),
+//		),
+//		't'Locomo\Observer_Revision' => array(
+//			'events' => array('after_insert', 'after_save', 'before_delete'),
+//		),
+
+	);
+
+	/**
+	 * form_definition()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function form_definition($factory = 'msgbrd_usergroup', $obj = null)
+	{
+		$form = \Fieldset::forge($factory, \Config::get('form'));
+
+		//id
+		$form->add(
+			'id',
+			'ID',
+			array('type' => 'text', 'disabled' => 'disabled', 'size' => 2)
+		)
+		->set_value(@$obj->id);
+
+		//name
+		$form->add(
+				'name',
+				'カテゴリ名',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->name)
+			->add_rule('required')
+			->add_rule('max_length', 50)
+			->add_rule('unique', "lcm_usrgrps.name.".@$obj->id);
+
+		//description
+		$form->add(
+				'description',
+				'説明',
+				array('type' => 'text', 'size' => 20)
+			)
+			->set_value(@$obj->description)
+			->add_rule('max_length', 255);
+
+		//order
+		$form->add(
+				'seq',
+				'表示順',
+				array('type' => 'text', 'size' => 5)
+			)
+			->set_value(@$obj->seq ?: 10)
+			->add_rule('valid_string', array('numeric'));
+
+		//is_available
+		$form->add(
+				'is_available',
+				'使用中',
+				array('type' => 'select', 'options' => array('0' => '未使用', '1' => '使用中'), 'default' => 0)
+			)
+			->set_value(@$obj->is_available ?: 1);
+
+		return $form;
+	}
+
+	/**
+	 * plain_definition()
+	 *
+	 * @param str $factory
+	 * @param int $id
+	 *
+	 * @return  obj
+	 */
+	public static function plain_definition($factory = 'msgbrd_usergroup', $obj = null)
+	{
+		$form = static::form_definition($factory, $obj);
+/*
+		$form->field('created_at')
+			->set_attribute(array('type' => 'text'));
+*/
+
+		return $form;
+	}
+
+	/*
+	 * search_form
+	 */
+	public static function search_form()
+	{
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('msgbrd_usergroup_search_form', $config);
+
+		// 検索
+		$form->add(
+			'all',
+			'フリーワード',
+			array('type' => 'text', 'value' => \Input::get('all'))
+		);
+
+		// wrap
+		$parent = parent::search_form_base('');
+		$parent->add_after($form, 'msgbrd_usergroup_search_form', array(), array(), 'opener');
+
+		return $parent;
+	}
+}

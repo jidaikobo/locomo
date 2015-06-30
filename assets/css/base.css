@@ -1,0 +1,1267 @@
+@charset "UTF-8";
+/* http://jigsaw.w3.org/css-validator/ */
+
+html {
+	height:100%;
+	margin-bottom:1px;
+	overflow-y: scroll;
+}
+
+body {
+	background-color: #fff;
+	color: #000;
+	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	word-break: break-all;
+}
+
+
+/* === for html5set === */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+	display: block;
+}
+
+p,
+dl,
+ul,
+ol {
+	line-height: 1.6;
+	margin: 0;
+	padding: 0;
+}
+
+/* === heading === */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	clear: both;
+	font-size: 100%;	
+	font-weight: bold;
+	line-height: 1.6;
+	margin: 0;
+}
+/* header footer */
+header,
+#header,
+footer,
+#footer {
+	line-height: 1;
+}
+
+
+
+/* max-width */
+img,
+table {
+	max-width: 100%;
+}
+img {
+	height: auto;
+	vertical-align: bottom;
+}
+
+/* === hyper-link activities (normal) === */
+
+a:link    {color: #1122cc;}
+a:visited {color: #515;}
+a:hover   {text-decoration: none;}
+a img {
+	border: none;
+}
+
+/* === hyper-link activities (.nfb) === */
+
+a.nfb:link,
+a.nfb:visited {
+	color: #000 !important;
+	background-color: transparent;
+	text-decoration: none !important;
+}
+a.nfb:hover {
+	color: #1122cc !important;
+	background-color: transparent;
+	text-decoration: none !important;
+}
+
+a.fb:link img {
+	outline: 1px dotted #1122cc;
+}
+a.fb:visited img {
+	outline: 1px dotted #515;
+}
+a.fb:hover img {
+	outline: 1px solid #900 !important;
+}
+a.fb {
+	text-decoration: none !important;
+}
+a.fb:hover {
+	color: #900 !important;
+}
+img.nfb {
+	outline: 1px solid #fff;
+}
+
+
+/* === hyper-link activities (.danger) === */
+a.danger,
+a.danger:visited {
+	color: #a20;
+}
+
+
+/* === focus === */
+:focus {
+	outline:4px solid rgb(153,198,200);
+	outline: -webkit-focus-ring-color auto 4px;
+	outline-color: rgba(153,198,200,.6);
+	z-index: 99;
+}
+body:focus {
+	outline: none;
+}
+::-moz-focus-inner {
+	border:0;
+}
+
+
+/* === hover activities (opacity) === */
+.bt.opro:hover *,
+.ro.opro:hover *{
+	opacity: .6; /* Standard: FF gt 1.5, Opera, Safari */
+	filter: alpha(opacity=60); /* IE lt 8 */
+	-ms-filter: "alpha(opacity=60)"; /* IE 8 */
+	-khtml-opacity: .6; /* Safari 1.x */
+	-moz-opacity: .6; /* FF lt 1.5, Netscape */
+}
+
+/* === em , strong === */
+em,
+strong {
+	color: #a20;
+	font-style: normal;
+}
+em {
+	font-weight: normal;
+}
+strong {
+	font-weight: bold;
+}
+strong.attn {
+	color: #000;
+	font-weight: bold;
+}
+strong strong {
+	border-bottom: 3px #a20 double;
+}
+strong.strong2 {
+	color: #000;
+	border-bottom:2px solid #ff6; 
+	box-shadow:0 -.45em 0 #ff6 inset; 
+}
+
+/* === abbr , acronym === */
+abbr,
+acronym {
+	color: inherit;
+	font-style: normal;
+	border-color: #333;
+	border-style: dotted;
+	border-width: 0 0 1px;
+	cursor: help;
+}
+
+/* === code === */
+code {
+	font-family: 'monospace';
+	padding: 1px 3px;
+	border: 1px #aaa solid;
+	background-color: #ffffee;
+}
+
+/* === kbd === */
+kbd {
+	font-family: 'monospace';
+	margin: 0 0.1em;
+	padding: 0 2px;
+	border-style: solid;
+	border-width: 1px;
+	display: inline;
+}
+
+/* === ruby === */
+ruby {
+	line-height: 1;
+}
+rt,
+rp {
+	font-size: 70%;
+	font-weight: normal;
+}
+
+/* === ruby (secret , explanation) === */
+span.exp,
+span.ruby,
+dfn {
+	border-color: #333;
+	border-style: dotted;
+	border-width: 0 0 1px;
+	cursor: help;
+}
+
+/* === clear , hidden === */
+.nd,
+.nodisplay {
+	display: none;
+}
+
+.hd,
+.hidden {
+	visibility: hidden;
+}
+
+.hl,
+.hiddenlink,
+.hiddenmessage,
+.forscreenreader,
+.skip {
+	position: absolute !important;
+	left: auto;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+}
+
+.hl.show_if_focus:focus,
+.hiddenlink.show_if_focus:focus,
+.hiddenmessage.show_if_focus:focus,
+.forscreenreader.show_if_focus:focus,
+.skip.show_if_focus:focus {
+/*	position: relative !important; */
+	left: auto;
+	clip: auto;
+	dislay: block;
+	padding:5px 10px;
+	background-color: #fff;
+	z-index: 1000;
+	height: auto;
+	width: auto;
+	text-decoration: none;
+}
+
+.div,
+.clear {
+	clear: both;
+}
+
+.nc,
+.noclear {
+	clear: none !important;
+}
+
+/* === clearfix === */
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	height: 0;
+	visibility: hidden;
+}
+
+.clearfix {
+	min-height: 1px;
+}
+
+* html .clearfix {
+	height: 1px;
+	/*\*//*/
+	height: auto;
+	overflow: hidden;
+	/**/
+}
+
+/* === list === */
+ol {
+ padding:  0 0 0 30px; 
+}
+ul {
+ padding:  0 0 0 18px; 
+}
+
+/* === ul , ol (.nlm) === */
+ul.nlm,
+ol.nlm {
+	list-style-image: none !important;
+	list-style: none;
+	padding: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
+ul.nlm li,
+ol.nlm li {
+	padding: 0;
+	margin: 0;
+}
+
+/* === ul,ol (.cmt) === */
+ul.cmt,
+ol.cmt {
+	color: #111;
+	background-color: #f8f8f8;
+	border: 1px #bbb solid;
+	margin: 10px 0;
+	padding: 8px 0 5px 40px;
+}
+
+/* === dl.cmt === */
+dl.cmt {
+	color: #111;
+	background-color: #fff;
+	margin: 0 0 15px;
+	padding: 0 15px;
+	border-bottom: #bbb 1px solid;
+	border-left: #bbb 1px solid;
+	border-right: #bbb 1px solid;
+	width: auto;
+}
+dl.cmt dt {
+	line-height: 1;
+	position: relative;
+	color: #111;
+	background-color: #f8f8f8;
+	margin: 0 -15px;
+	padding: 10px 10px;
+	border-top: #bbb 1px solid;
+	border-bottom: #bbb 1px dotted;
+}
+*>dl.cmt dt {
+	margin: 0 -15px -5px;
+}
+dl.cmt dd {
+	position: relative;
+	margin: 0 -15px 0;
+	padding: 10px 10px 5px;
+}
+dl.cmt dd * {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/* === dl.list === */
+dl.list {
+	margin: 0 0 15px;
+	padding: 0;
+	width: 100%;
+}
+dl.list dt {
+	font-weight: bold;
+	line-height: 1;
+	position: relative;
+	margin: 0;
+	padding: 4px 0;
+}
+dl.list dd {
+	position: relative;
+	margin: 0;
+	padding: 5px 0;
+}
+dl.list dt img {
+	float: right;
+}
+
+/* === p , div , pre , ul , ol (.cmt) === */
+pre.cmt,
+pre.cmt2,
+div.cmt,
+p.cmt {
+	color: #111;
+	background-color: #f8f8f8;
+	margin: 0 0 15px;
+	padding: 7px 15px;
+	border: 1px #bbb solid;
+	width: auto;
+}
+div.cmt {
+	padding: 8px 15px;
+}
+div.cmt * {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+div.cmt ul,
+div.cmt ol {
+	padding: 0;
+	margin-left: 25px;
+	margin-right: 0;
+}
+div.cmt ul.il,
+div.cmt ol.il {
+	margin-left: 0;
+}
+pre.cmt {
+	overflow: auto;
+}
+pre.cmt2 {
+	white-space: pre-line;
+}
+
+/* === cite === */
+cite.jp,
+cite.ja {
+	font-style: normal;
+}
+cite.en,
+span.en {
+	font-style: italic;
+}
+cite[lang$="ja"] {
+	font-style: normal;
+}
+cite[lang$="en"],
+cite.foreign {
+	font-style: italic;
+}
+
+/* === address === */
+address {
+	font-style: normal;
+}
+
+/* === pre.pre === */
+pre.pre {
+	border: 1px #bbb solid;
+	padding: 5px;
+	width: 100%;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	background-color: #fefefe;
+}
+
+/* === blockquote === */
+blockquote.blockquote {
+	border: 1px #bbb dashed;
+	padding: 0 10px;
+	margin: 10px 0;
+	width: 100%;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	background-color: #fefefe;
+}
+
+/* === form - wrapper === */
+/*div.form_group {
+	padding: 20px 10px;
+	border: 1px solid #aaa;
+	margin: 20px 0;
+}
+*/
+/*.form_group fieldset,*/
+fieldset {
+	border: 1px solid #aaa;
+	margin: 10px 0;
+}
+.button + fieldset,
+.btn + fieldset {
+	margin-top: 20px;
+}
+
+/* === forms - buttons === */
+input,
+select,
+label {
+	max-width: 100%;
+}
+
+input[type="text"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="email"],
+input[type="password"],
+input[type="datetime"],
+input[type="date"],
+input[type="month"],
+input[type="week"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="number"],
+textarea {
+	padding: 0 3px;
+	line-height: 1.5;
+	font-size: 110%;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.btn,
+.button {
+	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+	vertical-align: middle;
+	padding: 5px 15px ;
+	margin: 0 5px;
+	line-height: 1.5em;
+	font-size: 90%;
+	border-radius: 4px;
+	color: #222;
+	text-decoration: none;
+	font-weight: normal;
+	display: inline-block;
+	cursor: pointer;
+	border: 1px solid #999;
+	background-color: #fafafa;
+	-webkit-appearance: none;
+}
+.btn+.btn,
+.button+.button {
+	margin-left: 5px;
+}
+a.btn,
+a.button {
+	color: #222;
+}
+.btn:hover,
+.button:hover {
+	border: 1px solid #111;
+	text-decoration: none;
+	background-color: #e6e6e6;
+}
+.btn:active,
+.button:active {
+
+}
+
+/* === forms - primarybutton === */
+
+.btn.primary,
+.button.primary {
+	font-weight: bold;
+	border: 2px solid #666;
+	padding: 4px 12px;
+}
+.btn.primary:hover,
+.button.primary:hover {
+	border: 4px solid #666;
+	padding: 2px 10px;
+}
+.button.primary:active,
+.btn.primary:active {
+	border: 4px solid #666;
+	padding: 2px 10px;
+}
+select {
+	border: 1px #999 solid;
+	font-size: 100%;
+}
+.textarea,
+.wide {
+	width: 100%;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	height: 12em;
+}
+.textarea.src {
+	line-height: 1.6;
+	font-family: monospace;
+	background-color: #fafafa;
+	white-space: pre;
+}
+form em.exp,
+form em.explanation {
+	font-size: 90%;
+	display: block;
+}
+
+/* === form - label of checkboxes and radio === */
+.label_fb label {
+	white-space:nowrap;
+	padding: 2px 1px;
+}
+
+.label_fb label:hover {
+	background-color: #e8e8e8;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+form .label_fb label * {
+	vertical-align: text-bottom;
+}
+.disabled label {
+	opacity: 0.5;
+}
+
+.disabled label:hover {
+	background-color: transparent !important;
+}
+
+/*=== btn-group ===*/
+.btn_group .btn,
+.btn_group .button {
+	border-radius: 0;
+	margin-left: -1px;
+	margin-right: -1px;
+}
+.btn_group .btn+.btn ,
+.btn_group .button+.button {
+	margin-left: 0;
+}
+.btn_group .btn:first-child,
+.btn_group .button:first-child {
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	margin-left: 0;
+}
+.btn_group .btn:last-child,
+.btn_group .button:last-child {
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	margin-right: 0;
+}
+
+/* === tables === */
+
+th.ctrl,
+td.ctrl,
+th.id,
+td.id {
+	white-space: nowrap;
+	text-align: center !important;
+	width: 1%;
+}
+
+th.ctrl2 {
+	white-space: nowrap;
+	text-align: center !important;
+}
+
+td.cost,
+td.title,
+td.head {
+	white-space: nowrap;
+}
+td.cost {
+	text-align: right !important;
+}
+th.title,
+td.title {
+	text-align: center !important;
+}
+
+/* === table.nostyle === */
+
+table.nostyle,
+table.nostyle th,
+table.nostyle td {
+	border: none !important;
+	background-color: transparent !important;
+	background-image: none !important;
+}
+
+/* === table.tbl === */
+table.tbl {
+	margin: 5px 0 10px ;
+	width: 100%;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+/*	border-collapse: collapse;*/
+	border-spacing: 0px;
+	border-top: 1px #bbb solid;
+	border-left: 1px #bbb solid;
+}
+*>table.tbl
+{
+	width: 100%;
+}
+table.tbl th,
+table.tbl td
+{
+	text-align: left;
+	padding: 8px 5px;
+	border-bottom: 1px #bbb solid;
+	border-right: 1px #bbb solid;
+}
+*>table.tbl th,
+*>table.tbl td {
+	padding: 8px 5px;
+}
+table.tbl th {
+	text-align: left;
+	background-color: #f8f8f8;
+	white-space: nowrap;
+	font-weight: bold;
+	color: #111;
+}
+table.tbl thead th,
+table.tbl .thead th {
+	background-color: #eee;
+	color: #111;
+	text-align: center;
+}
+table.tbl * {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+table.tbl ul,
+table.tbl ol {
+	padding: 0;
+	margin-left: 25px;
+	margin-right: 0;
+}
+
+/* === tabl.tbl1 === */
+table.tbl1 {
+/*	border-collapse: collapse;*/
+	border-spacing: 0px;
+	width: 100%;
+	border-top: 1px #bbb solid;
+	border-left: none;
+}
+table.tbl1 th,
+table.tbl1 td {
+	text-align: left;
+	padding: 8px 5px;
+	border-bottom: 1px #bbb solid;
+	border-right: none;
+}
+table.tbl1 thead th {
+	color: #111;
+	background-color: #eee;
+	text-align: center;
+}
+table.tbl1 th {
+	color: #111;
+	background-color: #f8f8f8;
+}
+table.tbl1 td {
+	color: #111;
+	background-color: #fff;
+}
+
+/* === table.tbl2 === */
+table.tbl2 {
+/*	border-collapse: collapse;*/
+	border-spacing: 0px;
+	width: 100%;
+	background-color: #fff;
+}
+table.tbl2 th,
+table.tbl2 td {
+	text-align: left;
+	padding: 8px 5px;
+}
+table.tbl2 thead th {
+	color: #111;
+	background: #eee;
+	text-align: center;
+	font-weight: bold;
+	border-top: 1px #ccc solid;
+	border-bottom: 1px #ccc solid;
+}
+table.tbl2 tbody tr:nth-child(even),
+table.tbl2 tbody tr:nth-child(even) th,
+table.tbl2.even tbody tr:nth-child(even) td {
+	background: #f6f6f6;
+}
+table.datatable th,
+table.datatable td{
+	border-bottom: 1px solid #f3f3f3;
+}
+table.tbl2 tbody tr:nth-child(odd),
+table.tbl2 tbody tr:nth-child(odd) th,
+table.tbl2 tbody tr:nth-child(odd) td,
+table.tbl2.even tbody tr:nth-child(odd),
+table.tbl2.even tbody tr:nth-child(odd) th,
+table.tbl2.even tbody tr:nth-child(odd) td {
+	background: #fff;
+}
+table.tbl2.odd tbody tr:nth-child(odd),
+table.tbl2.odd tbody tr:nth-child(odd) th,
+table.tbl2.odd tbody tr:nth-child(odd) td {
+	background: #fff;
+}
+table.tbl2.odd tbody tr:nth-child(even),
+table.tbl2.odd tbody tr:nth-child(even) th,
+table.tbl2.odd tbody tr:nth-child(even) td {
+	background: #f3f3f3;
+}
+table.tbl2 th {
+	font-weight: normal;
+	color: #111;
+}
+table.tbl2 td {
+	color: #111;
+}
+
+/* === tabl.tbl3 === */
+table.tbl3 {
+/*	border-collapse: collapse;*/
+	border-spacing: 0px;
+	width: 100%;
+	border-top: 1px #bbb solid;
+	border-left: none;
+}
+table.tbl3 th,
+table.tbl3 td {
+	text-align: left;
+	padding: 8px 5px;
+	border-bottom: 1px #bbb solid;
+	border-right: none;
+}
+table.tbl3 thead th {
+	color: #111;
+	background-color: #eee;
+	text-align: center;
+}
+table.tbl3 th {
+	color: #111;
+	background-color: #eee;
+}
+table.tbl3 td {
+	color: #111;
+	background-color: #fff;
+}
+table.tbl3 tbody td:nth-child(odd) {
+	background: #f6f6f6;
+}
+
+/* === tabl.tbl4 === */
+table.tbl4 {
+/*	border-collapse: collapse;*/
+	border-spacing: 0px;
+	width: 100%;
+	border-left: none;
+}
+table.tbl4 th,
+table.tbl4 td {
+	text-align: left;
+	padding: 8px 5px;
+	border-bottom: 1px #111 solid;
+	border-right: none;
+}
+table.tbl4 thead th {
+	text-align: left;
+}
+
+/* === table.radius === */
+table.tr,
+table.radius { /* 上、左にborder */
+	border-radius: 4px;
+}
+*>table.tr,
+*>table.radius {
+/*
+	width: 100%;
+*/
+}
+table.tr th,
+table.radius th,
+table.tr td,
+table.radius td { /* 右、下にborder */
+/*
+	border-right: 1px solid #888888;
+	border-bottom: 1px solid #888888;
+	border-top: none; 
+	border-left: none;
+*/
+}
+
+/* 上角丸 */
+
+/* 1行目、左端の要素 */
+table.tr tr:first-child th:first-child,
+table.radius tr:first-child th:first-child,
+table.tr tr:first-child td:first-child,
+table.radius tr:first-child td:first-child {
+	border-top-left-radius: 4px; /* 左上角丸 */
+}
+table.tr tr:first-child th:last-child,
+table.radius tr:first-child th:last-child,
+table.tr tr:first-child td:last-child,
+table.radius tr:first-child td:last-child {
+	border-top-right-radius: 4px; /* 右上角丸 */
+}
+
+/* theadのない場合のtbody > th（thead > thと同様のスタイルに。） */
+table.tr table tbody:first-child th,
+table.radius table tbody:first-child th {
+	background-color: #eee;
+}
+
+/* ----- 上角丸、theadがある場合にtbodyの角丸を解除 ----- */
+
+table.tr thead ~ tbody tr:first-child th:first-child,
+table.radius thead ~ tbody tr:first-child th:first-child,
+table.tr thead ~ tbody tr:first-child td:first-child,
+table.radius thead ~ tbody tr:first-child td:first-child {
+	border-top-left-radius: 0; /* 左上角丸なし */
+}
+table.tr thead ~ tbody tr:first-child td:last-child,
+table.radius thead ~ tbody tr:first-child td:last-child {
+	border-top-right-radius: 0; /* 右上角丸なし */
+}
+
+/* 下角丸 */
+
+/* tbodyのラスト1行、左端の要素 */
+
+table.tr tbody tr:last-child th:first-child,
+table.radius tbody tr:last-child th:first-child,
+table.tr tbody tr:last-child td:first-child,
+table.radius tbody tr:last-child td:first-child {
+	border-bottom-left-radius: 4px; /* 左下角丸 */
+}
+
+/* tbodyのラスト1行、右端の要素 */
+table.tr tbody tr:last-child td:last-child,
+table.radius tbody tr:last-child td:last-child {
+	border-bottom-right-radius: 4px; /* 右下角丸 */
+}
+
+/* ----- tfootがある場合にtbodyの角丸を解除  ----- */
+
+table.tr tfoot ~ tbody tr:last-child th:first-child,
+table.radius tfoot ~ tbody tr:last-child th:first-child,
+table.tr tfoot ~ tbody tr:last-child td:first-child,
+table.radius tfoot ~ tbody tr:last-child td:first-child {
+	border-bottom-left-radius: 0; /* 左下角 */
+}
+table.tr tfoot ~ tbody tr:last-child td:last-child,
+table.radius tfoot ~ tbody tr:last-child td:last-child {
+	border-bottom-right-radius: 0; /* 右下角 */
+}
+
+/* tfootのラスト1行、左端の要素 */
+table.tr tfoot tr:last-child th:first-child,
+table.radius tfoot tr:last-child th:first-child,
+table.tr tfoot tr:last-child td:first-child,
+table.radius tfoot tr:last-child td:first-child {
+	border-top-left-radius: 0; /* 左上角 */
+	border-bottom-left-radius: 4px; /* 左下角丸 */
+}
+
+/* tfootのラスト1行、右端の要素 */
+table.tr tfoot tr:last-child td:last-child,
+table.radius tfoot tr:last-child td:last-child {
+	border-top-right-radius: 0; /* 右上角 */
+	border-bottom-right-radius: 4px; /* 右下角丸 */
+}
+
+
+/* === table.list === */
+table.list th,
+table.list td {
+	padding: 5px 3px 0 0;
+}
+
+table.list th {
+	white-space: nowrap;
+	vertical-align: top;
+	font-weight: normal !important;
+}
+
+/* === dl.search_results === */
+/* atode */
+dl.search_results dt {
+	margin: 0;
+	padding: 0 0 0 10px;
+	font-weight: bold;
+	background-image: url( '../img/_base/menulist_blue.gif' );
+	background-repeat: no-repeat;
+	background-position: -8px 5px;
+}
+dl.search_results dd {
+	color: #222;
+	font-size: 90%;
+	padding: 5px;
+	margin: 5px 0 15px;
+	border: 1px #eee dotted;
+	background-color: #f8f8f8;
+}
+dl.search_results dd strong {
+	color: #000;
+}
+
+/* === div.pagenavi === */
+/*atode*/
+.hits {
+	margin: 0;
+	padding: 0;
+}
+.pagenavi {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+.pagenavi a {
+	color: #1122cc;
+	text-decoration: none;
+}
+.pagenavi .prev a img {
+	margin: 0 2px -3px;
+}
+.pagenavi .next a img {
+	margin: 0 0 -3px 2px;
+}
+.pagenavi a:hover {
+	text-decoration: underline;
+}
+.pagenavi .prev {
+	float: left;
+}
+.pagenavi .next {
+	float: right;
+}
+
+/* === Download Icons === */
+
+/* thx argon and XCL project */
+a.pdf:before,    a.icon[href$=".pdf"]:before    { content: url( '../img/icons/icon_pdf.gif' ); }
+a.ppt:before,    a.icon[href$=".ppt"]:before    { content: url( '../img/icons/icon_ppt.gif' ); }
+a.doc:before,    a.icon[href$=".doc"]:before    { content: url( '../img/icons/icon_doc.gif' ); }
+a.docx:before,   a.icon[href$=".docx"]:before   { content: url( '../img/icons/icon_doc.gif' ); }
+a.xls:before,    a.icon[href$=".xls"]:before    { content: url( '../img/icons/icon_xls.gif' ); }
+a.xlsx:before,   a.icon[href$=".xlsx"]:before   { content: url( '../img/icons/icon_xls.gif' ); }
+a.zip:before,    a.icon[href$=".zip"]:before    { content: url( '../img/icons/icon_zip.gif' ); }
+a.lzh:before,    a.icon[href$=".lzh"]:before    { content: url( '../img/icons/icon_lzh.gif' ); }
+a.txt:before,    a.icon[href$=".txt"]:before    { content: url( '../img/icons/icon_txt.gif' ); }
+a.tar_gz:before, a.icon[href$=".tar.gz"]:before { content: url( '../img/icons/icon_tgz.gif' ); }
+a.lock:after,    a.icon[href^="https:"]:before  { content: url( '../img/icons/lock.gif' ); }
+a._blank:after,  a.icon[target="_blank"]:after  { content: url( '../img/icons/window.gif' ); }
+
+a.noicon:before,
+.noicon a:before {
+	content: "";
+}
+
+/* === box model (.fr , .fl , etc) === */
+.fr,
+.alignright {
+	display: block;
+	float:right;
+	margin:0 0 10px 10px;
+}
+
+.fl,
+.alignleft {
+	display: block;
+	float:left;
+	margin:0 10px 10px 0;
+}
+.fc,
+.aligncenter {
+	clear: both;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* === a.lb img === */
+.lb img {
+	outline: 1px #eee solid;
+}
+.lb:hover img {
+	border: 1px #58b dashed;
+}
+
+/* === align right (.cite , .sig , .cf, .ar, table .num) === */
+.cite,
+.sig,
+.cf,
+.ar,
+table th.ar,
+table td.ar,
+table th.num,
+table td.num {
+	text-align: right;
+	list-style: none;
+	clear: both;
+}
+
+/* === align left === */
+.al {
+	text-align: left;
+	list-style: none;
+	clear: both;
+}
+/* === align center === */
+.ac,
+table th.ac,
+table td.ac {
+	text-align: center;
+}
+
+/* === span.subtitle === */
+span.subtitle {
+	font-size: 90%;
+	font-weight: normal;
+}
+
+/* === span.date === */
+span.date {
+	display: inline-block;
+	font-size: 90%;
+	color: #555;
+}
+
+/* === .caption (by jQuery) === */
+.caption {
+	font-size: 85%;
+	color: #333;
+}
+
+/* === a.edit_link === */
+
+a.edit_link {
+	font-size: 85%;
+	font-weight: bold;
+	text-decoration: none;
+	position: absolute;
+	z-index: 1000;
+	color: #000;
+	background-color: #fff;
+	opacity: 0.6;
+	padding: 2px 3px;
+}
+
+/* !!画像なし!! */
+a.edit_link span.icon {
+	background-image: url( '/wp-admin/img/menu.png' );
+	background-position: -277px -40px;
+	display: inline-block;
+	height: 15px;
+	width: 15px;
+	margin: 0 4px;
+}
+a.edit_link:hover span {
+	background-position: -277px -8px;
+}
+a.edit_link:hover {
+	opacity: .6; /* Standard: FF gt 1.5, Opera, Safari */
+	-khtml-opacity: .6; /* Safari 1.x */
+	-moz-opacity: .6; /* FF lt 1.5, Netscape */
+}
+a.edit_link:hover * {
+	filter: alpha(opacity=60); /* IE lt 8 */
+	-ms-filter: "alpha(opacity=60)"; /* IE 8 */
+}
+
+a.edit_link span span {
+	position: absolute !important;
+	left: auto;
+	height: 0;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
+}
+
+/* === font === */
+.mincho,
+.serif {
+	font-family: "Times New Roman", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "HGS明朝E" ,"游明朝", YuMincho, "MS PMincho" , "メイリオ", Meiryo, serif;
+}
+.gothic,
+.sans_serif {
+	font-family: Verdana, "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN",  "游ゴシック", YuGothic,"メイリオ", Meiryo, sans-serif;
+}
+.marugo,
+.roundedfont {
+	font-family: "Lucida Grande", "ヒラギノ丸ゴ ProN W4", "Hiragino Maru Gothic ProN", Meiryo, Arial, sans-serif;
+}
+
+/* forMobile */
+.formobile,
+.forsp {
+	display: none;
+}
+
+span.nowrap,
+span.nobr {
+	display: inline-block;
+}
+
+.nowrap,
+.nobr {
+	white-space: nowrap !important;
+}
+
+.radius {
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.gradient {
+	background-color: #eee;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#aaaaaa', endColorstr = '#eeeeee');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr = '#aaaaaa', endColorstr = '#eeeeee')";
+	background-image: -moz-linear-gradient(top, #aaa, #eee);
+	background-image: -ms-linear-gradient(top, #aaa, #eee);
+	background-image: -o-linear-gradient(top, #aaa, #eee);
+	background-image: -webkit-gradient(linear, center top, center bottom, from(#aaa), to(#eee));
+	background-image: -webkit-linear-gradient(top, #aaa, #eee);
+	background-image: linear-gradient(top, #aaa, #eee);
+}
+.boxshadow {
+	box-shadow: 0 0 6px #aaa;
+	-moz-box-shadow: 0 0 6px #aaa;
+	-o-box-shadow: 0 0 6px #aaa;
+	-ms-box-shadow: 0 0 6px #aaa;
+/*
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true), 
+*/
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+/*
+progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
+*/
+}
+.op *,
+.opacity * {
+	opacity: .6; /* Standard: FF gt 1.5, Opera, Safari */
+	filter: alpha(opacity=60); /* IE lt 8 */
+	-ms-filter: "alpha(opacity=60)"; /* IE 8 */
+	-khtml-opacity: .6; /* Safari 1.x */
+	-moz-opacity: .6; /* FF lt 1.5, Netscape */
+}
+.borderbox,
+.boxsizing_borderbox {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+}
+.content_box,
+.boxsizing_contentbox {
+	-webkit-box-sizing : content-box ;
+	-moz-box-sizing : content-box ;
+	box-sizing : content-box ;
+}
+
+/* === hide if js/no-js === */
+.hide_if_no_js {
+	display: none !important;
+}
