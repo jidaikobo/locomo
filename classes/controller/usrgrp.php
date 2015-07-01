@@ -4,7 +4,6 @@ class Controller_Usrgrp extends \Locomo\Controller_Base
 {
 	// traits
 	use \Controller_Traits_Revision;
-	use \Controller_Traits_Bulk;
 
 	// locomo
 	public static $locomo = array(

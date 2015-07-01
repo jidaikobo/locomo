@@ -2,7 +2,6 @@
 class Controller_Adrs extends \Locomo\Controller_Base
 {
 	// traits
-	use \Controller_Traits_Bulk;
 	use \Controller_Traits_Testdata;
 	use \Controller_Traits_Revision;
 //	use \Controller_Traits_Wrkflw;
@@ -105,19 +104,23 @@ class Controller_Adrs extends \Locomo\Controller_Base
 	/**
 	 * action_edit_adrsgrp()
 	 */
-	public function action_edit_adrsgrp()
+	public function action_edit_adrsgrp($page = 1)
 	{
+
+		$this->model_name = '\Locomo\Model_Adrsgrp';
+	//	vaR_dump(\Locomo\Model_Adrsgrp::find('all', array()));
+		$this->_content_template = 'adrsgrp/bulk';
 		// bulk
-		$option = array(
+		/*
+		$options = array(
 			'where' => array(array('is_available', 'is not', null)),
 			'order_by' => array('seq' => 'ASC'),
 		);
-		$form = $this->bulk($option, '\Model_Adrsgrp');
+		\Locomo\Model_Adrsgrp::$_options = $options;
+		 */
+		$this->bulk($page, 0);
 
 		// assign
-		$view = \View::forge('bulk/bulk');
-		$view->set_global('title', 'ユーザグループ設定');
-		$view->set_global('form', $form, false);
-		$this->template->content = $view;
+		$this->template->set_global('title', 'アドレスグループ設定');
 	}
 }

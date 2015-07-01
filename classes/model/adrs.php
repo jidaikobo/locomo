@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Model_Adrs extends \Model_Base_Soft
 {
 	protected static $_table_name = 'lcm_adrs';

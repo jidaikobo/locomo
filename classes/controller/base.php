@@ -706,7 +706,7 @@ class Controller_Base extends Controller_Core
 	/**
 	 * bulk()
 	 */
-	protected function bulk($page = 1, $is_redirect = true)
+	protected function bulk($page = 1, $add = 3, $is_redirect = true)
 	{
 		$model = $this->model_name;
 		$action = \Request::main()->action;
@@ -729,7 +729,7 @@ class Controller_Base extends Controller_Core
 		// edit create 分岐
 		}
 		// create
-		elseif ($create_field = intval(\Input::get('create')))
+		elseif ($create_field = intval(\Input::get('create', 0)))
 		{
 			for ($i = 0; $i < $create_field; $i++)
 			{
@@ -743,7 +743,7 @@ class Controller_Base extends Controller_Core
 			$model::set_paginated_options();
 			$objects = $model::find('all', $model::$_options);
 			// $total = max($total - count($objects), 1);
-			if ($add = \Input::get('add', 3))
+			if ($add = \Input::get('add', $add))
 			{
 				for ($i = 0; $i < $add; $i++)
 				{
@@ -803,7 +803,7 @@ class Controller_Base extends Controller_Core
 			}
 		}
 
-		$content = \View::forge(static::$dir.'bulk');
+		$content = \View::forge($this->_content_template ?: static::$dir.'bulk');
 		$this->template->content = $content;
 		$this->template->set_global('form', $bulk->build(), false);
 		$this->template->set_global('title', self::$nicename.'の一括処理');
