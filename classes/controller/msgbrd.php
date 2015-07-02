@@ -180,26 +180,21 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	/**
 	 * action_edit_categories()
 	 */
-	public function action_edit_categories()
+	public function action_edit_categories($page = 1)
 	{
 		// bulk
-		\Model_Msgbrd_Categories::disable_filter();
-		$option = array(
+		\Model_Msgbrd_Categories::$_options = array(
 			'where' => array(array('is_available', 'is not', null)),
 			'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
 		);
-		\Model_Msgbrd_Categories::$_options = array();
-		$form = $this->bulk($option, '\Model_Msgbrd_Categories');
-
-		// add_actionset - back to index at edit
-		$action['urls'][] = \Html::anchor(static::$main_url, '一覧へ');
-		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
+		$this->model_name = '\Model_Msgbrd_Categories';
+		$this->_content_template = 'msgbrd/categories/bulk';
+		$this->bulk($page);
 
 		// assign
-		$view = \View::forge('bulk/bulk');
-		$view->set_global('title', 'カテゴリ設定');
-		$view->set_global('form', $form, false);
-		$this->template->content = $view;
+		$presenter = \Presenter::forge($this->_content_template);
+		$this->template->set_global('search_form', $presenter::search_form('カテゴリ設定'), false);
+		$this->template->set_global('title', 'カテゴリ設定');
 	}
 
 	/**

@@ -214,22 +214,37 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 // bulk edit
 
 バルク編集（複数項目の一括編集）をするためには、バルク編集用のアクションを作ります。
-バルク編集用のアクションでは、対象となるモデルを設定してください。以下の例はユーザモジュールのユーザグループです。モデルは、\Model_Usrgrpとなっています。
+バルク編集用のアクションでは、対象となるモデルを設定してください。以下の例はメッセージボードコントローラのカテゴリ編集です。モデルは、\Model_Msgbrd_Categoriesとなっています。
+
+モデルの$_optionsに条件設定をしたのちに、適宜、$this->model_nameや$this->_content_templateを設定して、Controller_Baseのbulk()を呼び出しています。ほとんどの処理はController_Base::bulk()で行われますが、search_formを使う場合は、表題（h1）を設定する必要があるため、コントローラ側で明示的に設定してください。
 
 +quote start-----------------------------+
-	public function action_bulk($page_num = 1)
+	/**
+	 * action_edit_categories()
+	 */
+	public function action_edit_categories($page = 1)
 	{
 		// bulk
-		$form = $this->bulk(array(), array(), '\Model_Usrgrp');
+		\Model_Msgbrd_Categories::$_options = array(
+			'where' => array(array('is_available', 'is not', null)),
+			'order_by' => array('seq' => 'ASC', 'name' => 'ASC'),
+		);
+		$this->model_name = '\Model_Msgbrd_Categories';
+		$this->_content_template = 'msgbrd/categories/bulk';
+		$this->bulk($page);
 
-		//assin
-		$view = \View::forge(LOCOMOPATH.'modules/bulk/views/bulk.php');
-		$view->set_global('title', 'ユーザグループ設定');
-		$view->set_global('form', $form, false);
-		$this->template->content = $view;
+		// assign
+		$presenter = \Presenter::forge($this->_content_template);
+		$this->template->set_global('search_form', $presenter::search_form('カテゴリ設定'), false);
+		$this->template->set_global('title', 'カテゴリ設定');
 	}
 +-------------------------------quote end+
 
+バルク編集に関しては、\Admin\Controller_Admin::action_edit()にもちょっと違ったサンプルがあります。こちらはtabular formを使ったサンプルで、\Admin\Model_Adminや\Admin\Model_Userなど、専用のリレーションモデルを対象にした事例です。
+
+次は、conditioned_bulk()の使用例です。
+
++quote start-----------------------------+
 	public function action_bulk ()
 	{
 		$date = \Input::get('date', date('Y-m-d'));
@@ -252,9 +267,7 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 
 		$this->conditioned_bulk($options, $defaults);
 	}
-
-
-バルク編集に関しては、\Admin\Controller_Admin::action_edit()にもちょっと違ったサンプルがあります。こちらはtabular formを使ったサンプルで、\Admin\Model_Adminや\Admin\Model_Userなど、専用のリレーションモデルを対象にした事例です。
++-------------------------------quote end+
 
 // dashboard widget
 

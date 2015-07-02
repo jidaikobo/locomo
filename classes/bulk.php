@@ -1,7 +1,8 @@
 <?php
 namespace Locomo;
 
-class Bulk {
+class Bulk
+{
 
 	protected $forms = array();
 
@@ -11,24 +12,38 @@ class Bulk {
 
 	protected static $_enable_deleted = false;
 
-	public function __construct ($name) {
+	/*
+	 * __construct()
+	 */
+	public function __construct($name)
+	{
 		$this->name = $name;
 	}
 
-	public static function forge($name = 'bulk_form') {
+	/*
+	 * forge()
+	 */
+	public static function forge($name = 'bulk_form')
+	{
 		return new static($name);
 	}
 
+	/*
+	 * add_model()
+	 */
 	public function add_model($model, $add_delete_field = true)
 	//, $define_function = null) {
 	{
-		if (is_array($model)) {
-			foreach ($model as $model_obj) {
+		if (is_array($model))
+		{
+			foreach ($model as $model_obj)
+			{
 				$this->add_model($model_obj, $add_delete_field);
 			}
 
 		} else {
-			if ($model->is_new()) {
+			if ($model->is_new())
+			{
 				$key = 'bulk_new_' . count($this->models);
 			} else {
 				$key = 'bulk_' . $model[$model::primary_key()[0]];

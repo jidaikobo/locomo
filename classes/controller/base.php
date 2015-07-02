@@ -758,9 +758,19 @@ class Controller_Base extends Controller_Core
 			return false;
 		}
 
+		// forge bulk
 		$bulk = \Locomo\Bulk::forge();
 		$bulk::$_presenter = $this->_content_template ?: static::$dir.'bulk';
 		$bulk->add_model($objects);
+
+		// count all for pagination
+		if (method_exists($model, 'set_public_options'))
+		{
+			$model::set_public_options();
+			$options = array();
+			$options['where'] = $model::$_options['where'];
+			\Pagination::$refined_items = $model::count($options);
+		}
 
 		// deletedも保持
 		$ids = array();
@@ -773,7 +783,6 @@ class Controller_Base extends Controller_Core
 		{
 			if ($bulk->save())
 			{
-
 				// saveした object の保持
 				// $ids = array();
 				foreach ($objects as $object)
@@ -808,8 +817,6 @@ class Controller_Base extends Controller_Core
 		$this->template->set_global('form', $bulk->build(), false);
 		$this->template->set_global('title', self::$nicename.'の一括処理');
 	}
-
-
 
 	/*
 	 *
@@ -877,13 +884,10 @@ class Controller_Base extends Controller_Core
 			}
 		}
 
-
 		$content = \View::forge(static::$dir.'bulk');
 		$this->template->content = $content;
 		$this->template->set_global('form', $bulk->build(), false);
 		$this->template->set_global('title', self::$nicename.'の一括処理');
-
-
 	}
 
 

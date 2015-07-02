@@ -1,5 +1,5 @@
 <?php
-class Model_Msgbrd_Categories extends \Model_Base
+class Model_Msgbrd_Categories extends \Model_Base_Soft
 {
 //	use \Model_Traits_Wrkflw;
 
@@ -17,12 +17,43 @@ class Model_Msgbrd_Categories extends \Model_Base
 		'id',
 		'name' => array(
 			'lcm_role' => 'subject',
-			'label' => '名称',
+			'label' => 'カテゴリ名',
+			'form' => array(
+				'type' => 'text',
+				'size' => 20,
+			),
+			'validation' => array(
+				'unique' => array('lcm_msgbrds_categories.name')
+			),
 		),
-		'description',
-		'seq',
-		'is_available',
-		'deleted_at',
+		'description' => array(
+			'label' => '説明',
+			'form' => array(
+				'type' => 'text',
+				'size' => 20,
+			),
+		),
+		'seq' => array(
+			'label' => '表示順',
+			'form' => array(
+				'type' => 'text',
+				'size' => 5,
+			),
+		),
+		'is_available' => array(
+			'label' => '表示',
+			'form' => array(
+				'type' => 'select',
+				'options' => array('0' => '未使用', '1' => '使用中')
+			),
+			'default' => 0
+		),
+		'deleted_at' => array(
+			'form' => array(
+				'type' => false
+			),
+			'default' => null
+		),
 	);
 
 
@@ -79,103 +110,20 @@ class Model_Msgbrd_Categories extends \Model_Base
 	);
 
 	/**
-	 * form_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
+	 * set_search_options()
 	 */
-	public static function form_definition($factory = 'msgbrd_usergroup', $obj = null)
+	public static function set_search_options()
 	{
-		$form = \Fieldset::forge($factory, \Config::get('form'));
-
-		//id
-		$form->add(
-			'id',
-			'ID',
-			array('type' => 'text', 'disabled' => 'disabled', 'size' => 2)
-		)
-		->set_value(@$obj->id);
-
-		//name
-		$form->add(
-				'name',
-				'カテゴリ名',
-				array('type' => 'text', 'size' => 20)
-			)
-			->set_value(@$obj->name)
-			->add_rule('required')
-			->add_rule('max_length', 50)
-			->add_rule('unique', "lcm_usrgrps.name.".@$obj->id);
-
-		//description
-		$form->add(
-				'description',
-				'説明',
-				array('type' => 'text', 'size' => 20)
-			)
-			->set_value(@$obj->description)
-			->add_rule('max_length', 255);
-
-		//order
-		$form->add(
-				'seq',
-				'表示順',
-				array('type' => 'text', 'size' => 5)
-			)
-			->set_value(@$obj->seq ?: 10)
-			->add_rule('valid_string', array('numeric'));
-
-		//is_available
-		$form->add(
-				'is_available',
-				'使用中',
-				array('type' => 'select', 'options' => array('0' => '未使用', '1' => '使用中'), 'default' => 0)
-			)
-			->set_value(@$obj->is_available ?: 1);
-
-		return $form;
-	}
-
-	/**
-	 * plain_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
-	 */
-	public static function plain_definition($factory = 'msgbrd_usergroup', $obj = null)
-	{
-		$form = static::form_definition($factory, $obj);
-/*
-		$form->field('created_at')
-			->set_attribute(array('type' => 'text'));
-*/
-
-		return $form;
-	}
-
-	/*
-	 * search_form
-	 */
-	public static function search_form()
-	{
-		$config = \Config::load('form_search', 'form_search', true, true);
-		$form = \Fieldset::forge('msgbrd_usergroup_search_form', $config);
-
-		// 検索
-		$form->add(
-			'all',
-			'フリーワード',
-			array('type' => 'text', 'value' => \Input::get('all'))
-		);
-
-		// wrap
-		$parent = parent::search_form_base('');
-		$parent->add_after($form, 'msgbrd_usergroup_search_form', array(), array(), 'opener');
-
-		return $parent;
+		// free word search
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
+		{
+			static::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+				'or' => array(
+					array('description', 'LIKE', $all),
+				) 
+			);
+		}
 	}
 }
