@@ -19,6 +19,9 @@ return array(
 	'site_title' => 'Locomo',
 	'slogan' => 'Accessible Web System Package for FuelPHP',
 
+	// is_admin_knows_password
+	'is_admin_knows_password' => false,
+
 	// upload path *not* terminated with /
 	'upload_path' => APPPATH.'locomo/uploads',
 

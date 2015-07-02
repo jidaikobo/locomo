@@ -2,6 +2,46 @@
 class Presenter_Usr_Edit extends \Presenter_Base
 {
 	/**
+	 * reset_paswd_form()
+	 * @return obj instanceof \Form
+	 */
+	public static function reset_paswd_form($mode, $obj)
+	{
+		$config = \Config::load('form_search', 'reset_paswd', true, true);
+		$form = \Fieldset::forge('reset_paswd', $config);
+
+		// 管理者がすべてのパスワードを知ることのできるサイトの場合
+		$is_admin_knows_password = \Config::get('is_admin_knows_password', false);
+		$notice = $is_admin_knows_password ? '<div><strong>このサイトはサイト管理者がパスワードを把握する仕様になっています。</strong>この設定はシステム管理者のみ変更できます。</div>' : '';
+
+		// 検索
+		if ($mode == 'bulk')
+		{
+			$form->add(
+					'description',
+					'説明',
+					array('type' => 'text')
+				)
+				->set_template('<div>ユーザ全員のパスワードをリセットし、メールを送信します。</div>'.$notice);
+		} else {
+			$form->add(
+					'description',
+					'説明',
+					array('type' => 'text')
+				)
+				->set_template('<div>パスワードリセットすると、強制的にパスワードを新規登録し、登録メールアドレス宛に新しいパスワードが送付されます。</div>');
+		}
+
+		// generate password
+		$pswd = substr(md5(microtime()), 0, 8);
+		$form->add('password', '', array('type' => 'hidden', 'value' => $pswd));
+
+		$form->add('submit', '', array('type' => 'submit', 'value' => 'パスワードをリセットする', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');
+
+		return $form;
+	}
+
+	/**
 	 * form()
 	 * @return obj instanceof \Form
 	 */
