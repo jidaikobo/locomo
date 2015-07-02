@@ -789,8 +789,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				));
 		}
 
-
-
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		
