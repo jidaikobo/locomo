@@ -206,6 +206,6 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 			array('is_sticky', '=', 1)
 		);
 		$this->_content_template = 'msgbrd/index_admin_widget';
-		$this->action_index_admin();
+		parent::index_widget();
 	}
 }

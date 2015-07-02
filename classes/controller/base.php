@@ -321,6 +321,7 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 
 		// widgets gives args by \Request::forge()->execute($args)
+		$options = array();
 		if ($args = func_get_args())
 		{
 			if (is_array($args[0]))
@@ -337,7 +338,8 @@ class Controller_Base extends Controller_Core
 		$this->template->set_global('title', static::$nicename.'管理一覧');
 
 		// size
-		$this->template->content->set('widget_size', $args[0][0]);
+		$size = isset($args[0][0]) ? $args[0][0] : 1 ;
+		$this->template->content->set('widget_size', $size);
 	}
 
 	/**
