@@ -1,4 +1,4 @@
-<?php echo \Form::open(); ?>
+<?php echo \Form::open(array('class'=>'lcm_form form_group')); ?>
 
 <fieldset>
 	<div class="form-group">

@@ -10,9 +10,6 @@ class Model_Adrsgrp extends \Model_Base
 
 	// $_conditions
 	protected static $_conditions = array(
-		'where' => array(
-			array('is_available', true)
-		),
 		'order_by' => array('seq' => 'acs'),
 	);
 
@@ -30,16 +27,33 @@ class Model_Adrsgrp extends \Model_Base
 			),
 			'validation' => 
 			array (
+				'unique' => array('lcm_adrs_groups.name'),
 				'required',
-				'max_length' => 
-				array (
-					255,
-				),
+				'max_length' => array (255,),
 			),
 		),
-		'description',
-		'seq',
-		'is_available',
+		'description' => array(
+			'label' => '説明',
+			'form' => array(
+				'type' => 'text',
+				'size' => 20,
+			),
+		),
+		'seq' => array(
+			'label' => '表示順',
+			'form' => array(
+				'type' => 'text',
+				'size' => 5,
+			),
+		),
+		'is_available' => array(
+			'label' => '表示',
+			'form' => array(
+				'type' => 'select',
+				'options' => array('0' => '未使用', '1' => '使用中')
+			),
+			'default' => 0
+		),
 	);
 
 	protected static $_has_many = array(
@@ -52,4 +66,21 @@ class Model_Adrsgrp extends \Model_Base
 		)
 	);
 
+	/**
+	 * set_search_options()
+	 */
+	public static function set_search_options()
+	{
+		// free word search
+		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		if ($all)
+		{
+			static::$_options['where'][] = array(
+				array('name', 'LIKE', $all),
+				'or' => array(
+					array('description', 'LIKE', $all),
+				) 
+			);
+		}
+	}
 }

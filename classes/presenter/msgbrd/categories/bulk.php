@@ -7,17 +7,20 @@ class Presenter_Msgbrd_Categories_Bulk extends \Presenter_Base
 	public static function search_form($title)
 	{
 		// parent
-		$form = parent::search_form($title);
+		$config = \Config::load('form_search', 'form_search', true, true);
+		$form = \Fieldset::forge('msgbrd', $config);
 
 		// 検索
-		$form->add_after(
+		$form->add(
 			'all',
 			'フリーワード',
-			array('type' => 'text', 'value' => \Input::get('all')),
-			array(),
-			'opener'
+			array('type' => 'text', 'value' => \Input::get('all'))
 		);
 
-		return $form;
+		// wrap
+		$parent = parent::search_form($title);
+		$parent->add_after($form, 'msgbrd', array(), array(), 'opener');
+
+		return $parent;
 	}
 }

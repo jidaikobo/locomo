@@ -752,10 +752,14 @@ class Controller_Base extends Controller_Core
 			}
 		}
 
-		if (!$objects)
+		if ( ! $objects)
 		{
-			\Session::set_flash('error', '該当が 0 件でした');
-			return false;
+			\Session::set_flash('message', array(
+				array(
+					'該当が 0 件でした。新規作成してください。',
+					static::$current_url.'?create=1')
+				)
+			);
 		}
 
 		// forge bulk

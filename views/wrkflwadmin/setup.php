@@ -1,6 +1,6 @@
-<?php echo \Form::open(); ?>
-
 <h1>ワークフロー名：<?php echo $workflow_name; ?></h1>
+
+<?php echo \Form::open(array('class'=>'lcm_form form_group')); ?>
 
 <fieldset>
 	<legend>執筆者設定</legend>
@@ -102,13 +102,13 @@
 </fieldset>
 <?php endforeach; ?>
 
-<p>
+<div class="submit_button">
 	<?php
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::hidden('allstep', $allstep);
 		echo \Form::submit('add_step', '承認ステップを1つ増やす', array('class' => 'button primary'));
 		echo \Form::submit('submit', '保存', array('class' => 'button primary'));
 	?>
-</p>
+</div>
 
 <?php echo \Form::close(); ?>

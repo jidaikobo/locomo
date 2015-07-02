@@ -7,7 +7,7 @@
 </ul>
 
 <!--ユーザグループ単位の権限設定-->
-<?php echo \Form::open(array('action' => \Uri::base(false).'acl/actionset_index/')); ?>
+<?php echo \Form::open(array('action' => \Uri::base(false).'acl/actionset_index/', 'class'=>'lcm_form form_group')); ?>
 <fieldset>
 <legend>ユーザグループ単位の権限設定</legend>
 <p>
@@ -22,17 +22,17 @@
 	echo \Form::select('usergroup', 'none', \Model_Acl::get_usergroups());
 ?>
 </p>
-<p>
+<div class="submit_button">
 <?php
 	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
-</p>
+</div>
 </fieldset>
 <?php echo \Form::close(); ?>
 
 <!--ユーザ単位の権限設定-->
-<?php echo \Form::open(array('action' => \Uri::base(false).'acl/actionset_index/')); ?>
+<?php echo \Form::open(array('action' => \Uri::base(false).'acl/actionset_index/', 'class'=>'lcm_form form_group')); ?>
 <fieldset>
 <legend>ユーザ単位の権限設定</legend>
 <p>
@@ -48,12 +48,12 @@
 	echo \Form::select('user', 'none', \Model_Usr::get_users());
 ?>
 </p>
-<p>
+<div class="submit_button">
 <?php
 	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
-</p>
+</div>
 </fieldset>
 <?php echo \Form::close(); ?>
 
