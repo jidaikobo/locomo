@@ -206,6 +206,8 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 		\Model_Msgbrd::$_options['where'][] = array(
 			array('is_sticky', '=', 1)
 		);
+		\Model_Msgbrd::$_options['order_by'] = array('created_at' => 'desc');
+
 		$this->_content_template = 'msgbrd/index_admin_widget';
 		parent::index_widget();
 	}
