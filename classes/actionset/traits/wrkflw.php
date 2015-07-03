@@ -8,6 +8,8 @@ trait Actionset_Traits_Wrkflw
 	public static function actionset_index_workflow($controller, $obj = null, $id = null, $urls = array())
 	{
 		// count
+		// count を数えると未承認の項目全てを見るので count は返さない
+		/*
 		static $count;
 		$model = str_replace('Controller', 'Model', $controller);
 		if (class_exists($model) && ! $count)
@@ -33,6 +35,9 @@ trait Actionset_Traits_Wrkflw
 		// urls
 		$count = " ({$count})";
 		$urls = array(array($controller.DS."index_workflow", "承認項目一覧{$count}"));
+		 */
+
+		$urls = array(array($controller.DS."index_workflow", "承認項目一覧"));
 
 		$retvals = array(
 			'realm'        => 'index',
