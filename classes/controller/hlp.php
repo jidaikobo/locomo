@@ -114,7 +114,7 @@ class Controller_Hlp extends \Controller_Base
 			{
 				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), '編集する',array('class'=>'edit_link'));
 			}
-			$add.= html_tag('div', array('class' => 'add_body'), $obj->body) ;
+			$add.= $obj->body ? html_tag('div', array('class' => 'add_body'), $obj->body) : '' ;
 		}
 		else
 		{

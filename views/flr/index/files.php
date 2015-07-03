@@ -13,7 +13,7 @@
 			<th class="min">操作</th>
 			<th>種類</th>
 			<th>説明</th>
-			<th class="min">担当者</th>
+			<th class="min">作成者</th>
 		</tr>
 	</thead>
 	<tbody>
