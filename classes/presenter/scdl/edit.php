@@ -20,7 +20,13 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 		$form->field('kind_flg')->set_value(\Model_Scdl::$_kind_flg);
 
 		// 作成者
-		$form->field('user_id')->set_options(Model_Usr::find_options('display_name', array('order_by' => 'pronunciation')));
+		// テンポラル対応
+		if (isset(\Model_Usr::properties()['pronunciation']))
+		{
+			$form->field('user_id')->set_options(Model_Usr::find_options('display_name', array('order_by' => 'pronunciation')));
+		} else {
+			$form->field('user_id')->set_options(Model_Usr::find_options('display_name'));
+		}
 
 		//$form->field('user_id')->set_value(\Auth::get('id'));
 		$form->field('is_visible')->set_value(1);

@@ -1,6 +1,12 @@
+<?php if ($items): ?>
 <?php echo $search_form; ?>
 
-<?php if ($items): ?>
+<!--ページネーション-->
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
+
+<!--一覧-->
 <table class="tbl datatable">
 	<thead>
 		<tr>
@@ -57,7 +63,4 @@
 <?php endforeach; ?>
 	</tbody>
 </table>
-<?php echo \Pagination::create_links(); ?>
-<?php else: ?>
-<p>adrsが存在しません。</p>
 <?php endif; ?>

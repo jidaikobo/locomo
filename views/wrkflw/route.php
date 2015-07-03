@@ -1,6 +1,6 @@
 <h1><?php echo $obj->$subject ?>のルート設定</h1>
 
-<?php echo \Form::open(); ?>
+<?php echo \Form::open(array('class'=>'lcm_form form_group')); ?>
 
 <fieldset>
 	<legend>ルート候補</legend>

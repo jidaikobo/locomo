@@ -18,7 +18,6 @@ class Controller_Usr extends \Locomo\Controller_Base
 		'order'        => 1010, // order of appearance
 		'widgets' =>array(
 			array('name' => '新規ユーザ一覧', 'uri' => '\\Controller_Usr/index_widget?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
-			array('name' => '新規ユーザ登録', 'uri' => '\\Controller_Usr/create'),
 		),
 	);
 
@@ -217,7 +216,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 	{
 		// vals
 		$model = $this->model_name ;
-		$content = \View::forge('defaults/edit');
+		$content = \Presenter::forge('usr/edit');
 
 		if ($id)
 		{
@@ -230,9 +229,10 @@ class Controller_Usr extends \Locomo\Controller_Base
 				return \Response::redirect(\Uri::create('usr/index_admin'));
 			}
 		}
-		$form = $model::reset_paswd_form('edit', $obj);
+		$form = $content::reset_paswd_form('edit', $obj);
 
-$is_sendmail = true;
+		// for test use
+		$is_sendmail = true;
 
 		// save
 		if (\Input::post())
@@ -253,8 +253,8 @@ $is_sendmail = true;
 
 		//view
 		$this->template->set_global('title', 'パスワードリセット');
-		$content->set_global('item', $obj, false);
-		$content->set_global('form', $form, false);
+		$this->template->set_global('item', $obj, false);
+		$this->template->set_global('form', $form, false);
 		$this->template->set_safe('content', $content);
 		static::set_object($obj);
 	}
@@ -266,7 +266,7 @@ $is_sendmail = true;
 	{
 		// vals
 		$model = $this->model_name ;
-		$content = \View::forge('defaults/edit');
+		$content = \Presenter::forge('usr/edit');
 
 		if ( ! \Auth::is_root())
 		{
@@ -275,8 +275,10 @@ $is_sendmail = true;
 		}
 
 		$objs = $model::find('all');
-
-		$form = $model::reset_paswd_form('bulk', $objs);
+		$form = $content::reset_paswd_form('bulk', $objs);
+		$site_title = \Config::get('site_title');
+		$is_admin_knows_password = \Config::get('is_admin_knows_password');
+		$is_admin_knows_password = $is_admin_knows_password ?: false;
 
 		// save
 		if (\Input::post())
@@ -291,13 +293,16 @@ $is_sendmail = true;
 				}
 				\Session::set_flash('success', '一括でパスワードをリセットして、メールを送信しました。');
 
-				// set up email
-				$body = var_export(static::$generated, 1);
-				$email = \Email::forge();
-				$email->from('webmaster@kyoto-lighthouse.org', 'ライトスタッフシステム');
-				$email->to('shibata@jidaikobo.com', $obj->display_name);
-				$email->subject('すべてのパスワードのお知らせです');
-				$email->body($body);
+				// tell admin to all passwords
+				if ($is_admin_knows_password)
+				{
+					$body = var_export(static::$generated, 1);
+					$email = \Email::forge();
+					$email->from(LOCOMO_ADMIN_MAIL, $site_title);
+					$email->to(LOCOMO_ADMIN_MAIL, $obj->display_name);
+					$email->subject('すべてのパスワードのお知らせです');
+					$email->body($body);
+				}
 
 				// send
 				$email->send();
@@ -306,7 +311,7 @@ $is_sendmail = true;
 
 		//view
 		$this->template->set_global('title', 'パスワードリセット');
-		$content->set_global('form', $form, false);
+		$this->template->set_global('form', $form, false);
 		$this->template->set_safe('content', $content);
 	}
 
@@ -345,7 +350,7 @@ $is_sendmail = true;
 	
 			// set up email
 			$email = \Email::forge();
-			$email->from('webmaster@kyoto-lighthouse.org', 'ライトスタッフシステム');
+			$email->from(LOCOMO_ADMIN_MAIL, $site_title);
 			$email->to($obj->email, $obj->display_name);
 			$email->subject('【'.$site_title.'】パスワードのお知らせ');
 			$email->body($body);

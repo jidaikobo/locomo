@@ -27,7 +27,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 		// check env.
 		// dbの存在確認（同期途中のトラブルなどでデータベースが失われていたりする場合の処理）
-		require(LOCOMOPATH.'migrations/007_create_flrs.php');
+		require_once(LOCOMOPATH.'migrations/007_create_flrs.php');
 		if ( ! \DBUtil::table_exists('lcm_flrs'))
 		{
 			$obj = new \Fuel\Migrations\Create_Flrs;
@@ -44,7 +44,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if (\Str::ends_with(LOCOMOUPLOADPATH, DS)) throw new \Exception("LOCOMOUPLOADPATH must not be terminated with '/'");
 
 		// LOCOMOFLRUPLOADPATH
-		define('LOCOMOFLRUPLOADPATH', LOCOMOUPLOADPATH.DS.'flr');
+		defined('LOCOMOFLRUPLOADPATH') or define('LOCOMOFLRUPLOADPATH', LOCOMOUPLOADPATH.DS.'flr');
 
 		// check permission and set default permission
 		// ディレクトリパーミッションの確認と、デフォルトパーミッションの設定

@@ -1,33 +1,20 @@
-<?php
-/*
-if ( ! \Input::get('create') && ! @$is_revision):
-	echo \Form::open(array('method' => 'get'));
-	echo \Form::input('likes[name]', \Input::get('likes')['name']);
-	echo \Form::submit('submit', '検索', array('class'=>'button'));
-	echo \Form::close();
-endif;
- */
-?>
-
+<?php if ($form): ?>
 <?php if (isset($search_form)) echo $search_form; ?>
 
+<!--ページネーション-->
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
 
-<?php if ($form): ?>
-<?php echo \Form::open(\Uri::create(\Uri::current(), array(), \Input::get())); ?>
-<div class="form_group">
-
+<!--一覧-->
+<?php echo \Form::open(array('action' => \Uri::create(\Uri::current(), array(''), \Input::get()), 'class'=>'lcm_form form_group')); ?>
 <?php echo $form; ?>
-
-<p>
+<div class="submit_button">
 	<?php
 		echo \Form::hidden('is_locomo_bulk', true);
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 	?>
-</p>
-
 </div>
 <?php endif; ?>
 <?php echo \Form::close() ?>
-<?php echo \Pagination::create_links() ?>
-

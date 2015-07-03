@@ -1,6 +1,6 @@
+<?php if ($items): ?>
 <?php echo $search_form; ?>
 
-<?php if ($items): ?>
 <!--ページネーション-->
 <div class="index_toolbar clearfix">
 <?php echo \Pagination::create_links(); ?>
@@ -79,9 +79,4 @@
 		</tr>
 	</tfoot>
 </table>
-
-<?php else: ?>
-<p>項目が存在しません</p>
-
 <?php endif; ?>
-

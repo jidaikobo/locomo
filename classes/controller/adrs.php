@@ -106,21 +106,14 @@ class Controller_Adrs extends \Locomo\Controller_Base
 	 */
 	public function action_edit_adrsgrp($page = 1)
 	{
-
-		$this->model_name = '\Locomo\Model_Adrsgrp';
-	//	vaR_dump(\Locomo\Model_Adrsgrp::find('all', array()));
-		$this->_content_template = 'adrsgrp/bulk';
 		// bulk
-		/*
-		$options = array(
-			'where' => array(array('is_available', 'is not', null)),
-			'order_by' => array('seq' => 'ASC'),
-		);
-		\Locomo\Model_Adrsgrp::$_options = $options;
-		 */
+		$this->model_name = '\Model_Adrsgrp';
+		$this->_content_template = 'adrsgrp/bulk';
 		$this->bulk($page, 0);
 
 		// assign
+		$presenter = \Presenter::forge($this->_content_template);
+		$this->template->set_global('search_form', $presenter::search_form('アドレスグループ設定'), false);
 		$this->template->set_global('title', 'アドレスグループ設定');
 	}
 }

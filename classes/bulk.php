@@ -1,15 +1,10 @@
 <?php
 namespace Locomo;
-
 class Bulk
 {
-
 	protected $forms = array();
-
 	protected $models = array();
-
 	public static $_presenter = null;
-
 	protected static $_enable_deleted = false;
 
 	/*
@@ -67,7 +62,8 @@ class Bulk
 	 * add_delete_field()
 	 * $field の対象の $model を判定して、適切な削除フィールドを付ける
 	 */
-	private function add_delete_field($field, $model) {
+	private function add_delete_field($field, $model)
+	{
 		if ($model->is_new()) {
 
 			$field->add('_deleted', '削除', array('type' => 'checkbox', 'value' => 1, 'disabled' => true))->set_template("\t\t\t\t<td>{field}{label}{error_msg}</td>"); // disable
@@ -107,19 +103,29 @@ class Bulk
 	}
 
 
-	public function __get($name) {
+	/*
+	 * __get()
+	 */
+	public function __get($name)
+	{
 		if ($name == 'models') return $this->models;
 	}
 
 	/*
+	 * build()
 	 */
-	public function build() {
+	public function build()
+	{
+		if ( ! $this->forms) return '';
+
 		$output = '<thead><tr>';
 
 		$fst_obj = reset($this->forms);
-		foreach ($fst_obj->field() as $f) {
+		foreach ($fst_obj->field() as $f)
+		{
 			if ($f->type === false  OR $f->type === 'hidden' OR $f->type === 'submit') continue;
-			if (is_null ($f->template)) {
+			if (is_null ($f->template))
+			{
 				$output .=  '<th>' . $f->label . '</th>';
 			} else {
 				$temp = str_replace('td>', 'th>', $f->template);
@@ -131,21 +137,23 @@ class Bulk
 		}
 		$output .= '</tr><thead>';
 
-		foreach($this->forms as $form) {
-
+		foreach($this->forms as $form)
+		{
 			$form->set_config('form_template', "\t\t\t<tr>\n{fields}\n\t\t\t</tr>\n");
 			foreach ($form->field() as $field) {
-				if ($field->type === 'submit') {
+				if ($field->type === 'submit')
+				{
 					$form->delete('submit');
 				}
-				if ($field->type == 'checkbox' OR $field->type == 'radio') {
+
+				if ($field->type == 'checkbox' OR $field->type == 'radio')
+				{
 					is_null($field->template) and $field->set_template("\t\t\t\t<td>{fields}\n\t\t\t\t{field} {label}\n{fields}{error_msg}\n\t\t\t</td>");
 				} else {
 					is_null($field->template) and $field->set_template("\t\t\t\t<td>{field}{error_msg}</td>");
 				}
 				// no required rules on this row
 				$field->delete_rule('required', false)->delete_rule('required_with', false);
-
 			}
 
 			$output .= $form->build();
@@ -155,12 +163,12 @@ class Bulk
 		return $output;
 	}
 
-
 	/*
+	 * save()
 	 * @return validate
 	 */
-	public function save($use_transaction = true, $validation = true) {
-
+	public function save($use_transaction = true, $validation = true)
+	{
 		$validated = array();
 
 		// transaction start
@@ -235,10 +243,7 @@ class Bulk
 									$this->forms[$key]->field($mm_field)->set_value(array());
 								}
 							}
-
-
 						}
-
 						// mm 以外をセットする
 						$this->models[$key]->set(\Arr::filter_keys(\Input::post($key), $mm_fields, true));
 
@@ -246,8 +251,6 @@ class Bulk
 					} else {
 						$model->set(\Input::post($key));
 					}
-
-
 
 					if ($this->forms[$key]->populate(\Input::post())->validation()->run(\Input::post())) {
 						$model->save(null, false);
@@ -278,10 +281,13 @@ class Bulk
 	}
 
 
-	public static function set_define_function($name) {
+	/*
+	 * set_define_function()
+	 */
+	public static function set_define_function($name)
+	{
 		if ($name) static::$_define_function = $name;
 	}
-
 
 	/*
 	public static function disable_deleted() {
@@ -293,16 +299,12 @@ class Bulk
 	}
 	 */
 
-
 	/**
 	 * Magic method toString that will build this as a form
-	 *
 	 * @return  string
 	 */
 	public function __toString()
 	{
 		return $this->build();
 	}
-
 }
-

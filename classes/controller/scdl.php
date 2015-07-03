@@ -770,14 +770,24 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
 
-		$view->set('narrow_user_list', \Model_Usr::find('all',
-			array(
-				'related'   => count($where) ? array('usergroup') : array(),
-				'where'=> $where,
-				'order_by' => 'pronunciation'
-				)
-			));
-
+		// テンポラル対応
+		if (isset(\Model_Usr::properties()['pronunciation']))
+		{
+			$view->set('narrow_user_list', \Model_Usr::find('all',
+				array(
+					'related'   => count($where) ? array('usergroup') : array(),
+					'where'=> $where,
+					'order_by' => 'pronunciation'
+					)
+				));
+		} else {
+			$view->set('narrow_user_list', \Model_Usr::find('all',
+				array(
+					'related'   => count($where) ? array('usergroup') : array(),
+					'where'=> $where,
+					)
+				));
+		}
 
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());

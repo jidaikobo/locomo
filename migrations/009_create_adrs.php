@@ -30,7 +30,7 @@ class Create_adrs
 		\DBUtil::create_index('lcm_adrs', array('deleted_at'), 'adrs_deleted_at');
 
 		\DBUtil::create_table('lcm_adrs_groups', array(
-			'id' => array('constraint' => 11, 'type' => 'int', /*'auto_increment' => true, */'unsigned' => true),
+			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name' => array('constraint' => 255, 'type' => 'varchar', 'default' => ''),
 			'description'  => array('constraint' => 255, 'type' => 'varchar'),
 			'seq'          => array('constraint' => 11, 'type' => 'int', 'unsigned' => true),

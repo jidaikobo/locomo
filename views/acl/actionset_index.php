@@ -14,8 +14,8 @@
 	<li>コンフィグで許可されいてるアクションを不許可にはできません</li>
 </ul>
 
-<?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_acl/')); ?>
 <h2>設定</h2>
+<?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_acl/', 'class'=>'lcm_form form_group')); ?>
 
 <?php foreach($actionsets as $controller => $each_actionsets): ?>
 	<fieldset>
@@ -49,7 +49,7 @@ echo \Form::hidden('user', $hidden_user);
 echo \Form::hidden('usergroup', $hidden_usergroup);
 ?>
 
-<div class="button_group">
+<div class="submit_button">
 	<?php echo Html::anchor('acl/controller_index/', '戻る', array('class' => 'button')); ?>
 	<?php echo \Form::submit('submit', '保存する', array('class' => 'button primary')); ?>
 </div>

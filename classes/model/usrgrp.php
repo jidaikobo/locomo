@@ -46,7 +46,7 @@ class Model_Usrgrp extends \Model_Base
 		'is_for_acl' => array(
 			'label' => '権限用',
 			'form' => array('type' => 'select', 'options' => array(0 => '通常', 1 => '権限用グループ')),
-			'default' => 1,
+			'default' => 0,
 		),
 	);
 
