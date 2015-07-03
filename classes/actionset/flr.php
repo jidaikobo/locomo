@@ -117,6 +117,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_upload($controller, $obj = null, $id = null, $urls = array())
 	{
+		// ファイラ固有のアクセス権を確認する
+		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'upload')) return array();
+
 		if (@$obj->genre == 'dir')
 		{
 			$urls = array(array("\Controller_Flr_File/upload/".$obj->id, '新規アップロード'));
@@ -136,6 +139,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())
 	{
+		// ファイラ固有のアクセス権を確認する
+		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'create_dir')) return array();
+
 		if (@$obj->genre == 'dir')
 		{
 			$urls = array(
@@ -160,6 +166,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_rename($controller, $obj = null, $id = null, $urls = array())
 	{
+		// ファイラ固有のアクセス権を確認する
+		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'rename_dir')) return array();
+
 		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{
 			$urls = array(array("\Controller_Flr_Dir/rename/".$obj->id, '<!--ディレクトリ-->名称変更'));
@@ -176,6 +185,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_permission($controller, $obj = null, $id = null, $urls = array())
 	{
+		// ファイラ固有のアクセス権を確認する - パーミッションはパージ権限クラス
+		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'purge_dir')) return array();
+
 		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{
 			$urls = array(array("\Controller_Flr_Dir/permission/".$obj->id, '<!--ディレクトリ-->権限設定'));
@@ -192,6 +204,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_purge($controller, $obj = null, $id = null, $urls = array())
 	{
+		// ファイラ固有のアクセス権を確認する
+		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'purge_dir')) return array();
+
 		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{
 			$urls = array(array("\Controller_Flr_Dir/purge/".$obj->id, '<!--ディレクトリ-->削除'));
@@ -208,6 +223,9 @@ class Actionset_Flr extends \Actionset
 	 */
 	public static function actionset_edit_file($controller, $obj = null, $id = null, $urls = array())
 	{
+		// ファイラ固有のアクセス権を確認する - アップロードできる人は編集できる
+		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'upload')) return array();
+
 		if ($controller == '\Controller_Flr_File' && \Request::active()->action == 'view' && $id)
 		{
 			$urls = array(array("\Controller_Flr_File/edit".DS.$id, 'ファイル編集'));
