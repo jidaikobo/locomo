@@ -408,14 +408,15 @@ $(document).click(function(e){
 } );
 
 
-
+/* =================== フォーカス制御周りここから ================== */
 
 /* ================================▼▼▼=============================== */
 
-//tabindex制御
+// ================== tabindex制御 ==================
 $.fn.set_tabindex = function(){
 	//tabindexを一旦dataに格納し、現在の要素のみtabindex制御をリセットする。
 	//毎回全体そうさすべきなのかなあ？？
+	
 	$(document).find(':focusable').each(function(){
 			var tabindex;
 	
@@ -454,6 +455,8 @@ $.fn.reset_tabindex = function(){
 }
 
 
+// ================== lcm_focus ==================
+
 //.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしい環境は除外
 if(tabindexCtrl && $('.lcm_focus')[0]){
 	/* 閲覧状態のフォーム内のlcm_focusを外す */
@@ -476,17 +479,20 @@ function lcm_focus(){
 		$('.currentfocus').removeClass('currentfocus');
 		if(!esc){
 			$(document).set_tabindex();
-		}else if(target){
-			parents = target.parents(elm).addClass('focusparent');
+		}else if(target && target.hasClass('lcm_focus')){
+			target.parents('.lcm_focus');
+			parents = target.parents('.lcm_focus').addClass('focusparent');
 			target.addClass('currentfocus').css('position', 'relative').set_tabindex();
 		}else{
 			$(document).set_tabindex();//重いかなあ。
 		}
+
+		// ================== lcm_focus_esc ==================
 		
 		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
 			var len = elm.length;
-			for( var n = len-1 ; n >= 0 ; n-- ){
+			for( var n = len ; n > 0 ; n-- ){
 				el = elm.eq(n);
 				var title_str = el.attr('title') ? el.attr('title') : '';
 				el.attr('title', title_str+' エンターで入ります')
@@ -534,7 +540,7 @@ function lcm_focus(){
 	//ひとまず実行 //lcm_focusが入れ子になっていてもここで一旦-1
 	setTimeout(lcm_focus_set, 0);
 
-	//lcm_focus上でのキーボードイベント。
+	// ================== lcm_focus上でのキーボードイベント ==================
 	elm.on('keydown', function(e){
 		e = e ? e : event;
 		var t, k, parent;
@@ -606,10 +612,10 @@ function lcm_focus(){
 		t = $(e.target);
 		k = e.which;
 		
-//		console.log($('.lcm_modal.on, .semimodal.on'));
+//		console.log($('.modal.on, .semimodal.on'));
 		if($('.currentfocus')[0]){
 			if((t.is('#esc_focus_wrapper') && k == 13) || 
-				(!t.is(':input') && !$('.lcm_modal.on, .semimodal.on')[0] && k == 27 )){
+				(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
 				lcm_focus_esc(e);
 				e.stopPropagation();
 			}
@@ -620,6 +626,7 @@ function lcm_focus(){
 		e = e ? e : event;
 		lcm_focus_esc(e);
 	});
+	
 
 /*
 	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
@@ -640,71 +647,6 @@ function lcm_focus(){
 */
 }
 /* ================================▲▲▲=============================== */
-
-
-
-
-
-//要素の中央配置
-$.fn.set_center = function(){
-	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
-	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
-	this.css({'left': left, 'top': top});
-	return this;
-}
-$(window).resize(function(){
-	var el = $('.set_center, .lcm_modal.on');
-	if(el){
-		el.set_center();
-	}
-});
-
-
-/*
-//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行う。確実にサイト内に表示されている要素でサイズが変化するもの。
-//
-var fontsize_h, fontsize_ratio, window_resized;
-fontsize_h =  adminbar.height();
-var font_resize = setInterval(function(){
-	if(!window_resized && fontsize_h != adminbar.height()){
-		 fontsize_ratio = adminbar.height()/fontsize_h;
-		 fontsize_h = adminbar.height();
-//		 console.log(fontsize_ratio);
-		if(fontsize_ratio != 1 && !window_resized){
-//			console.log('フォントリサイズ')
-		}
-		window_resized = false;
-	}else
-	if(window_resized){
-//		console.log('ウィンドウのリサイズ');
-	}
-}, 200);
-//window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
-//モーダルウィンドウも同じことになる？
-var resize_timer = false;
-$(window).resize(function(){
-	if (resize_timer !== false) clearTimeout(resize_timer);
-	resize_timer = setTimeout(function(){
-	//リサイズ終了待ちの処理
-	
-	}, 200);
-	$(document).find('#help_window:visible').each(function(e){
-		var pw, w, l, r;
-		w  = parseInt($(this).width());
-		pw = $(document).width();
-		l  = parseInt(this.offsetLeft);
-		r  = pw-l-w;
-		if(pw < w){
-//			console.log('pw < w');
-			$(this).css({'width': pw, 'left' : 0});
-		}else if(r < 0){
-			$(this).css({'left' : pw-w});
-		}
-	});
-	window_resize = true;
-});
-
-*/
 
 
 //モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
@@ -865,6 +807,71 @@ $(document).on('keydown',function(e){
 		}
 	}
 });
+
+
+/* =================== フォーカス制御周りここまで ================== */
+
+//要素の中央配置
+$.fn.set_center = function(){
+	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
+	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
+	this.css({'left': left, 'top': top});
+	return this;
+}
+$(window).resize(function(){
+	var el = $('.set_center, .lcm_modal.on');
+	if(el){
+		el.set_center();
+	}
+});
+
+
+/*
+//リサイズの検知(フォント基準) //ひとまずadminbarを対象に行う。確実にサイト内に表示されている要素でサイズが変化するもの。
+//
+var fontsize_h, fontsize_ratio, window_resized;
+fontsize_h =  adminbar.height();
+var font_resize = setInterval(function(){
+	if(!window_resized && fontsize_h != adminbar.height()){
+		 fontsize_ratio = adminbar.height()/fontsize_h;
+		 fontsize_h = adminbar.height();
+//		 console.log(fontsize_ratio);
+		if(fontsize_ratio != 1 && !window_resized){
+//			console.log('フォントリサイズ')
+		}
+		window_resized = false;
+	}else
+	if(window_resized){
+//		console.log('ウィンドウのリサイズ');
+	}
+}, 200);
+//window.resizeもそのうちまとめたい。リサイズ終了待ちと、随時処理されたいものをわける。
+//モーダルウィンドウも同じことになる？
+var resize_timer = false;
+$(window).resize(function(){
+	if (resize_timer !== false) clearTimeout(resize_timer);
+	resize_timer = setTimeout(function(){
+	//リサイズ終了待ちの処理
+	
+	}, 200);
+	$(document).find('#help_window:visible').each(function(e){
+		var pw, w, l, r;
+		w  = parseInt($(this).width());
+		pw = $(document).width();
+		l  = parseInt(this.offsetLeft);
+		r  = pw-l-w;
+		if(pw < w){
+//			console.log('pw < w');
+			$(this).css({'width': pw, 'left' : 0});
+		}else if(r < 0){
+			$(this).css({'left' : pw-w});
+		}
+	});
+	window_resize = true;
+});
+
+*/
+
 
 
 
