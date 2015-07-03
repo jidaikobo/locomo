@@ -206,11 +206,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 				array('is_sticky', 1),
 				array('genre', '<>','image'),
 			),
-/*
 			'order_by' => array(
-				array('seq', 'ASC'),
+				array('name', 'ASC'),
 			),
-*/
 		);
 		$objs = \Model_Flr::find('all', $option);
 
