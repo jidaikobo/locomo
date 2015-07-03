@@ -168,9 +168,9 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 * auth()
 	 * @return void
 	 */
-	public function auth()
+	public static function auth()
 	{
-		$current_action = '\\'.\Request::active()->controller.'/'.$this->request->action;
+		$current_action = '\\'.\Request::active()->controller.'/'.\Request::active()->action;
 
 		// ordinary auth
 		$is_allow = \Auth::instance()->has_access($current_action);
