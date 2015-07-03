@@ -39,7 +39,7 @@ window.requestAnimationFrame = (function(){
 	$n = 1;
 	foreach ($items as $item):
 		if (\Controller_Flr::check_auth($item->path)):
-		$url = \Uri::create('flr/dl/?p='.\Model_Flr::enc_url($item->path, true));
+		$url = \Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true));
 		$url = \Inflector::get_root_relative_path($url);
 		?>
 		<div
