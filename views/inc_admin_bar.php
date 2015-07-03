@@ -156,7 +156,9 @@ if (\Auth::check()):
 			$html.= "<li><a href=\"".\Uri::base()."auth/logout\">ログアウト</a></li>";
 			if ( ! \Auth::is_admin()):
 				$html.= "<li class=\"has_bottm_separator\"><a href=\"".\Uri::base()."usr/view/".\Auth::get('id')."\">ユーザ情報</a></li>";
-				$html.= "<li class=\"has_bottm_separator\"><a href=\"".\Uri::base()."usrgrp/custom/index_admin/\">カスタムユーザグループ</a></li>";
+				if (\Config::get('is_use_customusergroup')):
+					$html.= "<li class=\"has_bottm_separator\"><a href=\"".\Uri::base()."usrgrp/custom/index_admin/\">カスタムユーザグループ</a></li>";
+				endif;
 			endif;
 			// usergroup
 			$usergroups = \Auth::get('usergroup');

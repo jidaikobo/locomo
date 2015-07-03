@@ -656,7 +656,11 @@ class Controller_Base extends Controller_Core
 	{
 		// redirect
 		$id = \Input::post('id');
-		if ( ! \Auth::is_root() || is_null($id) || ! \Security::check_token())
+		if (
+			! \Auth::instance()->has_access(static::$controller.DS.static::$action) ||
+			is_null($id) ||
+			! \Security::check_token()
+		)
 		{
 			\Response::redirect(static::$main_url);
 		}

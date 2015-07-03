@@ -7,11 +7,17 @@ echo $plain;
 <div class="input_group">
 	<h2>ユーザ</h2>
 	<div class="field">
-	<?php
-	foreach ($item->user as $uid => $v):
-		echo $v->display_name;
-	endforeach;
-	?>
+	<?php if ($item->user): ?>
+		<ul>
+		<?php
+		foreach ($item->user as $uid => $v):
+			echo '<li>'.$v->display_name.'</li>';
+		endforeach;
+		?>
+		</ul>
+	<?php else: ?>
+		<p>所属ユーザはいません。</p>
+	<?php endif; ?>
 	</div><!--/.field-->
 </div><!--/.input_group-->
 

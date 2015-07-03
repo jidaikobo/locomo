@@ -76,7 +76,6 @@ class Model_Usrgrp extends \Model_Base
 		),
 	);
 
-
 	public static function _init()
 	{
 		if (\Request::main()->action == 'bulk' ) {

@@ -51,56 +51,6 @@ foreach ($targets as $path)
 }
 Autoloader::add_classes($classes);
 
-/*
-
-$paths = array(
-	// these models are called by \Auth::is_root() at \Inflector::dir_to_ctrl() 
-	'\\Locomo\\Model_Auth_Usrgrps' => 'model/auth/usrgrps.php',
-	'\\Locomo\\Model_Auth' => 'model/auth.php',
-	'\\Locomo\\Model_Acl' => 'model/acl.php',
-
-	// basic classes
-	'\\Locomo\\Inflector' => 'inflector.php',
-	'\\Locomo\\Util' => 'util.php',
-	'\\Locomo\\Auth' => 'auth.php',
-	'\\Locomo\\Auth_Acl_Locomoacl' => 'auth/acl/locomoacl.php',
-	'\\Locomo\\Auth_Group_Locomogroup' => 'auth/group/locomogroup.php',
-	'\\Locomo\\Auth_Login_Locomoauth' => 'auth/login/locomoauth.php',
-	'\\Locomo\\Pagination' => 'pagination.php',
-	'\\Locomo\\Actionset' => 'actionset.php',
-	'\\Locomo\\Module' => 'module.php',
-	'\\Locomo\\Request' => 'request.php',
-//	'\\Locomo\\Asset_Instance' => 'asset/instance.php',
-//	'\\Locomo\\Fieldset_Field' => 'fieldset/field.php',
-//	'\\Locomo\\Fieldset' => 'fieldset.php',
-//	'\\Locomo\\Security' => 'security.php',
-//	'\\Locomo\\Validation' => 'validation.php',
-);
-$classes = array();
-foreach ($paths as $class => $path)
-{
-	if ( file_exists(APPPATH.'classes/'.$path))
-	{
-		Autoloader::load($class);
-	} else {
-		$classes[$class] = LOCOMOPATH.'classes/'.$path;
-	}
-}
-Autoloader::add_classes($classes);
-
-// other classes - this must be called after first Autoloader::add_classes()
-$target = \Inflector::dir_to_ctrl(LOCOMOPATH.'classes/');
-foreach ($target as $class => $path)
-{
-	$app = str_replace(LOCOMOPATH, APPPATH, $path);
-	if ( ! file_exists($app))
-	{
-		$classes['\\Locomo'.$class] = $path;
-	}
-}
-Autoloader::add_classes($classes);
-*/
-
 // always load package
 \Package::load('auth');
 
