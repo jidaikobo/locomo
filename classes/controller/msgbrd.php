@@ -202,6 +202,7 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	 */
 	public function action_index_dashboard()
 	{
+		\Model_Msgbrd::set_public_options();
 		\Model_Msgbrd::$_options['where'][] = array(
 			array('is_sticky', '=', 1)
 		);
