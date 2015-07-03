@@ -48,7 +48,51 @@ trait Model_Traits_Base
 	 * prepare static::$_options
 	 * @return void
 	 */
-	public static function set_search_options(){}
+	public static function set_search_options()
+	{
+	}
+
+	/**
+	 * set_equal_options()
+	 * $_options に $fields の配列を
+	 * array($k, '=', $v) の形でセットする
+	 * @param  array $white_list
+	 * @param  array or value $fields :for examle "\Input::get('searches')"
+	 * @return void
+	 */
+	public static function set_equal_options($white_list = array(), $fields = null)
+	{
+		if (!$fields) return;
+		if (!is_array($fields)) $fields = array($fields);
+
+		if ($fields) {
+			foreach ($fields as $k => $v) {
+				if (!$v || !in_array($k, $white_list)) continue;
+				static::$_options['where'][] = array($k, '=', $v);
+			}
+		}
+	}
+
+	/**
+	 * set_like_options()
+	 * $_options に $fields の配列を
+	 * array($k, 'LIKE', '%'.$v.'%') の形でセットする
+	 * @param  array $white_list
+	 * @param  array or value $fields :for examle "\Input::get('likes')"
+	 * @return void
+	 */
+	public static function set_like_options($white_list = array(), $fields = 'likes')
+	{
+		if (!$fields) return;
+		if (!is_array($fields)) $fields = array($fields);
+
+		if ($fields) {
+			foreach ($fields as $k => $v) {
+				if (!$v || !in_array($k, $white_list)) continue;
+				static::$_options['where'][] = array($k, 'LIKE', '%'.$v.'%');
+			}
+		}
+	}
 
 	/**
 	 * set_paginated_options()
