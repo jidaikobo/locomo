@@ -161,7 +161,7 @@ class Presenter_Usr_Edit extends \Presenter_Base
 			$form->field('main_usergroup_id')
 				->set_description('権限用ユーザグループは対象にならないので、所属していても候補にされません。')
 				->set_type('select')
-				->set_options($ugrps4main)
+				->set_options(array('0' => '') + $ugrps4main)
 				->set_value($obj->main_usergroup_id);
 		}
 		else
