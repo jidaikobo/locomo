@@ -182,7 +182,7 @@
 			<?php if(!\Request::is_hmvc()): ?>
 			<td class="name nowrap">
 			<?php
-				echo $detaildata->create_user->display_name;
+				echo $detaildata->create_user['display_name'];
 			?>
 			</td>
 			<?php endif; ?>
