@@ -26,22 +26,43 @@ class Controller_Usrgrp_Custom extends \Locomo\Controller_Base
 		// parent
 		parent::before();
 
-		// check item's creator_id
-		$pkid = \Request::main()->id;
-		$obj = \Model_Usrgrp_Custom::find($pkid);
-		if ( ! $obj) return false;
-
-		// actions
-		$actions = array(
-			'\Controller_Usrgrp_Custom/edit',
-			'\Controller_Usrgrp_Custom/view',
-		);
-
-		// modify \Auth::get('allowed')
-		\Auth::instance()->remove_allowed($actions);
-		if ($obj->customgroup_uid === \Auth::get('id'))
+		// is_use_customusergroup
+		$is_use_customusergroup = \Config::get('is_use_customusergroup');
+		if ($is_use_customusergroup)
 		{
+			// index_admin
+			$actions = array(
+				'\Controller_Usrgrp_Custom/index_admin',
+				'\Controller_Usrgrp_Custom/index_unavailable',
+				'\Controller_Usrgrp_Custom/create',
+				'\Controller_Usrgrp_Custom/edit',
+				'\Controller_Usrgrp_Custom/view',
+				'\Controller_Usrgrp_Custom/delete',
+				'\Controller_Usrgrp_Custom/purge_confirm',
+				'\Controller_Usrgrp_Custom/purge',
+			);
 			\Auth::instance()->add_allowed($actions);
+
+			// check item's creator_id
+			$pkid = \Request::main()->id;
+			$obj = \Model_Usrgrp_Custom::find($pkid);
+
+			if ($obj)
+			{
+				// actions
+				$actions = array(
+					'\Controller_Usrgrp_Custom/edit',
+					'\Controller_Usrgrp_Custom/view',
+					'\Controller_Usrgrp_Custom/purge_confirm',
+					'\Controller_Usrgrp_Custom/purge',
+				);
+		
+				// modify \Auth::get('allowed')
+				if ($obj->customgroup_uid !== \Auth::get('id'))
+				{
+					\Auth::instance()->remove_allowed($actions);
+				}
+			}
 		}
 	}
 
@@ -83,5 +104,21 @@ class Controller_Usrgrp_Custom extends \Locomo\Controller_Base
 	public function action_edit($id)
 	{
 		parent::edit($id);
+	}
+
+	/**
+	 * action_purge_confirm()
+	 */
+	public function action_purge_confirm($id)
+	{
+		parent::purge_confirm($id);
+	}
+
+	/**
+	 * action_purge()
+	 */
+	public function action_purge()
+	{
+		parent::purge();
 	}
 }

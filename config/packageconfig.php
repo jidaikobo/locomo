@@ -19,6 +19,12 @@ return array(
 	'site_title' => 'Locomo',
 	'slogan' => 'Accessible Web System Package for FuelPHP',
 
+	// is_use_customusergroup
+	'is_use_customusergroup' => true,
+
+	// is_remind_password
+	'is_remind_password' => true,
+
 	// is_admin_knows_password
 	'is_admin_knows_password' => false,
 
