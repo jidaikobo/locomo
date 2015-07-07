@@ -749,7 +749,7 @@ class Controller_Base extends Controller_Core
 			$model::set_paginated_options();
 			$objects = $model::find('all', $model::$_options);
 			// $total = max($total - count($objects), 1);
-			if ($add = \Input::get('add', $add))
+			if ($add)
 			{
 				for ($i = 0; $i < $add; $i++)
 				{
