@@ -1366,10 +1366,10 @@ td.minimum {
 	background: #fefefe;
 }
 .datatable tbody tr:nth-child(even) {
-	background: #f9f9f9;
+	background: #f0f0f0;
 }
 .datatable tbody tr:nth-child(even) th {
-	background: #eee;
+	background: #e3e3e3;
 }
 .datatable thead a,
 .datatable .thead a {
@@ -1379,7 +1379,7 @@ td.minimum {
 }
 .datatable thead a:hover,
 .datatable .thead a:hover {
-	background-color: #ddd;
+	background-color: #d0d0d0;
 	text-decoration: underline;
 }
 .datatable tr.current th,
@@ -1387,13 +1387,13 @@ td.minimum {
 .datatable tr.affected:nth-child(even) th,
 .datatable tbody tr:hover th,
 .datatable tfoot tr:hover th {
-	background-color: #f0f0dd;
+	background-color: #f0f0ba;
 }
 .datatable tr.current td,
 .datatable tr.affected td,
 .datatable tbody tr:hover td,
 .datatable tfoot tr:hover td {
-	background-color: #fafadd;
+	background-color: #fafac6;
 }
 
 .datatable tbody tr.checked th {
@@ -1564,7 +1564,7 @@ table.calendar {
 }
 
 .calendar td.today {
-	background-color: #fafadd;
+	background-color: #fafac6;
 }
 .calendar td.week6.today {
 	background-color: #f6f6e6;
@@ -1579,7 +1579,7 @@ table.calendar {
 	border-color: darkcyan;
 }
 .calendar td.week6 {
-	background-color: #f3f3f3;
+	background-color: #f0f0f0;
 }
 .calendar th.week0 {
 	color: indianred;
