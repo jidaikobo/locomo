@@ -277,9 +277,9 @@ class Pdf
 			),
 			'width' => 100,
 		),
-
 	);
 	 */
+
 	public function Bulk($objects)
 	{
 
