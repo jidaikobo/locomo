@@ -791,7 +791,7 @@ table.tbl2.even tbody tr:nth-child(even) td {
 }
 table.datatable th,
 table.datatable td{
-	border-bottom: 1px solid #f3f3f3;
+	border-bottom: 1px solid #e0e0e0;
 }
 table.tbl2 tbody tr:nth-child(odd),
 table.tbl2 tbody tr:nth-child(odd) th,
@@ -809,7 +809,7 @@ table.tbl2.odd tbody tr:nth-child(odd) td {
 table.tbl2.odd tbody tr:nth-child(even),
 table.tbl2.odd tbody tr:nth-child(even) th,
 table.tbl2.odd tbody tr:nth-child(even) td {
-	background: #f3f3f3;
+	background: #e0e0e0;
 }
 table.tbl2 th {
 	font-weight: normal;
