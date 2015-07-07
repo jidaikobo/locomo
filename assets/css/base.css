@@ -720,7 +720,7 @@ table.tbl th {
 }
 table.tbl thead th,
 table.tbl .thead th {
-	background-color: #eee;
+	background-color: #e0e0e0;
 	color: #111;
 	text-align: center;
 }

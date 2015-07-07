@@ -1369,7 +1369,7 @@ td.minimum {
 	background: #f0f0f0;
 }
 .datatable tbody tr:nth-child(even) th {
-	background: #eee;
+	background: #e3e3e3;
 }
 .datatable thead a,
 .datatable .thead a {
@@ -1379,7 +1379,7 @@ td.minimum {
 }
 .datatable thead a:hover,
 .datatable .thead a:hover {
-	background-color: #ddd;
+	background-color: #d0d0d0;
 	text-decoration: underline;
 }
 .datatable tr.current th,
@@ -1387,7 +1387,7 @@ td.minimum {
 .datatable tr.affected:nth-child(even) th,
 .datatable tbody tr:hover th,
 .datatable tfoot tr:hover th {
-	background-color: #f0f0dd;
+	background-color: #f0f0ba;
 }
 .datatable tr.current td,
 .datatable tr.affected td,
