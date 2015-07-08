@@ -146,37 +146,22 @@ class Actionset_Flr extends \Actionset
 		{
 			$urls = array(
 				array("\Controller_Flr_Dir/create/".$obj->id, '<!--ディレクトリ-->作成'),
-				array("\Controller_Flr_Dir/edit/".$obj->id, '編集')
 			);
+			// ルートディレクトリは編集の対象外
+			if ($obj->path != '/')
+			{
+				$urls[] = array("\Controller_Flr_Dir/edit/".$obj->id, '編集');
+			}
 		}
 		$retvals = array(
 			'realm'        => 'base',
 			'urls'         => $urls,
-			'action_name'  => 'ディレクトリ作成、編集、削除',
+			'action_name'  => 'ディレクトリ作成、編集',
 			'show_at_top'  => true,
 			'explanation'  => '新しいディレクトリを追加します。',
 			'order'        => 30,
 		);
 
-		return $retvals;
-	}
-
-	/**
-	 * actionset_rename()
-	 */
-	public static function actionset_rename($controller, $obj = null, $id = null, $urls = array())
-	{
-		// ファイラ固有のアクセス権を確認する
-		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'rename_dir')) return array();
-
-		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
-		{
-			$urls = array(array("\Controller_Flr_Dir/rename/".$obj->id, '<!--ディレクトリ-->名称変更'));
-		}
-		$retvals = array(
-			'urls'         => $urls,
-			'order'        => 40,
-		);
 		return $retvals;
 	}
 
@@ -187,6 +172,9 @@ class Actionset_Flr extends \Actionset
 	{
 		// ファイラ固有のアクセス権を確認する - パーミッションはパージ権限クラス
 		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'purge_dir')) return array();
+
+		// パーミッション設定するのは、ルート直下の階層だけ
+		if ($obj->depth != 1) return array();
 
 		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{
@@ -206,6 +194,9 @@ class Actionset_Flr extends \Actionset
 	{
 		// ファイラ固有のアクセス権を確認する
 		if ( ! isset($obj->path) || ! \Controller_Flr::check_auth($obj->path, 'purge_dir')) return array();
+
+		// ルートディレクトリは削除の対象外
+		if ($obj->path == '/') return array();
 
 		if (\Request::main()->action != 'create' && @$obj->genre == 'dir')
 		{

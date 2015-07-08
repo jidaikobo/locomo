@@ -17,14 +17,18 @@
 		</tr>
 	</thead>
 	<tbody>
-<?php foreach ($items as $item): ?>
+<?php
+foreach ($items as $item):
+// ディレクトリは表示権限を確認する
+if ($item->genre == 'dir' && \Controller_Flr::check_auth($item->path) || $item->genre != 'dir'):
+?>
 		<tr tabindex="-1">
 			<th><div class="col_scrollable" style="min-width: 10em;">
 			<?php
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
 				else:
-					if (\Controller_Flr::check_auth($item->path, 'read')):
+					if (\Controller_Flr::check_auth($item->path, 'read') || $item->depth == 1):
 						echo Html::anchor('flr/file/view'.DS.$item->id, $item->name, array('class' => 'icon '.$item->genre));
 					else:
 						echo '<span class="icon '.$item->genre.'">'.$item->name.'</span>';
@@ -36,14 +40,20 @@
 			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo dirname(urldecode($item->path)) ?></div></td>
 <?php endif; ?>
 			<td><?php
-				if ($item->genre !== 'dir' && \Controller_Flr::check_auth($item->path, 'read')):
-					echo \Html::anchor(\Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true)), 'ダウンロード', array('class' => 'button small'));
+				if ($item->genre !== 'dir'):
+					if (\Controller_Flr::check_auth($item->path, 'read') || $item->depth == 1):
+						echo \Html::anchor(\Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true)), 'ダウンロード', array('class' => 'button small'));
+					endif;
 				endif;
 			?></td>
 			<td><?php echo $item->genre; ?></td>
 			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo $item->explanation; ?></div></td>
 			<td><?php echo \Model_Usr::get_display_name($item->creator_id); ?></td>
-		</tr><?php endforeach; ?>
+		</tr>
+<?php
+endif;
+endforeach;
+?>
 	</tbody>
 </table>
 <?php echo \Pagination::create_links(); ?>

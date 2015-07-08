@@ -161,7 +161,7 @@ class Model_Flr extends \Model_Base
 			 // rename flag to use at _event_after_update
 			if ($old_name != $new_name)
 			{
-				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
+				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).$new_name).DS;
 				$this->name = $new_name;
 				$fullpath = LOCOMOFLRUPLOADPATH.$this->path;
 			}
@@ -182,80 +182,6 @@ class Model_Flr extends \Model_Base
 			$this->mimetype = \File::file_info($fullpath)['mimetype'] ;
 			$this->genre    = \Locomo\File::get_file_genre($this->name);
 		}
-
-		// permission
-		// ディレクトリパーミッションの修正
-		if ($this->genre == 'dir')
-		{
-			// to solve contradiction compare permission between parent and current dir.
-			// パーミッションの矛盾を直情の親を見て解決。親以下にする。
-			if ($this->path != '/') // not for root dir.
-			{
-				$p_obj = static::get_parent($this);
-	
-				// usergroup
-				$parent_g  = static::get_relation_as_array($p_obj, 'usergroup');
-				$parent_g  = static::transform_permission_to_intersect_arr($parent_g, 'usergroup');
-				$current_g = static::get_relation_as_array($this, 'usergroup');
-				$current_g = static::transform_permission_to_intersect_arr($current_g, 'usergroup');
-				$group_intersects = array_intersect($parent_g, $current_g);
-				$parent_g = array_unique($parent_g);
-				$group_intersects = array_unique($group_intersects);
-	
-				// user
-				$parent_u  = static::get_relation_as_array($p_obj, 'user');
-				$parent_u  = static::transform_permission_to_intersect_arr($parent_u, 'user');
-				$current_u = static::get_relation_as_array($this, 'user');
-				$current_u = static::transform_permission_to_intersect_arr($current_u, 'user');
-				$user_intersects = array_intersect($parent_u, $current_u);
-				$parent_u = array_unique($parent_u);
-				$user_intersects = array_unique($user_intersects);
-
-				// initialize permission - overhead but for test purpose, it must be place here
-				// データベースを初期化。
-				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
-				unset($this->permission_usergroup);
-				unset($this->permission_user);
-
-				// update permissions - group
-				if ( ! $current_g)
-				{
-					// default permission is same as parent permission
-					// 現在のパーミッションが空だったら親のパーミッションと同じにする
-					static::update_permission_by_intersects($this, $parent_g, 'usergroup');
-				} else {
-					// update permission by intersects
-					// 現在のパーミッションを親以下にする
-					static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
-				}
-
-				// update permissions - user
-				if ( ! $current_u)
-				{
-					static::update_permission_by_intersects($this, $parent_u, 'user');
-				} else {
-					static::update_permission_by_intersects($this, $user_intersects, 'user');
-				}
-			}
-	
-			// tidy up order of permissions at root dir
-			if ($this->path == '/')
-			{
-				// preserve and sort
-				$usergroup = static::get_relation_as_array($this, 'usergroup');
-				$user = static::get_relation_as_array($this, 'user');
-	
-				// initialize permission - overhead but for test purpose, it must be place here
-				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
-				unset($this->permission_usergroup);
-				unset($this->permission_user);
-	
-				// update permissions
-				static::update_permission($this, $usergroup, 'usergroup');
-				static::update_permission($this, $user, 'user');
-			}
-		} // is_dir until here.
-
 	}
 
 	/**
@@ -370,23 +296,6 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * transform_permission_to_intersect_arr()
-	*/
-	public static function transform_permission_to_intersect_arr($permissions, $relation)
-	{
-		$tmps = array();
-		foreach ($permissions as $v)
-		{
-			$v['access_level'] = @$v['access_level'] ?: 1;
-			for ($n = 1; $n <= $v['access_level']; $n++)
-			{
-				$tmps[] = $v[$relation.'_id'].DS.$n;
-			}
-		}
-		return $tmps;
-	}
-
-	/**
 	 * get_parent()
 	 */
 	public static function get_parent($obj)
@@ -400,7 +309,7 @@ class Model_Flr extends \Model_Base
 				array('path', '=', $p_path),
 			),
 		);
-		return static::find('first');
+		return static::find('first', $option);
 	}
 
 	/**

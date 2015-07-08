@@ -97,6 +97,13 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// current dir
 		$current_obj = \Model_Flr::find($id);
 
+		// check_auth()
+		if ($current_obj && ! static::check_auth($current_obj->path))
+		{
+			\Session::set_flash('error', "アクセス権のないディレクトリです。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		// show current dir items. when search ingnore this.
 		// 現在のディレクトリを表示。
 		// 検索の場合でもいちおうディレクトリ整合性確認のため走るが、結果は無視する。
@@ -277,6 +284,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public static function check_auth($path, $level = 'read')
 	{
+		// ルートディレクトリはアクセスはできる
+		if ($path == '/') return true;
+
 		// rights
 		$rights = array(
 		 'read'       => 1,
@@ -293,10 +303,10 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// always true
 		if (in_array('-1', $usergroups) || in_array('-2', $usergroups) ) return true;
 
-		// when file, check parent dir
-		$fullpath = LOCOMOFLRUPLOADPATH.$path;
-		$path = is_dir($fullpath) ? $path : rtrim(dirname($path),DS).DS;
-		$obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
+		// check first level dir
+		$paths = explode('/', $path);
+		if (count($paths) < 2) return false; // invalid depth
+		$obj = \Model_Flr::find('first', array('where' => array(array('path', "/{$paths[1]}/"))));
 		if ( ! $obj) return false;
 
 		// check usergroups

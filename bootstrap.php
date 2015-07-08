@@ -6,7 +6,7 @@
  */
 
 // version
-define('LOCOMOVERSION', '1.1');
+define('LOCOMOVERSION', '1.8');
 
 // load package
 \Package::load('auth');

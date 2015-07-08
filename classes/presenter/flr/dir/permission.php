@@ -30,31 +30,6 @@ class Presenter_Flr_Dir_Permission extends \Presenter_Base
 		$options = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('customgroup_uid', 'is', null))));
 		$options = array('-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
 
-		// ルートディレクトリであれば、上記で取得した全項目をoptionsとしてよい
-		if ($obj->path !== '/')
-		{
-			$parent = \Model_Flr::get_parent($obj);
-			$g_permissions = array();
-			foreach ($parent->permission_usergroup as $k => $v)
-			{
-				// logged in users - non object value
-				if ($v->usergroup_id === '-10')
-				{
-					$g_permissions[-10] = 'ログインユーザすべて';
-				}
-				// guest - non object value
-				elseif ($v->usergroup_id === '0')
-				{
-					$g_permissions[0] = 'ゲスト';
-				}
-				elseif (is_object($v->usrgrp))
-				{
-					$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
-				}
-			}
-			$options = array_intersect($g_permissions, $options);
-		}
-
 		// $formset
 		$options = array(''=>'選択してください') + $options;
 		$formset = array('type' => 'select', 'options' => $options, 'class' => 'varchar usergroup', 'style' => 'width: 12em;');
@@ -71,16 +46,6 @@ class Presenter_Flr_Dir_Permission extends \Presenter_Base
 
 		// === user_id ===
 		$options = \Model_Usr::find_options('display_name');
-		if ($obj->path !== '/')
-		{
-			$u_permissions = array();
-			foreach ($parent->permission_user as $k => $v)
-			{
-				if ( ! is_object($v->usr)) continue;
-				$g_permissions[$v->user_id] = $v->usr->display_name;
-			}
-			$options = array_intersect($u_permissions, $options);
-		}
 
 		// $formset
 		$options = array(''=>'選択してください') + $options;
