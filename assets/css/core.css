@@ -839,6 +839,7 @@ div.lcm_tooltip {
 	-ms-box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	border: 1px solid #aaa !important;
+	max-width: 100%;
 }
 .lcm_tooltip:after,
 .lcm_tooltip:before {
