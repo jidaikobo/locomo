@@ -1,10 +1,11 @@
 <?php
 namespace Locomo;
-class Controller_Pdf extends \Locomo\Controller_Base
+class Controller_Pdf extends \Controller_Base
 // class Controller_Pdf extends \Controller
 {
 
 
+	/*
 	public static $locomo = array(
 		'show_at_menu' => true,
 		'order_at_menu' => 10,
@@ -12,6 +13,7 @@ class Controller_Pdf extends \Locomo\Controller_Base
 		'main_action' => 'index_admin',
 		'nicename' => 'PDF',
 	);
+	 */
 
 	public function before() {
 		parent::before();
