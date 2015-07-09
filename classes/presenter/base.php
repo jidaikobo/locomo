@@ -95,7 +95,7 @@ class Presenter_Base extends \Presenter
 				<div class="hidden_item form_group">
 				<section>
 					<h1 class="skip">検索</h1>
-					<form class="search" action="' . preg_replace('/\/[0-9]+$/u', "", \Uri::current()) . '">
+					<form class="search" action="' . preg_replace('/\/[0-9]+$/u', "/", \Uri::current()) . '">
 			');
 
 		// limit

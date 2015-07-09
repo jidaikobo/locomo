@@ -68,7 +68,7 @@ class Pagination extends \Fuel\Core\Pagination
 				{
 					if ($i == $p_seg)
 					{
-						$url .= '1/';
+						$url .= '1';
 					}
 					else
 					{
