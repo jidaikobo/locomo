@@ -427,11 +427,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		if (!\Session::get("calendar_day"))
 			\Session::set("calendar_day", date('d'));
 
-		// actionsetを正常に動かすために実行
-		parent::view($id);
-
 		$model = $this->model_name;
 		$detail = $model::find($id);
+
+		// actionsetを正常に動かすために実行
+		static::set_object($detail);
 
 		// 見つからなければカレンダーへ
 		if ($detail == null) {

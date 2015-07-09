@@ -15,6 +15,7 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 
 //		$usergroups = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true),array('is_for_acl', false))));
 		$usergroups = \Model_Usrgrp_Custom::find_options();
+
 		$form->field('group_detail')->set_options($usergroups);
 
 		$form->field('kind_flg')->set_value(\Model_Scdl::$_kind_flg);
