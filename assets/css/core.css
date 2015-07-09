@@ -1985,14 +1985,15 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 	display: none;
 }
 
-.w1em {width: 1em !important;}
-.w2em {width: 2em !important;}
-.w3em {width: 3em !important;}
-.w4em {width: 4em !important;}
-.w5em {width: 5em !important;}
-.w6em {width: 6em !important;}
-.w7em {width: 7em !important;}
-.w8em {width: 8em !important;}
+.w1em  {width: 1em !important;}
+.w2em  {width: 2em !important;}
+.w3em  {width: 3em !important;}
+.w4em  {width: 4em !important;}
+.w5em  {width: 5em !important;}
+.w6em  {width: 6em !important;}
+.w7em  {width: 7em !important;}
+.w8em  {width: 8em !important;}
+.w9em  {width: 9em !important;}
 .w10em {width: 10em !important;}
 .w15em {width: 15em !important;}
 .w20em {width: 20em !important;}
@@ -2019,10 +2020,25 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 .hw6em h1, .hw6em h2, .hw6em h3, .hw6em h4, .hw6em h5 {width: 6em !important;}
 .hw7em h1, .hw7em h2, .hw7em h3, .hw7em h4, .hw7em h5 {width: 7em !important;}
 .hw8em h1, .hw8em h2, .hw8em h3, .hw8em h4, .hw8em h5 {width: 8em !important;}
+.hw9em h1, .hw9em h2, .hw9em h3, .hw9em h4, .hw9em h5 {width: 9em !important;}
 .hw10em h1, .hw10em h2, .hw10em h3, .hw10em h4, .hw10em h5 {width: 10em !important;}
 .hw15em h1, .hw15em h2, .hw15em h3, .hw15em h4, .hw15em h5 {width: 15em !important;}
 .hw20em h1, .hw20em h2, .hw20em h3, .hw20em h4, .hw20em h5 {width: 20em !important;}
 .hw25em h1, .hw25em h2, .hw25em h3, .hw25em h4, .hw25em h5 {width: 25em !important;}
+
+.hw1em .input_group > .field  { margin-left: 1em;}
+.hw2em .input_group > .field  { margin-left: 2em;}
+.hw3em .input_group > .field  { margin-left: 3em;}
+.hw4em .input_group > .field  { margin-left: 4em;}
+.hw5em .input_group > .field  { margin-left: 5em;}
+.hw6em .input_group > .field  { margin-left: 6em;}
+.hw7em .input_group > .field  { margin-left: 7em;}
+.hw8em .input_group > .field  { margin-left: 8em;}
+.hw9em .input_group > .field  { margin-left: 9em;}
+.hw10em .input_group > .field { margin-left: 10em;}
+.hw15em .input_group > .field { margin-left: 15em;}
+.hw20em .input_group > .field { margin-left: 20em;}
+.hw25em .input_group > .field { margin-left: 25em;}
 
 .display_inline {
 	display: inline;
