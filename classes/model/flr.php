@@ -27,6 +27,8 @@ class Model_Flr extends \Model_Base
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
 			'validation' => array(
 				'required',
+				'match_pattern' => array("/^[亜-熙ぁ-んァ-ヶa-zA-Z0-9_-]+$/"),
+//				'match_pattern' => array("/[亜-熙ぁ-んァ-ヶa-zA-Z0-9_-]+/"),
 				'max_length' => array(255),
 			),
 		),
@@ -224,7 +226,6 @@ class Model_Flr extends \Model_Base
 
 	/**
 	 * enc_url()
-	 * 
 	*/
 	public static function enc_url($path, $enc_slash = false)
 	{
