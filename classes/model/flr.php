@@ -23,12 +23,11 @@ class Model_Flr extends \Model_Base
 	protected static $_properties = array(
 		'id',
 		'name' => array(
-			'label' => 'ディレクトリ名',
+			'label' => '名称',
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
 			'validation' => array(
 				'required',
-				'match_pattern' => array("/^[亜-熙ぁ-んァ-ヶa-zA-Z0-9_-]+$/"),
-//				'match_pattern' => array("/[亜-熙ぁ-んァ-ヶa-zA-Z0-9_-]+/"),
+				'match_pattern' => array("/^[一-龠ぁ-んァ-ヶa-zA-Z0-9ー_-]+$/u"),
 				'max_length' => array(255),
 			),
 		),
