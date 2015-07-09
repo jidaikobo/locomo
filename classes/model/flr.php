@@ -319,10 +319,12 @@ class Model_Flr extends \Model_Base
 	{
 		if ( ! $obj instanceof Model_Flr) return array();
 
+		$path = str_replace('%', '\%', $obj->path);
+
 		// current children
 		$option = array(
 			'where' => array(
-				array('path', 'like', $obj->path.'%'),
+				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
 			),
@@ -331,6 +333,7 @@ class Model_Flr extends \Model_Base
 				'created_at' => 'DESC'
 			),
 		);
+
 		return static::find('all', $option);
 	}
 
