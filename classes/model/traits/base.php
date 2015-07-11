@@ -518,7 +518,7 @@ trait Model_Traits_Base
 	 *
 	 * @important   \Response::redirect() after save() or Regenerate Fieldset instance
 	 */
-	public static $_hm_delete_else = false;
+	public static $_hm_delete_else = false; // \Locomo\Fieldset::set_tabular_form_blank で自動的に true になり、全入れ全消しの状態になる
 	public static $_mm_delete_else = true;
 	public function cascade_set($input_post = null, $form = null, $repopulate = false, $validation = true, $hm_delete_else = null, $mm_delete_else = null)
 	{

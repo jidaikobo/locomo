@@ -77,6 +77,8 @@ class Presenter_Base extends \Presenter
 		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$pagenate_txt}全".number_format($total)."件</span>";
 		$sortinfo     = $total ? $sortinfo_txt : '項目が存在しません' ;
 
+		$action_url = is_int(\Pagination::instance()->config['uri_segment']) ? preg_replace('/\/[0-9]+$/u', "/", \Uri::current()) : \Uri::current();
+
 		// form
 		$form
 			->add('opener','',array('type' => 'text'))
@@ -95,7 +97,7 @@ class Presenter_Base extends \Presenter
 				<div class="hidden_item form_group">
 				<section>
 					<h1 class="skip">検索</h1>
-					<form class="search" action="' . preg_replace('/\/[0-9]+$/u', "/", \Uri::current()) . '">
+					<form class="search" action="' . $action_url . '">
 			');
 
 		// limit
