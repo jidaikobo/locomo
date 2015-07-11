@@ -26,10 +26,16 @@ class Controller_Flr_Dir extends Controller_Flr
 			$dirnname = \Input::post('name');
 			$path = \Model_Flr::enc_url($parent.$dirnname).DS;
 			$tmp_obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
-
-			if ($tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
+			// ディレクトリがすでに存在している場合
+			if (file_exists(LOCOMOFLRUPLOADPATH.$path) && $dirnname !== '/')
 			{
+				\Session::delete_flash('success');
 				\Session::set_flash('error', 'そのディレクトリは既に存在します。');
+				if ($edit_obj && $tmp_obj)
+				{
+					// 失敗したのでデータベースから削除
+					$edit_obj->delete(null, true);
+				}
 				\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 			}
 
@@ -37,6 +43,7 @@ class Controller_Flr_Dir extends Controller_Flr
 			// データベースには存在しなかったが、物理ディレクトリが存在していて、データベースへの保存が成功したとき。
 			if ($edit_obj && ! $tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
 			{
+				\Session::delete_flash('success');
 				\Session::set_flash('success', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 				\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 			}
@@ -49,7 +56,7 @@ class Controller_Flr_Dir extends Controller_Flr
 				if ( ! \File::create_dir(LOCOMOFLRUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
 				{
 					// 失敗したのでデータベースから削除
-					$edit_obj->purge();
+					$edit_obj->delete_self();
 					\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
 					\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 				} else {
@@ -63,6 +70,11 @@ class Controller_Flr_Dir extends Controller_Flr
 
 		// assign
 		$parent = \Model_Flr::find($id);
+		if ( ! $parent)
+		{
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($parent->path));
 		$this->template->set_global('title', 'ディレクトリ作成');
 	}
@@ -110,7 +122,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		{
 			$prev_name = $obj->name;
 			$new_name = \Input::post('name');
-			$parent = LOCOMOFLRUPLOADPATH.dirname($obj->path);
+			$parent = LOCOMOFLRUPLOADPATH.dirname(rtrim($obj->path, DS)).DS;
 
 			// rename
 			if ($prev_name != $new_name)
@@ -124,7 +136,7 @@ class Controller_Flr_Dir extends Controller_Flr
 				if (file_exists($new))
 				{
 					\Session::set_flash('error', "同じ階層に同じ名前のファイル／ディレクトリが既に存在します。");
-					\Response::redirect(\Uri::create('flr/dir/rename/'.$obj->id));
+					\Response::redirect(static::$current_url.$obj->id);
 				}
 
 				// try to rename
@@ -135,7 +147,7 @@ class Controller_Flr_Dir extends Controller_Flr
 				} catch (\Fuel\Core\PhpErrorException $e) {
 					Controller_Flr_Sync::sync();
 					\Session::set_flash('error', "データベースとディレクトリの状況に矛盾が見つかったので、強制同期をかけました。");
-					\Response::redirect(static::$current_url.$id);
+					\Response::redirect(static::$current_url.$obj->id);
 				}
 
 				// failed to rename
@@ -143,7 +155,7 @@ class Controller_Flr_Dir extends Controller_Flr
 				if( ! $rename)
 				{
 					\Session::set_flash('error', "ディレクトリのリネームに失敗しました。");
-					\Response::redirect(static::$current_url.$id);
+					\Response::redirect(static::$current_url.$obj->id);
 				}
 			}
 		}

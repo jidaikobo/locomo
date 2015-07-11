@@ -23,10 +23,11 @@ class Model_Flr extends \Model_Base
 	protected static $_properties = array(
 		'id',
 		'name' => array(
-			'label' => 'ディレクトリ名',
+			'label' => '名称',
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
 			'validation' => array(
 				'required',
+				'match_pattern' => array("/^[一-龠ぁ-んァ-ヶa-zA-Z0-9ー_-]+$/u"),
 				'max_length' => array(255),
 			),
 		),
@@ -224,7 +225,6 @@ class Model_Flr extends \Model_Base
 
 	/**
 	 * enc_url()
-	 * 
 	*/
 	public static function enc_url($path, $enc_slash = false)
 	{
@@ -319,10 +319,12 @@ class Model_Flr extends \Model_Base
 	{
 		if ( ! $obj instanceof Model_Flr) return array();
 
+		$path = str_replace('%', '\%', $obj->path);
+
 		// current children
 		$option = array(
 			'where' => array(
-				array('path', 'like', $obj->path.'%'),
+				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
 			),
@@ -331,6 +333,7 @@ class Model_Flr extends \Model_Base
 				'created_at' => 'DESC'
 			),
 		);
+
 		return static::find('all', $option);
 	}
 

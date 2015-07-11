@@ -123,7 +123,7 @@ class Controller_Hlp extends \Controller_Base
 				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), 'ヘルプを加筆する',array('class'=>'edit_link'));
 			}
 		}
-		$help = $add.$help ;
+		$help = $add."\n".$help ;
 		$help.= $action ? \Html::anchor(\Uri::create('/hlp/view?action='.$controller_safe), \Util::get_locomo($controller_original, 'nicename').'のヘルプ一覧', array('style'=>'display: block; border-top: 1px solid #aaa; padding-top: .5em;margin: 1em 0;')) : '' ;
 
 		$help = html_tag('div', array('class' => 'txt'), \Markdown::parse($help));
