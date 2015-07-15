@@ -559,21 +559,18 @@ function lcm_focus(){
 			var index = $(current_tabbable).index(t);
 			if(e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
 				if(t.hasClass('currentfocus') || index==0){//とりあえず
-					esc.focus();
+					setTimeout(function(){esc.focus()},0);
 				}else{
 					$(current_tabbable).eq(index-1).focus();
 				}
-				e.preventDefault();
-				return false;
 			}else{
 				if(t.is($(current_tabbable).last())){
-					esc.focus();
+					setTimeout(function(){esc.focus()},0);
 				}else{
 					$(current_tabbable).eq(index+1).focus();
 				}
-			e.preventDefault();
-			return false;
 			}
+			e.preventDefault();
 		}
 		
 	
