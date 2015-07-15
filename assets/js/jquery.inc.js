@@ -34,6 +34,7 @@ $(function(){
 });
 
 //クリックイベントを下の要素に適用する。
+//selectやtextareaなどではうまくとれていないみたい。focus関係？
 //:hover等の擬似要素はjsからは操作できないので対応していない。
 //するなら、mousemoveを取得して.hoverのようなクラスを付与? でもいちいちの:hoverに.hoverを併記するのは非効率なので。
 $(function() {
@@ -340,6 +341,7 @@ $('.container').css({'cssText':'width: '+c_w+'px ; max-width : auto;'});
 
 
 //ページ内リンク ヘッダー分位置調整とスムーズスクロール
+
 //html要素がスクロール対象であるか判定。
 //http://www.webdesignleaves.com/wp/jquery/573/
 var is_html_scrollable = (function(){
@@ -362,7 +364,16 @@ $(document).on('click', 'a[href^=#]', function(e){
 
 	href= $(this).attr("href");
 	if(href!='#'){
-		t = $(href == '' ? 'html' : href);
+		//フォーカスを確実に移動させるために、ターゲットがtabbableでない場合はtabindex-1をふよする
+		if(href != ''){
+			t = $(href);
+			if(!t.attr('tabindex')){
+				t.attr('tabindex', '-1');
+			}
+		}else{
+			t = $('html');
+		}
+
 		position = t.offset().top - headerheight - 10;
 		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
 		set_focus(t);
@@ -415,7 +426,6 @@ $(document).click(function(e){
 // ================== tabindex制御 ==================
 $.fn.set_tabindex = function(){
 	//tabindexを一旦dataに格納し、現在の要素のみtabindex制御をリセットする。
-	//毎回全体そうさすべきなのかなあ？？
 	
 	$(document).find(':focusable').each(function(){
 			var tabindex;
@@ -459,24 +469,23 @@ $.fn.reset_tabindex = function(){
 
 //.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしい環境は除外
 if(tabindexCtrl && $('.lcm_focus')[0]){
-	/* 閲覧状態のフォーム内のlcm_focusを外す */
+	// 閲覧状態のフォーム内のlcm_focusを外す
 	if($('.lcm_form.view')[0]){
 		$('.lcm_form.view .lcm_focus').removeClass('lcm_focus').removeAttr('tabindex');
 		//ブロック説明用に、lcm_focusとは別にフォーカスを与えることを想定してlcm_form内のinput_groupはtabindexを持っている。そもそも妥当？
 	}
 	lcm_focus();
 }
-
 function lcm_focus(){
-	var elm, esc;
+	var elm, current_tabbable, esc;
 	elm = $(document).find('.lcm_focus');
-
-	/*=== set_focus ===*/
+	// === set_focus === 
 	//フォーカス対象を指定して実行されている場合はそれを、なければlcm_focusを相手にする。
 	//?ない場合?：初回と、lcm_focus最上部で抜ける時。
 	lcm_focus_set = function(target){
 		var parent, t; 
 		$('.currentfocus').removeClass('currentfocus');
+
 		if(!esc){
 			$(document).set_tabindex();
 		}else if(target && target.hasClass('lcm_focus')){
@@ -486,8 +495,7 @@ function lcm_focus(){
 		}else{
 			$(document).set_tabindex();//重いかなあ。
 		}
-
-		// ================== lcm_focus_esc ==================
+		// ================== esc ==================
 		
 		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
@@ -504,9 +512,10 @@ function lcm_focus(){
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
 
-		//抜けるリンクの枠の表示領域をcurrentfocusを元に設定
+		//現在のフォーカス対象を取得し、抜けるリンクの枠の表示領域をcurrentfocusを元に設定
 		var current = $('.currentfocus');
 		if(current[0]){
+			current_tabbable = current.find(':tabbable');
 			esc.show().attr('tabindex','0');
 			esc.css({
 				'top'   : current.offset().top,
@@ -515,11 +524,12 @@ function lcm_focus(){
 				'height': current[0].scrollHeight - current.height() < 0 ? current[0].scrollHeight : current.height(),
 			});
 		}else{
+			current_tabbable = $(document).find(':tabbable');
 			esc.hide();
 		}
 	}
-	/*=== lcm_focus_esc ===*/
-	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを1階層抜ける。
+	// === lcm_focus_esc ===
+	//フォーカス有効時にESCや「抜ける」リンクでフォーカスを1階層抜ける。
 	var lcm_focus_esc = function(e){
 		e = e ? e : event;//抜けるリンクはeがclickイベントになり、tが#esc_focusになる
 		e.preventDefault();
@@ -536,7 +546,6 @@ function lcm_focus(){
 		}
 		lcm_focus_set(parent);
 	}
-
 	//ひとまず実行 //lcm_focusが入れ子になっていてもここで一旦-1
 	setTimeout(lcm_focus_set, 0);
 
@@ -546,12 +555,28 @@ function lcm_focus(){
 		var t, k, parent;
 		t = $(e.target);
 		k = e.which;
-		
-		if(k == 9 && e.shiftKey && t.hasClass('currentfocus')){ //現在のフォーカス枠上でshift+tabの場合、escに移動
-			esc.focus();
+		if(k == 9){ //Tab
+			var index = $(current_tabbable).index(t);
+			if(e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
+				if(t.hasClass('currentfocus') || index==0){//とりあえず
+					esc.focus();
+				}else{
+					$(current_tabbable).eq(index-1).focus();
+				}
+				e.preventDefault();
+				return false;
+			}else{
+				if(t.is($(current_tabbable).last())){
+					esc.focus();
+				}else{
+					$(current_tabbable).eq(index+1).focus();
+				}
 			e.preventDefault();
+			return false;
+			}
 		}
 		
+	
 		if( k == 13 ){//Enter
 			if(isie && !t.is('a') && !t.is(':input')){
 				e.preventDefault();
@@ -606,7 +631,7 @@ function lcm_focus(){
 
 	
 	$(document).on('keydown', function(e){
-	//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
+		//キーボードでのESC。
 		e = e ? e : event;
 		var t, k;
 		t = $(e.target);
@@ -614,8 +639,8 @@ function lcm_focus(){
 		
 //		console.log($('.modal.on, .semimodal.on'));
 		if($('.currentfocus')[0]){
-			if((t.is('#esc_focus_wrapper') && k == 13) || 
-				(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
+			if(k == 13 && (t.is('#esc_focus_wrapper')) || 
+				(k == 27 && !t.is(':input') && !$('.modal.on, .semimodal.on')[0])){
 				lcm_focus_esc(e);
 				e.stopPropagation();
 			}
