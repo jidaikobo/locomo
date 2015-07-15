@@ -421,8 +421,6 @@ $(document).click(function(e){
 
 /* =================== フォーカス制御周りここから ================== */
 
-/* ================================▼▼▼=============================== */
-
 // ================== tabindex制御 ==================
 $.fn.set_tabindex = function(){
 	//tabindexを一旦dataに格納し、現在の要素のみtabindex制御をリセットする。
@@ -556,18 +554,22 @@ function lcm_focus(){
 		t = $(e.target);
 		k = e.which;
 		if(k == 9){ //Tab
-			var index = $(current_tabbable).index(t);
-			if(e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
-				if(t.hasClass('currentfocus') || index==0){//とりあえず
+			if( current_tabbable.length == 0){
 					setTimeout(function(){esc.focus()},0);
-				}else{
-					$(current_tabbable).eq(index-1).focus();
-				}
 			}else{
-				if(t.is($(current_tabbable).last())){
-					setTimeout(function(){esc.focus()},0);
+				var index = $(current_tabbable).index(t);
+				if(e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
+					if(t.hasClass('currentfocus') || index==0){//とりあえず
+						setTimeout(function(){esc.focus()},0);
+					}else{
+						$(current_tabbable).eq(index-1).focus();
+					}
 				}else{
-					$(current_tabbable).eq(index+1).focus();
+					if(t.is($(current_tabbable).last())){
+						setTimeout(function(){esc.focus()},0);
+					}else{
+						$(current_tabbable).eq(index+1).focus();
+					}
 				}
 			}
 			e.preventDefault();
@@ -648,27 +650,7 @@ function lcm_focus(){
 		e = e ? e : event;
 		lcm_focus_esc(e);
 	});
-	
-
-/*
-	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
-	if(isLtie9){
-		$(document).on('keydown',function(e){
-			e = e ? e : event;
-			var k, parent;
-			k = e.which;
-			if(k == 9 && e.shiftKey){
-				setTimeout(function(){
-					if($(':focus').attr('tabindex') == -1){
-						$(':focus').closest('.lcm_focus').focus();
-					}
-				}, 0);
-			}
-		});
-	}
-*/
 }
-/* ================================▲▲▲=============================== */
 
 
 //モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
