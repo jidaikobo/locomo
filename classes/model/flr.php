@@ -334,7 +334,16 @@ class Model_Flr extends \Model_Base
 			),
 		);
 
-		return static::find('all', $option);
+		$objs = static::find('all', $option);
+		foreach ($objs as $k => $obj)
+		{
+			if ( ! \Controller_Flr::check_auth($obj->path))
+			{
+				unset($obj[$k]);
+			}
+		}
+
+		return $objs;
 	}
 
 	/**
