@@ -57,7 +57,7 @@ class Controller_Flr_File extends Controller_Flr
 						$errors[] = $v['message'];
 					}
 					\Session::set_flash('error', $errors);
-					\Response::redirect(\Uri::create('flr/file/view/'.$obj->id));
+					\Response::redirect(\Uri::create('flr/index_files/'.$obj->id));
 				}
 
 				// upload succeed
