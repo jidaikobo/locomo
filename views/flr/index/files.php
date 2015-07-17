@@ -1,5 +1,11 @@
 <h1><?php echo $search_form ?></h1>
 
+<!--ファイラはページネーションしない-->
+<!--
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
+-->
 <?php if ( ! \Input::get('submit')) echo $breadcrumbs ;?>
 
 <?php if ($items): ?>
@@ -13,6 +19,7 @@
 			<th class="min">操作</th>
 			<th>種類</th>
 			<th>説明</th>
+			<th>登録日</th>
 			<th class="min">作成者</th>
 		</tr>
 	</thead>
@@ -48,6 +55,7 @@ if ($item->genre == 'dir' && \Controller_Flr::check_auth($item->path) || $item->
 			?></td>
 			<td><?php echo $item->genre; ?></td>
 			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo $item->explanation; ?></div></td>
+			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo date('Y年m月d日', strtotime($item->created_at)); ?></div></td>
 			<td><?php echo \Model_Usr::get_display_name($item->creator_id); ?></td>
 		</tr>
 <?php
@@ -56,7 +64,6 @@ endforeach;
 ?>
 	</tbody>
 </table>
-<?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>
 <p>ファイルおよびディレクトリが存在しません。</p>

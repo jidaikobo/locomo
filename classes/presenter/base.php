@@ -100,6 +100,13 @@ class Presenter_Base extends \Presenter
 					<form class="search" action="' . $action_url . '">
 			');
 
+		$form
+			->add('clear_results', '', array('type' => 'text'))
+			->set_value('')
+			->set_template('
+				<div class="submit_button">'.
+				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']));
+
 		// limit
 		$options = array(
 			10 => 10,
@@ -113,11 +120,7 @@ class Presenter_Base extends \Presenter
 		$form
 			->add('limit', '', array('type' => 'select', 'class'=>'w5em', 'title'=>'表示件数', 'options' => $options))
 			->set_value(\Input::get('limit', 25))
-			->set_template('
-				<div class="submit_button">'.
-				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).
-				'{field}件&nbsp;
-			');
+			->set_template('{field}件&nbsp;');
 
 		// submit
 		$form

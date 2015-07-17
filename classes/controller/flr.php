@@ -144,36 +144,76 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// 検索の場合
 		if (\Input::get('submit'))
 		{
-			// free word search
-			$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
-			if ($all)
+			$objs = array();
+
+			// アクセス権のあるディレクトリを取得
+			$options = array(
+				'related' => array('permission_usergroup'),
+				'where' => array(
+					array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+					array('permission_usergroup.access_level', '>', 1),
+				),
+			);
+			$dirs = \Model_Flr::find('all', $options) ;
+
+			// 検索キーワード
+			$all = strlen(\Input::get('all')) ? '%'.\Input::get('all').'%' : '' ;
+
+			// root ディレクトリ直下のファイルを対象とする
+			$dirs[] = (object) array(
+				'path' => '/',
+			);
+
+			// ディレクトリをループ
+			foreach ($dirs as $k => $dir)
 			{
-				\Model_Flr::$_options['where'][] = array(
-					array('name', 'LIKE', $all),
-					'or' => array(
-						array('explanation', 'LIKE', $all),
-					) 
-				);
-				\Model_Flr::$_options['order_by'] = array(
-					'genre'      => 'asc',
-					'created_at' => 'desc'
-				);
+			// rootディレクトリそのものは対象外とする
+				$options = array();
+				$options['where'][] = array('depth', '!=', '0');
+
+				// フリーワード検索
+				if ($all)
+				{
+					$options['where'][] = array(
+							array('name', 'LIKE', $all),
+							'or' => array(
+								array('explanation', 'LIKE', $all),
+							)
+					);
+				}
+
+				// path
+				if (count(explode('/', $dir->path)) == 2)
+				{
+					// ルートディレクトリを検索するときには、深さで見る
+					$options['where'][] = array('depth', 1);
+				} else {
+					// ルートディレクトリ以外を検索する場合は、前方一致でディレクトリ名を確認する
+					$path = str_replace('%', '\%', $dir->path);
+					$options['where'][] = array('path', 'like', $path.'%');
+				}
+
+				// span
+				if (\Input::get('from')) $options['where'][] = array('created_at', '>=', \Input::get('from').' 0:0:0');
+				if (\Input::get('to'))   $options['where'][] = array('created_at', '<=', \Input::get('to').' 23:59:59');
+
+				// 取得
+				$objs = array_merge($objs, \Model_Flr::find('all', $options)) ;
 			}
-
-			// eliminate root dir
-			\Model_Flr::$_options['where'][] = array('depth', '!=', '0');
-
-			// span
-			if (\Input::get('from')) \Model_Flr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
-			if (\Input::get('to'))   \Model_Flr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
-
-			// set_paginated_options
-			\Model_Flr::set_paginated_options();
-			$objs = \Model_Flr::find('all', \Model_Flr::$_options) ;
+			// order by
+/*
+			\Model_Flr::$_options['order_by'] = array(
+				'genre'      => 'asc',
+				'created_at' => 'desc'
+			);
+*/
 		}
 
-		// count
-		\Pagination::$refined_items = count($objs);
+		// count - Flrはページネーションをしないので、refinedやper_pageは、常に最大値を取る
+		$cnt = count($objs);
+		\Pagination::$refined_items = $cnt;
+		\Pagination::set('total_items', $cnt);
+		\Pagination::set('per_page', $cnt);
 
 		// view
 		$content = \Presenter::forge('flr/index/files');
