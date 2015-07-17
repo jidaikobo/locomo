@@ -13,27 +13,29 @@ if( typeof window.console.log !== "function" ){
 //テスト環境やローカル開発環境での表示
 $(function(){
 	(function(){
-		var host, body, str, info, topinfo;
+		var host, $body, str, $info, topinfo;
 		host = location.host;
-		body = $('body');
+		$body = $('body');
 		if(host == 'www.kyoto-lighthouse.org'){
-			body.addClass('testserver');
+			$body.addClass('testserver');
 			str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
 		}else if(host!='kyoto-lighthouse.org'){
 			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
 		}
 		if(str){
-			info = $('<p class="develop_info through_click">').prepend(str);
-			body.append(info);
+			$info = $('<p class="develop_info through_click">').prepend(str);
+			$body.append($info);
 			if($('body').hasClass('loggedin testserver')){
-				topinfo = info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
-				$('#main_content').prepend(topinfo);
+				$topinfo = $info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
+				$('#main_content').prepend($topinfo);
 			}
 		}
 	})();
 });
 
 //クリックイベントを下の要素に適用する。
+//.through_click
+//selectやtextareaなどではうまくとれていないみたい。focus関係？
 //:hover等の擬似要素はjsからは操作できないので対応していない。
 //するなら、mousemoveを取得して.hoverのようなクラスを付与? でもいちいちの:hoverに.hoverを併記するのは非効率なので。
 $(function() {
@@ -51,31 +53,33 @@ $(function() {
 	});
 });
 
-//チェックボックス全選択
+
+//チェックボックス全選択、
+//.checkbox_binded, .check_all, .uncheck_all, tr.has_checkbox
 $(function() {
-	var checkboxes = $('.checkbox_binded');
+	var $checkboxes = $('.checkbox_binded');
 	$('.check_all').on('click', function(e) {
 		e.preventDefault();
-		checkboxes.prop('checked', true).trigger('change');
+		$checkboxes.prop('checked', true).trigger('change');
 	});
 	$('.uncheck_all').on('click', function(e) {
 		e.preventDefault();
-		checkboxes.prop('checked', false).trigger('change');
+		$checkboxes.prop('checked', false).trigger('change');
 	});
 	$(document).on('click', '.has_checkbox tr' ,function(e){
-		var t, tr, checkbox, prop;
+		var $t, $tr, checkbox, prop;
 		e = e ? e : event;
-		t = $(e.target);
-		tr = $(t.closest('tr'));
-//		if(t.closest('table').hasClass('tekitou')) return;//なにか適当なクラスをつけておけばキャンセルできるように
-		if(!t || (t.is('label'))){
+		$t = $(e.target);
+		$tr = $($t.closest('tr'));
+
+		if(!$t || ($t.is('label'))){
 			e.preventDefault();
 		}
-		if(t.is('input') || t.is('a')){
+		if($t.is('input') || $t.is('a')){
 			return;
 		}
 
-		checkbox = tr.find('.checkbox_binded');
+		checkbox = $tr.find('.checkbox_binded');
 		if(!$(checkbox).prop('checked')){
 			prop = true; 
 		}else{
@@ -97,7 +101,7 @@ $(function() {
 		}
 	}
 	set_class();
-	checkboxes.change(set_class);
+	$checkboxes.change(set_class);
 });
 
 
@@ -187,7 +191,7 @@ $('.hide_if_no_js').find(':disabled').prop("disabled", false);
 $('.show_if_no_js').hide();
 
 //for NetReader
-//NetReaderで付与されたスタイルに負けることがあるので、.hidden_itemをインラインスタイルでdisplay: none;
+//NetReaderで付与されたスタイルに負けることがあるようなので、.hidden_itemをインラインスタイルでdisplay: none;
 $('.hidden_item').hide();
 
 //アクセスキーをもつ要素へのタイトル付与
@@ -249,11 +253,13 @@ tabindexCtrl  = isNetReader || isLtie9 || isTouchDevice || $('body').hasClass('n
 	return rs;
 })();
 */
+
 //フォーカスするついでに場合によってはセレクトもする
 function set_focus(t){
-	$(t).focus();
-	if($(t).is(':input') && !isNetReader){
-		$(t).select();
+	var $t = $(t);
+	$t.focus();
+	if($t.is(':input') && !isNetReader){
+		$t.select();
 	}
 }
 
@@ -268,8 +274,7 @@ function set_focus(t){
 	if(firstFocus){
 		set_focus(firstFocus);
 	}else{
-		var container = $('#main_content');
-		container.focus();
+		$('#main_content').focus();
 		document.body.scrollTop = 0; //描画が遅れるとカクカクしちゃうので、containerの描画位置自体を考えられたらよいのかも？
 	}
 	
@@ -281,13 +286,13 @@ function set_focus(t){
 function add_body_padding(headerheight){
 	$('body').css('padding-top', headerheight+'px' );
 }
-var adminbar = $('#adminbar');
+var $adminbar = $('#adminbar');
 headerheight = 0;
-if(adminbar[0]){
-	headerheight = adminbar.outerHeight();
+if($adminbar[0]){
+	headerheight = $adminbar.outerHeight();
 	add_body_padding(headerheight);
 
-	adminbar.exResize(function(){
+	$adminbar.exResize(function(){
 		headerheight = $(this).outerHeight();
 		add_body_padding(headerheight);
 	});
@@ -295,8 +300,8 @@ if(adminbar[0]){
 
 //非表示の要素の設定
 $('.hidden_item').each(function(){
-	var query, params, v, trigger ; 
-	//hidden_itemでも検索条件のある場合、中に値がある場合は展開しておく
+	var query, params, v, $trigger ; 
+	//hidden_itemでも検索条件がデフォルトでない場合は展開しておく
 	if($(this).find('form.search')[0]){
 	//検索フォームの場合、get値を見る。
 		query = window.location.search.substring(1);
@@ -315,9 +320,9 @@ $('.hidden_item').each(function(){
 		});
 	}
 	if(!v) return;
-	trigger = $('.toggle_item').eq($('.hidden_item').index(this));
+	$trigger = $('.toggle_item').eq($('.hidden_item').index(this));
 	$(this).addClass('on').show();
-	trigger.addClass('on');
+	$trigger.addClass('on');
 });
 
 //テーブルにあわせたcontent幅 //ウィンドウ幅で表示サイズが左右される端末のことも考える
@@ -340,32 +345,42 @@ $('.container').css({'cssText':'width: '+c_w+'px ; max-width : auto;'});
 
 
 //ページ内リンク ヘッダー分位置調整とスムーズスクロール
+
 //html要素がスクロール対象であるか判定。
 //http://www.webdesignleaves.com/wp/jquery/573/
 var is_html_scrollable = (function(){
-	var html, el, rs, top;
-	html = $('html');
-	top = html.scrollTop();
-	el = $('<div>').height(10000).prependTo('body');
-	html.scrollTop(10000);
-	rs = !!html.scrollTop();
-	html.scrollTop(top);
-	el.remove();
+	var $html, $el, rs, top;
+	$html = $('html');
+	top = $html.scrollTop();
+	$el = $('<div>').height(10000).prependTo('body');
+	$html.scrollTop(10000);
+	rs = !!$html.scrollTop();
+	$html.scrollTop(top);
+	$el.remove();
 	return rs;
 })();
 
 //スクロール
 $(document).on('click', 'a[href^=#]', function(e){
 	e = e ? e : event;
-	var href, t, position;
+	var href, $t, position;
 	$(window).off('beforeunload');//ページ内リンクでは画面遷移の警告をキャンセル
 
 	href= $(this).attr("href");
 	if(href!='#'){
-		t = $(href == '' ? 'html' : href);
-		position = t.offset().top - headerheight - 10;
+		//フォーカスを確実に移動させるために、ターゲットがtabbableでない場合はtabindex-1をふよする
+		if(href != ''){
+			$t = $(href);
+			if(!$t.attr('tabindex')){
+				$t.attr('tabindex', '-1');
+			}
+		}else{
+			$t = $('html');
+		}
+
+		position = $t.offset().top - headerheight - 10;
 		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
-		set_focus(t);
+		set_focus($t);
 		return false;
 	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ 
 		e.preventDefault();
@@ -373,22 +388,16 @@ $(document).on('click', 'a[href^=#]', function(e){
 });
 
 //フォーカスしたものが画面外にある場合に位置を調節する。
+//クリックは除外したい
 //もう少し条件を整理したら、上のページ内リンクともまとめられる？ まとめたほうがいい？
 $(document).on('keydown',function(e){
 	e = e ? e : event;
-	var t = $(e.target);
-	var k = e.which;
-	if(k==9){
-		setTimeout(function(){
-			var el = $(':focus');
-			if(el[0]){
-				var position = el.offset().top-$(window).scrollTop()-headerheight;
-				if(el.closest($('#adminbar'))[0] || position > 10) return;
-				$(is_html_scrollable ? 'html' : 'body').scrollTop(el.offset().top-headerheight-10);
-			}
-		}, 0);
-	}
-
+	var $t = $(e.target);
+	setTimeout(function(){
+		var position = $t.offset().top-$(window).scrollTop()-headerheight;
+		if($t.closest($('#adminbar'))[0] || position > 10) return;
+		$(is_html_scrollable ? 'html' : 'body').scrollTop($t.offset().top-headerheight-10);
+	}, 0);
 })
 
 //全体に対するクリックイベント。
@@ -410,12 +419,9 @@ $(document).click(function(e){
 
 /* =================== フォーカス制御周りここから ================== */
 
-/* ================================▼▼▼=============================== */
-
 // ================== tabindex制御 ==================
 $.fn.set_tabindex = function(){
 	//tabindexを一旦dataに格納し、現在の要素のみtabindex制御をリセットする。
-	//毎回全体そうさすべきなのかなあ？？
 	
 	$(document).find(':focusable').each(function(){
 			var tabindex;
@@ -459,24 +465,23 @@ $.fn.reset_tabindex = function(){
 
 //.lcm_focus フォーカス枠の設定 //フォーカス制御がむずかしい環境は除外
 if(tabindexCtrl && $('.lcm_focus')[0]){
-	/* 閲覧状態のフォーム内のlcm_focusを外す */
+	// 閲覧状態のフォーム内のlcm_focusを外す
 	if($('.lcm_form.view')[0]){
 		$('.lcm_form.view .lcm_focus').removeClass('lcm_focus').removeAttr('tabindex');
 		//ブロック説明用に、lcm_focusとは別にフォーカスを与えることを想定してlcm_form内のinput_groupはtabindexを持っている。そもそも妥当？
 	}
 	lcm_focus();
 }
-
 function lcm_focus(){
-	var elm, esc;
+	var elm, current_tabbable, esc;
 	elm = $(document).find('.lcm_focus');
-
-	/*=== set_focus ===*/
+	// === set_focus === 
 	//フォーカス対象を指定して実行されている場合はそれを、なければlcm_focusを相手にする。
 	//?ない場合?：初回と、lcm_focus最上部で抜ける時。
 	lcm_focus_set = function(target){
 		var parent, t; 
 		$('.currentfocus').removeClass('currentfocus');
+
 		if(!esc){
 			$(document).set_tabindex();
 		}else if(target && target.hasClass('lcm_focus')){
@@ -486,8 +491,7 @@ function lcm_focus(){
 		}else{
 			$(document).set_tabindex();//重いかなあ。
 		}
-
-		// ================== lcm_focus_esc ==================
+		// ================== esc ==================
 		
 		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
@@ -504,9 +508,10 @@ function lcm_focus(){
 		t.attr('tabindex', '0');
 		t.find(':tabbable').attr('tabindex', '-1');
 
-		//抜けるリンクの枠の表示領域をcurrentfocusを元に設定
+		//現在のフォーカス対象を取得し、抜けるリンクの枠の表示領域をcurrentfocusを元に設定
 		var current = $('.currentfocus');
 		if(current[0]){
+			current_tabbable = current.find(':tabbable');
 			esc.show().attr('tabindex','0');
 			esc.css({
 				'top'   : current.offset().top,
@@ -515,11 +520,12 @@ function lcm_focus(){
 				'height': current[0].scrollHeight - current.height() < 0 ? current[0].scrollHeight : current.height(),
 			});
 		}else{
+			current_tabbable = $(document).find(':tabbable');
 			esc.hide();
 		}
 	}
-	/*=== lcm_focus_esc ===*/
-	//フォーカス有効時にESCや「抜けるリンク」でフォーカスを1階層抜ける。
+	// === lcm_focus_esc ===
+	//フォーカス有効時にESCや「抜ける」リンクでフォーカスを1階層抜ける。
 	var lcm_focus_esc = function(e){
 		e = e ? e : event;//抜けるリンクはeがclickイベントになり、tが#esc_focusになる
 		e.preventDefault();
@@ -536,7 +542,6 @@ function lcm_focus(){
 		}
 		lcm_focus_set(parent);
 	}
-
 	//ひとまず実行 //lcm_focusが入れ子になっていてもここで一旦-1
 	setTimeout(lcm_focus_set, 0);
 
@@ -546,12 +551,29 @@ function lcm_focus(){
 		var t, k, parent;
 		t = $(e.target);
 		k = e.which;
-		
-		if(k == 9 && e.shiftKey && t.hasClass('currentfocus')){ //現在のフォーカス枠上でshift+tabの場合、escに移動
-			esc.focus();
+		if(k == 9){ //Tab
+			if( current_tabbable.length == 0){
+					setTimeout(function(){esc.focus()},0);
+			}else{
+				var index = $(current_tabbable).index(t);
+				if(e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
+					if(t.hasClass('currentfocus') || index==0){//とりあえず
+						setTimeout(function(){esc.focus()},0);
+					}else{
+						$(current_tabbable).eq(index-1).focus();
+					}
+				}else{
+					if(t.is($(current_tabbable).last())){
+						setTimeout(function(){esc.focus()},0);
+					}else{
+						$(current_tabbable).eq(index+1).focus();
+					}
+				}
+			}
 			e.preventDefault();
 		}
 		
+	
 		if( k == 13 ){//Enter
 			if(isie && !t.is('a') && !t.is(':input')){
 				e.preventDefault();
@@ -566,7 +588,7 @@ function lcm_focus(){
 			e.stopPropagation();
 		}
 	});
-	
+	/*
 	//スケジューラの期間の設定でうまくescにフォーカスが当たらない状況になっているので、一旦むりやりフォーカス（あとでみなおす）
 	$('#form_end_time, #form_end_date').blur(function(){
 		setTimeout(function(){
@@ -576,7 +598,13 @@ function lcm_focus(){
 			}
 		},0);
 	});
-	
+	*/
+
+	//datepickerが、フォーカス時に表示されてしまうのをふせぐ。
+	$(document).on('focus', '#esc_focus_wrapper', function(){
+		$('#ui-datepicker-div').hide();
+	});
+
 	//フォーカスの取り直し。クリックのほか、チェックボックスをスペースキーでチェックした際などにも走るので除外
 	$(document).on('click', lcm_focus_setparent);
 	
@@ -606,7 +634,7 @@ function lcm_focus(){
 
 	
 	$(document).on('keydown', function(e){
-	//他のセミモーダルなどの閉じるESCとのかねあい。モーダル系が出ている時はこちらのESCは動かさない、向こう側のreset_tabindexもcurrentfocusを除外する。keydownとkeyup:focusの違いを見てもよいのかなあ
+		//キーボードでのESC。
 		e = e ? e : event;
 		var t, k;
 		t = $(e.target);
@@ -614,8 +642,8 @@ function lcm_focus(){
 		
 //		console.log($('.modal.on, .semimodal.on'));
 		if($('.currentfocus')[0]){
-			if((t.is('#esc_focus_wrapper') && k == 13) || 
-				(!t.is(':input') && !$('.modal.on, .semimodal.on')[0] && k == 27 )){
+			if(k == 13 && (t.is('#esc_focus_wrapper')) || 
+				(k == 27 && !t.is(':input') && !$('.modal.on, .semimodal.on')[0])){
 				lcm_focus_esc(e);
 				e.stopPropagation();
 			}
@@ -626,27 +654,7 @@ function lcm_focus(){
 		e = e ? e : event;
 		lcm_focus_esc(e);
 	});
-	
-
-/*
-	//IEの6~9では、tabindex-1のinput要素(radioのみ？)にタブ移動できてしまう。ここでは逆順の移動で枠より先に中の要素にフォーカスする際の処理をする。移動してしまってからの処理でよい？？
-	if(isLtie9){
-		$(document).on('keydown',function(e){
-			e = e ? e : event;
-			var k, parent;
-			k = e.which;
-			if(k == 9 && e.shiftKey){
-				setTimeout(function(){
-					if($(':focus').attr('tabindex') == -1){
-						$(':focus').closest('.lcm_focus').focus();
-					}
-				}, 0);
-			}
-		});
-	}
-*/
 }
-/* ================================▲▲▲=============================== */
 
 
 //モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
@@ -813,15 +821,16 @@ $(document).on('keydown',function(e){
 
 //要素の中央配置
 $.fn.set_center = function(){
-	var left  = Math.floor(( $(window).width()-this.outerWidth() ) /2);
-	var top   = Math.floor(( $(window).height()-this.outerHeight() ) /2);
+	var left, top;
+	left = Math.floor(( $(window).width()-this.outerWidth() ) /2);
+	top  = Math.floor(( $(window).height()-this.outerHeight() ) /2);
 	this.css({'left': left, 'top': top});
 	return this;
 }
 $(window).resize(function(){
-	var el = $('.set_center, .lcm_modal.on');
-	if(el){
-		el.set_center();
+	var $el = $('.set_center, .lcm_modal.on');
+	if($el[0]){
+		$el.set_center();
 	}
 });
 
@@ -901,12 +910,12 @@ $('.confirm').click(function(){
 //エラー時には必ず。//フォームと無関係のエラーは？
 //login画面とsubmitがない場合(編集履歴など)では出さない。編集履歴はむしろdisableにするほうがよい？
 function check_formchange(){
-	var input_time, len, el;
-	input_time = $('.datetime','.time');//datetimeの枠にフォーカスした際のchange周りのなにか。あとでもういちど確認
-	len = input_time.length;
+	var $input_time, len, $el;
+	$input_time = $('.datetime','.time');//datetimeの枠にフォーカスした際のchange周りのなにか。あとでもういちど確認
+	len = $input_time.length;
 	for( var n = len; n > 0; n--){
-		el = input_time.eq(0);
-		el.data('val',el.val());
+		$el = $input_time.eq(0);
+		$el.data('val', $el.val());
 	}
 
 	function confirm_beforeunload(){
@@ -917,13 +926,19 @@ function check_formchange(){
 
 	$('form').change( function(e){
 		e = e ? e : event;
-		var t = $(e.target);
-		if(!( t.closest('.search, .index_toolbar')[0] || t.hasClass('checkbox_binded') || t.hasClass('datetime') && t.val() == t.data('val') )){
+		var $t = $(e.target);
+		if(!( $t.closest('.search, .index_toolbar')[0]
+			|| $t.hasClass('checkbox_binded')
+			|| $t.hasClass('datetime') && $t.val() == $t.data('val') )
+		){
 		//変更のあった要素のうち、.search form内や、一括処理用のチェックボックス、datetimepickerは除外
 			confirm_beforeunload();
 		}
 	});
-	if($('#alert_error').children('ul.list')[0] || $('.lcm_module_reserve #alert_error')[0] || $('.lcm_ctrl_-controller_scdl #alert_error')[0]){
+	if($('#alert_error').children('ul.list')[0]
+		|| $('.lcm_module_reserve #alert_error')[0]
+		|| $('.lcm_ctrl_-controller_scdl #alert_error')[0]
+	){
 		confirm_beforeunload();
 	}
 }
@@ -941,17 +956,18 @@ $('a:submit, input:submit, .confirm').click(function(){//該当する場合遷�
 //とりあえずスケジューラについては一旦個別対応
 //.validation_error が適切につくようならそれを見るとよいのかも
 $('#alert_error .link').find('a').each(function(){
-	var link = $('<a href="#anchor_alert_error" class="skip show_if_focus link_alert_error">エラー一覧にもどる</a>');
-	var t = $($(this).attr('href'));
-	if(t.closest('.lcm_multiple_select')[0]){
-		t.closest('.lcm_multiple_select').eq(0).append(link);
+	var $link, $t;
+	$link = $('<a href="#anchor_alert_error" class="skip show_if_focus link_alert_error">エラー一覧にもどる</a>');
+	$t = $($(this).attr('href'));
+	if($t.closest('.lcm_multiple_select')[0]){
+		$t.closest('.lcm_multiple_select').eq(0).append($link);
 		return;
-	}else if(t.is('#form_start_date')){
-		t = $('#form_end_date');
+	}else if($t.is('#form_start_date')){
+		$t = $('#form_end_date');
 	}else if(t.is('#form_start_time')){
-		t = $('#form_end_time');
+		$t = $('#form_end_time');
 	}
-	t.after(link);
+	$t.after($link);
 });
 
 
@@ -959,67 +975,67 @@ $('#alert_error .link').find('a').each(function(){
 /*=== lcm_multiple_select ===*/
 
 $('.lcm_multiple_select').each(function(){
-	var select, selected, selects, to, from, hidden_items;
-	select = $($(this).find('.select_from'));
-	selected = $($(this).find('.selected'));
-	selects = select.add(selected);
+	var $select, $selected, $selects, $to, $from, hidden_items;
+	$select = $($(this).find('.select_from'));
+	$selected = $($(this).find('.selected'));
+	$selects = $select.add($selected);
 	hidden_items = $(this).data('hiddenItemId') ?
 		$(this).data('hiddenItemId') :
 		$(this).closest('.show_if_js').prevAll('.show_if_no_js').last();//スケジューラはnoscript用のチェックボックス未対応。ベットhiddenの値をしようしている
 	
 	if(typeof hidden_items !== 'object'){//スケジューラの場合data-hidden-item-idを取っているので・noscript対応の場合はcheckboxが最初からチェックされているのでここは不要
-		make_hidden_form_items(hidden_items, selected);
+		make_hidden_form_items(hidden_items, $selected);
 	}
 	
 	$(this).find(':button').click(function(e){
 		e = e ? e : event;
-		from = $(this).hasClass('add_item') ? select : selected;
-		to = selects.not(from);
-		lcm_multiple_select(from, to, hidden_items, selected);
+		$from = $(this).hasClass('add_item') ? $select : $selected;
+		to = $selects.not($from);
+		lcm_multiple_select($from, $to, hidden_items, $selected);
 	});
-	selects.dblclick(function(){
-		from = $(this);
-		to = selects.not(from);
-		lcm_multiple_select(from, to, hidden_items, selected);
+	$selects.dblclick(function(){
+		$from = $(this);
+		$to = $selects.not($from);
+		lcm_multiple_select($from, $to, hidden_items, $selected);
 	});
 });
 
-function lcm_multiple_select(from, to, hidden_items, selected){
-	//引数selectedはhidden_itemがなくなれば不要
-	var from, to, vals, v, item, hidden_items;
-	vals = from.val();
+function lcm_multiple_select($from, $to, hidden_items, $selected){
+	//引数$selectedはhidden_itemがなくなれば不要
+	var vals, v, item;
+	vals = $from.val();
 	if ( vals == "" || !vals) return;
 	
 	//相手のセレクトボックスに移動
 	for(var i=0, len = vals.length; i < len; i++){
 		v = vals[i];
-		item = from.find('option[value='+v+']');
-		item.appendTo(to).attr('selected',false);
+		item = $from.find('option[value='+v+']');
+		item.appendTo($to).attr('selected',false);
 		
 		if(typeof hidden_items == 'object'){//この判定は、スケジューラ用の措置がなくなれば不要
-			change_hidden_inputs(from, hidden_items, v);
+			change_hidden_inputs($from, hidden_items, v);
 		}
 	}
 	
 	//スケジューラ用。hidden_itemがnoscript用のチェックボックスでない場合に。
 	if(typeof hidden_items !== 'object'){
-		make_hidden_form_items(hidden_items, selected);
+		make_hidden_form_items(hidden_items, $selected);
 	}	
 }
 
 //selectedの中身をチェックボックスに反映
-function change_hidden_inputs(from, hidden_items, v){
-	var prop, item;
-	prop = from.hasClass('selected') ? false : true;
-	item = $(hidden_items.find('input[value='+v+']'));
-	item.prop('checked', prop);
+function change_hidden_inputs($from, hidden_items, v){
+	var prop, $item;
+	prop = $from.hasClass('selected') ? false : true;
+	$item = $(hidden_items.find('input[value='+v+']'));
+	$item.prop('checked', prop);
 	}
 
 //スケジューラ用hidden
-function make_hidden_form_items(hidden_items, selected){
-	var hidden_item = $('#'+hidden_items);
-	if (!hidden_item[0]) {
-		hidden_item = $('<input>').attr({
+function make_hidden_form_items(hidden_items, $selected){
+	var $hidden_item = $('#'+hidden_items);
+	if (!$hidden_item[0]) {
+		$hidden_item = $('<input>').attr({
 		    type : 'hidden',
 		    id   : hidden_items,
 		    name : hidden_items,
@@ -1027,22 +1043,22 @@ function make_hidden_form_items(hidden_items, selected){
 		}).appendTo('form');
 	}
 	var hidden_str = "";
-	var els = $(selected).find('option');
+	var els = $selected.find('option');
 	// 配列に入れる
 	for( var len = els.length, n = 0; n < len ; n++){
 		hidden_str += "/" + els.eq(n).val();
 	}
-	hidden_item.val(hidden_str);
+	$hidden_item.val(hidden_str);
 }
 
 /*=== グループ絞り込み ===*/
 var base_uri = $('body').data('uri');
-function lcm_select_narrow_down(group_id, uri, select, selected){
+function lcm_select_narrow_down(group_id, uri, $select, $selected){
 	var now_items, selected_items, label_item, name, id;
-	label_item = $(select).find('option[value=""]');//valueが空のものをラベルとみなす？
+	label_item = select.find('option[value=""]');//valueが空のものをラベルとみなす？
 	now_items = new Object();
-	if(selected){
-		selected_items = selected.find('option');
+	if($selected[0]){
+		selected_items = $selected.find('option');
 		for(var i = 0, len = selected_items.length; i < len; i++){
 			now_items[selected_items[i].value] = 1;
 		};
@@ -1056,37 +1072,37 @@ function lcm_select_narrow_down(group_id, uri, select, selected){
 			var exists = JSON.parse(res);
 			select_items = '';
 			for(var i in exists) {
-				if (selected && now_items[exists[i]['id']]) continue;
+				if ($selected && now_items[exists[i]['id']]) continue;
 				name = (exists[i]['display_name']!=null) ? exists[i]['display_name'] : exists[i]['item_name'];
 				id = (exists[i]['item_id']!=null) ? exists[i]['item_id'] : exists[i]['id'];
 				select_items += '<option value="'+id+'">'+name+'</option>';
 			}
-			select.html(select_items).prepend(label_item);
+			$select.html(select_items).prepend(label_item);
 		}
 	});
 }
 
 //通常の選択ボックス
 $('.select_narrow_down').each(function(){
-	var select, uri;
-	select = $('#'+$(this).data('targetId'));
+	var $select, uri;
+	$select = $('#'+$(this).data('targetId'));
 	uri = base_uri;
 	uri += $(this).data('uri') ? $(this).data('uri') : 'usr/user_list.json';
 	this.onchange = function(){
-		lcm_select_narrow_down($(this).val(), uri, select);
+		lcm_select_narrow_down($(this).val(), uri, $select);
 	};
 });
 
 //複数選択ボックスを持つ場合
 $('.multiple_select_narrow_down').each(function(){
-	var uri, selects, select, seleced; 
+	var uri, $selects, $select, $seleced; 
 	uri = base_uri;
 	uri += $(this).data['uri'] ? $(this).data['uri'] : 'usr/user_list.json';
-	selects  = $(this).nextAll('.lcm_multiple_select').first().find('select');
-	selected = selects.eq(0);
-	select   = selects.eq(1);
+	$selects  = $(this).nextAll('.lcm_multiple_select').first().find('select');
+	$select   = selects.eq(1);
+	$selected = selects.eq(0);
 	this.onchange = function(){
-		lcm_select_narrow_down($(this).val(), uri, select, selected);
+		lcm_select_narrow_down($(this).val(), uri, $select, $selected);
 	};
 });
 

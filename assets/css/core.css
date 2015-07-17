@@ -935,7 +935,7 @@ table + .index_toolbar {
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	margin-top: 2em;
+	margin-top: 1.25em;
 	padding-bottom: 4em;
 }
 .lcm_form:after {
@@ -1007,6 +1007,16 @@ table + .index_toolbar {
 	padding: .5em 0;
 	min-width: 8em;
 }
+
+/*== lcm_form.compact ==*/
+.lcm_form.compact {
+	padding-bottom: 0 !important; /*とりあえず*/
+	border: 4px double #bbb;
+	margin-top: 1.25em;
+	margin-bottom: 1.25em;
+}
+
+
 
 /*=== multiple_select ===*/
 .lcm_multiple_select {
@@ -2527,7 +2537,7 @@ li.show_if_smalldisplay {
 		min-width: inherit;
 	}	
 	
-	/*=== float_list ===*/
+		/*=== float_list ===*/
 	.size1 ul.float_list li {
 		width: 100%;
 		float: none;
