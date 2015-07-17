@@ -20,6 +20,7 @@ class Controller_Pdf extends \Controller_Base
 		\Package::load('pdf');
 
 		$this->pdf = \Pdf::forge();
+		$this->pdf->setting();
 
 		// $this->pdf = \Pdf::factory('fpdi')->init();
 		// define('PDF_TEMP_PATH', PKGPATH.'pdf/templates/');
