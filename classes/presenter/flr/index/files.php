@@ -67,6 +67,8 @@ class Presenter_Flr_Index_Files extends \Presenter_Base
 			$parent->field('opener')->set_template($template);
 		}
 
+		$parent->delete('limit');
+
 		return $parent;
 	}
 }
