@@ -230,6 +230,11 @@ class Model_Msgbrd extends \Model_Base_Soft
 			);
 		}
 
+		$options['order_by'] = array(
+			'is_sticky' => ' DESC',
+			'created_at' => ' DESC',
+		);
+
 		// array_merge
 		static::$_options = \Arr::merge(static::$_options, $options);
 

@@ -6,6 +6,37 @@ class Actionset_Msgbrd extends \Actionset_Base
 	use \Actionset_Traits_Testdata;
 
 	/**
+	 * actionset_admin()
+	 */
+	public static function actionset_admin($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = parent::actionset_admin($controller, $obj, $id);
+		$actions = array(
+			'\Controller_Msgbrd/index_admin',
+			'\Controller_Msgbrd/index_dashboard',
+			'\Controller_Msgbrd/index_draft',
+			'\Controller_Msgbrd/create',
+			'\Controller_Msgbrd/view',
+			'\Controller_Msgbrd/edit',
+			'\Controller_Msgbrd/delete',
+			'\Controller_Msgbrd/confirm_delete',
+			'\Controller_Msgbrd/undelete',
+			'\Controller_Msgbrd/view_deleted',
+			'\Controller_Msgbrd/view_expired',
+			'\Controller_Msgbrd/view_yet',
+			'\Controller_Msgbrd/view_invisible',
+			'\Controller_Msgbrd/index_deleted',
+			'\Controller_Msgbrd/index_yet',
+			'\Controller_Msgbrd/index_expired',
+			'\Controller_Msgbrd/index_invisible',
+			'\Controller_Msgbrd/index_all',
+		);
+		\Arr::set($retvals, 'dependencies', $actions);
+		\Arr::set($retvals, 'action_name', 'メッセージボードへのアクセス権');
+		return $retvals;
+	}
+
+	/**
 	 * actionset_index_admin()
 	 */
 	public static function actionset_index_admin($controller, $obj = null, $id = null, $urls = array())

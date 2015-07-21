@@ -147,6 +147,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 			$objs = array();
 
 			// アクセス権のあるディレクトリを取得
+
+// rootで全部検索するようにする
+
 			$options = array(
 				'related' => array('permission_usergroup'),
 				'where' => array(

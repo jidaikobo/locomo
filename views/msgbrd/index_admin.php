@@ -10,7 +10,9 @@
 <table class="tbl datatable">
 	<thead>
 		<tr>
+<?php if (\Auth::is_root()): ?>
 			<th class="min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
+<?php endif; ?>
 			<th><?php echo \Pagination::sort('name', '表題', false);?></th>
 <!--			<th><?php echo \Pagination::sort('contents', '本文', false);?></th>-->
 			<th><?php echo \Pagination::sort('category_id', 'カテゴリ', false);?></th>
@@ -28,7 +30,9 @@
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr title="<?php echo $item->name.'：'.\Model_Usr::get_display_name($item->creator_id); ?>" tabindex="-1" class="<?php if ($affected_id == $item->id) echo 'affected'; ?>">
+<?php if (\Auth::is_root()): ?>
 			<td class="ar"><?php echo $item->id; ?></td>
+<?php endif; ?>
 			<th><div class="col_scrollable" style="min-width: 12em;">
 				<?php echo $item->is_sticky ? '<span class="icon" style="font-size: .5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_pin.png" alt=""></span>' : '' ?>
 				<?php if (\Auth::has_access('\Controller_Msgbrd/view')):
@@ -54,7 +58,6 @@
 					if (\Auth::has_access('\Controller_Msgbrd/edit') && $item->creator_id == \Auth::get('id')):
 						echo Html::anchor('msgbrd/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
-
 
 					if (
 						\Auth::has_access('\Controller_Msgbrd/delete') &&
@@ -82,7 +85,9 @@
 	</tbody>
 	<tfoot class="thead">
 		<tr>
-			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
+<?php if (\Auth::is_root()): ?>
+			<th class="min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
+<?php endif; ?>
 			<th><?php echo \Pagination::sort('name', '表題', false);?></th>
 <!--			<th><?php echo \Pagination::sort('contents', '本文', false);?></th>-->
 			<th><?php echo \Pagination::sort('category_id', 'カテゴリ', false);?></th>
