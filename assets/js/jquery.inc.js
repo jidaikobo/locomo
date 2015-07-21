@@ -377,9 +377,7 @@ $(document).on('click', 'a[href^=#]', function(e){
 		}else{
 			$t = $('html');
 		}
-
-		position = $t.offset().top - headerheight - 10;
-		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+		lcm_smooth_scroll($t);
 		set_focus($t);
 		return false;
 	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ 
@@ -397,14 +395,24 @@ $(document).on('keydown',function(e){
 	if( k == 9 ){
 		setTimeout(function(){;
 			$t = $(':focus');
-			position = $t.offset();
-			if(typeof position === 'undefined') return;
-			position = position.top-$(window).scrollTop()-headerheight;
-			if($t.closest($('#adminbar'))[0] || position > 10) return;
-			$(is_html_scrollable ? 'html' : 'body').scrollTop($t.offset().top-headerheight-10);
+			lcm_smooth_scroll($t);
 		}, 0);
 	};
 })
+
+function lcm_smooth_scroll($t) {
+	var position, margin;
+	if($t.closest($('#adminbar'))[0]) return;
+	position = $t.offset();
+	if(typeof position === 'undefined') return;
+	headerheight = (!headerheight==0) ? headerheight : 0; 
+	margin = 10;//上位置のマージン
+
+	position = position.top-$(window).scrollTop()-headerheight;
+	if(position > margin) return;
+	$(is_html_scrollable ? 'html' : 'body').scrollTop($t.offset().top-headerheight-margin);
+}
+
 
 //全体に対するクリックイベント。
 $(document).click(function(e){
