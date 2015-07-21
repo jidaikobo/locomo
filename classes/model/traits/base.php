@@ -122,7 +122,10 @@ trait Model_Traits_Base
 					if ( ! in_array($k, array_keys($model::properties()))) continue;
 					static::$_options['related'][$relate]['where'][] = array('id', '!=', 0);
 					static::$_options['related'][$relate]['order_by'][$k] = $v;
-					static::$_options['related'][$relate]['order_by']['t0.id'] = 'asc';
+					// primary key を追加
+					$primary_key = reset(static::$_primary_key);
+					$table_name = static::table();
+					static::$_options['related'][$relate]['order_by']['t0.'.$primary_key] = 'ASC';
 					// 既存の order_by を キャンセル
 					static::$_options['order_by'] = $orders;
 				}
