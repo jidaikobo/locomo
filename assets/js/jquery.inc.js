@@ -360,7 +360,7 @@ var is_html_scrollable = (function(){
 	return rs;
 })();
 
-//スクロール
+//ページ内リンク
 $(document).on('click', 'a[href^=#]', function(e){
 	e = e ? e : event;
 	var href, $t, position;
@@ -377,9 +377,7 @@ $(document).on('click', 'a[href^=#]', function(e){
 		}else{
 			$t = $('html');
 		}
-
-		position = $t.offset().top - headerheight - 10;
-		$(is_html_scrollable ? 'html' : 'body').animate({scrollTop:position}, 250, 'swing');
+		lcm_smooth_scroll($t);
 		set_focus($t);
 		return false;
 	}else if(e.isDefaultPrevented()){ //#でイベントを設定されている場合に抑止？ 
@@ -389,16 +387,32 @@ $(document).on('click', 'a[href^=#]', function(e){
 
 //フォーカスしたものが画面外にある場合に位置を調節する。
 //クリックは除外したい
-//もう少し条件を整理したら、上のページ内リンクともまとめられる？ まとめたほうがいい？
+//もう少し条件を整理したら、上のページ内リンクともまとめられる
 $(document).on('keydown',function(e){
 	e = e ? e : event;
-	var $t = $(e.target);
-	setTimeout(function(){
-		var position = $t.offset().top-$(window).scrollTop()-headerheight;
-		if($t.closest($('#adminbar'))[0] || position > 10) return;
-		$(is_html_scrollable ? 'html' : 'body').scrollTop($t.offset().top-headerheight-10);
-	}, 0);
+	var k, $t, position;
+	k = e.which;
+	if( k == 9 ){
+		setTimeout(function(){;
+			$t = $(':focus');
+			lcm_smooth_scroll($t);
+		}, 0);
+	};
 })
+
+function lcm_smooth_scroll($t) {
+	var position, margin;
+	if($t.closest($('#adminbar'))[0]) return;
+	position = $t.offset();
+	if(typeof position === 'undefined') return;
+	headerheight = (!headerheight==0) ? headerheight : 0; 
+	margin = 10;//上位置のマージン
+
+	position = position.top-$(window).scrollTop()-headerheight;
+	if(position > margin) return;
+	$(is_html_scrollable ? 'html' : 'body').scrollTop($t.offset().top-headerheight-margin);
+}
+
 
 //全体に対するクリックイベント。
 $(document).click(function(e){
@@ -496,7 +510,7 @@ function lcm_focus(){
 		if(!esc){//抜けるリンクなどの準備
 			esc = $('<div id="esc_focus_wrapper" class="skip show_if_focus" style="display: none;" tabindex="0"><a id="esc_focus"  class="boxshadow" href="javascript: void(0);" tabindex="-1">抜ける</a></div>').appendTo($('body'));
 			var len = elm.length;
-			for( var n = len ; n > 0 ; n-- ){
+			for( var n = len-1 ; n >= 0 ; n-- ){
 				el = elm.eq(n);
 				var title_str = el.attr('title') ? el.attr('title') : '';
 				el.attr('title', title_str+' エンターで入ります')
@@ -546,31 +560,39 @@ function lcm_focus(){
 	setTimeout(lcm_focus_set, 0);
 
 	// ================== lcm_focus上でのキーボードイベント ==================
+	// 要素が多いページのことを考えるとtabindexの操作をやめてしまいたいので、Tabでの移動制御をもう少しまとめる。
+	// いずれにせよブラウザ間の挙動の差異を埋めるためなどの理由でtabindexの制御はやめたほうがよさそう。Shift+Tabがけっこうめんどうなので。
+	// Tabキーの動きをのっとっちゃうことのデメリットはよくよく調べること
 	elm.on('keydown', function(e){
 		e = e ? e : event;
-		var t, k, parent;
+		var t, k, parent, is_esc;
 		t = $(e.target);
 		k = e.which;
 		if(k == 9){ //Tab
 			if( current_tabbable.length == 0){
-					setTimeout(function(){esc.focus()},0);
+			// 中にフォーカス対象がないとき（読み上げ用の枠にtabindexをあてているなど）。この場合Enterで入れる状態にすべきかどうかわからないのだけど、入れたらタブ移動対象は抜けるリンクだけにする。
+						esc.focus()
+						is_esc = true;
 			}else{
 				var index = $(current_tabbable).index(t);
 				if(e.shiftKey){ //現在のフォーカス枠上でshift+tabの場合、escに移動
 					if(t.hasClass('currentfocus') || index==0){//とりあえず
-						setTimeout(function(){esc.focus()},0);
+						esc.focus()
+						is_esc = true;
 					}else{
 						$(current_tabbable).eq(index-1).focus();
 					}
 				}else{
 					if(t.is($(current_tabbable).last())){
-						setTimeout(function(){esc.focus()},0);
+						esc.focus()
+						is_esc = true;
 					}else{
 						$(current_tabbable).eq(index+1).focus();
 					}
 				}
 			}
 			e.preventDefault();
+			if(is_esc) return false;
 		}
 		
 	
@@ -964,7 +986,7 @@ $('#alert_error .link').find('a').each(function(){
 		return;
 	}else if($t.is('#form_start_date')){
 		$t = $('#form_end_date');
-	}else if(t.is('#form_start_time')){
+	}else if($t.is('#form_start_time')){
 		$t = $('#form_end_time');
 	}
 	$t.after($link);
@@ -981,9 +1003,11 @@ $('.lcm_multiple_select').each(function(){
 	$selects = $select.add($selected);
 	hidden_items = $(this).data('hiddenItemId') ?
 		$(this).data('hiddenItemId') :
-		$(this).closest('.show_if_js').prevAll('.show_if_no_js').last();//スケジューラはnoscript用のチェックボックス未対応。ベットhiddenの値をしようしている
+		$(this).closest('.show_if_js').prevAll('.show_if_no_js').last();
+		//スケジューラはnoscriptのチェックボックス未対応。別途hiddenの値をしようしている
 	
-	if(typeof hidden_items !== 'object'){//スケジューラの場合data-hidden-item-idを取っているので・noscript対応の場合はcheckboxが最初からチェックされているのでここは不要
+	if(typeof hidden_items !== 'object'){
+	//スケジューラの場合data-hidden-item-idを取っている。noscriptチェックボックス併用の場合はここは不要
 		make_hidden_form_items(hidden_items, $selected);
 	}
 	
@@ -1290,7 +1314,8 @@ $('input.time').timepicker({
 	}
 });
 
-//tooltip //overflowしている対象にページ内リンクでスクロールして表示する場合、出る位置が狂う。
+//tooltip
+//表示枠外（overflow:hidden)の要素にページ内リンクでスクロールして表示するとスクロール前の位置を基準に表示されてしまう。
 //title属性はブラウザの対応がまちまちなので、data-を対象にする
 //エラー
 $('.validation_error :input').tooltip({

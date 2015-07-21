@@ -1008,6 +1008,16 @@ table + .index_toolbar {
 	min-width: 8em;
 }
 
+/* placeholder */
+/*Webkit*/
+::-webkit-input-placeholder {color: #bbb;}
+/*Firefox 19以降*/
+::-moz-placeholder    {color: #bbb;}
+/*Firefox 18以前*/
+:-moz-placeholder    {color: #bbb;}
+/*Windows IE*/
+:-ms-input-placeholder    {color: #bbb;}
+
 /*== lcm_form.compact ==*/
 .lcm_form.compact {
 	padding-bottom: 0 !important; /*とりあえず*/
