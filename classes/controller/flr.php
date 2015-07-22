@@ -184,11 +184,41 @@ class Controller_Flr extends \Locomo\Controller_Base
 				// フリーワード検索
 				if ($all)
 				{
+					$options['related'] = array('permission_usergroup');
 					$options['where'][] = array(
-							array('name', 'LIKE', $all),
+						array('name', 'LIKE', $all),
+						array('genre', '<>', 'dir'),
+						'or' => array(
+							array('explanation', 'LIKE', $all),
+							array('genre', '<>', 'dir'),
 							'or' => array(
-								array('explanation', 'LIKE', $all),
-							)
+								array('name', 'LIKE', $all),
+								array('genre', '=', 'dir'),
+								array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+								array('permission_usergroup.access_level', '>=', 1),
+								'or' => array(
+									array('explanation', 'LIKE', $all),
+									array('genre', '=', 'dir'),
+									array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+									array('permission_usergroup.access_level', '>=', 1),
+								)
+							),
+						),
+					);
+				}
+				else
+				{
+					// 検索キーワードがない場合でも、権限のないディレクトリをハツるようにする
+					$options['related'] = array('permission_usergroup');
+					$options['where'][] = array(
+						array(
+							array('genre', '=', 'dir'),
+							array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+							array('permission_usergroup.access_level', '>', 1),
+						),
+						'or' => array(
+							array('genre', '<>', 'dir'),
+						)
 					);
 				}
 
@@ -217,6 +247,8 @@ class Controller_Flr extends \Locomo\Controller_Base
 				'created_at' => 'desc'
 			);
 */
+
+			// 重複する検索結果をはつる
 			$exists = array();
 			foreach ($objs as $k => $obj)
 			{

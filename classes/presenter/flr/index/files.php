@@ -60,8 +60,9 @@ class Presenter_Flr_Index_Files extends \Presenter_Base
 		if ( ! \Input::get('submit'))
 		{
 			$pattern  = '/<span class="sort_info">.+?<\/span>/';
-			$count = \Model_Flr::count() - 1; //ルートディレクトリを除く
-			$replace  = '<span class="sort_info">全'.$count.'件のファイル／ディレクトリがあります。</span>';
+//			$count = \Model_Flr::count() - 1; //ルートディレクトリを除く
+			$count = \Pagination::$refined_items;
+			$replace  = '<span class="sort_info">'.$count.'件のファイル／ディレクトリがあります。</span>';
 			$subject  = (string) $parent->field('opener');
 			$template = preg_replace($pattern, $replace, $subject);
 			$parent->field('opener')->set_template($template);
