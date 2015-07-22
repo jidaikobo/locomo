@@ -360,7 +360,13 @@ class Model_Flr extends \Model_Base
 		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
 
 		// get myself and children
-		$vals = Model_Flr::find('all', array('where' => array(array('path', 'like', $obj->path.'%'))));
+		$vals = Model_Flr::find('all', array('from_cache' => false, 'where' => array(array('path', 'like', $obj->path.'%'))));
+
+
+/*
+第二階層のみ、パーミッションをアップデートするようにして、hidden_infoを調整する。
+そのためには、ややじかんがかかるんで、今日はここまで。
+*/
 
 		// update myself and children 
 		if ($vals)

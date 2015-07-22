@@ -148,15 +148,21 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 			// アクセス権のあるディレクトリを取得
 
-// rootで全部検索するようにする
-
-			$options = array(
-				'related' => array('permission_usergroup'),
-				'where' => array(
-					array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
-					array('permission_usergroup.access_level', '>', 1),
-				),
-			);
+			// rootで全部検索するようにする
+			if (\Auth::is_admin())
+			{
+				$options = array();
+			}
+			else
+			{
+				$options = array(
+					'related' => array('permission_usergroup'),
+					'where' => array(
+						array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+						array('permission_usergroup.access_level', '>', 1),
+					),
+				);
+			}
 			$dirs = \Model_Flr::find('all', $options) ;
 
 			// 検索キーワード
@@ -210,6 +216,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 				'created_at' => 'desc'
 			);
 */
+			$objs = \Arr::multisort($objs, array('ext' => SORT_ASC, 'created_at' => SORT_DESC));
 		}
 
 		// count - Flrはページネーションをしないので、refinedやper_pageは、常に最大値を取る
