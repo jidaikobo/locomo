@@ -224,7 +224,6 @@ class Controller_Flr extends \Locomo\Controller_Base
 				$exists[] = $obj->id;
 			}
 
-
 			$objs = \Arr::multisort($objs, array('ext' => SORT_ASC, 'created_at' => SORT_DESC));
 		}
 

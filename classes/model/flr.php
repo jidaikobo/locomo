@@ -323,10 +323,20 @@ class Model_Flr extends \Model_Base
 
 		// current children
 		$option = array(
+			'related' => array('permission_usergroup'),
 			'where' => array(
+				array('genre', '<>', 'dir'),
 				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
+				'or' => array(
+					array('genre', '=', 'dir'),
+					array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+					array('permission_usergroup.access_level', '>', 1),
+					array('path', 'like', $path.'%'),
+					array('depth', '=', $obj->depth + 1),
+					array('id', '<>', $obj->id),
+				),
 			),
 			'order_by' => array(
 				'ext' => 'ASC',
