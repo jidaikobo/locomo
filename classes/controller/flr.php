@@ -176,8 +176,9 @@ class Controller_Flr extends \Locomo\Controller_Base
 			// ディレクトリをループ
 			foreach ($dirs as $k => $dir)
 			{
-			// rootディレクトリそのものは対象外とする
 				$options = array();
+
+				// rootディレクトリそのものは対象外とする
 				$options['where'][] = array('depth', '!=', '0');
 
 				// フリーワード検索
@@ -207,7 +208,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 				if (\Input::get('to'))   $options['where'][] = array('created_at', '<=', \Input::get('to').' 23:59:59');
 
 				// 取得
-				$objs = array_merge($objs, \Model_Flr::find('all', $options)) ;
+				$objs = \Arr::merge($objs, \Model_Flr::find('all', $options)) ;
 			}
 			// order by
 /*
@@ -216,6 +217,14 @@ class Controller_Flr extends \Locomo\Controller_Base
 				'created_at' => 'desc'
 			);
 */
+			$exists = array();
+			foreach ($objs as $k => $obj)
+			{
+				if (in_array($obj->id, $exists)) unset($objs[$k]);
+				$exists[] = $obj->id;
+			}
+
+
 			$objs = \Arr::multisort($objs, array('ext' => SORT_ASC, 'created_at' => SORT_DESC));
 		}
 
