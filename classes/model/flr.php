@@ -329,7 +329,7 @@ class Model_Flr extends \Model_Base
 				array('id', '<>', $obj->id),
 			),
 			'order_by' => array(
-				'genre' => 'ASC',
+				'ext' => 'ASC',
 				'created_at' => 'DESC'
 			),
 		);
