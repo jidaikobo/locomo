@@ -27,7 +27,7 @@ class Model_Flr extends \Model_Base
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
 			'validation' => array(
 				'required',
-				'match_pattern' => array("/^[一-龠ぁ-んァ-ヶa-zA-Z0-9ー_-]+$/u"),
+				'match_pattern' => array("/^[一-龠ぁ-んァ-ヴa-zA-Z0-9・.ー_ 　-]+$/u"),
 				'max_length' => array(255),
 			),
 		),
@@ -323,13 +323,23 @@ class Model_Flr extends \Model_Base
 
 		// current children
 		$option = array(
+			'related' => array('permission_usergroup'),
 			'where' => array(
+				array('genre', '<>', 'dir'),
 				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
+				'or' => array(
+					array('genre', '=', 'dir'),
+					array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+					array('permission_usergroup.access_level', '>', 1),
+					array('path', 'like', $path.'%'),
+					array('depth', '=', $obj->depth + 1),
+					array('id', '<>', $obj->id),
+				),
 			),
 			'order_by' => array(
-				'genre' => 'ASC',
+				'ext' => 'ASC',
 				'created_at' => 'DESC'
 			),
 		);
@@ -360,7 +370,13 @@ class Model_Flr extends \Model_Base
 		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
 
 		// get myself and children
-		$vals = Model_Flr::find('all', array('where' => array(array('path', 'like', $obj->path.'%'))));
+		$vals = Model_Flr::find('all', array('from_cache' => false, 'where' => array(array('path', 'like', $obj->path.'%'))));
+
+
+/*
+第二階層のみ、パーミッションをアップデートするようにして、hidden_infoを調整する。
+そのためには、ややじかんがかかるんで、今日はここまで。
+*/
 
 		// update myself and children 
 		if ($vals)

@@ -24,11 +24,7 @@
 		</tr>
 	</thead>
 	<tbody>
-<?php
-foreach ($items as $item):
-// ディレクトリは表示権限を確認する
-if ($item->genre == 'dir' && \Controller_Flr::check_auth($item->path) || $item->genre != 'dir'):
-?>
+<?php foreach ($items as $item): ?>
 		<tr tabindex="-1">
 			<th><div class="col_scrollable" style="min-width: 10em;">
 			<?php
@@ -58,10 +54,7 @@ if ($item->genre == 'dir' && \Controller_Flr::check_auth($item->path) || $item->
 			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo date('Y年m月d日', strtotime($item->created_at)); ?></div></td>
 			<td><?php echo \Model_Usr::get_display_name($item->creator_id); ?></td>
 		</tr>
-<?php
-endif;
-endforeach;
-?>
+<?php endforeach; ?>
 	</tbody>
 </table>
 

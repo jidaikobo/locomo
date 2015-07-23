@@ -148,15 +148,21 @@ class Controller_Flr extends \Locomo\Controller_Base
 
 			// アクセス権のあるディレクトリを取得
 
-// rootで全部検索するようにする
-
-			$options = array(
-				'related' => array('permission_usergroup'),
-				'where' => array(
-					array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
-					array('permission_usergroup.access_level', '>', 1),
-				),
-			);
+			// rootで全部検索するようにする
+			if (\Auth::is_admin())
+			{
+				$options = array();
+			}
+			else
+			{
+				$options = array(
+					'related' => array('permission_usergroup'),
+					'where' => array(
+						array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+						array('permission_usergroup.access_level', '>', 1),
+					),
+				);
+			}
 			$dirs = \Model_Flr::find('all', $options) ;
 
 			// 検索キーワード
@@ -170,18 +176,49 @@ class Controller_Flr extends \Locomo\Controller_Base
 			// ディレクトリをループ
 			foreach ($dirs as $k => $dir)
 			{
-			// rootディレクトリそのものは対象外とする
 				$options = array();
+
+				// rootディレクトリそのものは対象外とする
 				$options['where'][] = array('depth', '!=', '0');
 
 				// フリーワード検索
 				if ($all)
 				{
+					$options['related'] = array('permission_usergroup');
 					$options['where'][] = array(
-							array('name', 'LIKE', $all),
+						array('name', 'LIKE', $all),
+						array('genre', '<>', 'dir'),
+						'or' => array(
+							array('explanation', 'LIKE', $all),
+							array('genre', '<>', 'dir'),
 							'or' => array(
-								array('explanation', 'LIKE', $all),
-							)
+								array('name', 'LIKE', $all),
+								array('genre', '=', 'dir'),
+								array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+								array('permission_usergroup.access_level', '>=', 1),
+								'or' => array(
+									array('explanation', 'LIKE', $all),
+									array('genre', '=', 'dir'),
+									array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+									array('permission_usergroup.access_level', '>=', 1),
+								)
+							),
+						),
+					);
+				}
+				else
+				{
+					// 検索キーワードがない場合でも、権限のないディレクトリをハツるようにする
+					$options['related'] = array('permission_usergroup');
+					$options['where'][] = array(
+						array(
+							array('genre', '=', 'dir'),
+							array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+							array('permission_usergroup.access_level', '>', 1),
+						),
+						'or' => array(
+							array('genre', '<>', 'dir'),
+						)
 					);
 				}
 
@@ -201,7 +238,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 				if (\Input::get('to'))   $options['where'][] = array('created_at', '<=', \Input::get('to').' 23:59:59');
 
 				// 取得
-				$objs = array_merge($objs, \Model_Flr::find('all', $options)) ;
+				$objs = \Arr::merge($objs, \Model_Flr::find('all', $options)) ;
 			}
 			// order by
 /*
@@ -210,6 +247,16 @@ class Controller_Flr extends \Locomo\Controller_Base
 				'created_at' => 'desc'
 			);
 */
+
+			// 重複する検索結果をはつる
+			$exists = array();
+			foreach ($objs as $k => $obj)
+			{
+				if (in_array($obj->id, $exists)) unset($objs[$k]);
+				$exists[] = $obj->id;
+			}
+
+			$objs = \Arr::multisort($objs, array('ext' => SORT_ASC, 'created_at' => SORT_DESC));
 		}
 
 		// count - Flrはページネーションをしないので、refinedやper_pageは、常に最大値を取る
