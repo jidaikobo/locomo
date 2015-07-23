@@ -326,6 +326,28 @@ class Model_Flr extends \Model_Base
 
 		$path = str_replace('%', '\%', $obj->path);
 
+		// admin/root condition
+		if (\Auth::is_admin())
+		{
+			$or_conditions = array(
+				array('genre', '=', 'dir'),
+				array('path', 'like', $path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+			);
+		}
+		else
+		{
+			$or_conditions = array(
+				array('genre', '=', 'dir'),
+				array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+				array('permission_usergroup.access_level', '>', 1),
+				array('path', 'like', $path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+			);
+		}
+
 		// current children
 		$option = array(
 			'related' => array('permission_usergroup'),
@@ -334,14 +356,7 @@ class Model_Flr extends \Model_Base
 				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
-				'or' => array(
-					array('genre', '=', 'dir'),
-					array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
-					array('permission_usergroup.access_level', '>', 1),
-					array('path', 'like', $path.'%'),
-					array('depth', '=', $obj->depth + 1),
-					array('id', '<>', $obj->id),
-				),
+				'or' => $or_conditions,
 			),
 			'order_by' => array(
 				'ext' => 'ASC',
