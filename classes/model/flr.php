@@ -27,7 +27,7 @@ class Model_Flr extends \Model_Base
 			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
 			'validation' => array(
 				'required',
-				'match_pattern' => array("/^[一-龠ぁ-んァ-ヴa-zA-Z0-9・.ー_ 　-]+$/u"),
+				'match_pattern' => array("/^[一-龠ぁ-んァ-ヴa-zA-Z0-9０-９・.ー_ 　-]+$/u"),
 				'max_length' => array(255),
 			),
 		),

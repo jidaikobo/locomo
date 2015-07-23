@@ -100,21 +100,21 @@ class Controller_Flr_Dir extends Controller_Flr
 		if ( ! $obj || $obj->genre != 'dir')
 		{
 			\Session::set_flash('error', "ディレクトリが見つかりませんでした");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// root directory
 		if (LOCOMOFLRUPLOADPATH.$obj->path == LOCOMOFLRUPLOADPATH.DS)
 		{
 			\Session::set_flash('error', "基底ディレクトリは編集できません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'create_dir'))
 		{
 			\Session::set_flash('error', "ディレクトリの編集をする権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// ディレクトリ名称変更の場合
@@ -183,10 +183,10 @@ class Controller_Flr_Dir extends Controller_Flr
 		$obj = \Model_Flr::find($id);
 
 		// check_auth
-		if ( ! static::check_auth($obj->path, 'create_dir'))
+		if ( ! static::check_auth($obj->path, 'create_dir') || $obj->genre != 'dir')
 		{
 			\Session::set_flash('error', "ディレクトリの権限を変更する権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// parent::edit()
@@ -226,24 +226,24 @@ class Controller_Flr_Dir extends Controller_Flr
 		$obj = \Model_Flr::find($id);
 
 		// existence
-		if ( ! $obj)
+		if ( ! $obj || $obj->genre != 'dir')
 		{
 			\Session::set_flash('error', "ディレクトリが見つかりませんでした。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// root dir
 		if ($obj->id == 1)
 		{
 			\Session::set_flash('error', "基底ディレクトリは削除できません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'purge_dir'))
 		{
 			\Session::set_flash('error', "ディレクトリを削除する権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// create dir
