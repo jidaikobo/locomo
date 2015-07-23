@@ -784,28 +784,179 @@ class Controller_Pdf extends \Controller_Base
 
 
 	/*
-	 * todo delete
-	 * dompdf test
+	 * Sample
 	 */
-	public function action_dom_test () {
+	protected function sample()
+	{
+		$pdf = $this->pdf;
 
-		$dompdf = \Pdf::factory('dompdf')->init();
+		// \Module::load('usr');
+		// サンプル用のユーザー
+		$usrs = \Locomo\Model_Usr::find('all', array(
+			'limit' => 20,
+		));
 
-		$html =
-			'<html><body>'.
-			'<style>body{font-family:"ipagp";}</style>'.
-			''.
-		  '<p>日本語 どないでっしゃろ '.
-		  'templating system.</p>'.
-		  '</body></html>';
+		$pdf->addPage('L', 'A4'); // 横向き A4
+		$pdf->setMargins(10, 10, 10, 10);
 
-		$dompdf = new \DOMPDF();
-		$dompdf->load_html($html);
-		$dompdf->render();
-		$dompdf->stream("sample.pdf", array("Attachment" => 0));
 
+		$pdf->Box(array(
+			'x' => 10,
+			'y' => 10,
+			'w' => 120,
+			'h' => 20,
+			'txt' => 'タイトルは txt に入力 border は BLR stretch 1 で 横幅を伸縮',
+			'stretch' => 1,
+			'fontsize' => 18,
+			'border' => 'BLR',
+		));
+
+		// テーブル
+		$pdf->setXY(10, 80);
+		$this->table_sample($usrs);
+
+
+		// 縦書き
+		$pdf->addPage('P', array(120, 180)); // 少し小さめの用紙設定等 array(横, 縦)
+		$pdf->setXY(10, 80);
+		$this->tategaki_sample(reset($usrs));
+
+		// バルク
+		$this->bulk_sample($usrs);
+
+		$pdf->output();
 	}
 
+	protected function table_sample($usrs)
+	{
+		$formats = array(
+			array(
+				array(
+					'w' => 20,
+					'font_size' => 10,
+					'align' => 'R',
+					'fields' => array(
+						'ID:', // プロパティにないものは、そのまま出力されます
+						'id',  // モデルのプロパティにあれば、その値が出力されます
+					),
+				),
+				array(
+					'w' => 50,
+					'font_size' => 12,
+					'fields' => array(
+						'username', // user->username
+					),
+				),
+				array(
+					'w' => 30,
+					'font_size' => 12,
+					'fields' => array(
+						'display_name', // user->display_name
+					),
+				),
+				array(
+					'w' => 65,
+					'font_size' => 8,
+					'fields' => array(
+						"このように\n長い文章や改行に合わせて、\nセルの高さが変わります。",
+					),
+				),
+				array(
+					'w' => 65,
+					'font_size' => 8,
+					'fields' => array(
+						"ユーザーが13人を超えると、自動で改ページします",
+					),
+				),
+			),
+		);
+		// テーブルを出力
+		$this->pdf->Table($usrs, $formats);
+	}
+
+	protected function tategaki_sample()
+	{
+		$pdf = $this->pdf;
+		$pdf->Vertical(array(
+			'x' => 20,
+			'y' => 20,
+			'txt' => ' 「ジョニ」き----キーファー・サザーランド———',
+			'size' => 4,
+		));
+		$pdf->Vertical(array(
+			'x' => 40,
+			'y' => 20,
+			'txt' => '「ジョニ」き」----キーファー・サザーランド———',
+			'size' => 12,
+		));
+		$pdf->Vertical(array(
+			'x' => 60,
+			'y' => 10,
+			'txt' => '「ジョニ」----キーファー・サザーランド———',
+			'size' => 12,
+			'fix' => -0.6,
+		));
+		$pdf->Vertical(array(
+			'x' => 70,
+			'y' => 10,
+			'text' => '『ジョニ』ーデップ1F『America―――――',
+			'size' => 16,
+			'fix' => -0.4,
+		));
+		$pdf->Vertical(array(
+			'x' => 90,
+			'y' => 10,
+			'text' => '「ジョニ」ー」デップ)——"そして"【ほんで】',
+			'size' => 20,
+			'fix' => -0.2,
+		));
+	}
+	protected function bulk_sample($usrs)
+	{
+		$format = array(
+			array(
+				'font_size' => 25,
+				'x' => 20,
+				'y' => 40,
+				'width' => 100,
+				'align' => 'L',
+				'border' => 1,
+				'ln' => 1,
+				'fields' => array(
+					'username', // user->username
+					'の',
+				),
+			),
+			array(
+				'font_size' => 20,
+				'x' => 10,
+				'width' => 180,
+				'align' => 'L',
+				'border' => 0,
+				'fields' => array(
+					'displaynameは',
+					"\n",
+				),
+			),
+			array(
+				'fontsize' => 14,
+				'x' => 20,
+				'width' => 100,
+				'align' => 'C',
+				'border' => 'B',
+				'fields' => array(
+					'display_name',
+					"\n",
+				),
+			),
+		);
+
+		foreach ($usrs as $usr) {
+			$this->pdf->addPage('P', 'B5'); // 用紙サイズを戻す
+			$this->pdf->Bulk($usr, $format);
+		}
+
+	}
 
 }
 
