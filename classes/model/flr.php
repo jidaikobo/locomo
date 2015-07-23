@@ -179,14 +179,14 @@ class Model_Flr extends \Model_Base
 		// 拡張子やmimetypeを修正
 		if ($this->genre != 'dir')
 		{
-			$this->ext      = substr($this->name, strrpos($this->name, '.') + 1) ;
+			$this->ext = strtolower(substr($this->name, strrpos($this->name, '.') + 1));
 			try
 			{
-				$this->mimetype = \File::file_info($fullpath)['mimetype'] ;
+				$this->mimetype = \File::file_info($fullpath)['mimetype'];
 			} catch (\Fuel\Core\InvalidPathException $e) {
 				$this->mimetype = 'unknown' ;
 			}
-			$this->genre    = \Locomo\File::get_file_genre($this->name);
+			$this->genre = \Locomo\File::get_file_genre($this->name);
 		}
 	}
 
