@@ -116,7 +116,7 @@ class Controller_Flr_Sync extends Controller_Flr
 			// set obj
 			$basename = basename($fullpath);
 			$obj->name        = $basename;
-			$obj->ext         = is_dir($fullpath) ? '' : substr($basename, strrpos($basename, '.') + 1) ;
+			$obj->ext         = is_dir($fullpath) ? '' : strtolower(substr($basename, strrpos($basename, '.') + 1)) ;
 			$obj->mimetype    = is_dir($fullpath) ? '' : \File::file_info($fullpath)['mimetype'] ;
 			$obj->genre       = is_dir($fullpath) ? 'dir' : \Locomo\File::get_file_genre($basename);
 			$obj->explanation = \Arr::get($current, md5($path).'.data.explanation', '');

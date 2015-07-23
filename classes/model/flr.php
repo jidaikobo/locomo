@@ -179,14 +179,14 @@ class Model_Flr extends \Model_Base
 		// 拡張子やmimetypeを修正
 		if ($this->genre != 'dir')
 		{
-			$this->ext      = substr($this->name, strrpos($this->name, '.') + 1) ;
+			$this->ext = strtolower(substr($this->name, strrpos($this->name, '.') + 1)) ;
 			try
 			{
 				$this->mimetype = \File::file_info($fullpath)['mimetype'] ;
 			} catch (\Fuel\Core\InvalidPathException $e) {
 				$this->mimetype = 'unknown' ;
 			}
-			$this->genre    = \Locomo\File::get_file_genre($this->name);
+			$this->genre = \Locomo\File::get_file_genre($this->name);
 		}
 	}
 
@@ -326,28 +326,6 @@ class Model_Flr extends \Model_Base
 
 		$path = str_replace('%', '\%', $obj->path);
 
-		// admin/root condition
-		if (\Auth::is_admin())
-		{
-			$or_conditions = array(
-				array('genre', '=', 'dir'),
-				array('path', 'like', $path.'%'),
-				array('depth', '=', $obj->depth + 1),
-				array('id', '<>', $obj->id),
-			);
-		}
-		else
-		{
-			$or_conditions = array(
-				array('genre', '=', 'dir'),
-				array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
-				array('permission_usergroup.access_level', '>', 1),
-				array('path', 'like', $path.'%'),
-				array('depth', '=', $obj->depth + 1),
-				array('id', '<>', $obj->id),
-			);
-		}
-
 		// current children
 		$option = array(
 			'related' => array('permission_usergroup'),
@@ -356,7 +334,14 @@ class Model_Flr extends \Model_Base
 				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
-				'or' => $or_conditions,
+				'or' => array(
+					array('genre', '=', 'dir'),
+					array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+					array('permission_usergroup.access_level', '>', 1),
+					array('path', 'like', $path.'%'),
+					array('depth', '=', $obj->depth + 1),
+					array('id', '<>', $obj->id),
+				),
 			),
 			'order_by' => array(
 				'ext' => 'ASC',
