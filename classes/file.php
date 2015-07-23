@@ -20,7 +20,7 @@ class File extends \Fuel\Core\File
 			'pdf'     => array('pdf',),
 			'compressed' => array('zip', 'lzh',),
 		);
-		$ext = substr($file, strrpos($file, '.') + 1);
+		$ext = strtolower(substr($file, strrpos($file, '.') + 1));
 
 		// search genre
 		$retval = 'file';
