@@ -68,7 +68,7 @@ class Controller_Flr_File extends Controller_Flr
 					$obj_file->name        = urldecode($name);
 					$obj_file->path        = $obj->path.$name;
 					$obj_file->is_sticky   = \Input::post('is_sticky');
-					$obj_file->ext         = substr($name, strrpos($name, '.') + 1);
+					$obj_file->ext         = strtolower(substr($name, strrpos($name, '.') + 1));
 					$obj_file->genre       = \Locomo\File::get_file_genre($name);
 					$obj_file->is_visible  = \Input::post('is_visible', 1);
 					$obj_file->explanation = \Input::post('explanation');
@@ -136,6 +136,7 @@ class Controller_Flr_File extends Controller_Flr
 
 		// view
 		$content->set_safe('plain', $content::plain($obj));
+		$content->set_safe('file_info', \File::file_info(LOCOMOFLRUPLOADPATH.$obj->path));
 		$content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
 		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', 'ファイル詳細');

@@ -323,6 +323,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			'where' => array(
 				array('is_sticky', 1),
 				array('genre', 'image'),
+				array('ext', 'in', array('gif','jpg','jpeg','png','bmp')),
 			),
 		);
 		$objs = \Model_Flr::find('all', $option);

@@ -65,14 +65,14 @@ return array(
 		'zip2'  => 'application/x-compress',
 
 // files for blind person
-//		'bes' => '',
+		'bes' => 'application/octet-stream',
 //		'bet' => '',
 //		'ble' => '',
 //		'bls' => '',
 //		'bmt' => '',
 //		'brl' => '',
 //		'bs' => '',
-//		'bse' => '',
+		'bse' => 'text/plain',
 //		'ebk' => '',
 //		'mbd' => '',
 //		'mse' => '',
