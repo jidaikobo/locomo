@@ -21,7 +21,12 @@ class Presenter_Base extends \Presenter
 	public static function form($obj = null)
 	{
 		// forge
-		$form = \Fieldset::forge(\Request::active()->action);
+		$name = \Request::active()->action;
+		while (\Locomo\Fieldset::instance($name))
+		{
+			$name = $name.'_form';
+		}
+		$form = \Fieldset::forge($name);
 
 		// populate
 		$form->add_model($obj)->populate($obj, true);
