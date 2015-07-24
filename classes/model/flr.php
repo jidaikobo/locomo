@@ -433,7 +433,13 @@ class Model_Flr extends \Model_Base
 			\File::delete($target.'.LOCOMO_DIR_INFO');
 		}
 
-		$permissions = File::get_permissions($target);
+		try
+		{
+			$permissions = File::get_permissions($target);
+		} catch (\Fuel\Core\InvalidPathException $e) {
+			$permissions = null;
+		}
+
 		if ($permissions !== '0777')
 		{
 			try
@@ -448,8 +454,7 @@ class Model_Flr extends \Model_Base
 		{
 			\File::create($target, '.LOCOMO_DIR_INFO', serialize($current));
 		} catch (\Fuel\Core\InvalidPathException $e) {
-			// do nothing
-			\Session::set_flash('error', array('同期用の補助情報の保存に失敗しています。サーバ管理者にディレクトリのパーミッションを調整するように打診してください。'));
+			\Session::set_flash('error', array('同期用の補助情報の保存に失敗しています。システム管理者にディレクトリのパーミッションを調整するように打診してください。'));
 		}
 	}
 
