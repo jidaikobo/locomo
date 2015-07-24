@@ -9,8 +9,8 @@
 	<tbody>
 	<?php foreach ($items as $item): ?>
 	<?php if (\Controller_Flr::check_auth($item->path)): ?>
-		<tr>
-			<td><div class="col_scrollable" style="min-width: 6em;">
+		<tr title="<?php echo $item->genre.' '.$item->name.' (登録日:'.date('Y年n月j日G時i分', strtotime($item->created_at)).')' ?>" tabindex="-1">
+			<td><div class="col_scrollable" style="min-width: 12em;">
 			<?php
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
@@ -19,7 +19,7 @@
 				endif;
 			?>
 			</div></td>
-			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo $item->explanation; ?></div></td>
+			<td><div class="col_scrollable"><?php echo $item->explanation; ?></div></td>
 		</tr>
 	<?php endif; ?>
 	<?php endforeach; ?>

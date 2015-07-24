@@ -2454,7 +2454,7 @@ body .ui-resizable-handle {
 
 
 /*=== media_query ===*/
-li.show_if_smalldisplay {
+.show_if_smalldisplay {
 	display: none !important;
 }
 
@@ -2490,6 +2490,12 @@ li.show_if_smalldisplay {
 	}
 	.nd_if_smalldisplay {
 		display: none !important;
+	}
+	.show_if_smalldisplay {
+		display: inherit !important;
+	}
+	div.show_if_smalldisplay {
+		display: block !important;
 	}
 	li.show_if_smalldisplay {
 		display: list-item !important;
@@ -2551,6 +2557,11 @@ li.show_if_smalldisplay {
 	.size1 ul.float_list li {
 		width: 100%;
 		float: none;
+	}
+	
+	/*=== ファイラ ===*/
+	.lcm_ctrl_-controller_flr #main_content .show_if_smalldisplay:before {
+		content: none;
 	}
 }
 */
