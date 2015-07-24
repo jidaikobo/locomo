@@ -26,7 +26,7 @@
 	<tbody>
 <?php foreach ($items as $item): ?>
 		<tr title="<?php echo $item->name.' (登録日:'.date('Y年n月j日G時i分', strtotime($item->created_at)).')' ?>" tabindex="-1">
-			<th>
+			<th<?php if ($item->genre == 'dir') echo ' class="dir"' ?>>
 			<?php
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
@@ -47,7 +47,7 @@
 			<td class="ac"><?php
 				if ($item->genre !== 'dir'):
 					if (\Controller_Flr::check_auth($item->path, 'read') || $item->depth == 1):
-						echo \Html::anchor(\Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true)), '<span class="icon" style="font-size: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_download.png" alt="ダウンロード"></span>', array('class' => 'show_if_smalldisplay'));
+						echo \Html::anchor(\Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true)), '<span class="icon" style="font-size: 1em; width: 1.5em; height: 1.5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_download.png" alt="ダウンロード"></span>', array('class' => 'show_if_smalldisplay'));
 						echo \Html::anchor(\Uri::create('flr/file/dl/?p='.\Model_Flr::enc_url($item->path, true)), 'ダウンロード', array('class' => 'button small hide_if_smalldisplay'));
 					endif;
 				endif;

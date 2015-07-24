@@ -34,9 +34,9 @@
 			<td class="ar"><?php echo $item->id; ?></td>
 <?php endif; ?>
 			<th><div class="col_scrollable" style="min-width: 12em;">
-				<?php echo $item->is_sticky ? '<span class="icon" style="font-size: .5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_pin.png" alt=""></span>' : '' ?>
+				<?php $icon_sticky = $item->is_sticky ? '<span class="icon" style="font-size: .5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_pin.png" alt=""></span>' : '' ?>
 				<?php if (\Auth::has_access('\Controller_Msgbrd/view')):
-					echo Html::anchor('msgbrd/view/'.$item->id, $item->name.'<span class="skip"> 作成日時 '.date('Y年n月j日 G時i分', strtotime($item->created_at)).' 投稿者 '.\Model_Usr::get_display_name($item->creator_id).'</span>', array('class' => 'view'));
+					echo Html::anchor('msgbrd/view/'.$item->id, $icon_sticky.$item->name.'<span class="skip"> 作成日時 '.date('Y年n月j日 G時i分', strtotime($item->created_at)).' 投稿者 '.\Model_Usr::get_display_name($item->creator_id).'</span>', array('class' => 'view'));
 				else:
 					echo $item->name;
 				endif;

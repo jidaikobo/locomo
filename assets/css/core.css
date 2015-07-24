@@ -1346,6 +1346,7 @@ td.minimum {
 .tbl_wrapper {
 	overflow-x: auto;
 }
+
 /* tbl datatable */
 *>table.datatable thead th,
 *>table.datatable .thead th,
@@ -1372,6 +1373,15 @@ td.minimum {
 	font-weight: normal;
 	padding:.25em .5em;	
 } 
+.lcm_ctrl_-controller_flr .datatable tbody th.dir {
+	background-image: url('../img/system/mark_disclose.png') !important;
+	background-position: right center !important;
+	background-repeat: no-repeat !important;
+	background-size: 6px 9px !important;
+}
+.datatable tbody th a {
+	display: block;
+}
 .datatable th,
 .datatable td {
 	border-bottom: 1px solid #eee;
@@ -1388,6 +1398,9 @@ td.minimum {
 }
 .datatable tbody tr:nth-child(even) {
 	background: #f0f0f0;
+}
+.datatable tbody tr:nth-child(odd) th {
+	background: #f3f3f3;
 }
 .datatable tbody tr:nth-child(even) th {
 	background: #e3e3e3;
@@ -2557,11 +2570,6 @@ body .ui-resizable-handle {
 	.size1 ul.float_list li {
 		width: 100%;
 		float: none;
-	}
-	
-	/*=== ファイラ ===*/
-	.lcm_ctrl_-controller_flr #main_content .show_if_smalldisplay:before {
-		content: none;
 	}
 }
 */

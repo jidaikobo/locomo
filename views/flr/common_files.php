@@ -10,7 +10,7 @@
 	<?php foreach ($items as $item): ?>
 	<?php if (\Controller_Flr::check_auth($item->path)): ?>
 		<tr title="<?php echo $item->genre.' '.$item->name.' (登録日:'.date('Y年n月j日G時i分', strtotime($item->created_at)).')' ?>" tabindex="-1">
-			<td><div class="col_scrollable" style="min-width: 12em;">
+			<th><div class="col_scrollable" style="min-width: 12em;">
 			<?php
 				if ($item->genre == 'dir'):
 					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
@@ -18,7 +18,7 @@
 					echo Html::anchor('flr/file/dl/?dl=1&p='.\Model_Flr::enc_url($item->path, true), $item->name, array('class' => 'icon '.$item->genre));
 				endif;
 			?>
-			</div></td>
+			</div></th>
 			<td><div class="col_scrollable"><?php echo $item->explanation; ?></div></td>
 		</tr>
 	<?php endif; ?>
