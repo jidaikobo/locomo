@@ -1,5 +1,6 @@
-<?php if ($items): ?>
 <?php echo $search_form; ?>
+
+<?php if ($items): ?>
 
 <!--ページネーション-->
 <div class="index_toolbar clearfix">
