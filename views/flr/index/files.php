@@ -1,4 +1,4 @@
-<h1><?php echo $search_form ?></h1>
+<?php echo $search_form ?>
 
 <!--ファイラはページネーションしない-->
 <!--
