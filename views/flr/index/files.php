@@ -25,7 +25,7 @@
 	</thead>
 	<tbody>
 <?php foreach ($items as $item): ?>
-		<tr title="<?php echo $item->name.' (登録日:'.date('Y年n月j日G時i分', strtotime($item->created_at)).')' ?>" tabindex="-1">
+		<tr title="<?php echo $item->genre == 'dir' ? $item->name : $item->name.' (登録日:'.date('Y年n月j日G時i分', strtotime($item->created_at)).')' ?>" tabindex="-1">
 			<th<?php if ($item->genre == 'dir') echo ' class="dir"' ?>>
 			<?php
 				if ($item->genre == 'dir'):
@@ -54,7 +54,7 @@
 			?></td>
 			<td class="hide_if_smalldisplay"><div class="col_scrollable" style="min-width:3.5em;"><?php echo $item->genre; ?></div></td>
 			<td><div class="col_scrollable" style="min-width:12em;"><?php echo $item->explanation; ?></div></td>
-			<td class="hide_if_smalldisplay"><?php echo date('Y年m月d日', strtotime($item->created_at)); ?></td>
+			<td class="hide_if_smalldisplay"><?php echo $item->genre == 'dir' ? '' : date('Y年m月d日', strtotime($item->created_at)); ?></td>
 			<td class="hide_if_smalldisplay"><?php echo \Model_Usr::get_display_name($item->creator_id); ?></td>
 		</tr>
 <?php endforeach; ?>
