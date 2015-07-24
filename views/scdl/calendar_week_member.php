@@ -100,7 +100,7 @@
 										endforeach;
 										//重要度
 										$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
-										$eventtitle_icon.= '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
+										$eventtitle_icon.= '<span class="icon" style="width: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
 										$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
 										$eventtitle_skip.= '</span>';
 										// 時間
