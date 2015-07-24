@@ -73,8 +73,4 @@
 		</tr>
 	</tfoot>
 </table>
-
-<?php else: ?>
-<p>ファイルおよびディレクトリが存在しません。</p>
-
 <?php endif; ?>

@@ -268,6 +268,11 @@ class Controller_Flr extends \Locomo\Controller_Base
 		\Pagination::set('total_items', $cnt);
 		\Pagination::set('per_page', $cnt);
 
+		if ( ! $objs)
+		{
+			\Session::set_flash('message', 'ファイルおよびディレクトリが存在しません。');
+		}
+
 		// view
 		$content = \Presenter::forge('flr/index/files');
 		$this->template->set_safe('content', $content);
