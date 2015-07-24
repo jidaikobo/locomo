@@ -133,9 +133,12 @@ class Controller_Flr extends \Locomo\Controller_Base
 		{
 			if (Controller_Flr_Sync::sync())
 			{
-				\Session::set_flash('success', "データベースとファイルの状況に矛盾が見つかったので、強制同期をかけました。");
+				if (\Auth::is_root())
+				{
+					\Session::set_flash('success', "データベースとファイルの状況に矛盾が見つかったので、強制同期をかけました。");
+				}
 			} else {
-				\Session::set_flash('error', "データベースとファイルの矛盾解消のため、強制同期をかけましたが失敗しました。矛盾は解消されていません。物理ファイルの状況を確認してください。");
+				\Session::set_flash('error', "データベースとファイルの矛盾解消のため、強制同期をかけましたが失敗しました。矛盾は解消されていません。システム管理者に問い合わせてください。");
 			}
 			\Response::redirect(static::$main_url);
 		}
