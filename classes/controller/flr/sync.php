@@ -126,6 +126,7 @@ class Controller_Flr_Sync extends Controller_Flr
 				$obj->explanation = \Arr::get($current, md5($path).'.data.explanation', '');
 				$obj->is_visible  = \Arr::get($current, md5($path).'.data.is_visible', 1);
 				$obj->is_sticky   = \Arr::get($current, md5($path).'.data.is_sticky', 0);
+				$obj->creator_id  = \Arr::get($current, md5($path).'.data.creator_id', -2);
 				$obj->depth       = $depth;
 				$obj->path        = $path;
 				$obj->created_at  = date('Y-m-d H:i:s', \File::get_time($fullpath, 'created'));
