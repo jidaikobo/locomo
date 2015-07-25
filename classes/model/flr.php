@@ -378,6 +378,7 @@ class Model_Flr extends \Model_Base
 
 	/**
 	 * embed_hidden_info()
+	 * ルートディレクトリと最上層ディレクトリについて隠し情報を入れる
 	 */
 	public static function embed_hidden_info($obj)
 	{
