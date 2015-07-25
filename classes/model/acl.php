@@ -63,7 +63,8 @@ class Model_Acl extends \Orm\Model
 	 */
 	public static function get_usergroups()
 	{
-		$usergroups = array('none' => '選択してください', 0 => 'ゲスト', '-10' => 'ログインユーザすべて');
+//		$usergroups = array('' => '選択してください', 0 => 'ゲスト', '-10' => 'ログインユーザすべて');
+		$usergroups = array('-10' => '選択してください');
 		$usergroups += \Model_Usrgrp::find_options(
 			'name',
 			array(
