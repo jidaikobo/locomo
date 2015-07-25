@@ -1691,15 +1691,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * ajax IDから施設リストを返す
 	 * @return users の配列
 	 */
-	public function action_get_building_list()
+	public function post_building_list()
 	{
 		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
 		$where = array(array('item_group', 'building'));
-		if (\Input::post("gid")) {
+		if (\Input::post("bid")) {
 			$where = array(
-						array('item_group2', '=', \Input::post("gid", 0)),
-						array('item_group', 'building')
-						);
+				array('item_group2', '=', \Input::post("bid", 0)),
+				array('item_group', 'building')
+			);
 		}
 		$response = \Model_Scdl_Item::find('all',
 			array(
