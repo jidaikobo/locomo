@@ -202,20 +202,6 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * _event_after_update()
-	 * it calls static::embed_hidden_info().
-	 * static::embed_hidden_info() は、確実にデータベースをアップデートしたあとに呼びたいので、ここに設置する。しかし、関係テーブルしかアップデートしないaction_permission_dir()は、これを呼び出さないので、処理のためだけにaction_permission_dir()でupdated_atフィールドを改変しているが、要検討。
-	*/
-	public function _event_after_update()
-	{
-		// prevent loop at inside of this observer
-		$this->disable_event('after_update');
-
-		// embed hidden file
-		static::embed_hidden_info($this);
-	}
-
-	/**
 	 * update_permission()
 	*/
 	public static function update_permission($obj, $arrs, $relation)
@@ -374,106 +360,5 @@ class Model_Flr extends \Model_Base
 		}
 
 		return $objs;
-	}
-
-	/**
-	 * embed_hidden_info()
-	 * ルートディレクトリと最上層ディレクトリについて隠し情報を入れる
-	 */
-	public static function embed_hidden_info($obj)
-	{
-		// current
-		if ( ! $obj) return false;
-		$current = static::fetch_hidden_info(LOCOMOFLRUPLOADPATH.$obj->path);
-
-		// target
-		$path = LOCOMOFLRUPLOADPATH.$obj->path;
-		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
-
-		// get myself and children
-		$vals = Model_Flr::find('all', array('from_cache' => false, 'where' => array(array('path', 'like', $obj->path.'%'))));
-
-
-/*
-第二階層のみ、パーミッションをアップデートするようにして、hidden_infoを調整する。
-そのためには、ややじかんがかかるんで、今日はここまで。
-*/
-
-		// update myself and children 
-		if ($vals)
-		{
-			foreach ($vals as $val)
-			{
-				if ( ! is_object($val)) continue;
-				$key = md5($val->path); // to save dot and ext.
-
-				// var_export() to use Model's __to_string() and eval() it
-				eval('$data = '.var_export($val->_data, true).';');
-				\Arr::set($current, $key.'.data'     , $data);
-
-				// relations
-				$usergroups = static::get_relation_as_array($val, 'usergroup');
-				\Arr::set($current, $key.'.permission_usergroup', $usergroups);
-				$users = static::get_relation_as_array($val, 'user');
-				\Arr::set($current, $key.'.permission_user', $users);
-			}
-		}
-
-		// tidy up current
-		foreach ($current as $k => $v)
-		{
-			if( ! file_exists(LOCOMOFLRUPLOADPATH.\Arr::get($v, 'data.path')))
-			{
-				unset($current[$k]);
-			}
-		}
-
-		// put 
-		if (file_exists($target.'.LOCOMO_DIR_INFO'))
-		{
-			\File::delete($target.'.LOCOMO_DIR_INFO');
-		}
-
-		try
-		{
-			$permissions = File::get_permissions($target);
-		} catch (\Fuel\Core\InvalidPathException $e) {
-			$permissions = null;
-		}
-
-		if ($permissions !== '0777')
-		{
-			try
-			{
-				chmod($target, 0777);
-			} catch (\Fuel\Core\PhpErrorException $e) {
-				// do nothing
-			}
-		}
-
-		try
-		{
-			\File::create($target, '.LOCOMO_DIR_INFO', serialize($current));
-		} catch (\Fuel\Core\InvalidPathException $e) {
-			\Session::set_flash('error', array('同期用の補助情報の保存に失敗しています。システム管理者にディレクトリのパーミッションを調整するように打診してください。'));
-		}
-	}
-
-	/**
-	 * fetch_hidden_info()
-	 */
-	public static function fetch_hidden_info($path)
-	{
-		$target = is_dir($path) ? $path.'.LOCOMO_DIR_INFO' : dirname($path).DS.'.LOCOMO_DIR_INFO' ;
-		if ( ! file_exists($target)) return array();
-		$content = \File::read($target, $as_string = true);
-
-		try
-		{
-			$retval = unserialize($content) ?: array();
-		} catch (Exception $e) {
-			$retval = array();
-		}
-		return $retval;
 	}
 }

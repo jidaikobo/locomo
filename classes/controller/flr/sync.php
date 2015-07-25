@@ -54,13 +54,14 @@ class Controller_Flr_Sync extends Controller_Flr
 			\DB::query('CREATE TABLE lcm_flr_permissions_tmp like lcm_flr_permissions;')->execute();
 			\DB::query('INSERT INTO lcm_flr_permissions_tmp SELECT * FROM lcm_flr_permissions;')->execute();
 			\DBUtil::truncate_table('lcm_flr_permissions');
-	
+
 			// eliminate invalid filenames
 			foreach ($items as $k => $fullpath)
 			{
 				if ($fullpath == LOCOMOFLRUPLOADPATH.DS) continue; //root dir
 				$enc_name = \Model_Flr::enc_url($fullpath);
 	
+/*
 				// too long file name
 				// ファイル名が長過ぎるときにはエラーを返す
 				if (strlen($enc_name) >= 700)
@@ -72,6 +73,7 @@ class Controller_Flr_Sync extends Controller_Flr
 					\Session::set_flash('error', $errors);
 					\Response::redirect(\Uri::create('flr/sync/sync'));
 				}
+*/
 	
 				// if same name exists
 				// エンコード名が改名後と同じ項目があるときにはエラーを返す
@@ -84,7 +86,7 @@ class Controller_Flr_Sync extends Controller_Flr
 					\Session::set_flash('error', $errors);
 					\Response::redirect(\Uri::create('flr/sync/sync'));
 				}
-	
+
 				// if not exist. it maybe already enced.
 				// ファイルが存在しない場合はすでにエンコードされているので、エンコードする
 				if ( ! file_exists($fullpath))
@@ -98,7 +100,7 @@ class Controller_Flr_Sync extends Controller_Flr
 				} catch (\Fuel\Core\PhpErrorException $e) {
 					$errors = array(
 						'同期は不完全に終わりました。',
-						"'".urldecode(basename($fullpath))."'は、パーミッションが妥当でありませんシステム管理者に修正を依頼してください。",
+						"'".urldecode(basename($fullpath))."'の同期に失敗しました。システム管理者に修正を依頼してください。",
 					);
 					\Session::set_flash('error', $errors);
 					\Response::redirect(\Uri::create('flr/sync/sync'));
@@ -112,33 +114,37 @@ class Controller_Flr_Sync extends Controller_Flr
 			foreach ($items as $fullpath)
 			{
 				$obj = \Model_Flr::forge();
+				$tmp = \Model_Flr_Tmp::forge();
+
 				$num = is_dir($fullpath) ? 2 : 1;
 				$depth = count(explode('/', substr($fullpath, $basepath_len))) - $num;
 				$path = substr($fullpath, $basepath_len);
-				$current = \Model_Flr::fetch_hidden_info($fullpath);// .LOCOMO_DIR_INFO
-	
+
+				// search possible record
+				$tmp_data = $tmp::find('first', array('where' => array(array('path', $path))));
+
 				// set obj
 				$basename = basename($fullpath);
 				$obj->name        = $basename;
 				$obj->ext         = is_dir($fullpath) ? '' : strtolower(substr($basename, strrpos($basename, '.') + 1)) ;
 				$obj->mimetype    = is_dir($fullpath) ? '' : \File::file_info($fullpath)['mimetype'] ;
 				$obj->genre       = is_dir($fullpath) ? 'dir' : \Locomo\File::get_file_genre($basename);
-				$obj->explanation = \Arr::get($current, md5($path).'.data.explanation', '');
-				$obj->is_visible  = \Arr::get($current, md5($path).'.data.is_visible', 1);
-				$obj->is_sticky   = \Arr::get($current, md5($path).'.data.is_sticky', 0);
-				$obj->creator_id  = \Arr::get($current, md5($path).'.data.creator_id', -2);
+				$obj->explanation = is_array($tmp_data) ? \Arr::get($tmp_data, 'explanation', '') : '' ;
+				$obj->is_visible  = is_array($tmp_data) ? \Arr::get($tmp_data, 'is_visible', '') : '' ;
+				$obj->is_sticky   = is_array($tmp_data) ? \Arr::get($tmp_data, 'is_sticky', '') : '' ;
+				$obj->creator_id  = is_array($tmp_data) ? \Arr::get($tmp_data, 'creator_id', '') : '' ;
 				$obj->depth       = $depth;
 				$obj->path        = $path;
 				$obj->created_at  = date('Y-m-d H:i:s', \File::get_time($fullpath, 'created'));
 				$obj->updated_at  = date('Y-m-d H:i:s', \File::get_time($fullpath, 'modified'));
 	
 				// relations
-				$usergroups = \Arr::get($current, md5($path).'.permission_usergroup', array());
+				$usergroups = $tmp_data ? $tmp_data->permission_usergroup : array();
 				foreach ($usergroups as $id => $usergroup)
 				{
 					$obj->permission_usergroup[$id] = \Model_Flr_Usergroup::forge()->set($usergroup);
 				}
-				$users = \Arr::get($current, md5($path).'.permission_user', array());
+				$users = $tmp_data ? $tmp_data->permission_user : array();
 				foreach ($users as $id => $user)
 				{
 					$obj->permission_user[$id] = \Model_Flr_User::forge()->set($user);
@@ -146,15 +152,7 @@ class Controller_Flr_Sync extends Controller_Flr
 	
 				$obj->save();
 			}
-	
-			// update .LOCOMO_DIR_INFO - overhead but until here there is no data at lcm_flrs.
-			foreach ($items as $fullpath)
-			{
-				$path = substr($fullpath, $basepath_len);
-				$tmp_obj = Model_Flr::find('first', array('where' => array(array('path', $path))));
-				Model_Flr::embed_hidden_info($tmp_obj);
-			}
-	
+
 			// check
 			if ($obj->count() == count($items))
 			{
