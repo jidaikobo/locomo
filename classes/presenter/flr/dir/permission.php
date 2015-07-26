@@ -10,19 +10,13 @@ class Presenter_Flr_Dir_Permission extends \Presenter_Base
 
 		// hidden current name
 		$form->field('name')->set_type('hidden');
-		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
+		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'textarea', 'class' => 'textarea', 'style' => 'height: 3.5em', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
 
 		// delete is form
 		$form->delete('is_sticky');
 		$form->field('explanation')->set_type('hidden');
 
-		// message
-		\Session::set_flash('message', [
-			'親以上の権限は選択しても有効になりません。',
-			'親以上の権限を設定しようとすると、自動的に親以下の権限に調整されます。',
-			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
-		]);
-
+		// opener
 		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'display_name')->set_template('<div class="input_group">');
 		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'display_name')->set_template('</div>');
 

@@ -48,7 +48,7 @@ class Controller_Flr_Sync extends Controller_Flr
 			\DB::query('CREATE TABLE lcm_flrs_tmp like lcm_flrs;')->execute();
 			\DB::query('INSERT INTO lcm_flrs_tmp SELECT * FROM lcm_flrs;')->execute();
 			\DBUtil::truncate_table('lcm_flrs');
-	
+
 			// tmp - clone flr_permissions table
 			if (\DBUtil::table_exists('lcm_flr_permissions_tmp')) \DBUtil::drop_table('lcm_flr_permissions_tmp');
 			\DB::query('CREATE TABLE lcm_flr_permissions_tmp like lcm_flr_permissions;')->execute();
@@ -58,7 +58,7 @@ class Controller_Flr_Sync extends Controller_Flr
 			// eliminate invalid filenames
 			foreach ($items as $k => $fullpath)
 			{
-				if ($fullpath == LOCOMOFLRUPLOADPATH.DS) continue; //root dir
+//				if ($fullpath == LOCOMOFLRUPLOADPATH.DS) continue; //root dir
 				$enc_name = \Model_Flr::enc_url($fullpath);
 	
 /*
@@ -129,25 +129,39 @@ class Controller_Flr_Sync extends Controller_Flr
 				$obj->ext         = is_dir($fullpath) ? '' : strtolower(substr($basename, strrpos($basename, '.') + 1)) ;
 				$obj->mimetype    = is_dir($fullpath) ? '' : \File::file_info($fullpath)['mimetype'] ;
 				$obj->genre       = is_dir($fullpath) ? 'dir' : \Locomo\File::get_file_genre($basename);
-				$obj->explanation = is_array($tmp_data) ? \Arr::get($tmp_data, 'explanation', '') : '' ;
-				$obj->is_visible  = is_array($tmp_data) ? \Arr::get($tmp_data, 'is_visible', '') : '' ;
-				$obj->is_sticky   = is_array($tmp_data) ? \Arr::get($tmp_data, 'is_sticky', '') : '' ;
-				$obj->creator_id  = is_array($tmp_data) ? \Arr::get($tmp_data, 'creator_id', '') : '' ;
+				$obj->explanation = is_object($tmp_data) ? \Arr::get($tmp_data, 'explanation', '') : '' ;
+				$obj->is_visible  = is_object($tmp_data) ? \Arr::get($tmp_data, 'is_visible', '') : '' ;
+				$obj->is_sticky   = is_object($tmp_data) ? \Arr::get($tmp_data, 'is_sticky', '') : '' ;
+				$obj->creator_id  = is_object($tmp_data) ? \Arr::get($tmp_data, 'creator_id', '') : '' ;
 				$obj->depth       = $depth;
 				$obj->path        = $path;
 				$obj->created_at  = date('Y-m-d H:i:s', \File::get_time($fullpath, 'created'));
 				$obj->updated_at  = date('Y-m-d H:i:s', \File::get_time($fullpath, 'modified'));
 	
 				// relations
-				$usergroups = $tmp_data ? $tmp_data->permission_usergroup : array();
+				$usergroups = is_object($tmp_data) ? $tmp_data->permission_usergroup : array();
+
+
 				foreach ($usergroups as $id => $usergroup)
 				{
-					$obj->permission_usergroup[$id] = \Model_Flr_Usergroup::forge()->set($usergroup);
+					$arr = array(
+						'id' => $usergroup->id,
+						'flr_id' => $usergroup->flr_id,
+						'usergroup_id' => $usergroup->usergroup_id,
+						'access_level' => $usergroup->access_level,
+					);
+					$obj->permission_usergroup[$id] = \Model_Flr_Usergroup::forge()->set($arr);
 				}
-				$users = $tmp_data ? $tmp_data->permission_user : array();
+				$users = is_object($tmp_data) ? $tmp_data->permission_user : array();
 				foreach ($users as $id => $user)
 				{
-					$obj->permission_user[$id] = \Model_Flr_User::forge()->set($user);
+					$arr = array(
+						'id' => $user->id,
+						'flr_id' => $user->flr_id,
+						'user_id' => $user->user_id,
+						'access_level' => $user->access_level,
+					);
+					$obj->permission_user[$id] = \Model_Flr_User::forge()->set($arr);
 				}
 	
 				$obj->save();

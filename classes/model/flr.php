@@ -24,7 +24,12 @@ class Model_Flr extends \Model_Base
 		'id',
 		'name' => array(
 			'label' => '名称',
-			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
+			'form' => array(
+				'type' => 'textarea',
+				'class' => 'textarea',
+				'style' => 'height:3.5em;',
+				'description' => '半角英数文字、全角文字などで構成してください。改行コードやスラッシュは禁止されています。'
+			),
 			'validation' => array(
 				'required',
 				'match_pattern' => array("/^[一-龠ぁ-んァ-ヴa-zA-Z0-9０-９・.ー_ 　-]+$/u"),
@@ -156,7 +161,7 @@ class Model_Flr extends \Model_Base
 
 		// modify name - currently directory only
 		// 名称変更。今のところディレクトリのみ
-		if ($this->genre == 'dir'){
+		if ($this->genre == 'dir' && $this->path != '/'){
 			$old_name = \Arr::get($this->_original, 'name', $this->name);
 			$new_name = \Input::post('name', $this->name);
 			 // rename flag to use at _event_after_update

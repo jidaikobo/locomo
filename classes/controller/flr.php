@@ -380,9 +380,12 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public static function check_auth($path, $level = 'read')
 	{
+/*
 		// ルートディレクトリはアクセスはできる
 		$paths = explode('/', $path);
 		if ($level == 'read' && count($paths) == 2) return true;
+*/
+
 
 		// rights
 		$rights = array(

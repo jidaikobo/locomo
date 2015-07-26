@@ -58,6 +58,12 @@ class Presenter_Flr_Dir_Edit extends \Presenter_Base
 		// is_sticky
 		$form->delete('is_sticky');
 
+		// root directly
+		if ($obj && $obj->path == '/')
+		{
+			$form->field('name')->set_type('hidden');
+			$form->delete('parent');
+		}
 		return $form;
 	}
 }
