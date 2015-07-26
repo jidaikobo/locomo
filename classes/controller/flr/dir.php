@@ -60,15 +60,15 @@ class Controller_Flr_Dir extends Controller_Flr
 					\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
 					\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 				} else {
-					\Session::set_flash('success', "ディレクトリを新規作成しました。");
-
 					//新規作成の結果、最上層ディレクトリであれば、パーミッション編集に画面遷移する
+					if ($edit_obj->depth == 1)
+					{
+						\Session::set_flash('success', '引き続いてディレクトリへのアクセス権限の設定をしてください。');
+						\Response::redirect(\Uri::create('flr/dir/permission/'.$edit_obj->id));
+					}
 
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">' ;
-var_dump( $edit_obj ) ;
-echo '</textarea>' ;
-die();
-
+					// 最上層ディレクトリでないので、ディレクトリ一覧へ遷移
+					\Session::set_flash('success', "ディレクトリを新規作成しました。");
 					$pobj = \Model_flr::get_parent($edit_obj);
 					$id = is_object($pobj) ? $pobj->id : 1 ;//root
 					\Response::redirect(\Uri::create('flr/index_files/'.$id));
@@ -118,8 +118,8 @@ die();
 
 /*
 ルートディレクトリを「編集」できるようにする
-ルートディレクトリの権限がうまく動作するかどうかチェック
 新規ディレクトリ作成時のパーミッションへの遷移
+ルートディレクトリの権限がうまく動作するかどうかチェック
 */
 
 			//編集の結果、ルートか最上層ディレクトリであれば、パーミッション編集に画面遷移する
