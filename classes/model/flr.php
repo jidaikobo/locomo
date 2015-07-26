@@ -327,7 +327,7 @@ class Model_Flr extends \Model_Base
 				array('id', '<>', $obj->id),
 			);
 		}
-		else
+		elseif($obj->path == '/')
 		{
 			$or_conditions = array(
 				array('genre', '=', 'dir'),
@@ -336,12 +336,30 @@ class Model_Flr extends \Model_Base
 				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
+				'or' => array(
+					array('genre', '=', 'dir'),
+					array('permission_user.user_id', 'in', \Auth::get_groups()),
+					array('permission_user.access_level', '>=', 1),
+					array('path', 'like', $path.'%'),
+					array('depth', '=', $obj->depth + 1),
+					array('id', '<>', $obj->id),
+				),
+			);
+		}
+		else
+		{
+			// ルートディレクトリ以外では、最上層ディレクトリのアクセス権を対象とするため、一旦取得したのちにあとでハツる
+			$or_conditions = array(
+				array('genre', '=', 'dir'),
+				array('path', 'like', $path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
 			);
 		}
 
 		// current children
 		$option = array(
-			'related' => array('permission_usergroup'),
+			'related' => array('permission_usergroup', 'permission_user'),
 			'where' => array(
 				array('genre', '<>', 'dir'),
 				array('path', 'like', $path.'%'),
@@ -366,5 +384,31 @@ class Model_Flr extends \Model_Base
 		}
 
 		return $objs;
+	}
+
+	/**
+	 * get_permission_dir()
+	 * ファイラのパーミッション判定対象はルートディレクトリと最上層ディレクトリ
+	 */
+	public static function get_permission_dir($path)
+	{
+		$paths = explode('/', $path);
+
+		// root dir
+		if (count($paths) == 2)
+		{
+			$path = '/';
+		}
+		// deep dir
+		elseif (count($paths) > 2)
+		{
+			$path = '/'.$paths[1].'/';
+		}
+		// invalid path
+		else
+		{
+			return false;
+		}
+		return $path;
 	}
 }

@@ -174,19 +174,26 @@ class Controller_Flr_Dir extends Controller_Flr
 	{
 		$this->model_name = '\\Model_Flr';
 		$obj = \Model_Flr::find($id);
+		\Session::keep_flash('success');
 
 		if ($sync)
 		{
 			// dbのupdate直後にsync()するとうまく行かないので、一回画面遷移を経る。
 			// 理由はよくわからない :-(
-			\Session::keep_flash('success');
 			\Controller_Flr_Sync::sync();
 
-			// syncしているので、とりなおす
+			// syncしているので、取得し直す
 			$obj = \Model_Flr::find('first', array('where' => array(array('path', $obj->path))));
 
 			// 通常の編集画面へ
 			\Response::redirect(static::$current_url.$obj->id);
+		}
+
+		// depth
+		// パーミッションの対象はルートと最上層ディレクトリのみ
+		if ($obj->depth > 1)
+		{
+			\Response::redirect(\Uri::create('flr/dir/edit/'.$obj->id));
 		}
 
 		// check_auth
