@@ -386,7 +386,6 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if ($level == 'read' && count($paths) == 2) return true;
 */
 
-
 		// rights
 		$rights = array(
 		 'read'       => 1,
@@ -404,9 +403,12 @@ class Controller_Flr extends \Locomo\Controller_Base
 		if (in_array('-1', $usergroups) || in_array('-2', $usergroups) ) return true;
 
 		// check first level dir
-		$paths = explode('/', $path);
-		if (count($paths) < 2) return false; // invalid depth
-		$obj = \Model_Flr::find('first', array('where' => array(array('path', "/{$paths[1]}/"))));
+		if ($path != '/')
+		{
+			$paths = explode('/', $path);
+		}
+		$obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
+
 		if ( ! $obj) return false;
 
 		// check usergroups

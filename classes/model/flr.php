@@ -317,7 +317,7 @@ class Model_Flr extends \Model_Base
 
 		$path = str_replace('%', '\%', $obj->path);
 
-		// admin/root condition
+		// admin/root user condition
 		if (\Auth::is_admin())
 		{
 			$or_conditions = array(
@@ -332,7 +332,7 @@ class Model_Flr extends \Model_Base
 			$or_conditions = array(
 				array('genre', '=', 'dir'),
 				array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
-				array('permission_usergroup.access_level', '>', 1),
+				array('permission_usergroup.access_level', '>=', 1),
 				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
@@ -356,6 +356,7 @@ class Model_Flr extends \Model_Base
 		);
 
 		$objs = static::find('all', $option);
+
 		foreach ($objs as $k => $obj)
 		{
 			if ( ! \Controller_Flr::check_auth($obj->path))

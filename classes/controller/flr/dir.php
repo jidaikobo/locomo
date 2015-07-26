@@ -91,7 +91,7 @@ class Controller_Flr_Dir extends Controller_Flr
 	 * action_edit()
 	 * ディレクトリの編集
 	 */
-	public function action_edit($id = null, $sync = false)
+	public function action_edit($id = null)
 	{
 		$obj = \Model_Flr::find($id);
 
@@ -107,30 +107,6 @@ class Controller_Flr_Dir extends Controller_Flr
 		{
 			\Session::set_flash('error', "ディレクトリの編集をする権利がありません。");
 			\Response::redirect(dirname(static::$base_url).DS.'index_files');
-		}
-
-		if ($sync)
-		{
-			// dbのupdate直後にsync()するとうまく行かないので、一回画面遷移を経る。
-			// 理由はよくわからない :-(
-			\Session::keep_flash('success');
-			\Controller_Flr_Sync::sync();
-
-/*
-ルートディレクトリを「編集」できるようにする
-新規ディレクトリ作成時のパーミッションへの遷移
-ルートディレクトリの権限がうまく動作するかどうかチェック
-*/
-
-			//編集の結果、ルートか最上層ディレクトリであれば、パーミッション編集に画面遷移する
-			if ($obj->genre == 'dir' && $obj->depth <= 1 && \Controller_Flr::check_auth('/', 'create_dir'))
-			{
-				\Session::set_flash('success', '引き続いてディレクトリへのアクセス権限の設定をしてください。');
-				\Response::redirect(\Uri::create('flr/dir/permission/'.$obj->id));
-			}
-
-			// 通常の編集画面へ
-			\Response::redirect(static::$current_url.$id);
 		}
 
 		// ディレクトリ名称変更の場合 - ルートディレクトリは名称変更の対象外
@@ -180,9 +156,10 @@ class Controller_Flr_Dir extends Controller_Flr
 		$this->model_name = '\\Model_Flr';
 		$edit_obj = parent::edit($id, $is_redirect = false);
 
+		// 編集を終えたらとりあえずパーミッションに遷移する。そこではsyncも行う
 		if (\Input::post() && $edit_obj)
 		{
-			\Response::redirect(static::$current_url.$id.DS.'sync');
+			\Response::redirect(\Uri::create('flr/dir/permission/'.$obj->id));
 		}
 
 		$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
@@ -193,10 +170,24 @@ class Controller_Flr_Dir extends Controller_Flr
 	 * action_permission()
 	 * ディレクトリの権限
 	 */
-	public function action_permission($id = null)
+	public function action_permission($id = null, $sync = false)
 	{
 		$this->model_name = '\\Model_Flr';
 		$obj = \Model_Flr::find($id);
+
+		if ($sync)
+		{
+			// dbのupdate直後にsync()するとうまく行かないので、一回画面遷移を経る。
+			// 理由はよくわからない :-(
+			\Session::keep_flash('success');
+			\Controller_Flr_Sync::sync();
+
+			// syncしているので、とりなおす
+			$obj = \Model_Flr::find('first', array('where' => array(array('path', $obj->path))));
+
+			// 通常の編集画面へ
+			\Response::redirect(static::$current_url.$obj->id);
+		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'create_dir') || $obj->genre != 'dir')
@@ -209,7 +200,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		$this->_content_template = 'flr/dir/permission';
 		$edit_obj = parent::edit($id, $is_redirect = false);
 
-		// to load \Model_Flr::_event_after_update() and \Model_Flr::embed_hidden_info().
+		// to load \Model_Flr::_event_after_update().
 		// no update cause no load observer_after_update
 		if (\Input::post())
 		{
@@ -225,7 +216,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		if (\Input::post() && $edit_obj && $success && strpos(\Input::referrer(), 'permission') !== false)
 		{
 			\Session::set_flash('success', "ディレクトリの権限を変更しました。");
-			return \Response::redirect(static::$base_url.'permission/'.$edit_obj->id);
+			return \Response::redirect(static::$base_url.'permission/'.$edit_obj->id.'/sync/1');
 		}
 
 		// assign

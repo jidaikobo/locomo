@@ -10,15 +10,15 @@ class Presenter_Flr_Dir_Permission extends \Presenter_Base
 
 		// hidden current name
 		$form->field('name')->set_type('hidden');
-		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'textarea', 'class' => 'textarea', 'style' => 'height: 3.5em', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
+//		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'textarea', 'class' => 'textarea', 'style' => 'height: 3.5em', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
 
 		// delete is form
 		$form->delete('is_sticky');
 		$form->field('explanation')->set_type('hidden');
 
 		// opener
-		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'display_name')->set_template('<div class="input_group">');
-		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'display_name')->set_template('</div>');
+		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'name')->set_template('<div class="input_group">');
+		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'name')->set_template('</div>');
 
 		// === usergroup_id ===
 		$options = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('customgroup_uid', 'is', null))));
