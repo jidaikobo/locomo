@@ -183,7 +183,12 @@ class Model_Flr extends \Model_Base
 
 		// modify fileinfo
 		// 拡張子やmimetypeを修正
-		if ($this->genre != 'dir')
+		if ($this->genre == 'dir')
+		{
+			$this->ext = '';
+			$this->mimetype = '';
+		}
+		else
 		{
 			$this->ext = strtolower(substr($this->name, strrpos($this->name, '.') + 1));
 			try
@@ -370,6 +375,7 @@ class Model_Flr extends \Model_Base
 			),
 			'order_by' => array(
 				'ext' => 'ASC',
+				'name' => 'ASC',
 				'created_at' => 'DESC'
 			),
 		);

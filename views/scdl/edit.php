@@ -103,13 +103,13 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<h2><span class="label_required">必須</span>メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
-				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
+				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
 					<?php foreach($group_list as $key => $value) { ?>
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 					<?php } ?>
 				</select>
-				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
+				<div id="user_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_members">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
 						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
@@ -139,14 +139,14 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
-				<select id="building_group_list" title="施設グループ絞り込み" onchange="get_group_building()">
+				<select id="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
 					<option value="">絞り込み：全施設
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 					<?php } ?>
 				</select>
 				</div>
-				<div class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
+				<div id="building_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
 					<div class="multiple_select_content">
 						<label for="building_kizon">選択済み</label>
 						<select id="form_building_kizon" name="building_kizon" class="selected" size="2" title="選択済み施設" multiple>
@@ -208,13 +208,13 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2 class="ar">メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
+				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
 				<?php foreach($group_list as $key => $value): ?>
 					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 				<?php endforeach; ?>
 				</select>
-				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
+				<div id="user_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_members">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
 						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
@@ -264,25 +264,6 @@ if (isset($overlap_result) && count($overlap_result)) {
 <script>
 <!-- jsに移す -->
 change_repeat_kb_area();
-/* いったんonchangeに変更。でも.attachEvent('onchange', ...)とかで書き直せる？
-$("#form_repeat_kb").change(function(event){
-	change_repeat_kb_area();
-});
-$("#group_list").change(function(event) {
-	get_group_user(event, $("#group_list").val(), "form_member_new");
-});
-$("#group_list_create_user").change(function(event) {
-	get_group_user(event, $("#group_list_create_user").val(), "form_user_id");
-});
-
-$("#building_group_list").change(function(event) {
-	get_group_building(event);
-});
-$("#form_group_detail").change(function(event) {
-	form_group_detail_change(event);
-});
-*/
-
 
 function form_group_detail_change(e) {
 	$("#form_group_kb_1").val(['2']);
@@ -400,77 +381,7 @@ function is_allday(){
 		$('#form_start_time, #form_end_time').attr('readonly',false);
 	}
 }
-/*
-	複数選択はjquery.inc.jsに移動。
-*/
 
-
-var base_uri = $('body').data('uri');
-
-function get_group_user(groupId, targetEle) {
-
-	var targetEle = targetEle;
-	var group_id = groupId;
-
-	var now_members = new Object();
-	var kizon_options = document.getElementById('form_member_kizon').options;
-	for(var i = 0; i < kizon_options.length; i++){
-		now_members['member' + kizon_options[i].value] = 1;
-	};
-
-	$.ajax({
-		url: base_uri + 'usr/user_list.json',
-		type: 'post',
-		data: 'gid=' + group_id,
-		success: function(res) {
-			exists = JSON.parse(res);
-
-			document.getElementById(targetEle).options.length=0;
-
-			for(var i in exists) {
-				if (targetEle == "member_new") {
-					if (!now_members['member' + exists[i]['id']]) {
-						$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
-					}
-				} else {
-					$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
-				}
-			}
-		
-		}
-	});
-}
-
-function get_group_building()
-{
-
-	var group_id = $("#building_group_list").val();
-
-	var now_buildings = new Object();
-	var kizon_options = document.getElementById('form_building_kizon').options;
-	for(var i = 0; i < kizon_options.length; i++){
-		now_buildings['building' + kizon_options[i].value] = 1;
-	};
-
-	$.ajax({
-		url: base_uri + 'scdl/building_list.json',
-		type: 'post',
-		data: 'bid=' + group_id,
-		success: function(res) {
-
-			exists = JSON.parse(res);
-
-			document.getElementById("form_building_new").options.length=0;
-
-			for(var i in exists) {
-				if (!now_buildings['building' + exists[i]['item_id']]) {
-					$("#form_building_new").append($('<option>').html(exists[i]['item_name']).val(exists[i]['item_id']));
-				}
-			}
-		
-		}
-	});
-}
 </script>
 
 

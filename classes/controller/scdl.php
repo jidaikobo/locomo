@@ -1695,9 +1695,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	{
 		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
 		$where = array(array('item_group', 'building'));
-		if (\Input::post("bid")) {
+		if (\Input::post("gid")) {
 			$where = array(
-				array('item_group2', '=', \Input::post("bid", 0)),
+				array('item_group2', '=', \Input::post("gid", 0)),
 				array('item_group', 'building')
 			);
 		}
