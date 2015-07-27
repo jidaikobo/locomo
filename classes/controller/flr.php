@@ -380,10 +380,11 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public static function check_auth($path, $level = 'read')
 	{
+/*
 		// ルートディレクトリはアクセスはできる
 		$paths = explode('/', $path);
 		if ($level == 'read' && count($paths) == 2) return true;
-
+*/
 		// rights
 		$rights = array(
 		 'read'       => 1,
@@ -400,10 +401,26 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// always true
 		if (in_array('-1', $usergroups) || in_array('-2', $usergroups) ) return true;
 
-		// check first level dir
+		// check first level and root dir
 		$paths = explode('/', $path);
-		if (count($paths) < 2) return false; // invalid depth
-		$obj = \Model_Flr::find('first', array('where' => array(array('path', "/{$paths[1]}/"))));
+
+		// root dir
+		if (count($paths) == 2)
+		{
+			$path = '/';
+		}
+		// deep dir
+		elseif (count($paths) > 2)
+		{
+			$path = '/'.$paths[1].'/';
+		}
+		// invalid path
+		else
+		{
+			return false;
+		}
+		$obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
+
 		if ( ! $obj) return false;
 
 		// check usergroups

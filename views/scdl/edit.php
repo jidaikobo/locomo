@@ -441,7 +441,8 @@ function get_group_user(groupId, targetEle) {
 	});
 }
 
-function get_group_building() {
+function get_group_building()
+{
 
 	var group_id = $("#building_group_list").val();
 
@@ -452,7 +453,7 @@ function get_group_building() {
 	};
 
 	$.ajax({
-		url: base_uri + 'scdl/get_building_list.json',
+		url: base_uri + 'scdl/building_list.json',
 		type: 'post',
 		data: 'bid=' + group_id,
 		success: function(res) {

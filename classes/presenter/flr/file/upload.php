@@ -10,7 +10,7 @@ class Presenter_Flr_File_Upload extends \Presenter_Base
 		$form = parent::form($obj);
 
 		$form->field('name')->set_type('hidden');
-		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
+		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'textarea', 'disabled' => 'disabled', 'style' => 'height: 3.5em;'),array(), 'name')->set_value(@$obj->name);
 		$form->add_after(
 			'upload',
 			'アップロード',

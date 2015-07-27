@@ -24,7 +24,12 @@ class Model_Flr extends \Model_Base
 		'id',
 		'name' => array(
 			'label' => '名称',
-			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
+			'form' => array(
+				'type' => 'textarea',
+				'class' => 'textarea',
+				'style' => 'height:3.5em;',
+				'description' => '半角英数文字、全角文字などで構成してください。改行コードやスラッシュは禁止されています。'
+			),
 			'validation' => array(
 				'required',
 				'match_pattern' => array("/^[一-龠ぁ-んァ-ヴa-zA-Z0-9０-９・.ー_ 　-]+$/u"),
@@ -156,7 +161,7 @@ class Model_Flr extends \Model_Base
 
 		// modify name - currently directory only
 		// 名称変更。今のところディレクトリのみ
-		if ($this->genre == 'dir'){
+		if ($this->genre == 'dir' && $this->path != '/'){
 			$old_name = \Arr::get($this->_original, 'name', $this->name);
 			$new_name = \Input::post('name', $this->name);
 			 // rename flag to use at _event_after_update
@@ -199,20 +204,6 @@ class Model_Flr extends \Model_Base
 		// Controller_Flr::sync() doesn't have \Input::post() but Controller_Flr::sync() already define $this->path
 		$this->path = $this->path ?: \Input::post('parent').\Input::post('name');
 		$this->save();
-	}
-
-	/**
-	 * _event_after_update()
-	 * it calls static::embed_hidden_info().
-	 * static::embed_hidden_info() は、確実にデータベースをアップデートしたあとに呼びたいので、ここに設置する。しかし、関係テーブルしかアップデートしないaction_permission_dir()は、これを呼び出さないので、処理のためだけにaction_permission_dir()でupdated_atフィールドを改変しているが、要検討。
-	*/
-	public function _event_after_update()
-	{
-		// prevent loop at inside of this observer
-		$this->disable_event('after_update');
-
-		// embed hidden file
-		static::embed_hidden_info($this);
 	}
 
 	/**
@@ -326,7 +317,7 @@ class Model_Flr extends \Model_Base
 
 		$path = str_replace('%', '\%', $obj->path);
 
-		// admin/root condition
+		// admin/root user condition
 		if (\Auth::is_admin())
 		{
 			$or_conditions = array(
@@ -336,12 +327,30 @@ class Model_Flr extends \Model_Base
 				array('id', '<>', $obj->id),
 			);
 		}
-		else
+		elseif($obj->path == '/')
 		{
 			$or_conditions = array(
 				array('genre', '=', 'dir'),
 				array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
-				array('permission_usergroup.access_level', '>', 1),
+				array('permission_usergroup.access_level', '>=', 1),
+				array('path', 'like', $path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+				'or' => array(
+					array('genre', '=', 'dir'),
+					array('permission_user.user_id', 'in', \Auth::get_groups()),
+					array('permission_user.access_level', '>=', 1),
+					array('path', 'like', $path.'%'),
+					array('depth', '=', $obj->depth + 1),
+					array('id', '<>', $obj->id),
+				),
+			);
+		}
+		else
+		{
+			// ルートディレクトリ以外では、最上層ディレクトリのアクセス権を対象とするため、一旦取得したのちにあとでハツる
+			$or_conditions = array(
+				array('genre', '=', 'dir'),
 				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
@@ -350,7 +359,7 @@ class Model_Flr extends \Model_Base
 
 		// current children
 		$option = array(
-			'related' => array('permission_usergroup'),
+			'related' => array('permission_usergroup', 'permission_user'),
 			'where' => array(
 				array('genre', '<>', 'dir'),
 				array('path', 'like', $path.'%'),
@@ -365,6 +374,7 @@ class Model_Flr extends \Model_Base
 		);
 
 		$objs = static::find('all', $option);
+
 		foreach ($objs as $k => $obj)
 		{
 			if ( ! \Controller_Flr::check_auth($obj->path))
@@ -377,102 +387,28 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * embed_hidden_info()
+	 * get_permission_dir()
+	 * ファイラのパーミッション判定対象はルートディレクトリと最上層ディレクトリ
 	 */
-	public static function embed_hidden_info($obj)
+	public static function get_permission_dir($path)
 	{
-		// current
-		if ( ! $obj) return false;
-		$current = static::fetch_hidden_info(LOCOMOFLRUPLOADPATH.$obj->path);
+		$paths = explode('/', $path);
 
-		// target
-		$path = LOCOMOFLRUPLOADPATH.$obj->path;
-		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
-
-		// get myself and children
-		$vals = Model_Flr::find('all', array('from_cache' => false, 'where' => array(array('path', 'like', $obj->path.'%'))));
-
-
-/*
-第二階層のみ、パーミッションをアップデートするようにして、hidden_infoを調整する。
-そのためには、ややじかんがかかるんで、今日はここまで。
-*/
-
-		// update myself and children 
-		if ($vals)
+		// root dir
+		if (count($paths) == 2)
 		{
-			foreach ($vals as $val)
-			{
-				if ( ! is_object($val)) continue;
-				$key = md5($val->path); // to save dot and ext.
-
-				// var_export() to use Model's __to_string() and eval() it
-				eval('$data = '.var_export($val->_data, true).';');
-				\Arr::set($current, $key.'.data'     , $data);
-
-				// relations
-				$usergroups = static::get_relation_as_array($val, 'usergroup');
-				\Arr::set($current, $key.'.permission_usergroup', $usergroups);
-				$users = static::get_relation_as_array($val, 'user');
-				\Arr::set($current, $key.'.permission_user', $users);
-			}
+			$path = '/';
 		}
-
-		// tidy up current
-		foreach ($current as $k => $v)
+		// deep dir
+		elseif (count($paths) > 2)
 		{
-			if( ! file_exists(LOCOMOFLRUPLOADPATH.\Arr::get($v, 'data.path')))
-			{
-				unset($current[$k]);
-			}
+			$path = '/'.$paths[1].'/';
 		}
-
-		// put 
-		if (file_exists($target.'.LOCOMO_DIR_INFO'))
+		// invalid path
+		else
 		{
-			\File::delete($target.'.LOCOMO_DIR_INFO');
+			return false;
 		}
-
-		try
-		{
-			$permissions = File::get_permissions($target);
-		} catch (\Fuel\Core\InvalidPathException $e) {
-			$permissions = null;
-		}
-
-		if ($permissions !== '0777')
-		{
-			try
-			{
-				chmod($target, 0777);
-			} catch (\Fuel\Core\PhpErrorException $e) {
-				// do nothing
-			}
-		}
-
-		try
-		{
-			\File::create($target, '.LOCOMO_DIR_INFO', serialize($current));
-		} catch (\Fuel\Core\InvalidPathException $e) {
-			\Session::set_flash('error', array('同期用の補助情報の保存に失敗しています。システム管理者にディレクトリのパーミッションを調整するように打診してください。'));
-		}
-	}
-
-	/**
-	 * fetch_hidden_info()
-	 */
-	public static function fetch_hidden_info($path)
-	{
-		$target = is_dir($path) ? $path.'.LOCOMO_DIR_INFO' : dirname($path).DS.'.LOCOMO_DIR_INFO' ;
-		if ( ! file_exists($target)) return array();
-		$content = \File::read($target, $as_string = true);
-
-		try
-		{
-			$retval = unserialize($content) ?: array();
-		} catch (Exception $e) {
-			$retval = array();
-		}
-		return $retval;
+		return $path;
 	}
 }

@@ -60,6 +60,14 @@ class Controller_Flr_Dir extends Controller_Flr
 					\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
 					\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 				} else {
+					//新規作成の結果、最上層ディレクトリであれば、パーミッション編集に画面遷移する
+					if ($edit_obj->depth == 1)
+					{
+						\Session::set_flash('success', '引き続いてディレクトリへのアクセス権限の設定をしてください。');
+						\Response::redirect(\Uri::create('flr/dir/permission/'.$edit_obj->id));
+					}
+
+					// 最上層ディレクトリでないので、ディレクトリ一覧へ遷移
 					\Session::set_flash('success', "ディレクトリを新規作成しました。");
 					$pobj = \Model_flr::get_parent($edit_obj);
 					$id = is_object($pobj) ? $pobj->id : 1 ;//root
@@ -81,32 +89,16 @@ class Controller_Flr_Dir extends Controller_Flr
 
 	/**
 	 * action_edit()
-	 * ディレクトリのメモ欄の編集
+	 * ディレクトリの編集
 	 */
-	public function action_edit($id = null, $sync = false)
+	public function action_edit($id = null)
 	{
-		if ($sync)
-		{
-			// dbのupdate直後にsync()するとうまく行かないので、一回画面遷移を経る。
-			// 理由はよくわからない :-(
-			\Session::keep_flash('success');
-			\Controller_Flr_Sync::sync();
-			\Response::redirect(static::$current_url.$id);
-		}
-
 		$obj = \Model_Flr::find($id);
 
 		// existence
 		if ( ! $obj || $obj->genre != 'dir')
 		{
 			\Session::set_flash('error', "ディレクトリが見つかりませんでした");
-			\Response::redirect(dirname(static::$base_url).DS.'index_files');
-		}
-
-		// root directory
-		if (LOCOMOFLRUPLOADPATH.$obj->path == LOCOMOFLRUPLOADPATH.DS)
-		{
-			\Session::set_flash('error', "基底ディレクトリは編集できません。");
 			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
@@ -117,8 +109,8 @@ class Controller_Flr_Dir extends Controller_Flr
 			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
-		// ディレクトリ名称変更の場合
-		if (\Input::post())
+		// ディレクトリ名称変更の場合 - ルートディレクトリは名称変更の対象外
+		if (\Input::post() && $obj->path != '/')
 		{
 			$prev_name = $obj->name;
 			$new_name = \Input::post('name');
@@ -164,9 +156,10 @@ class Controller_Flr_Dir extends Controller_Flr
 		$this->model_name = '\\Model_Flr';
 		$edit_obj = parent::edit($id, $is_redirect = false);
 
+		// 編集を終えたらとりあえずパーミッションに遷移する。そこではsyncも行う
 		if (\Input::post() && $edit_obj)
 		{
-			\Response::redirect(static::$current_url.$id.DS.'sync');
+			\Response::redirect(\Uri::create('flr/dir/permission/'.$obj->id));
 		}
 
 		$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
@@ -177,10 +170,31 @@ class Controller_Flr_Dir extends Controller_Flr
 	 * action_permission()
 	 * ディレクトリの権限
 	 */
-	public function action_permission($id = null)
+	public function action_permission($id = null, $sync = false)
 	{
 		$this->model_name = '\\Model_Flr';
 		$obj = \Model_Flr::find($id);
+		\Session::keep_flash('success');
+
+		if ($sync)
+		{
+			// dbのupdate直後にsync()するとうまく行かないので、一回画面遷移を経る。
+			// 理由はよくわからない :-(
+			\Controller_Flr_Sync::sync();
+
+			// syncしているので、取得し直す
+			$obj = \Model_Flr::find('first', array('where' => array(array('path', $obj->path))));
+
+			// 通常の編集画面へ
+			\Response::redirect(static::$current_url.$obj->id);
+		}
+
+		// depth
+		// パーミッションの対象はルートと最上層ディレクトリのみ
+		if ($obj->depth > 1)
+		{
+			\Response::redirect(\Uri::create('flr/dir/edit/'.$obj->id));
+		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'create_dir') || $obj->genre != 'dir')
@@ -193,7 +207,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		$this->_content_template = 'flr/dir/permission';
 		$edit_obj = parent::edit($id, $is_redirect = false);
 
-		// to load \Model_Flr::_event_after_update() and \Model_Flr::embed_hidden_info().
+		// to load \Model_Flr::_event_after_update().
 		// no update cause no load observer_after_update
 		if (\Input::post())
 		{
@@ -209,7 +223,7 @@ class Controller_Flr_Dir extends Controller_Flr
 		if (\Input::post() && $edit_obj && $success && strpos(\Input::referrer(), 'permission') !== false)
 		{
 			\Session::set_flash('success', "ディレクトリの権限を変更しました。");
-			return \Response::redirect(static::$base_url.'permission/'.$edit_obj->id);
+			return \Response::redirect(static::$base_url.'permission/'.$edit_obj->id.'/sync/1');
 		}
 
 		// assign
