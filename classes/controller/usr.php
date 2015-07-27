@@ -204,10 +204,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 				)
 			);
 		$result = array();
-		$index = 0;
 		foreach ($response as $row) {
-//			$row[0] = $index;
-			$index++;
 			$result[] = $row;
 		}
 		echo $this->response($result, 200); die();
