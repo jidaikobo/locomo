@@ -179,6 +179,10 @@ class Controller_Usr extends \Locomo\Controller_Base
 
 		switch ($gid)
 		{
+			// all users
+			case '':
+				$where = array(array('usergroup.id', 'is not', null));
+				break;
 			// guest users - return nothing
 			case 0:
 				$where = array(array('usergroup.id', '=', 0));
@@ -201,10 +205,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 				)
 			);
 		$result = array();
-		$index = 0;
 		foreach ($response as $row) {
-//			$row[0] = $index;
-			$index++;
 			$result[] = $row;
 		}
 		echo $this->response($result, 200); die();
