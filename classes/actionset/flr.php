@@ -136,6 +136,10 @@ class Actionset_Flr extends \Actionset
 				array("\Controller_Flr_Dir/create/".$obj->id, '<!--ディレクトリ-->作成'),
 			);
 			$urls[] = array("\Controller_Flr_Dir/edit/".$obj->id, '編集');
+			if ($obj->depth <= 1)
+			{
+				$urls[] = array("\Controller_Flr_Dir/permission/".$obj->id, '権限設定');
+			}
 		}
 		$retvals = array(
 			'realm'        => 'base',

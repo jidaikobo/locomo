@@ -116,7 +116,7 @@ class Controller_Flr_Dir extends Controller_Flr
 			// ディレクトリ名称変更の場合
 			$prev_name = $obj->name;
 			$new_name = \Input::post('name');
-			$parent = LOCOMOFLRUPLOADPATH.trim(dirname($obj->path), DS).DS;
+			$parent = LOCOMOFLRUPLOADPATH.rtrim(dirname($obj->path), DS).DS;
 			$post_parent = LOCOMOFLRUPLOADPATH.rtrim(\Input::post('parent', DS), DS).DS;
 
 			// path
