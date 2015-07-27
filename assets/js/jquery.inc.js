@@ -1014,7 +1014,7 @@ $('.lcm_multiple_select').each(function(){
 	$(this).find(':button').click(function(e){
 		e = e ? e : event;
 		$from = $(this).hasClass('add_item') ? $select : $selected;
-		to = $selects.not($from);
+		$to = $selects.not($from);
 		lcm_multiple_select($from, $to, hidden_items, $selected);
 	});
 	$selects.dblclick(function(){
@@ -1029,13 +1029,11 @@ function lcm_multiple_select($from, $to, hidden_items, $selected){
 	var vals, v, item;
 	vals = $from.val();
 	if ( vals == "" || !vals) return;
-	
 	//相手のセレクトボックスに移動
 	for(var i=0, len = vals.length; i < len; i++){
 		v = vals[i];
 		item = $from.find('option[value='+v+']');
 		item.appendTo($to).attr('selected',false);
-		
 		if(typeof hidden_items == 'object'){//この判定は、スケジューラ用の措置がなくなれば不要
 			change_hidden_inputs($from, hidden_items, v);
 		}
@@ -1078,30 +1076,33 @@ function make_hidden_form_items(hidden_items, $selected){
 /*=== グループ絞り込み ===*/
 var base_uri = $('body').data('uri');
 function lcm_select_narrow_down(group_id, uri, $select, $selected){
-	var now_items, selected_items, label_item, name, id;
-	label_item = select.find('option[value=""]');//valueが空のものをラベルとみなす？
-	now_items = new Object();
-	if($selected[0]){
-		selected_items = $selected.find('option');
-		for(var i = 0, len = selected_items.length; i < len; i++){
-			now_items[selected_items[i].value] = 1;
+	var $label_item, $selected_items, now_items, name, id;
+	$label_item = $select.find('option[value=""]')[0] ? $select.find('option[value=""]') : $();//valueが空のものをラベルとみなす。ひとまず？
+	if(!!$selected){ // 選択済みのものがある場合(multiple_select_narrow_down)
+		$selected_items = $selected.find('option');
+		now_items = new Object();
+		for(var i = 0, len = $selected_items.length; i < len; i++){
+			now_items[$selected_items[i].value] = 1;
 		};
 	}
-	
 	$.ajax({
 		url: uri,
 		type: 'post',
 		data: 'gid=' + group_id,
 		success: function(res) {
-			var exists = JSON.parse(res);
+			var exists = JSON.parse(res||"null");
 			select_items = '';
 			for(var i in exists) {
-				if ($selected && now_items[exists[i]['id']]) continue;
-				name = (exists[i]['display_name']!=null) ? exists[i]['display_name'] : exists[i]['item_name'];
+				//scdl/reserveはuser:idとbuilding:item_idの２通りで管理している。どうしたものか
+				//ココアとで整理
+				if ($(now_items)[0] && $(now_items[exists[i]['id']])[0] ) continue;
+				if ($(now_items)[0] && $(now_items[exists[i]['item_id']])[0] ) continue;
+				
 				id = (exists[i]['item_id']!=null) ? exists[i]['item_id'] : exists[i]['id'];
+				name = (exists[i]['display_name']!=null) ? exists[i]['display_name'] : exists[i]['item_name'];
 				select_items += '<option value="'+id+'">'+name+'</option>';
 			}
-			$select.html(select_items).prepend(label_item);
+			$select.html(select_items).prepend($label_item);
 		}
 	});
 }
@@ -1121,10 +1122,10 @@ $('.select_narrow_down').each(function(){
 $('.multiple_select_narrow_down').each(function(){
 	var uri, $selects, $select, $seleced; 
 	uri = base_uri;
-	uri += $(this).data['uri'] ? $(this).data['uri'] : 'usr/user_list.json';
-	$selects  = $(this).nextAll('.lcm_multiple_select').first().find('select');
-	$select   = selects.eq(1);
-	$selected = selects.eq(0);
+	uri += $(this).data('uri') ? $(this).data('uri') : 'usr/user_list.json';
+	$selects  = $('#'+$(this).data('targetId')).find('select');
+	$select   = $selects.eq(1);
+	$selected = $selects.eq(0);
 	this.onchange = function(){
 		lcm_select_narrow_down($(this).val(), uri, $select, $selected);
 	};
