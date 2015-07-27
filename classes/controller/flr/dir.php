@@ -218,11 +218,17 @@ class Controller_Flr_Dir extends Controller_Flr
 			// 理由はよくわからない :-(
 			\Controller_Flr_Sync::sync();
 
-			// syncしているので、取得し直す
-			$obj = \Model_Flr::find('first', array('where' => array(array('path', $obj->path))));
-
 			// 通常の編集画面へ
-			\Response::redirect(static::$current_url.$obj->id);
+			if ($obj)
+			{
+				// syncしているので、取得し直す
+				$obj = \Model_Flr::find('first', array('where' => array(array('path', $obj->path))));
+				\Response::redirect(static::$current_url.$obj->id);
+			}
+			else
+			{
+			\Response::redirect(\Uri::create('flr/index_files/'));
+			}
 		}
 
 		// depth
