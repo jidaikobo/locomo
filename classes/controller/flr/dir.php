@@ -192,6 +192,11 @@ class Controller_Flr_Dir extends Controller_Flr
 		$this->model_name = '\\Model_Flr';
 		$edit_obj = parent::edit($id, $is_redirect = false);
 
+		// 編集を終え、名称変更やフォルダ移動を行っていた場合
+		
+
+
+
 		// 編集を終えたらとりあえずパーミッションに遷移する。そこではsyncも行う
 		if (\Input::post() && $edit_obj)
 		{
