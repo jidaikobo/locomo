@@ -109,25 +109,30 @@ class Controller_Flr_Dir extends Controller_Flr
 			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
-		// ディレクトリ名称変更の場合 - ルートディレクトリは名称変更の対象外
+		// 保存前にファイルに対して物理的変化（改名や移動）を適用
+		// いずれもルートディレクトリは対象外
 		if (\Input::post() && $obj->path != '/')
 		{
+			// ディレクトリ名称変更の場合
 			$prev_name = $obj->name;
 			$new_name = \Input::post('name');
 			$parent = LOCOMOFLRUPLOADPATH.dirname(rtrim($obj->path, DS)).DS;
+			$post_parent = LOCOMOFLRUPLOADPATH.rtrim(\Input::post('parent', DS), DS).DS;
+
+			// path
+			$prev  = \Model_Flr::enc_url($parent.$prev_name);
+			$new   = \Model_Flr::enc_url($parent.$new_name);
+			$moved = \Model_Flr::enc_url($post_parent.$new_name);
 
 			// rename
 			if ($prev_name != $new_name)
 			{
-				$prev = \Model_Flr::enc_url($parent.$prev_name);
-				$new  = \Model_Flr::enc_url($parent.$new_name);
-
 				// unicode normalized issue
 				// 濁音付き文字など、同じ文字を別物と判定することがあるが、有効手段がない。
 				// \Normalizerクラスがあればよいが、かならずしも存在しないので。
 				if (file_exists($new))
 				{
-					\Session::set_flash('error', "同じ階層に同じ名前のファイル／ディレクトリが既に存在します。");
+					\Session::set_flash('error', "同じ階層に同じ名前のディレクトリが既に存在します。");
 					\Response::redirect(static::$current_url.$obj->id);
 				}
 
@@ -136,6 +141,7 @@ class Controller_Flr_Dir extends Controller_Flr
 				try
 				{
 					$rename = \File::rename_dir($prev, $new);
+					\Session::set_flash('success', "ディレクトリの名称を変更しました。");
 				} catch (\Fuel\Core\PhpErrorException $e) {
 					Controller_Flr_Sync::sync();
 					\Session::set_flash('error', "データベースとディレクトリの状況に矛盾が見つかったので、強制同期をかけました。");
@@ -147,6 +153,36 @@ class Controller_Flr_Dir extends Controller_Flr
 				if( ! $rename)
 				{
 					\Session::set_flash('error', "ディレクトリのリネームに失敗しました。");
+					\Response::redirect(static::$current_url.$obj->id);
+				}
+			}
+
+			// フォルダ移動
+			if ($new != $moved)
+			{
+				// 移動先に同名のフォルダがある場合
+				if (file_exists($moved))
+				{
+					\Session::set_flash('error', "移動先に同じ名前のディレクトリが既に存在します。");
+					\Response::redirect(static::$current_url.$obj->id);
+				}
+
+				// try to move
+				try
+				{
+					$move = \File::rename_dir($new, $moved);
+					\Session::set_flash('success', "ディレクトリを移動しました。");
+				} catch (\Fuel\Core\PhpErrorException $e) {
+					Controller_Flr_Sync::sync();
+					\Session::set_flash('error', "データベースとディレクトリの状況に矛盾が見つかったので、強制同期をかけました。");
+					\Response::redirect(static::$current_url.$obj->id);
+				}
+
+				// failed to move
+				// その他の理由による失敗
+				if( ! $move)
+				{
+					\Session::set_flash('error', "ディレクトリの移動に失敗しました。");
 					\Response::redirect(static::$current_url.$obj->id);
 				}
 			}

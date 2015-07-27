@@ -147,7 +147,8 @@ class Model_Flr extends \Model_Base
 
 		// modify path
 		// パスの確定
-		if ( ! $this->path && \Input::post('parent'))
+//		if ( ! $this->path && \Input::post('parent'))
+		if (\Input::post('parent'))
 		{
 			// action_create_dir
 			$this->path = \Input::post('parent', DS).\Input::post('name');
