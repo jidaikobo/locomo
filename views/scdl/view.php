@@ -95,7 +95,7 @@
 </tr>
 <?php } ?>
 
-<?php if($detail->purpose_kb && !$detail->private_kb): ?>
+<?php if($locomo['controller']['name'] === "\Reserve\Controller_Reserve" && $detail->purpose_kb && !$detail->private_kb): //施設選択の時 ?>
 <tr>
 	<th class="min">施設使用目的</th>
 	<td><?php echo $detail->purpose_kb; ?></td>
