@@ -106,6 +106,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$title = self::$nicename . '新規作成';
 		}
 		$content = \Presenter::forge(static::$dir.'edit');
+
 		$form = $content::form($obj);
 
 		$overlap_result = array();
@@ -122,7 +123,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$emon  = date('m', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("end_date")));
 			$eday  = date('d', strtotime($this->_someedit_date ? $this->_someedit_date : \Input::post("end_date")));
 			$shour = $smin = $ehour = $emin = 0;
-
 			if (preg_match("/:/", \Input::post("start_time"))) {
 				$shour = explode(":", \Input::post("start_time"))[0];
 				$smin  = explode(":", \Input::post("start_time"))[1];
@@ -166,6 +166,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					if (!\Input::post($v)) {
 						$obj->__set($v, 0);
 					}
+				}
+
+				// 繰り返し区分が「毎月」の場合、開始日を月の一日とし、終了日を末日とする
+				if (\Input::post('repeat_kb') == 4 && \Input::post('start_date') && \Input::post('end_date'))
+				{
+					$obj->__set('start_date', date('Y-m-01', strtotime(\Input::post('start_date'))));
+					$obj->__set('end_date',   date('Y-m-t',  strtotime(\Input::post('end_date'))));
 				}
 
 				//save

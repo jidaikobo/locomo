@@ -9,16 +9,17 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form($factory = 'schedules', $obj = null)
+	public static function form($obj = null)
 	{
-		$form = parent::form($factory, $obj);
+		$form = parent::form($obj);
 
 //		$usergroups = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true),array('is_for_acl', false))));
 		$usergroups = \Model_Usrgrp_Custom::find_options();
 
 		$form->field('group_detail')->set_options($usergroups);
 
-		$form->field('kind_flg')->set_value(\Model_Scdl::$_kind_flg);
+		$model = \Request::main()->controller == 'Controller_Scdl' ? '\Model_Scdl' : '\Reserve\Model_Reserve' ; 
+		$form->field('kind_flg')->set_value($model::$_kind_flg);
 
 		// 作成者
 		// テンポラル対応
