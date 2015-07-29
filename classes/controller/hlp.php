@@ -110,9 +110,9 @@ class Controller_Hlp extends \Controller_Base
 		if ($obj)
 		{
 //			$add.= html_tag('h2', array(), '加筆されたヘルプ') ;
-			if (\Input::is_ajax() && \Auth::has_access('\\Controller_Hlp/edit'))
+			if (/*\Input::is_ajax() &&*/ \Auth::has_access('\\Controller_Hlp/edit'))
 			{
-				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), '編集する',array('class'=>'edit_link'));
+				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), 'ヘルプを加筆・編集する',array('class'=>'edit_link'));
 			}
 			$add.= $obj->body ? html_tag('div', array('class' => 'add_body'), $obj->body) : '' ;
 		}
@@ -120,11 +120,11 @@ class Controller_Hlp extends \Controller_Base
 		{
 			if (\Input::is_ajax() && \Auth::has_access('\\Help\\Controller_Hlp/edit'))
 			{
-				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), 'ヘルプを加筆する',array('class'=>'edit_link'));
+				$add.= \Html::anchor(\Uri::create('/hlp/edit?action='.urlencode($controller_safe)), 'ヘルプを加筆・編集する',array('class'=>'edit_link'));
 			}
 		}
 		$help = $add."\n".$help ;
-		$help.= $action ? \Html::anchor(\Uri::create('/hlp/view?action='.$controller_safe), \Util::get_locomo($controller_original, 'nicename').'のヘルプ一覧', array('style'=>'display: block; border-top: 1px solid #aaa; padding-top: .5em;margin: 1em 0;')) : '' ;
+		$help.= $action ? \Html::anchor(\Uri::create('/hlp/view?action='.$controller_safe), \Util::get_locomo($controller_original, 'nicename').'のヘルプ一覧', array('class'=>'helpindex_link')) : '' ;
 
 		$help = html_tag('div', array('class' => 'txt'), \Markdown::parse($help));
 

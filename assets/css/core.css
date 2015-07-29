@@ -2194,6 +2194,8 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 #help_window div {
 	display: block;
 }
+
+
 .modal_content {
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
@@ -2227,11 +2229,23 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 #help_window .modal_content a:hover {
 	text-decoration: none;
 }
-#help_window .edit_link {
+#help_window .edit_link,
+.contents .txt .edit_link {
 	display: block;
 	position: relative;
 	text-align: right;
 }
+.contents .txt .edit_link {
+	z-index: 0;
+	opacity: 1;
+}
+#help_window .helpindex_link {
+	display: block;
+	border-top: 1px solid #aaa;
+	padding-top: .5em;
+	margin: 1em 0;
+}
+
 .lcm_close_window {
 	position: absolute;
 	top: .1em;
