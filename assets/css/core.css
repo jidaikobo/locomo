@@ -1729,10 +1729,11 @@ table.calendar .events {
 	font-size: 85%;
 }
 
-/* あとでkesu */
-.icon_small {
-	font-size: .6em;
+.calendar.week tbody th,
+.schedule_day.graph tbody th {
+	background-color: #eaf0f5;
 }
+
 .widget .schedule_day.detail th,
 .widget .schedule_day.detail td {
 	padding: .125em;
