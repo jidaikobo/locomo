@@ -18,7 +18,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 60,
 				'class' => 'varchar',
 			),
 			'validation' => 
@@ -37,7 +37,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 60,
 				'class' => 'varchar',
 			),
 			'validation' => 
@@ -56,7 +56,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 60,
 				'class' => 'varchar',
 			),
 			'default' => ''
@@ -68,7 +68,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 60,
 				'class' => 'varchar',
 			),
 			'default' => ''
@@ -80,7 +80,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 20,
 				'class' => 'varchar',
 			),
 			'default' => ''
@@ -92,7 +92,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 20,
 				'class' => 'varchar',
 			),
 			'default' => ''
@@ -104,7 +104,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 40,
 				'class' => 'varchar',
 			),
 			'default' => ''
@@ -116,7 +116,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 20,
 				'class' => 'varchar',
 			),
 			'default' => ''
@@ -153,7 +153,7 @@ class Model_Adrs extends \Model_Base_Soft
 			'form' => 
 			array (
 				'type' => 'text',
-				'size' => 30,
+				'size' => 60,
 				'class' => 'varchar',
 			),
 			'default' => ''
