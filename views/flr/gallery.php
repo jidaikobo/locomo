@@ -3,7 +3,7 @@
 <script>
 $(window).on('load',function(){
 var parentbox = $('.lcm_flr_slideblock');
-
+if(parentbox.find('div').length == 1) return false;
 sn = setTimeout( function() { requestAnimationFrame(slides)}, 10000 );
 
 var slides = function(){
@@ -12,7 +12,7 @@ var slides = function(){
 	var nextpict = nowpict.next('div')[0] ? nowpict.next('div') : parentbox.find('div.first');
 	nowpict.fadeTo('slow','0').removeClass('current');
 	nextpict.fadeTo('slow',1).addClass('current');
-	sn = setTimeout( function() { requestAnimationFrame(slides)}, 10000 );
+	sn = setTimeout( function() { requestAnimationFrame(slides)}, 10000);
 }
 
 window.requestAnimationFrame = (function(){

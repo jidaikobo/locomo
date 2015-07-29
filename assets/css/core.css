@@ -2191,6 +2191,9 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 #help_window {
 	font-size: 1.125em;
  }
+#help_window div {
+	display: block;
+}
 .modal_content {
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
