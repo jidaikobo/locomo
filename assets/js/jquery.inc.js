@@ -54,8 +54,8 @@ $(function() {
 });
 
 
-//チェックボックス全選択、
-//.checkbox_binded, .check_all, .uncheck_all, tr.has_checkbox
+// チェックボックス全選択、
+// input.checkbox_binded, .check_all, .uncheck_all, tr.has_checkbox
 $(function() {
 	var $checkboxes = $('.checkbox_binded');
 	$('.check_all').on('click', function(e) {
@@ -131,7 +131,10 @@ function show_help(e){
 			}
 			return;
 		} else {
-			$('#help_window').show()
+			$('#help_window').show();
+/*			setTimeout(function(){
+			console.log($('#help_txt').find('.txt'));
+			},0);*/
 		}
 		setTimeout(function(){//アクセスキーの場合、キーを設定した要素にフォーカスするのでその後に実行
 			$('#help_title_anchor').focus();
