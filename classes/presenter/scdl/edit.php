@@ -34,7 +34,7 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 		$form->field('is_visible')->set_value(1);
 
 		// 初期値
-		if ($obj == null) {
+		if (\Request::main()->action == 'create') {
 			// 自分を選択する
 			$form->field('user_id')->set_value(\Auth::get('id'));
 			// 重要度
