@@ -359,13 +359,13 @@ function change_repeat_kb_area() {
 	}
 
 	//区分選択により、期間の入力欄の種類を変更 //入力が未対応なのでコメントアウト
-/*	if(repeat_kb < 4){
+	if(repeat_kb < 4){
 		$('#form_start_date, #form_end_date').removeClass('month');
 		//入力欄の値もyy-mmに変更したい。datepicker上の値は"1日"が補完される
 	}else{
 		$('#form_start_date, #form_end_date').addClass('month');
 	}
-*/
+
 }
 
 //終日選択反映
