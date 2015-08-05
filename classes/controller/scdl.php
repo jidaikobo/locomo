@@ -266,9 +266,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			endif;
 		}
 		
-		// $cuurent_uidが$default_uidと異なれば、通常のユーザであるか確認して、初期値として足す
+		// スケジューラでは$cuurent_uidが$default_uidと異なれば、通常のユーザであるか確認して、初期値として足す
 		// コピーの際は除外
-		if(!\Input::get("from"))
+		if($model::$_kind_name=="scdl" && !\Input::get("from"))
 		{
 			$cuurent_uid = \Auth::get('id');
 			if ( $cuurent_uid >= 1 && $default_uid != $cuurent_uid)
