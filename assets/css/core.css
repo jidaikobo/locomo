@@ -2442,9 +2442,7 @@ span.sr_add.bracket:after {
 .yearpicker .ui-datepicker-calendar {
 	display: none;
 }
-.yearpicker .ui-datepicker-month,
-.yearpicker .ui-datepicker-prev,
-.yearpicker .ui-datepicker-next {
+.yearpicker .ui-datepicker-month {
 	display: none;
 }
 .yearpicker.ui-datepicker {

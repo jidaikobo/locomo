@@ -266,14 +266,17 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			endif;
 		}
 		
-		// $default_uidが$cuurent_uidと異なれば、通常のユーザであるか確認して、初期値として足す
-		$cuurent_uid = \Auth::get('id');
-		if ( $cuurent_uid >= 1 && $default_uid != $cuurent_uid)
+		// $cuurent_uidが$default_uidと異なれば、通常のユーザであるか確認して、初期値として足す
+		// コピーの際は除外
+		if(!\Input::get("from"))
 		{
-			// $select_user_listの配列に追加
-			$select_user_list[$cuurent_uid] = \Model_Usr::find($cuurent_uid);
+			$cuurent_uid = \Auth::get('id');
+			if ( $cuurent_uid >= 1 && $default_uid != $cuurent_uid)
+			{
+				// $select_user_listの配列に追加
+				$select_user_list[$cuurent_uid] = \Model_Usr::find($cuurent_uid);
+			}
 		}
-
 		
 		$this->template->content->set("select_user_list", $select_user_list);
 		if (!$id && \Session::get($model::$_kind_name . "narrow_ugid") && $model::$_kind_name=="scdl" && count($select_user_list) == 0) {

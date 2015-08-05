@@ -1191,17 +1191,20 @@ $.datepicker.setDefaults({
 	showButtonPanel  : true,
 	beforeShow: function(input, inst) {
 		var currentDate = $(this).val();
+		var dateFormat = 'yy-mm-dd';
+		var stepMonths = 1;
 		if(!$(input).hasClass('month') && !$(input).hasClass('year')){
 			$(inst.dpDiv).removeClass('monthpicker yearpicker');
-			var dateFormat = 'yy-mm-dd';
 		}else if($(input).hasClass('month')){ // 年月選択
 			$(inst.dpDiv).removeClass('yearpicker').addClass('monthpicker');
-			var dateFormat = 'yy-mm'
+			var dateFormat = 'yy-mm';
 		}else{
 			$(inst.dpDiv).removeClass('monthpicker').addClass('yearpicker');
-			var dateFormat = 'yy'
+			var dateFormat = 'yy';
+			var stepMonths = 12;
 		}
 		$(this).datepicker('option', 'dateFormat', dateFormat);
+		$(this).datepicker('option', 'stepMonths', stepMonths);
 		$(this).datepicker('option', 'defaultDate', new Date(currentDate));
 		if(!currentDate) return;
 		$(this).datepicker('setDate', new Date(currentDate));
@@ -1215,11 +1218,16 @@ $.datepicker.setDefaults({
 			$(this).val(year);
 		}
 	},
-	onClose: function(dateText, inst, input) {
-	//	if(!$(inst.input[0]).hasClass('month')) return;
-	//	var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-	//	var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-	//	$(this).datepicker('setDate', new Date(year, month, 1));
+	onClose: function(dateText, inst) {
+		if(!$(this).hasClass('month') && !$(this).hasClass('month')) return;
+		var year = inst.selectedYear;
+		if($(this).hasClass('month')){
+			var month = ("0"+(inst.selectedMonth+1)).slice(-2);//1ずれるので？補正
+			$(this).val(year+'-'+month);
+		}else{
+			$(this).val(year);
+		}
+//		$(this).datepicker('setDate', new Date(year, month, 1));
 	},
 });
 
