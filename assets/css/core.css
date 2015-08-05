@@ -2438,10 +2438,23 @@ span.sr_add.bracket:after {
 .ui-datepicker-current {
 	opacity: 1 !important;
 }
-.monthpicker .ui-datepicker-calendar {
+.monthpicker .ui-datepicker-calendar,
+.yearpicker .ui-datepicker-calendar {
 	display: none;
 }
-#ui-datepicker-div.monthpicker .ui-datepicker-buttonpane {
+.yearpicker .ui-datepicker-month,
+.yearpicker .ui-datepicker-prev,
+.yearpicker .ui-datepicker-next {
+	display: none;
+}
+.yearpicker.ui-datepicker {
+	width: 14em;
+}
+.yearpicker.ui-datepicker .ui-datepicker-title {
+	margin: 0;
+}
+#ui-datepicker-div.monthpicker .ui-datepicker-buttonpane,
+#ui-datepicker-div.yearpicker .ui-datepicker-buttonpane {
 	border: none;
 	margin-top: 0;
 }
@@ -2464,6 +2477,12 @@ body .ui-resizable-handle {
 	padding: 0 8px 0 0!important;
 }
 
+input.month {
+	width: 5em;
+}
+input.year {
+	width: 3.5em;
+}
 /*=== for NetReader ===*/
 .netreader .ui-tooltip {
 	display: none !important;

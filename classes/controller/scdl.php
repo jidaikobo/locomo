@@ -168,11 +168,17 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 				}
 
-				// 繰り返し区分が「毎月」の場合、開始日を月の一日とし、終了日を末日とする
-				if (\Input::post('repeat_kb') == 4 && \Input::post('start_date') && \Input::post('end_date'))
+				// 繰り返し区分が「毎月」「毎月(曜日指定)」の場合、開始日を月の一日とし、終了日を末日とする
+				if (\Input::post('repeat_kb') == 4 || \Input::post('repeat_kb') == 6 && \Input::post('start_date') && \Input::post('end_date'))
 				{
 					$obj->__set('start_date', date('Y-m-01', strtotime(\Input::post('start_date'))));
 					$obj->__set('end_date',   date('Y-m-t',  strtotime(\Input::post('end_date'))));
+				}
+				// 繰り返し区分が「毎年」の場合、開始日を年始日、終了日を年末日とする
+				elseif (\Input::post('repeat_kb') == 5 && \Input::post('start_date') && \Input::post('end_date'))
+				{
+					$obj->__set('start_date', date('Y-01-01', strtotime(\Input::post('start_date'))));
+					$obj->__set('end_date',   date('Y-12-31',  strtotime(\Input::post('end_date'))));
 				}
 
 				//save

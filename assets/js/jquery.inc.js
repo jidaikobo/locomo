@@ -1168,13 +1168,13 @@ $('input.date , input[type=date]').datepicker({dateFormat: 'yy-mm-dd',});
 
 //開始日と終了日
 var jslcm_dates = $( '#form_start_date, #form_end_date' );
-jslcm_dates.datepicker('option', 'onSelect', function( selectedDate ) {
-		var option = this.id == 'form_start_date' ? 'minDate' : 'maxDate',
+//日付選択時、繰り返しなしの区分での終了日補完
+$( '#form_start_date, #form_end_date' ).datepicker('option', 'onSelect', function( selectedDate ) {
+//		var option = this.id == 'form_start_date' ? 'minDate' : 'maxDate',
 		inst = $(this).data('datepicker'),
 		date = $.datepicker.parseDate(inst.settings.dateFormat || $.datepicker._defaults.dateFormat,
 			selectedDate,inst.settings );
-		jslcm_dates.not(this).datepicker('option', option, date);
-		//繰り返しなしの場合は開始日を入力したら自動的に終了日に同じ値が入るようにする。終了日は任意変更可。
+//		jslcm_dates.not(this).datepicker('option', option, date);
 		if($("#form_repeat_kb")[0] && $("#form_repeat_kb").val() == 0){
 			set_startdate_to_enddate(this);
 		}
@@ -1184,7 +1184,6 @@ jslcm_dates.datepicker('option', 'onSelect', function( selectedDate ) {
 // デフォルトの設定
 $.datepicker.setDefaults({
 	firstDay         : 1,
-	dateFormat       : 'yy-mm-dd',
 	autoSize         : true,
 	changeMonth      : true,
 	changeYear       : true,
@@ -1192,25 +1191,32 @@ $.datepicker.setDefaults({
 	showButtonPanel  : true,
 	beforeShow: function(input, inst) {
 		var currentDate = $(this).val();
-		if(!$(input).hasClass('month')){
-			$(inst.dpDiv).removeClass('monthpicker');
+		if(!$(input).hasClass('month') && !$(input).hasClass('year')){
+			$(inst.dpDiv).removeClass('monthpicker yearpicker');
 			var dateFormat = 'yy-mm-dd';
-		}else{ // 年月選択
-			$(inst.dpDiv).addClass('monthpicker');
+		}else if($(input).hasClass('month')){ // 年月選択
+			$(inst.dpDiv).removeClass('yearpicker').addClass('monthpicker');
 			var dateFormat = 'yy-mm'
+		}else{
+			$(inst.dpDiv).removeClass('monthpicker').addClass('yearpicker');
+			var dateFormat = 'yy'
 		}
 		$(this).datepicker('option', 'dateFormat', dateFormat);
 		$(this).datepicker('option', 'defaultDate', new Date(currentDate));
 		if(!currentDate) return;
 		$(this).datepicker('setDate', new Date(currentDate));
 	},
-	onChangeMonthYear: function(year, month,input){
-		if(!$(input.input[0]).hasClass('month')) return;//期間：月でないときはひとまずreturn
-		month = ("0"+month).slice(-2); 
-		$(this).val(year+'-'+month);
+	onChangeMonthYear: function(year, month){
+		if(!$(this).hasClass('month') && !$(this).hasClass('year')) return;
+		if($(this).hasClass('month')){
+			month = ("0"+month).slice(-2); 
+			$(this).val(year+'-'+month);
+		}else{
+			$(this).val(year);
+		}
 	},
 	onClose: function(dateText, inst, input) {
-	//	if(!$(inst.input[0]).hasClass('month')) return;//期間：月でないときはひとまずreturn
+	//	if(!$(inst.input[0]).hasClass('month')) return;
 	//	var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
 	//	var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
 	//	$(this).datepicker('setDate', new Date(year, month, 1));
@@ -1227,7 +1233,7 @@ if($('#form_start_date')[0] && $('#form_end_date')[0]){
 	});
 }
 function set_startdate_to_enddate(elm){
-	if(elm.id == 'form_start_date'){//このはんていそとでやるほうがよい？
+	if(elm.id == 'form_start_date'){//はんていそとでやるほうがよい？
 		$('#form_end_date').val($(elm).val());
 	}
 }
