@@ -168,8 +168,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 				}
 
+				// 繰り返し区分の開始日終了日補完
 				// 繰り返し区分が「毎月」「毎月(曜日指定)」の場合、開始日を月の一日とし、終了日を末日とする
-				if (\Input::post('repeat_kb') == 4 || \Input::post('repeat_kb') == 6 && \Input::post('start_date') && \Input::post('end_date'))
+				if ((\Input::post('repeat_kb') == 4 || \Input::post('repeat_kb') == 6) && \Input::post('start_date') && \Input::post('end_date'))
 				{
 					$obj->__set('start_date', date('Y-m-01', strtotime(\Input::post('start_date'))));
 					$obj->__set('end_date',   date('Y-m-t',  strtotime(\Input::post('end_date'))));
@@ -256,28 +257,32 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$select_building_list = $this->template->content->item->building;
 		}
 
-		// $select_user_listがあれば編集と見なし、$default_uidがあれば初期値として足す
-		$default_uid = \Input::get('member_id');
-		if (empty($select_user_list) && $default_uid)
+		//スケジューラでの選択済メンバー
+		if($model::$_kind_name=="scdl")
 		{
-			// $select_user_listの配列に追加
-			if(\Model_Usr::find(intval($default_uid))):
-				$select_user_list[$default_uid] = \Model_Usr::find($default_uid);
-			endif;
-		}
-		
-		// スケジューラでは$cuurent_uidが$default_uidと異なれば、通常のユーザであるか確認して、初期値として足す
-		// コピーの際は除外
-		if($model::$_kind_name=="scdl" && !\Input::get("from"))
-		{
-			$cuurent_uid = \Auth::get('id');
-			if ( $cuurent_uid >= 1 && $default_uid != $cuurent_uid)
+		// $select_user_listがなければ新規作成と見なす
+			$default_uid = \Input::get('member_id');
+			// $default_uidがあれば初期値として足す
+			if (empty($select_user_list))
 			{
-				// $select_user_listの配列に追加
-				$select_user_list[$cuurent_uid] = \Model_Usr::find($cuurent_uid);
+			 if($default_uid)
+				{
+					if(\Model_Usr::find(intval($default_uid))):
+						$select_user_list[$default_uid] = \Model_Usr::find($default_uid);
+					endif;
+				}
+			
+				// $cuurent_uidが$default_uidと異なれば、通常のユーザであるか確認して、初期値として足す。コピー時は除外
+				if(!\Input::get("from"))
+				{
+					$cuurent_uid = \Auth::get('id');
+					if ( $cuurent_uid >= 1 && $default_uid != $cuurent_uid)
+					{
+						$select_user_list[$cuurent_uid] = \Model_Usr::find($cuurent_uid);
+					}
+				}
 			}
 		}
-		
 		$this->template->content->set("select_user_list", $select_user_list);
 		if (!$id && \Session::get($model::$_kind_name . "narrow_ugid") && $model::$_kind_name=="scdl" && count($select_user_list) == 0) {
 			$non_selected_user_list = \Model_Usr::find('all',
@@ -1755,17 +1760,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		if (\Input::post("repeat_kb") == 0) {
 			$start = strtotime(\Input::post("start_date") . " " . \Input::post("start_time"));
 			$end = strtotime(\Input::post("end_date") . " " . \Input::post("end_time"));
+
+
 			if ($start > $end) {
 				$this->_scdl_errors["start_time"] = "開始時間と終了時間の入力が不正です。";
 			} else if (\Input::post("start_date") == "" || \Input::post("end_date") == "") {
 				// 自動挿入しようかと思ったが、繰り返しなしの場合は全期間はおかしいのでエラーでとめておく
-				$this->_scdl_errors["start_date"] = "開始日付と終了日付を入力してください。";
+				// ？終了日が空の場合は、＝開始日の扱いで良い？
+				$this->_scdl_errors["start_date"] = "開始日と終了日を入力してください。";
 			}
 		} else {
 			if (\Input::post("start_time") >= \Input::post("end_time")) {
 				$this->_scdl_errors["start_time"] = "開始時間と終了時間の入力が不正です。";
 			} else if (\Input::post("start_date") >= \Input::post("end_date")) {
-				$this->_scdl_errors["start_date"] = "開始日付と終了日付の入力が不正です。";
+				$this->_scdl_errors["start_date"] = "開始日と終了日の入力が不正です。";
 			}
 		}
 		if (\Input::post("repeat_kb") == 4 

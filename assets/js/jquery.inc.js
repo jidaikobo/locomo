@@ -1164,8 +1164,24 @@ $(document).on('click', '.switch_mce', function(){
 
 // datepicker
 (function(){
-$('input.date , input[type=date]').datepicker({dateFormat: 'yy-mm-dd',});
 
+//複数のdateFormatを切り替えて使用している場合、yy-mm-dd形式以外の値が消えてしまうのを抑止する（エラーでの再表示時など）
+if($('#form_repeat_kb')[0]){
+	var $input = $('input.date , input[type=date]');
+	var input_val = new Object;
+	$input.each(function(index){
+		input_val[index] = $(this).val();
+	});
+	setTimeout(function($input, input_val){
+		$input.each(function(index){
+		if($(this).is(':hidden') || input_val[index] == "0000-00-00") return;
+			$(this).val(input_val[index]);
+		});
+	}, 0, $input, input_val);
+}
+
+
+$('input.date , input[type=date]').datepicker();
 //開始日と終了日
 var jslcm_dates = $( '#form_start_date, #form_end_date' );
 //日付選択時、繰り返しなしの区分での終了日補完

@@ -12,7 +12,7 @@
 		dayNames: ['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],
 		dayNamesShort: ['日','月','火','水','木','金','土'],
 		dayNamesMin: ['日','月','火','水','木','金','土'],
-		dateFormat: 'yyyy/mm/dd',
+		dateFormat: 'yyyy-mm-dd',
 		firstDay: 0,
 		prevText: '&#x3c;前', prevStatus: '',
 		prevJumpText: '&#x3c;&#x3c;', prevJumpStatus: '',
