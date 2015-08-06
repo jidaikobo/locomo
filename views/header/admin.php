@@ -27,6 +27,7 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 	<?php echo \Asset::css('admin.css'); ?>
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css">
 	<?php echo \Asset::css('../js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css'); ?>
+	<?php echo \Asset::css('../js/jquery.timepicker/jquery.timepicker.css'); ?>
 	<?php echo \Asset::render('css'); ?>
 
 
@@ -37,7 +38,8 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 	<?php echo \Asset::js('jquery.exresize/jquery.exresize.0.1.0.js'); ?>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/i18n/jquery.ui.datepicker-ja.js"></script>
 	<?php echo \Asset::js('jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js'); ?>
-	<?php echo \Asset::js('jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js'); ?>
+	<?php echo \Asset::js('jquery.timepicker/jquery.timepicker.js'); ?>
+	<?php  echo \Asset::js('jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js'); ?>
 	<?php echo \Asset::js('jquery-ui-touch-punch/jquery.ui.touch-punch.min.js'); ?>
 	<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
 	<?php echo \Asset::js('jquery-autoKana/jquery.autoKana.js'); ?>
