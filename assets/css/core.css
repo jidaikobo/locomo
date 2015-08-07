@@ -2474,15 +2474,7 @@ body .ui-resizable-handle {
 .ui-wrapper.resizable_textarea {
 	padding: 0 8px 0 0!important;
 }
-input.date {
-	width: 7em;
-}
-input.date.month {
-	width: 5em;
-}
-input.date.year {
-	width: 3.5em;
-}
+
 /*=== for NetReader ===*/
 .netreader .ui-tooltip {
 	display: none !important;

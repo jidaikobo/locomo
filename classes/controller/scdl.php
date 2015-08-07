@@ -1761,7 +1761,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$start = strtotime(\Input::post("start_date") . " " . \Input::post("start_time"));
 			$end = strtotime(\Input::post("end_date") . " " . \Input::post("end_time"));
 
-
 			if ($start > $end) {
 				$this->_scdl_errors["start_time"] = "開始時間と終了時間の入力が不正です。";
 			} else if (\Input::post("start_date") == "" || \Input::post("end_date") == "") {

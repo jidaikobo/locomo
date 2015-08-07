@@ -63,6 +63,11 @@ class Model_Scdl extends \Model_Base
 				'size' => 14,
 				'class' => 'date',
 			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\/-]+$/u"),
+				'max_length' => array(10),
+			),
 		),
 		'end_date' => 
 		array (
@@ -73,6 +78,11 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 14,
 				'class' => 'date',
+			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\/-]+$/u"),
+				'max_length' => array(10),
 			),
 		),
 		'start_time' => 
@@ -85,6 +95,11 @@ class Model_Scdl extends \Model_Base
 				'size' => 7,
 				'class' => 'time min15',
 			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\:]+$/u"),
+				'max_length' => array(5),
+			),
 		),
 		'end_time' => 
 		array (
@@ -95,6 +110,11 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 7,
 				'class' => 'time min15',
+			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\:]+$/u"),
+				'max_length' => array(5),
 			),
 			'default' => '21:00'
 		),
