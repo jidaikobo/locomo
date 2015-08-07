@@ -21,7 +21,7 @@ class Controller_Scffld extends \Controller_Base
 	public static function _init()
 	{
 		// only at development
-		if (\Fuel::$env != 'development')
+		if (\Fuel::$env == 'development')
 		{
 			// permission check
 			$arrs = array(
