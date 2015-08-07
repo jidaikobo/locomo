@@ -46,6 +46,7 @@
 	<th>対象施設：</th>
 	<td>
 		<?php $buildings = [];
+		ksort($detail_pop_data->building);
 		foreach ($detail_pop_data->building as $row) {
 			$buildings[] .= $row['item_name'];
 		}

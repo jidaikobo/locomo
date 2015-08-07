@@ -255,6 +255,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		} else {
 			$select_user_list = $this->template->content->item->user;
 			$select_building_list = $this->template->content->item->building;
+			ksort($select_building_list);
 		}
 
 		//スケジューラでの選択済メンバー

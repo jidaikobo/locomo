@@ -589,7 +589,7 @@ class Model_Scdl extends \Model_Base
 		$week = array('日', '月', '火', '水', '木', '金', '土');
 		$repeat_kbs = self::get_repeat_kbs($data->repeat_kb);
 		if($data->repeat_kb != 0) {
-			$print .= "<td></tr><tr><th>期間詳細：</th><td>";
+			$print .= "<td></tr><tr><th>期間：</th><td>";
 			$print .= "<p>" . $repeat_kbs[$data->repeat_kb];
 		}
 		$date_detail['display_repeat_kb'] = $repeat_kbs[$data->repeat_kb];
