@@ -1761,13 +1761,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$start = strtotime(\Input::post("start_date") . " " . \Input::post("start_time"));
 			$end = strtotime(\Input::post("end_date") . " " . \Input::post("end_time"));
 
-			if ($start > $end) {
+			if(strtotime(\Input::post("start_date")) > strtotime(\Input::post("end_date"))){
+				$this->_scdl_errors["start_date"] = "開始日と終了日の入力が不正です。";
+			} else if ($start > $end) {
 				$this->_scdl_errors["start_time"] = "開始時間と終了時間の入力が不正です。";
-			} else if (\Input::post("start_date") == "" || \Input::post("end_date") == "") {
+			}/* else if (\Input::post("start_date") == "" || \Input::post("end_date") == "") {
 				// 自動挿入しようかと思ったが、繰り返しなしの場合は全期間はおかしいのでエラーでとめておく
-				// ？終了日が空の場合は、＝開始日の扱いで良い？
 				$this->_scdl_errors["start_date"] = "開始日と終了日を入力してください。";
-			}
+			}*/
 		} else {
 			if (\Input::post("start_time") >= \Input::post("end_time")) {
 				$this->_scdl_errors["start_time"] = "開始時間と終了時間の入力が不正です。";
