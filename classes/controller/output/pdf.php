@@ -1,39 +1,8 @@
 <?php
 namespace Locomo;
-class Controller_Pdf extends \Controller_Base
-// class Controller_Pdf extends \Controller
+trait Controller_Output_Pdf
 {
 
-
-	/*
-	public static $locomo = array(
-		'show_at_menu' => true,
-		'order_at_menu' => 10,
-		'is_for_admin' => false,
-		'main_action' => 'index_admin',
-		'nicename' => 'PDF',
-	);
-	 */
-
-	public function before() {
-		parent::before();
-		\Package::load('pdf');
-
-		$this->pdf = \Pdf::forge();
-		$this->pdf->setting();
-
-		// $this->pdf = \Pdf::factory('fpdi')->init();
-		// define('PDF_TEMP_PATH', PKGPATH.'pdf/templates/');
-		define('PDF_TEMP_PATH', APPPATH.'/locomo/assets/pdftemplate/');
-
-		\Fuel\Core\Fuel::$profiling = false;
-	}
-
-	public function after($response)
-	{
-		// response object を返すと template が返るので pdf がレンダリングされない
-		exit();
-	}
 
 /* ==============================
  * 宛名印刷 単体 A4
@@ -958,5 +927,5 @@ class Controller_Pdf extends \Controller_Base
 
 	}
 
-}
 
+}
