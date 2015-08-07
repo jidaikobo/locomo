@@ -297,7 +297,7 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'select',
 				'class' => 'text',
-				'options' => array('賃室' => '賃室', '会議' => '会議')
+				'options' => array('貸室' => '貸室', '会議' => '会議')
 			),
 
 		),

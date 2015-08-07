@@ -371,4 +371,24 @@ class Actionset_Scdl extends \Actionset
 */
 		return array();
 	}
+
+	/**
+	 * actionset_adminindex
+	 */
+	public static function actionset_adminindex($controller, $obj = null, $id = null, $urls = array())
+	{
+		if (\Auth::is_admin())
+		{
+			$urls = array(array($controller.DS."/admin/index_admin/", '管理者向け一覧'));
+		}
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '管理者向け一覧',
+			'show_at_top'  => true,
+			'explanation'  => '管理者向けの一覧です。',
+			'order'        => 5
+		);
+		return $retvals;
+	}
 }
