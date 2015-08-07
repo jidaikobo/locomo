@@ -1135,6 +1135,16 @@ $('.multiple_select_narrow_down').each(function(){
 });
 
 
+/* スケジューラ一日詳細グラフ用 あとで分ける */
+if($('#schedule_graph')[0]){
+	(function(){
+		$('.lcm_tooltip_parent').on('click', function(){
+		var link = $('[data-jslcm-tooltip-id="'+$(this).data('jslcmTooltipId')+'"]').find('a').attr('href');
+		location.href = link;
+		});
+	})();
+}
+
 /* Tiny MCE  */
 tinymce.init({
 	mode : "none",

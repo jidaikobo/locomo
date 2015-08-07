@@ -595,7 +595,7 @@ class Model_Scdl extends \Model_Base
 			if ($data->allday_kb && $data->display_enddate=='') {
 				$print .= $data->display_startdate;
 			} else {
-				$print .= $data->display_startdate . ' ' . $data->display_starttime . " 〜 " . $data->display_enddate . " " . $data->display_endtime;
+				$print .= $data->display_startdate . " " . $data->display_starttime . " 〜 " . $data->display_enddate . " " . $data->display_endtime;
 			}
 		} else {
 			$print .= $data->target_year . "年" . $data->target_mon . "月" . $data->target_day . "日";

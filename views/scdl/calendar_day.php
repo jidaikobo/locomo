@@ -16,7 +16,7 @@
 	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>	
 	<h2 class="skip">タイムテーブル グラフ</h2>
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0): ?>
-	<table class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
+	<table id="schedule_graph" class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
 	<tbody>
 	<?php foreach ($schedule_data['member_list'] as $row): ?>
 			<tr>
@@ -34,7 +34,7 @@
 				foreach ($row as $member_rowdata):
 					if (!isset($member_rowdata['data'])) { continue; }
 					?>
-					<tr>
+					<tr class="bar">
 					<?php // 24時間をloop
 						$empty_cells = 0;
 						$filled_cells = 0;
@@ -63,16 +63,16 @@
 						//  空白セル
 						for ($i = 1; $i <= $empty_cells; $i++)
 						{
-							echo '<td class="bar"></td>';
+							echo '<td>&nbsp;</td>';
 						}
 
 						//  予定セル
-						echo '<td colspan="'.$filled_cells.'" class="active lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$tooltipid.'"></td>';
+						echo '<td colspan="'.$filled_cells.'" class="active lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$tooltipid.'">&nbsp;</td>';
 
 						//  空白セル
 						for ($i = 1, $cnt_rest = 24*4-$empty_cells-$filled_cells; $i <= $cnt_rest; $i++)
 						{
-							echo '<td class="bar"></td>';
+							echo '<td>&nbsp;</td>';
 						} ?>
 					</tr>
 				<?php endforeach;
@@ -86,7 +86,7 @@
 <?php if(!\Request::is_hmvc()): ?>
 	<h2 class="skip">タイムテーブル 一覧</h2>
 <?php endif; ?>
-	<table class="tbl datatable schedule_day detail lcm_focus" title="タイムテーブル 一覧">
+	<table id="schedule_detail" class="tbl datatable schedule_day detail lcm_focus" title="タイムテーブル 一覧">
 		<thead>
 		<tr>
 			<th class="time">
