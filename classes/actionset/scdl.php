@@ -387,7 +387,7 @@ class Actionset_Scdl extends \Actionset
 			'action_name'  => '管理者向け一覧',
 			'show_at_top'  => true,
 			'explanation'  => '管理者向けの一覧です。',
-			'order'        => 5
+			'order'        => 50
 		);
 		return $retvals;
 	}

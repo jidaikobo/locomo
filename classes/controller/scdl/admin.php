@@ -20,9 +20,12 @@ class Controller_Scdl_Admin extends \Locomo\Controller_Base
 	 */
 	public function action_index_admin()
 	{
+		$this->model_name = static::$controller == "\Controller_Scdl_Admin" ? '\Model_Scdl' : '\Reserve\Model_Reserve';
+		$model = $this->model_name;
+
 		\Model_Scdl::$_options = array(
 			'where' => array(
-				array('kind_flg', \Model_Scdl::$_kind_flg),
+				array('kind_flg', $model::$_kind_flg),
 			),
 			'order_by' => array('id' => 'desc')
 		);
@@ -52,13 +55,5 @@ class Controller_Scdl_Admin extends \Locomo\Controller_Base
 	public function action_index_all()
 	{
 		parent::index_all();
-	}
-
-	/**
-	 * action_view()
-	 */
-	public function action_view($id = null)
-	{
-		parent::view($id);
 	}
 }

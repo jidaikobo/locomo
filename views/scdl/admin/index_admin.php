@@ -35,14 +35,16 @@
 			<td class="min">
 				<div class="btn_group">
 					<?php
+					$ctrl = $locomo['controller']['name'] == '\Controller_Scdl_Admin' ? 'scdl' :'reserve/reserve' ;
+
 					if (\Auth::is_admin()):
-						echo Html::anchor('scdl/viewdetail/'.$item->id, '<span class="skip">'.'を</span>閲覧', array('class' => 'view'));
-						echo Html::anchor('scdl/edit/'.$item->id, '編集', array('class' => 'edit'));
+						echo Html::anchor($ctrl.'/viewdetail/'.$item->id, '<span class="skip">'.'を</span>閲覧', array('class' => 'view'));
+						echo Html::anchor($ctrl.'/edit/'.$item->id, '編集', array('class' => 'edit'));
 						if ($item->deleted_at):
-							echo Html::anchor('scdl/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
-							echo Html::anchor('scdl/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
+							echo Html::anchor($ctrl.'/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
+							echo Html::anchor($ctrl.'/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
 						else:
-							echo Html::anchor('scdl/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
+							echo Html::anchor($ctrl.'/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
 						endif;
 					endif;
 					?>
