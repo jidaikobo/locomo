@@ -21,24 +21,25 @@ class Controller_Scffld extends \Controller_Base
 	public static function _init()
 	{
 		// only at development
-		if (\Fuel::$env != 'development') throw new \Exception('scaffold is only worked under development environment.');
-
-		// permission check
-		$arrs = array(
-//			APPPATH.'classes/',
-			APPPATH.'migrations/',
-			APPPATH.'classes/controller/',
-			APPPATH.'classes/actionset/',
-			APPPATH.'classes/model/',
-			APPPATH.'classes/presenter/',
-			APPPATH.'views/',
-			APPPATH.'modules/',
-		);
-		foreach ($arrs as $arr)
+		if (\Fuel::$env != 'development')
 		{
-			if ('0777' !== \File::get_permissions($arr))
+			// permission check
+			$arrs = array(
+	//			APPPATH.'classes/',
+				APPPATH.'migrations/',
+				APPPATH.'classes/controller/',
+				APPPATH.'classes/actionset/',
+				APPPATH.'classes/model/',
+				APPPATH.'classes/presenter/',
+				APPPATH.'views/',
+				APPPATH.'modules/',
+			);
+			foreach ($arrs as $arr)
 			{
-				throw new \Exception($arr.'のパーミッションを確認してください。');
+				if ('0777' !== \File::get_permissions($arr))
+				{
+					throw new \Exception($arr.'のパーミッションを確認してください。');
+				}
 			}
 		}
 	}
