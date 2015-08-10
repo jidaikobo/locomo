@@ -379,7 +379,7 @@ class Actionset_Scdl extends \Actionset
 	{
 		if (\Auth::is_admin())
 		{
-			$urls = array(array($controller.DS."/admin/index_admin/", '管理者向け一覧'));
+			$urls = array(array($controller.DS."admin/index_admin/", '管理者向け一覧'));
 		}
 
 		$retvals = array(

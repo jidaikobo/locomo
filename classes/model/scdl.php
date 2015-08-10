@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Model_Scdl extends \Model_Base
+class Model_Scdl extends \Model_Base_Soft
 {
 //	use \Model_Traits_Wrkflw;
 
