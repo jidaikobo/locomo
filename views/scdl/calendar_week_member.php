@@ -37,16 +37,21 @@ $ugids = array();
 foreach($narrow_user_list as $v):
 	$ugids[$v->id] = true;
 endforeach;
-
  ?>
-<?php foreach($schedule_data['member_list'] as $row): ?>
-<?php if((\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') == null) ||
- 	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $row['model']->id) ||
- 	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$row['model']->id]))):
- //絞り込みのない時、uidがrow[model]idと一致する時、ugidで得られるユーザidに該当するとき。でも最終的には予定がない施設も表示されていてほしい？　要望によるかもしれないので、いったん今の状態で絞り込みが効いたものを作る ?>
-	<tr class="lcm_focus" title="<?php echo  $row['model']->display_name?>">
+<?php // foreach($schedule_data['member_list'] as $row): ?>
+
+<?php foreach($narrow_user_list as $row): ?>
+<?php // 絞り込みを反映
+	//if(\Session::get('show_empty_row'))
+if(isset($schedule_data['member_list'][$row->id])):
+	$each_row_data = $schedule_data['member_list'][$row->id];
+	if((\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') == null) ||
+	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $each_row_data['model']->id) ||
+	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$each_row_data['model']->id]))):
+?>
+	<tr class="lcm_focus" title="<?php echo  $each_row_data['model']->display_name?>">
 		<th>
-			<?php print $row['model']->display_name; ?>
+			<?php print $each_row_data['model']->display_name; ?>
 		</th>
 		<?php
 		foreach($schedule_data['schedules_list'] as $schedule_row):
@@ -63,7 +68,7 @@ endforeach;
 			$each_date_title_str.=  $schedule_row['day'].'日 '.$week_name[$schedule_row['week']].'曜日 ';
 			$each_date_title_str.= (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
 			$schedule_num = 0;
-			foreach($row as $member_rowdata):
+			foreach($each_row_data as $member_rowdata):
 				if (!isset($member_rowdata['data'])) continue;
 				if(isset($schedule_row['day'])):
 					foreach($schedule_row['data'] as $v1):
@@ -86,11 +91,11 @@ endforeach;
 					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
 				
-				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;member_id='.$row['model']->id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
+				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;member_id='.$each_row_data['model']->id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 			
 				<div class="events">
 					<?php
-					foreach ($row as $member_rowdata):
+					foreach ($each_row_data as $member_rowdata):
 						if (!isset($member_rowdata['data'])) continue;
 						if (isset($schedule_row['day'])):
 							foreach ($schedule_row['data'] as $v2):
@@ -137,6 +142,7 @@ endforeach;
 		</td>
 <?php	endforeach; ?>
 	</tr>
+<?php endif; ?>
 <?php endif; ?>
 <?php endforeach; ?>
 </tbody>

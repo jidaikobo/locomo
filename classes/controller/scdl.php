@@ -703,6 +703,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			\Session::set("scdl_display_time", \Input::get("scdl_display_time"));
 		}
 
+		if (\Input::get("show_empty_row", "") != "") {
+			\Session::set("show_empty_row", \Input::get("show_empty_row"));
+		}
+
+
 		// 初期表示 スケジューラのときだけメインユーザグループIDを見る
 		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
 		{
