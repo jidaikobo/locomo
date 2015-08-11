@@ -8,23 +8,31 @@
 
 <select class="schedule_narrow" id="narrow_user_id" name="narrow_user_list" title="ユーザー">
 	<option value="">-- ユーザー --
-	<?php foreach($narrow_user_list as $row) { ?>
+	<?php foreach($narrow_user_list as $row):?>
 		<option value="<?php print $row['id']; ?>" <?php if ($row['id'] == \Session::get($kind_name . "narrow_uid")) { print "selected"; } ?>><?php  print $row['display_name']; ?>
-	<?php } ?>
+	<?php endforeach; ?>
 </select>
 <input class="schedule_narrow button small primary" id="btn_user" type="button" value="絞り込み" onclick="javascript:location.href='?uid=' + $('#narrow_user_id').val() + '&ugid=' + $('#narrow_user_group_id').val()" />
 <input class="schedule_narrow button small" id="btn_user_reset" type="button" value="絞り込みを解除" onclick="javascript:location.href='?uid=&ugid='" />
 
 <?php 
 // 非表示のとき以外
-if (!(isset($day) && $day && $mode != "week")) {
-	if (\Session::get('scdl_display_time') == "1") { ?>
-<input type="button" class="schedule_narrow button small" value="時間表示をしない" id="scdl_time_button" />
-<?php } else { ?>
-<input type="button" class="schedule_narrow button small" value="時間表示をする" id="scdl_time_button" />
-<?php
-	}
-}
+if (!(isset($day) && $day && $mode != "week")):
+	if (\Session::get('scdl_display_time') == "1"):
+		echo '<input type="button" class="schedule_narrow button small" value="時間を表示" id="scdl_time_button">';
+	else:
+		echo '<input type="button" class="schedule_narrow button small" value="時間を非表示" id="scdl_time_button">';
+	endif;
+endif;
+?>
+<?php 
+if($mode == "week"):
+	if (\Session::get('view_empty_row') == "1"):
+		echo '&nbsp;<input type="button" class="schedule_narrow button small" value="予定のない列を非表示" id="scdl_time_button">';
+	else:
+		echo '&nbsp;<input type="button" class="schedule_narrow button small" value="予定のない列を表示" id="scdl_time_button">';
+	endif;
+endif;
 ?>
 </div><!-- /.narrow_user -->
 

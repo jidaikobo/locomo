@@ -31,7 +31,19 @@
 <?php endif; ?>
 <tbody>
 <?php $detail_pop_array = array(); ?>
+
+<?php 
+$ugids = array();
+foreach($narrow_user_list as $v):
+	$ugids[$v->id] = true;
+endforeach;
+
+ ?>
 <?php foreach($schedule_data['member_list'] as $row): ?>
+<?php if((\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') == null) ||
+ 	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $row['model']->id) ||
+ 	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$row['model']->id]))):
+ //絞り込みのない時、uidがrow[model]idと一致する時、ugidで得られるユーザidに該当するとき。でも最終的には予定がない施設も表示されていてほしい？　要望によるかもしれないので、いったん今の状態で絞り込みが効いたものを作る ?>
 	<tr class="lcm_focus" title="<?php echo  $row['model']->display_name?>">
 		<th>
 			<?php print $row['model']->display_name; ?>
@@ -125,6 +137,7 @@
 		</td>
 <?php	endforeach; ?>
 	</tr>
+<?php endif; ?>
 <?php endforeach; ?>
 </tbody>
 </table>

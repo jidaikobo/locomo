@@ -31,11 +31,20 @@
 <?php endif; ?>
 	<tbody>
 <?php $detail_pop_array = array(); ?>
+<?php 
+$bgids = array();
+foreach($narrow_building_list as $v):
+	$bgids[$v->item_id] = true;
+endforeach;
+?>
+ <?php $reserve_rows = array(); ?>
 <?php foreach($schedule_data['building_list'] as $row): ?>
-	<tr class="lcm_focus" title="<?php echo  $row['model']->item_name ?>">
-		<th>
-		<?php print $row['model']->item_name; ?>
-		</th>
+<?php if((\Session::get('reservenarrow_bid') == null && \Session::get('reservenarrow_bgid') == null) || // 絞り込み：なし
+ 	 (\Session::get('reservenarrow_bid') != null && \Session::get('reservenarrow_bid') == $row['model']->item_id) || // 絞り込み：単一
+ 	 (\Session::get('reservenarrow_bid') == null && \Session::get('reservenarrow_bgid') != null && isset($bgids[$row['model']->item_id]))): // 絞り込み：グループ
+?>
+	<?php $reserve_rows[$row['model']->item_sort] ="\t".'<tr class="lcm_focus" title="'.$row['model']->item_name .'">'."\n\t\t"
+		.'<th>'.$row['model']->item_name.'</th>'."\n\t\t"; ?>
 		<?php
 		foreach($schedule_data['schedules_list'] as $schedule_row):
 			if (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) {
@@ -63,61 +72,55 @@
 			$each_date_title_skip.= isset($schedule_row['is_holiday']) && $schedule_row['is_holiday'] ? '祝日</span><span class="holiday_name">'.'祝日'.'</span><span class="skip">' : '';
 			$each_date_title_skip.= $schedule_num!=0 ? ' '.$schedule_num . '件の登録' : ' 登録なし';
  ?>
-		<td class="<?php print $class_str; ?>">
-			<div class="each_date lcm_focus" title="<?php echo $each_date_title_str ?>">
-				<a href="<?php echo \Uri::create(Config::get('base_url') . $kind_name . '/calendar/' . sprintf("%04d/%02d/%02d/", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])); ?>" class="title">
-					<span class="date_str"><?php print $date_str ?>日</span>
-					<span class="skip"><?php print $each_date_title_skip ?></span>
-				</a>
-				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;building_id='.$row['model']->id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
-				<div class="events">
-					<?php
-					if (isset($schedule_row['day'])):
-						foreach ($schedule_row['data'] as $v2):
-							foreach ($row['data'] as $building_detail):
-								if ($building_detail['id'] == $v2['scdlid']):
-									$detail_pop_array[] = $v2;
+		<?php $reserve_rows[$row['model']->item_sort] .= '<td class="'.$class_str.'"><div class="each_date lcm_focus" title="'.$each_date_title_str.'">'."\n\t\t\t";
+			$reserve_rows[$row['model']->item_sort] .= '<a href="'.\Uri::create(Config::get('base_url').$kind_name.'/calendar/'.sprintf('%04d/%02d/%02d/', $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'" class="title"><span class="date_str">'.$date_str.'日</span><span class="skip">'.$each_date_title_skip.'</span></a>'."\n\t\t\t";
+			$reserve_rows[$row['model']->item_sort] .= '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;building_id='.$row['model']->id).'" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>'."\n\t\t\t"
+			.'<div class="events">';
+			if (isset($schedule_row['day'])):
+				foreach ($schedule_row['data'] as $v2):
+					foreach ($row['data'] as $building_detail):
+						if ($building_detail['id'] == $v2['scdlid']):
+							$detail_pop_array[] = $v2;
 
-									$eventtitle_icon = '';
-									$eventtitle_skip = '<span class="skip">';
-									//繰り返し区分
-									$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
-									$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']] : '';
-									//詳細区分
-									foreach($detail_kbs as $key => $value):
-										if($v2[$key]):
-											$eventtitle_icon.= '<span class="text_icon schedule '.$key.'"></span>';
-											$eventtitle_skip.= ' '.$value;
-										endif;
-									endforeach;
-									//重要度
-									$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
-									$eventtitle_icon.= '<span class="icon" style="width: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
-									$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
-									$eventtitle_skip.= '</span>';
-									// 時間
-									$event_time_display_data = $model_name::make_target_day_info($v2);
-									$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
-									$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
-					
-									echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
-									
-									echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">';
-									echo $eventtitle_icon.$event_time.htmlspecialchars($v2['title_text']).$eventtitle_skip;
-									echo '</a>';
-
-									echo '</p>';
+							$eventtitle_icon = '';
+							$eventtitle_skip = '<span class="skip">';
+							//繰り返し区分
+							$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
+							$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']] : '';
+							//詳細区分
+							foreach($detail_kbs as $key => $value):
+								if($v2[$key]):
+									$eventtitle_icon.= '<span class="text_icon schedule '.$key.'"></span>';
+									$eventtitle_skip.= ' '.$value;
 								endif;
 							endforeach;
-						endforeach;
-					endif;
-					?>
-				</div><!-- /.events -->
-			</div><!-- /.each_date -->
-		</td>
-<?php	endforeach;?>
-	</tr>
+							//重要度
+							$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
+							$eventtitle_icon.= '<span class="icon" style="width: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
+							$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
+							$eventtitle_skip.= '</span>';
+							// 時間
+							$event_time_display_data = $model_name::make_target_day_info($v2);
+							$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
+							$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
+
+							$reserve_rows[$row['model']->item_sort] .= '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">'."\n\t\t\t\t";
+							$reserve_rows[$row['model']->item_sort] .= '<a href="'.\Uri::create($kind_name."/viewdetail/".$v2['scdlid'].sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])).'">'.$eventtitle_icon.$event_time.htmlspecialchars($v2['title_text']).$eventtitle_skip.'</a>'."\n\t\t\t".'</p>';
+						endif;
+					endforeach;
+				endforeach;
+			endif;
+			$reserve_rows[$row['model']->item_sort] .= '</div><!-- /.events -->'."\n\t\t\t";
+			$reserve_rows[$row['model']->item_sort] .= '</div><!-- /.each_date -->'."\n\t\t".'</td>';
+		endforeach;
+		$reserve_rows[$row['model']->item_sort] .= "\n\t</tr>\n"; ?>
+<?php endif; ?>
 <?php endforeach; ?>
+<?php ksort($reserve_rows) ;
+	$row = "" ;?>
+<?php foreach($reserve_rows as $row):
+	echo $row;
+endforeach; ?>
 	</tbody>
 </table>
 <?php include("inc_legend.php"); //カレンダ凡例 ?>
