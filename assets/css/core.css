@@ -874,7 +874,9 @@ div.lcm_tooltip {
 	text-align: right;
 	font-weight: bold;
 }
-
+.lcm_action_calendar div.lcm_tooltip {
+	max-width: 350px ;
+}
 /* tooolbar */
 .index_toolbar {
 	margin: 20px 0 5px;
@@ -1739,6 +1741,7 @@ table.calendar .events {
 	padding: .125em;
 }
 
+/*== 時間グラフ ==*/
 .schedule_day.graph {
 	table-layout: fixed;
 }
@@ -1753,11 +1756,11 @@ table.calendar .events {
 	white-space: nowrap;
 	padding: 2px;
 }
-.schedule_day.graph .bar {
-	padding: 4px 2px;
+.schedule_day.graph .bar td {
+	padding: 0;
 	border-right-color: #ddd;
 }
-.schedule_day.graph .bar:last-child{
+.schedule_day.graph .bar td:last-child{
 	border-right-color: #bbb;
 }
 .schedule_day.graph tbody td{
@@ -1777,15 +1780,14 @@ table.calendar .events {
 .schedule_day.graph .time.h23 {
 /*	width: 1.25em;  縮小した時に、むしろ営業時間帯より長くなってしまうので */
 }
-.schedule_day.graph td.active:not(.hoo) {
-	border-right: none;
+.schedule_day.graph .bar td {
+	height: 1.5em;
 }
-.schedule_day.graph td.active + td:not(.active) {
-	border-left: 1px solid #bbb;
+.schedule_day.graph .active {
+	background-color: #d8ebfc;
+	cursor: pointer;
 }
-.schedule_day.graph td:last-child.active {
-	border-right: 1px solid #bbb ;
-}
+
 .datatable.schedule_day.detail tbody .members,
 .datatable.schedule_day.detail tbody .buildings {
 	white-space: normal;
@@ -1793,6 +1795,9 @@ table.calendar .events {
 .datatable.schedule_day.detail tbody .detail {
 	min-width: 8em;
 }
+
+
+
 .legend.calendar {
 	text-align: left;
 	font-size: .75em;
@@ -1972,16 +1977,7 @@ schedule_day.graph td {
 	content: '代理登録';
 }
 
-/*== 時間グラフ ==*/
-.schedule_day.graph td.bar {
-	height: .75em;
-}
-.schedule_day.graph .active {
-	background-color: #d8ebfc;
-}
-table.schedule_day .graydown {
-	background-color: #CCC;
-}
+
 /*=== filer ===*/
 a.icon.dir:before,     span.icon.dir:before     { content: url('../img/led-icons/folder.png')' ';}
 a.icon.file:before,    span.icon.file:before    { content: url('../img/led-icons/page.png')' ';}
@@ -2474,15 +2470,7 @@ body .ui-resizable-handle {
 .ui-wrapper.resizable_textarea {
 	padding: 0 8px 0 0!important;
 }
-input.date {
-	width: 7em;
-}
-input.date.month {
-	width: 5em;
-}
-input.date.year {
-	width: 3.5em;
-}
+
 /*=== for NetReader ===*/
 .netreader .ui-tooltip {
 	display: none !important;

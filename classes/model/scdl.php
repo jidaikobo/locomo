@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Model_Scdl extends \Model_Base
+class Model_Scdl extends \Model_Base_Soft
 {
 //	use \Model_Traits_Wrkflw;
 
@@ -63,6 +63,11 @@ class Model_Scdl extends \Model_Base
 				'size' => 14,
 				'class' => 'date',
 			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\/-]+$/u"),
+				'max_length' => array(10),
+			),
 		),
 		'end_date' => 
 		array (
@@ -73,6 +78,11 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 14,
 				'class' => 'date',
+			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\/-]+$/u"),
+				'max_length' => array(10),
 			),
 		),
 		'start_time' => 
@@ -85,6 +95,11 @@ class Model_Scdl extends \Model_Base
 				'size' => 7,
 				'class' => 'time min15',
 			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\:]+$/u"),
+				'max_length' => array(5),
+			),
 		),
 		'end_time' => 
 		array (
@@ -95,6 +110,11 @@ class Model_Scdl extends \Model_Base
 				'type' => 'text',
 				'size' => 7,
 				'class' => 'time min15',
+			),
+			'validation' => array(
+				'required',
+				'match_pattern' => array("/^[0-9\:]+$/u"),
+				'max_length' => array(5),
 			),
 			'default' => '21:00'
 		),
@@ -277,7 +297,7 @@ class Model_Scdl extends \Model_Base
 			array (
 				'type' => 'select',
 				'class' => 'text',
-				'options' => array('賃室' => '賃室', '会議' => '会議')
+				'options' => array('貸室' => '貸室', '会議' => '会議')
 			),
 
 		),
@@ -473,25 +493,6 @@ class Model_Scdl extends \Model_Base
 	}
 
 	/**
-	 * plain_definition()
-	 *
-	 * @param str $factory
-	 * @param int $id
-	 *
-	 * @return  obj
-	 */
-	public static function plain_definition($factory = 'schedules', $obj = null)
-	{
-		$form = static::form_definition($factory, $obj);
-/*
-		$form->field('created_at')
-			->set_attribute(array('type' => 'text'));
-*/
-
-		return $form;
-	}
-
-	/**
 	 * [value2index description]
 	 * @param  [type] $key [description]
 	 * @param  [type] $val [description]
@@ -512,7 +513,7 @@ class Model_Scdl extends \Model_Base
 	 * @return [type] [description]
 	 */
 	public static function get_repeat_kbs() {
-		return array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月(曜日指定)', '5' => '毎年');
+		return array('0' => 'なし', '1' => '毎日', '2' => '毎日(土日除く)', '3' => '毎週', '4' => '毎月', '6' => '毎月', '5' => '毎年');
 	}
 
 	/**
@@ -557,6 +558,7 @@ class Model_Scdl extends \Model_Base
 			$data->display_enddate = date('n月j日', strtotime($data->end_date . " " . $data->end_time));
 		else:
 			$data->display_enddate = date('Y年n月j日', strtotime($data->end_date . " " . $data->end_time));
+			$data->display_enddate = $data->display_enddate == "" ? "" : $data->display_enddate." ";
 		endif;
 		$data->display_starttime = date('i', strtotime($data->start_time))==0 ?
 			date('G時', strtotime($data->start_date . " " . $data->start_time)) :
@@ -575,32 +577,32 @@ class Model_Scdl extends \Model_Base
 			if ($data->allday_kb && $data->display_enddate=='') {
 				$print .= $data->display_startdate;
 			} else {
-				$print .= $data->display_startdate . ' ' . $data->display_starttime . " 〜 " . $data->display_enddate . " " . $data->display_endtime;
+				$print .= $data->display_startdate . " " . $data->display_starttime . "〜" . $data->display_enddate . " " . $data->display_endtime;
 			}
 		} else {
 			$print .= $data->target_year . "年" . $data->target_mon . "月" . $data->target_day . "日";
-			$print .= '　' . $data->display_starttime . " 〜 " . $data->display_endtime;
+			$print .= '　' . $data->display_starttime . "〜" . $data->display_endtime;
 		}
 		$date_detail['display_target_date'] = $print;
 
 		// 登録データ
 		$week = array('日', '月', '火', '水', '木', '金', '土');
 		$repeat_kbs = self::get_repeat_kbs($data->repeat_kb);
-		$print .= "<p>■登録条件</p>";
-		$print .= "<p>繰り返し：" . $repeat_kbs[$data->repeat_kb];
-		
+		if($data->repeat_kb != 0) {
+			$print .= "<td></tr><tr><th>期間：</th><td>";
+			$print .= "<p>" . $repeat_kbs[$data->repeat_kb];
+		}
 		$date_detail['display_repeat_kb'] = $repeat_kbs[$data->repeat_kb];
-		if ($data->repeat_kb == 3){
+		if ($data->repeat_kb == 3){ // 毎週
 			$print .= $week[$data->week_kb] . "曜日";
 			$date_detail['display_repeat_kb'] = '毎週 '.$week[$data->week_kb] . "曜日";
-		} else if ($data->repeat_kb == 4) {
+		} else if ($data->repeat_kb == 4) { // 毎月
 			$print .= intval($data->target_day) . "日";
 			$date_detail['display_repeat_kb'] .= intval($data->target_day) . "日";
-		} else if ($data->repeat_kb == 5) {
+		} else if ($data->repeat_kb == 5) { //毎年
 			$print .= intval($data->target_mon) . "月" . intval($data->target_day) . "日";
 			$date_detail['display_repeat_kb'] .= intval($data->target_mon) . "月" . intval($data->target_day) . "日";
-		} else if ($data->week_kb != "" && $data->repeat_kb == 6) {
-			$print .= "(";
+		} else if ($data->week_kb != "" && $data->repeat_kb == 6) { //毎月（曜日指定）
 			if ($data->week_index) {
 				$print .= "第" . $data->week_index;
 				$date_detail['display_repeat_kb'] = "毎月 第" . $data->week_index;
@@ -608,26 +610,25 @@ class Model_Scdl extends \Model_Base
 				$print .= "毎週";
 				$date_detail['display_repeat_kb'] .= "毎週";
 			}
-			$print .= $week[$data->week_kb] . "曜日)";
+			$print .= $week[$data->week_kb] . "曜日";
 			$date_detail['display_repeat_kb'] .= $week[$data->week_kb] . "曜日";
 		}
-		$print .= "</p>";
-		if ($data->repeat_kb == 0) {
-			$print .= '<span class="display_inline_block">' . $data->display_startdate . " " . $data->display_starttime . ' 〜</span> <span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime . "</span>";
+		if($data->repeat_kb != 0) $print .= "</p>";
+		if ($data->repeat_kb == 0) { //繰り返しなし
+			//$print .= '<span class="display_inline_block">' . $data->display_startdate . " " . $data->display_starttime . '〜</span><span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime . "</span>";
 			
-//			$data->display_enddate = $data->display_startdate == $data->display_enddate ? '' : $data->display_enddate;
-			$date_detail['display_period'] = '<span class="display_inline_block">'.$data->display_startdate . " " . $data->display_starttime . ' 〜</span> <span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime.'</span>';
-		} else {
-			$print .= '<span class="display_inline_block">' . $data->display_startdate . ' 〜</span> <span class="display_inline_block">' . $data->display_enddate . "</span>";
-			$print .= '<span class="display_inline_block">' . $data->display_starttime . ' 〜</span> <span class="display_inline_block">' . $data->display_endtime . "</span>";
-			$date_detail['display_period'] = $data->display_startdate . " 〜 " . $data->display_enddate . " " . $data->display_starttime . " 〜 " . $data->display_endtime;
+			$date_detail['display_period'] = '<span class="display_inline_block">'.$data->display_startdate . " " . $data->display_starttime . '〜</span><span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime.'</span>';
+		} else if($data->repeat_kb != 0){
+			$print .= '<span class="display_inline_block">' . $data->display_startdate . '〜</span><span class="display_inline_block">' . $data->display_enddate . "</span>";
+			$print .= ' <span class="display_inline_block">' . $data->display_starttime . '〜</span><span class="display_inline_block">' . $data->display_endtime . "</span>";
+			$date_detail['display_period'] = $data->display_startdate . "〜" . $data->display_enddate . " " . $data->display_starttime . "〜" . $data->display_endtime;
 		}
 		if($data->repeat_kb == 0 && $data->display_enddate == ''):
 			$date_detail['display_period_day'] = '<span class="display_inline_block">'.$data->display_startdate.'</span>';
 		else:
-			$date_detail['display_period_day'] = '<span class="display_inline_block">'.$data->display_startdate . " 〜 " . $data->display_enddate.'</span>';
+			$date_detail['display_period_day'] = '<span class="display_inline_block">'.$data->display_startdate . "〜" . $data->display_enddate.'</span>';
 		endif;
-		$date_detail['display_period_time'] = '<span class="display_inline_block">'.$data->display_starttime . " 〜 " . $data->display_endtime.'</span>';
+		$date_detail['display_period_time'] = '<span class="display_inline_block">'.$data->display_starttime . "〜" . $data->display_endtime.'</span>';
 
 
 		// 時間を追加

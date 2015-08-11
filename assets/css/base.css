@@ -1052,7 +1052,7 @@ a.zip:before,    a.icon[href$=".zip"]:before    { content: url( '../img/icons/ic
 a.lzh:before,    a.icon[href$=".lzh"]:before    { content: url( '../img/icons/icon_lzh.gif' ); }
 a.txt:before,    a.icon[href$=".txt"]:before    { content: url( '../img/icons/icon_txt.gif' ); }
 a.tar_gz:before, a.icon[href$=".tar.gz"]:before { content: url( '../img/icons/icon_tgz.gif' ); }
-a.lock:after,    a.icon[href^="https:"]:before  { content: url( '../img/icons/lock.gif' ); }
+a.lock:after,   /* a.icon[href^="https:"]:before */ { content: url( '../img/icons/lock.gif' ); }
 a._blank:after,  a.icon[target="_blank"]:after  { content: url( '../img/icons/window.gif' ); }
 
 a.noicon:before,

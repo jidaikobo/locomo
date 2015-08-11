@@ -47,8 +47,9 @@
 	<td>
 		<?php $buildings = [];
 		foreach ($detail_pop_data->building as $row) {
-			$buildings[] .= $row['item_name'];
+			$buildings[$row->item_id] = $row['item_name'];
 		}
+		ksort($buildings);
 		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>'; 
 		?>
 		

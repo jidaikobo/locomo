@@ -1135,6 +1135,20 @@ $('.multiple_select_narrow_down').each(function(){
 });
 
 
+/* スケジューラ一日詳細グラフ用 あとで分ける */
+if($('#schedule_graph')[0]){
+	$('.lcm_tooltip_parent').each(function(){
+		$(this).on('click', function(e){
+			e = e ? e : event;
+			var href = $('[data-jslcm-tooltip-id="'+$(this).data('jslcmTooltipId')+'"]').find('a').attr('href');
+			if(href.length){
+				location.href = href;
+				return false;
+			}
+		});
+	});
+}
+
 /* Tiny MCE  */
 tinymce.init({
 	mode : "none",
@@ -1159,13 +1173,11 @@ $(document).on('click', '.switch_mce', function(){
 	}
 });
 
-
 /* jQuery UI */
 
 // datepicker
 (function(){
-
-//複数のdateFormatを切り替えて使用している場合、yy-mm-dd形式以外の値が消えてしまうのを抑止する（エラーでの再表示時など）
+//複数のdateFormatを切り替えて使用している場合にyy-mm-dd形式以外の値が消えるのを抑止（エラーでの再表示時など）
 if($('#form_repeat_kb')[0]){
 	var $input = $('input.date , input[type=date]');
 	var input_val = new Object;
@@ -1173,6 +1185,7 @@ if($('#form_repeat_kb')[0]){
 		input_val[index] = $(this).val();
 	});
 	setTimeout(function($input, input_val){
+		if(typeof($input) == "undefined") return;
 		$input.each(function(index){
 		if($(this).is(':hidden') || input_val[index] == "0000-00-00") return;
 			$(this).val(input_val[index]);
@@ -1181,7 +1194,7 @@ if($('#form_repeat_kb')[0]){
 }
 
 
-$('input.date , input[type=date]').datepicker();
+$('input.date , input[type=date]').datepicker({dateFormat: "yy-mm-dd"});
 //開始日と終了日
 var jslcm_dates = $( '#form_start_date, #form_end_date' );
 //日付選択時、繰り返しなしの区分での終了日補完
@@ -1193,37 +1206,52 @@ $( '#form_start_date, #form_end_date' ).datepicker('option', 'onSelect', functio
 //		jslcm_dates.not(this).datepicker('option', option, date);
 		if($("#form_repeat_kb")[0] && $("#form_repeat_kb").val() == 0){
 			set_startdate_to_enddate(this);
+			$(this).trigger('change');
 		}
 //		val_compare($('#form_start_date'), $('#form_end_date'));
 	});
 
+
+
 // デフォルトの設定
 $.datepicker.setDefaults({
 	firstDay         : 1,
-	autoSize         : true,
+	autoSize         : false,
 	changeMonth      : true,
 	changeYear       : true,
 	hideIfNoPrevNext : true,
 	showButtonPanel  : true,
 	beforeShow: function(input, inst) {
-		var currentDate = $(this).val();
 		var dateFormat = 'yy-mm-dd';
 		var stepMonths = 1;
+		var currentDate = $(this).val().replace(/-/g, "/");
+		var currentDateLen = (currentDate.replace(/\u002f/g, "")+"").length;
+
+		if(currentDateLen==6){
+			currentDate = currentDate+"/01";
+		}else if(currentDateLen==4){
+			currentDate = currentDate+"/01/01";
+		}
+
 		if(!$(input).hasClass('month') && !$(input).hasClass('year')){
 			$(inst.dpDiv).removeClass('monthpicker yearpicker');
 		}else if($(input).hasClass('month')){ // 年月選択
 			$(inst.dpDiv).removeClass('yearpicker').addClass('monthpicker');
-			var dateFormat = 'yy-mm';
-		}else{
+			dateFormat = 'yy-mm';
+		}else{ // 年選択
 			$(inst.dpDiv).removeClass('monthpicker').addClass('yearpicker');
-			var dateFormat = 'yy';
+			dateFormat = 'yy';
 			var stepMonths = 12;
 		}
+		
 		$(this).datepicker('option', 'dateFormat', dateFormat);
 		$(this).datepicker('option', 'stepMonths', stepMonths);
 		$(this).datepicker('option', 'defaultDate', new Date(currentDate));
 		if(!currentDate) return;
 		$(this).datepicker('setDate', new Date(currentDate));
+	},
+	onSelect : function(){
+		$(this).trigger('change');
 	},
 	onChangeMonthYear: function(year, month){
 		if(!$(this).hasClass('month') && !$(this).hasClass('year')) return;
@@ -1235,7 +1263,8 @@ $.datepicker.setDefaults({
 		}
 	},
 	onClose: function(dateText, inst) {
-		if(!$(this).hasClass('month') && !$(this).hasClass('month')) return;
+		if($(this).val || !$(this).hasClass('month') && !$(this).hasClass('year')) return;
+		
 		var year = inst.selectedYear;
 		if($(this).hasClass('month')){
 			var month = ("0"+(inst.selectedMonth+1)).slice(-2);//1ずれるので？補正
@@ -1243,10 +1272,10 @@ $.datepicker.setDefaults({
 		}else{
 			$(this).val(year);
 		}
+		$(this).trigger('change');
 //		$(this).datepicker('setDate', new Date(year, month, 1));
 	},
 });
-
 
 // 開始日選択時に終了日補完
 if($('#form_start_date')[0] && $('#form_end_date')[0]){
@@ -1261,7 +1290,6 @@ function set_startdate_to_enddate(elm){
 		$('#form_end_date').val($(elm).val());
 	}
 }
-
 
 //日付＋時間は、入力欄がひとつなのでdatetimepickerを使用
 //15分区切り
@@ -1281,89 +1309,6 @@ $('input.datetime,  input[type=datetime]').datetimepicker({
 		firstDay: 1,
 });
 
-
-
-/* //開始時間入力時の終了時刻補完
-//開始時間入力時に終了時間の自動補完をするなら、Googleカレンダのように１時間後の値が入るようにしておくとちょっと便利？
-if($('#form_start_time')[0] && $('#form_end_time')[0]){
-	set_inputtime_interval($('#form_start_time')[0], $('#form_end_time')[0]);
-}
-
-function set_inputtime_interval(start, end){
-	//開始時間と終了時間の間隔をとる。開始時間を変更したときだけ、終了時間を変更。日を跨ぐときは？？とりあえず23:45を超えないようにする？
-	var preset_val = start.value;
-	$(start).on('focus',function(){
-		preset_val = this.value;
-	});
-	var is_default = preset_val == "" && end.value == "21:00" ? true : false;
-	//デフォルト値、今は開始時間がうまく取れてないけどいずれ
-
-	$(start).on('change', function(){
-		if(!this.value) return;//個々の判定をもう少しちゃんとして、てきとうにおいかえす
-		var start_vals = this.value.split(':');
-
-		var date = new Date();
-		date.setHours(start_vals[0]);
-		date.setMinutes(start_vals[1]);
-		
-		var end_vals = end.value.split(':');
-
-		var preset_vals = preset_val.split(':');//ここでももうすこしこのまま進めるかどうかの判定いる。
-		
-//		console.log(preset_vals);
-		var change_val = 60;
-		if(!is_default || end_vals){
-			var preset_date = new Date(date);
-			preset_date.setHours(preset_vals[0]);
-			preset_date.setMinutes(preset_vals[1]);
-			change_val = (date.getTime()-preset_date.getTime())/(1000*60);
-			var enddate = new Date(date);
-			enddate.setHours(end_vals[0]);
-			enddate.setMinutes(end_vals[1]);
-		}
-//		console.log(change_val);
-		date.setMinutes(enddate.getMinutes()+change_val);
-		var endtime = date;
-//		console.log(endtime);
-		is_default = false;
-	});
-}
-*/
-//時間選択
-//開始時間と終了時間
-/*
-var jslcm_times = $( '#form_start_time, #form_end_time' ).timepicker( {
-	timeFormat: 'HH:mm',
-	stepMinute: 15,
-*/
-/*	beforeShow: function(){
-		var option = null;
-		option = $(this).hasClass('min15') ? 15 : option;
-		option = $(this).hasClass('min30') ? 30 : option;
-		if(option){
-			$(this).timepicker({stepMinute: option});
-			console.log(option);
-		};
-	},
-*/
-/*	onSelect: function( selectedtime ) {
-		console.log(this);
-		console.log(selectedtime);
-		
-		var option = this.id == 'form_start_time' ? 'minTime' : 'maxTime',
-		time = selectedtime;
-*/
-/*		date = $.datepicker.parseDate(inst.settings.dateFormat ||
-			$.datepicker._defaults.dateFormat,
-			selectedDate,inst.settings );
-*/
-/*
-		jslcm_times.not(this).datepicker('option', option, time);
-	}
-});
-*/
-
-
 // jquery.timepicker 
 // beforeRender, beforeShowを追加
 	$('input.time').timepicker({
@@ -1374,7 +1319,52 @@ var jslcm_times = $( '#form_start_time, #form_end_time' ).timepicker( {
 		beforeShow: function(){
 		},
 	});
-})();
+})();//datepickerここまで
+
+//入力された日付の整形
+
+$('input.date , input[type=date]').each(function(){
+	this.onchange = function(){
+		$(this).val(format_datestr($(this).val()));
+	}
+});
+function format_datestr(data){
+	data += '';
+	var table = {
+	"０":0,
+	"１":1,
+	"２":2,
+	"３":3,
+	"４":4,
+	"５":5,
+	"６":6,
+	"７":7,
+	"８":8,
+	"９":9,
+	"ー":"-",
+	"－":"-",
+	"−":"-",
+	"/":"-",
+	"／":"-",
+	"年":"-",
+	"月":"-",
+	"日":"",
+	};
+	while(data.match(/[０-９]/)){
+		for(n in table){
+			data = data.replace(n, table[n]);
+		}
+	}
+	if(data.substr((data.length-1)) == "-") data = data.substr(0, (data.length-1));
+
+	data = data.split('-');
+	for( var i = 0, len = data.length;  i < len; i++ ){
+		if(data[i].length == 1 ) data[i] = ("0"+ data[i]).slice(-2);
+	}
+	data = data.join('-');
+	return data;
+}
+
 
 //tooltip
 //表示枠外（overflow:hidden)の要素にページ内リンクでスクロールして表示するとスクロール前の位置を基準に表示されてしまう。

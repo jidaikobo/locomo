@@ -8,7 +8,7 @@
 </div>
 
 <!--一覧-->
-<table class="tbl datatable tbl_scrollable lcm_focus" title="ユーザ一覧">
+<table class="tbl datatable tbl_scrollable lcm_focus" title="予定一覧">
 	<thead>
 		<tr>
 			<!--
