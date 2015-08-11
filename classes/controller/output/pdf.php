@@ -3,6 +3,144 @@ namespace Locomo;
 trait Controller_Output_Pdf
 {
 
+	/*
+	 * Free format for PDF
+	 * @param object $format  object of format
+	 * @param array  $objects array include Model or array
+	 */
+	public function pdf($format, $objects)
+	{
+		// todo test
+		$pdf = $this->pdf;
+
+		$pdf->setCellPaddings(0,0,0,0);
+
+		// 回転によって用紙の左右を変える
+		if ($format->rotation == 90 || $format->rotation == 270)
+		{
+			$width = $format->h;
+			$height = $format->w;
+		}
+		else
+		{
+			$width = $format->w;
+			$height = $format->h;
+		}
+
+		$orientation = ($height >= $width) ? 'P' : 'L';
+
+		$format_arr = static::convert_formats($format->element);
+
+		foreach ($objects as $object)
+		{
+			$pdf->addPage($orientation, array(
+				$format->w,
+				$format->h,
+			));
+
+			if ($format->rotation == 90) {
+				$pdf->StartTransform();
+				$pdf->Rotate(270, intval($format->h)/2 , intval($format->h)/2);
+			} else if ($format->rotation == 270) {
+				$pdf->StartTransform();
+				$pdf->Rotate(90, intval($format->w)/2 , intval($format->w)/2);
+			} else if ($format->rotation == 180) {
+				$pdf->StartTransform();
+				$pdf->Rotate(180, intval($format->w)/2 , intval($format->h)/2);
+			}
+
+
+
+			$pdf->Bulk($object, $format_arr);
+		if ($format->rotation == 90 || $format->rotation == 270)
+		{
+			$pdf->StopTransform();
+		}
+
+		}
+
+		$pdf->output($format->name .'('.date('Ymd').')');
+	}
+
+	/*
+	 * Free format for PDF Multiple
+	 * @param object $format  object of format
+	 * @param array  $objects array include Model or array
+	 * @param array  $cols    number of col
+	 * @param array  $rows    number of row
+	 * @param array  $options margins of page and space of each cells
+	 * @param int    $blank   blank output
+	 */
+	public function pdf_multiple($format, $objects)
+	{
+		$pdf = $this->pdf;
+		$pdf->SetAutoPageBreak(false);
+
+		$blank = intval(\Input::post('start', 1)) - 1;
+
+
+		$pdf->setCellPaddings(0,0,0,0);
+
+		$width = $format->w;
+		$height = $format->h;
+
+
+		$orientation = ($height >= $width) ? 'P' : 'L';
+
+		$current_page = 1;
+		$current_cell = 0 + 5;
+
+		$start_top = $format->margin_top;
+		$start_left = $format->margin_left;
+
+		$pdf->setXY($start_left, $start_top);
+		$cols = $format->cols;
+		$rows = $format->rows;
+		$space_horizontal = $format->space_horizontal;
+		$space_vertical = $format->space_vertical;
+		$cell_width = ( $format->w - ($format->margin_left + $format->margin_right + $space_horizontal*($cols-1)) ) / $cols; // todo 計算する?
+		$cell_height = ( $format->h - ($format->margin_top + $format->margin_bottom + $space_vertical*($rows-1)) ) / $rows; // todo 計算する?
+
+		$post_per_page = $cols * $rows;
+
+		$format_arr = static::convert_formats($format->element);
+
+		// 1セルめは飛ばされる事があるので、最初のページはループ外で足す。
+		$pdf->add_page($orientation, array($width, $height));
+
+		foreach($objects as $object)
+		{
+			$col_position = ($current_cell%$post_per_page)%$cols;
+			$row_position = floor( ($current_cell%$post_per_page)/$cols);
+			if ($current_cell != 0 && $current_cell%$post_per_page == 0) // 一件目
+			{
+				$pdf->add_page($orientation, array(
+					$width,
+					$height,
+				));
+			}
+
+			$cell_left = ($cell_width  + $space_horizontal) * $col_position + $start_left;
+			$cell_top  = ($cell_height + $space_vertical  ) * $row_position + $start_top;
+		//	var_dump($col_position. ':' . $row_position);
+		//	var_dump($cell_left. ':' . $cell_top);
+			$cell_format = array();
+			foreach ($format_arr as $format)
+			{
+				$tmp = $format;
+				$tmp['x'] = $tmp['x'] + $cell_left;
+				if (isset($tmp['y']))  $tmp['y'] = $tmp['y'] + $cell_top;
+				$cell_format[] = $tmp;
+			}
+			//	var_dump($cell_format);
+			$pdf->Bulk($object, $cell_format);
+
+			$current_cell++;
+		}
+		$pdf->output($format->name .'('.date('Ymd').')');
+	}
+
+
 
 /* ==============================
  * 宛名印刷 単体 A4

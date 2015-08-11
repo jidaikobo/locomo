@@ -1,15 +1,16 @@
 <?php
 namespace Fuel\Migrations;
-class Create_Pdf
+class Create_Format
 {
 	public function up()
 	{
-		echo "create lcm_pdf_formats table.\n";
-		\DBUtil::create_table('lcm_pdf_formats', array(
+		echo "create lcm_formats table.\n";
+		\DBUtil::create_table('lcm_formats', array(
 			'id'               => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true, 'unsigned' => true),
-			'is_visible'       => array('type' => 'bool',     'default' => 0,),
+			'is_draft'         => array('type' => 'bool',     'default' => 1,),
 			'name'             => array('type' => 'varchar',  'default' => '', 'constraint' => 255),
 			'seq'              => array('type' => 'int',      'default' => 0,  'constraint' => 11,),
+			'rotation'         => array('type' => 'int',      'default' => 0,  'constraint' => 11,),
 			'w'                => array('type' => 'double',   'default' => 0.0,),
 			'h'                => array('type' => 'double',   'default' => 0.0,),
 			'margin_top'       => array('type' => 'double',   'default' => 0.0,),
@@ -23,10 +24,18 @@ class Create_Pdf
 			'cell_h'           => array('type' => 'double',   'default' => 0.0,),
 			'space_horizontal' => array('type' => 'double',   'default' => 0.0,),
 			'space_vertical'   => array('type' => 'double',   'default' => 0.0,),
+			'type'             => array('type' => 'varchar',  'default' => '', 'constraint' => 255),
+			'model'            => array('type' => 'varchar',  'default' => '', 'constraint' => 255),
+
+			'created_at'        => array('type' => 'datetime', 'null' => true),
+			'updated_at'        => array('type' => 'datetime', 'null' => true),
+			'deleted_at'        => array('type' => 'datetime', 'null' => true),
+			'creator_id'        => array('constraint' => 5, 'type' => 'int'),
+			'updater_id'        => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 
-		echo "create lcm_pdf_elements table.\n";
-		\DBUtil::create_table('lcm_pdf_elements', array(
+		echo "create lcm_format_elements table.\n";
+		\DBUtil::create_table('lcm_format_elements', array(
 			'id'             => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true, 'unsigned' => true),
 			'format_id'      => array('type' => 'int',      'default' => 0,  'constraint' => 11,),
 			'name'           => array('type' => 'varchar',  'default' => '', 'constraint' => 255),
@@ -56,8 +65,8 @@ class Create_Pdf
 			'border_bottom'  => array('type' => 'bool',     'default' => 0),
 		), array('id'));
 
-		echo "create lcm_pdf_eav table.\n";
-		\DBUtil::create_table('lcm_pdf_eav', array(
+		echo "create lcm_format_eav table.\n";
+		\DBUtil::create_table('lcm_format_eav', array(
 			'id'         => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'format_id'  => array('constraint' => 11,  'type' => 'int', 'default' => 0),
 			'key'        => array('constraint' => 255, 'type' => 'varchar', 'default' => ''),
@@ -69,11 +78,11 @@ class Create_Pdf
 
 	public function down()
 	{
-		echo "drop lcm_pdf_formats table.\n";
-		\DBUtil::drop_table('lcm_pdf_formats');
-		echo "drop lcm_pdf_elements table.\n";
-		\DBUtil::drop_table('lcm_pdf_elements');
-		echo "drop lcm_pdf_eav table.\n";
-		\DBUtil::drop_table('lcm_pdf_eav');
+		echo "drop lcm_formats table.\n";
+		\DBUtil::drop_table('lcm_formats');
+		echo "drop lcm_format_elements table.\n";
+		\DBUtil::drop_table('lcm_format_elements');
+		echo "drop lcm_format_eav table.\n";
+		\DBUtil::drop_table('lcm_format_eav');
 	}
 }
