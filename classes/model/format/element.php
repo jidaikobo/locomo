@@ -1,9 +1,8 @@
 <?php
 namespace Locomo;
-
-class Model_Pdf_Element extends \Locomo\Model_Base
+class Model_Format_Element extends \Locomo\Model_Base
 {
-	protected static $_table_name = 'lcm_pdf_elements';
+	protected static $_table_name = 'lcm_format_elements';
 
 	// $_conditions
 	protected static $_conditions = array(
@@ -276,5 +275,11 @@ class Model_Pdf_Element extends \Locomo\Model_Base
 	);
 
 
-}
+	public static $format_options = array(
+	);
 
+	public static $model_properties = array(
+	);
+
+
+}

@@ -1,8 +1,8 @@
 <?php
 namespace Locomo;
-class Model_Pdf_Eav extends Model_Base {
+class Model_Format_Excel_Eav extends Model_Base {
 
-	protected static $_table_name = 'lcm_pdf_eav';
+	protected static $_table_name = 'lcm_format_eav';
 
 	protected static $_properties = array(
 		'id',
@@ -14,7 +14,7 @@ class Model_Pdf_Eav extends Model_Base {
 	protected static $_belongs_to = array(
 		'format' => array(
 			'key_from' => 'format_id',
-			'model_to' => '\Locomo\Model_Pdf_Format',
+			'model_to' => '\Locomo\Model_format_Excel_Format',
 			'key_to' => 'id',
 			'cascade_save' => false,
 			'cascade_delete' => false,
