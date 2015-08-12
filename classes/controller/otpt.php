@@ -1,11 +1,11 @@
 <?php
 namespace Locomo;
-class Controller_Output extends \Controller
+class Controller_Otpt extends \Controller
 {
 	public $model_name = ''; //'\Locomo\Model_Pdf_format';
 
-	use \Controller_Output_Pdf;
-	use \Controller_Output_Excel;
+	use \Controller_Otpt_Pdf;
+	use \Controller_Otpt_Excel;
 
 	protected static $_pdf = null;
 	protected static $_excel = null;

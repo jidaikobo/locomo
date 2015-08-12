@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-trait Controller_Output_Excel
+trait Controller_Otpt_Excel
 {
 
 

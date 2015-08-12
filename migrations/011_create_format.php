@@ -4,8 +4,8 @@ class Create_Format
 {
 	public function up()
 	{
-		echo "create lcm_formats table.\n";
-		\DBUtil::create_table('lcm_formats', array(
+		echo "create lcm_frmts table.\n";
+		\DBUtil::create_table('lcm_frmts', array(
 			'id'               => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true, 'unsigned' => true),
 			'is_draft'         => array('type' => 'bool',     'default' => 1,),
 			'name'             => array('type' => 'varchar',  'default' => '', 'constraint' => 255),
@@ -34,8 +34,8 @@ class Create_Format
 			'updater_id'        => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
 
-		echo "create lcm_format_elements table.\n";
-		\DBUtil::create_table('lcm_format_elements', array(
+		echo "create lcm_frmt_elements table.\n";
+		\DBUtil::create_table('lcm_frmt_elements', array(
 			'id'             => array('type' => 'int', 'constraint' => 11, 'auto_increment' => true, 'unsigned' => true),
 			'format_id'      => array('type' => 'int',      'default' => 0,  'constraint' => 11,),
 			'name'           => array('type' => 'varchar',  'default' => '', 'constraint' => 255),
@@ -65,24 +65,21 @@ class Create_Format
 			'border_bottom'  => array('type' => 'bool',     'default' => 0),
 		), array('id'));
 
-		echo "create lcm_format_eav table.\n";
-		\DBUtil::create_table('lcm_format_eav', array(
+		echo "create lcm_frmt_eav table.\n";
+		\DBUtil::create_table('lcm_frmt_eav', array(
 			'id'         => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'format_id'  => array('constraint' => 11,  'type' => 'int', 'default' => 0),
 			'key'        => array('constraint' => 255, 'type' => 'varchar', 'default' => ''),
 			'value'      => array('type' => 'text', 'default' => ''),
 		), array('id'));
-
-
 	}
 
 	public function down()
 	{
-		echo "drop lcm_formats table.\n";
-		\DBUtil::drop_table('lcm_formats');
-		echo "drop lcm_format_elements table.\n";
-		\DBUtil::drop_table('lcm_format_elements');
-		echo "drop lcm_format_eav table.\n";
-		\DBUtil::drop_table('lcm_format_eav');
-	}
+		echo "drop lcm_frmts table.\n";
+		\DBUtil::drop_table('lcm_frmts');
+		echo "drop lcm_frmt_elements table.\n";
+		\DBUtil::drop_table('lcm_frmt_elements');
+		echo "drop lcm_frmt_eav table.\n";
+		\DBUtil::drop_table('lcm_frmt_eav');
 }

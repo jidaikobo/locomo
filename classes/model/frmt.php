@@ -1,8 +1,26 @@
 <?php
 namespace Locomo;
-class Model_Format extends \Locomo\Model_Base_Soft
+class Model_Frmt extends \Locomo\Model_Base_Soft
 {
-	protected static $_table_name = 'lcm_formats';
+
+
+	public static $_format_model = '';
+	public static $_format_pdf_fields = array(
+	);
+
+	public static $_format_excel_fields = array(
+	);
+
+	public static function _init()
+	{
+		parent::_init();
+
+		$_properties['model']['default'] = static::$_format_model;
+
+		if (static::$_format_model) static::$_options['where'][] = array('model', '=', static::$_format_model);
+	}
+
+	protected static $_table_name = 'lcm_frmts';
 
 	// $_conditions
 	protected static $_conditions = array(
@@ -241,10 +259,15 @@ class Model_Format extends \Locomo\Model_Base_Soft
 		),
 	);
 
+	public function _event_before_save()
+	{
+		$this->model = static::$_format_model;
+	}
+
 	protected static $_has_many = array(
 		'element' => array(
 			'key_from' => 'id',
-			'model_to' => '\Locomo\Model_Format_Element',
+			'model_to' => '\Locomo\Model_Frmt_Element',
 			'key_to' => 'format_id',
 			'cascade_save' => true,
 			'cascade_delete' => false,
@@ -252,7 +275,7 @@ class Model_Format extends \Locomo\Model_Base_Soft
 		// EAV
 		'eav' => array(
 			'key_from' => 'id',
-			'model_to' => '\Locomo\Model_Format_Eav',
+			'model_to' => '\Locomo\Model_Frmt_Eav',
 			'key_to' => 'format_id',
 			'cascade_save' => true,
 			'cascade_delete' => true,
@@ -265,4 +288,6 @@ class Model_Format extends \Locomo\Model_Base_Soft
 			'value' => 'value',
 		)
 	);
+
+
 }

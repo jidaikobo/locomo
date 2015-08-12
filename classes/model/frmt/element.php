@@ -1,8 +1,8 @@
 <?php
 namespace Locomo;
-class Model_Format_Element extends \Locomo\Model_Base
+class Model_Frmt_Element extends \Locomo\Model_Base
 {
-	protected static $_table_name = 'lcm_format_elements';
+	protected static $_table_name = 'lcm_frmt_elements';
 
 	// $_conditions
 	protected static $_conditions = array(

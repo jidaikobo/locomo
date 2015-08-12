@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-trait Controller_Output_Pdf
+trait Controller_Otpt_Pdf
 {
 
 	/*

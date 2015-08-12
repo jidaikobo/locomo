@@ -190,7 +190,7 @@ class Presenter_Base extends \Presenter
 	}
 
 
-	public static function index_admin_toolbar($model = '\Format\Model_Customer', $name_num = '')
+	public static function index_admin_toolbar($model = '\Frmt\Model_Customer', $name_num = '')
 	{
 		$index_toolbar_btns = '';
 		if (\Request::main()->action == 'index_admin')
