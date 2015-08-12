@@ -4,7 +4,7 @@ trait Controller_Output_Excel
 {
 
 
-	public function excel($format, $objects)
+	public function excel($objects, $format)
 	{
 		$excel = $this->excel;
 
@@ -46,7 +46,7 @@ trait Controller_Output_Excel
 		$excel->output($format->name .'('.date('Ymd').')');
 	}
 
-	public function csv($format, $objects)
+	public function csv($objects, $format)
 	{
 	}
 }

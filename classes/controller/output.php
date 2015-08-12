@@ -82,7 +82,12 @@ class Controller_Output extends \Controller
 		}
 
 		$model = $this->model_name;
-		$format_id = \Input::post('format', \Input::post('format1', false));
+
+		if (\Input::post('submit1')) {
+			$format_id = \Input::post('format1', \Input::post('format', false));
+		} else {
+			$format_id = \Input::post('format', \Input::post('format1', false));
+		}
 
 		$format = $model::find($format_id);
 
@@ -142,29 +147,34 @@ class Controller_Output extends \Controller
 			case 'pdf':
 				if ($format->is_multiple)
 				{
-					return $this->pdf_multiple($format, $objects);
+					if (\Input::post('submit1')) {
+						$start_cell = \Input::post('start_cell1', \Input::post('start_cell', false));
+					} else {
+						$start_cell = \Input::post('start_cell', \Input::post('start_cell1', false));
+					}
+					return $this->pdf_multiple($objects, $format, $start_cell);
 				}
 				else
 				{
-					return $this->pdf($format, $objects);
+					return $this->pdf($objects, $format);
 				}
 				break;
 			case 'excel':
-				return $this->excel($format, $objects);
+				return $this->excel($objects, $format);
 				break;
 			case 'csv':
-				return $this->csv($format, $objects);
+				return $this->csv($objects, $format);
 				break;
 			default:
 				if (method_exists($this, $format->type))
 				{
 					$action_name = $format->type;
-					$this->$action_name($format, $objects);
+					$this->$action_name($objects, $format);
 				}
 				else if (method_exists($this, 'action_'.$format->type))
 				{
 					$action_name = 'action_'.$format->type;
-					$this->$action_name($format, $objects);
+					$this->$action_name($objects, $format);
 				}
 				break;
 		}
@@ -182,54 +192,6 @@ class Controller_Output extends \Controller
 		return $objects;
 	}
 
-	/*
-	 * フォーマットの変更用
-	 * Override する際は parent で呼ぶ
-	 */
-	protected static function convert_formats($element)
-	{
-		$format_arr = array();
-
-		$defaults = array(
-			'ln' => 2,
-		);
-
-		foreach ($element as $elm)
-		{
-			$arr = $elm->to_array();
-
-			$arr = array_merge($defaults, $arr);
-			// テキストの処理
-			$fields = explode('}', str_replace('{', '}', $elm->txt));
-			$arr['fields'] = $fields;
-
-			if ($elm->h_adjustable) {
-				$arr['fitcell']  = false;
-				$arr['maxh'] = 0;
-				$arr['h'] = 0;
-			} else {
-				$arr['fitcell'] = true;
-				$arr['maxh'] = $elm->h;
-			}
-
-			if ($elm->ln_y) {
-				unset($arr['y']);
-			} else {
-			}
-
-			$border_str = '';
-			if ($elm->border_left) $border_str .= 'L';
-			if ($elm->border_top) $border_str .= 'T';
-			if ($elm->border_right) $border_str .= 'R';
-			if ($elm->border_bottom) $border_str .= 'B';
-			$arr['border'] = $border_str;
-
-			$format_arr[] = $arr;
-		}
-
-		return $format_arr;
-	}
-
-
+	// convert_formats pdf に
 }
 

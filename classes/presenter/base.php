@@ -189,4 +189,66 @@ class Presenter_Base extends \Presenter
 		return $html;
 	}
 
+
+	public static function index_admin_toolbar($model = '\Format\Model_Customer', $name_num = '')
+	{
+		$index_toolbar_btns = '';
+		if (\Request::main()->action == 'index_admin')
+		{
+			$opt = '';
+			$opt.= \Form::button('全てチェック', null, array('class' => 'check_all button small'));
+			$opt.= \Form::button('全て外す',     null, array('class' => 'uncheck_all button small'));
+
+			$formats = $model::find('all');
+
+			$opt .= '<select name="format'.$name_num.'" class="select_format">';
+			$opt .= '<option value=""> ▼ 選択して下さい ▼ </option>';
+			foreach ($formats as $format)
+			{
+				$multiple = $format->is_multiple ? 'multiple' : '';
+				$cells = $multiple  ? $format->cols * $format->rows : 1;
+				$selected = \Input::post('format'.$name_num) == $format->id ? ' selected="selected"' : '';
+				$opt .= '<option value="'.$format->id.'" class="'.$multiple.' "'.$selected.' data-cells="'.$cells.'">'.$format->name.'</option>';
+			}
+			$opt .= '</select>';
+
+			$opt .= '<div class="pdf_start_cell" style="display:inline;">セル';
+			$opt .= '<select name="start_cell'.$name_num.'" class="start_cell">';
+			$opt .= '<option value=""></option>';
+			for ($i=1; $i<=10; $i++)
+			{
+				$opt .= '<option value="'.$i.'">'.$i.'</option>';
+			}
+			$opt .= '</select>';
+			$opt .= '個目から</div>';
+			/*
+			$opt.= \Form::select('format', '', array(
+				'' => ' == 宛名フォーマット == ',
+				'env_kaku2' => '宛名封筒[角2]',
+				'env_kaku3' => '宛名封筒[角3]',
+				'env_kaku6' => '宛名封筒[角6]',
+				'env_cyo3yoko' => '宛名封筒[長3横]',
+				'tackseal' => 'タックシール1',
+				'tackseal_library' => 'タックシール(情ステ)',
+				'env_cyo3yoko_aiai' => '宛名封筒[長3横](あいあい)',
+				'csv' => 'CSV',
+			));
+			 */
+
+			$opt.= \Form::submit('submit'.$name_num, '宛名の出力', array('class'=>'button small primary'));
+
+			$index_toolbar_btns = html_tag('div', array(
+				'class' => 'index_toolbar_buttons'
+			), $opt);
+		}
+
+		$pagination = \Pagination::create_links();
+
+		$result_str = html_tag('div', array(
+			'class' => 'index_toolbar clearfix'
+		), $index_toolbar_btns . $pagination);
+
+		return $result_str;
+	}
+
 }
