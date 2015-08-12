@@ -104,7 +104,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
 				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
-					<option value="">絞り込み：全グループ
+					<option value="">絞り込み：全グループ</option>
 					<?php foreach($group_list as $key => $value) { ?>
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 					<?php } ?>
@@ -140,7 +140,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
 				<select id="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
-					<option value="">絞り込み：全施設
+					<option value="">絞り込み：全施設</option>
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 					<?php } ?>

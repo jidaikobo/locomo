@@ -1088,6 +1088,8 @@ function lcm_select_narrow_down(group_id, uri, $select, $selected){
 			now_items[$selected_items[i].value] = 1;
 		};
 	}
+	//  Locomoでは、-10が「ログインしているユーザ」なので、空のgroup_idがきたら、明示的に-10をわたす
+	group_id = ! group_id ? -10 : group_id;
 	$.ajax({
 		url: uri,
 		type: 'post',
@@ -1097,7 +1099,7 @@ function lcm_select_narrow_down(group_id, uri, $select, $selected){
 			select_items = '';
 			for(var i in exists) {
 				//scdl/reserveはuser:idとbuilding:item_idの２通りで管理している。どうしたものか
-				//ココアとで整理
+				//ココあとで整理
 				if ($(now_items)[0] && $(now_items[exists[i]['id']])[0] ) continue;
 				if ($(now_items)[0] && $(now_items[exists[i]['item_id']])[0] ) continue;
 				

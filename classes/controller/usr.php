@@ -176,7 +176,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 		if ( ! \Input::is_ajax()) throw new \HttpNotFoundException;;
 		$where = array();
 
-		$gid = \Input::post("gid");
+		$gid = \Input::post("gid", '');
 //		$gid = \Input::get("gid");
 
 		switch ($gid)
