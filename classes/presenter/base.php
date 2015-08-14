@@ -199,7 +199,10 @@ class Presenter_Base extends \Presenter
 			$opt.= \Form::button('全てチェック', null, array('class' => 'check_all button small'));
 			$opt.= \Form::button('全て外す',     null, array('class' => 'uncheck_all button small'));
 
-			$formats = $model::find('all');
+			$model::$_options['where'][] = array(
+				array('is_draft', false),
+			);
+			$formats = $model::find('all', $model::$_options);
 
 			$opt .= '<select name="format'.$name_num.'" class="select_format">';
 			$opt .= '<option value=""> ▼ 選択して下さい ▼ </option>';
@@ -221,19 +224,6 @@ class Presenter_Base extends \Presenter
 			}
 			$opt .= '</select>';
 			$opt .= '個目から</div>';
-			/*
-			$opt.= \Form::select('format', '', array(
-				'' => ' == 宛名フォーマット == ',
-				'env_kaku2' => '宛名封筒[角2]',
-				'env_kaku3' => '宛名封筒[角3]',
-				'env_kaku6' => '宛名封筒[角6]',
-				'env_cyo3yoko' => '宛名封筒[長3横]',
-				'tackseal' => 'タックシール1',
-				'tackseal_library' => 'タックシール(情ステ)',
-				'env_cyo3yoko_aiai' => '宛名封筒[長3横](あいあい)',
-				'csv' => 'CSV',
-			));
-			 */
 
 			$opt.= \Form::submit('submit'.$name_num, '宛名の出力', array('class'=>'button small primary'));
 

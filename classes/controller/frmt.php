@@ -80,7 +80,7 @@ class Controller_Frmt extends \Locomo\Controller_Base
 
 		$content->get_view()->set('model_properties', $model::$_format_pdf_fields);
 		$this->template->set_safe('content', $content);
-		$this->template->set_global('title', 'PDFフォーマット編集');
+		$this->template->set_global('title', $item->name . ' 要素編集');
 	}
 
 	/*
@@ -151,9 +151,9 @@ class Controller_Frmt extends \Locomo\Controller_Base
 		$content = \Presenter::forge($this->_content_template ?: 'frmt/excel/edit/element');
 		$content->get_view()->set('item', $item);
 
-		$content->get_view()->set('model_properties', $model::$_format_pdf_fields);
+		$content->get_view()->set('model_properties', $model::$_format_excel_fields);
 		$this->template->set_safe('content', $content);
-		$this->template->set_global('title', 'PDFフォーマット編集');
+		$this->template->set_global('title', $item->name . ' 要素編集');
 	}
 
 	/*

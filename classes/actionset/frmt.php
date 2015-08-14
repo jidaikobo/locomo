@@ -108,6 +108,25 @@ class Actionset_Frmt extends \Actionset_Base
 	}
 
 	/**
+	 * actionset_pdf_edit_element()
+	 */
+	public static function actionset_pdf_edit_element($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = array(
+			'realm'        => 'base',
+			// 'urls'         => array(),
+			'action_name'  => 'PDF編集',
+			'show_at_top'  => true,
+			'explanation'  => 'PDF用フォーマットを編集します。',
+			'order'        => 10,
+			'dependencies' => array(
+				$controller.'/pdf_create',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
 	 * actionset_pdf_create()
 	 */
 	public static function actionset_excel_create($controller, $obj = null, $id = null, $urls = array())

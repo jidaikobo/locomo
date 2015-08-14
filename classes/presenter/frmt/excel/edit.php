@@ -30,8 +30,9 @@ class Presenter_Frmt_Excel_Edit extends \Presenter_Base
 		$form = \Fieldset::forge('format_excel');
 
 		$form->add('name', '名前', array('template' => 'opener'), array('required'))->set_value(\Input::post('name', $obj->name));
-		$form->add('seq', '表示順', array('template' => 'closer', 'size' => 5, 'class' => 'ar'), array())->set_value(\Input::post('seq', $obj->seq));
-		$form->add('type', '表示順', array('type' => 'hidden'), array())->set_value('excel');
+		$form->add('seq', '表示順', array('size' => 5, 'class' => 'ar'), array())->set_value(\Input::post('seq', $obj->seq));
+		$form->add('is_draft', '下書き', array('type' => 'radio', 'options' => array(0=>'使用', 1=>'下書き'), 'template' => 'closer'), array())->set_value(\Input::post('is_draft', $obj->is_draft));
+		$form->add('type', '', array('type' => 'hidden'), array())->set_value('excel');
 
 		// submit
 		if (! $obj->is_new()) {

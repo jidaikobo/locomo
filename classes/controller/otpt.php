@@ -120,7 +120,7 @@ class Controller_Otpt extends \Controller
 		$format_model::$_options['where'][] = array('id', 'IN', $ids);
 		$objects = $format_model::find('all', $format_model::$_options);
 
-		$objects = static::convert_objects($objects);
+		$objects = static::convert_objects($objects, $format);
 
 		if (! $objects) // ほぼあり得ない($ids の時点で飛ばしているので)
 		{
@@ -141,6 +141,12 @@ class Controller_Otpt extends \Controller
 			}
 			\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
 		}
+
+		// TODO
+		// そのうち、こっちに addPage を積んで、
+		// foreach の$object ごとにデフォルトのフォーマットと
+		// element 両方呼ぶ処理に切り替える
+		// $pdf->output もこちらに
 
 		switch ($format->type)
 		{
@@ -187,11 +193,11 @@ class Controller_Otpt extends \Controller
 	 * Override 用
 	 * フィールドの出力を変えたい時などに使う
 	 */
-	protected static function convert_objects($objects)
+	protected static function convert_objects($objects, $format)
 	{
 		return $objects;
 	}
 
-	// convert_formats pdf に
+	// convert_formats trait pdf に
 }
 

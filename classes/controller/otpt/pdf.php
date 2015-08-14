@@ -50,19 +50,21 @@ trait Controller_Otpt_Pdf
 			}
 
 
-		$this->FormatBulk($object, $format_arr);
-		if ($format->rotation == 90 || $format->rotation == 270)
-		{
-			$pdf->StopTransform();
-		}
+			$this->pdf_single($object, $format_arr);
+
+			if ($format->rotation == 90 || $format->rotation == 270)
+			{
+				$pdf->StopTransform();
+			}
 
 		}
 
-		$pdf->output($format->name .'('.date('Ymd').')');
+		$pdf->output($format->name.'('.date('Ymd').')');
 	}
 
-	public function pdf_single()
+	public function pdf_single($object, $format_arr)
 	{
+		$this->FormatBulk($object, $format_arr);
 	}
 
 
@@ -102,8 +104,8 @@ trait Controller_Otpt_Pdf
 		$rows = $format->rows;
 		$space_horizontal = $format->space_horizontal;
 		$space_vertical = $format->space_vertical;
-		$cell_width = ( $format->w - ($format->margin_left + $format->margin_right + $space_horizontal*($cols-1)) ) / $cols; // todo 計算する?
-		$cell_height = ( $format->h - ($format->margin_top + $format->margin_bottom + $space_vertical*($rows-1)) ) / $rows; // todo 計算する?
+		$cell_width = ( $format->w - ($format->margin_left + $format->margin_right + $space_horizontal*($cols-1)) ) / $cols;
+		$cell_height = ( $format->h - ($format->margin_top + $format->margin_bottom + $space_vertical*($rows-1)) ) / $rows;
 
 		$post_per_page = $cols * $rows;
 
@@ -193,6 +195,7 @@ trait Controller_Otpt_Pdf
 			$arr['border'] = $border_str;
 
 			$format_arr[] = $arr;
+
 		}
 
 		return $format_arr;
@@ -234,12 +237,27 @@ trait Controller_Otpt_Pdf
 					{
 						$related_name = substr($field_name, 0, strpos($field_name, '.'));
 						$related_field = substr($field_name, strpos($field_name, '.') +1);
-						isset($object->{$related_name}) &&
-						isset($object->{$related_name}->{$related_field}) &&
-						$related_str = $object->{$related_name}->{$related_field};
+						if (isset($object->{$related_name}))
+						{
+							if (is_array($object->{$related_name}))
+							{
+								$related_str = '';
+								foreach ($object->{$related_name} as $v)
+								{
+									isset($v->{$related_field}) &&
+									$related_str .= $v->{$related_field} . ', ';
+								}
+								$related_str = rtrim(rtrim($related_str), ',');
+							}
+							else
+							{
+								isset($object->{$related_name}->{$related_field}) &&
+								$related_str = $object->{$related_name}->{$related_field};
+							}
+						}
 					}
 
-					if ($related_str && is_string($related_str))
+					if ($related_str !== false && is_string($related_str))
 					{
 						$format['txt'] .= $related_str;
 					} // ここまでリレーションの処理

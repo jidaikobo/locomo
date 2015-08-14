@@ -93,7 +93,7 @@
 		removeRow: function(e) {
 			if (window.confirm('消去します、よろしいですか')) {
 				var tb = e.data.tb;
-				if ($(tb.row_class).length <= 1) tb.addRow(tb);
+				if (tb.wrap.find(tb.row_class).length <= 1) tb.addRow(tb);
 				$(e.target).parents(tb.row_class).remove();
 				tb.calculateTabular(tb);
 			}
