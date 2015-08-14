@@ -703,6 +703,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			\Session::set("scdl_display_time", \Input::get("scdl_display_time"));
 		}
 
+		if (\Input::get("show_empty_row", "") != "") {
+			\Session::set("show_empty_row", \Input::get("show_empty_row"));
+		}
+
+
 		// 初期表示 スケジューラのときだけメインユーザグループIDを見る
 		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
 		{
@@ -815,7 +820,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		
-		if (\Session::get($model::$_kind_name . "narrow_bgid") > 0) {
+		if (\Session::get($model::$_kind_name . "narrow_bgid") != null) {
 			$where = array(
 				array('item_group2', '=', \Session::get($model::$_kind_name . "narrow_bgid"))
 				,array('item_group' , '=', 'building')
