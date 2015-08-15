@@ -135,14 +135,13 @@
 	width: 30%;
 	float: left;
 	height: 1.5em;
-	overflow-y: hidden;
-	overflow-x: scroll;
+	overflow: hidden;
 }
 #elements > .element > .text_wrapper
 {
 	display: block;
 	float: left;
-	width: 60%;
+	width: 58%;
 	max-height: 1.5em;
 	overflow: scroll;
 	margin-left: 1em;
@@ -184,7 +183,7 @@
 #model_properties li
 {
 	border-bottom: 1px solid #aaa;
-	height: 1.8em;
+	min-height: 1.8em;
 	overflow: hidden;
 }
 

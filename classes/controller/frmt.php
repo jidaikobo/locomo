@@ -18,6 +18,14 @@ class Controller_Frmt extends \Locomo\Controller_Base
 		\Asset::js('frmt/pdf/edit.js', array(), 'js');
 		$this->_content_template = $this->_content_template ?: 'frmt/pdf/edit';
 		$obj = parent::edit($id, false);
+
+		if (!$obj)
+		{
+			$page = \Request::forge('sys/403')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 403);
+		}
+
 		if (\Input::post() && $obj) \Response::redirect(static::$base_url.'pdf_edit/'.$obj->id);
 	}
 
@@ -31,7 +39,14 @@ class Controller_Frmt extends \Locomo\Controller_Base
 		\Asset::css('frmt/pdf/edit/element.css', array(), 'css');
 		\Asset::js('frmt/pdf/edit/element.js', array(), 'js');
 
-		$item = $model::find($id);
+		$item = $model::find($id, $model::$_options);
+
+		if (!$item)
+		{
+			$page = \Request::forge('sys/403')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 403);
+		}
 
 		if (\Input::post())
 		{
@@ -94,6 +109,13 @@ class Controller_Frmt extends \Locomo\Controller_Base
 
 		$obj = static::edit($id, false);
 
+		if (!$obj)
+		{
+			$page = \Request::forge('sys/403')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 403);
+		}
+
 		if (\Input::post() && $obj)
 		{
 			if (\Input::post('submit_to_element')) {
@@ -114,7 +136,14 @@ class Controller_Frmt extends \Locomo\Controller_Base
 		\Asset::css('frmt/excel/edit/element.css', array(), 'css');
 		\Asset::js('frmt/excel/edit/element.js', array(), 'js');
 
-		$item = $model::find($id);
+		$item = $model::find($id, $model::$_options);
+
+		if (!$item)
+		{
+			$page = \Request::forge('sys/403')->execute();
+			$this->template->set_safe('content', $page);
+			return new \Response($page, 403);
+		}
 
 		if (\Input::post())
 		{

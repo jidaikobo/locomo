@@ -164,15 +164,14 @@ div.print
 #controllers_wrapper,
 #element_seq_wrapper
 {
+	box-sizing: border-box;
 	position: absolute;
 	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.4);
 	background: Bisque;
 	background-color: #0e3664;
-	border-bottom: 13px solid #0e3664;
-	padding: 10px;
+	border: 10px solid #0e3664;
+	padding-bottom: 40px;
 	border-radius: 3px;
-	overflow-x: hidden;
-	overflow-y: scroll;
 }
 #controllers_wrapper h1.title,
 #element_seq_wrapper h1.title
@@ -202,12 +201,16 @@ div.print
 #controllers_wrapper > #controller,
 #element_seq_wrapper > #element_seq
 {
+	box-sizing: border-box;
 	margin-bottom: 3em;
 	overflow: hidden;
 	padding: 10px;
 	background: Beige;
 	margin: 0 auto;
 	height: auto;
+	max-height: 100%;
+	overflow-x: hidden;
+	overflow-y: scroll;
 }
 
 #controllers_wrapper > #controller

@@ -142,25 +142,35 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 		return $form;
 	}
 
+	/*
+	 * モデルのプロパティを追加
+	 */
 	protected static function modelPropertiesForm()
 	{
-
 		$form = \Fieldset::forge('model_properties_form');
-		// モデルのプロパティを追加
-		/*
-					<!-- テキストの入力に使う -->
-		
-			<input type="button" class="field-id" data-field="id" value="ID">
-			<input type="button" class="field-name" data-field="name" value="顧客名">
-			<input type="button" class="field-kana" data-field="kana" value="ふりがな">
-			</div>
-		 */
 
 		$form->add('model_properties_opener', '', array(), array())->set_template('<div id="model_properties">');
+
+		$child_group_count = 0;
 		foreach (static::$_model_properties as $prop_name => $label)
 		{
-			$name = 'field_'.$prop_name;
-			$form->add($name, '', array('type' => 'button', 'value' => $label, 'class' => 'field_'.$prop_name.' btn small', 'data-field' => $prop_name))->set_template('{field}');
+			if (is_array($label))
+			{
+				$form->add('model_properties_group_opener_'.$child_group_count)->set_template('<fieldset class="model_properties_group">');
+				$form->add('model_properties_group_legend_'.$child_group_count)->set_template('<legend>'.$prop_name.'</legend>');
+				foreach ($label as $prop_name_c => $label_c)
+				{
+					$name = 'field_'.$prop_name_c;
+					$form->add($name, '', array('type' => 'button', 'value' => $label_c, 'class' => 'field_'.$prop_name_c.' btn small', 'data-field' => $prop_name_c))->set_template('{field}');
+				}
+				$form->add('model_properties_group_closer_'.$child_group_count)->set_template('</fieldset>');
+				$child_group_count++;
+			}
+			else
+			{
+				$name = 'field_'.$prop_name;
+				$form->add($name, '', array('type' => 'button', 'value' => $label, 'class' => 'field_'.$prop_name.' btn small', 'data-field' => $prop_name))->set_template('{field}');
+			}
 		}
 		$form->add('model_properties_closer', '', array(), array())->set_template('</div>');
 

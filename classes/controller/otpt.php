@@ -199,5 +199,40 @@ class Controller_Otpt extends \Controller
 	}
 
 	// convert_formats trait pdf に
+
+
+	/*
+	 * デフォルトの action 用のカプセル化
+	 * id が渡されたら model でfind して、配列化して返す
+	 */
+	protected static function find_objects($id, $model)
+	{
+		if (is_array($id))
+		{
+			$objects = $id;
+		}
+		else
+		{
+			if (is_object($id))
+			{
+				$objects = array($id);
+			}
+			else
+			{
+				$model::set_authorized_options();
+				$model::$_options['from_cache'] = false;
+				$object = $model::find($id, $model::$_options);
+				if (! $object)
+				{
+					throw new \HttpNotFoundException;
+				}
+				$objects = array($object);
+			}
+		}
+		return $objects;
+	}
+
+
+
 }
 

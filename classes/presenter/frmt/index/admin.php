@@ -130,15 +130,16 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 		$model = $obj->model;
 		if (! $model ) return '';
 
+
+		$model::set_public_options();
+		$model::set_search_options();
+		$model::set_paginated_options();
+
+		$model::$_options['from_cache'] = false;
+		$model::$_options['rows_limit'] = 25;
 		if (!static::$_test_objects)
 		{
-			static::$_test_objects = $model::find('all', array(
-				'from_cache' => false,
-				'where' => array(
-					//array(),
-				),
-				'limit' => 10,
-			));
+			static::$_test_objects = $model::find('all', $model::$_options);
 		}
 
 		$html = \Form::open(array('action' => $output_url, 'method' => 'post'));

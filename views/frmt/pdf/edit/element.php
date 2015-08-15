@@ -16,8 +16,8 @@
 		<a href="#" class="delete_element        button small" title="要素の削除">要素の削除</a>
 		<input      class="save                  button small" title="保存" type="submit" value="保存">
 
-		<a href="#" class="show_element_seq      button small" title="印刷順を表示">印刷順</a>
 		<a href="#" class="show_controller       button small" title="要素の編集を表示">要素の編集</a>
+		<a href="#" class="show_element_seq      button small" title="印刷順を表示">印刷順</a>
 	</div>
 
 	<div id="print_wrapper">

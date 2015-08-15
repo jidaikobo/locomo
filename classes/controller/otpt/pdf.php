@@ -82,6 +82,8 @@ trait Controller_Otpt_Pdf
 		$pdf = $this->pdf;
 		$pdf->SetAutoPageBreak(false);
 
+		$start_cell = max($start_cell, 1);
+
 		$blank = $start_cell - 1;
 
 
