@@ -123,6 +123,17 @@ if (\Auth::check()):
 			// 処理速度
 			$html.= \Fuel::$env == 'development' ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
 
+
+// ブックマーク テスト中
+			// bkmk ブックマーク
+			$bookmark_uri = \Uri::base().'bkmk/index_admin';
+			$html.= '<div class="admin_bookmark menu">';
+			$html.= '<a href="'.$bookmark_uri.'" title="ブックマーク" alt="B" id="lcm_bookmark" data-uri="'.$bookmark_uri.'"  accesskey="D"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_bookmark.png\" alt=\"\">".'<span class="skip">ブックマーク エンターでブックマークを開きます</span></span></a>';
+			$html.= '</div><!-- /.admin_bookmark -->';
+// ブックマーク テスト中
+
+
+
 			// help
 			$help_uri = \Uri::base().'hlp/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
 			$html.= '<div class="admin_help menu">';
@@ -193,3 +204,21 @@ endif;
 	</div>
 	<a href="javascript: void(0);" role="button" class="lcm_close_window lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ヘルプウィンドウを閉じる"></a>
 </div>
+
+
+
+<!-- ブックマークテスト中 -->
+<div id="bookmark_window" class="lcm_floatwindow resizable draggable" style=" display: none;">
+	<h1 id="bookmark_title" class="lcmbar_top lcmbar_top_title lcm_floatwindow_title">
+		ブックマーク一覧
+	</h1>
+	<input type="text" id="admin_bookmark_name_input" value="<?php echo $title; ?>">
+	<input type="text" id="admin_bookmark_url_input" value="<?php echo \Uri::create(\Uri::current(), array(), \Input::get()); ?>">
+	<button type="" id="admin_bookmark_add_button">ブックマークに追加</button>
+	<ul id="bookmarks">
+	</ul>
+	<a href="javascript: void(0);" role="button" class="lcm_close_window lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ブックマークウィンドウを閉じる"></a>
+</div>
+
+<?php echo \Asset::js('bookmark.js') ?>
+
