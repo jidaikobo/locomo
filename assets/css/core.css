@@ -1322,21 +1322,6 @@ a.desc:after {
 	content: ' ▼';
 }
 
-/*=== 同じ値チェック ===*/
-/*.same_value.check_same_value {
-	color: #ccc;
-	background-color: #fff;
-}
-*/
-/*
-.same_value {
-	background-color: #fff3f3;
-}
-*/
-/*.same_value.check_same_value:focus {
-	color: inherit;
-}
-*/
 /*===  table  ===*/
 th.min,
 td.min,
@@ -2369,6 +2354,11 @@ h1 .sort_info {
 .pagenation_info input {
 	margin-left: 3px;
 }
+.select_format {
+	width: 13em;
+	margin-right: .5em;
+}
+
 /*=== for_screenreader ===*/
 span.sr_replace span {
 	position: absolute !important;

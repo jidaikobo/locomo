@@ -678,18 +678,21 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$model = $this->model_name;
 
 		// 絞り込みをセッションへ保存
-		if (\Input::get("ugid", "not") != "not") {
+		if (\Input::get("ugid", "not") != "not")
+		{
 			\Session::set($model::$_kind_name . "narrow_ugid", \Input::get("ugid"));
 			\Session::set($model::$_kind_name . "narrow_uid", "");
 
 			\Session::set($model::$_kind_name . "narrow_bgid", "");
 			\Session::set($model::$_kind_name . "narrow_bid", "");
-
 		}
 		if (\Input::get("uid", "not") != "not")
+		{
 			\Session::set($model::$_kind_name . "narrow_uid", \Input::get("uid"));
-
-		if (\Input::get("bgid", "not") != "not") {
+		}
+		
+		if (\Input::get("bgid", "not") != "not")
+		{
 			\Session::set($model::$_kind_name . "narrow_bgid", \Input::get("bgid"));
 			\Session::set($model::$_kind_name . "narrow_bid", "");
 
@@ -697,13 +700,17 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			\Session::set($model::$_kind_name . "narrow_uid", "");
 		}
 		if (\Input::get("bid", "not") != "not")
+		{
 			\Session::set($model::$_kind_name . "narrow_bid", \Input::get("bid"));
+		}
 
-		if (\Input::get("scdl_display_time", "") != "") {
+		if (\Input::get("scdl_display_time", "") != "")
+		{
 			\Session::set("scdl_display_time", \Input::get("scdl_display_time"));
 		}
 
-		if (\Input::get("show_empty_row", "") != "") {
+		if (\Input::get("show_empty_row", "") != "")
+		{
 			\Session::set("show_empty_row", \Input::get("show_empty_row"));
 		}
 
@@ -760,7 +767,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$next_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_year), '次の年',  array('class' => 'next_year'));
 		$prev_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_year), '前の年',  array('class' => 'prev_year'));
 
-		if ($mode == "week") {
+		if ($mode == "week")
+		{
 			// 週表示
 			$calendar = $this->make_week_calendar($year, $mon, $day);
 			// 次の週
@@ -772,14 +780,18 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の週',  array('class' => 'next_week'));
 			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の週',  array('class' => 'prev_week'));
-		} else if ($day && $mode == null) {
+		}
+		else if ($day && $mode == null)
+		{
 			// 1日表示
 			$calendar = $this->make_day_calendar($year , $mon, $day);
 			$next_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " + 1days"));
 			$prev_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " - 1days"));
 			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の日');
 			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の日');
-		} else {
+		}
+		else
+		{
 			// １ヶ月表示
 			$calendar = $this->make_month_calendar($year, $mon);
 			$next_url = $mini_next_url;
@@ -820,12 +832,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		
-		if (\Session::get($model::$_kind_name . "narrow_bgid") != null) {
+		if (\Session::get($model::$_kind_name . "narrow_bgid") != null)
+		{
 			$where = array(
 				array('item_group2', '=', \Session::get($model::$_kind_name . "narrow_bgid"))
 				,array('item_group' , '=', 'building')
 				);
-		} else {
+		}
+		else
+		{
 			$where = array(array('item_group' , '=', 'building'));
 		}
 		$view->set('narrow_building_list', \Model_Scdl_Item::find('all',
@@ -1190,11 +1205,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		for ($i = 1; $i <= $last_day; $i++) {
 			$row = array();
 			// 日付
-			$row['year']	 = (int)$year;
-			$row['mon']		 = (int)$mon;
-			$row['day']		 = $i;
-			$row['week']	 = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $i)));
-			$row['data']	 = array();
+			$row['year'] = (int)$year;
+			$row['mon']  = (int)$mon;
+			$row['day']  = $i;
+			$row['week'] = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $i)));
+			$row['data'] = array();
 //			$row['link_day'] = \Html::anchor('schedules/calendar/' . $row['year'] . "/" . $row['mon'] . "/" . $row['day'], $row['day']);
 			foreach ($schedules_data as $r) {
 				// 対象の日付のデータか判断
@@ -1202,11 +1217,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					// 詳細へのリンク
 					$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $i)), $r['title_text']);
 					$r['target_year'] = $row['year'];
-					$r['target_mon'] = $row['mon'];
-					$r['target_day'] = $row['day'];
+					$r['target_mon']  = $row['mon'];
+					$r['target_day']  = $row['day'];
 					// 追加
-					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
-					$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
+					$r['scdlid']   = $r['id'];	// クローンするとIDが消えるため
+					$r['user']     = $r['user'];	// クローンすると消える（クエリが発行されない）
 					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
 					$row['data'][] = clone $r;
 				}
@@ -1319,14 +1334,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				}
 				if (!$is_member) { return false; }
 			}
-			if ((\Session::get($model::$_kind_name . "narrow_bid") > 0 || \Session::get($model::$_kind_name . "narrow_bgid") > 0) && $model::$_kind_name == "reserve") {
+			if ((\Session::get($model::$_kind_name . "narrow_bid") > 0 || \Session::get($model::$_kind_name . "narrow_bgid") != "" ) && $model::$_kind_name == "reserve") {
 				$is_building = false;
 				foreach ($row['building'] as $v) {
 					if (\Session::get($model::$_kind_name . "narrow_bid") > 0
 						&& \Session::get($model::$_kind_name . "narrow_bid") == $v['item_id']) {
 						$is_building = true;
 						break;
-					} else if (\Session::get($model::$_kind_name . "narrow_bgid") > 0
+					} else if (\Session::get($model::$_kind_name . "narrow_bgid") != ""
 						&& !\Session::get($model::$_kind_name . "narrow_bid")) {
 						// グループの場合
 						if (\Session::get($model::$_kind_name . "narrow_bgid") == $v['item_group2']) {
@@ -1339,6 +1354,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				if (!$is_building) { return false; }
 			}
 		}
+		
 		switch ($row['repeat_kb']) {
 			case 0:
 				// なし
@@ -1818,5 +1834,44 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		return self::action_calendar($year, $mon, $day);
 	}
 
+	/**
+	 * action_index_admin()
+	 */
+	public function action_index_admin()
+	{
+		$model = $this->model_name;
 
+		\Model_Scdl::$_options = array(
+			'where' => array(
+				array('kind_flg', $model::$_kind_flg),
+			),
+			'order_by' => array('id' => 'desc')
+		);
+		parent::index_admin();
+		
+	}
+
+	/**
+	 * action_index_invisible()
+	 */
+	public function action_index_invisible()
+	{
+		parent::index_invisible();
+	}
+
+	/**
+	 * action_index_deleted()
+	 */
+	public function action_index_deleted()
+	{
+		parent::index_deleted();
+	}
+
+	/*
+	 * action_index_all()
+	 */
+	public function action_index_all()
+	{
+		parent::index_all();
+	}
 }

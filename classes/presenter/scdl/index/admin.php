@@ -1,5 +1,5 @@
 <?php
-class Presenter_Scdl_Admin_Index_Admin extends \Presenter_Base
+class Presenter_Scdl_Index_Admin extends \Presenter_Base
 {
 	/*
 	 * search_form

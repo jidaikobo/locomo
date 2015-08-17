@@ -6,11 +6,7 @@
 ?>
 <h1><?php print $year; ?>年<?php print (int)$mon; ?>月 月間カレンダ</h1>
 <?php
-//if (\Request::main()->controller == 'Controller_Scdl'):
 	include("calendar_narrow.php");
-//else:
-//	include(APPPATH."modules/reserve/views/reserve/calendar_narrow.php");
-//endif;
 ?>
 <div class="field_wrapper calendar">
 <div class="select_period lcm_focus pagination" title="月を選択">
@@ -50,7 +46,7 @@
 	</thead>
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data as $v): ?>
-	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
+<?php if ($v['week'] == 1) { print '<tr>'; } ?>
 	<?php $class_str = 'week'.$v['week'];
 		// 祝日対応
 		if (isset($v['is_holiday']) && $v['is_holiday']) { $class_str = "week_holiday"; }
