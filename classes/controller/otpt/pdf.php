@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-trait Controller_Output_Pdf
+trait Controller_Otpt_Pdf
 {
 
 	/*
@@ -8,7 +8,7 @@ trait Controller_Output_Pdf
 	 * @param object $format  object of format
 	 * @param array  $objects array include Model or array
 	 */
-	public function pdf($format, $objects)
+	public function pdf($objects, $format)
 	{
 		// todo test
 		$pdf = $this->pdf;
@@ -50,17 +50,23 @@ trait Controller_Output_Pdf
 			}
 
 
+			$this->pdf_single($object, $format_arr);
 
-			$pdf->Bulk($object, $format_arr);
-		if ($format->rotation == 90 || $format->rotation == 270)
-		{
-			$pdf->StopTransform();
+			if ($format->rotation == 90 || $format->rotation == 270)
+			{
+				$pdf->StopTransform();
+			}
+
 		}
 
-		}
-
-		$pdf->output($format->name .'('.date('Ymd').')');
+		$pdf->output($format->name.'('.date('Ymd').')');
 	}
+
+	public function pdf_single($object, $format_arr)
+	{
+		$this->FormatBulk($object, $format_arr);
+	}
+
 
 	/*
 	 * Free format for PDF Multiple
@@ -71,12 +77,14 @@ trait Controller_Output_Pdf
 	 * @param array  $options margins of page and space of each cells
 	 * @param int    $blank   blank output
 	 */
-	public function pdf_multiple($format, $objects)
+	public function pdf_multiple($objects, $format, $start_cell = 1)
 	{
 		$pdf = $this->pdf;
 		$pdf->SetAutoPageBreak(false);
 
-		$blank = intval(\Input::post('start', 1)) - 1;
+		$start_cell = max($start_cell, 1);
+
+		$blank = $start_cell - 1;
 
 
 		$pdf->setCellPaddings(0,0,0,0);
@@ -88,7 +96,7 @@ trait Controller_Output_Pdf
 		$orientation = ($height >= $width) ? 'P' : 'L';
 
 		$current_page = 1;
-		$current_cell = 0 + 5;
+		$current_cell = 0 + $blank;
 
 		$start_top = $format->margin_top;
 		$start_left = $format->margin_left;
@@ -98,8 +106,8 @@ trait Controller_Output_Pdf
 		$rows = $format->rows;
 		$space_horizontal = $format->space_horizontal;
 		$space_vertical = $format->space_vertical;
-		$cell_width = ( $format->w - ($format->margin_left + $format->margin_right + $space_horizontal*($cols-1)) ) / $cols; // todo 計算する?
-		$cell_height = ( $format->h - ($format->margin_top + $format->margin_bottom + $space_vertical*($rows-1)) ) / $rows; // todo 計算する?
+		$cell_width = ( $format->w - ($format->margin_left + $format->margin_right + $space_horizontal*($cols-1)) ) / $cols;
+		$cell_height = ( $format->h - ($format->margin_top + $format->margin_bottom + $space_vertical*($rows-1)) ) / $rows;
 
 		$post_per_page = $cols * $rows;
 
@@ -125,21 +133,190 @@ trait Controller_Output_Pdf
 		//	var_dump($col_position. ':' . $row_position);
 		//	var_dump($cell_left. ':' . $cell_top);
 			$cell_format = array();
-			foreach ($format_arr as $format)
+			foreach ($format_arr as $v)
 			{
-				$tmp = $format;
+				$tmp = $v;
 				$tmp['x'] = $tmp['x'] + $cell_left;
 				if (isset($tmp['y']))  $tmp['y'] = $tmp['y'] + $cell_top;
 				$cell_format[] = $tmp;
 			}
 			//	var_dump($cell_format);
-			$pdf->Bulk($object, $cell_format);
+			$this->FormatBulk($object, $cell_format);
 
 			$current_cell++;
 		}
 		$pdf->output($format->name .'('.date('Ymd').')');
 	}
 
+
+	/*
+	 * フォーマットの変更用
+	 * Override する際は parent で呼ぶ
+	 */
+	protected static function convert_formats($element)
+	{
+		$format_arr = array();
+
+		$defaults = array(
+			'ln' => 2,
+		);
+
+		foreach ($element as $elm)
+		{
+			$arr = $elm->to_array();
+
+			/* TODO 位置調整 ここで全てやる
+			if (isset($arr['x'])) $arr['x'] = $arr['x'] - 50;
+			if (isset($arr['y'])) $arr['y'] = $arr['y'] - 50;
+			 */
+
+			$arr = array_merge($defaults, $arr);
+			// テキストの処理
+			$fields = explode('}', str_replace('{', '}', $elm->txt));
+			$arr['fields'] = $fields;
+
+			if ($elm->h_adjustable) {
+				$arr['fitcell']  = false;
+				$arr['maxh'] = 0;
+				$arr['h'] = 0;
+			} else {
+				$arr['fitcell'] = true;
+				$arr['maxh'] = $elm->h;
+			}
+
+			if ($elm->ln_y) {
+				unset($arr['y']);
+			} else {
+			}
+
+			$border_str = '';
+			if ($elm->border_left) $border_str .= 'L';
+			if ($elm->border_top) $border_str .= 'T';
+			if ($elm->border_right) $border_str .= 'R';
+			if ($elm->border_bottom) $border_str .= 'B';
+			$arr['border'] = $border_str;
+
+			$format_arr[] = $arr;
+
+		}
+
+		return $format_arr;
+	}
+
+
+	// Locomo\Format_Model の使用前提の Bulk
+	/*
+	 * Bulk
+	 * @param Model or array $object
+	 * @param array $formats
+	 * 
+	 */
+	public function FormatBulk($object, $formats)
+	{
+		$pdf = $this->pdf;
+		foreach ($formats as $key => $format)
+		{
+			$default_paddings = $pdf->getCellPaddings();
+			$pdf->setCellPaddings(
+				isset($format['padding_left']  ) ? $format['padding_left']   : $default_paddings['L'],
+				isset($format['padding_top']   ) ? $format['padding_top']    : $default_paddings['T'],
+				isset($format['padding_right'] ) ? $format['padding_right']  : $default_paddings['R'],
+				isset($format['padding_bottom']) ? $format['padding_bottom'] : $default_paddings['B']
+			);
+
+			if ( !isset($format['fields']) ) continue;
+
+			$format['txt'] = '';
+			foreach($format['fields'] as $field_name)
+			{
+
+				// field を元に, object を txt に変換
+				if (is_object($object))
+				{
+					// リレーションの可能性有り
+					$related_str = false;
+					if (strpos($field_name, '.') !== false)
+					{
+						$related_name = substr($field_name, 0, strpos($field_name, '.'));
+						$related_field = substr($field_name, strpos($field_name, '.') +1);
+						if (isset($object->{$related_name}))
+						{
+							if (is_array($object->{$related_name}))
+							{
+								$related_str = '';
+								foreach ($object->{$related_name} as $v)
+								{
+									isset($v->{$related_field}) &&
+									$related_str .= $v->{$related_field} . ', ';
+								}
+								$related_str = rtrim(rtrim($related_str), ',');
+							}
+							else
+							{
+								isset($object->{$related_name}->{$related_field}) &&
+								$related_str = $object->{$related_name}->{$related_field};
+							}
+						}
+					}
+
+					if ($related_str !== false && is_string($related_str))
+					{
+						$format['txt'] .= $related_str;
+					} // ここまでリレーションの処理
+					else if (isset($object->{$field_name}))
+					{
+						$format['txt'] .= $object->{$field_name};
+					}
+					else if (isset($object[$field_name]))
+					{
+						$format['txt'] .= $object[$field_name];
+					}
+					else
+					{
+						$format['txt'] .= $field_name;
+					}
+				}
+				else
+				{
+					$format['txt'] .= $field_name;
+				}
+
+				if (isset($format['ln_y']))
+				{
+					if ($format['ln_y'])
+					{
+						$format['y'] = $pdf->getY()+$format['margin_top'];
+					}
+					else
+					{
+						$format['y'] += $format['margin_top'];
+				}
+				}
+
+				if (isset($format['font_family']))
+				{
+					if ($format['font_family'] == 'G')
+					{
+						$pdf->setFont('kozgopromedium');
+					}
+					else
+					{
+						$pdf->setFont('kozminproregular');
+					}
+				}
+			}
+
+			$pdf->MultiBox($format);
+
+			// padding 戻し
+			$pdf->setCellPaddings(
+				$default_paddings['L'],
+				$default_paddings['T'],
+				$default_paddings['R'],
+				$default_paddings['B']
+			);
+		}
+	}
 
 
 /* ==============================

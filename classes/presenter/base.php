@@ -189,4 +189,77 @@ class Presenter_Base extends \Presenter
 		return $html;
 	}
 
+
+	public static function index_admin_toolbar($model = null, $name_num = '', $is_print_all = true, $is_repeat = true)
+	{
+		if (!$model) return '';
+
+		$index_toolbar_btns = '';
+		if (\Request::main()->action == 'index_admin')
+		{
+			$opt = '';
+			$opt.= \Form::button('全てチェック', null, array('class' => 'check_all button small'));
+			$opt.= \Form::button('全て外す',     null, array('class' => 'uncheck_all button small'));
+
+			$model::$_options['where'][] = array(
+				array('is_draft', false),
+			);
+			$formats = $model::find('all', $model::$_options);
+
+			$opt .= '<select name="format'.$name_num.'" class="select_format">';
+			$opt .= '<option value=""> ▼ 選択して下さい ▼ </option>';
+			foreach ($formats as $format)
+			{
+				$multiple = $format->is_multiple ? 'multiple' : '';
+				$cells = $multiple  ? $format->cols * $format->rows : 1;
+				$selected = \Input::post('format'.$name_num) == $format->id ? ' selected="selected"' : '';
+				$opt .= '<option value="'.$format->id.'" class="'.$multiple.' "'.$selected.' data-cells="'.$cells.'">'.$format->name.'</option>';
+			}
+			$opt .= '</select>';
+
+			$opt .= '<div class="pdf_start_cell" style="display:inline;">セル';
+			$opt .= '<select name="start_cell'.$name_num.'" class="start_cell">';
+			$opt .= '<option value=""></option>';
+			for ($i=1; $i<=10; $i++)
+			{
+				$opt .= '<option value="'.$i.'">'.$i.'</option>';
+			}
+			$opt .= '</select>';
+			$opt .= '個目から</div>';
+
+			if ($is_repeat)
+			{
+				$opt .= '<div class="pdf_repeat" style="display:inline;">繰り返し';
+				$opt .= '<select name="print_repeat'.$name_num.'" class="print_repeat">';
+				for ($i=1; $i<=10; $i++)
+				{
+					$selected = (\Input::post('print_repeat') == $i) ? 'selected="selected"' : '';
+					$opt .= '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
+				}
+				$opt .= '</select>';
+				$opt .= '件ずつ</div>';
+			}
+
+			$opt.= \Form::hidden('count_total', \Pagination::get("total_items"), array('class' => 'count_total'));
+			$opt.= \Form::submit('submit'.$name_num, 'チェック項目出力', array('class'=>'button small primary'));
+			if ($is_print_all) $opt.= \Form::submit('print_all'.$name_num, '全て出力 ('. \Pagination::get("total_items").')', array('class'=>'button small primary print_all'));
+
+			// 印刷設定へリンク
+			$format_slug = strtolower(str_replace('_', '/', str_replace('\Model_', '/', ltrim($model, '\\')))) . '/index_admin';
+			if (\Auth::has_access($format_slug)) $opt .= \Html::anchor($format_slug, '印刷設定へ', array());
+
+			$index_toolbar_btns = html_tag('div', array(
+				'class' => 'index_toolbar_buttons'
+			), $opt);
+		}
+
+		$pagination = \Pagination::create_links();
+
+		$result_str = html_tag('div', array(
+			'class' => 'index_toolbar clearfix'
+		), $index_toolbar_btns . $pagination);
+
+		return $result_str;
+	}
+
 }

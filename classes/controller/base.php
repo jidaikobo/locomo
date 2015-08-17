@@ -778,7 +778,7 @@ class Controller_Base extends Controller_Core
 		{
 			$model::set_public_options();
 			$options = array();
-			$options['where'] = $model::$_options['where'];
+			if (isset($model::$_options['where'])) $options['where'] = $model::$_options['where'];
 			\Pagination::$refined_items = $model::count($options);
 		}
 

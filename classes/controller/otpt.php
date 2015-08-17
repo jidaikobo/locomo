@@ -1,11 +1,11 @@
 <?php
 namespace Locomo;
-class Controller_Output extends \Controller
+class Controller_Otpt extends \Controller
 {
 	public $model_name = ''; //'\Locomo\Model_Pdf_format';
 
-	use \Controller_Output_Pdf;
-	use \Controller_Output_Excel;
+	use \Controller_Otpt_Pdf;
+	use \Controller_Otpt_Excel;
 
 	protected static $_pdf = null;
 	protected static $_excel = null;
@@ -82,40 +82,83 @@ class Controller_Output extends \Controller
 		}
 
 		$model = $this->model_name;
-		$format_id = \Input::post('format', \Input::post('format1', false));
+
+		if (\Input::post('submit1')) {
+			$format_id = \Input::post('format1', \Input::post('format', false));
+		} else {
+			$format_id = \Input::post('format', \Input::post('format1', false));
+		}
 
 		$format = $model::find($format_id);
 
-		$ids = \Input::post('ids');
-		if (! $format || !$ids)
+		if (! $format)
 		{
-			if (! $format)  \Session::set_flash('error', 'フォーマットが選択されていません');
-			if (! $ids) \Session::set_flash('error', '印刷項目が選択されていません');
-
+			\Session::set_flash('error', 'フォーマットが選択されていません');
 			$referrer = \Input::referrer(\Uri::create('/'));
 			if (\Input::get())
 			{
 				$char = strpos($referrer, '?') === false ? '?' : '&';
-				if (is_string(\Input::get()))
-				{
+				if (is_string(\Input::get())) {
 					$referrer .= $char.str_replace('%3A', ':', \Input::get());
-				}
-				else
-				{
+				} else {
 					$referrer .= $char.str_replace('%3A', ':', http_build_query(\Input::get()));
 				}
 			}
 			\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
 		}
 
+
 		$format_model = $format->model;
 		$format_model::set_public_options();
 		$format_model::set_search_options();
-		$format_model::set_paginated_options();
-		$format_model::$_options['where'][] = array('id', 'IN', $ids);
+
+		// print_all で全件印刷
+		if (\Input::post('print_all') || \Input::post('print_all1'))
+		{
+		}
+		else
+		{
+			$ids = \Input::post('ids');
+			if (! $ids)
+			{
+				\Session::set_flash('error', '印刷項目が選択されていません');
+				$referrer = \Input::referrer(\Uri::create('/'));
+				if (\Input::get())
+				{
+					$char = strpos($referrer, '?') === false ? '?' : '&';
+					if (is_string(\Input::get())) {
+						$referrer .= $char.str_replace('%3A', ':', \Input::get());
+					} else {
+						$referrer .= $char.str_replace('%3A', ':', http_build_query(\Input::get()));
+					}
+				}
+				\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
+			}
+			$format_model::set_paginated_options();
+			$format_model::$_options['where'][] = array('id', 'IN', $ids);
+		}
+
 		$objects = $format_model::find('all', $format_model::$_options);
 
-		$objects = static::convert_objects($objects);
+		$objects = static::convert_objects($objects, $format);
+
+		// 繰り返しに対応
+		if (\Input::post('print_repeat') || \Input::post('print_repeat1'))
+		{
+			$repeat = max(intval(\Input::post('print_repeat', \Input::post('print_repeat1', 0))) , 1);
+			if ($repeat > 1)
+			{
+				$repeat_objects = array();
+				foreach ($objects as $object)
+				{
+					for ($i=0; $i<$repeat; $i++)
+					{
+						$repeat_objects[] = $object;
+					}
+				}
+				$objects = $repeat_objects;
+			}
+		}
 
 		if (! $objects) // ほぼあり得ない($ids の時点で飛ばしているので)
 		{
@@ -137,34 +180,45 @@ class Controller_Output extends \Controller
 			\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
 		}
 
+		// TODO
+		// そのうち、こっちに addPage を積んで、
+		// foreach の$object ごとにデフォルトのフォーマットと
+		// element 両方呼ぶ処理に切り替える
+		// $pdf->output もこちらに
+
 		switch ($format->type)
 		{
 			case 'pdf':
 				if ($format->is_multiple)
 				{
-					return $this->pdf_multiple($format, $objects);
+					if (\Input::post('submit1')) {
+						$start_cell = \Input::post('start_cell1', \Input::post('start_cell', false));
+					} else {
+						$start_cell = \Input::post('start_cell', \Input::post('start_cell1', false));
+					}
+					return $this->pdf_multiple($objects, $format, $start_cell);
 				}
 				else
 				{
-					return $this->pdf($format, $objects);
+					return $this->pdf($objects, $format);
 				}
 				break;
 			case 'excel':
-				return $this->excel($format, $objects);
+				return $this->excel($objects, $format);
 				break;
 			case 'csv':
-				return $this->csv($format, $objects);
+				return $this->csv($objects, $format);
 				break;
 			default:
 				if (method_exists($this, $format->type))
 				{
 					$action_name = $format->type;
-					$this->$action_name($format, $objects);
+					$this->$action_name($objects, $format);
 				}
 				else if (method_exists($this, 'action_'.$format->type))
 				{
 					$action_name = 'action_'.$format->type;
-					$this->$action_name($format, $objects);
+					$this->$action_name($objects, $format);
 				}
 				break;
 		}
@@ -177,58 +231,45 @@ class Controller_Output extends \Controller
 	 * Override 用
 	 * フィールドの出力を変えたい時などに使う
 	 */
-	protected static function convert_objects($objects)
+	protected static function convert_objects($objects, $format)
 	{
 		return $objects;
 	}
 
+	// convert_formats trait pdf に
+
+
 	/*
-	 * フォーマットの変更用
-	 * Override する際は parent で呼ぶ
+	 * デフォルトの action 用のカプセル化
+	 * id が渡されたら model でfind して、配列化して返す
 	 */
-	protected static function convert_formats($element)
+	protected static function find_objects($id, $model)
 	{
-		$format_arr = array();
-
-		$defaults = array(
-			'ln' => 2,
-		);
-
-		foreach ($element as $elm)
+		if (is_array($id))
 		{
-			$arr = $elm->to_array();
-
-			$arr = array_merge($defaults, $arr);
-			// テキストの処理
-			$fields = explode('}', str_replace('{', '}', $elm->txt));
-			$arr['fields'] = $fields;
-
-			if ($elm->h_adjustable) {
-				$arr['fitcell']  = false;
-				$arr['maxh'] = 0;
-				$arr['h'] = 0;
-			} else {
-				$arr['fitcell'] = true;
-				$arr['maxh'] = $elm->h;
-			}
-
-			if ($elm->ln_y) {
-				unset($arr['y']);
-			} else {
-			}
-
-			$border_str = '';
-			if ($elm->border_left) $border_str .= 'L';
-			if ($elm->border_top) $border_str .= 'T';
-			if ($elm->border_right) $border_str .= 'R';
-			if ($elm->border_bottom) $border_str .= 'B';
-			$arr['border'] = $border_str;
-
-			$format_arr[] = $arr;
+			$objects = $id;
 		}
-
-		return $format_arr;
+		else
+		{
+			if (is_object($id))
+			{
+				$objects = array($id);
+			}
+			else
+			{
+				$model::set_authorized_options();
+				$model::$_options['from_cache'] = false;
+				$object = $model::find($id, $model::$_options);
+				if (! $object)
+				{
+					throw new \HttpNotFoundException;
+				}
+				$objects = array($object);
+			}
+		}
+		return $objects;
 	}
+
 
 
 }
