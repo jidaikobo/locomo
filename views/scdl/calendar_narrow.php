@@ -25,7 +25,7 @@ if (!(isset($day) && $day && $mode != "week")):
 	endif;
 endif;
 ?>
-<?php 
+<?php /*
 if($mode == "week"):
 	if (\Session::get('view_empty_row') == "1"):
 		echo '&nbsp;<input type="button" class="schedule_narrow button small" value="予定のないユーザを非表示" id="show_empty_row">';
@@ -33,7 +33,7 @@ if($mode == "week"):
 		echo '&nbsp;<input type="button" class="schedule_narrow button small" value="予定のないユーザを表示" id="show_empty_row">';
 	endif;
 endif;
-?>
+*/ ?>
 </div><!-- /.narrow_user -->
 
 <script>
