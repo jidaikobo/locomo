@@ -378,7 +378,7 @@ class Controller_Base extends Controller_Core
 		// view
 		$content->get_view()->set_safe('plain', $plain);
 		$content->get_view()->set('item', $item);
-		$content->get_view()->set_global('title', self::$nicename.'閲覧');
+		$content->get_view()->set_global('title', '#'.$id.' '.self::$nicename.'閲覧');
 		$this->template->set_safe('content', $content);
 	}
 
