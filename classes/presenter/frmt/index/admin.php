@@ -9,53 +9,57 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 	{
 		$config = \Config::load('form_search','form_search',true,true);
 		// 検索用form
-		$form = \Fieldset::forge('counseling', $config);
+		$form = \Fieldset::forge('frmt', $config);
 
-		$form->add('counseled_at', '日付で絞り込み', array(
+		$form->add('searches[id]', 'ID', array(
 			'type' => 'text',
-			'value' => \Input::get('counseled_at'),
-			'class' => 'date',
-		));
-
-
-		$form->add('assessment[id]', '利用者ID', array(
-			'type' => 'text',
-			'value' => \Input::get('assessment.id'),
+			'size' => 6,
+			'value' => \Input::get('searches.id'),
 		))
 			->set_template('opener');
 
-		$form->add('assessment[name]', '利用者名前', array(
+		$form->add('likes[name]', 'フォーマット名', array(
 			'type' => 'text',
-			'value' => \Input::get('assessment.name'),
-		));
-
-		$form->add('assessment[area_type]', '利用者地域区分', array(
-			'type' => 'select',
-			'options' => array(
-				'' => '',
-				'市内' => '市内',
-				'府内' => '府内',
-				'他府県' => '他府県',
-			),
-			'value' => \Input::get('assessment.area_type'),
+			'value' => \Input::get('likes.name'),
 		))
 			->set_template('closer');
 
-
-		$form->add('likes[title]', '件名', array(
-			'type' => 'text',
-			'value' => \Input::get('likes.title'),
+		$form->add('is_draft', '使用状態', array(
+			'type' => 'select',
+			'options' => array(
+				'' => '',
+				'use' => '使用中のみ',
+				'draft' => '下書きのみ',
+			),
+			'value' => \Input::get('is_draft'),
 		))
 			->set_template('opener');
 
-		$form->add('likes[contents]', '相談内容', array(
-			'type' => 'text',
-			'value' => \Input::get('likes.contents'),
+		/*
+		$form->add('searches[is_multiple]', '1ページ内に複数印刷', array(
+			'type' => 'select',
+			'options' => array(
+				'' => '',
+				0  => '単数のみ',
+				1  => '複数印刷のみ',
+			),
+			'value' => \Input::get('searches.is_draft'),
+		));
+		 */
+
+		$form->add('searches[type]', 'タイプ', array(
+			'type' => 'select',
+			'options' => array(
+				''      => '',
+				'pdf'   => 'pdf のみ',
+				'excel' => 'excel のみ',
+			),
+			'value' => \Input::get('searches.type'),
 		))
 			->set_template('closer');
 
 		// wrapper
-		$parent = parent::search_form($title ?: '相談支援');
+		$parent = parent::search_form($title ?: 'フォーマット一覧');
 		$parent->add_after($form, 'counseling', array(), array(), 'opener');
 
 		return $parent;

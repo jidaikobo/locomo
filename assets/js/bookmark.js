@@ -35,6 +35,8 @@ $(function() {
 		if (!name) alert('ブックマーク名を入力して下さい');
 		if (!url) alert('ブックマークURLが空です');
 
+		$('#admin_bookmark_add_button').off();
+
 		$.ajax({
 			type: 'POST',
 			url: docroot + 'bkmk/add',

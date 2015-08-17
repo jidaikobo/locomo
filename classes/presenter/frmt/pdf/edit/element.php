@@ -161,7 +161,7 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 				foreach ($label as $prop_name_c => $label_c)
 				{
 					$name = 'field_'.$prop_name_c;
-					$form->add($name, '', array('type' => 'button', 'value' => $label_c, 'class' => 'field_'.$prop_name_c.' btn small', 'data-field' => $prop_name_c))->set_template('{field}');
+					$form->add($name, '', array('type' => 'button', 'value' => $label_c, 'title' => $prop_name_c, 'class' => 'field_'.$prop_name_c.' btn small', 'data-field' => $prop_name_c))->set_template('{field}');
 				}
 				$form->add('model_properties_group_closer_'.$child_group_count)->set_template('</fieldset>');
 				$child_group_count++;
@@ -169,7 +169,7 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 			else
 			{
 				$name = 'field_'.$prop_name;
-				$form->add($name, '', array('type' => 'button', 'value' => $label, 'class' => 'field_'.$prop_name.' btn small', 'data-field' => $prop_name))->set_template('{field}');
+				$form->add($name, '', array('type' => 'button', 'value' => $label, 'title' => $prop_name, 'class' => 'field_'.$prop_name.' btn small', 'data-field' => $prop_name))->set_template('{field}');
 			}
 		}
 		$form->add('model_properties_closer', '', array(), array())->set_template('</div>');

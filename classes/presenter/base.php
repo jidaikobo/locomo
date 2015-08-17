@@ -190,8 +190,10 @@ class Presenter_Base extends \Presenter
 	}
 
 
-	public static function index_admin_toolbar($model = '\Frmt\Model_Customer', $name_num = '')
+	public static function index_admin_toolbar($model = null, $name_num = '', $is_print_all = true, $is_repeat = true)
 	{
+		if (!$model) return '';
+
 		$index_toolbar_btns = '';
 		if (\Request::main()->action == 'index_admin')
 		{
@@ -225,7 +227,26 @@ class Presenter_Base extends \Presenter
 			$opt .= '</select>';
 			$opt .= '個目から</div>';
 
-			$opt.= \Form::submit('submit'.$name_num, '宛名の出力', array('class'=>'button small primary'));
+			if ($is_repeat)
+			{
+				$opt .= '<div class="pdf_repeat" style="display:inline;">繰り返し';
+				$opt .= '<select name="print_repeat'.$name_num.'" class="print_repeat">';
+				for ($i=1; $i<=10; $i++)
+				{
+					$selected = (\Input::post('print_repeat') == $i) ? 'selected="selected"' : '';
+					$opt .= '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
+				}
+				$opt .= '</select>';
+				$opt .= '件ずつ</div>';
+			}
+
+			$opt.= \Form::hidden('count_total', \Pagination::get("total_items"), array('class' => 'count_total'));
+			$opt.= \Form::submit('submit'.$name_num, 'チェック項目出力', array('class'=>'button small primary'));
+			if ($is_print_all) $opt.= \Form::submit('print_all'.$name_num, '全て出力 ('. \Pagination::get("total_items").')', array('class'=>'button small primary print_all'));
+
+			// 印刷設定へリンク
+			$format_slug = strtolower(str_replace('_', '/', str_replace('\Model_', '/', ltrim($model, '\\')))) . '/index_admin';
+			if (\Auth::has_access($format_slug)) $opt .= \Html::anchor($format_slug, '印刷設定へ', array());
 
 			$index_toolbar_btns = html_tag('div', array(
 				'class' => 'index_toolbar_buttons'

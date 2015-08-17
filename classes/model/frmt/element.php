@@ -1,6 +1,6 @@
 <?php
 namespace Locomo;
-class Model_Frmt_Element extends \Locomo\Model_Base
+class Model_Frmt_Element extends \Locomo\Model_Base_Soft
 {
 	protected static $_table_name = 'lcm_frmt_elements';
 
@@ -272,6 +272,12 @@ class Model_Frmt_Element extends \Locomo\Model_Base
 			),
 			'default' => 0,
 		),
+
+		'created_at' => array('form' => array('type' => false), 'default' => null),
+		'updated_at' => array('form' => array('type' => false), 'default' => null),
+		'deleted_at' => array('form' => array('type' => false), 'default' => null),
+		'creator_id' => array('form' => array('type' => false), 'default' => ''),
+		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 	);
 
 

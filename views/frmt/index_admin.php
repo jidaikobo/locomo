@@ -10,6 +10,7 @@
 			<th class="min">表示順</th>
 			<th class="min">使用</th>
 			<th class="min">フォーマット名</th>
+			<th class="min">要素</th>
 			<th class="min">操作</th>
 			<?php if ($output_url) { ?><th class="min">テスト印刷</th><?php } ?>
 		</tr>
@@ -21,6 +22,9 @@
 			<td class="min ar"><?php echo $item->seq; ?></td>
 			<td class="min ac"><?php echo $item->is_draft ? '<span style="color:IndianRed;">下書き</span>' : '<span style="color:green;">使用中</span>'; ?></td>
 			<td class="min"><span class="icon <?php echo ($item->type == 'excel') ? 'xls' : $item->type ; ?>"><?php echo $item->name; ?></span></td>
+			<td class="min ac">
+				<?php echo count($item->element); ?>
+			</td>
 			<td class="min"><?php echo \Locomo\Presenter_Frmt_Index_Admin::create_ctrls($item); ?></td>
 			<?php if ($output_url) : ?>
 				<td class="min"><?php echo \Locomo\Presenter_Frmt_Index_Admin::create_preview($item, $output_url); ?></td>

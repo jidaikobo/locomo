@@ -56,10 +56,17 @@ $(function () {
 		applyAllStyle();
 		$('.print .element.focus').removeClass('focus');
 
+		/* クリアしない
 		$('#controller').find('input[type="text"]').val('');
 		$('#controller').find('textarea').val('');
 		$('#controller').find('input[type="checkbox"]').prop('checked', false);
 		$('#controller').find('select').val('');
+		*/
+		// x, y, txt, name のみクリアする
+		$('#controller').find('.name').val('');
+		$('#controller').find('.txt').val('');
+		$('#controller').find('.x').val('');
+		$('#controller').find('.y').val('');
 
 		// 新しい要素の追加
 		if ($('#controller_bar .add_element').hasClass('active')) {
@@ -69,6 +76,8 @@ $(function () {
 
 	function addNewElement(e)
 	{
+		// フォーカスの全解除
+		$('.print .element.focus').removeClass('focus');
 
 		$('#controller_bar .add_element').removeClass('active');
 
@@ -76,14 +85,17 @@ $(function () {
 		var new_index = $('.print .element.' + new_element_class + '').length;
 		var replaced = $( $('#element_template').html().replace(/\$/g, new_index) );
 		replaced.addClass(new_element_class);
-		replaced.find('.x').val(e.offsetX*px2mm);
-		replaced.find('.y').val(e.offsetY*px2mm);
+		replaced.addClass('focus');
+		$('#controller').find('.x').val(e.offsetX*px2mm);
+		$('#controller').find('.y').val(e.offsetY*px2mm);
 
 		replaced.find('.display_name').show();
 		if ($('#controller_bar .show_shade').hasClass('active')) replaced.addClass('shade');
 
 		replaced.appendTo($('#print_div'));
 		replaced.on('click', focusElementListener);
+
+		valueInputController2Element();
 
 		refleshElementSeq();
 		sortedCallback(); // ->applyAllStyle() 走る 

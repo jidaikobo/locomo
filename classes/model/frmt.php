@@ -270,7 +270,7 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 			'model_to' => '\Locomo\Model_Frmt_Element',
 			'key_to' => 'format_id',
 			'cascade_save' => true,
-			'cascade_delete' => false,
+			'cascade_delete' => true,
 		),
 		// EAV
 		'eav' => array(
@@ -289,5 +289,30 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 		)
 	);
 
+	/*
+	 * set_search_options()
+	 */
+	public static function set_search_options()
+	{
 
+		static::set_equal_options(
+			array(
+				'id',
+				'is_multiple',
+				'type',
+			)
+		, \Input::get('searches'));
+		static::set_like_options(
+			array(
+				'name',
+			)
+		, \Input::get('likes'));
+
+		if (\Input::get('is_draft'))
+		{
+			if (\Input::get('is_draft') == 'use') static::$_options['where'][] = array('is_draft', false);
+			if (\Input::get('is_draft') == 'draft') static::$_options['where'][] = array('is_draft', true);
+		}
+
+	}
 }

@@ -8,7 +8,6 @@ class Controller_Frmt extends \Locomo\Controller_Base
 
 	public $model_name = '\Locomo\Model_Frmt';
 
-
 	/**
 	 * pdf_edit()
 	 */

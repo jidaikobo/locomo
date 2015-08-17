@@ -91,36 +91,74 @@ class Controller_Otpt extends \Controller
 
 		$format = $model::find($format_id);
 
-		$ids = \Input::post('ids');
-		if (! $format || !$ids)
+		if (! $format)
 		{
-			if (! $format)  \Session::set_flash('error', 'フォーマットが選択されていません');
-			if (! $ids) \Session::set_flash('error', '印刷項目が選択されていません');
-
+			\Session::set_flash('error', 'フォーマットが選択されていません');
 			$referrer = \Input::referrer(\Uri::create('/'));
 			if (\Input::get())
 			{
 				$char = strpos($referrer, '?') === false ? '?' : '&';
-				if (is_string(\Input::get()))
-				{
+				if (is_string(\Input::get())) {
 					$referrer .= $char.str_replace('%3A', ':', \Input::get());
-				}
-				else
-				{
+				} else {
 					$referrer .= $char.str_replace('%3A', ':', http_build_query(\Input::get()));
 				}
 			}
 			\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
 		}
 
+
 		$format_model = $format->model;
 		$format_model::set_public_options();
 		$format_model::set_search_options();
-		$format_model::set_paginated_options();
-		$format_model::$_options['where'][] = array('id', 'IN', $ids);
+
+		// print_all で全件印刷
+		if (\Input::post('print_all') || \Input::post('print_all1'))
+		{
+		}
+		else
+		{
+			$ids = \Input::post('ids');
+			if (! $ids)
+			{
+				\Session::set_flash('error', '印刷項目が選択されていません');
+				$referrer = \Input::referrer(\Uri::create('/'));
+				if (\Input::get())
+				{
+					$char = strpos($referrer, '?') === false ? '?' : '&';
+					if (is_string(\Input::get())) {
+						$referrer .= $char.str_replace('%3A', ':', \Input::get());
+					} else {
+						$referrer .= $char.str_replace('%3A', ':', http_build_query(\Input::get()));
+					}
+				}
+				\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
+			}
+			$format_model::set_paginated_options();
+			$format_model::$_options['where'][] = array('id', 'IN', $ids);
+		}
+
 		$objects = $format_model::find('all', $format_model::$_options);
 
 		$objects = static::convert_objects($objects, $format);
+
+		// 繰り返しに対応
+		if (\Input::post('print_repeat') || \Input::post('print_repeat1'))
+		{
+			$repeat = max(intval(\Input::post('print_repeat', \Input::post('print_repeat1', 0))) , 1);
+			if ($repeat > 1)
+			{
+				$repeat_objects = array();
+				foreach ($objects as $object)
+				{
+					for ($i=0; $i<$repeat; $i++)
+					{
+						$repeat_objects[] = $object;
+					}
+				}
+				$objects = $repeat_objects;
+			}
+		}
 
 		if (! $objects) // ほぼあり得ない($ids の時点で飛ばしているので)
 		{

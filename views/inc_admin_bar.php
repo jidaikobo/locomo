@@ -210,15 +210,70 @@ endif;
 <!-- ブックマークテスト中 -->
 <div id="bookmark_window" class="lcm_floatwindow resizable draggable" style=" display: none;">
 	<h1 id="bookmark_title" class="lcmbar_top lcmbar_top_title lcm_floatwindow_title">
-		ブックマーク一覧
+		ブックマーク
 	</h1>
-	<input type="text" id="admin_bookmark_name_input" value="<?php echo $title; ?>">
-	<input type="text" id="admin_bookmark_url_input" value="<?php echo \Uri::create(\Uri::current(), array(), \Input::get()); ?>">
-	<button type="" id="admin_bookmark_add_button">ブックマークに追加</button>
-	<ul id="bookmarks">
-	</ul>
+	<div id="bookmark_txt" class="modal_content">
+		<div id="bookmark_form">
+			<h2>現在のページ</h2>
+			<input type="text" id="admin_bookmark_name_input" value="<?php echo $title; ?><?php if (\Arr::get($locomo, 'module.nicename')) echo '('.\Arr::get($locomo, 'module.nicename').')'; ?>">
+			<input type="text" id="admin_bookmark_url_input" value="<?php echo \Uri::create(\Uri::current(), array(), \Input::get()); ?>">
+			<button type="" id="admin_bookmark_add_button" class="ar button primary small">ブックマークに追加</button>
+		</div>
+		<h2>ブックマークリスト</h2>
+		<ul id="bookmarks">
+		</ul>
+		<div id="bookmark_bottom">
+			<?php echo \Html::anchor('bkmk/bulk', 'ブックマーク管理へ', array('class' => 'button small')) ?>
+		</div>
+	</div>
 	<a href="javascript: void(0);" role="button" class="lcm_close_window lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ブックマークウィンドウを閉じる"></a>
 </div>
+
+<style>
+#bookmark_window
+{
+	height: 25em;
+	width: 20em;
+	box-sizing: border-box;
+}
+#admin_bookmark_name_input,
+#admin_bookmark_url_input
+{
+	margin-left: 0;
+	width: 100%;
+}
+#admin_bookmark_url_input
+{
+	font-size: 0.8em;
+}
+#admin_bookmark_add_button
+{
+	display: block;
+	float: right;
+}
+#bookmark_form
+{
+	overflow: hidden;
+	box-sizing: border-box;
+}
+#bookmarks
+{
+	margin-top: 1em;
+	padding-left: 0;
+	width: 100%;
+}
+#bookmarks li
+{
+	list-style: none;
+	font-size: 0.95em;
+}
+#bookmark_bottom
+{
+position: absolute;
+bottom: 5px;
+right: 5px;
+}
+</style>
 
 <?php echo \Asset::js('bookmark.js') ?>
 

@@ -103,8 +103,8 @@ class Presenter_Frmt_Excel_Edit_Element extends \Presenter_Base
 		{
 			$html .= '<li>';
 			$html .= $label;
-			$html .= '<button name="field_'.$prop_name.'" id="form_field_'.$prop_name.'" data-field="'.$prop_name.'" class="field_'.$prop_name.' btn small add_txt" value="'.$label.'" type="button">データに追加</button>';
-			$html .= '<button name="field_'.$prop_name.'" id="form_field_'.$prop_name.'" data-field="'.$prop_name.'" class="field_'.$prop_name.' btn small add_row" value="'.$label.'" type="button">新規列として追加</button>';
+			$html .= '<button name="field_'.$prop_name.'" id="form_field_'.$prop_name.'" title="'.$prop_name.'" data-field="'.$prop_name.'" class="field_'.$prop_name.' btn small add_txt" value="'.$label.'" type="button">データに追加</button>';
+			$html .= '<button name="field_'.$prop_name.'" id="form_field_'.$prop_name.'" title="'.$prop_name.'" data-field="'.$prop_name.'" class="field_'.$prop_name.' btn small add_row" value="'.$label.'" type="button">新規列として追加</button>';
 			$html .= '</li>';
 		}
 		$html .= '</ul>';
