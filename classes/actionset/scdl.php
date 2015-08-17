@@ -379,7 +379,7 @@ class Actionset_Scdl extends \Actionset
 	{
 		if (\Auth::is_admin())
 		{
-			$urls = array(array($controller.DS."admin/index_admin/", '管理者向け一覧'));
+			$urls = array(array($controller.DS."index_admin/", '管理者向け一覧'));
 		}
 
 		$retvals = array(
@@ -387,6 +387,26 @@ class Actionset_Scdl extends \Actionset
 			'action_name'  => '管理者向け一覧',
 			'show_at_top'  => true,
 			'explanation'  => '管理者向けの一覧です。',
+			'order'        => 50
+		);
+		return $retvals;
+	}
+
+	/**
+	 * actionset_index_deleted
+	 */
+	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
+	{
+		if (\Auth::is_admin())
+		{
+			$urls = array(array($controller.DS."index_deleted/", '削除済み項目一覧'));
+		}
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '削除済み項目一覧',
+			'show_at_top'  => true,
+			'explanation'  => '管理者向けの削除済み項目一覧です。',
 			'order'        => 50
 		);
 		return $retvals;

@@ -1,65 +1,98 @@
-<h2>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h2>
-<p><?php echo \Pagination::sort_info('\Schedules\Model_Schedules'); ?></p>
-<?php 
-	//index menu
-	echo \Actionset::generate_menu_html($actionset['index'], array('class'=>'holizonal_list'));
-?>
+<?php echo $search_form; ?>
+
 <?php if ($items): ?>
-<table class="tbl datatable">
+
+<!--ページネーション-->
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div>
+
+<!--一覧-->
+<table class="tbl datatable tbl_scrollable lcm_focus" title="ユーザ一覧">
 	<thead>
 		<tr>
-			<th><?php echo \Pagination::sort('id', 'ID', false);?></th>
-			<th><?php echo \Pagination::sort('repeat_kb', '繰り返し区分', false);?></th>
-			<th><?php echo \Pagination::sort('week_kb', '繰り返し曜日', false);?></th>
-			<th><?php echo \Pagination::sort('title_text', 'タイトル', false);?></th>
-			<th><?php echo \Pagination::sort('title_kb', 'タイトル（区分）', false);?></th>
-			<th><?php echo \Pagination::sort('message', 'メッセージ', false);?></th>
-			<th><?php echo \Pagination::sort('group_kb', '表示するグループフラグ', false);?></th>
-			<th><?php echo \Pagination::sort('group_detail', 'グループ指定', false);?></th>
-			<th><?php echo \Pagination::sort('purpose_kb', '施設使用目的区分', false);?></th>
-			<th><?php echo \Pagination::sort('purpose_text', '施設使用目的テキスト', false);?></th>
-			<th><?php echo \Pagination::sort('user_num', '施設利用人数', false);?></th>
-			<th><?php echo \Pagination::sort('user_id', '作成者', false);?></th>
-			<th><?php echo \Pagination::sort('created_at', '作成日時', false);?></th>
-			<th><?php echo \Pagination::sort('updated_at', '更新日時', false);?></th>
-			<th><?php echo \Pagination::sort('deleted_at', '削除日', false);?></th>
-			<th><?php echo \Pagination::sort('is_visible', '可視属性', false);?></th>
-
+			<!--
+			<th style="width: 10px; padding-right: 3px; padding-left: 3px;"><a role="button" class="button" style="padding: 4px 4px 2px; margin: 0;">選択</a></th>
+			-->
+			<th class="min"><?php echo \Pagination::sort('id', 'ID');?></th>
+			<th><?php echo \Pagination::sort('title_text', 'タイトル');?></th>
+			<th>期間</th>
+			<th class="min"><?php echo \Pagination::sort('', '作成'); ?></th>
+			<?php if (\Request::main()->action != 'index_deleted'): ?>
+			<th class="min"><?php echo \Pagination::sort('', '更新'); ?></th>
+			<?php endif; ?>
+			<?php if (\Request::main()->action == 'index_deleted'): ?>
+				<th>削除</th>
+			<?php endif; ?>
 			<th>操作</th>
 		</tr>
 	</thead>
 	<tbody>
-<?php foreach ($items as $item): ?>		<tr>
-	<td><?php echo $item->id; ?></td>
-	<td><div class="col_scrollable"><?php echo $item->repeat_kb; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->week_kb; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->title_text; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->title_kb; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->message; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->group_kb; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->group_detail; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->purpose_kb; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->purpose_text; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->user_num; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->user_id; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->created_at; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->updated_at; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->deleted_at; ?></div></td>
-	<td><div class="col_scrollable"><?php echo $item->is_visible ? 'Yes' : 'No'; ?></div></td>
-			<td>
+<?php
+	$ctrl = $locomo['controller']['name'] == '\Controller_Scdl_Admin' ? 'scdl' :'reserve/reserve' ; 
+	$model_name = $ctrl == 'scdl' ? 'Locomo\Model_Scdl' : '\Reserve\Model_Reserve';
+?>
+<?php foreach ($items as $item): ?>
+<?php
+	$repeat_kbs = $model_name::get_repeat_kbs();
+	$importance_kbs = $model_name::get_importance_kbs();
+	$detail_kbs = $model_name::get_detail_kbs();
+	$eventtitle_icon = '';
+	$eventtitle_skip = '';
+	//繰り返し区分
+	$eventtitle_icon.= $item['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$item['repeat_kb'].'"></span>' : '';
+	//詳細区分
+	foreach($detail_kbs as $key => $value):
+		if($item[$key]):
+			$eventtitle_icon.= '<span class="text_icon schedule '.$key.'"></span>';
+			$eventtitle_skip.= ' '.$value;
+		endif;
+	endforeach;
+?>
+		<tr class="l2" tabindex="-1" title="<?php echo $item->title_text ?>">
+			<td class="ar"><?php echo $item->id; ?></td>
+			<th><div class="col_scrollable" style="min-width: 12em;"><?php echo $eventtitle_icon.$item->title_text; ?></div></th>
+			<td><?php echo $item->start_date.' '.$item->start_time.'〜<br>'.$item->end_date.' '.$item->end_time; ?></td>
+			<td><?php echo $item->created_at.'<br>'.$item->create_user['display_name']; ?></td>
+			<?php if (\Request::main()->action != 'index_deleted'): ?>
+			<td><?php echo $item->updated_at.'<br>'.\Model_Usr::get_display_name($item->updater_id); ?></td>
+			<?php endif; ?>
+			<?php if (\Request::main()->action == 'index_deleted'): ?>
+			<td><?php echo $item->deleted_at.'<br>'.\Model_Usr::get_display_name($item->updater_id); ?></td>
+			<?php endif; ?>
+			<td class="min">
 				<div class="btn_group">
 					<?php
-					echo Html::anchor('scdl/viewdetail'.'/'.$item->id, '閲覧', array('class' => 'edit'));
-					echo ' ';
-					echo Html::anchor('scdl/edit'.'/'.$item->id, '編集', array('class' => 'edit'));
+					if (\Auth::is_admin()):
+						echo Html::anchor($ctrl.'/viewdetail/'.$item->id, '<span class="skip">'.'を</span>閲覧', array('class' => 'view'));
+						echo Html::anchor($ctrl.'/edit/'.$item->id, '編集', array('class' => 'edit'));
+						if ($item->deleted_at):
+							echo Html::anchor($ctrl.'/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));
+							echo Html::anchor($ctrl.'/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
+						else:
+							echo Html::anchor($ctrl.'/delete/'.$item->id, '削除', array('class' => 'delete confirm'));
+						endif;
+					endif;
 					?>
 				</div>
 			</td>
-		</tr>
-<?php endforeach; ?>
+		</tr><?php endforeach; ?>
 	</tbody>
+	<tfoot class="thead">
+		<tr>
+			<th><?php echo \Pagination::sort('id', 'ID');?></th>
+			<th><?php echo \Pagination::sort('title_text', 'タイトル');?></th>
+			<th>期間</th>
+			<th><?php echo \Pagination::sort('', '作成'); ?></th>
+			<?php if (\Request::main()->action != 'index_deleted'): ?>
+			<th class="min"><?php echo \Pagination::sort('', '更新'); ?></th>
+			<?php endif; ?>
+			<?php if (\Request::main()->action == 'index_deleted'): ?>
+				<th>削除</th>
+			<?php endif; ?>
+			<th>操作</th>
+		</tr>
+	</tfoot>
 </table>
-<?php echo \Pagination::create_links(); ?>
-<?php else: ?>
-<p>schedulesが存在しません。</p>
+<?php include(LOCOMOPATH . "/views/scdl/inc_legend.php"); //カレンダ凡例 ?>
 <?php endif; ?>
