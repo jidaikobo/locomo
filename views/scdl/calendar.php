@@ -46,7 +46,7 @@
 	</thead>
 <?php $detail_pop_array = array(); ?>
 <?php foreach($schedule_data as $v): ?>
-<?php if ($v['week'] == 1) { print '<tr>'; } ?>
+	<?php if ($v['week'] == 1) { print '<tr>'; } ?>
 	<?php $class_str = 'week'.$v['week'];
 		// 祝日対応
 		if (isset($v['is_holiday']) && $v['is_holiday']) { $class_str = "week_holiday"; }

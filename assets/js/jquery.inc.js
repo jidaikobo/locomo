@@ -1076,11 +1076,11 @@ function make_hidden_form_items(hidden_items, $selected){
 	$hidden_item.val(hidden_str);
 }
 
-/*=== グループ絞り込み ===*/
+/*=== グループ絞り込み Ajax ===*/
 var base_uri = $('body').data('uri');
 function lcm_select_narrow_down(group_id, uri, $select, $selected){
 	var $label_item, $selected_items, now_items, name, id;
-	$label_item = $select.find('option[value=""]')[0] ? $select.find('option[value=""]') : $();//valueが空のものをラベルとみなす。ひとまず？
+	$label_item = $select.find('option[value=""]')[0] ? $select.find('option[value=""]') : $();//valueが空のものをラベルとみなす。
 	if(!!$selected){ // 選択済みのものがある場合(multiple_select_narrow_down)
 		$selected_items = $selected.find('option');
 		now_items = new Object();
@@ -1088,8 +1088,10 @@ function lcm_select_narrow_down(group_id, uri, $select, $selected){
 			now_items[$selected_items[i].value] = 1;
 		};
 	}
+
 	//  Locomoでは、-10が「ログインしているユーザ」なので、空のgroup_idがきたら、明示的に-10をわたす
-	group_id = ! group_id ? -10 : group_id;
+	// usr以外で-10が渡るのも不便かなあ
+		group_id = ! group_id ? -10 : group_id;
 	$.ajax({
 		url: uri,
 		type: 'post',
@@ -1098,8 +1100,7 @@ function lcm_select_narrow_down(group_id, uri, $select, $selected){
 			var exists = JSON.parse(res||"null");
 			select_items = '';
 			for(var i in exists) {
-				//scdl/reserveはuser:idとbuilding:item_idの２通りで管理している。どうしたものか
-				//ココあとで整理
+				//scdl/reserveはuser:idとbuilding:item_idの２通りで管理している。あとで整理したい。
 				if ($(now_items)[0] && $(now_items[exists[i]['id']])[0] ) continue;
 				if ($(now_items)[0] && $(now_items[exists[i]['item_id']])[0] ) continue;
 				
@@ -1125,7 +1126,7 @@ $('.select_narrow_down').each(function(){
 
 //複数選択ボックスを持つ場合
 $('.multiple_select_narrow_down').each(function(){
-	var uri, $selects, $select, $seleced; 
+	var uri, $selects, $select, $selected; 
 	uri = base_uri;
 	uri += $(this).data('uri') ? $(this).data('uri') : 'usr/user_list.json';
 	$selects  = $('#'+$(this).data('targetId')).find('select');
