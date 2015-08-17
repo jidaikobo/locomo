@@ -168,7 +168,7 @@ class Presenter_Base extends \Presenter
 					$html.= \Html::anchor($crtl.'/undelete/'.$obj->id, '復活', array('class' => 'undelete confirm'));
 					if (\Auth::has_access($crtl_name.'/purge_confirm'))
 					{
-						$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm'));
+						$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete'));
 					}
 				}
 				else

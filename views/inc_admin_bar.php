@@ -215,7 +215,7 @@ endif;
 	<div id="bookmark_txt" class="modal_content">
 		<div id="bookmark_form">
 			<h2>現在のページ</h2>
-			<input type="text" id="admin_bookmark_name_input" value="<?php echo $title; ?><?php if (\Arr::get($locomo, 'module.nicename')) echo '('.\Arr::get($locomo, 'module.nicename').')'; ?>">
+			<input type="text" id="admin_bookmark_name_input" value="<?php echo $title; ?><?php if (\Arr::get($locomo, 'module.nicename')) echo ' - '.\Arr::get($locomo, 'module.nicename'); ?>">
 			<input type="text" id="admin_bookmark_url_input" value="<?php echo \Uri::create(\Uri::current(), array(), \Input::get()); ?>">
 			<button type="" id="admin_bookmark_add_button" class="ar button primary small">ブックマークに追加</button>
 		</div>
