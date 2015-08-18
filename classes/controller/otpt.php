@@ -115,6 +115,11 @@ class Controller_Otpt extends \Controller
 		// print_all で全件印刷
 		if (\Input::post('print_all') || \Input::post('print_all1'))
 		{
+			$format_model::set_paginated_options();
+			if ( isset($format_model::$_options['limit']) ) unset($format_model::$_options['limit']);
+			if ( isset($format_model::$_options['offset']) ) unset($format_model::$_options['offset']);
+			if ( isset($format_model::$_options['rows_limit']) ) unset($format_model::$_options['rows_limit']);
+			if ( isset($format_model::$_options['rows_offset']) ) unset($format_model::$_options['rows_offset']);
 		}
 		else
 		{
