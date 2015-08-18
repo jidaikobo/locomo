@@ -33,6 +33,7 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 			// $form->add_model($element)->populate($element);
 			foreach ($props as $prop_name => $prop)
 			{
+				if (isset($prop['form']['type']) && $prop['form']['type'] == false) continue;
 				$name = $element->id ? 'element[' . $element->id .'][' . $prop_name . ']' : 'element_new[$][' . $prop_name . ']';
 				if (isset($element->form_key)) $name = str_replace('$', $element->form_key, $name);
 				$form->add(

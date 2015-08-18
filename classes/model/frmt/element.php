@@ -279,6 +279,18 @@ class Model_Frmt_Element extends \Locomo\Model_Base_Soft
 		'creator_id' => array('form' => array('type' => false), 'default' => ''),
 		'updater_id' => array('form' => array('type' => false), 'default' => ''),
 	);
+	
+	// $_observers
+	protected static $_observers = array(
+		"Orm\Observer_Self" => array(),
+		'Locomo\Observer_Created' => array(
+			'events' => array('before_insert', 'before_save'),
+			'mysql_timestamp' => true,
+		),
+		'Locomo\Observer_Revision' => array(
+			'events' => array('after_insert', 'after_save'),
+		),
+	);
 
 
 	public static $format_options = array(
