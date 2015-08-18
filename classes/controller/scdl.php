@@ -1698,39 +1698,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		return "";
 	}
 
-
-	/*
-	 * ajax グループIDからユーザリストを返す
-	 * @return users の配列
-	 */
-	 /* usrに統合
-	public function action_get_user_list()
-	{
-		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
-		$where = array();
-
-		if (\Input::post("gid", 0)) {
-			$where = array(array('usergroup.id', '=', \Input::post("gid", 0)));
-		} else {
-			$where = array();
-		}
-		$response = \Model_Usr::find('all',
-			array(
-				'related'   => count($where) ? array('usergroup') : array(),
-				'where'=> $where,
-				'order_by' => array('pronunciation' => 'asc')
-				)
-			);
-		$result = array();
-		$index = 0;
-		foreach ($response as $row) {
-//			$row[0] = $index;
-			$index++;
-			$result[] = $row;
-		}
-		echo $this->response($result, 200); die();
-	}
-*/
 	/*
 	 * ajax IDから施設リストを返す
 	 * @return users の配列
@@ -1739,7 +1706,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	{
 		if (!\Input::is_ajax()) throw new HttpNotFoundException;;
 		$where = array(array('item_group', 'building'));
-		if (\Input::post("gid")) {
+		if (\Input::post("gid") && \Input::post("gid") != -10) {
 			$where = array(
 				array('item_group2', '=', \Input::post("gid", 0)),
 				array('item_group', 'building')
