@@ -152,11 +152,11 @@ class Presenter_Base extends \Presenter
 
 		if (\Auth::has_access($crtl_name.'/view'))
 		{
-			$html.= \Html::anchor($crtl.'/view/'.$obj->id, '閲覧', array('class' => 'view'));
+			$html.= \Html::anchor($crtl.'/view/'.$obj->id, '閲覧', array('class' => 'view button small'));
 		}
 		if (\Auth::has_access($crtl_name.'/edit'))
 		{
-			$html.= \Html::anchor($crtl.'/edit/'.$obj->id, '編集', array('class' => 'edit'));
+			$html.= \Html::anchor($crtl.'/edit/'.$obj->id, '編集', array('class' => 'edit button small'));
 		}
 
 		if (is_subclass_of($obj, '\Orm\Model_Soft'))
@@ -165,15 +165,15 @@ class Presenter_Base extends \Presenter
 			{
 				if ($obj['deleted_at'])
 				{
-					$html.= \Html::anchor($crtl.'/undelete/'.$obj->id, '復活', array('class' => 'undelete confirm'));
+					$html.= \Html::anchor($crtl.'/undelete/'.$obj->id, '復活', array('class' => 'undelete confirm button small'));
 					if (\Auth::has_access($crtl_name.'/purge_confirm'))
 					{
-						$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete'));
+						$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete button small'));
 					}
 				}
 				else
 				{
-					$html.= \Html::anchor($crtl.'/delete/'.$obj->id, '削除', array('class' => 'delete confirm'));
+					$html.= \Html::anchor($crtl.'/delete/'.$obj->id, '削除', array('class' => 'delete confirm button small'));
 				}
 			}
 		}
@@ -181,7 +181,7 @@ class Presenter_Base extends \Presenter
 		{
 			if (\Auth::has_access($crtl_name.'/purge_confirm'))
 			{
-				$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm'));
+				$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm button small'));
 			}
 		}
 		$html = $html ? '<div class="btn_group">'.$html.'</div>' : '' ;
@@ -217,7 +217,7 @@ class Presenter_Base extends \Presenter
 			}
 			$opt .= '</select>';
 
-			$opt .= '<div class="pdf_start_cell" style="display:inline;">セル';
+			$opt .= '<div class="pdf_start_cell nowrap" style="display:inline;">セル';
 			$opt .= '<select name="start_cell'.$name_num.'" class="start_cell">';
 			$opt .= '<option value=""></option>';
 			for ($i=1; $i<=10; $i++)
@@ -225,11 +225,11 @@ class Presenter_Base extends \Presenter
 				$opt .= '<option value="'.$i.'">'.$i.'</option>';
 			}
 			$opt .= '</select>';
-			$opt .= '個目から</div>';
+			$opt .= '個目から、</div>';
 
 			if ($is_repeat)
 			{
-				$opt .= '<div class="pdf_repeat" style="display:inline;">繰り返し';
+				$opt .= '<div class="pdf_repeat nowrap" style="display:inline;">繰り返し';
 				$opt .= '<select name="print_repeat'.$name_num.'" class="print_repeat">';
 				for ($i=1; $i<=10; $i++)
 				{
