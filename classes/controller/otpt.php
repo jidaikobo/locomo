@@ -185,48 +185,7 @@ class Controller_Otpt extends \Controller
 			\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
 		}
 
-		// TODO
-		// そのうち、こっちに addPage を積んで、
-		// foreach の$object ごとにデフォルトのフォーマットと
-		// element 両方呼ぶ処理に切り替える
-		// $pdf->output もこちらに
-
-		switch ($format->type)
-		{
-			case 'pdf':
-				if ($format->is_multiple)
-				{
-					if (\Input::post('submit1')) {
-						$start_cell = \Input::post('start_cell1', \Input::post('start_cell', false));
-					} else {
-						$start_cell = \Input::post('start_cell', \Input::post('start_cell1', false));
-					}
-					return $this->pdf_multiple($objects, $format, $start_cell);
-				}
-				else
-				{
-					return $this->pdf($objects, $format);
-				}
-				break;
-			case 'excel':
-				return $this->excel($objects, $format);
-				break;
-			case 'csv':
-				return $this->csv($objects, $format);
-				break;
-			default:
-				if (method_exists($this, $format->type))
-				{
-					$action_name = $format->type;
-					$this->$action_name($objects, $format);
-				}
-				else if (method_exists($this, 'action_'.$format->type))
-				{
-					$action_name = 'action_'.$format->type;
-					$this->$action_name($objects, $format);
-				}
-				break;
-		}
+		$this->output($objects, $format);
 
 		// ここまでに return しなかったらページはない
 		throw new \HttpNotFoundException;
@@ -276,6 +235,86 @@ class Controller_Otpt extends \Controller
 	}
 
 
+	/*
+	 * action_single()
+	 * target _blank 等リンクで使用する
+	 */
+	public function action_single($format_id = null, $object_id = null)
+	{
+		if (! $this->model_name)
+		{
+			throw new \Exception('Undefined $this->model_name.');
+		}
 
+		$model = $this->model_name;
+		$format = $model::find($format_id);
+
+		$format_model = $format->model;
+		$format_model::set_authorized_options();
+
+		if (
+			! $format ||
+			! $object = $format_model::find($object_id, $format_model::$_options))
+		{
+			throw new \HttpNotFoundException;
+		}
+
+		$objects = array($object);
+		$objects = static::convert_objects($objects, $format);
+
+		$this->output($objects, $format);
+	}
+
+
+	/*
+	 * output()
+	 * action_output, action_single をここで処理
+	 */
+	protected function output($objects, $format)
+	{
+
+		// TODO
+		// そのうち、こっちに addPage を積んで、
+		// foreach の$object ごとにデフォルトのフォーマットと
+		// element 両方呼ぶ処理に切り替える
+		// $pdf->output もこちらに
+
+		switch ($format->type)
+		{
+			case 'pdf':
+				if ($format->is_multiple)
+				{
+					if (\Input::post('submit1')) {
+						$start_cell = \Input::post('start_cell1', \Input::post('start_cell', false));
+					} else {
+						$start_cell = \Input::post('start_cell', \Input::post('start_cell1', false));
+					}
+					return $this->pdf_multiple($objects, $format, $start_cell);
+				}
+				else
+				{
+					return $this->pdf($objects, $format);
+				}
+				break;
+			case 'excel':
+				return $this->excel($objects, $format);
+				break;
+			case 'csv':
+				return $this->csv($objects, $format);
+				break;
+			default:
+				if (method_exists($this, $format->type))
+				{
+					$action_name = $format->type;
+					$this->$action_name($objects, $format);
+				}
+				else if (method_exists($this, 'action_'.$format->type))
+				{
+					$action_name = 'action_'.$format->type;
+					$this->$action_name($objects, $format);
+				}
+				break;
+		}
+	}
 }
 
