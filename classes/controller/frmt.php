@@ -185,12 +185,45 @@ class Controller_Frmt extends \Locomo\Controller_Base
 	}
 
 	/*
-	 * copy
+	 * action_copy()
 	 */
-	public function copy($item)
+	public function copy($id = null)
 	{
-		return $copy;
+		$model = $this->model_name;
+		$parent = $model::find($id);
+
+		if (! $parent)
+		{
+			\Session::set_flash('success', '不正なリクエストです。');
+			\Response::redirect(\Input::referrer());
+		}
+
+		$copy = $model::forge($parent->to_array());
+		unset($copy->id);
+		$copy->name = $parent->name.'の複製';
+		$copy->is_draft = true;
+		$copy->deleted_at = null;
+		if ($copy->save())
+		{
+			$element_model = $model::relations('element')->model_to;
+			foreach ($parent->element as $element)
+			{
+				$elm_cpy = $element_model::forge($element->to_array());
+				$elm_cpy->format_id = $copy->id;
+				unset($elm_cpy->id);
+				$copy->element[] = $elm_cpy;
+			}
+			if ($copy->save())
+			{
+				\Session::set_flash('success', 'ID: '.$copy->id.'に、フォーマットID: '.$parent->id.' '.$parent->name.'の複製を作成しました。(使用する際は"下書き"から"使用中"に変更して下さい)');
+				\Response::redirect(\Input::referrer());
+			}
+		}
+		\Session::set_flash('error', '作成に失敗しました。もう一度やり直して下さい。');
+		\Response::redirect(\Input::referrer());
 	}
+
+
 }
 
 

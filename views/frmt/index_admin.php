@@ -3,6 +3,17 @@
 <div class="main_column index_table">
 <?php if ($items): ?>
 
+
+<?php
+$index_toolbar = '<div class="index_toolbar clearfix">';
+$index_toolbar.= '<div class="index_toolbar_buttons">';
+$index_toolbar.= '</div> <!-- /.index_toolbar_buttons -->';
+$index_toolbar.= \Pagination::create_links();
+$index_toolbar.= '</div> <!-- /.index_toolbar -->';
+?>
+
+<?php echo $index_toolbar; ?>
+
 <table class="tbl datatable tbl_scrollable lcm_focus" title="項目一覧">
 	<thead>
 		<tr>
@@ -32,16 +43,23 @@
 		</tr>
 <?php endforeach; ?>
 	</tbody>
-<!-- // TODO 後で上に合わせる
 	<tfoot class="thead">
-		<tr>
 			<th class="min">ID</th>
-			<th class="min">name</th>
-			<th class="min">edit</th>
-		</tr>
+			<th class="min">表示順</th>
+			<th class="min">使用</th>
+			<th class="min">フォーマット名</th>
+			<th class="min">要素</th>
+			<th class="min">操作</th>
+			<?php if ($output_url) { ?><th class="min">テスト印刷</th><?php } ?>
 	</tfoot>
--->
 </table>
+
+<?php echo $index_toolbar; ?>
+
 <?php else: ?>
+
+<p>該当のフォーマットがありません。</p>
+
 <?php endif; ?>
+
 </div><!-- /.index_table -->

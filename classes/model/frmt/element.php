@@ -273,6 +273,8 @@ class Model_Frmt_Element extends \Locomo\Model_Base_Soft
 			'default' => 0,
 		),
 
+		'type' => array('form' => array('type' => 'text', 'class' => 'type'), 'default' => ''),
+
 		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),
 		'deleted_at' => array('form' => array('type' => false), 'default' => null),

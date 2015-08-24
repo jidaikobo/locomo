@@ -17,7 +17,12 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 
 		$_properties['model']['default'] = static::$_format_model;
 
-		if (static::$_format_model) static::$_options['where'][] = array('model', '=', static::$_format_model);
+		/*
+		 * static::$_options にすると
+		 * set_public_options や set_public_options の merge で消されてしまう。
+		 * 絶対に where 句に入る検索条件は $_conditions に書く
+		 */
+		if (static::$_format_model) static::$_conditions['where'][] = array('model', '=', static::$_format_model);
 	}
 
 	protected static $_table_name = 'lcm_frmts';

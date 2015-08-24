@@ -86,8 +86,8 @@ $(function () {
 		var replaced = $( $('#element_template').html().replace(/\$/g, new_index) );
 		replaced.addClass(new_element_class);
 		replaced.addClass('focus');
-		$('#controller').find('.x').val(e.offsetX*px2mm);
-		$('#controller').find('.y').val(e.offsetY*px2mm);
+		replaced.find('.x').val(e.offsetX*px2mm);
+		replaced.find('.y').val(e.offsetY*px2mm);
 
 		replaced.find('.display_name').show();
 		if ($('#controller_bar .show_shade').hasClass('active')) replaced.addClass('shade');
@@ -95,6 +95,11 @@ $(function () {
 		replaced.appendTo($('#print_div'));
 		replaced.on('click', focusElementListener);
 
+
+		// 現状 type = 'multibox' のみ
+		replaced.find('.type').val('multibox');
+		controllerMultiBox();
+		valueInputElement2Controller();
 		valueInputController2Element();
 
 		refleshElementSeq();
@@ -116,7 +121,51 @@ $(function () {
 		$('.print .element.focus').removeClass('focus');
 		elm.addClass('focus');
 
+		if (elm.find('.type').val() == 'action')
+		{
+			controllerDefault();
+		}
+		else
+		{
+			controllerMultiBox();
+		}
 		valueInputElement2Controller();
+	}
+
+	/*
+	 * element type = 'multibox'
+	 * 表示・非表示を切り替える
+	 */
+	function controllerMultiBox()
+	{
+		$('#controller').find('input[type="text"]').closest('.input_group').show();
+		$('#controller').find('textarea').closest('.input_group').show();
+		$('#controller').find('input[type="checkbox"]').closest('.input_group').show();
+		$('#controller').find('select').closest('.input_group').show();
+		$('#controller').find('#model_properties').show();
+
+		$('#controller').find('.type').closest('.input_group').hide();
+	}
+
+	/*
+	 * element type = 'action'
+	 * 表示・非表示を切り替える
+	 */
+	function controllerAction()
+	{
+		// 全てのコントローラーの要素を隠す
+		// その後で、必要な要素だけ表示
+		$('#controller').find('input[type="text"]').closest('.input_group').hide();
+		$('#controller').find('textarea').closest('.input_group').hide();
+		$('#controller').find('input[type="checkbox"]').closest('.input_group').hide();
+		$('#controller').find('select').closest('.input_group').hide();
+		$('#controller').find('#model_properties').hide();
+
+		$('#controller').find('.x').closest('.input_group').show();
+		$('#controller').find('.y').closest('.input_group').show();
+		$('#controller').find('.w').closest('.input_group').show();
+		$('#controller').find('.h').closest('.input_group').show();
+		$('#controller').find('.type').closest('.input_group').show();
 	}
 
 	function valueInputElement2Controller()
@@ -576,6 +625,9 @@ $(function () {
 			$('#controllers_wrapper').css('zIndex', 10);
 			$('#element_seq_wrapper').css('zIndex', 11);
 		});
+
+		// コントローラー部の type を消す
+		controllerMultiBox();
 
 		// $('#controllers_wrapper').hide();
 		// css

@@ -90,11 +90,15 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 
 		if (\Auth::has_access($crtl_name.''.$obj->type.'_edit/'))
 		{
-			$html.= \Html::anchor($crtl.'/'.$obj->type.'_edit/'.$obj->id, '編集', array('class' => 'edit'));
+			$html.= \Html::anchor($crtl.'/'.$obj->type.'_edit/'.$obj->id, '編集', array('class' => 'edit button small'));
 		}
 		if (\Auth::has_access($crtl_name.''.$obj->type.'_edit_element/'))
 		{
-			$html.= \Html::anchor($crtl.'/'.$obj->type.'_edit_element/'.$obj->id, '要素の編集', array('class' => 'edit'));
+			$html.= \Html::anchor($crtl.'/'.$obj->type.'_edit_element/'.$obj->id, '要素の編集', array('class' => 'edit button small'));
+		}
+		if (\Auth::has_access($crtl_name.'copy/'))
+		{
+			$html.= \Html::anchor($crtl.'/copy/'.$obj->id, '複製', array('class' => 'copy  button small'));
 		}
 
 		if (is_subclass_of($obj, '\Orm\Model_Soft'))
@@ -103,15 +107,15 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 			{
 				if ($obj['deleted_at'])
 				{
-					$html.= \Html::anchor($crtl.'/undelete/'.$obj->id, '復活', array('class' => 'undelete confirm'));
+					$html.= \Html::anchor($crtl.'/undelete/'.$obj->id, '復活', array('class' => 'undelete confirm button small'));
 					if (\Auth::has_access($crtl_name.'/purge_confirm'))
 					{
-						$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm'));
+						$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm button small'));
 					}
 				}
 				else
 				{
-					$html.= \Html::anchor($crtl.'/delete/'.$obj->id, '削除', array('class' => 'delete confirm'));
+					$html.= \Html::anchor($crtl.'/delete/'.$obj->id, '削除', array('class' => 'delete confirm button small'));
 				}
 			}
 		}
@@ -119,7 +123,7 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 		{
 			if (\Auth::has_access($crtl_name.'/purge_confirm'))
 			{
-				$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm'));
+				$html.= \Html::anchor($crtl.'/purge_confirm/'.$obj->id, '完全に削除', array('class' => 'delete confirm button small'));
 			}
 		}
 		$html = $html ? '<div class="btn_group">'.$html.'</div>' : '' ;

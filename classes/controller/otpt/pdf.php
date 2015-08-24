@@ -216,107 +216,134 @@ trait Controller_Otpt_Pdf
 		$pdf = $this->pdf;
 		foreach ($formats as $key => $format)
 		{
-			$default_paddings = $pdf->getCellPaddings();
-			$pdf->setCellPaddings(
-				isset($format['padding_left']  ) ? $format['padding_left']   : $default_paddings['L'],
-				isset($format['padding_top']   ) ? $format['padding_top']    : $default_paddings['T'],
-				isset($format['padding_right'] ) ? $format['padding_right']  : $default_paddings['R'],
-				isset($format['padding_bottom']) ? $format['padding_bottom'] : $default_paddings['B']
-			);
-
-			if ( !isset($format['fields']) ) continue;
-
-			$format['txt'] = '';
-			foreach($format['fields'] as $field_name)
+			$format_type = isset($format['type']) ? $format['type'] : '';
+			if ($format_type == 'multibox')
 			{
 
-				// field を元に, object を txt に変換
-				if (is_object($object))
+				$default_paddings = $pdf->getCellPaddings();
+				$pdf->setCellPaddings(
+					isset($format['padding_left']  ) ? $format['padding_left']   : $default_paddings['L'],
+					isset($format['padding_top']   ) ? $format['padding_top']    : $default_paddings['T'],
+					isset($format['padding_right'] ) ? $format['padding_right']  : $default_paddings['R'],
+					isset($format['padding_bottom']) ? $format['padding_bottom'] : $default_paddings['B']
+				);
+
+				if ( !isset($format['fields']) ) continue;
+
+				$format['txt'] = '';
+				foreach($format['fields'] as $field_name)
 				{
-					// リレーションの可能性有り
-					$related_str = false;
-					if (strpos($field_name, '.') !== false)
+
+					// field を元に, object を txt に変換
+					if (is_object($object))
 					{
-						$related_name = substr($field_name, 0, strpos($field_name, '.'));
-						$related_field = substr($field_name, strpos($field_name, '.') +1);
-						if (isset($object->{$related_name}))
+						// リレーションの可能性有り
+						$related_str = false;
+						if (strpos($field_name, '.') !== false)
 						{
-							if (is_array($object->{$related_name}))
+							$related_name = substr($field_name, 0, strpos($field_name, '.'));
+							$related_field = substr($field_name, strpos($field_name, '.') +1);
+							if (isset($object->{$related_name}))
 							{
-								$related_str = '';
-								foreach ($object->{$related_name} as $v)
+								if (is_array($object->{$related_name}))
 								{
-									isset($v->{$related_field}) &&
-									$related_str .= $v->{$related_field} . ', ';
+									$related_str = '';
+									foreach ($object->{$related_name} as $v)
+									{
+										isset($v->{$related_field}) &&
+										$related_str .= $v->{$related_field} . ', ';
+									}
+									$related_str = rtrim(rtrim($related_str), ',');
 								}
-								$related_str = rtrim(rtrim($related_str), ',');
-							}
-							else
-							{
-								isset($object->{$related_name}->{$related_field}) &&
-								$related_str = $object->{$related_name}->{$related_field};
+								else
+								{
+									isset($object->{$related_name}->{$related_field}) &&
+									$related_str = $object->{$related_name}->{$related_field};
+								}
 							}
 						}
-					}
 
-					if ($related_str !== false && is_string($related_str))
-					{
-						$format['txt'] .= $related_str;
-					} // ここまでリレーションの処理
-					else if (isset($object->{$field_name}))
-					{
-						$format['txt'] .= $object->{$field_name};
-					}
-					else if (isset($object[$field_name]))
-					{
-						$format['txt'] .= $object[$field_name];
+						if ($related_str !== false && is_string($related_str))
+						{
+							$format['txt'] .= $related_str;
+						} // ここまでリレーションの処理
+						else if (isset($object->{$field_name}))
+						{
+							$format['txt'] .= $object->{$field_name};
+						}
+						else if (isset($object[$field_name]))
+						{
+							$format['txt'] .= $object[$field_name];
+						}
+						else
+						{
+							$format['txt'] .= $field_name;
+						}
 					}
 					else
 					{
 						$format['txt'] .= $field_name;
 					}
+
+					if (isset($format['ln_y']))
+					{
+						if ($format['ln_y'])
+						{
+							$format['y'] = $pdf->getY()+$format['margin_top'];
+						}
+						else
+						{
+							$format['y'] += $format['margin_top'];
+					}
+					}
+
+					if (isset($format['font_family']))
+					{
+						if ($format['font_family'] == 'G')
+						{
+							$pdf->setFont('kozgopromedium');
+						}
+						else
+						{
+							$pdf->setFont('kozminproregular');
+						}
+					}
+				}
+
+				$pdf->MultiBox($format);
+
+				// padding 戻し
+				$pdf->setCellPaddings(
+					$default_paddings['L'],
+					$default_paddings['T'],
+					$default_paddings['R'],
+					$default_paddings['B']
+				);
+
+			}
+			else
+			{
+				if (method_exists($this, $format_type))
+				{
+					$action_name = $format_type;
+					$pdf->setXY($format['x'], $format['y']);
+					$this->$action_name($object);
+				}
+				else if (method_exists($this, 'action_'.$format_type))
+				{
+					$action_name = 'action_'.$format_type;
+					$this->$action_name($object);
 				}
 				else
 				{
-					$format['txt'] .= $field_name;
-				}
-
-				if (isset($format['ln_y']))
-				{
-					if ($format['ln_y'])
-					{
-						$format['y'] = $pdf->getY()+$format['margin_top'];
-					}
-					else
-					{
-						$format['y'] += $format['margin_top'];
-				}
-				}
-
-				if (isset($format['font_family']))
-				{
-					if ($format['font_family'] == 'G')
-					{
-						$pdf->setFont('kozgopromedium');
-					}
-					else
-					{
-						$pdf->setFont('kozminproregular');
-					}
+					// 何もしない
 				}
 			}
-
-			$pdf->MultiBox($format);
-
-			// padding 戻し
-			$pdf->setCellPaddings(
-				$default_paddings['L'],
-				$default_paddings['T'],
-				$default_paddings['R'],
-				$default_paddings['B']
-			);
 		}
 	}
+
+
+
 
 
 /* ==============================

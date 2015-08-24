@@ -189,7 +189,9 @@ class Presenter_Base extends \Presenter
 		return $html;
 	}
 
-
+	/*
+	 * index_admin_toolbar()
+	 */
 	public static function index_admin_toolbar($model = null, $name_num = '', $is_print_all = true, $is_repeat = true)
 	{
 		if (!$model) return '';
