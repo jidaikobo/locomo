@@ -24,7 +24,7 @@ class Controller_Base extends Controller_Core
 		\Pagination::$refined_items = count($items);
 
 		// presenter
-		$content = \Presenter::forge($this->_content_template ?: static::$dir.'admin');
+		$content = \Presenter::forge($this->_content_template ?: static::$dir.'index');
 
 		// title
 		$title = static::$nicename.'一覧';

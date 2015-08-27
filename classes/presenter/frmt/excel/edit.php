@@ -2,25 +2,6 @@
 namespace Locomo;
 class Presenter_Frmt_Excel_Edit extends \Presenter_Base
 {
-	public function view()
-	{
-		$this->setElements = function ($elements)
-		{
-			return static::setElements($elements);
-		};
-		$this->templateElement = function ()
-		{
-			return static::setElements(\Locomo\Model_Frmt_Element::forge());
-		};
-
-		$this->modelPropertiesForm = function ($model_properties = array())
-		{
-			if ($model_properties) static::setModelProperties($model_properties);
-			return static::modelPropertiesForm($model_properties);
-		};
-	}
-
-
 	/**
 	 * form()
 	 * @return obj instanceof \Form

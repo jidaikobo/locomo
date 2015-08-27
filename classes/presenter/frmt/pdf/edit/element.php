@@ -4,7 +4,7 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 {
 	public function view()
 	{
-		$this->setElements = function ($elements)
+		$this->setElements = function ($elements = null)
 		{
 			return static::setElements($elements);
 		};
@@ -22,6 +22,7 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 
 	public static function setElements($elements)
 	{
+		if (! $elements) return false;
 		$result_str = '';
 		$props = \Locomo\Model_Frmt_Element::properties();
 		if (! is_array($elements)) $elements = array($elements);

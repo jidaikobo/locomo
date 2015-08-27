@@ -78,8 +78,9 @@ class Controller_Frmt extends \Locomo\Controller_Base
 				var_dump(\Input::post()); die();
 			}
 		}
-
 		$content = \Presenter::forge($this->_content_template ?: 'frmt/pdf/edit/element');
+	//	$content->view();
+////		var_dump( $content->setElements(array(1  => 'hoge'))); die();
 		$content->get_view()->set('item', $item);
 		if ($item->is_multiple)
 		{
