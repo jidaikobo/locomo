@@ -34,7 +34,7 @@
 			<input type="hidden" id="print_height" value="<?php echo $print_height ?>">
 
 			<!-- form -->
-			<?php echo $setElements($item->element); ?>
+			<?php echo \Locomo\Presenter_Frmt_Pdf_Edit_Element::setElements($item->element); ?>
 			<!-- // form -->
 
 		</div>
@@ -45,7 +45,7 @@
 <div id="controllers_wrapper">
 	<h1 class="title">要素の編集</h1>
 	<div id="controller">
-		<?php echo $setController($model_properties); ?>
+		<?php echo \Locomo\Presenter_Frmt_Pdf_Edit_Element::setController($model_properties); ?>
 	</div>
 </div>
 
@@ -57,5 +57,5 @@
 
 
 <div id="element_template">
-	<?php echo $templateElement(); ?>
+	<?php echo \Locomo\Presenter_Frmt_Pdf_Edit_Element::templateElement(); ?>
 </div>

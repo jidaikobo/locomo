@@ -2,25 +2,6 @@
 namespace Locomo;
 class Presenter_Frmt_Excel_Edit_Element extends \Presenter_Base
 {
-	public function view()
-	{
-		$this->setElements = function ($elements)
-		{
-			return static::setElements($elements);
-		};
-		$this->templateElement = function ()
-		{
-			return static::setElements(\Locomo\Model_Frmt_Element::forge());
-		};
-
-		$this->modelPropertiesForm = function ($model_properties = array())
-		{
-			if ($model_properties) static::setModelProperties($model_properties);
-			return static::modelPropertiesForm($model_properties);
-		};
-	}
-
-
 	/**
 	 * form()
 	 * @return obj instanceof \Form
@@ -37,6 +18,15 @@ class Presenter_Frmt_Excel_Edit_Element extends \Presenter_Base
 
 
 	public static function setElements($elements)
+	{
+		return static::_setElements($elements);
+	}
+	public static function templateElement()
+	{
+		return static::_setElements(\Locomo\Model_Frmt_Element::forge());
+	}
+
+	protected static function _setElements($elements)
 	{
 		$result_str = '';
 
@@ -94,8 +84,9 @@ class Presenter_Frmt_Excel_Edit_Element extends \Presenter_Base
 	}
 
 
-	protected static function modelPropertiesForm()
+	public static function modelPropertiesForm($model_properties = array())
 	{
+		if ($model_properties) static::setModelProperties($model_properties);
 
 		$html = '<ul id="model_properties">';
 		// モデルのプロパティを追加

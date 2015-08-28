@@ -9,7 +9,7 @@
 
 <div class="input_group">
 <ul id="elements">
-	<?php echo $setElements($item->element); ?>
+	<?php echo \Locomo\Presenter_Frmt_Excel_Edit_Element::setElements($item->element); ?>
 </ul>
 </div>
 
@@ -37,14 +37,14 @@ echo \Form::close();
 	<h2><label for="controller_txt" id="label_txt">使用可能データ</label></h2>
 	<div id="model_properties_wrapper">
 		<h1 class="title"></h1>
-		<?php echo $modelPropertiesForm($model_properties); ?>
+		<?php echo \Locomo\Presenter_Frmt_Excel_Edit_Element::modelPropertiesForm($model_properties); ?>
 	</div>
 
 </div>
 
 
 <ul id="element_template">
-	<?php echo $templateElement(); ?>
+	<?php echo \Locomo\Presenter_Frmt_Excel_Edit_Element::templateElement(); ?>
 </ul>
 
 

@@ -2,25 +2,17 @@
 namespace Locomo;
 class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 {
-	public function view()
+	public static function setElements ($elements = null)
 	{
-		$this->setElements = function ($elements = null)
-		{
-			return static::setElements($elements);
-		};
-
-		$this->templateElement = function ()
-		{
-			return static::setElements(\Locomo\Model_Frmt_Element::forge());
-		};
-
-		$this->setController = function ($model_properties = array())
-		{
-			return static::setController($model_properties);
-		};
+		return static::_setElements($elements);
 	}
 
-	public static function setElements($elements)
+	public static function templateElement()
+	{
+		return static::_setElements(\Locomo\Model_Frmt_Element::forge());
+	}
+
+	public static function _setElements($elements)
 	{
 		if (! $elements) return false;
 		$result_str = '';
