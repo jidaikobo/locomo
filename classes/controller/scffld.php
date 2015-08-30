@@ -60,6 +60,11 @@ class Controller_Scffld extends \Controller_Base
 			$scfld_type  = \Input::post('type', 'app');
 			$scfld_model = \Input::post('model', 'model');
 
+			// repopulate for error
+			\Session::set_flash('cmd_raw', $cmd_raw);
+			\Session::set_flash('type', $scfld_type);
+			\Session::set_flash('model', $scfld_model);
+
 			// vals
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw);
 			$cmd_orig = join(explode("\n", $cmd_orig),' ');
@@ -67,9 +72,30 @@ class Controller_Scffld extends \Controller_Base
 			$cmd  = \Controller_Scffld_Helper::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
 
+			// errors
+			$errors = array();
+			if ( ! isset($cmds[0]) || $cmds[0] == '')
+			{
+				$errors[] = 'first line must be controller/module name.';
+			}
+
+			// banned name - reserved keyword
+			$banned = array('__halt_compiler', 'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue', 'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'eval', 'exit', 'extends', 'final', 'for', 'foreach', 'function', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'isset', 'list', 'namespace', 'new', 'or', 'print', 'private', 'protected', 'public', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 'xor');
+			if ($scfld_type == 'module' && in_array(strtolower($cmds[0]), $banned))
+			{
+				$errors[] = 'reserved keyword. cannot use "'.$cmds[0].'" for mudule\'s namespace. ';
+			}
+
+			// empty
 			if ( ! $cmd_orig)
 			{
-				\Session::set_flash('error', 'invalid value sent');
+				$errors[] = 'invalid value sent.';
+			}
+
+			// redirection
+			if ($errors)
+			{
+				\Session::set_flash('error', $errors);
 				\Response::redirect(\Uri::create('/scffld/main'));
 			}
 

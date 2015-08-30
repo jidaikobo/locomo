@@ -32,15 +32,23 @@ class Controller_Scffld_Helper_Migration extends Controller_Scffld_Helper
 				$field_array['name'] = array_shift($parts);
 				foreach ($parts as $part_i => $part)
 				{
-					// locomo: add \'
-					preg_match('/([a-z0-9_-]+)(?:\[([\'0-9a-z_\-\,\s]+)\])?/i', $part, $part_matches);
-//					preg_match('/([a-z0-9_-]+)(?:\[([0-9a-z_\-\,\s]+)\])?/i', $part, $part_matches);
+					preg_match('/([a-z0-9_-]+)(?:\[([0-9a-z_\-\,\s]+)\])?/i', $part, $part_matches);
 					array_shift($part_matches);
-	
+
 					if (count($part_matches) < 1)
 					{
 						// Move onto the next part, something is wrong here...
 						continue;
+					}
+
+					// locomo: allow all chr for default value
+					if ($part_matches[0] == 'default')
+					{
+						preg_match('/\[(.+?)\]/i', $part, $default_value);
+						if (isset($default_value[1]))
+						{
+							$part_matches[1] = $default_value[1];
+						}
 					}
 	
 					$option_name = ''; // This is the name of the option to be passed to the action in a field
@@ -100,7 +108,7 @@ class Controller_Scffld_Helper_Migration extends Controller_Scffld_Helper
 						$option_name = array_shift($option);
 
 						//locomo - start
-						if ($option_name == 'default' && $option[0] == "''")
+						if ($option_name == 'default' && count($option) > 0 && $option[0] == "''")
 						{
 							$option = '';
 						}
@@ -114,7 +122,7 @@ class Controller_Scffld_Helper_Migration extends Controller_Scffld_Helper
 							$option = true;
 						}
 					}
-	
+
 					// deal with some special cases
 					switch ($option_name)
 					{
@@ -126,7 +134,6 @@ class Controller_Scffld_Helper_Migration extends Controller_Scffld_Helper
 					}
 	
 					$field_array[$option_name] = $option;
-	
 				}
 				$fields[] = $field_array;
 			}
