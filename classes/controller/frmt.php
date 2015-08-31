@@ -75,7 +75,7 @@ class Controller_Frmt extends \Locomo\Controller_Base
 			}
 			else 
 			{
-				var_dump(\Input::post()); die();
+				// var_dump(\Input::post()); die();
 			}
 		}
 		$content = \Presenter::forge($this->_content_template ?: 'frmt/pdf/edit/element');
@@ -173,7 +173,7 @@ class Controller_Frmt extends \Locomo\Controller_Base
 			}
 			else 
 			{
-				var_dump(\Input::post()); die();
+				// var_dump(\Input::post()); die();
 			}
 		}
 
