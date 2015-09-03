@@ -11,7 +11,8 @@
 	?>
 	<title><?php echo $title; ?></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=0.5,user-scalable=yes,initial-scale=1.0" />
+
 	<!--stylesheet-->
 	<?php echo \Asset::css('base.css'); ?>
 	<?php echo \Asset::css('core.css'); ?>
