@@ -71,6 +71,10 @@ return array(
 );
 +-------------------------------quote end+
 
+// config
+
+モジュールの場合は、モジュールディレクトリのconfigのなか、モジュールでない場合は、APPPATH.configにあるコントローラ名と同名のconfigを参照します。
+
 // actionset - overview
 
 アクションセットは、ユーザインタフェイスの提供とアクセス権管理の設定用クラスです。
@@ -112,11 +116,6 @@ return array(
 // actionset - acl
 
 アクションセットで設定されているdependenciesは、アクションセットのリンクを表示する上で必要なアクションです。ここにはlocomo-pathの文字列を配列で渡します。ここで設定したものがlocomoのaclの画面に表示され、管理の対象になります。
-
-// config
-
-configにnicenameとmain_controllerを設定してください。nicenameは人間用にコントローラ（モジュール）名を読みやすくしたもの。main_controllerは、これを使って、モジュールの代表画面を設定します。
-モジュールの場合は、モジュールディレクトリのconfigのなか、モジュールでない場合は、APPPATH.configにあるコントローラ名と同名のconfigを参照します。
 
 // template override
 
