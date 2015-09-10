@@ -134,11 +134,21 @@
 						.attr('id', '')
 						.removeClass('hasDatepicker')
 						.timepicker({
+							timeFormat: 'H:i',
+							beforeRender: function(self){
+								if(isTouchDevice){ this.useSelect = true;}
+							},
+							beforeShow: function(){
+							},
+						});
+						/*
+						.timepicker({
 							timeFormat: 'HH:mm',
 							beforeShow: function(){
 								if( $(this).attr('readonly') ) return;
 							}
 						});
+						*/
 				} else if ($(this).hasClass('datetime')) {
 					$(this)
 						.attr('id', '')
