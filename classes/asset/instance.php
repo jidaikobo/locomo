@@ -26,19 +26,23 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 	 */
 	public function locomo_replace($retval)
 	{
+		// for windows env.
+		$apppath = str_replace(DS, '/', APPPATH);
+		$docroot = str_replace(DS, '/', DOCROOT);
+		$locomopath = str_replace(DS, '/', LOCOMOPATH);
 
-		// app_assetx を先に replace
-		if (strpos($retval, APPPATH) !== false)
+		// app_assets を先にreplace
+		if (strpos($retval, $apppath) !== false)
 		{
 			$replace = 'app_assets/';
-			$search = APPPATH.'locomo/assets/';
+			$search = $apppath.'locomo/assets/';
 			$retval = str_replace($search, $replace, $retval);
 		}
 
 		$replace = 'lcm_assets/';
 		// in case parent::render() fail to delete DOCROOT.
-		$search = str_replace(DOCROOT, '', LOCOMOPATH).'assets/';
-		$retval = str_replace(DOCROOT, '', $retval);
+		$search = str_replace($docroot, '', $locomopath).'assets/';
+		$retval = str_replace($docroot, '', $retval);
 
 		return str_replace($search, $replace, $retval);
 	}
