@@ -130,9 +130,14 @@
 							showButtonPanel: true,
 						});
 				} else if ($(this).hasClass('time')) {
+
+					$(this).timepicker('remove');
+					$('input.time').timepicker('remove');
+
+					/*
 					$(this)
 						.attr('id', '')
-						.removeClass('hasDatepicker')
+						.removeClass('ui-timepicker-input')
 						.timepicker({
 							timeFormat: 'H:i',
 							beforeRender: function(self){
@@ -141,6 +146,8 @@
 							beforeShow: function(){
 							},
 						});
+*/
+
 						/*
 						.timepicker({
 							timeFormat: 'HH:mm',
@@ -162,6 +169,18 @@
 			});
 			// tb.wrap.find(tb.row_class + ':last-child').after(clone);
 			$(tb.wrap.find(tb.row_class)[tb.wrap.find(tb.row_class).length - 1]).after(clone);
+
+			// timepicker 新しくなったので、ここで登録
+			$('input.time')
+						.timepicker({
+							timeFormat: 'H:i',
+							beforeRender: function(self){
+								if(isTouchDevice){ this.useSelect = true;}
+							},
+							beforeShow: function(){
+							},
+						});
+
 
 			tb.calculateTabular(tb);
 
