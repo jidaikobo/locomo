@@ -70,11 +70,12 @@ class Util
 
 			// classディレクトリを走査し、$locomoのメンバ変数を持っているコントローラを洗い出す
 			$paths = array_merge(
-				\Inflector::dir_to_ctrl(APPPATH.'classes/controller'),
-				\Inflector::dir_to_ctrl(LOCOMOPATH.'classes/controller')
+				\Inflector::dir_to_ctrl(APPPATH.'classes'.DS.'controller'),
+				\Inflector::dir_to_ctrl(LOCOMOPATH.'classes'.DS.'controller')
 			);
 
-			foreach(array_keys($paths) as $ctrl):
+			foreach(array_keys($paths) as $ctrl)
+			{
 				if (strpos($ctrl, 'Controller_Traits_') !== false) continue;
 				if ( ! property_exists($ctrl, 'locomo')) continue;
 				$retvals[$ctrl]['is_module'] = false;
@@ -87,8 +88,8 @@ class Util
 				$retvals[$ctrl]['no_acl'] = \Arr::get($ctrl::$locomo, 'no_acl', false) ;
 				$retvals[$ctrl]['widgets'] = \Arr::get($ctrl::$locomo, 'widgets') ;
 				$retvals[$ctrl]['order'] = \Arr::get($ctrl::$locomo, 'order', 100) ;
-			endforeach;
-	
+			}
+
 			// order
 			$retvals = \Arr::multisort($retvals, array('order' => SORT_ASC,));
 

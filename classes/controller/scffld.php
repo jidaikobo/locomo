@@ -156,7 +156,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// path - app
-			if ($scfld_type == 'app' || $scfld_type == 'view')
+			if ($scfld_type == 'app' || $scfld_type == 'view' || $scfld_type == 'model')
 			{
 				$scfldpath      = APPPATH;
 				$migrationpath  = APPPATH.'migrations/';

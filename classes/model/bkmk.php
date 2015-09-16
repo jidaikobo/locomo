@@ -60,6 +60,7 @@ class Model_Bkmk extends \Locomo\Model_Base
 		$this->user_id = \Auth::get('id');
 	}
 
+	/* リレーションはっちゃ駄目
 	protected static $_has_many = array(
 		'user' => array(
 			'key_from' => 'user_id',
@@ -69,4 +70,5 @@ class Model_Bkmk extends \Locomo\Model_Base
 			'cascade_delete' => false,
 		),
 	);
+	 */
 }
