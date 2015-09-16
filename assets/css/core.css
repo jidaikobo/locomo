@@ -1075,7 +1075,7 @@ table + .index_toolbar {
 
 .lcm_form textarea {
 	width: 98%;
-	max-width: 800px;
+/*	max-width: 800px; */
 }
 .lcm_form .address input[type="button"] {
 	margin-bottom: .5em;
@@ -2472,10 +2472,10 @@ body .ui-resizable-handle {
 	background-repeat: no-repeat;
 	background-position: left top;
 }
-.switch_mce.is_visual {
+.switch_mce.on {
 	background-image: url( '../img/led-icons/text_align_left.png' );
 }
-.switch_mce.is_text {
+.switch_mce.off {
 	background-image: url( '../img/led-icons/style.png' );
 }
 
