@@ -170,6 +170,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public static function auth()
 	{
+		// Do not use 'DS' instead of '/' for windows environment!!
 		$current_action = '\\'.\Request::active()->controller.'/'.\Request::active()->action;
 
 		// ordinary auth
