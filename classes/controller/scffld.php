@@ -165,9 +165,12 @@ class Controller_Scffld extends \Controller_Base
 				$modelpath      = $classpath.'model/';
 				$presenterpath  = $classpath.'presenter/';
 				$actionsetpath  = $classpath.'actionset/';
-				if (\File::create_dir($scfldpath.'views/', $name)) $viewpath = APPPATH.'views/'.$name;
-				if (\File::create_dir($presenterpath, $name)) $presenterpath.= $name.DS;
-				if (\File::create_dir($presenterpath, 'index')) $presenteridxpath = $presenterpath.'index/';
+				if ($scfld_type != 'model')
+				{
+					if (\File::create_dir($scfldpath.'views/', $name)) $viewpath = APPPATH.'views/'.$name;
+					if (\File::create_dir($presenterpath, $name)) $presenterpath.= $name.DS;
+					if (\File::create_dir($presenterpath, 'index')) $presenteridxpath = $presenterpath.'index/';
+				}
 			}
 			$log_dir = APPPATH.'logs/scffld/'.$name;
 
