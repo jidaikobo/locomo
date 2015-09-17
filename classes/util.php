@@ -280,6 +280,28 @@ class Util
 	}
 
 	/**
+	 * uniform_locomopath
+	 * [\Namespace]\Controller_Name/actionの形式を整える。Windows環境では、DSが、バックスラッシュになっているため、actionsetのdependenciesをDSを使って定義していると、locomoパスの一意性が失われてしまう。これを防止するため、locomoパスのアクション名の前をスラッシュに整える。
+	 * at Windows environment, DS means backslash. this cause break uniqueness of locomo-path. so unity style of locomo-path.
+	 * @return string
+	 */
+	public static function uniform_locomopath($str = '')
+	{
+		$last_backslash_pos = strrpos($str, '\\');
+
+		// Locomoパスは、必ずスラッシュの後にアクションを伴うので、最後に出現するバックスラッシュが先頭の場合は、正しいLocomoパスか、たいへん不正な値かのどちらかなので、とりあえずそのまま返す。
+		if ($last_backslash_pos === 0 || $last_backslash_pos == false) return $str;
+
+		$slash_pos = strpos($str, '/');
+		// スラッシュが存在する場合は、問題がないので、そのまま返す。
+		if ($slash_pos !== false) return $str;
+
+		// バックスラッシュが先頭以外に存在し、かつスラッシュがない場合、最後のバックスラッシュはスラッシュに変換する
+		$str[$last_backslash_pos] = '/';
+		return $str;
+	}
+
+	/**
 	 * method_exists
 	 * コントローラのメソッドの存在確認
 	 * @return Mix
