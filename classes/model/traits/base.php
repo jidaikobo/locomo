@@ -142,7 +142,9 @@ trait Model_Traits_Base
 		}
 
 		// set total before use offset
-		$count = static::count(static::$_options);
+		$cnt_opt = static::$_options;
+		if (isset($cnt_opt['group_by'])) unset($cnt_opt['group_by']);
+		$count = static::count($cnt_opt);
 		\Pagination::set('total_items', $count);
 
 		// limit
