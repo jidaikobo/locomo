@@ -154,7 +154,7 @@ class Controller_Acl extends \Controller_Base
 		if (\Input::method() == 'POST')
 		{
 			// CSRF
-//			if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
+	//		if ( ! \Security::check_token()) \Response::redirect(\Uri::create('/acl/controller_index/'));
 
 			// delete all at first
 			foreach ($actionsets as $ctrl => $actionset)
@@ -162,6 +162,11 @@ class Controller_Acl extends \Controller_Base
 				foreach ($actionset as $action_name => $v)
 				{
 					if ( ! isset($v['dependencies'])) continue;
+
+					// uniform locomo-path for windows environment
+					$v['dependencies'] = array_map('\Util::uniform_locomopath', $v['dependencies']);
+
+					// delete at first
 					$q = \DB::delete('lcm_acls');
 					$q->where('slug', 'IN', $v['dependencies']);
 					if ( ! is_null($usergroup_id)) $q->where('usergroup_id', '=', $usergroup_id);
@@ -184,7 +189,12 @@ class Controller_Acl extends \Controller_Base
 						{
 							//format conditions
 							$each_action = \Inflector::add_head_backslash($each_action);
-							list($dpnd_controller, $dpnd_action) = explode(DS, $each_action);
+
+							// uniform locomo-path for windows environment
+							$each_action = \Util::uniform_locomopath($each_action);
+
+							// Do not use 'DS' instead of '/'. because \Util::uniform_locomopath() unified it.
+							list($dpnd_controller, $dpnd_action) = explode('/', $each_action);
 
 							//insert
 							$q = \DB::insert('lcm_acls');

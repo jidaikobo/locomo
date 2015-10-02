@@ -24,7 +24,7 @@ Locomoパッケージ（以下locomo）では、モジュールやコントロ�
 
 [\Namespace]\Controller_Name/action
 
-完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。定数のLOCOMOPATHは、package/locomoの物理パスを指します。
+完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。ぜったいにスラッシュです。くれぐれもDS（Directory Separator）を使わないようにしてください。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。定数のLOCOMOPATHは、package/locomoの物理パスを指します。
 
 // $locomo
 

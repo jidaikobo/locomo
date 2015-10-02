@@ -14,21 +14,25 @@ class Inflector extends \Fuel\Core\Inflector
 
 		$controller = static::add_head_backslash($controller);
 		$controller = $delete_locomo ? str_replace('\Locomo', '', $controller) : $controller;
-
 		// if T_PAAMAYIM_NEKUDOTAYIM exists
-		if(strpos($controller, '::action_') !== false) {
+		if(strpos($controller, '::action_') !== false)
+		{
 			$strs = explode('::action_', $controller);
 		// if T_PAAMAYIM_NEKUDOTAYIM get exists
-		} elseif(strpos($controller, '::get_') !== false) {
-			$strs = explode('::get_', $controller);
-		} else {
-			$strs = explode('/', $controller);
 		}
+		elseif(strpos($controller, '::get_') !== false)
+		{
+			$strs = explode('::get_', $controller);
+		}
+		else
+		{
+			$strs = explode(DS, $controller);
+		}
+		$strs = array_values(array_filter($strs));
 		$strs[0] = str_replace('\\', '', $strs[0]);
-		$strs[0] = str_replace(array('Controller_','_'), '/', $strs[0]);
+		$strs[0] = str_replace(array('Controller_','_'), DS, $strs[0]);
 		$strs[0] = strtolower($strs[0]);
-
-		return join('/', $strs);
+		return join(DS, $strs);
 	}
 
 	/**
@@ -54,14 +58,14 @@ class Inflector extends \Fuel\Core\Inflector
 		{
 			// read files
 			$paths = \File::read_dir($path);
-			$paths = \Arr::flatten(\Arr::flatten($paths, '/'));
+			$paths = \Arr::flatten(\Arr::flatten($paths, DS));
 	
 			// classify
 			$classes = array();
 			foreach ($paths as $k => $v)
 			{
-				$k = substr($k, 0, strrpos($k, '/'));
-				$k.= \Str::ends_with($k, '_') ? '' : '/';
+				$k = substr($k, 0, strrpos($k, DS));
+				$k.= \Str::ends_with($k, '_') ? '' : DS;
 				$full_path = str_replace(DS.DS, DS, $path.DS.$k.$v);
 				$class = static::path_to_ctrl($full_path);
 				$classes[$class] = $full_path;
@@ -87,7 +91,7 @@ class Inflector extends \Fuel\Core\Inflector
 	public static function path_to_ctrl($path = null)
 	{
 		if ( ! file_exists($path)) throw new \InvalidArgumentException('file not found.');
-		$paths = explode('/', $path);
+		$paths = explode(DS, $path);
 
 		// module name is next to modules dir.
 		$mod_pos = \Arr::search($paths, 'modules');
@@ -99,9 +103,16 @@ class Inflector extends \Fuel\Core\Inflector
 		//if ( ! $class_pos) throw new \InvalidArgumentException('controller not found.');
 
 		// classify
-		$class = join('/', array_slice($paths, $class_pos));
-		$class = \Inflector::words_to_upper(str_replace(LOCOMOPATH.'classes/', '', $class));
-		$class = \Inflector::words_to_upper(str_replace('/', '_', $module.$class));
+		$class = join(DS, array_slice($paths, $class_pos));
+		$class = \Inflector::words_to_upper(str_replace(LOCOMOPATH.'classes'.DS, '', $class));
+		$class = \Inflector::words_to_upper(str_replace(DS, '_', $module.$class));
+		
+		// at windows environment occasionally occur this case. :-(
+		if (\Str::starts_with($class, '_'))
+		{
+			$class[0] = '\\';
+		}
+
 		return str_replace('.php', '', $class);
 	}
 

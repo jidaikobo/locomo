@@ -51,6 +51,7 @@ class Controller_Base extends Controller_Core
 
 		// find()
 		$items = $model::find('all', $model::$_options) ;
+
 		if ( ! $items && ! \Request::is_hmvc()) \Session::set_flash('message', '項目が存在しません。');
 
 		// refined count
