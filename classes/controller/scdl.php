@@ -1065,9 +1065,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where_close()
 							->where("deleted_at", "is", null)
 							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_time")
+							->order_by("start_time", "asc")
 							->get();
-
 		
 		$user_exist = array();
 		$building_exist = array();
@@ -1094,10 +1093,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$row['data'][] = clone $r;
 
 					// メンバー
+					// メンバーに対して、イベントの有無を確認してから足しているために、順番をこの時点で制御するのが難しい。
+					// あとでmulti_sortをかけることとする
 					foreach ($r->user as $d) {
 						if (!isset($user_exist[$d->id][$r->id])) {
 							$user_exist[$d->id]['model'] = $d;
 							$user_exist[$d->id][$r->id]['data'][] = $r;
+
+							$user_exist[$d->id][$r->id]['start_time'] = $r->start_time;
+							$user_exist[$d->id]['model']['start_time'] = '0';// 便宜上sort用のフィールドを与える
 						} else {
 							$flg_push = true;
 							foreach ($user_exist[$d->id][$r->id]['data'] as $row_data) {
@@ -1107,9 +1111,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							}
 							if ($flg_push) {
 								$user_exist[$d->id][$r->id]['data'][] = $r;
+								$user_exist[$d->id][$r->id]['start_time'] = $r->start_time;
 							}
 						}
 					}
+
 					// 施設
 					foreach ($r->building as $d) {
 						if (!isset($building_exist[$d->item_id])) {
@@ -1129,9 +1135,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 				}
 
-
 			}
 			$schedules['schedules_list'][] = $row;
+		}
+
+		// 時間昇順にする
+		foreach($user_exist as $id => $v)
+		{
+			$user_exist[$id] = \Arr::multisort($v, array('start_time' => SORT_ASC));
+		}
+
+		// 時間昇順にする
+		foreach($building_exist as $id => $v)
+		{
+			$building_exist[$id]['data'] = \Arr::multisort($v['data'], array('start_time' => SORT_ASC));
 		}
 
 		$schedules['member_list'] = $user_exist;

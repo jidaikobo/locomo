@@ -102,7 +102,6 @@ if(isset($schedule_data['member_list'][$row->id])):
 								foreach ($member_rowdata['data'] as $member_detail):
 									if ($member_detail['id'] == $v2['scdlid']):
 										$detail_pop_array[] = $v2;
-
 										$eventtitle_icon = '';
 										$eventtitle_skip = '<span class="skip">';
 										//繰り返し区分
