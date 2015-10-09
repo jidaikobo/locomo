@@ -1,5 +1,47 @@
 <?php
 if (isset($overlap_result) && count($overlap_result)) {
+	$display_results = array();
+	foreach($overlap_result as $each_result):
+		// ？時間表示の整形？
+		$each_result->display_startdate = date('Y年n月j日', strtotime($each_result->start_date . " " . $each_result->start_time));
+		$each_result->display_enddate = date('Y年n月j日', strtotime($each_result->end_date . " " . $each_result->end_time));
+		$each_result->display_starttime = date('i', strtotime($each_result->start_time))==0 ?
+			date('G時', strtotime($each_result->start_date . " " . $each_result->start_time)) :
+			preg_replace("/時0/", "時", date('G時i分', strtotime($each_result->start_date . " " . $each_result->start_time)));
+		$each_result->display_endtime = date('i', strtotime($each_result->end_time))==0 ?
+			date('G時', strtotime($each_result->end_date . " " . $each_result->end_time)) :
+			preg_replace("/時0/", "時", date('G時i分', strtotime($each_result->start_date . " " . $each_result->end_time)));
+	
+		//表の上にもう一度日付を出したほうが迷わない？？
+	
+		if ($each_result->repeat_kb == 0 && $each_result->display_startdate != $each_result->display_enddate) { //開始日終了日が異なる場合は連続した期間扱い
+	/*
+		//開始日〜終了日 (何時〜何時）開始日と終了日を比較しつつ、同年や同月の表示省略
+			if(date('Y', strtotime($each_result->start_date)) == date('Y', strtotime($each_result->end_date))) : //年が同じかどうか
+				$each_result->display_startdate = intval(date("Y")) == $year ? //現在と同年なら省略
+					date('n月j日', strtotime($each_result->start_date)) :
+					date('Y年n月j日', strtotime($each_result->start_date));
+				$each_result->display_enddate = date('n', strtotime($each_result->start_date)) == date('n', strtotime($each_result->end_date)) ? //同月なら省略
+					date('j日', strtotime($each_result->end_date)) :
+					date('n月j日', strtotime($each_result->end_date));
+			endif;
+	*/
+			if($each_result->allday_kb): // 終日は時間を省略
+				$result_str = '<span class="nowrap">'.$each_result->display_startdate.' <span class="sr_replace to"><span>から</span></span></span> <span class="nowrap">'.$each_result->display_enddate.'</span>';
+			else:
+				$result_str = '<span class="nowrap">'.$each_result->display_startdate.' '.$each_result->display_starttime.'<span class="sr_replace to"><span>から</span></span></span> <span class="nowrap">'.$each_result->display_enddate.' '.$each_result->display_endtime.'</span>';
+			endif;
+		} else { //期間でないならば繰り返し
+			if($each_result->allday_kb){
+				$result_str = $each_result->display_startdate.'<span class="sr_replace to"><span>から</span></span>'.$each_result->display_startdate.'<span class="nowrap">終日</span>';
+			}else{
+				$result_str = $each_result->display_startdate.'<span class="sr_replace to"><span>から</span></span>'.$each_result->display_startdate.'<span class="nowrap">'.$each_result->display_starttime . '<span class="sr_replace to"><span>から</span></span></span> <span class="nowrap">' . $each_result->display_endtime.'</span>';
+			}
+		}
+	$display_results[] = $result_str;
+	echo '#'.$each_result['id'].': '.$each_result['targetdata'].' '.$result_str.' '.$each_result['title_text'].'<br>';
+	
+	endforeach;
 ?>
 <table class="tbl datatable" tabindex="0">
 	<thead>
