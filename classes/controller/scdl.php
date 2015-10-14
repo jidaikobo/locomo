@@ -29,7 +29,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * [action_create description]
 	 * @return [type]
 	 */
-	public function action_create() {
+	public function action_create()
+    {
 		$this->action_edit();
 	}
 
@@ -38,8 +39,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $id [description]
 	 * @return [type]     [description]
 	 */
-	public function action_delete($id) {
-
+	public function action_delete($id)
+    {
 		$model = $this->model_name ;
 		if ($obj = $model::find($id))
 		{
@@ -800,7 +801,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 週表示用
 		list($weekY, $weekM, $weekD) = $this->week_first_date($year, $mon, $day);
-		$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
+        if ($this->_content_template)
+        {
+            $view = \View::forge($model::$_kind_name . "/" . $this->_content_template);
+        } else {
+            $view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
+        }
 
 		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
