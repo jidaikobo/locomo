@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Msgbrd_Edit extends \Presenter_Base
 {
 	/**

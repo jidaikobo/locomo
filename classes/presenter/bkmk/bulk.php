@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Bkmk_Bulk extends \Presenter_Base
 {
 	/**

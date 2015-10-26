@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Flr_Dir_Purge extends \Presenter_Base
 {
 	/**

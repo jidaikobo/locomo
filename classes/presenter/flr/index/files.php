@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Flr_Index_Files extends \Presenter_Base
 {
 	/*
