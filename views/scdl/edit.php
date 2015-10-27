@@ -126,7 +126,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<div class="input_group">
 		<h2>実使用時間</h2>
 		<div id="field_term" class="lcm_focus field" title="実使用時間">
-			<span id="span_public_time_start" class="display_inline_block">
+			<span id="span_public_time_start" class="">
 			<?php echo $form->field('public_start_time')->set_template('{error_msg}{field}'); ?>
 			</span> から <span id="span_public_time_end" class="display_inline_block" style="margin-right: 1em;">
 			<?php echo $form->field('public_end_time')->set_template('{error_msg}{field}'); ?>
