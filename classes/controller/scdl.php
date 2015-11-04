@@ -29,7 +29,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * [action_create description]
 	 * @return [type]
 	 */
-	public function action_create() {
+	public function action_create()
+    {
 		$this->action_edit();
 	}
 
@@ -38,8 +39,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $id [description]
 	 * @return [type]     [description]
 	 */
-	public function action_delete($id) {
-
+	public function action_delete($id)
+    {
 		$model = $this->model_name ;
 		if ($obj = $model::find($id))
 		{
@@ -800,7 +801,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 週表示用
 		list($weekY, $weekM, $weekD) = $this->week_first_date($year, $mon, $day);
-		$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
+        if ($this->_content_template)
+        {
+            $view = \View::forge($model::$_kind_name . "/" . $this->_content_template);
+        } else {
+            $view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
+        }
 
 		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
@@ -1065,8 +1071,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where_close()
 							->where("deleted_at", "is", null)
 							->where("kind_flg", $model::$_kind_flg)
+							->order_by("start_time", "asc")
 							->get();
-
 		
 		$user_exist = array();
 		$building_exist = array();
@@ -1093,10 +1099,15 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$row['data'][] = clone $r;
 
 					// メンバー
+					// メンバーに対して、イベントの有無を確認してから足しているために、順番をこの時点で制御するのが難しい。
+					// あとでmulti_sortをかけることとする
 					foreach ($r->user as $d) {
 						if (!isset($user_exist[$d->id][$r->id])) {
 							$user_exist[$d->id]['model'] = $d;
 							$user_exist[$d->id][$r->id]['data'][] = $r;
+
+							$user_exist[$d->id][$r->id]['start_time'] = $r->start_time;
+							$user_exist[$d->id]['model']['start_time'] = '0';// 便宜上sort用のフィールドを与える
 						} else {
 							$flg_push = true;
 							foreach ($user_exist[$d->id][$r->id]['data'] as $row_data) {
@@ -1106,9 +1117,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							}
 							if ($flg_push) {
 								$user_exist[$d->id][$r->id]['data'][] = $r;
+								$user_exist[$d->id][$r->id]['start_time'] = $r->start_time;
 							}
 						}
 					}
+
 					// 施設
 					foreach ($r->building as $d) {
 						if (!isset($building_exist[$d->item_id])) {
@@ -1128,9 +1141,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 				}
 
-
 			}
 			$schedules['schedules_list'][] = $row;
+		}
+
+		// 時間昇順にする
+		foreach($user_exist as $id => $v)
+		{
+			$user_exist[$id] = \Arr::multisort($v, array('start_time' => SORT_ASC));
+		}
+
+		// 時間昇順にする
+		foreach($building_exist as $id => $v)
+		{
+			$building_exist[$id]['data'] = \Arr::multisort($v['data'], array('start_time' => SORT_ASC));
 		}
 
 		$schedules['member_list'] = $user_exist;
@@ -1641,7 +1665,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							if (count($result) >= $maxCount) { return $result; }
 						}
 					} else {
-
 
 						// 日にちが被っているかどうか
 						if ( !(($r['end_time'] <= $start_time && $r['end_time'] < $end_time)

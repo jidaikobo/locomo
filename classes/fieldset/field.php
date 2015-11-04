@@ -378,7 +378,7 @@ class Fieldset_Field extends \Fuel\Core\Fieldset_Field
 		}
 
 		// _at を $date_format の形に
-		if (substr($this->name, -2) == 'at') {
+		if (substr($this->name, -3) == '_at') {
 			// 時間の表記を含む なおかつ 00:00:00
 
 			$date_format = $form->get_config('date_format_plain', 'Y-m-d H:i:s');

@@ -697,7 +697,7 @@ $('.lcm_close_window').on('click', function(e){
 
 $.fn.lcm_close_window = function(w){
 	w.hide();
-	if($(w.find('.lcm_close_window')[0]).hasClass('lcm_reset_style')){
+	if(w.find('.lcm_close_window').hasClass('lcm_reset_style')){
 		w.removeAttr('style').hide();
 	}
 }
