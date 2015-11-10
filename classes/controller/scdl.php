@@ -1065,6 +1065,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where_close()
 							->where("deleted_at", "is", null)
 							->where("kind_flg", $model::$_kind_flg)
+							->order_by("start_time")
 							->get();
 
 		
