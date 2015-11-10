@@ -142,7 +142,9 @@ trait Model_Traits_Base
 		}
 
 		// set total before use offset
-		$count = static::count(static::$_options);
+		$cnt_opt = static::$_options;
+		if (isset($cnt_opt['group_by'])) unset($cnt_opt['group_by']);
+		$count = static::count($cnt_opt);
 		\Pagination::set('total_items', $count);
 
 		// limit
@@ -649,7 +651,7 @@ trait Model_Traits_Base
 				// 何も飛んでこなかったとき、form に存在していれば 全て unset する
 				} else {
 					if ($mm_delete_else) {
-						if ($form->field($k) instanceof \Fieldset_Field) unset($this->{$k});
+						if ($form->field($k) instanceof \Fieldset_Field) $this->{$k} = array();
 					}
 				}
 			}

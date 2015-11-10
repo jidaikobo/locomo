@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Usrgrp_Edit extends \Presenter_Base
 {
 	/**

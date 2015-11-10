@@ -11,6 +11,7 @@
 			echo '<span class="display_inline_block"><span class="icon mark_importance kb_'.$k.'"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt=""></span><span></span></span>';
 		endforeach;
 //	endif;
-	echo $locomo['controller']['name'] === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt=""></span><span></span></span>' : '';
+
+	echo \Request::active()->controller === "\Controller_Scdl" ? '<span class="display_inline_block"><span class="icon mark_private"><img src="'.Uri::base().'lcm_assets/img/system/mark_private.png" alt=""></span><span></span></span>' : '';
 ?>
 </div><!-- /.legend.calendar -->

@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Adrsgrp_Bulk extends \Presenter_Base
 {
 	/*

@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Msgbrd_Categories_Bulk extends \Presenter_Base
 {
 	/*

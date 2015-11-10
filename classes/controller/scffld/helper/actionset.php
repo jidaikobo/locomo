@@ -59,7 +59,7 @@ class Controller_Scffld_Helper_Actionset extends Controller_Scffld_Helper
 	/**
 	 * actionset_index_deleted()
 	 */
-	public static function actionset_actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
 	{
 		return \Actionset_Base::index_deleted($controller, $obj, $id, $urls);
 	}
@@ -73,7 +73,7 @@ class Controller_Scffld_Helper_Actionset extends Controller_Scffld_Helper
 	/**
 	 * actionset_index_yet()
 	 */
-	public static function actionset_actionset_index_yet($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_index_yet($controller, $obj = null, $id = null, $urls = array())
 	{
 		return \Actionset_Base::index_yet($controller, $obj, $id, $urls);
 	}
@@ -87,7 +87,7 @@ class Controller_Scffld_Helper_Actionset extends Controller_Scffld_Helper
 	/**
 	 * actionset_index_expired()
 	 */
-	public static function actionset_actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_index_expired($controller, $obj = null, $id = null, $urls = array())
 	{
 		return \Actionset_Base::index_expired($controller, $obj, $id, $urls);
 	}
@@ -101,7 +101,7 @@ class Controller_Scffld_Helper_Actionset extends Controller_Scffld_Helper
 	/**
 	 * actionset_index_invisible()
 	 */
-	public static function actionsetindex_invisible($controller, $obj = null, $id = null, $urls = array())
+	public static function actionset_index_invisible($controller, $obj = null, $id = null, $urls = array())
 	{
 		return \Actionset_Base::index_invisible($controller, $obj, $id, $urls);
 	}

@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Defaults_Purge extends \Presenter_Base
 {
 	/**
