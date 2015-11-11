@@ -6,6 +6,19 @@ trait Controller_Otpt_Excel
 
 	public function excel($objects, $format)
 	{
+		$this->create($objects, $format);
+		$this->excel->output($format->name .'('.date('Ymd').')');
+	}
+
+	public function csv($objects, $format)
+	{
+		$this->create($objects, $format);
+		$this->excel->output($format->name .'('.date('Ymd').')', null, 'CSV');
+	}
+
+
+	private function create($objects, $format)
+	{
 		$excel = $this->excel;
 
 		//シートを設定する
@@ -100,11 +113,5 @@ trait Controller_Otpt_Excel
 			}
 			$excel->downWard();
 		}
-
-		$excel->output($format->name .'('.date('Ymd').')');
-	}
-
-	public function csv($objects, $format)
-	{
 	}
 }
