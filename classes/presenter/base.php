@@ -251,7 +251,7 @@ class Presenter_Base extends \Presenter
 		{
 			$opt .= '<div class="pdf_repeat nowrap" style="display:inline;">繰り返し';
 			$opt .= '<select name="print_repeat'.$name_num.'" class="print_repeat">';
-			for ($i=1; $i<=10; $i++)
+			for ($i=1; $i<=12; $i++)
 			{
 				$selected = (\Input::post('print_repeat') == $i) ? 'selected="selected"' : '';
 				$opt .= '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
