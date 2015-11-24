@@ -119,7 +119,6 @@ class Presenter_Base extends \Presenter
 			50 => 50,
 			100 => 100,
 			250 => 250,
-			24 => '24(タックシール一枚分)',
 		);
 
 		$form
