@@ -66,7 +66,7 @@ class Actionset_Usr extends \Actionset_Base
 		$retval = \Actionset_Base::edit($controller, $obj, $id, $urls);
 
 		$retval['action_name'] = '編集（自分以外）';
-		$retval['explanation'] = '自分以外のユーザーの編集権限です。';
+		$retval['explanation'] = '自分以外のユーザーの編集権限です';
 		$retval['dependencies'][] = '\Controller_Usr/edit_other';
 
 		return $retval;
