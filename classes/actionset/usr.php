@@ -59,6 +59,20 @@ class Actionset_Usr extends \Actionset_Base
 	}
 
 	/**
+	 * actionset_edit_other()
+	 */
+	public static function actionset_edit_other($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retval = \Actionset_Base::edit($controller, $obj, $id, $urls);
+
+		$retval['action_name'] = '編集（自分以外）';
+		$retval['explanation'] = '自分以外のユーザーの編集権限です。';
+		$retval['dependencies'][] = '\Controller_Usr/edit_other';
+
+		return $retval;
+	}
+
+	/**
 	 * actionset_delete()
 	 */
 	public static function actionset_delete($controller, $obj = null, $id = null, $urls = array())
