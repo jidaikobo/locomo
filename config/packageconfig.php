@@ -86,6 +86,21 @@ return array(
 		),
 	),
 
+	// disable controller even if for administrator
+	// ex) '\\Modname\\Controller_Something'
+	'disabled_controllers' => array(
+		// '\\Controller_Scdl',
+		// '\\Controller_Msgbrd',
+		// '\\Controller_Adrs',
+		// '\\Controller_Flr',
+		// '\\Controller_Usr',
+		// '\\Controller_Usrgrp',
+		// '\\Controller_Acl',
+		// '\\Controller_Scffld',
+		// '\\Controller_Wrkflwadmin',
+		// '\\Controller_Bkmk',
+	),
+
 	// always guest allowed actions
 	// ex) '\\Modname\\Controller_Something/action'
 	'always_allowed' => array(

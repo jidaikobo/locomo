@@ -296,4 +296,3 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// if ($name == 'template') return $this->template = \View::forge('default'); //var_dump($name); die();
 	}
 }
-

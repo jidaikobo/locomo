@@ -651,7 +651,7 @@ trait Model_Traits_Base
 				// 何も飛んでこなかったとき、form に存在していれば 全て unset する
 				} else {
 					if ($mm_delete_else) {
-						if ($form->field($k) instanceof \Fieldset_Field) unset($this->{$k});
+						if ($form->field($k) instanceof \Fieldset_Field) $this->{$k} = array();
 					}
 				}
 			}

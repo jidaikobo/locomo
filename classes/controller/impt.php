@@ -69,18 +69,20 @@ class Controller_Impt extends \Locomo\Controller_Base
 				$is_relation = false;
 				$insert_model = $format->model;
 
-				var_dump($insert_model::relations());
-				die();
-
 				foreach ($files as $file)
 				{
 					$data = file_get_contents($file['saved_to'].$file['saved_as']);
-					mb_convert_variables('UTF-8', null, $data);
+					// $data = mb_convert_encoding($data, 'UTF-8', 'SJISwin');
+					mb_convert_variables('UTF-8', 'SJIS', $data);
 					// インポートする物がこのシステムからとは限らないので、
 					$data = \Format::forge($data, 'csv', false)->to_array();
 
+					$data = static::convert_objects($data, $format);
+
 					if (\Input::post('ignore_one_line')) array_shift($data);
 
+					$belongs_to = array();
+					$belongs_to_saved = array();
 					foreach ($data as $row_data)
 					{
 						$arr = array();
@@ -89,12 +91,55 @@ class Controller_Impt extends \Locomo\Controller_Base
 						{
 							$fields = explode('}', trim(str_replace('{', '}' , $element->txt), '}') );
 							if (count($fields) !== 1) continue; // todo throw error
-							$field = reset($fields);
-							$value = isset($row_data[$cnt]) ? $row_data[$cnt] : null;
+							$field_name = reset($fields);
 
-							$arr[$field] = $value;
+							// リレーションの処理
+							if (strpos($field_name, '.') !== false)
+							{
+								$related_name = substr($field_name, 0, strpos($field_name, '.'));
+								$related_field = substr($field_name, strpos($field_name, '.') +1);
+								if ($insert_model::relations($related_name) &&
+									(get_class($insert_model::relations($related_name)) == 'Orm\BelongsTo' ||
+									get_class($insert_model::relations($related_name)) == 'Orm\HasOne')
+								)
+								{
+									$value = isset($row_data[$cnt]) ? $row_data[$cnt] : null;
+									$belongs_to[$related_name][$related_field] = $value;
+								}
+							}
+
+							else
+							{
+								$value = isset($row_data[$cnt]) ? $row_data[$cnt] : null;
+
+								$arr[$field_name] = $value;
+							}
 
 							$cnt++;
+						}
+
+						foreach ($belongs_to as $related_name => $bt)
+						{
+							$relate_model = $insert_model::relations($related_name);
+							$relate_model_name = $relate_model->model_to;
+							$key_from = $relate_model->key_from[0];
+							$key_to = $relate_model->key_to[0];
+
+							if (isset($belongs_to_saved[$related_name]) &&
+								$format::format_import_matcher($belongs_to_saved[$related_name], $bt))
+							{
+								$arr[$key_from] = $relate_save_item->{$key_to};
+								continue;
+							}
+
+							$relate_save_item = $relate_model_name::forge($bt);
+							$relate_save_item->save();
+
+							$belongs_to_saved[$related_name] = $bt;
+
+							$key_from = $relate_model->key_from[0];
+							$key_to = $relate_model->key_to[0];
+							$arr[$key_from] = $relate_save_item->{$key_to};
 						}
 
 						$insert_model::forge($arr)->save();
@@ -143,5 +188,16 @@ class Controller_Impt extends \Locomo\Controller_Base
 
 		return $ret_arr;
 	}
+
+
+	/*
+	 * Override 用
+	 * フィールドの出力を変えたい時などに使う
+	 */
+	protected static function convert_objects($objects, $format)
+	{
+		return $objects;
+	}
+
 
 }
