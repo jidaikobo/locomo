@@ -73,6 +73,7 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 		$controllables = array(
 			'pdf',
 			'excel',
+			'csv',
 		);
 
 		if (! in_array($obj->type, $controllables)) return '';
@@ -88,13 +89,16 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 		}
 		 */
 
-		if (\Auth::has_access($crtl_name.'/'.$obj->type.'_edit'))
+		$object_type = $obj->type;
+		if ($obj->type == 'csv') $object_type = 'excel';
+
+		if (\Auth::has_access($crtl_name.'/'.$object_type.'_edit'))
 		{
-			$html.= \Html::anchor($crtl.'/'.$obj->type.'_edit/'.$obj->id, '編集', array('class' => 'edit button small'));
+			$html.= \Html::anchor($crtl.'/'.$object_type.'_edit/'.$obj->id, '編集', array('class' => 'edit button small'));
 		}
-		if (\Auth::has_access($crtl_name.'/'.$obj->type.'_edit_element'))
+		if (\Auth::has_access($crtl_name.'/'.$object_type.'_edit_element'))
 		{
-			$html.= \Html::anchor($crtl.'/'.$obj->type.'_edit_element/'.$obj->id, '要素の編集', array('class' => 'edit button small'));
+			$html.= \Html::anchor($crtl.'/'.$object_type.'_edit_element/'.$obj->id, '要素の編集', array('class' => 'edit button small'));
 		}
 		if (\Auth::has_access($crtl_name.'/copy'))
 		{
