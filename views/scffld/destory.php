@@ -35,7 +35,6 @@ if ($files = \File::read_dir($basepath, 1))
 
 }
 
-
 ?>
 
 <p><?php echo \Form::textarea('cmd', Input::post('cmd', \Session::get_flash('cmd_raw')), array('style' => 'width:100%;height:10em;', 'placeholder'=>'拡張oilコマンド書式')); ?><br /></p>
