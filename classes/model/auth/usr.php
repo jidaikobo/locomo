@@ -1,7 +1,35 @@
 <?php
 namespace Locomo;
-class Model_Auth_Usr extends Model_Usr
+class Model_Auth_Usr extends Model_Base
 {
+	/**
+	 * vals
+	 */
+	protected static $_table_name = 'lcm_usrs';
+
+	/**
+	 * $_properties
+	 */
+	protected static $_properties = array(
+		'id',
+		'username',
+		'display_name',
+		'email',
+		'main_usergroup_id',
+		'password',
+		'is_visible',
+		'last_login_at',
+		'expired_at',
+		'created_at',
+		'login_hash',
+		'activation_key',
+		'profile_fields',
+		'updated_at',
+		'deleted_at',
+	//	'creator_id',
+	//	'updater_id',
+	);
+
 	/**
 	 * relations
 	 */
