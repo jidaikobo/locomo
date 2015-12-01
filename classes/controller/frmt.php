@@ -8,6 +8,8 @@ class Controller_Frmt extends \Locomo\Controller_Base
 
 	public $model_name = '\Locomo\Model_Frmt';
 
+	public $output_url;
+
 	/**
 	 * pdf_edit()
 	 */
@@ -225,6 +227,115 @@ class Controller_Frmt extends \Locomo\Controller_Base
 	}
 
 
+	/* ==========
+	 * actions
+	========== */
+
+		/*
+	 * action_index_admin
+	 */
+	public function action_index_admin()
+	{
+		if (!$this->_content_template) $this->_content_template = 'frmt/index_admin';
+
+		parent::index_admin();
+
+		if ($this->output_url) $this->template->content->output_url = \Uri::create($this->output_url);
+	}
+
+
+	/*
+	 * action_index_deleted
+	 */
+	public function action_index_deleted ()
+	{
+		if (!$this->_content_template) $this->_content_template = 'frmt/index_admin';
+		parent::index_deleted();
+		$this->template->content->output_url = false;
+	}
+
+
+	/**
+	 * action_view()
+	 */
+	public function action_view($id = null)
+	{
+		static::view($id);
+	}
+
+	/*
+	 * action_delete()
+	 * @param Integer
+	 */
+	public function action_delete($id = null)
+	{
+		parent::delete($id);
+	}
+
+	/*
+	 * action_undelete()
+	 * @param Integer
+	 */
+	public function action_undelete($id = null)
+	{
+		parent::undelete($id);
+	}
+
+	/**
+	 * action_pdf_create()
+	 */
+	public function action_pdf_create($id = null)
+	{
+		static::pdf_edit($id);
+	}
+
+	/**
+	 * action_pdf_edit()
+	 */
+	public function action_pdf_edit($id = null)
+	{
+		static::pdf_edit($id);
+	}
+
+	/**
+	 * action_pdf_edit()
+	 */
+	public function action_pdf_edit_element($id = null)
+	{
+		static::pdf_edit_element($id);
+	}
+
+	/**
+	 * action_excel_create()
+	 */
+	public function action_excel_create($id = null)
+	{
+		$obj = static::excel_edit($id);
+	}
+
+	/**
+	 * action_excel_edit()
+	 */
+	public function action_excel_edit($id = null)
+	{
+		$obj = static::excel_edit($id);
+	}
+
+	/**
+	 * action_excel_edit_element()
+	 */
+	public function action_excel_edit_element($id = null)
+	{
+		static::edit_excel_element($id);
+	}
+
+	/*
+	 * action_copy()
+	 */
+	public function action_copy($id = null)
+	{
+		static::copy($id);
+	}
 }
 
 

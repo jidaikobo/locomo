@@ -13,8 +13,25 @@ class Actionset_Scffld extends \Actionset
 			'urls'         => $urls ,
 			'action_name'  => '足場組み',
 			'show_at_top'  => true,
-			'explanation'  => '新規モジュール作成の足場組み。',
+			'explanation'  => '足場組み',
 			'order'        => 1,
+		);
+		return $retvals;
+	}
+
+	/**
+	 * actionset_controller_destroy()
+	 */
+	public static function actionset_controller_destroy($controller, $obj = null, $id = null, $urls = array())
+	{
+		$urls = array(array($controller.DS."destory", '削除'));
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '削除',
+			'show_at_top'  => true,
+			'explanation'  => '削除',
+			'order'        => 10,
 		);
 		return $retvals;
 	}

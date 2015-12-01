@@ -10,8 +10,6 @@ class Controller_Otpt extends \Controller
 	protected static $_pdf = null;
 	protected static $_excel = null;
 
-
-	
 	public function before()
 	{
 		parent::before();

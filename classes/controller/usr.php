@@ -35,7 +35,11 @@ class Controller_Usr extends \Locomo\Controller_Base
 		// check item's creator_id
 		$pkid = \Request::main()->id;
 		$obj = \Model_Usr::find($pkid);
-		if ($obj)
+		if (
+			! \Auth::is_admin() &&
+			! in_array('\Controller_Usr/edit_other', \Auth::get('allowed')) &&
+			$obj
+		)
 		{
 			// actions
 			$actions = array(
@@ -43,7 +47,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 				'\Controller_Usr/edit',
 				'\Controller_Usr/reset_paswd'
 			);
-	
+
 			// modify \Auth::get('allowed')
 			\Auth::instance()->remove_allowed($actions);
 			if ($obj->id === \Auth::get('id'))

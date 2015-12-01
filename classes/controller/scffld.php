@@ -71,6 +71,7 @@ class Controller_Scffld extends \Controller_Base
 			$cmd_orig = trim(preg_replace("/ +/", ' ', $cmd_orig));
 			$cmd  = \Controller_Scffld_Helper::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
+			$files = array();
 
 			// errors
 			$errors = array();
@@ -186,9 +187,11 @@ class Controller_Scffld extends \Controller_Base
 			{
 				// migrations
 				\File::update($migrationpath, $migrate_file, $migration);
+				$files[] = $migrationpath.$migrate_file;
 
 				// model
 				\File::update($modelpath, $filename, $model);
+				$files[] = $modelpath.$filename;
 
 				// message
 				$messages[] = "modelとmigrationを生成しました。";
@@ -203,11 +206,13 @@ class Controller_Scffld extends \Controller_Base
 				\File::update($viewpath, 'index_admin.php', $tpl_index_admin);
 				\File::update($viewpath, 'view.php', $tpl_view);
 				\File::update($viewpath, 'edit.php', $tpl_edit);
+				$files[] = $viewpath;
 
 				// prensenter
 				\File::update($presenteridxpath, 'admin.php', $presenter_index);
 				\File::update($presenterpath, 'view.php', $presenter_view);
 				\File::update($presenterpath, 'edit.php', $presenter_edit);
+				$files[] = $presenterpath;
 
 				// message
 				$messages[] = "viewsとpresenterのファイル群を生成しました。";
@@ -218,6 +223,8 @@ class Controller_Scffld extends \Controller_Base
 			{
 				\File::update($controllerpath, $filename, $controller);
 				\File::update($actionsetpath, $filename, $actionset);
+				$files[] = $controllerpath.$filename;
+				$files[] = $actionsetpath.$name;
 
 				// message
 				$messages[] = "controllerとactionsetのファイル群を生成しました。";
@@ -227,6 +234,7 @@ class Controller_Scffld extends \Controller_Base
 			if ($scfld_type == 'module')
 			{
 				\File::update($configpath, $filename, $config);
+				$files[] = $configpath.'modules/'.$filename;
 
 				// message
 				$messages[] = "configのファイルを生成しました。";
@@ -247,7 +255,8 @@ class Controller_Scffld extends \Controller_Base
 			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scffld/'.$name);
 			$latest = \Util::get_latestprefix($log_dir);
 			\File::update($log_dir, $latest.'_scaffold.txt', $cmd_raw);
-	
+			\File::update($log_dir, 'files.php', "<?php\n$scfflds = ".var_export($files, 1).';');
+
 			// message
 			$messages[] = "{$log_dir}";
 			$messages[] = "にpostされた文字列を保存しています。";
@@ -266,4 +275,36 @@ class Controller_Scffld extends \Controller_Base
 		$this->template->content = $view;
 	}
 
+	/**
+	 * action_destory()
+	 */
+	public function action_destory()
+	{
+		// view
+		$view = \View::forge('scffld/destory');
+		if (\Input::method() == 'POST' && \Security::check_token())
+		{
+			$cmd_raw     = \Input::post('cmd');
+			$scfld_type  = \Input::post('type', 'app');
+			$scfld_model = \Input::post('model', 'model');
+
+			// repopulate for error
+			\Session::set_flash('cmd_raw', $cmd_raw);
+			\Session::set_flash('type', $scfld_type);
+			\Session::set_flash('model', $scfld_model);
+
+
+
+		}
+
+		// set errors
+		if (\Input::method() == 'POST' && ! \Security::check_token())
+		{
+			\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+		}
+
+		// view
+		$view->set_global('title', '削除');
+		$this->template->content = $view;
+	}
 }

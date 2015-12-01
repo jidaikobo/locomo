@@ -2,8 +2,6 @@
 namespace Locomo;
 trait Controller_Otpt_Excel
 {
-
-
 	public function excel($objects, $format)
 	{
 		$excel = $this->excel;
@@ -93,7 +91,7 @@ trait Controller_Otpt_Excel
 			foreach($format->element as $element)
 			{
 				$txt = '';
-				$fields = explode('}', str_replace('{', '}' , $element->txt) );
+				$fields = explode('}', trim(str_replace('{', '}' , $element->txt), '}') );
 				foreach ($fields as $field_name)
 				{
 					// field を元に, object を txt に変換
@@ -125,7 +123,6 @@ trait Controller_Otpt_Excel
 						$txt .= $field_name;
 					}
 
-
 					/*
 					if (isset($object->{$field})) {
 
@@ -138,11 +135,11 @@ trait Controller_Otpt_Excel
 
 				}
 				$key_name = mb_convert_encoding($element->name, 'SJIS', 'UTF-8');
+				if ($key_name == '') $key_name = $field_name;
 				$r_arr[$key_name] = $txt;
 			}
 			$csv[] = $r_arr;
 		}
-
 
 		mb_convert_variables('SJIS-win','UTF-8',$csv);
 
@@ -161,11 +158,11 @@ trait Controller_Otpt_Excel
 		{
 			$related_name = substr($field_name, 0, strpos($field_name, '.'));
 			$related_field = substr($field_name, strpos($field_name, '.') +1);
+			$related_str = '';
 			if (isset($object->{$related_name}))
 			{
 				if (is_array($object->{$related_name}))
 				{
-					$related_str = '';
 					foreach ($object->{$related_name} as $v)
 					{
 						isset($v->{$related_field}) &&

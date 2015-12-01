@@ -320,4 +320,21 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 		}
 
 	}
+
+
+	public static function format_import_matcher($origin, $new)
+	{
+		$match = true;
+		foreach ($origin as $key => $value)
+		{
+			if ($origin[$key] != $new[$key])
+			{
+				$match = false;
+				break;
+			}
+		}
+		return $match;
+	}
+
+
 }
