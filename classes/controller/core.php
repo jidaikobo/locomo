@@ -49,6 +49,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		\Fuel::$profiling = \Fuel::$env == 'development' ?: false ;
 		\Fuel::$profiling = \Input::get('no_prof') ? false : \Fuel::$profiling ;
 		\Fuel::$profiling = \Locomo\Browser::getIEVersion() && \Locomo\Browser::getIEVersion() <= 8 ? false : \Fuel::$profiling;
+		\Fuel::$profiling = file_exists(APPPATH.'noprof') ? false : \Fuel::$profiling;
 
 		// hmvc
 		$this->_template = \Request::is_hmvc() ? 'widget' : $this->_template ;
