@@ -43,22 +43,26 @@ class Presenter_Header extends \Presenter
 
 		// affected_id for index template - from session
 		$this->_view->set_global('affected_id', \Session::get_flash('affected_id'));
-		
-		// locomo - for logged in users'
+
+		// locomo
 		$locomo = array();
+		$locomo['site_title'] = \Config::get('site_title');
+		$locomo['slogan'] = \Config::get('slogan');
+		$locomo['identity'] = \Config::get('identity');
+
 		if ( ! \Auth::check())
 		{
 			$this->_view->set_global('locomo', $locomo);
 			return;
 		}
-		
+
 		// locomo path
 		$locomo['locomo_path'] = $controller.DS.$action;
 
 		// ua - too heavy to use :-(
 //		$locomo['ua']['browser'] = \Agent::browser();
 //		$locomo['ua']['version'] = \Agent::version();
-		
+
 		// current controller
 		$locomo['controller']['name'] = $controller;
 		if (property_exists($controller, 'locomo') && \Arr::get($controller::$locomo, 'main_action'))
@@ -118,14 +122,14 @@ class Presenter_Header extends \Presenter
 		\Actionset::get_actionset($controller, $obj);
 		\Profiler::mark('Locomo\\Presenter_Header::view() - actionset done');
 
-/*		
+/*
 		$status = array();
 		if (isset($obj->deleted_at) && ! is_null($obj->deleted_at))
 		{
 			$status[] = '削除済み';
 		}
-		
-		
+
+
 		if ($status)
 		{
 			$message = \Session::get_flash('message');
