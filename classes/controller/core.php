@@ -82,10 +82,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		static::$config = static::$config ?: array();
 
 		// pagination_config
-		$pagination_config = \Config::load('pagination', true);
-//		unset($pagination_config['active']);
-		\Pagination::set($pagination_config);
-		if (empty($this->pagination_config) && ! \Pagination::get('uri_segment'))
+		if (empty($this->pagination_config) && is_numeric(\Pagination::get('uri_segment')))
 		{
 			$suspicious_segment = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
 			\Pagination::set('uri_segment', $suspicious_segment);
