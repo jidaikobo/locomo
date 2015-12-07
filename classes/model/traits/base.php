@@ -102,7 +102,7 @@ trait Model_Traits_Base
 	static public function set_paginated_options()
 	{
 		// クエリ文字列の場合
-		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
+		if (\Input::get('paged')) \Pagination::set('uri_segment', 'paged');
 
 		// order
 		if (\Input::get('orders'))

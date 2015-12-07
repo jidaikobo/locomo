@@ -2,6 +2,21 @@
 namespace Locomo;
 trait Controller_Traits_Revision
 {
+	/*
+	 * $pagination_config
+	 */
+	protected static $pagination_config = array(
+		'uri_segment' => 4,
+		'num_links' => 5,
+		'per_page' => 20,
+		'template' => array(
+			'wrapper_start' => '<div class="pagination">',
+			'wrapper_end' => '</div>',
+			'active_start' => '<span class="current">',
+			'active_end' => '</span>',
+		),
+	);
+
 	/**
 	 * action_index_revision()
 	 */

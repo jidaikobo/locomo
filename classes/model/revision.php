@@ -17,18 +17,6 @@ class Model_Revision extends \Model_Base
 		'then_displayname',
 	);
 
-	protected static $pagination_config = array(
-		'uri_segment' => 4,
-		'num_links' => 5,
-		'per_page' => 20,
-		'template' => array(
-			'wrapper_start' => '<div class="pagination">',
-			'wrapper_end' => '</div>',
-			'active_start' => '<span class="current">',
-			'active_end' => '</span>',
-		),
-	);
-
 	protected static $_belongs_to = array(
 		'user' => array(
 			'key_from' => 'user_id',

@@ -300,3 +300,15 @@ Authをoverrideしたいときに参考になるのは、\Locomo\Controller_Usr:
 原理的には、before()で、Authの判定材料である\Auth::get('allowed')の値をあらかじめ改変しておくという手法をとります。
 
 \Auth::has_access()には、locomo_has_accessというEventもあり、こちらも利用できますが、controllerのなかで処理が完結するような場合は、before()で十分間に合うと思われます。
+
+// pagination
+
+ページネーションをgetで行いたい時には、app/config/pagination.phpに以下を記述すること。
+
+start_______________________
+<?php
+return array(
+	'uri_segment' => 'paged',
+	'active' => '<span class="active">{link}</span>',
+);
+_________________________end
