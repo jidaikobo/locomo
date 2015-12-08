@@ -14,6 +14,7 @@ class Controller_Base extends Controller_Core
 
 		// set options
 		$model::set_public_options();
+		$model::set_search_options();
 		$model::set_paginated_options();
 
 		// find()
