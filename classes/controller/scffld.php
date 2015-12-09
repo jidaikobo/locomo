@@ -255,7 +255,7 @@ class Controller_Scffld extends \Controller_Base
 			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scffld/'.$name);
 			$latest = \Util::get_latestprefix($log_dir);
 			\File::update($log_dir, $latest.'_scaffold.txt', $cmd_raw);
-			\File::update($log_dir, 'files.php', "<?php\n$scfflds = ".var_export($files, 1).';');
+			\File::update($log_dir, 'files.php', '<?php'."\n".'$scfflds = '.var_export($files, 1).';');
 
 			// message
 			$messages[] = "{$log_dir}";
