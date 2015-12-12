@@ -1,4 +1,7 @@
-<?php echo \Form::open(); ?>
+<?php
+//echo \Form::open(array('enctype' => 'multipart/form-data', 'class' => 'lcm_form form_group'));
+echo \Form::open(array('class' => 'lcm_form form_group'));
+?>
 
 <!--form_group-->
 <div class="lcm_form form_group">
@@ -7,11 +10,11 @@
 	echo $form;
 ?>
 
-<!--
+<?php /* ?>
 <table class="formtable">
 ###FIELDS###
 </table>
--->
+<?php */ ?>
 
 <?php
 	// revision memo template - optional
@@ -21,7 +24,7 @@
 <div class="submit_button">
 	<?php
 ###HIDDEN_FIELDS###
-	if ( ! @$is_revision): 
+	if ( ! @$is_revision):
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 	endif;
