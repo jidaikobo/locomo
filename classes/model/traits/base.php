@@ -514,8 +514,8 @@ trait Model_Traits_Base
 
 	/**
 	 * add_or()
-	 * @param array $whr
-	 * @param array $arr
+	 * @param array $whr original where
+	 * @param array $arr additional where
 	 */
 	public static function add_or($whr = array(), $arr = array())
 	{
@@ -687,6 +687,7 @@ trait Model_Traits_Base
 	 * @param $glue       string length 1~2
 	 * @param $paren
 	 */
+/*
 	public function to_csv(
 		$options = array(),
 		$rel_names = array(),
@@ -745,11 +746,12 @@ trait Model_Traits_Base
 			}
 			$r_arr[$key] = $value;
 		}
-
+*/
 		/*
 		if ($this->_data_relations) {
 			foreach ($this->_data_relations as $rel_name => $dr) {
 		 */
+/*
 		if (isset($options['related'])) {
 			foreach ($options['related'] as $rel_name => $rel_options) {
 
@@ -791,7 +793,7 @@ trait Model_Traits_Base
 
 		return $r_arr;
 	}
-
+*/
 // 以降、削除予定
 
 	/*
@@ -802,6 +804,7 @@ trait Model_Traits_Base
 	 *
 	 * @return Model finded
 	 */
+/*
 	public static function paginated_find($options = array(), $use_get_query = true)
 	{
 		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
@@ -847,16 +850,6 @@ trait Model_Traits_Base
 					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
 				}
 			}
-
-/*
-			if (\Input::get('all')) {
-				foreach (static::$_properties as $k => $v) {
-					if (in_array($v, static::$_primary_key)) continue;
-					$field = is_array($v) ? $k : $v;// properties sometimes only has key without value
-					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
-				}
-			}
-*/
 		}
 
 		$options+= static::$_options;
@@ -870,26 +863,19 @@ trait Model_Traits_Base
 		$options['rows_limit'] = \Pagination::get('per_page');
 		$options['rows_offset'] = \Pagination::get('offset');
 
-/* 不具合有りました
-		foreach (static::relations() as $ref => $v) {
-			// var_dump($ref);
-			// レイジーロードしない
-			$options['related'][] = $ref;
-		}
- */
-
 		$objs = static::find('all', $options);
 		\Pagination::$refined_items = count($objs);
 
 		return $objs;
 	}
-
+*/
 
 
 
 	/**
 	 * search_form_base()
 	 */
+/*
 	public static function search_form_base($title = '')
 	{
 		// forge
@@ -979,4 +965,5 @@ trait Model_Traits_Base
 
 		return $form;
 	}
+*/
 }
