@@ -512,6 +512,16 @@ trait Model_Traits_Base
 		return array('lcm_field' => $field) + static::properties()[$field];
 	}
 
+	/**
+	 * add_or()
+	 * @param array $whr
+	 * @param array $arr
+	 */
+	public static function add_or($whr = array(), $arr = array())
+	{
+		return empty($whr) ? $arr : array($arr, 'or' => $whr);
+	}
+
 	/*
 	 * cascade_set()
 	 * @param   array     $input_post
