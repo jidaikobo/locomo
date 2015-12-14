@@ -39,9 +39,11 @@ class File extends \Fuel\Core\File
 	 * get_attached_files()
 	 * 自動生成画像の拡張子など、将来的に汎用化する
 	 */
-	public static function get_attached_files($dir, $id, $type = false)
+	public static function get_attached_files($dir, $id = false, $types = array(), $exclude_types = array())
 	{
 		$retvals = array();
+		$id = $id ?: \Request::main()->id;
+		$dir = \Inflector::add_tailing_slash($dir);
 		$upload_path = LOCOMOUPLOADPATH.DS.$dir.$id;
 		$save_path = 'uploads/'.$dir.$id.DS;
 		$files = is_dir($upload_path) ? \File::read_dir($upload_path, 1) : array();
@@ -49,7 +51,8 @@ class File extends \Fuel\Core\File
 		{
 			foreach ($files as $file)
 			{
-				if($type && $type != static::get_file_genre($file)) continue;
+				if($types && ! in_array(static::get_file_genre($file), $types)) continue;
+				if($exclude_types && in_array(static::get_file_genre($file), $exclude_types)) continue;
 				if(in_array(substr($file, -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
 				$retvals[$save_path.$file] = rawurldecode($file);
 			}
@@ -70,6 +73,7 @@ class File extends \Fuel\Core\File
 		// vals
 		$errors = array();
 		$id = $obj->id;
+		$dir = \Inflector::add_tailing_slash($dir);
 		$upload_path = LOCOMOUPLOADPATH.DS.$dir.$id;
 		$save_path = 'uploads'.DS.$dir.$id.DS;
 
@@ -144,6 +148,7 @@ class File extends \Fuel\Core\File
 		{
 			foreach (\Input::post('unlink') as $path)
 			{
+				$path = APPPATH.'locomo/'.$path;
 				\File::delete($path);
 				// 自動生成される画像の削除
 				foreach(array('_lg.jpg','_sm.jpg','_tn.jpg') as $suffix)
