@@ -148,7 +148,6 @@ class File extends \Fuel\Core\File
 		{
 			foreach (\Input::post('unlink') as $path)
 			{
-				$path = APPPATH.'locomo/'.$path;
 				\File::delete($path);
 				// 自動生成される画像の削除
 				foreach(array('_lg.jpg','_sm.jpg','_tn.jpg') as $suffix)
