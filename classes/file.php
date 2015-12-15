@@ -65,14 +65,12 @@ class File extends \Fuel\Core\File
 	 * simple uploader
 	 * TODO: 汎用化を進めるためにconfigを参照するようにする
 	 */
-	public static function attach($dir, $obj)
+	public static function attach($dir, $id)
 	{
-		if ( ! $obj instanceof \Orm\Model) return null;
-		if ( ! \Input::post() || ! $obj || ! \Input::file()) return null;
+		if ( ! \Input::post() || ! \Input::file()) return null;
 
 		// vals
 		$errors = array();
-		$id = $obj->id;
 		$dir = \Inflector::add_tailing_slash($dir);
 		$upload_path = LOCOMOUPLOADPATH.DS.$dir.$id;
 		$save_path = 'uploads'.DS.$dir.$id.DS;
@@ -94,7 +92,7 @@ class File extends \Fuel\Core\File
 		\Upload::save($upload_path, array_keys($files));
 
 		// retouch
-		$files = is_dir($upload_path) ? \File::read_dir($upload_path, 1) : array();
+		$files = is_dir($upload_path) ? \File::read_dir($upload_path, 1) : array(); // 既存のファイルを取り直すあえて
 		if ($files)
 		{
 			foreach ($files as $file)
@@ -102,30 +100,53 @@ class File extends \Fuel\Core\File
 				if( ! in_array(substr($file, -4, 4), array('.jpg','jpeg','.gif','.png'))) continue;
 				if(in_array(substr($file, -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
 
+				$img_path = $upload_path.DS.$file;
+				$img_file = \Image::load($img_path);
+				$exif = @exif_read_data( $img_path);
+				if (isset($exif['Orientation']))
+				{
+					switch ($exif['Orientation'])
+					{
+					case 3: // 180
+						$img_file->rotate(180);
+						$img_file->save($img_path);
+						break;
+					case 6: // 時計回りに90
+						$img_file->rotate(90);
+						$img_file->save($img_path);
+						break;
+					case 8: // 半時計回りに90
+						$img_file->rotate(-90);
+						$img_file->save($img_path);
+						break;
+					}
+				}
+
+
 				$sizes = \Image::sizes($upload_path.DS.$file);
 
 				// large image
 				if ($sizes->width <= 1600)
 				{
-					\Image::load($upload_path.DS.$file)
+					$img_file
 																	 ->save_pa('', '_lg', 'jpg');
 				}
 				else
 				{
-					\Image::load($upload_path.DS.$file)
+					$img_file
 																	 ->resize(1600)
 																	 ->config('bgcolor', '#ffffff')
 																	 ->save_pa('', '_lg', 'jpg');
 				}
 
 				// small image
-				\Image::load($upload_path.DS.$file)
+				$img_file
 																 ->resize(400)
 																 ->config('bgcolor', '#ffffff')
 																 ->save_pa('', '_sm', 'jpg');
 
 				// thumbnail
-				\Image::load($upload_path.DS.$file)
+				$img_file
 																 ->crop_resize(400, 400)
 																 ->config('bgcolor', '#ffffff')
 																 ->save_pa('', '_tn', 'jpg');
@@ -137,14 +158,12 @@ class File extends \Fuel\Core\File
 	 * unlink()
 	 * こちらも将来的に汎用化を進める
 	 */
-	public static function unlink($obj)
+	public static function unlink()
 	{
-		if ( ! $obj instanceof \Orm\Model) return null;
-
 		$unlinks = array();
 
 		// unlink
-		if (\Input::post('unlink') && $obj)
+		if (\Input::post('unlink'))
 		{
 			foreach (\Input::post('unlink') as $path)
 			{
