@@ -716,6 +716,7 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function bulk($page = 1, $add = 3, $is_redirect = true)
 	{
+		// TODO $page => \Pagination::set('uri_segments', 'paged');
 		$model = $this->model_name;
 		$action = \Request::main()->action;
 		$is_model_soft = is_subclass_of($model, '\Orm\Model_Soft');
@@ -726,7 +727,6 @@ class Controller_Base extends Controller_Core
 		if (\Input::get('ids'))
 		{
 			$model::$_options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
-			// $pagination_config['per_page'] = count(\Input::get('ids')) * 2;
 
 			if ($is_model_soft) $model::disable_filter();
 
