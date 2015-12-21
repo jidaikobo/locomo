@@ -92,13 +92,14 @@ class File extends \Fuel\Core\File
 		\Upload::save($upload_path, array_keys($files));
 
 		// retouch
-		$files = is_dir($upload_path) ? \File::read_dir($upload_path, 1) : array(); // 既存のファイルを取り直すあえて
+		// $files = is_dir($upload_path) ? \File::read_dir($upload_path, 1) : array(); // 既存のファイルを取り直すあえて
 		if ($files)
 		{
 			foreach ($files as $file)
 			{
-				if( ! in_array(substr($file, -4, 4), array('.jpg','jpeg','.gif','.png'))) continue;
-				if(in_array(substr($file, -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
+				$file = $file['name'];
+				if( ! in_array(substr(strtolower($file), -4, 4), array('.jpg','jpeg','.gif','.png'))) continue;
+				if(in_array(substr(strtolower($file), -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
 
 				$img_path = $upload_path.DS.$file;
 				$img_file = \Image::load($img_path);
