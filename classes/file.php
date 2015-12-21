@@ -67,7 +67,7 @@ class File extends \Fuel\Core\File
 	 */
 	public static function attach($dir, $id)
 	{
-		if ( ! \Input::post() || ! \Input::file()) return null;
+		if ( ! \Input::post() || ! \Upload::get_files()) return null;
 
 		// vals
 		$errors = array();
@@ -123,7 +123,7 @@ class File extends \Fuel\Core\File
 				}
 
 
-				$sizes = \Image::sizes($upload_path.DS.$file);
+				$sizes = \Image::sizes($img_path);
 
 				// large image
 				if ($sizes->width <= 1600)
