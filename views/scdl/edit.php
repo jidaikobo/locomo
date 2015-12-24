@@ -436,6 +436,58 @@ function is_allday(){
 		$('#form_start_time, #form_end_time').attr('readonly',false);
 	}
 }
+//start_timeを変更した際にend_timeに+1時間を入れる // 時間を変更していても引っ張られて良い？
+$('#form_start_time').on('change', function(){
+	if($('#form_start_time').val()){
+		var hour   = $('#form_start_time').val().slice(0, 2)-0;
+		var minute = $('#form_start_time').val().slice(-2);
+		hour = ((hour+1)+'').slice(-2);
+		if(hour==24) hour = 23; //23:59?
+		$('#form_end_time').val(hour+':'+minute);
+	}
+});
+
+//時間の設定を外部表示のplaceholderに
+$('#form_start_time, #form_end_time').on('change', function(){
+	if($(this).is('#form_start_time')){ //すでに値が入っている場合どうする？ placeholderだからよい？ //選択時のtimepickerの開始値とか、ずっとplaceholderにいれてていいの？とか
+		if($('#form_public_start_time').val()==''){
+			$('#form_public_start_time').attr('placeholder', $('#form_start_time').val());
+		}
+	}else{
+		if($('#form_public_end_time').val()==''){
+			$('#form_public_end_time').attr('placeholder', $('#form_end_time').val());
+		}
+	}
+});
+
+//実使用時間の片方のみに入力した場合に、もう一方に設定時間の値を入力
+$('#form_public_start_time, #form_public_end_time').on('change', function(){
+	$from = $(this).is('#form_public_start_time') ? $('#form_public_start_time') : $('#form_public_end_time');
+	$to = $(this).is('#form_public_start_time') ? $('#form_public_end_time') :  $('#form_public_start_time');
+	time_completion($from,$to);
+
+	function time_completion($from,$to){
+		if($from.val()){ //値が入力された場合
+			if(!$to.val()){
+				if($from.is('#form_public_start_time')){
+					$to.val($('#form_end_time').val());
+				}else{
+					$to.val($('#form_start_time').val());
+				}
+			}
+		}else{ //値が削除された場合
+			if(!$to.val()){
+				if($from.is('#form_public_start_time')){
+					$from.val($('#form_start_time').val());
+				}else{
+					$from.val($('#form_end_time').val());
+				}
+			}
+		}
+		$from.focus();
+	}
+
+});
 
 </script>
 

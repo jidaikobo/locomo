@@ -104,20 +104,27 @@ if(isset($schedule_data['member_list'][$row->id])):
 										$detail_pop_array[] = $v2;
 										$eventtitle_icon = '';
 										$eventtitle_skip = '<span class="skip">';
-										//繰り返し区分
-										$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
-										$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']] : '';
+
+										//外部表示(施設予約) ?calendar_week_memberには不要?
+										if(\Request::active()->controller !== "\Controller_Scdl"):
+											$eventtitle_icon.= $v2['public_display']==2 ? '<span class="text_icon reserve public"></span>' : '';
+											$eventtitle_skip.= $v2['public_display']==2 ? '外部に表示 ' : '';
+										endif;
 										//詳細区分
 										foreach($detail_kbs as $key => $value):
 											if($v2[$key]):
 												$eventtitle_icon.= '<span class="text_icon schedule '.$key.'"></span>';
-												$eventtitle_skip.= ' '.$value;
+												$eventtitle_skip.= $value.' ';
 											endif;
 										endforeach;
-										//重要度
+										//繰り返し区分
+										$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
+										$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']].' ' : '';
+/*										//重要度
 										$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
 										$eventtitle_icon.= '<span class="icon" style="width: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
 										$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
+*/
 										$eventtitle_skip.= '</span>';
 										// 時間
 										$event_time_display_data = $model_name::make_target_day_info($v2);
