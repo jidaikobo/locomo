@@ -273,7 +273,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						$select_user_list[$default_uid] = \Model_Usr::find($default_uid);
 					endif;
 				}
-			
+
 				// $cuurent_uidが$default_uidと異なれば、通常のユーザであるか確認して、初期値として足す。コピー時は除外
 				if(!\Input::get("from"))
 				{
@@ -302,7 +302,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		} else {
 			$non_selected_user_list = \Model_Usr::find('all');
 		}
-		
+
 		$this->template->content->set("non_selected_user_list", $non_selected_user_list);
 
 
@@ -315,7 +315,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$select_building_list[$default_bid] = \Model_Scdl_Item::find($default_bid);
 			endif;
 		}
-		
+
 		if (!$id && \Session::get($model::$_kind_name . "narrow_bgid") && $model::$_kind_name=="reserve" && count($select_building_list) == 0) {
 			$non_selected_building_list = \Model_Scdl_Item::find('all',
 			array(
@@ -334,8 +334,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			);
 		}
 
-		
-		
+
+
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
@@ -404,7 +404,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 				// 部分削除の処理をいれる
 				$obj = $model::find($id);
-				
+
 				// 部分削除処理
 				$obj->delete_day = $obj->delete_day . sprintf("[%04d/%02d/%02d]", $year, $mon, $day);
 
@@ -431,7 +431,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	/**
 	 * [action_detail]
 	 * 詳細を表示
-	 * 
+	 *
 	 * @param  [type] $id
 	 * @return [type]
 	 */
@@ -478,10 +478,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					));
 
 		$usergroups = \Auth::get_groups();
-		
+
 		// グループ判定のため$detail->private_kbが上書きされるので、個票でそもそもこれが非公開項目だったのかどうかを判定するために追加。
 		$detail->private_kb_check = $detail->private_kb;
-		
+
 		if ($detail->group_kb == 2) {
 			$allow = false;
 			foreach ($usergroups as $gid) {
@@ -510,7 +510,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	/**
 	 * 出席確認
-	 * 
+	 *
 	 * @param  [type] $id [description]
 	 * @return [type]     [description]
 	 */
@@ -550,7 +550,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					        array('user_id', $uid)
 					    ),
 					));
-		
+
 		// 更新
 		if (\Input::post()) {
 			$obj = Model_Scdl_Attend::find('all', array(
@@ -594,7 +594,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	/**
 	 * 仮登録から本登録へ
-	 * 
+	 *
 	 * @param  [type] $id [description]
 	 * @return [type]     [description]
 	 */
@@ -605,7 +605,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$mon = \Session::get("calendar_mon");
 		if (!$day)
 			$day = \Session::get("calendar_day");
-		
+
 		// 日付
 		if ($year)
 			\Session::set("calendar_year", $year);
@@ -631,7 +631,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	/**
 	 * 部分削除
-	 * 
+	 *
 	 * @param  [type] $id   [description]
 	 * @param  [type] $year [description]
 	 * @param  [type] $mon  [description]
@@ -668,7 +668,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * 一ヶ月表示：$yearと$mon
 	 * 週ごと：$yearと$monと$day、$mode='week'
 	 * 一日表示：$year,$mon,$day
-	 * 
+	 *
 	 * @param  [type] $year
 	 * @param  [type] $mon
 	 * @param  [type] $day
@@ -691,7 +691,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set($model::$_kind_name . "narrow_uid", \Input::get("uid"));
 		}
-		
+
 		if (\Input::get("bgid", "not") != "not")
 		{
 			\Session::set($model::$_kind_name . "narrow_bgid", \Input::get("bgid"));
@@ -715,19 +715,31 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			\Session::set("show_empty_row", \Input::get("show_empty_row"));
 		}
 
-
-		// 初期表示 スケジューラのときだけメインユーザグループIDを見る
+		// 初期表示 スケジューラのときだけ代表グループIDを見る
+		$is_main_ugid = true;
 		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
 		{
-			// 指定がない場合
 			// 自分の代表グループIDを取得
 			$mydata = \Model_Usr::find(\Auth::get('id'));
 			if (\Input::get("ugid", "not") == "not" && $mydata && $mydata->main_usergroup_id) {
 				\Session::set($model::$_kind_name . "narrow_ugid", $mydata->main_usergroup_id);
 				\Session::set($model::$_kind_name . "narrow_uid", "");
-
 				\Session::set($model::$_kind_name . "narrow_bgid", "");
 				\Session::set($model::$_kind_name . "narrow_bid", "");
+			}
+			elseif (count($mydata->usergroup) == 1)
+			{
+				// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
+				$main_ugid = reset($mydata->usergroup);
+				\Session::set($model::$_kind_name . "narrow_ugid", $main_ugid->id);
+				\Session::set($model::$_kind_name . "narrow_uid", "");
+				\Session::set($model::$_kind_name . "narrow_bgid", "");
+				\Session::set($model::$_kind_name . "narrow_bid", "");
+			}
+			else
+			{
+				// 代表グループが設定されておらず、ユーザグループも複数ある場合
+				$is_main_ugid = false;
 			}
 		}
 		if ($year == null || $year == "" || $year < 1000)
@@ -814,6 +826,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// ユーザーグループ一覧作成
 		$view->set('narrow_user_group_list', \Model_Usrgrp_Custom::find_options());
 
+		// 代表グループの存在
+		$view->set('is_main_ugid', $is_main_ugid);
+
 		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
 
 		// テンポラル対応
@@ -837,7 +852,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
-		
+
 		if (\Session::get($model::$_kind_name . "narrow_bgid") != null)
 		{
 			$where = array(
@@ -878,7 +893,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	/**
 	 * 日の詳細予定を表示
 	 *
-	 * 
+	 *
 	 * @param  [type] $year
 	 * @param  [type] $mon
 	 * @param  [type] $day
@@ -889,7 +904,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		$target_start = sprintf("%04d-%02d-%02d", $year, $mon, $day);
 		$target_end = sprintf("%04d-%02d-%02d", $year, $mon, $day);
-		
+
 		// 他のクラスから利用される事を前提でメンバ変数を使わないように
 		$schedules = array();
 
@@ -916,14 +931,14 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where("kind_flg", $model::$_kind_flg)
 							->order_by("start_time")
 							->get();
-						
+
 		$user_exist = array();
 		$building_exist = array();
 		$unique_schedule_data = array();
 
 		$unique_index = array();
 		for ($i = 0; $i <= 23; $i++) {
-			
+
 			$row = array();
 			$row['hour'] = $i;
 			$row['data'] = array();
@@ -1073,7 +1088,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where("kind_flg", $model::$_kind_flg)
 							->order_by("start_time", "asc")
 							->get();
-		
+
 		$user_exist = array();
 		$building_exist = array();
 		for ($i = 0; $i < 7; $i++) {
@@ -1166,7 +1181,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	/**
 	 * [make_month_calendar]
 	 * 一ヶ月表示用
-	 * 
+	 *
 	 * @param  [type] $year
 	 * @param  [type] $mon
 	 * @return [type]
@@ -1215,7 +1230,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where("kind_flg", $model::$_kind_flg)
 							->order_by("start_time");
 		$schedules_data = $query->get();
-							
+
 
 		// 月曜日からはじまるため、空白のデータを入れる
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1)));
@@ -1373,12 +1388,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							break;
 						}
 					}
-					
+
 				}
 				if (!$is_building) { return false; }
 			}
 		}
-		
+
 		switch ($row['repeat_kb']) {
 			case 0:
 				// なし
@@ -1465,7 +1480,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	/**
 	 * 週ごとに表示用に週の最初の日付を取得する
-	 * 
+	 *
 	 * @param  [type]  $year
 	 * @param  [type]  $mon
 	 * @param  integer $day
@@ -1489,7 +1504,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	/**
 	 * 重複データがあるかどうかをチェック
-	 * 
+	 *
 	 * @param  [type] $syear        [description]
 	 * @param  [type] $smon         [description]
 	 * @param  [type] $sday         [description]
@@ -1536,10 +1551,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$end_day    = sprintf("%04d/%02d/%02d", $eyear, $emon, $eday);
 		$start_time = sprintf("%02d:%02d:00", $shour, $smin);
 		$end_time   = sprintf("%02d:%02d:00", $ehour, $emin);
-		
+
 	    $start_day_timestamp = strtotime($start_day);
 	    $end_day_timestamp = strtotime($end_day);
-	 
+
 	    $start_datetime_timestamp = strtotime($start_day . " " . $start_time);
 	    $end_datetime_timestamp = strtotime($end_day . " " . $end_time);
 
@@ -1591,7 +1606,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					if ($target_day_from != $target_day) {
 				 		$flgContinue = true;
 					}
-				
+
 					break;
 				case 5:
 					// 毎年
@@ -1683,7 +1698,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 								$r['targetdata'] = $overlapUser;
 								$result[] = $r;
 							}
-							
+
 							if (count($result) >= $maxCount) { return $result; }
 						}
 					}
@@ -1789,11 +1804,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$this->_scdl_errors["start_date"] = "開始日と終了日の入力が不正です。";
 			}
 		}
-		if (\Input::post("repeat_kb") == 4 
+		if (\Input::post("repeat_kb") == 4
 			&& (\Input::post("target_day") < 1 || \Input::post("target_day") > 31 || \Input::post("target_day") == "")) {
 				$this->_scdl_errors['target_day'] = "対象の日を正しく入力してください。";
 		}
-		if (\Input::post("repeat_kb") == 5) { 
+		if (\Input::post("repeat_kb") == 5) {
 			if (\Input::post("target_month") < 1 || \Input::post("target_month") > 12 || \Input::post("target_month") == "") {
 				$this->_scdl_errors['target_month'] = "対象の月を正しく入力してください。";
 			}
@@ -1838,7 +1853,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			'order_by' => array('id' => 'desc')
 		);
 		parent::index_admin();
-		
+
 	}
 
 	/**
