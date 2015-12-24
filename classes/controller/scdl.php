@@ -392,33 +392,39 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 			// 変更不可項目を上書き
 			if ($obj_edit) {
-				$obj_edit->repeat_kb	 = 0;	// 繰り返しなしとする
-				$obj_edit->target_month	 = 0;
-				$obj_edit->target_day	 = 0;
-				$obj_edit->start_date	 = $year . "-" . $mon . "-" . $day;
-				$obj_edit->end_date		 = $year . "-" . $mon . "-" . $day;
-				$obj_edit->delete_day	 = "";
-				$obj_edit->week_kb		 = 0;
-				$obj_edit->parent_id	 = $id;
+				$obj_edit->repeat_kb    = 0;	// 繰り返しなしとする
+				$obj_edit->target_month = 0;
+				$obj_edit->target_day   = 0;
+				$obj_edit->start_date   = $year . "-" . $mon . "-" . $day;
+				$obj_edit->end_date     = $year . "-" . $mon . "-" . $day;
+				$obj_edit->delete_day   = "";
+				$obj_edit->week_kb      = 0;
+				$obj_edit->parent_id    = $id;
 				$obj_edit->save();
 
 				// 部分削除の処理をいれる
 				$obj = $model::find($id);
 
+				// 戻り先
+				$ret = static::$main_url;
+
 				// 部分削除処理
 				$obj->delete_day = $obj->delete_day . sprintf("[%04d/%02d/%02d]", $year, $mon, $day);
+
+				// Observer_Scdlでの施設・メンバー設定の上書き抑止
+				$obj::$_is_someedit = true;
 
 				if ($obj->save())
 				{
 					\DB::commit_transaction();
+					$ret.= date('/Y/m',strtotime($obj_edit->start_date)).'?mod_id='.$obj_edit->id;
 					\Session::set_flash('success', "部分編集をおこないました。");
 				} else {
 					\Session::set_flash('error', "部分編集に失敗しました。");
 				}
 
 				// カレンダー表示
-		//		$this->action_calendar();
-				\Response::redirect(static::$main_url);
+				\Response::redirect($ret);
 			}
 
 		} else {
