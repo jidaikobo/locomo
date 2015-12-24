@@ -126,20 +126,23 @@ if (\Auth::check()):
 
 // ブックマーク テスト中
 			// bkmk ブックマーク
-			$bookmark_uri = \Uri::base().'bkmk/index_admin';
-			$html.= '<div class="admin_bookmark menu">';
-			$html.= '<a href="'.$bookmark_uri.'" title="ブックマーク" alt="B" id="lcm_bookmark" data-uri="'.$bookmark_uri.'"  accesskey="D"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_bookmark.png\" alt=\"\">".'<span class="skip">ブックマーク エンターでブックマークを開きます</span></span></a>';
-			$html.= '</div><!-- /.admin_bookmark -->';
+			if(\Auth::has_access('\\Controller_Bkmk/index_admin')):
+				$bookmark_uri = \Uri::base().'bkmk/index_admin';
+				$html.= '<div class="admin_bookmark menu">';
+				$html.= '<a href="'.$bookmark_uri.'" title="ブックマーク" alt="B" id="lcm_bookmark" data-uri="'.$bookmark_uri.'"  accesskey="D"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_bookmark.png\" alt=\"\">".'<span class="skip">ブックマーク エンターでブックマークを開きます</span></span></a>';
+				$html.= '</div><!-- /.admin_bookmark -->';
+			endif;
 // ブックマーク テスト中
 
 
-
 			// help
-			$help_uri = \Uri::base().'hlp/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
-			$html.= '<div class="admin_help menu">';
-			$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_help.png\" alt=\"\">".'<span class="skip">ヘルプ エンターでヘルプを開きます</span></span></a>';
-			$html.= '</div><!-- /.admin_help -->';
-
+			if(\Auth::has_access('\\Controller_Hlp/index_admin')):
+				$help_uri = \Uri::base().'hlp/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
+				$html.= '<div class="admin_help menu">';
+				$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_help.png\" alt=\"\">".'<span class="skip">ヘルプ エンターでヘルプを開きます</span></span></a>';
+				$html.= '</div><!-- /.admin_help -->';
+			endif;
+			
 			// admin option menu
 			$admin_menu = '';
 			foreach($locomo['controllers'] as $k => $v):

@@ -38,24 +38,6 @@ cascade_set($input_post = null, $form = null, $repopulate = false, $validation =
 	hm_delete_else
 
 
-[ function ]
-paginated_find($options = array(), $use_get_query = true)
-	$options に基づく find('all') を行い、同時に \Pagination のセットも行う。
-
-	param   $options        array()   検索用のオプション Orm\Model の find('all',
-	                                  $options) の $options に相当
-	        $use_get_query  true      検索等に \Input::get()を使うか(※下記参照)
-	return  bool  Model Object
-
-
-	[ 検索 ]
-		searches   検索         field_name = search_value
-		likes      あいまい検索 field_name LIKE %search_value%
-		orders     ORDER BY 句 配列も使える
-		limit      表示件数
-		?searches[field_name]=search_value&limit=100
-
-
 [ static function ]
 get_options($options, $label)
 	find('all', $options) したものを $_primary_key => $label の配列に変換して返す

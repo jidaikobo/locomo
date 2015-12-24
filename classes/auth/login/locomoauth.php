@@ -109,10 +109,10 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 		{
 			if (is_null($this->user) or ($this->user['username'] != $username and $this->user != static::$guest_login))
 			{
-				// occasionally, Fuel lost Model_Usr by unidentified reason...
-				if (class_exists('Model_Usr'))
+				// occasionally, Fuel lost Model_Auth_Usr by unidentified reason...
+				if (class_exists('Model_Auth_Usr'))
 				{
-					$usrobj = \Model_Usr::find('first', array('where' => array(array('username', $username))));
+					$usrobj = \Model_Auth_Usr::find('first', array('where' => array(array('username', $username))));
 					if (is_object($usrobj))
 					{
 						$usrobj->usergroup;// to lazy load once, for clone
@@ -220,7 +220,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 
 		// others
 		$password = $this->hash_password($password);
-		$user = \Model_Usr::find('first', array(
+		$user = \Model_Auth_Usr::find('first', array(
 			'where' => array(
 				array('password', '=', $password),
 				array('created_at', '<=', date('Y-m-d H:i:s')),
@@ -306,7 +306,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			$this->user = static::$_admin;
 		}
 
-		$this->user = $this->user ? $this->user : \Model_Usr::find($user_id) ;
+		$this->user = $this->user ? $this->user : \Model_Auth_Usr::find($user_id) ;
 
 		if ($this->user == false)
 		{

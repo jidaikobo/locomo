@@ -26,6 +26,13 @@ class Auth_Acl_Locomoacl extends \Auth_Acl_Driver
 
 		$condition = \Inflector::add_head_backslash($condition);
 
+		// disabled_controller
+		$disabled_controllers = \Config::get('disabled_controllers');
+		if ($disabled_controllers && \Auth::get('id') !== -2)
+		{
+			if (in_array(substr($condition, 0, strpos($condition, '/')), $disabled_controllers)) return false;
+		}
+
 		// event
 		// to do nothing call back must return non bool value
 		if (\Event::instance()->has_events('locomo_has_access'))
