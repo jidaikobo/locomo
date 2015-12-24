@@ -584,7 +584,23 @@ class Model_Scdl extends \Model_Base_Soft
 			$print .= '　' . $data->display_starttime . "〜" . $data->display_endtime;
 		}
 		$date_detail['display_target_date'] = $print;
-
+		//実使用時間
+		if(\Request::active()->controller !== "\Controller_Scdl" && ($data->public_start_time!=0 || $data->public_end_time!=0)):
+			$start_time = $data->public_start_time!=0 ? $data->public_start_time : $data->start_time;
+			$start_time_hour   = date('G',strtotime('1974-12-25 '.$start_time)).'時';
+			$start_time_minute = intval(date('i',strtotime('1974-12-25 '.$start_time)));
+			$start_time_minute = $start_time_minute ? $start_time_minute.'分' : '';
+			$end_time   = $data->public_end_time!=0 ? $data->public_end_time : $data->end_time;
+			$end_time_hour   = date('G',strtotime('1974-12-25 '.$end_time)).'時';
+			$end_time_minute = intval(date('i',strtotime('1974-12-25 '.$end_time)));
+			$end_time_minute = $end_time_minute ? $end_time_minute.'分' : '';
+			$print.= '（実使用時間：';
+			$print.= $start_time_hour.$start_time_minute;
+			$print.= '<span class="sr_replace to"><span class="skip">から</span></span>';
+			$print.= $end_time_hour.$end_time_minute;
+			$print.= '）';
+	endif;
+		
 		// 登録データ
 		$week = array('日', '月', '火', '水', '木', '金', '土');
 		$repeat_kbs = self::get_repeat_kbs($data->repeat_kb);

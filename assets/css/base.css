@@ -506,8 +506,7 @@ input[type="time"],
 input[type="datetime-local"],
 input[type="number"],
 textarea {
-	padding: 0 3px;
-	line-height: 1.5;
+	padding: 3px;
 	font-size: 110%;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -516,6 +515,9 @@ textarea {
 	box-sizing: border-box;
 	max-width: 100%;
 	vertical-align: middle;
+}
+testarea {
+	line-height: 1.5;
 }
 
 .btn,

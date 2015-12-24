@@ -5,6 +5,12 @@
 	<thead>
 	<tr>
 		<th style="text-align: left;" colspan="2">
+		<?php
+			//外部表示(施設予約)
+			if(\Request::active()->controller !== "\Controller_Scdl"):
+				echo $detail_pop_data['public_display']==2 ? '<span class="text_icon reserve public"><span class="skip">外部表示</span></span>' : '';
+			endif;
+		 ?>
 			<?php print $detail_pop_data->title_text; ?>
 		</th>
 	</tr>
@@ -13,7 +19,6 @@
 	<tr>
 		<th>
 			<?php
-
 			// 指定なし
 			print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
 			?>
@@ -22,7 +27,7 @@
 	<?php if (!$detail_pop_data->private_kb) { ?>
 	<tr>
 		<th class="min">
-			メッセージ：</th><td><?php print preg_replace("/(\r\n|\r|\n)/", "<br />", (mb_substr($detail_pop_data->message, 0, 20))); ?>
+			メッセージ：</th><td><?php print preg_replace("/(\r\n|\r|\n)/", "<br />", $detail_pop_data->message); ?>
 		</td>
 	</tr>
 	<?php } ?>

@@ -1519,7 +1519,6 @@ schedule_day.graph td {
 	margin-right: .5em;
 }
 
-
 /*== 重要度 ==*/
 .calendar .icon img ,
 .schedule_day.detail .icon img ,
@@ -1530,6 +1529,17 @@ schedule_day.graph td {
 }
 .legend.calendar .icon img {
 	margin-left: .75em;
+}
+
+/*== 外部表示 ==*/
+.text_icon.public {
+	background-color: #ac2000;
+}
+.text_icon.public:before {
+	content: '外';
+}
+.legend .text_icon.public + span:before {
+	content: '外部表示';
 }
 
 /*== 繰り返し ==*/
@@ -1606,7 +1616,7 @@ schedule_day.graph td {
 	content: '仮';
 }
 .legend .text_icon.provisional_kb + span:after {
-	content: '仮予約';
+	content: '仮登録';
 }
 
 /*  時間指定無し  */
@@ -1643,7 +1653,6 @@ schedule_day.graph td {
 .legend .icon.mark_private + span:after {
 	content: '非公開';
 }
-
 
 /* 登録者関係 */
 .text_icon.proxy {
