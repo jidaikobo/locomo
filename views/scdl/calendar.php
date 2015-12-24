@@ -1,36 +1,39 @@
-<?php 
+<?php
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
 <h1><?php print $year; ?>年<?php print (int)$mon; ?>月 月間カレンダ</h1>
-<?php
-	include("calendar_narrow.php");
-?>
-<div class="field_wrapper calendar">
-<div class="select_period lcm_focus pagination" title="月を選択">
-	<?php print htmlspecialchars_decode($prev_url); ?> 
-	<?php print htmlspecialchars_decode($next_url); ?>
-	<span class="select_num lcm_focus" title="各月を選択">
-	<?php 
-		for($i = 1; $i <= 12; $i++) {
-			if ($i == $mon) {
-	?>
-		<span class="active"><?php print $i; ?></span>
-	<?php
-	} else {
-	?>
-	<span><a href="<?php print \Uri::create( $kind_name . '/calendar/' . $year . '/' . $i); ?>"><?php print $i; ?></a></span>
-	<?php
-	}
-	?>
-	<?php } ?>
-	</span>
-	<?php print htmlspecialchars_decode($prev_year_url); ?> 
-	<?php print htmlspecialchars_decode($next_year_url); ?>
 
-</div>
+<div class="field_wrapper calendar">
+
+<?php
+	// 絞り込み等
+	include("calendar_narrow.php");
+
+	// 月選択
+	$mon_select_html = '';
+	$mon_select_html.= '<div class="select_period lcm_focus pagination" title="月を選択">';
+	$mon_select_html.= htmlspecialchars_decode($prev_url);
+	$mon_select_html.= htmlspecialchars_decode($next_url);
+	$mon_select_html.= '<span class="select_num lcm_focus" title="各月を選択">';
+	for($i = 1; $i <= 12; $i++):
+		if ($i == $mon):
+			$mon_select_html.= '<span class="active">'.$i.'</span>';
+		else:
+			$mon_select_html.= '<span><a href="'.\Uri::create( $kind_name . '/calendar/' . $year . '/' . $i).'">'.$i.'</a></span>';
+		endif;
+	endfor;
+	$mon_select_html.= '</span>';
+	$mon_select_html.= htmlspecialchars_decode($prev_year_url);
+	$mon_select_html.= htmlspecialchars_decode($next_year_url);
+	$mon_select_html.= '</div>';
+
+	// 上段表示分
+	echo $mon_select_html;
+?>
+
 <h2 class="skip">カレンダ</h2>
 <table class="calendar month lcm_focus" title="カレンダ">
 	<thead>
@@ -107,7 +110,7 @@
 
 				echo $eventtitle_icon.$event_time.htmlspecialchars($v2['title_text']).$eventtitle_skip;
 				echo '</a>';
-				
+
 				echo '</p>';
 			endforeach;?>
 			</div><!-- /.events -->
@@ -129,6 +132,9 @@ if($detail_pop_array):
 	endforeach;
 	echo '</section></div>';
 endif;
-;?>
 
-
+	// 下段表示分
+	echo '<div style="text-align: center; margin: 15px 0;">';
+	echo $mon_select_html;
+	echo '</div>';
+?>

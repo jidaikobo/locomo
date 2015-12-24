@@ -1,4 +1,4 @@
-<?php 
+<?php
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
@@ -8,10 +8,17 @@
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar">
-<div class="select_period" title="週の選択">
-	<?php print htmlspecialchars_decode($prev_url); ?> / 
-	<?php print htmlspecialchars_decode($next_url); ?>
-</div>
+
+<?php
+	// 週選択
+	$week_select_html = '';
+	$week_select_html.= '<div class="select_period" title="週の選択">';
+	$week_select_html.= htmlspecialchars_decode($prev_url).' / ';
+	$week_select_html.= htmlspecialchars_decode($next_url);
+	$week_select_html.= '</div>';
+	echo $week_select_html;
+?>
+
 <h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week <?php if (!\Request::is_hmvc()) echo 'lcm_focus" title="カレンダ';?>">
@@ -59,7 +66,7 @@ endif; ?>
 					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
 				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $v['year'], $v['mon'], $v['day']))); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
-			
+
 			<div class="events">
 			<?php foreach ($v['data'] as $v2):
 				$detail_pop_array[] = $v2;
@@ -87,7 +94,7 @@ endif; ?>
 					$eventtitle_skip.= '</span>';
 
 					echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
-					
+
 					echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">';
 					echo $eventtitle_icon.$event_time.htmlspecialchars($v2['title_text']).$eventtitle_skip;
 					echo '</a>';
@@ -116,5 +123,4 @@ if($detail_pop_array):
 	endforeach;
 	echo '</section></div>';
 endif;
-;?>
-
+?>

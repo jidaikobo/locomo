@@ -1,4 +1,4 @@
-<?php 
+<?php
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
@@ -8,10 +8,17 @@
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar">
-<div class="select_period" title="週の選択">
-	<?php print htmlspecialchars_decode($prev_url); ?> / 
-	<?php print htmlspecialchars_decode($next_url); ?>
-</div>
+
+<?php
+	// 週選択
+	$week_select_html = '';
+	$week_select_html.= '<div class="select_period" title="週の選択">';
+	$week_select_html.= htmlspecialchars_decode($prev_url). ' / ';
+	$week_select_html.= htmlspecialchars_decode($next_url);
+	$week_select_html.= '</div>';
+	echo $week_select_html;
+?>
+
 <h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week lcm_focus" title="カレンダ">
@@ -32,7 +39,7 @@
 <tbody>
 <?php $detail_pop_array = array(); ?>
 
-<?php 
+<?php
 $ugids = array();
 foreach($narrow_user_list as $v):
 	$ugids[$v->id] = true;
@@ -63,7 +70,7 @@ if(isset($schedule_data['member_list'][$row->id])):
 			$class_str.= $currentday == $schedule_row['day'] ? ' today' : '';
 			//each_date_title_strはフォーカス移動時読み上げ文字列
 			//date_str, each_date_title_skip は枠内タイトル読み上げ文字列
-			
+
 			$each_date_title_str = $currentday == $schedule_row['day'] ? '今日 ' : '';
 			$each_date_title_str.=  $schedule_row['day'].'日 '.$week_name[$schedule_row['week']].'曜日 ';
 			$each_date_title_str.= (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) ? '祝日 ' : '';//祝日の名前(振り替え休日のことも考えたほうがよいのかも)。
@@ -90,9 +97,9 @@ if(isset($schedule_data['member_list'][$row->id])):
 					<span class="date_str"><?php print $date_str ?>日</span>
 					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
-				
+
 				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;member_id='.$each_row_data['model']->id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
-			
+
 				<div class="events">
 					<?php
 					foreach ($each_row_data as $member_rowdata):
@@ -123,13 +130,13 @@ if(isset($schedule_data['member_list'][$row->id])):
 										$event_time_display_data = $model_name::make_target_day_info($v2);
 										$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
 										$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
-					
+
 										echo '<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$v2->scdlid.$v2->target_year.$v2->target_mon.$v2->target_day.'">';
-										
+
 										echo '<a href="' . \Uri::create($kind_name . "/viewdetail/" . $v2['scdlid'] . sprintf("/%d/%d/%d", $v2['target_year'], $v2['target_mon'], $v2['target_day'])) . '">';
 										echo $eventtitle_icon.$event_time.htmlspecialchars($v2['title_text']).$eventtitle_skip;
 										echo '</a>';
-	
+
 										echo '</p>';
 									endif;
 								endforeach;
@@ -148,6 +155,10 @@ if(isset($schedule_data['member_list'][$row->id])):
 </table>
 <?php include("inc_legend.php"); //カレンダ凡例 ?>
 <?php if(!\Request::is_hmvc()): ?>
+<?php
+	// 週選択
+	echo $week_select_html;
+?>
 </div><!-- /.field_wrapper.calendar -->
 <?php endif; ?>
 <?php
@@ -160,4 +171,5 @@ if($detail_pop_array):
 	endforeach;
 	echo '</section></div>';
 endif;
-;?>
+
+?>
