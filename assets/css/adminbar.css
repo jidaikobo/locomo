@@ -139,6 +139,10 @@ img#adminbar_logo {
 	text-shadow: 1px 1px 0 #333;
 	vertical-align: middle;
 }
+#adminbar .menulist li {
+	text-shadow: none;
+	color: #333;
+}
 #adminbar .adminbar_bottom {
 	clear: both;
 	border-top: 1px solid #7393c6;
