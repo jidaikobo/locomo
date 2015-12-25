@@ -98,8 +98,16 @@ body.loggedin .container .horizontal_list li {
 	padding: 0 6px;
 	margin: .25em 0 .25em -1px;
 }
-
-
+.widget_title,
+.lcmbar_top.lcmbar_top_title {
+	background-image: url('../../app_assets/img/system/adminbar_bg.png');
+	background-color: #0e3664;
+	background-position: center top;
+	background-repeat: no-repeat;
+	color: #fff !important;
+	text-shadow: 1px 1px 0 #333;
+	vertical-align: middle;
+}
 /* default */
 /**
 body.default_logo {

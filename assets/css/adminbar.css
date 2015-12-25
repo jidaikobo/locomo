@@ -121,6 +121,9 @@ body.loggedin {
 	display: block;
 	width: 100%;
 }
+img#adminbar_logo {
+	background-color: #fff;
+}
 /* あとで整理 */
 #adminbar div.adminbar_top {
 	height: 2.5em;

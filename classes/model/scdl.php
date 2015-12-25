@@ -587,7 +587,8 @@ class Model_Scdl extends \Model_Base_Soft
 		}
 		$date_detail['display_target_date'] = $print;
 		//実使用時間
-		if(\Request::active()->controller !== "\Controller_Scdl" && ($data->public_start_time!=0 || $data->public_end_time!=0)):
+
+		if(!\Request::is_hmvc() && \Request::active()->controller == "Reserve\Controller_Reserve" && ($data->public_start_time!=0 || $data->public_end_time!=0)):
 			$start_time = $data->public_start_time!=0 ? $data->public_start_time : $data->start_time;
 			$start_time_hour   = date('G',strtotime('1974-12-25 '.$start_time)).'時';
 			$start_time_minute = intval(date('i',strtotime('1974-12-25 '.$start_time)));
