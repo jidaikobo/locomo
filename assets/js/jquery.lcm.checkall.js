@@ -1,6 +1,6 @@
 // checkbox 全選択・全選択解除
 // input.checkbox_binded, .check_all, .uncheck_all, tr.has_checkbox
-$(function() {
+jQuery(function ($) {
 	var $checkboxes = $('.checkbox_binded');
 	$('.check_all').on('click', function(e) {
 		e.preventDefault();

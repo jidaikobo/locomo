@@ -32,22 +32,29 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 
 
 	<!--JavaScript-->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	<?php echo \Asset::js('jquery-1.11.3.min.js'); ?>
+	<?php echo \Asset::js('jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js'); ?>
+	<?php echo \Asset::js('jquery-ui-1.10.4/development-bundle/ui/i18n/jquery.ui.datepicker-ja.js'); ?>
 	<?php echo \Asset::js('jquery.inc.js'); ?>
-	<?php echo \Asset::js('jquery.exresize/jquery.exresize.0.1.0.js'); ?>
-	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/i18n/jquery.ui.datepicker-ja.js"></script>
+	<?php echo \Asset::js('jquery.lcm.focus.js'); ?>
+	<?php echo \Asset::js('jquery-ui.dragresize.js'); ?>
+	<?php echo \Asset::js('jquery.lcm.checkall.js'); ?>
+	<?php echo \Asset::js('jquery.lcm.multipleselect.js'); ?>
+	<?php echo \Asset::js('jquery-ui.inc.date.timepicker.js'); ?>
+	<?php echo \Asset::js('jquery-ui.inc.tooltip.js'); ?>
 	<?php echo \Asset::js('jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js'); ?>
 	<?php echo \Asset::js('jquery.timepicker/jquery.timepicker.js'); ?>
-	<?php  echo \Asset::js('jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js'); ?>
+	<?php echo \Asset::js('jquery-ui-timepicker-addon/i18n/jquery-ui-timepicker-ja.js'); ?>
 	<?php echo \Asset::js('jquery-ui-touch-punch/jquery.ui.touch-punch.min.js'); ?>
-	<!--<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>-->
-	<?php echo \Asset::js('tinymce/tinymce.min.js'); ?>
+	<?php echo \Asset::js('tinymce/js/tinymce.min.js'); ?>
+	<?php echo \Asset::js('inc.tinymce.js'); ?>
 	<?php echo \Asset::js('jquery-autoKana/jquery.autoKana.js'); ?>
 	<?php echo \Asset::render('js'); ?>
+	<?php echo \Asset::js('admin.js'); ?>
 	<!--[if lt IE 9]>
-	<script src="//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+	<?php echo \Asset::js('css3-mediaqueries-js-master/css3-mediaqueries.js'); ?>
 	<![endif]-->
+
 
 	<!-- favicon -->
 	<link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>">

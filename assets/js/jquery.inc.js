@@ -12,7 +12,7 @@ if( typeof window.console.log !== "function" ){
 // 環境についていろいろ格納するオブジェクトを持っておく
 if(!lcm_env) var lcm_env = new Object();
 
-$(function(){
+jQuery(function ($){
 	// ログインしているかどうか
 	if(typeof(lcm_env.isloggedin) == 'undefined'){
 		lcm_env.isloggedin = $('body').hasClass('loggedin') ? true : false;
@@ -21,7 +21,7 @@ $(function(){
 
 
 //テスト環境やローカル開発環境での表示
-$(function(){
+jQuery(function ($){
 	(function(){
 		var host, $body, str, $info, topinfo;
 		host = location.host;
@@ -48,7 +48,7 @@ $(function(){
 //selectやtextareaなどではうまくとれていないみたい。focus関係？
 //:hover等の擬似要素はjsからは操作できないので対応していない。
 //するなら、mousemoveを取得して.hoverのようなクラスを付与? でもいちいちの:hoverに.hoverを併記するのは非効率なので。
-$(function() {
+jQuery(function ($) {
 	$('.through_click').on('click', function(e){
 		e = e ? e : event;
 		e.preventDefault();
@@ -78,7 +78,7 @@ function pluginExists( pluginName ){
 	var el, wrapper, closelink;
 	el = document.getElementById(id);
 	if(el){
-		$(function(){
+		jQuery(function ($){
 			el = $('#'+id);
 			wrapper = document.createElement('div');
 			closelink = document.createElement('a');
@@ -106,7 +106,7 @@ function pluginExists( pluginName ){
 
 
 
-$(function(){
+jQuery(function ($){
 /*=== 基本的な設定 ===*/
 //JavaScript有効時に表示、無効時にはCSSで非表示
 $('.hide_if_no_js').removeClass('hide_if_no_js').addClass('show_if_js');
@@ -138,7 +138,7 @@ $(document).find('[accesskey]').each(add_accesskey_title);
 });
 
 //大きなくくり。
-$(function(){
+jQuery(function ($){
 
 /*=== 環境の取得 ===*/
 //lcm_env.UAがなければいろいろ設定

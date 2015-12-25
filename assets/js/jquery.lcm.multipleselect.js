@@ -1,4 +1,4 @@
-$(function(){
+jQuery(function ($){
 
 /*=== lcm_multiple_select ===*/
 

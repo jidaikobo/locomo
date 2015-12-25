@@ -1,4 +1,4 @@
-$(function(){
+jQuery(function ($){
 	//tooltip
 	//表示枠外（overflow:hidden)の要素にページ内リンクでスクロールして表示するとスクロール前の位置を基準に表示されてしまう。
 	//title属性はブラウザの対応がまちまちなので、data-を対象にする

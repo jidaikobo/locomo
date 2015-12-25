@@ -1,5 +1,5 @@
 if(typeof(lcm_env)=='undefined') var lcm_env = new Object();
-$(function(){
+jQuery(function ($){
 	/*=== 環境の取得 ===*/
 	lcm_env.UA = window.navigator.userAgent;
 	lcm_env.isNetReader = lcm_env.UA.indexOf('NetReader') > 0 ? true : false;
