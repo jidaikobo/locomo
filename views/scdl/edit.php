@@ -446,7 +446,7 @@ $('#form_start_time').on('change', function(){
 		var minute = $('#form_start_time').val().slice(-2);
 		hour = ((hour+1)+'').slice(-2);
 		if(hour==24) hour = 23; //23:59?
-		$('#form_end_time').val(hour+':'+minute);
+		$('#form_end_time').val(hour+':'+minute).trigger('change');
 	}
 });
 
