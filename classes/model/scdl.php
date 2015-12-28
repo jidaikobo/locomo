@@ -393,6 +393,13 @@ class Model_Scdl extends \Model_Base_Soft
 				'type' => false,
 			),
 		),
+		'creator_id' =>
+		array (
+			'form' =>
+			array (
+				'type' => false,
+			),
+		),
 		'is_visible' =>
 		array (
 			'label' => '可視属性',

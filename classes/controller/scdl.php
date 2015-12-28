@@ -229,6 +229,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		//view
 		$this->template->set_global('title', $title);
+
+echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">';
+var_dump($obj);
+echo '</textarea>';
+die();
+
 		$content->get_view()->set_global('item', $obj, false);
 		$content->get_view()->set_global('form', $form, false);
 		$this->template->set_safe('content', $content);
