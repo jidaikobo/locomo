@@ -107,6 +107,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$title = self::$nicename . '新規作成';
 		}
 		$content = \Presenter::forge(static::$dir.'edit');
+		$tmp_obj = clone $obj;
 
 		$form = $content::form($obj);
 
@@ -227,8 +228,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$action['urls'][] = \Html::anchor(static::$main_url,'一覧へ');
 		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
+		// user_id and creator_id
+		$obj->__set('user_id', $tmp_obj->user_id ?: \Auth::get('id'));
+		$obj->__set('updater_id', $tmp_obj->updater_id ?: \Auth::get('id'));
+
 		//view
 		$this->template->set_global('title', $title);
+
 		$content->get_view()->set_global('item', $obj, false);
 		$content->get_view()->set_global('form', $form, false);
 		$this->template->set_safe('content', $content);
@@ -333,8 +339,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				array('where' => array(array('item_group', 'building')))
 			);
 		}
-
-
 
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
