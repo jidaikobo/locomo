@@ -452,14 +452,14 @@ $('#form_start_time').on('change', function(){
 
 //時間の設定を外部表示のplaceholderに
 $('#form_start_time, #form_end_time').on('change', function(){
-	if($(this).is('#form_start_time')){ //すでに値が入っている場合どうする？ placeholderだからよい？ //選択時のtimepickerの開始値とか、ずっとplaceholderにいれてていいの？とか
-		if($('#form_public_start_time').val()==''){
+	if($(this).is('#form_start_time')){ //すでに値が入っている場合どうする？ placeholderだからよい？ //選択時のtimepickerの開始値とか、ずっとplaceholderにいれてていいの？とか //空でないときはplaceholderは見えないので、とにかく入れてしまう
+//		if($('#form_public_start_time').val()==''){
 			$('#form_public_start_time').attr('placeholder', $('#form_start_time').val());
-		}
+//		}
 	}else{
-		if($('#form_public_end_time').val()==''){
+//		if($('#form_public_end_time').val()==''){
 			$('#form_public_end_time').attr('placeholder', $('#form_end_time').val());
-		}
+//		}
 	}
 });
 
