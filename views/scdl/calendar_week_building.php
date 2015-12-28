@@ -10,7 +10,6 @@
 
 <?php
 	include("calendar_narrow.php");
-
 	// 週選択
 	$week_select_html = '';
 	$week_select_html.= '<div class="select_period" title="週の選択">';
