@@ -73,6 +73,8 @@
 }
 .lcm_modal_content {
 	height: 100% !important;
+	overflow: auto;
+	padding-bottom: 1em !important;
 }
 
 /* === リセットここまで === */
@@ -466,7 +468,7 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 	height: 15em ;
 	min-height: 1.2em !important;
 	width: 20em ;
-	padding: 2em 5px 0 !important;
+	padding: 2em 0 0 !important;
 	min-width: 200px !important;
 	overflow: hidden !important;
 	color: #333 !important;
@@ -484,7 +486,7 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 	text-decoration: none !important;
 }
 #adminbar .lcm_floatwindow_title {
-	margin: -2em -5px 0 !important;
+	margin: -2em 0 0 !important;
 	z-index: 2 !important;
 	position: relative !important;
 	height: 33px !important;
