@@ -83,7 +83,7 @@ endif; ?>
 					endforeach;
 					
 					//外部表示(施設予約)
-					if(\Request::active()->controller !== "\Controller_Scdl"):
+					if(\Request::active()->controller == "Reserve\Controller_Reserve"):
 						$eventtitle_icon.= $v2['public_display']==2 ? '<span class="text_icon reserve public"></span>' : '';
 						$eventtitle_skip.= $v2['public_display']==2 ? '外部表示 ' : '';
 					endif;

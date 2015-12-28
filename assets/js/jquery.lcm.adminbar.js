@@ -4,7 +4,7 @@
 /* =========================== */
 
 if(typeof(lcm_env)=='undefined') var lcm_env = new Object();
-$(function(){
+jQuery(function ($){
 
 /* 非表示要素の設定 */
 //for NetReader

@@ -1,4 +1,4 @@
-$(function(){
+jQuery(function ($){
 	tinymce.init({
 		mode : "none",
 		resize: "both",

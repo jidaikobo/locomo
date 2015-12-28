@@ -121,6 +121,9 @@ body.loggedin {
 	display: block;
 	width: 100%;
 }
+img#adminbar_logo {
+	background-color: #fff;
+}
 /* あとで整理 */
 #adminbar div.adminbar_top {
 	height: 2.5em;
@@ -135,6 +138,10 @@ body.loggedin {
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333;
 	vertical-align: middle;
+}
+#adminbar .menulist li {
+	text-shadow: none;
+	color: #333;
 }
 #adminbar .adminbar_bottom {
 	clear: both;
@@ -281,10 +288,6 @@ body.loggedin {
 #adminbar .adminbar_bottom .adminbar_icon img {
 	padding: .25em 0;
 }
-
-
-
-
 
 #adminbar .adminbar_sub ul.on {
 	right: 0;
