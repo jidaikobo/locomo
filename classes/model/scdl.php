@@ -252,7 +252,7 @@ class Model_Scdl extends \Model_Base_Soft
 				'type' => 'checkbox',
 				'value' => 1
 			),
-			'default' => 1
+			'default' => 0 // 施設予約では_initでオンに
 		),
 
 		'message' =>

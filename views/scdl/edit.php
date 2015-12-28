@@ -88,10 +88,11 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
 			<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
+			<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"): ?>
 			<span id="span_public_display" class="display_inline_block">
 				<?php echo $form->field('public_display')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
 			</span>
-
+			<?php endif; ?>
 <?php /* ?>
 <span class="nowrap">
 	<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
