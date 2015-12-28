@@ -259,7 +259,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 					<option value="<?php print $key; ?>"><?php  print $value; ?>
 				<?php } ?>
 			</select>
-			<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
+			<?php echo $form->field('user_id')->set_template('{error_msg}{field}');
+			echo $item->user_id != $item->updater_id ? '<span class="dairi">代理登録者：'.\Model_Usr::get_display_name($item->updater_id).'</span>' : '';
+			?>
 		</div>
 	</div><!-- /.input_group -->
 	<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"):?>

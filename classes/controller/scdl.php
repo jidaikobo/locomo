@@ -107,6 +107,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$title = self::$nicename . '新規作成';
 		}
 		$content = \Presenter::forge(static::$dir.'edit');
+		$tmp_obj = clone $obj;
 
 		$form = $content::form($obj);
 
@@ -227,13 +228,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$action['urls'][] = \Html::anchor(static::$main_url,'一覧へ');
 		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
+		// user_id and creator_id
+		$obj->__set('user_id', $tmp_obj->user_id ?: \Auth::get('id'));
+		$obj->__set('updater_id', $tmp_obj->updater_id ?: \Auth::get('id'));
+
 		//view
 		$this->template->set_global('title', $title);
-
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">';
-var_dump($obj);
-echo '</textarea>';
-die();
 
 		$content->get_view()->set_global('item', $obj, false);
 		$content->get_view()->set_global('form', $form, false);
