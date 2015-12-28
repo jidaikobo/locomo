@@ -349,6 +349,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	}
 
+	/**
+	 * [action_copy description]
+	 */
 	public function action_copy() {
 		$model = $this->model_name ;
 
@@ -358,13 +361,22 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			// 直接メンバ変数にアクセスしてよいか
 			$from_data = $model::find(\Input::get("from"));
 			if ($from_data) {
+				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text'
+									, 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
+									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
+									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
+/*
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
 									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
+*/
 				foreach ($setcolumns as $v) {
 					$this->template->content->form->field($v)->set_value($from_data->$v);
 				}
+
+				// 複製の場合でもログインユーザを作成者とする
+				$this->template->content->form->field('user_id')->set_value(\Auth::get('id'));
 			}
 		}
 	}

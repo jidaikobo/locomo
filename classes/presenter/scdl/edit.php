@@ -26,10 +26,20 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 		// テンポラル対応
 		if (isset(\Model_Usr::properties()['pronunciation']))
 		{
-			$form->field('user_id')->set_options(Model_Usr::find_options('display_name', array('order_by' => 'pronunciation')));
+			$users = Model_Usr::find_options('display_name', array('order_by' => 'pronunciation'));
 		} else {
-			$form->field('user_id')->set_options(Model_Usr::find_options('display_name'));
+			$users = Model_Usr::find_options('display_name');
 		}
+		// 管理者を足す
+		if (\Auth::is_admin())
+		{
+			$users = array('-1' => '管理者') + $users;
+		}
+		if (\Auth::is_root())
+		{
+			$users = array('-2' => 'root管理者') + $users;
+		}
+		$form->field('user_id')->set_options($users);
 
 		//$form->field('user_id')->set_value(\Auth::get('id'));
 		$form->field('is_visible')->set_value(1);

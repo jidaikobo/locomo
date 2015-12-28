@@ -262,7 +262,7 @@ class Model_Scdl extends \Model_Base_Soft
 			'form' =>
 			array (
 				'type' => 'textarea',
-				'rows' => 7,
+				'rows' => 3,
 				'class' => 'text',
 			),
 			'validation' =>
