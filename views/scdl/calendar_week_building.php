@@ -54,7 +54,8 @@ endforeach;
 		 	 (\Session::get('reservenarrow_bid') == null && \Session::get('reservenarrow_bgid') != null && isset($bgids[$each_row_data['model']->item_id]))): // 絞り込み：グループ
 
 		 $reserve_rows[$each_row_data['model']->item_sort] ="\t".'<tr class="lcm_focus" title="'.$each_row_data['model']->item_name .'">'."\n\t\t"
-			.'<th>'.$each_row_data['model']->item_name.'</th>'."\n\t\t";
+//			.'<th>'.$each_row_data['model']->item_name.'</th>'."\n\t\t";
+			.'<th><a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d", $year, $mon)).'&amp;building_id='.$each_row_data['model']->id).'" class="">'.$each_row_data['model']->item_name.'</a></th>'."\n\t\t";
 
 			foreach($schedule_data['schedules_list'] as $schedule_row):
 				if (isset($schedule_row['is_holiday']) && $schedule_row['is_holiday']) {
