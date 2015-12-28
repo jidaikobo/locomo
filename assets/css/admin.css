@@ -100,12 +100,12 @@ body.loggedin .container .horizontal_list li {
 }
 .widget_title,
 .lcmbar_top.lcmbar_top_title {
-	background-image: url('../../app_assets/img/system/adminbar_bg.png');
-	background-color: #0e3664;
-	background-position: center top;
-	background-repeat: no-repeat;
+	background-image: url('../../app_assets/img/system/adminbar_bg.png') !important;
+	background-color: #0e3664 !important;
+	background-position: center top !important;
+	background-repeat: no-repeat !important;
 	color: #fff !important;
-	text-shadow: 1px 1px 0 #333;
+	text-shadow: 1px 1px 0 #333 !important;
 	vertical-align: middle;
 }
 /* default */
