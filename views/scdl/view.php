@@ -1,4 +1,4 @@
-<?php 
+<?php
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
@@ -36,7 +36,7 @@
 <?php
 	// use model's form plain definition instead of raw-like html
 	//echo $plain;
-	$info = $model_name::make_target_day_info($detail); 
+	$info = $model_name::make_target_day_info($detail);
 ?>
 <tr>
 	<th>予定日時</th>
@@ -48,9 +48,9 @@
 		else:
 			echo $ymd_str.$info['display_period_time'];
 		endif; ?>
-		
+
 	<?php
-		if(\Request::active()->controller !== "\Controller_Scdl" && ($detail->public_start_time!=0 || $detail->public_end_time!=0)):
+		if(\Request::active()->controller !== "Controller_Scdl" && ($detail->public_start_time!=0 || $detail->public_end_time!=0)):
 			$start_time = $detail->public_start_time!=0 ? $detail->public_start_time : $detail->start_time;
 			$start_time_hour   = date('G',strtotime('1974-12-25 '.$start_time)).'時';
 			$start_time_minute = intval(date('i',strtotime('1974-12-25 '.$start_time)));
@@ -104,7 +104,7 @@
 	foreach ($detail->user as $row) {
 		$members[] .= $row['display_name'];
 	}
-	echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>'; 
+	echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>';
 	?>
 </td>
 </tr>
@@ -119,7 +119,7 @@
 	foreach ($detail->building as $row) {
 		$buildings[] .= $row['item_name'];
 	}
-	echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>'; 
+	echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>';
 	?>
 </td>
 </tr>

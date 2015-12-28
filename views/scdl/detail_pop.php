@@ -1,4 +1,3 @@
-
 <?php if (isset($detail_pop_data->title_text)) { ?>
 <div id="pop<?php print $detail_pop_data->scdlid.$detail_pop_data->target_year.$detail_pop_data->target_mon.$detail_pop_data->target_day; ?>" aria-hidden="true">
 <table class="tbl2">
@@ -40,7 +39,7 @@
 		foreach ($detail_pop_data->user as $row) {
 			$members[] .= $row['display_name'];
 		}
-		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>'; 
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>';
 		?>
 	</td>
 	</tr>
@@ -55,17 +54,19 @@
 			$buildings[$row->item_id] = $row['item_name'];
 		}
 		ksort($buildings);
-		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>'; 
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>';
 		?>
-		
+
 	</td>
 	</tr>
 	<?php } ?>
 	<?php if (!$detail_pop_data->private_kb) { ?>
 	<tr>
+<?php /* ?>
 		<th>
 			予定の種類：</th><td><?php print $detail_pop_data->title_kb; ?>
 		</td>
+<?php */ ?>
 	</tr>
 	<?php if ($detail_pop_data->kind_flg == 2) { ?>
 	<tr>
@@ -92,6 +93,3 @@
 
 </div>
 <?php } ?>
-
-
-

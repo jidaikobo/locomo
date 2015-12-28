@@ -100,7 +100,7 @@ class Model_Scdl extends \Model_Base_Soft
 			'validation' => array(
 				'required',
 				'match_pattern' => array("/^[0-9\:]+$/u"),
-				'max_length' => array(5),
+				'max_length' => array(8),
 			),
 		),
 		'end_time' =>
@@ -116,7 +116,7 @@ class Model_Scdl extends \Model_Base_Soft
 			'validation' => array(
 				'required',
 				'match_pattern' => array("/^[0-9\:]+$/u"),
-				'max_length' => array(5),
+				'max_length' => array(8),
 			),
 			'default' => '21:00'
 		),
@@ -181,6 +181,7 @@ class Model_Scdl extends \Model_Base_Soft
 				'required',
 			),
 		),
+/*
 		'title_importance_kb' =>
 		array (
 			'label' => '重要度',
@@ -205,6 +206,7 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '区分',
 			),
 		),
+*/
 		'provisional_kb' =>
 		array (
 			'label' => '仮登録',
@@ -409,11 +411,8 @@ class Model_Scdl extends \Model_Base_Soft
 		),
 	) ;
 
-
-
 	//$_option_options - see sample at \Model_Usrgrp
 	public static $_option_options = array();
-
 
 	protected static $_belongs_to = array(
 		'create_user' => array(

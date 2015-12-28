@@ -733,7 +733,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				\Session::set($model::$_kind_name . "narrow_bgid", "");
 				\Session::set($model::$_kind_name . "narrow_bid", "");
 			}
-			elseif (count($mydata->usergroup) == 1)
+			elseif (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
 			{
 				// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
 				$main_ugid = reset($mydata->usergroup);

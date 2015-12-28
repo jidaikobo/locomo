@@ -19,7 +19,7 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 
 		$form->field('group_detail')->set_options($usergroups);
 
-		$model = \Request::main()->controller == 'Controller_Scdl' ? '\Model_Scdl' : '\Reserve\Model_Reserve' ; 
+		$model = \Request::main()->controller == 'Controller_Scdl' ? '\Model_Scdl' : '\Reserve\Model_Reserve' ;
 		$form->field('kind_flg')->set_value($model::$_kind_flg);
 
 		// 作成者
@@ -39,7 +39,7 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 			// 自分を選択する
 			$form->field('user_id')->set_value(\Auth::get('id'));
 			// 重要度
-			$form->field('title_importance_kb')->set_value("→中");
+//			$form->field('title_importance_kb')->set_value("→中");
 			if (\Input::get("ymd", "") == "") {
 				$form->field('start_date')->set_value(date('Y-m-d'));
 				$form->field('end_date')->set_value(date('Y-m-d'));
@@ -65,6 +65,6 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 
 		return $form;
 	}
-	
-	
+
+
 }
