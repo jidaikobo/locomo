@@ -30,6 +30,7 @@ link     #36a
 }
 .develop_info.top {
 	position: absolute;
+	bottom: auto;
 }
 .testserver {
 	background-color: #cdd7de !important;
