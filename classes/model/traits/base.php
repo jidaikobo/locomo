@@ -522,6 +522,54 @@ trait Model_Traits_Base
 		return empty($whr) ? $arr : array($arr, 'or' => $whr);
 	}
 
+	/**
+	 * and_search()
+	 */
+	public static function and_search($many_many, $model_to_keys)
+	{
+
+		// err
+		if (
+			! is_array($model_to_keys) ||
+			count($model_to_keys) < 1
+		)
+		{
+			throw new \Exception('Invaild parameter');
+		}
+		if (! isset(static::$_many_many[$many_many]) ) throw new \Exception('リレーション'.$manymany.'は有効ではありません');
+
+		$relation = static::$_many_many[$many_many];
+
+		$results = \DB::query('SELECT count(sub.'.$relation['key_through_from'].') cnt, '.$relation['key_through_from'].'
+			FROM (
+				SELECT * FROM '.$relation['table_through'].'
+					WHERE '.$relation['key_through_to'].' IN ('.implode(', ', $model_to_keys).')
+			) AS sub
+			GROUP BY '.$relation['key_through_from'].'
+		HAVING cnt >='.count($model_to_keys).';')->execute();
+
+		$return_array = array();
+		foreach ($results as $result)
+		{
+			$return_array[] = $result[$relation['key_through_from']];
+		}
+
+		return $return_array;
+	}
+
+	/**
+	 * wrapper and_search() and set $_options
+	 */
+	public static function set_and_search($many_many, $model_to_keys)
+	{
+		if (! isset(static::$_many_many[$many_many]) ) throw new \Exception('リレーション'.$manymany.'は有効ではありません');
+		$relation = static::$_many_many[$many_many];
+
+		$from_keys = static::and_search($many_many, $model_to_keys);
+
+		static::$_options['where'][] = array($relation['key_from'], 'IN', $from_keys);
+	}
+
 	/*
 	 * cascade_set()
 	 * @param   array     $input_post
