@@ -14,6 +14,7 @@ class Controller_Base extends Controller_Core
 
 		// set options
 		$model::set_public_options();
+		$model::set_search_options();
 		$model::set_paginated_options();
 
 		// find()
@@ -715,6 +716,7 @@ class Controller_Base extends Controller_Core
 	 */
 	protected function bulk($page = 1, $add = 3, $is_redirect = true)
 	{
+		// TODO $page => \Pagination::set('uri_segments', 'paged');
 		$model = $this->model_name;
 		$action = \Request::main()->action;
 		$is_model_soft = is_subclass_of($model, '\Orm\Model_Soft');
@@ -725,7 +727,6 @@ class Controller_Base extends Controller_Core
 		if (\Input::get('ids'))
 		{
 			$model::$_options['where'] = array(array($model::primary_key()[0], 'IN', \Input::get('ids')));
-			// $pagination_config['per_page'] = count(\Input::get('ids')) * 2;
 
 			if ($is_model_soft) $model::disable_filter();
 
@@ -830,8 +831,7 @@ class Controller_Base extends Controller_Core
 	}
 
 	/*
-	 *
-	 * 条件1 $options related の一つ目にマスタの relaten
+	 * 条件1 $options related の一つ目にマスタの relation
 	 */
 	protected function conditioned_bulk($options, $defaults = array(), $belongs_to_display_name = 'name', $is_redirect = true)
 	{
@@ -839,14 +839,12 @@ class Controller_Base extends Controller_Core
 		$model = $this->model_name;
 		$model::set_authorized_options();
 
-
 		$related =  array_keys($options['related'])[0];
 		$rel_model = $model::relations($related)->model_to;
 		$rel_key_from = $model::relations($related)->key_from[0];
 		$rel_key_to = $model::relations($related)->key_to[0];
 
 		$rel_datas = $rel_model::find('all', $options['related'][$related]);
-
 
 	//	($rel_model::primary_key()[0]);
 
@@ -881,7 +879,6 @@ class Controller_Base extends Controller_Core
 		{
 			if ($bulk->save())
 			{
-
 				\Session::set_flash('success', self::$nicename . 'への変更を保存しました');
 
 				$action = \Request::main()->action;
@@ -900,6 +897,4 @@ class Controller_Base extends Controller_Core
 		$this->template->set_global('form', $bulk->build(), false);
 		$this->template->set_global('title', self::$nicename.'の一括処理');
 	}
-
-
 }

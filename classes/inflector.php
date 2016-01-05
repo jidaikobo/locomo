@@ -59,7 +59,7 @@ class Inflector extends \Fuel\Core\Inflector
 			// read files
 			$paths = \File::read_dir($path);
 			$paths = \Arr::flatten(\Arr::flatten($paths, DS));
-	
+
 			// classify
 			$classes = array();
 			foreach ($paths as $k => $v)
@@ -106,7 +106,7 @@ class Inflector extends \Fuel\Core\Inflector
 		$class = join(DS, array_slice($paths, $class_pos));
 		$class = \Inflector::words_to_upper(str_replace(LOCOMOPATH.'classes'.DS, '', $class));
 		$class = \Inflector::words_to_upper(str_replace(DS, '_', $module.$class));
-		
+
 		// at windows environment occasionally occur this case. :-(
 		if (\Str::starts_with($class, '_'))
 		{
@@ -202,5 +202,25 @@ class Inflector extends \Fuel\Core\Inflector
 	public static function add_head_backslash($str = null)
 	{
 		return '\\'.self::remove_head_backslash($str);
+	}
+
+	/**
+	 * remove_tailing_slash()
+	 * @param string str[/]
+	 * @return string str
+	 */
+	public static function remove_tailing_slash($str = null)
+	{
+		return trim($str, '/');
+	}
+
+	/**
+	 * add_tailing_slash()
+	 * @param string str[/]
+	 * @return string str
+	 */
+	public static function add_tailing_slash($str = null)
+	{
+		return self::remove_tailing_slash($str).'/';
 	}
 }

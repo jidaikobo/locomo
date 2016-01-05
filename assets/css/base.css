@@ -506,8 +506,7 @@ input[type="time"],
 input[type="datetime-local"],
 input[type="number"],
 textarea {
-	padding: 0 3px;
-	line-height: 1.5;
+	padding: 3px;
 	font-size: 110%;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -516,6 +515,9 @@ textarea {
 	box-sizing: border-box;
 	max-width: 100%;
 	vertical-align: middle;
+}
+testarea {
+	line-height: 1.5;
 }
 
 .btn,
@@ -604,7 +606,7 @@ form em.explanation {
 }
 
 .label_fb label:hover {
-	background-color: #e8e8e8;
+	background-color: #e3e3e3;
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -979,7 +981,6 @@ table.list th,
 table.list td {
 	padding: 5px 3px 0 0;
 }
-
 table.list th {
 	white-space: nowrap;
 	vertical-align: top;
@@ -1191,7 +1192,7 @@ a.edit_link span span {
 }
 .marugo,
 .roundedfont {
-	font-family: "Lucida Grande", "ヒラギノ丸ゴ ProN W4", "Hiragino Maru Gothic ProN", "HG丸ｺﾞｼｯｸM-PRO", "HGMaruGothicMPRO", Meiryo, Arial, sans-serif;
+	font-family: "Lucida Grande", "ヒラギノ丸ゴ ProN W4", "Hiragino Maru Gothic ProN", Meiryo, Arial, sans-serif;
 }
 
 /* forMobile */

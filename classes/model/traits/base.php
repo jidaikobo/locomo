@@ -102,7 +102,7 @@ trait Model_Traits_Base
 	static public function set_paginated_options()
 	{
 		// クエリ文字列の場合
-		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
+		if (\Input::get('paged')) \Pagination::set('uri_segment', 'paged');
 
 		// order
 		if (\Input::get('orders'))
@@ -512,6 +512,64 @@ trait Model_Traits_Base
 		return array('lcm_field' => $field) + static::properties()[$field];
 	}
 
+	/**
+	 * add_or()
+	 * @param array $whr original where
+	 * @param array $arr additional where
+	 */
+	public static function add_or($whr = array(), $arr = array())
+	{
+		return empty($whr) ? $arr : array($arr, 'or' => $whr);
+	}
+
+	/**
+	 * and_search()
+	 */
+	public static function and_search($many_many, $model_to_keys)
+	{
+
+		// err
+		if (
+			! is_array($model_to_keys) ||
+			count($model_to_keys) < 1
+		)
+		{
+			throw new \Exception('Invaild parameter');
+		}
+		if (! isset(static::$_many_many[$many_many]) ) throw new \Exception('リレーション'.$manymany.'は有効ではありません');
+
+		$relation = static::$_many_many[$many_many];
+
+		$results = \DB::query('SELECT count(sub.'.$relation['key_through_from'].') cnt, '.$relation['key_through_from'].'
+			FROM (
+				SELECT * FROM '.$relation['table_through'].'
+					WHERE '.$relation['key_through_to'].' IN ('.implode(', ', $model_to_keys).')
+			) AS sub
+			GROUP BY '.$relation['key_through_from'].'
+		HAVING cnt >='.count($model_to_keys).';')->execute();
+
+		$return_array = array();
+		foreach ($results as $result)
+		{
+			$return_array[] = $result[$relation['key_through_from']];
+		}
+
+		return $return_array;
+	}
+
+	/**
+	 * wrapper and_search() and set $_options
+	 */
+	public static function set_and_search($many_many, $model_to_keys)
+	{
+		if (! isset(static::$_many_many[$many_many]) ) throw new \Exception('リレーション'.$manymany.'は有効ではありません');
+		$relation = static::$_many_many[$many_many];
+
+		$from_keys = static::and_search($many_many, $model_to_keys);
+
+		static::$_options['where'][] = array($relation['key_from'], 'IN', $from_keys);
+	}
+
 	/*
 	 * cascade_set()
 	 * @param   array     $input_post
@@ -677,6 +735,7 @@ trait Model_Traits_Base
 	 * @param $glue       string length 1~2
 	 * @param $paren
 	 */
+/*
 	public function to_csv(
 		$options = array(),
 		$rel_names = array(),
@@ -735,11 +794,12 @@ trait Model_Traits_Base
 			}
 			$r_arr[$key] = $value;
 		}
-
+*/
 		/*
 		if ($this->_data_relations) {
 			foreach ($this->_data_relations as $rel_name => $dr) {
 		 */
+/*
 		if (isset($options['related'])) {
 			foreach ($options['related'] as $rel_name => $rel_options) {
 
@@ -781,192 +841,5 @@ trait Model_Traits_Base
 
 		return $r_arr;
 	}
-
-// 以降、削除予定
-
-	/*
-	 * @param array    $options conditions for find. limit は pagination_config['perpage'] を使うため無視される
-	 * @param str      $model model class name
-	 * @param bool     $use_get_query use get query paramaters
-	 * @param array    $pagination_config overwrite $this->pagination_config
-	 *
-	 * @return Model finded
-	 */
-	public static function paginated_find($options = array(), $use_get_query = true)
-	{
-		if (\Input::get('paged')) \Pagination::set_config('uri_segment', 'paged');
-		$input_get = $use_get_query ? \Input::get() : array();
-
-		if ($use_get_query and \Input::get()) {
-			if (\Input::get('orders')) {
-
-				$orders = array();
-				foreach (\Input::get('orders') as $k => $v) {
-					if (($dot_pos = strpos($k, '.')) > 0) { // リレーションを見る
-						$model = static::relations( substr($k, 0, $dot_pos) )->model_to;
-						$relate = substr($k, 0, $dot_pos);
-						$k = substr($k, $dot_pos+1);
-						if ( ! in_array($k, array_keys($model::properties()))) continue;
-						$options['related'][$relate]['where'][] = array('id', '!=', 0);
-						$options['related'][$relate]['order_by'][$k] = $v;
-						$options['related'][$relate]['order_by']['t0.id'] = 'asc';
-						// 既存の conditions の order_by を キャンセル
-						$options['order_by'] = $orders;
-					} else {
-						if ( ! in_array($k, array_keys(static::properties()))) continue;
-						$orders[$k] = $v;
-						$options['order_by'] = $orders;
-						if (count(\Input::get('orders')) == 1 and $k != 'id') $options['order_by']['id'] = 'asc';
-					}
-				}
-				// ここは $_conditions
-				static::$_conditions['order_by'] = array();
-			}
-			if (\Input::get('searches')) {
-				foreach (\Input::get('searches') as $k => $v) {
-					if ($v == false) continue;
-					if ( ! in_array($k, array_keys(static::properties()))) continue;
-					$options['where'][] = array($k, '=', $v);
-				}
-			}
-			if (\Input::get('likes')) {
-				$likes = array();
-				foreach (\Input::get('likes') as $k => $v) {
-					if ($v == false) continue;
-					if ( ! in_array($k, array_keys(static::properties()))) continue;
-					$options['where'][] = array($k, 'LIKE', '%'.$v.'%');
-				}
-			}
-
-/*
-			if (\Input::get('all')) {
-				foreach (static::$_properties as $k => $v) {
-					if (in_array($v, static::$_primary_key)) continue;
-					$field = is_array($v) ? $k : $v;// properties sometimes only has key without value
-					$options['or_where'][] = array($field, 'LIKE', '%'.\Input::get('all').'%');
-				}
-			}
 */
-		}
-
-		$options+= static::$_options;
-
-		$count_all = static::count();
-		$count = static::count($options);
-
-		\Pagination::set('total_items', $count);
-
-		if (\Input::get('limit')) \Pagination::set('per_page', \Input::get('limit'));
-		$options['rows_limit'] = \Pagination::get('per_page');
-		$options['rows_offset'] = \Pagination::get('offset');
-
-/* 不具合有りました
-		foreach (static::relations() as $ref => $v) {
-			// var_dump($ref);
-			// レイジーロードしない
-			$options['related'][] = $ref;
-		}
- */
-
-		$objs = static::find('all', $options);
-		\Pagination::$refined_items = count($objs);
-
-		return $objs;
-	}
-
-
-
-
-	/**
-	 * search_form_base()
-	 */
-	public static function search_form_base($title = '')
-	{
-		// forge
-		$form = \Fieldset::forge('search_form_base');
-
-		// modify title
-//		$title = \Util::get_locomo(\Request::active()->controller, 'nicename');
-		$titles = array(
-			'index_deleted'   => '削除済み項目一覧',
-			'index_yet'       => '予約項目一覧',
-			'index_expired'   => '期限切れ項目一覧',
-			'index_invisible' => '不可視項目一覧',
-			'index'           => '公開一覧',
-			'index_all'       => 'すべて',
-		);
-
-		$title .= $title=='' ? '' : 'の';
-
-		if (array_key_exists(\Request::active()->action, $titles))
-		{
-			$title.= $titles[\Request::active()->action];
-		} else {
-			$title .= '項目一覧';
-		}
-
-		// add opener before unrefine
-		\Pagination::set_config('sort_info_model', get_called_class());
-		$sortinfo     = \Pagination::sort_info();
-		$total        = \Pagination::get("total_items");
-		$current_page = \Pagination::get("current_page");
-		$per_page     = \Pagination::get("per_page");
-		$refined      = \Pagination::$refined_items;
-
-		$from         = $current_page == 1 ? 1 : ($current_page - 1) * $per_page + 1;
-		$to           = $refined <= $per_page ? $from + $refined - 1 : $from + $per_page - 1;
-
-		$pagenate_txt = ($per_page < $total) ? number_format($from).'から'.number_format($to).'件 / ' : '';
-		$sortinfo_txt = "{$sortinfo} <span class=\"nowrap\">{$pagenate_txt}全".number_format($total)."件</span>";
-		$sortinfo = $total ? $sortinfo_txt : '項目が存在しません' ;
-
-		$form
-			->add('opener','',array('type' => 'text'))
-			->set_template('
-				<h1 id="page_title" class="clearfix">
-					<a href="javascript: void(0);" class="toggle_item disclosure nomarker">
-						'.$title.'
-						<span class="sort_info">'.$sortinfo.'</span>
-						<span class="icon fr ">
-							<img src="'.\Uri::base().'lcm_assets/img/system/mark_search.png" alt="">
-							<span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">検索</span>
-							<span class="skip"> エンターで検索条件を開きます</span>
-						</span>
-					</a>
-				</h1>
-				<div class="hidden_item form_group">
-				<section>
-					<h1 class="skip">検索</h1>
-					<form class="search">
-			');
-
-		// submit
-		$options = array(
-			10 => 10,
-			25 => 25,
-			50 => 50,
-			100 => 100,
-			250 => 250,
-			24 => '24(タックシール一枚分)',
-		);
-
-		$form->add('limit', '', array('type' => 'select', 'class'=>'w5em', 'title'=>'表示件数', 'options' => $options))
-			->set_value(\Input::get('limit', 25))
-			->set_template('
-				<div class="submit_button">'.
-				\Html::anchor(\Uri::current(), '絞り込みを解除', ['class' => 'button']).
-				'{field}件&nbsp;
-			');
-
-		$form->add('submit', '', array('type' => 'submit', 'value' => '検索', 'class' => 'button primary'))
-			->set_template('
-				{field}
-				</div><!--/.submit_button-->
-				</form>
-			</section>
-			</div><!-- /.hidden_item.form_group -->'
-			);
-
-		return $form;
-	}
 }

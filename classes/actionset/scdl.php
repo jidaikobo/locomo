@@ -282,7 +282,7 @@ class Actionset_Scdl extends \Actionset
 
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb)
 		{
-			$urls = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
+			$urls = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録',array('class' => 'confirm', 'data-jslcm-msg' => '本登録してよいですか？')));
 		}
 
 		$retvals = array(

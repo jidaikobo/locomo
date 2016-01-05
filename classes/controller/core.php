@@ -49,6 +49,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		\Fuel::$profiling = \Fuel::$env == 'development' ?: false ;
 		\Fuel::$profiling = \Input::get('no_prof') ? false : \Fuel::$profiling ;
 		\Fuel::$profiling = \Locomo\Browser::getIEVersion() && \Locomo\Browser::getIEVersion() <= 8 ? false : \Fuel::$profiling;
+		\Fuel::$profiling = file_exists(APPPATH.'noprof') ? false : \Fuel::$profiling;
 
 		// hmvc
 		$this->_template = \Request::is_hmvc() ? 'widget' : $this->_template ;
@@ -80,11 +81,11 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		}
 		static::$config = static::$config ?: array();
 
-		// pagination_config
-		if (is_null($this->pagination_config))
+		// uri_segment
+		if (is_numeric(\Pagination::get('uri_segment')))
 		{
 			$suspicious_segment = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
-			\Pagination::set_config('uri_segment', $suspicious_segment);
+			\Pagination::set('uri_segment', $suspicious_segment);
 		}
 	}
 
