@@ -57,8 +57,7 @@ if(isset($schedule_data['member_list'][$row->id])):
 	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$each_row_data['model']->id]))):
 ?>
 	<tr class="lcm_focus" title="<?php echo  $each_row_data['model']->display_name?>">
-		<th>
-			<?php print $each_row_data['model']->display_name; ?>
+		<th><?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d", $year, $mon)).'&amp;member_id='.$each_row_data['model']->id).'">'.$each_row_data['model']->display_name.'</a>'; ?>
 		</th>
 		<?php
 		foreach($schedule_data['schedules_list'] as $schedule_row):

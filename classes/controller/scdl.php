@@ -107,6 +107,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$title = self::$nicename . '新規作成';
 		}
 		$content = \Presenter::forge(static::$dir.'edit');
+		$tmp_obj = clone $obj;
 
 		$form = $content::form($obj);
 
@@ -227,8 +228,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$action['urls'][] = \Html::anchor(static::$main_url,'一覧へ');
 		\Actionset::add_actionset(static::$controller, 'ctrl', $action);
 
+		// user_id and creator_id
+		$obj->__set('user_id', $tmp_obj->user_id ?: \Auth::get('id'));
+		$obj->__set('updater_id', $tmp_obj->updater_id ?: \Auth::get('id'));
+
 		//view
 		$this->template->set_global('title', $title);
+
 		$content->get_view()->set_global('item', $obj, false);
 		$content->get_view()->set_global('form', $form, false);
 		$this->template->set_safe('content', $content);
@@ -334,8 +340,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			);
 		}
 
-
-
 		$this->template->content->set("building_group_list", \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
 		$this->template->content->set("select_building_list", $select_building_list);
 		$this->template->content->set("non_select_building_list", $non_selected_building_list);
@@ -349,6 +353,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	}
 
+	/**
+	 * [action_copy description]
+	 */
 	public function action_copy() {
 		$model = $this->model_name ;
 
@@ -358,13 +365,22 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			// 直接メンバ変数にアクセスしてよいか
 			$from_data = $model::find(\Input::get("from"));
 			if ($from_data) {
+				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text'
+									, 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
+									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
+									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
+/*
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
 									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
+*/
 				foreach ($setcolumns as $v) {
 					$this->template->content->form->field($v)->set_value($from_data->$v);
 				}
+
+				// 複製の場合でもログインユーザを作成者とする
+				$this->template->content->form->field('user_id')->set_value(\Auth::get('id'));
 			}
 		}
 	}
@@ -733,7 +749,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				\Session::set($model::$_kind_name . "narrow_bgid", "");
 				\Session::set($model::$_kind_name . "narrow_bid", "");
 			}
-			elseif (count($mydata->usergroup) == 1)
+			elseif (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
 			{
 				// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
 				$main_ugid = reset($mydata->usergroup);

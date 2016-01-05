@@ -21,7 +21,7 @@
 	<?php foreach ($schedule_data['member_list'] as $row): ?>
 			<tr>
 			<th class="name" rowspan="<?php print count($row); ?>">
-				<?php print $row['model']->display_name; ?>
+				<?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day)).'&amp;member_id='.$row['model']->id).'">'.$row['model']->display_name.'</a>'; ?>
 			</th>
 				<?php foreach($schedule_data['schedules_list'] as $v) {?>
 				<td colspan="4" class="time h<?php print $v['hour']; ?>">
