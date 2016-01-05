@@ -67,7 +67,7 @@ class File extends \Fuel\Core\File
 	 */
 	public static function attach($dir, $id)
 	{
-		if ( ! \Input::post() || ! \Input::file()) return null;
+		if ( ! \Input::file()) return null;
 
 		// vals
 		$errors = array();
