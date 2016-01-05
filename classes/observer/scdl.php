@@ -17,7 +17,7 @@ class Observer_Scdl extends \Orm\Observer
 	public function after_save(\Orm\Model $obj)
 	{
 		// repeat_kbがない場合は本登録処理などの違う処理
-		if (\Input::post("repeat_kb") != "") {
+		if (\Input::post("repeat_kb") != "" && ! $obj::$_is_someedit) {
 			// schedule_membersへの登録
 			$members = explode("/", \Input::post("hidden_members"));
 
@@ -31,10 +31,10 @@ class Observer_Scdl extends \Orm\Observer
 				$schedule_members->save();
 			}
 			// schedule_building
+
 			$buildings = explode("/", \Input::post("hidden_buildings"));
 
 			\DB::delete("lcm_scdls_buildings")->where("schedule_id", $obj->__get('id'))->execute();
-			
 			foreach ($buildings as $v) {
 				if (!$v) { continue; }
 				$schedule_buildings = Model_Scdl_Building::forge();

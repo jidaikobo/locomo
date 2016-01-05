@@ -11,7 +11,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		$each_result->display_endtime = date('i', strtotime($each_result->end_time))==0 ?
 			date('G時', strtotime($each_result->end_date . " " . $each_result->end_time)) :
 			preg_replace("/時0/", "時", date('G時i分', strtotime($each_result->start_date . " " . $each_result->end_time)));
-	
+
 		if ($each_result->repeat_kb == 0 && $each_result->display_startdate != $each_result->display_enddate) { //開始日終了日が異なる場合は連続した期間扱い
 	/*
 		//開始日〜終了日 (何時〜何時）開始日と終了日を比較しつつ、同年や同月の表示省略
@@ -38,7 +38,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		}
 	$display_results[] = $result_str;
 	echo '#'.$each_result['id'].': '.$each_result['targetdata'].' '.$result_str.' '.$each_result['title_text'].'<br>';
-	
+
 	endforeach;
 ?>
 <table class="tbl datatable" tabindex="0">
@@ -56,7 +56,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	</tr>
 	</thead>
 	<tbody>
-<?php 
+<?php
 	foreach ($overlap_result as $v) {
 ?>
 	<tr>
@@ -88,17 +88,24 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
 			<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
-			<span class="nowrap">
-				<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
-				<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
+			<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"): ?>
+			<span id="span_public_display" class="display_inline_block">
+				<?php echo $form->field('public_display')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
 			</span>
+			<?php endif; ?>
+<?php /* ?>
+<span class="nowrap">
+	<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
+		<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
+		</span>
 			<span class="nowrap">
 				<?php echo $form->field('title_kb')->set_template('{label}'); ?>
 				<?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?>
 			</span>
+<?php */ ?>
 		</div>
 	</div><!-- /.input_group -->
-	
+
 	<div class="input_group">
 		<h2><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></h2>
 		<div id="field_repeat_kb" class="field">
@@ -131,9 +138,6 @@ if (isset($overlap_result) && count($overlap_result)) {
 			</span> から <span id="span_public_time_end" class="display_inline_block" style="margin-right: 1em;">
 			<?php echo $form->field('public_end_time')->set_template('{error_msg}{field}'); ?>
 			</span>
-			<span id="span_public_display" class="display_inline_block">
-			<?php echo $form->field('public_display')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
-			</span>
 		</div>
 	</div><!-- /.input_group -->
 <?php endif; ?>
@@ -153,7 +157,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2><?php echo $form->field('message')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('message')->set_template('{error_msg}{field}'); ?></div>
 	</div>
-	
+
 	<?php if( $locomo['controller']['name'] === "\Controller_Scdl"): //施設選択の時は下に ?>
 	<div class="input_group">
 	<h2><span class="label_required">必須</span>メンバー</h2>
@@ -256,7 +260,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 					<option value="<?php print $key; ?>"><?php  print $value; ?>
 				<?php } ?>
 			</select>
-			<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
+			<?php echo $form->field('user_id')->set_template('{error_msg}{field}');
+			echo $item->user_id != $item->updater_id ? '<span class="dairi">代理登録者：'.\Model_Usr::get_display_name($item->updater_id).'</span>' : '';
+			?>
 		</div>
 	</div><!-- /.input_group -->
 	<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"):?>
@@ -295,7 +301,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</div>
 	</div><!-- /.input_group -->
 	<?php endif; ?>
-	
+
 	<?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
 	<?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
 	<?php echo $form->field('kind_flg')->set_template('{error_msg}{field}'); ?>
@@ -304,10 +310,10 @@ if (isset($overlap_result) && count($overlap_result)) {
 		// revision memo template - optional
 		//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
 	?>
-	
+
 	<div class="submit_button">
 		<?php
-		if( ! @$is_revision): 
+		if( ! @$is_revision):
 			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 			echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 		endif;
@@ -414,7 +420,7 @@ function change_repeat_kb_area() {
 		}
 	}
 
-	//区分選択により、期間の入力欄の種類を変更 
+	//区分選択により、期間の入力欄の種類を変更
 	if(repeat_kb == 5){
 		$('#form_start_date, #form_end_date').removeClass('month').addClass('year');
 	}else if(repeat_kb == 4 || repeat_kb == 6){
@@ -436,6 +442,58 @@ function is_allday(){
 		$('#form_start_time, #form_end_time').attr('readonly',false);
 	}
 }
+//start_timeを変更した際にend_timeに+1時間を入れる // 時間を変更していても引っ張られて良い？
+$('#form_start_time').on('change', function(){
+	if($('#form_start_time').val()){
+		var hour   = $('#form_start_time').val().slice(0, 2)-0;
+		var minute = $('#form_start_time').val().slice(-2);
+		hour = ((hour+1)+'').slice(-2);
+		if(hour==24) hour = 23; //23:59?
+		$('#form_end_time').val(hour+':'+minute).trigger('change');
+	}
+});
+
+//時間の設定を外部表示のplaceholderに
+$('#form_start_time, #form_end_time').on('change', function(){
+	if($(this).is('#form_start_time')){ //すでに値が入っている場合どうする？ placeholderだからよい？ //選択時のtimepickerの開始値とか、ずっとplaceholderにいれてていいの？とか //空でないときはplaceholderは見えないので、とにかく入れてしまう
+//		if($('#form_public_start_time').val()==''){
+			$('#form_public_start_time').attr('placeholder', $('#form_start_time').val());
+//		}
+	}else{
+//		if($('#form_public_end_time').val()==''){
+			$('#form_public_end_time').attr('placeholder', $('#form_end_time').val());
+//		}
+	}
+});
+
+//実使用時間の片方のみに入力した場合に、もう一方に設定時間の値を入力
+$('#form_public_start_time, #form_public_end_time').on('change', function(){
+	$from = $(this).is('#form_public_start_time') ? $('#form_public_start_time') : $('#form_public_end_time');
+	$to = $(this).is('#form_public_start_time') ? $('#form_public_end_time') :  $('#form_public_start_time');
+	time_completion($from,$to);
+
+	function time_completion($from,$to){
+		if($from.val()){ //値が入力された場合
+			if(!$to.val()){
+				if($from.is('#form_public_start_time')){
+					$to.val($('#form_end_time').val());
+				}else{
+					$to.val($('#form_start_time').val());
+				}
+			}
+		}else{ //値が削除された場合
+			if(!$to.val()){
+				if($from.is('#form_public_start_time')){
+					$from.val($('#form_start_time').val());
+				}else{
+					$from.val($('#form_end_time').val());
+				}
+			}
+		}
+		$from.focus();
+	}
+
+});
 
 </script>
 

@@ -21,7 +21,7 @@
 	<?php foreach ($schedule_data['member_list'] as $row): ?>
 			<tr>
 			<th class="name" rowspan="<?php print count($row); ?>">
-				<?php print $row['model']->display_name; ?>
+				<?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day)).'&amp;member_id='.$row['model']->id).'">'.$row['model']->display_name.'</a>'; ?>
 			</th>
 				<?php foreach($schedule_data['schedules_list'] as $v) {?>
 				<td colspan="4" class="time h<?php print $v['hour']; ?>">
@@ -163,9 +163,14 @@
 			<?php
 				$eventtitle_icon = '';
 				$eventtitle_skip = '<span class="skip">';
-				//繰り返し区分
-				$eventtitle_icon.= $detaildata['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata['repeat_kb'].'"></span>' : '';
-				$eventtitle_skip.= $detaildata['repeat_kb'] != 0 ? $repeat_kbs[$detaildata['repeat_kb']] : '';
+
+/*
+				//外部表示(施設予約)
+				if(\Request::active()->controller !== "\Controller_Scdl"):
+					$eventtitle_icon.= $detaildata['public_display']==2 ? '<span class="text_icon reserve public"></span>' : '';
+					$eventtitle_skip.= $detaildata['public_display']==2 ? '外部に表示 ' : '';
+				endif;
+*/
 				//詳細区分
 				foreach($detail_kbs as $key => $value):
 					if($detaildata[$key]):
@@ -173,10 +178,16 @@
 						$eventtitle_skip.= ' '.$value;
 					endif;
 				endforeach;
+				//繰り返し区分
+				$eventtitle_icon.= $detaildata['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata['repeat_kb'].'"></span>' : '';
+				$eventtitle_skip.= $detaildata['repeat_kb'] != 0 ? $repeat_kbs[$detaildata['repeat_kb']] : '';
+
+/*
 				//重要度
 				$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($detaildata['title_importance_kb']));
 				$eventtitle_icon.= '<span class="icon" style="width: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
 				$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
+*/
 				$eventtitle_skip.= '</span>';
 			?>
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detaildata->scdlid.$detaildata->target_year.$detaildata->target_mon.$detaildata->target_day ?>">

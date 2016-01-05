@@ -26,9 +26,11 @@ link     #36a
 	opacity: .55;
 	overflow-x: hidden;
 	white-space: nowrap;
+	z-index: 1;
 }
 .develop_info.top {
 	position: absolute;
+	bottom: auto;
 }
 .testserver {
 	background-color: #cdd7de !important;
@@ -45,103 +47,7 @@ a:link {
 	color: #36a;
 }
 /* あとでテーマカラー？や、ボーダー、背景色などの基本色をあてられるクラスを設定したい */
-/*=== login ===*/
 
-/* default */
-body.default_logo {
-    background-color: #eee;
-}
-body.default_logo.lcm_action_login {
-	   background-color: #ddd;
-}
-body.default_logo.lcm_action_login .container{
-	   height: 26.5em !important;
-}
-.default_logo.lcm_action_login #logo {
-    margin: -0.5em auto 0.5em;
-    width: 6em;
-}
-.default_logo.lcm_action_login .site_title {
-    display: none;
-}
-body.lcm_action_login {
-	background-color: #dde7ee;
-}
-.lcm_action_login .container {
-	min-height: inherit;
-	width: 23.5em;
-	min-width: 23em;
-	height: 23.75em !important;
-	padding: 0 1.5em;
-	margin: 7.5em auto 50px;
-	background-color: #fff;
-	border: 1px solid #ccc;
-	border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	text-align: center;
-	outline: none;
-}
-.lcm_action_login input[type="text"],
-.lcm_action_login input[type="password"] {
-	width: 13em;
-}
-.lcm_action_login.home .container {
-	height: 23em !important;
-}
-/*.lcm_action_login h1 {
-	position: absolute !important;
-	left: auto;
-	height: 0;
-	clip: rect(1px 1px 1px 1px);
-	clip: rect(1px, 1px, 1px, 1px);
-}
-*/
-.lcm_action_login .container h1 {
-	font-size: 2em !important;
-	color: #004896;
-	font-weight: normal;
-	font-family: Verdana;
-	border: none;
-	box-shadow: none;
-	margin: 0 0 .5em !important;
-}
-.lcm_action_login h1 img {
-	display: block;
-	margin: .5em auto 0;
-	width: 1.5em;
-}
-
-.lcm_action_login .form_group {
-	border: none;
-	padding: 0;
-	margin: .5em 0;
-	background-color: transparent;
-}
-.lcm_action_login input {
-	padding: 5px 2px;
-}
-.lcm_action_login input#form_submit {
-	margin: 1.5em 0;
-	width: 100%;
-}
-.lcm_action_login a.home {
-	display: block;
-	margin-top: 3em;
-	font-size: .9em;
-}
-.lcm_action_login .flash_alert {
-	position: absolute;
-	top: 2.5em;
-	left: 0;
-	right: 0;
-	width: 20em;
-	margin: 0 auto;
-	box-sizing: border-box;
-}
-body.loggedin {
-	padding-top: 70px;
-}
 .main_column,
 .sub_column,
 #adinbar,
@@ -152,13 +58,17 @@ body.loggedin {
 	box-sizing : border-box ;
 }
 
-#adminbar div,
-.adminbar_icon,
+.main_column,
+.sub_column {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+}
+
 .horizontal_list ul,
 .horizontal_list li {
 	display: inline-block;
 }
-*+html #adminbar div,
 *+html .horizontal_list ul,
 *+html .horizontal_list li {
 	display: inline;
@@ -218,12 +128,56 @@ body.loggedin {
 	width: 100%;
 }
 
+a.has_dropdown {
+	padding-right: 15px;
+	background-image: url('../img/system/mark_listopen_bk.png');
+	background-position: right center;
+	background-repeat: no-repeat;
+	padding-left: 0;
+}
+
+.has_top_separator {
+	border-top: 1px solid rgba(255,255,255,1);
+	box-shadow: 0 -1px 0 #ddd;
+	margin-top: -1px;
+	padding-top: 3px;
+}
+.has_bottom_separator {
+	border-bottom: 1px solid #ddd;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+	margin-bottom: 3px;
+}
+.has_top_separator.has_bottom_separator {
+	box-shadow: 0 1px 0 rgba(255,255,255,1), 0 -1px 0 #ddd;
+}
+.has_bottom_separator + .has_top_separator {
+	border-top: none;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+}
+ul.horizontal_list {
+	line-height: 1.25;
+	padding-left: 0;
+}
+.horizontal_list li {
+	padding: .25em 6px .25em 0;
+}
+.container .horizontal_list {
+	overflow: hidden;
+}
+.container .horizontal_list li {
+	border-left: 1px solid #aaa;
+	padding: 0 6px;
+	margin: .25em 0 .25em -1px;
+}
+
+/* ========== 管理画面:body.loggedin ========== */
+
 /* dashboard */
 .lcm_action_dashboard .contents {
 	margin-left: 0;
 	margin-right: -2%;
 }
-.widget {
+.lcm_action_dashboard .widget {
 	box-sizing: border-box;
 	border: 1px #aaa solid;
 	border-radius: 2px;
@@ -237,13 +191,13 @@ body.loggedin {
 	font-size: .85em;
 	
 }
-.widget.size1 {
+.lcm_action_dashboard .widget.size1 {
 	width: 32% !important;
 }
-.widget.size2 {
+.lcm_action_dashboard .widget.size2 {
 	width: 65.125% !important;
 }
-.widget.size3 {
+.lcm_action_dashboard .widget.size3 {
 	width: 98.275% !important;
 }
 
@@ -253,7 +207,7 @@ body.loggedin {
 	margin: 0 !important;
 	overflow: hidden;
 }
-.widget_content {
+.lcm_action_dashboard .widget_content {
 	overflow: auto;
 	position: absolute;
 	top: 2em;
@@ -264,17 +218,16 @@ body.loggedin {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-.widget_content_fc {
+.lcm_action_dashboard .widget_content_fc {
     display: block;
     margin: auto;
 }
-.widget_content_fr {
+.lcm_action_dashboard .widget_content_fr {
 	text-align: right;
 }
-.widget_content > table:first-child {
+.lcm_action_dashboard .widget_content > table:first-child {
 	margin-top: 0;
 }
-
 
 /* widget */
 .sys_admin_dashboard ul {
@@ -310,10 +263,10 @@ body.loggedin {
 	top: .1em;
 	position: relative;
 }
-
 .scdl_dashboard_today td.time{
 	min-width: 6.5em;
 }
+
 /* button */
 .btn,
 .button {
@@ -341,7 +294,6 @@ body.loggedin {
 	color: #fff;
 	padding: 5px 15px;
 }
-
 .btn.primary:active,
 .button.primary:active {
 	border: 1px solid  #357ebd;
@@ -399,7 +351,6 @@ a.button.danger:active {
 	border-width: 2px;
 	padding: 0 4px;
 }
-
 .btn.btn_block,
 .button.button_block {
 	display: block;
@@ -419,7 +370,6 @@ a.button.danger:active {
 .button.button_block:focus {
 	padding: .75em 0;
 }
-
 .btn.disabled,
 .button.disabled,
 input.button[disabled],
@@ -439,13 +389,11 @@ fieldset[disabled] a.button {
 	background-color: #fff3f3;
 	outline-color: rgba(238,153,153,.6);
 }
-
 .no_appearance {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
 }
-
 input[disabled],
 select[disabled],
 textarea[disabled] {
@@ -458,7 +406,7 @@ input[type="password"],
 input.int,
 input.time,
 input.date,
-input.datetime,
+input,datetime,
 input.han {
 	ime-mode: inactive;
 }
@@ -584,6 +532,7 @@ table + .index_toolbar {
 .index_toolbar_buttons {
 	float: left;
 }
+
 /* pagenation */
 .index_toolbar .pagination {
 	float: right;
@@ -591,7 +540,6 @@ table + .index_toolbar {
 .pagination a {
 	padding: 5px 10px;
 }
-
 .pagination .active a,
 .pagination a:hover,
 .select_period .active {
@@ -1519,7 +1467,6 @@ schedule_day.graph td {
 	margin-right: .5em;
 }
 
-
 /*== 重要度 ==*/
 .calendar .icon img ,
 .schedule_day.detail .icon img ,
@@ -1530,6 +1477,17 @@ schedule_day.graph td {
 }
 .legend.calendar .icon img {
 	margin-left: .75em;
+}
+
+/*== 外部表示 ==*/
+.text_icon.public {
+	background-color: #ac2000;
+}
+.text_icon.public:before {
+	content: '外';
+}
+.legend .text_icon.public + span:before {
+	content: '外部表示';
 }
 
 /*== 繰り返し ==*/
@@ -1606,7 +1564,7 @@ schedule_day.graph td {
 	content: '仮';
 }
 .legend .text_icon.provisional_kb + span:after {
-	content: '仮予約';
+	content: '仮登録';
 }
 
 /*  時間指定無し  */
@@ -1643,7 +1601,6 @@ schedule_day.graph td {
 .legend .icon.mark_private + span:after {
 	content: '非公開';
 }
-
 
 /* 登録者関係 */
 .text_icon.proxy {

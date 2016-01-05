@@ -9,14 +9,16 @@ class Model_Scdl extends \Model_Base_Soft
 	public static $_kind_name = "scdl";
 	public static $_kind_flg = 1;	// 1:スケジューラ 2:施設予約
 
+	public static $_is_someedit = false; //Observer_Scdlで使う。Controller_Action_Someeditでも。
+
 	protected static $_properties =
 	array (
 		'id',
-		'repeat_kb' => 
+		'repeat_kb' =>
 		array (
 			'label' => '繰り返し区分',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('0' => 'なし'
@@ -31,33 +33,33 @@ class Model_Scdl extends \Model_Base_Soft
 				'onchange' => 'change_repeat_kb_area()',
 			),
 		),
-		'target_month' => 
+		'target_month' =>
 		array (
 			'label' => '対象月',
 			'data_type' => 'int ar',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'class' => 'int',
 				'size' => 3,
 			),
 		),
-		'target_day' => 
+		'target_day' =>
 		array (
 			'label' => '対象日',
 			'data_type' => 'int ar',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'class' => 'int',
 				'size' => 3,
 			),
 		),
-		'start_date' => 
+		'start_date' =>
 		array (
 			'label' => '開始日',
 			'data_type' => 'date',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'size' => 14,
@@ -69,11 +71,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'max_length' => array(10),
 			),
 		),
-		'end_date' => 
+		'end_date' =>
 		array (
 			'label' => '終了日',
 			'data_type' => 'date',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'size' => 14,
@@ -85,11 +87,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'max_length' => array(10),
 			),
 		),
-		'start_time' => 
+		'start_time' =>
 		array (
 			'label' => '開始時間',
 			'data_type' => 'time',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'size' => 7,
@@ -98,14 +100,14 @@ class Model_Scdl extends \Model_Base_Soft
 			'validation' => array(
 				'required',
 				'match_pattern' => array("/^[0-9\:]+$/u"),
-				'max_length' => array(5),
+				'max_length' => array(8),
 			),
 		),
-		'end_time' => 
+		'end_time' =>
 		array (
 			'label' => '終了時間',
 			'data_type' => 'time',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'size' => 7,
@@ -114,15 +116,15 @@ class Model_Scdl extends \Model_Base_Soft
 			'validation' => array(
 				'required',
 				'match_pattern' => array("/^[0-9\:]+$/u"),
-				'max_length' => array(5),
+				'max_length' => array(8),
 			),
 			'default' => '21:00'
 		),
-		'week_kb' => 
+		'week_kb' =>
 		array (
 			'label' => '繰り返し曜日',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('0' => '日'
@@ -136,11 +138,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '曜日',
 			),
 		),
-		'week_index' => 
+		'week_index' =>
 		array (
 			'label' => '第何週',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('1' => '1'
@@ -153,37 +155,38 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '第何週',
 			),
 		),
-		'delete_day' => 
+		'delete_day' =>
 		array (
 			'label' => '部分削除日',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'class' => 'text',
 			),
 		),
-		'title_text' => 
+		'title_text' =>
 		array (
 			'lcm_role' => 'subject',
 			'label' => 'タイトル',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'size' => 50,
 				'class' => 'text',
 			),
-			'validation' => 
+			'validation' =>
 			array (
 				'required',
 			),
 		),
-		'title_importance_kb' => 
+/*
+		'title_importance_kb' =>
 		array (
 			'label' => '重要度',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'class' => 'text',
@@ -191,11 +194,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '重要度',
 			),
 		),
-		'title_kb' => 
+		'title_kb' =>
 		array (
 			'label' => '区分',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('標準' => '標準', '社内' => '社内', '社外' => '社外', '外出' => '外出', '来社' => '来社', '個人' => '個人'),
@@ -203,73 +206,74 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '区分',
 			),
 		),
-		'provisional_kb' => 
+*/
+		'provisional_kb' =>
 		array (
 			'label' => '仮登録',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'checkbox',
 				'value' => 1
 			),
 		),
-		'unspecified_kb' => 
+		'unspecified_kb' =>
 		array (
 			'label' => '時間指定なし',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'hidden',
 				'value' => 0
 			),
 		),
-		'allday_kb' => 
+		'allday_kb' =>
 		array (
 			'label' => '終日',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'checkbox',
 				'value' => 1,
 				'onchange' => 'is_allday()',
 			),
 		),
-		'private_kb' => 
+		'private_kb' =>
 		array (
 			'label' => '非公開',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'checkbox',
 				'value' => 1
 			),
 		),
-		'overlap_kb' => 
+		'overlap_kb' =>
 		array (
 			'label' => '重複チェック',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'checkbox',
 				'value' => 1
 			),
-			'default' => 1
+			'default' => 0 // 施設予約では_initでオンに
 		),
-		 
-		'message' => 
+
+		'message' =>
 		array (
 			'label' => 'メッセージ',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'textarea',
-				'rows' => 7,
+				'rows' => 3,
 				'class' => 'text',
 			),
-			'validation' => 
+			'validation' =>
 			array (
 			),
 		),
-		'group_kb' => 
+		'group_kb' =>
 		array (
 			'label' => '表示するグループ',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'radio',
 				'class' => 'int',
@@ -277,11 +281,11 @@ class Model_Scdl extends \Model_Base_Soft
 			),
 			'default' => '1'
 		),
-		'group_detail' => 
+		'group_detail' =>
 		array (
 			'label' => 'グループ指定',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'class' => 'text w10em',
@@ -289,11 +293,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'onchange' => 'form_group_detail_change()',
 			),
 		),
-		'purpose_kb' => 
+		'purpose_kb' =>
 		array (
 			'label' => '施設使用目的区分',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'class' => 'text',
@@ -301,21 +305,21 @@ class Model_Scdl extends \Model_Base_Soft
 			),
 
 		),
-		'purpose_text' => 
+		'purpose_text' =>
 		array (
 			'label' => '施設使用目的テキスト',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'class' => 'text',
 			),
 		),
-		'user_num' => 
+		'user_num' =>
 		array (
 			'label' => '施設利用人数',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'text',
 				'class' => 'int ar',
@@ -323,80 +327,87 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '施設利用人数 半角数字で入力してください',
 			),
 		),
-		'user_id' => 
+		'user_id' =>
 		array (
 			'label' => '作成者',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'class' => 'int',
 				'title' => '作成者'
 			),
 		),
-		'attend_flg' => 
+		'attend_flg' =>
 		array (
 			'label' => '出席確認',
 			'data_type' => 'text',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'checkbox',
 				'options' => array('1' => 'dummy')
 			),
 		),
-		'kind_flg' => 
+		'kind_flg' =>
 		array (
 			'label' => '予約区分(1:スケジュール 2:施設予約)',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'hidden'
 			),
 		),
-		'parent_id' => 
+		'parent_id' =>
 		array (
 			'label' => '部分編集元親ID',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'hidden'
 			),
 		),
 		'creator_id' => array('form' => array('type' => false), 'default' => '', 'lcm_role' => 'creator_id'),
 		'updater_id' => array('form' => array('type' => false), 'default' => ''),
-		'created_at' => 
+		'created_at' =>
 		array (
 			'label' => '作成日時',
 			'data_type' => 'date',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'hidden',
 				'size' => 20,
 				'class' => 'date',
 			),
 		),
-		'updated_at' => 
+		'updated_at' =>
 		array (
-			'form' => 
+			'form' =>
 			array (
 				'type' => false,
 			),
 		),
 		'deleted_at' =>
 		array (
-			'form' => 
+			'form' =>
 			array (
 				'type' => false,
 			),
 		),
-		'is_visible' => 
+		'creator_id' =>
+		array (
+			'form' =>
+			array (
+				'type' => false,
+			),
+		),
+		'is_visible' =>
 		array (
 			'label' => '可視属性',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'hidden',
-				'options' => 
+				'options' =>
 				array (
 					0 => '不可視',
 					1 => '可視',
@@ -407,11 +418,8 @@ class Model_Scdl extends \Model_Base_Soft
 		),
 	) ;
 
-
-
 	//$_option_options - see sample at \Model_Usrgrp
 	public static $_option_options = array();
-
 
 	protected static $_belongs_to = array(
 		'create_user' => array(
@@ -434,7 +442,7 @@ class Model_Scdl extends \Model_Base_Soft
 				'cascade_save' => false,
 				'cascade_delete' => false
 			),
-		
+
 		// ユーザー区分団体等
 		'building' => array(
 			'key_from' => 'id',
@@ -541,7 +549,7 @@ class Model_Scdl extends \Model_Base_Soft
 
 		// date_detail
 		$date_detail = self::make_target_day_info($data);
-		
+
 
 		return $date_detail['print'];
 	}
@@ -584,6 +592,23 @@ class Model_Scdl extends \Model_Base_Soft
 			$print .= '　' . $data->display_starttime . "〜" . $data->display_endtime;
 		}
 		$date_detail['display_target_date'] = $print;
+		//実使用時間
+
+		if(!\Request::is_hmvc() && \Request::active()->controller == "Reserve\Controller_Reserve" && ($data->public_start_time!=0 || $data->public_end_time!=0)):
+			$start_time = $data->public_start_time!=0 ? $data->public_start_time : $data->start_time;
+			$start_time_hour   = date('G',strtotime('1974-12-25 '.$start_time)).'時';
+			$start_time_minute = intval(date('i',strtotime('1974-12-25 '.$start_time)));
+			$start_time_minute = $start_time_minute ? $start_time_minute.'分' : '';
+			$end_time   = $data->public_end_time!=0 ? $data->public_end_time : $data->end_time;
+			$end_time_hour   = date('G',strtotime('1974-12-25 '.$end_time)).'時';
+			$end_time_minute = intval(date('i',strtotime('1974-12-25 '.$end_time)));
+			$end_time_minute = $end_time_minute ? $end_time_minute.'分' : '';
+			$print.= '（実使用時間：';
+			$print.= $start_time_hour.$start_time_minute;
+			$print.= '<span class="sr_replace to"><span class="skip">から</span></span>';
+			$print.= $end_time_hour.$end_time_minute;
+			$print.= '）';
+	endif;
 
 		// 登録データ
 		$week = array('日', '月', '火', '水', '木', '金', '土');
@@ -616,7 +641,7 @@ class Model_Scdl extends \Model_Base_Soft
 		if($data->repeat_kb != 0) $print .= "</p>";
 		if ($data->repeat_kb == 0) { //繰り返しなし
 			//$print .= '<span class="display_inline_block">' . $data->display_startdate . " " . $data->display_starttime . '〜</span><span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime . "</span>";
-			
+
 			$date_detail['display_period'] = '<span class="display_inline_block">'.$data->display_startdate . " " . $data->display_starttime . '〜</span><span class="display_inline_block">' . $data->display_enddate . " " . $data->display_endtime.'</span>';
 		} else if($data->repeat_kb != 0){
 			$print .= '<span class="display_inline_block">' . $data->display_startdate . '〜</span><span class="display_inline_block">' . $data->display_enddate . "</span>";
@@ -634,7 +659,7 @@ class Model_Scdl extends \Model_Base_Soft
 		// 時間を追加
 		$date_detail['start_time'] = $data->display_starttime;
 		$date_detail['end_time'] = $data->display_endtime;
-		
+
 		$date_detail['print'] = $print;
 		return $date_detail;
 	}
