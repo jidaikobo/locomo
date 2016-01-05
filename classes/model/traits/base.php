@@ -567,7 +567,10 @@ trait Model_Traits_Base
 
 		$from_keys = static::and_search($many_many, $model_to_keys);
 
-		static::$_options['where'][] = array($relation['key_from'], 'IN', $from_keys);
+		if ($from_keys)
+		{
+			static::$_options['where'][] = array($relation['key_from'], 'IN', $from_keys);
+		}
 	}
 
 	/*
