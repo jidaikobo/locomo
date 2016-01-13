@@ -114,6 +114,10 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 			<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
 			<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+			&nbsp;&nbsp;
+			<span id="span_week_kb_option1"><?php echo $form->field('week_kb_option1')->set_template('{error_msg}{field}'); ?></span>  <span id="span_week_number_option1">第<?php echo $form->field('week_index_option1')->set_template('{error_msg}{field}'); ?>週目</span>
+			&nbsp;&nbsp;
+			<span id="span_week_kb_option2"><?php echo $form->field('week_kb_option2')->set_template('{error_msg}{field}'); ?></span>  <span id="span_week_number_option2">第<?php echo $form->field('week_index_option2')->set_template('{error_msg}{field}'); ?>週目</span>
 			<div id="field_set_time" style="display: none;"> から </div>
 		</div>
 	</div><!-- /.input_group -->
@@ -354,27 +358,47 @@ function change_repeat_kb_area() {
 	if (repeat_kb == 0 || repeat_kb == 1 || repeat_kb == 2) {
 		// なし
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 3) {
 		$("#span_week_kb").css({'display': 'inline-block'});
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 4) {
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 5) {
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'inline-block'});
 	} else if (repeat_kb == 6) {
 		$("#span_week_kb").css({'display': 'inline-block'});
+		$("#span_week_kb_option1").css({'display': 'inline-block'});
+		$("#span_week_kb_option2").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'inline-block'});
+		$("#span_week_number_option1").css({'display': 'inline-block'});
+		$("#span_week_number_option2").css({'display': 'inline-block'});
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	}
