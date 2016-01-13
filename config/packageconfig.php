@@ -19,6 +19,9 @@ return array(
 	'site_title' => 'Locomo',
 	'slogan' => 'Accessible Web System Package for FuelPHP',
 
+	// allowed_ip_access_admin
+	'allowed_ip_access_admin' => '',
+
 	// is_use_customusergroup
 	'is_use_customusergroup' => true,
 
