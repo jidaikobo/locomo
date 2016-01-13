@@ -6,7 +6,6 @@
 // .toggle_floatwindowのID+'_window'もしくは、data-target-windowの値をIDに持つ要素を相手にする。
 // アクセスキーを付与する場合は、トリガーに設定する
 if(typeof(lcm_env)=='undefined') var lcm_env = new Object();
-
 function lcm_floatwindow(elm){
 	e = elm;
 	if(!$.isPlainObject(e)) e.preventDefault();//クリックイベント以外(アクセスキー等)の場合を除外 ？再確認必要？
@@ -56,7 +55,7 @@ function load_window($trigger, $target, $load_txt) {
 }
 
 // ウィンドウを表示する
-$('.toggle_floatwindow').on('click', function(){
+$('.toggle_floatwindow').on('click', function(e){
 	var e = e ? e : event;
 	e.preventDefault();
 	e.stopPropagation();
