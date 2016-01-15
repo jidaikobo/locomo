@@ -675,7 +675,7 @@ table + .index_toolbar {
 /*=== multiple_select ===*/
 .lcm_multiple_select {
 	position: relative;
-	height: 16em;
+	height: 13.5em;
 }
 .lcm_multiple_select .remove_item,
 .lcm_multiple_select .add_item {
@@ -683,7 +683,7 @@ table + .index_toolbar {
     left: 13.5em;
 }
 .lcm_multiple_select .add_item {
-	top: 7.5em;
+	top: 5.5em;
 }
 .lcm_multiple_select .remove_item {
     top: 10em;
@@ -699,7 +699,7 @@ table + .index_toolbar {
 .lcm_multiple_select select[size] {
 	margin-bottom: .5em;
 	width: 11em;
-	height: 12.5em;
+	height: 10.5em;
 }
 .lcm_multiple_select .multiple_select_content {
 	position: absolute;

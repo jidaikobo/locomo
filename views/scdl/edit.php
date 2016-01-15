@@ -1,3 +1,38 @@
+<style type="text/css">
+.form_group.lcm_form {
+	margin-top: -10px;
+}
+.flash_alert {
+	margin-top: -10px !important;
+}
+.flash_alert + .contents .form_group.lcm_form {
+	margin-top: 0;
+}
+.lcm_form .input_group h2,
+.lcm_form section h1,
+.lcm_form .input_group .field,
+.lcm_form .input_group table {
+	padding: 7px;
+}
+.multiple_select_narrow_down,
+#group_list_create_user {
+	width: 11em;
+}
+.form_group.lcm_form .toggle_item {
+	width: auto;
+	text-align: left;
+	border-top: 1px solid #fff;
+	box-shadow: 0 -1px 0 #ccc;
+	margin-right: -7px;
+	margin-left: -7px;
+}
+.lcm_form .submit_button.top {
+	position: relative;
+	right: auto;
+	bottom: auto;
+	margin-top: 0;
+}
+</style>
 <?php
 if (isset($overlap_result) && count($overlap_result)) {
 	$display_results = array();
@@ -76,10 +111,19 @@ if (isset($overlap_result) && count($overlap_result)) {
 	</tbody>
 </table>
 <?php } ;?>
-<h1><?php echo $title ?></h1>
+<h1 class="skip"><?php echo $title ?></h1>
 <?php echo \Form::open(); ?>
 
 <div class="form_group lcm_form">
+	<div class="submit_button top"><!-- 上部保存ボタン -->
+		<?php
+		if( ! @$is_revision):
+			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+			echo \Form::submit('submit', '保存する', array('class' => 'button primary', 'id' => 'form_submit_top'));
+		endif;
+		?>
+	</div>
+	
 <?php
 	// use model's form definition instead of raw-like html
 	//echo $form;
@@ -198,8 +242,16 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</div>
 	</div><!-- /.input_group -->
 	<?php endif; ?>
+	<?php /* 施設の設定 */ ?>
+	<?php if($locomo['controller']['name'] === "\Controller_Scdl"): ?>
+	<section>
+	<h1>
+		<a href="javascript:void(0);" class="toggle_item disclosure">施設設定</a>
+	</h1>
+	<div class="hidden_item">
+	<?php endif; ?>
 	<div class="input_group">
-		<h2><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</h2>
+		<h2><?php echo ($locomo['controller']['name'] === "\Controller_Scdl") ? '' : '<span class="label_required">必須</span>' ;?>施設選択</h2>
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
@@ -234,13 +286,6 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</div>
 	</div><!-- /.input_group -->
 	<div class="input_group">
-		<h2><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></h2>
-		<div class="field">
-			<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
-			<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
-		</div>
-	</div><!-- /.input_group -->
-	<div class="input_group">
 		<h2><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></div>
 	</div><!-- /.input_group -->
@@ -254,6 +299,17 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<div class="input_group">
 		<h2><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?>人</div>
+	</div><!-- /.input_group -->
+	<?php if($locomo['controller']['name'] === "\Controller_Scdl"): ?>
+		</div><!-- /.hidden_item -->
+	</section>
+	<?php endif; ?>
+	<div class="input_group">
+		<h2><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></h2>
+		<div class="field">
+			<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
+			<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
+		</div>
 	</div><!-- /.input_group -->
 	<div class="input_group">
 		<h2><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></h2>
