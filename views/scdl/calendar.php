@@ -11,7 +11,7 @@
 	<a href="javascript: void(0);" class="toggle_item disclosure nomarker tabindex_ctrl">
 		<?php print $year; ?>年<?php print (int)$mon; ?>月 月間カレンダ
 		<span class="icon fr ">
-		<img src="http://localhost:8090/lightstaff/public/lcm_assets/img/system/mark_search.png" alt="">
+		<img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_search.png" alt="">
 		<span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">検索</span>
 		<span class="skip"> エンターで検索条件を開きます</span>
 		</span>
@@ -156,13 +156,13 @@
 					$eventtitle_skip.= ' '.$value.' ';
 					endif;
 				endforeach;
-				
+
 				//外部表示(施設予約)
 				if(\Request::active()->controller !== "\Controller_Scdl"):
 					$eventtitle_icon.= $v2['public_display']==2 ? '<span class="text_icon reserve public"></span>' : '';
 					$eventtitle_skip.= $v2['public_display']==2 ? '外部表示 ' : '';
 				endif;
-				
+
 				//繰り返し区分
 				$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
 				$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']].' ' : '';
