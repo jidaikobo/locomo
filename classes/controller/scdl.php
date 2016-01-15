@@ -741,29 +741,35 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$is_main_ugid = true;
 		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
 		{
-			// 自分の代表グループIDを取得
-			$mydata = \Model_Usr::find(\Auth::get('id'));
-			if (\Input::get("ugid", "not") == "not" && $mydata && $mydata->main_usergroup_id) {
-				\Session::set($model::$_kind_name . "narrow_ugid", $mydata->main_usergroup_id);
+			// get値がある場合はそれを優先
+			if ( ! \Input::get('ugid'))
+			{
+				// 自分の代表グループIDを取得
+				$mydata = \Model_Usr::find(\Auth::get('id'));
+				if ($mydata && $mydata->main_usergroup_id) {
+					$is_main_ugid = $mydata->main_usergroup_id;
+				}
+				else if (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
+				{
+					// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
+					$is_main_ugid = reset($mydata->usergroup);
+				}
+
+				if ($is_main_ugid)
+				{
+					\Session::set($model::$_kind_name . "narrow_ugid", $is_main_ugid);
+				}
+				else
+				{
+					// 代表グループが設定されておらず、ユーザグループも複数ある場合
+					$is_main_ugid = false;
+				}
 				\Session::set($model::$_kind_name . "narrow_uid", "");
 				\Session::set($model::$_kind_name . "narrow_bgid", "");
 				\Session::set($model::$_kind_name . "narrow_bid", "");
-			}
-			elseif (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
-			{
-				// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
-				$main_ugid = reset($mydata->usergroup);
-				\Session::set($model::$_kind_name . "narrow_ugid", $main_ugid->id);
-				\Session::set($model::$_kind_name . "narrow_uid", "");
-				\Session::set($model::$_kind_name . "narrow_bgid", "");
-				\Session::set($model::$_kind_name . "narrow_bid", "");
-			}
-			else
-			{
-				// 代表グループが設定されておらず、ユーザグループも複数ある場合
-				$is_main_ugid = false;
 			}
 		}
+
 		if ($year == null || $year == "" || $year < 1000)
 			$year = date('Y');
 		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12)
@@ -785,8 +791,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$year = (int)$year;
 		$mon = (int)$mon;
 		$day = (int)$day;
-
-
 
 		// 各モードにより処理分け
 		$calendar = array();
@@ -851,26 +855,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// 代表グループの存在
 		$view->set('is_main_ugid', $is_main_ugid);
 
-		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
-
-		// テンポラル対応
-		if (isset(\Model_Usr::properties()['pronunciation']))
-		{
-			$view->set('narrow_user_list', \Model_Usr::find('all',
-				array(
-					'related'   => count($where) ? array('usergroup') : array(),
-					'where'=> $where,
-					'order_by' => 'pronunciation'
-					)
-				));
-		} else {
-			$view->set('narrow_user_list', \Model_Usr::find('all',
-				array(
-					'related'   => count($where) ? array('usergroup') : array(),
-					'where'=> $where,
-					)
-				));
-		}
+		// ユーザ一覧作成
+		$view->set('narrow_user_list', \Model_Usr::get_users_by_group(\Session::get($model::$_kind_name . "narrow_ugid")));
 
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());

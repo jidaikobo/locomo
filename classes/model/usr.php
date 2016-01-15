@@ -174,9 +174,9 @@ class Model_Usr extends Model_Base_Soft
 				'or' => array(
 					array('email', 'LIKE', $all),
 					'or' => array(
-						array('display_name', 'LIKE', $all), 
+						array('display_name', 'LIKE', $all),
 					)
-				) 
+				)
 			);
 		}
 
@@ -216,7 +216,7 @@ class Model_Usr extends Model_Base_Soft
 		} elseif ($this->password) {
 			// POST以外の更新であれば生値を送ったものと見なしてハッシュ処理
 			$this->password = \Auth::hash_password($this->password);
-		
+
 		}
 	}
 
@@ -257,4 +257,48 @@ class Model_Usr extends Model_Base_Soft
 
 		return $users;
 	}
-}
+
+	/**
+	 * get_users_by_group()
+	 */
+	public static function get_users_by_group($gid)
+	{
+		// カスタムユーザグループのため、一旦ユーザグループを取得する
+		$usrgrp = \Model_Usrgrp::find('first',
+										 array(
+											 'related' => array('usergroup'),
+											 'where'=> array(array('id', '=', $gid)),
+										 )
+		);
+
+		$options = array();
+		$options['related'] = 'usergroup';
+
+		// ユーザグループがユーザグループを内包している場合は、それも取得する
+		if ($usrgrp->usergroup)
+		{
+			$options['where'] = array(
+				array('usergroup.id', 'IN', array_keys($usrgrp->usergroup)),
+				'or' => array(
+					array('usergroup.id', '=', $gid),
+				)
+			);
+		} else {
+			// ユーザグループを内包していなければ、普通に取得する
+			$options['where'] = array(array('usergroup.id', '=', $gid));
+		}
+
+		$options['where'][] = array('created_at', '<', date('Y-m-d H:i:s'));
+		$options['where'][] = array(
+			array('expired_at', '>', date('Y-m-d H:i:s')),
+			'or' => array(
+				array('expired_at', 'is', null),
+			)
+		);
+		$options['order_by'] =  array('username' => 'asc');
+
+		$users = array('none' => '選択してください');
+		$users += static::find_options('display_name', $options);
+
+		return $users;
+	}}
