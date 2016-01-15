@@ -275,7 +275,7 @@ class Model_Usr extends Model_Base_Soft
 		$options['related'] = 'usergroup';
 
 		// ユーザグループがユーザグループを内包している場合は、それも取得する
-		if ($usrgrp->usergroup)
+		if ($usrgrp && $usrgrp->usergroup)
 		{
 			$options['where'] = array(
 				array('usergroup.id', 'IN', array_keys($usrgrp->usergroup)),
