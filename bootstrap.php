@@ -6,7 +6,7 @@
  */
 
 // version
-define('LOCOMOVERSION', '1.1');
+define('LOCOMOVERSION', '1.8');
 
 // load package
 \Package::load('auth');
@@ -25,7 +25,7 @@ if ( ! \Config::load('locomo'))
 }
 
 // path
-define('LOCOMOAPPPATH', APPPATH.'locomo/');
+define('LOCOMOAPPPATH', APPPATH.'locomo'.DS);
 define('LOCOMOUPLOADPATH', \Config::get('upload_path'));
 
 // prepare locomo dir.
@@ -37,10 +37,10 @@ Autoloader::add_namespace('Locomo', LOCOMOPATH.'classes'.DS);
 Autoloader::add_core_namespace('Locomo');
 
 // Autoloader::add_classes()
-$targets = \Locomo\Util::get_file_list(LOCOMOPATH.'classes/', 'file');
+$targets = \Locomo\Util::get_file_list(LOCOMOPATH.'classes'.DS, 'file');
 foreach ($targets as $path)
 {
-	$class = str_replace(array(LOCOMOPATH.'classes/', '.php', '/'), array('', '', '_'), $path);
+	$class = str_replace(array(LOCOMOPATH.'classes'.DS, '.php', DS), array('', '', '_'), $path);
 	$app = str_replace(LOCOMOPATH, APPPATH, $path);
 	if (file_exists($app))
 	{
@@ -55,7 +55,7 @@ Autoloader::add_classes($classes);
 \Package::load('auth');
 
 // add asset path
-\Asset::add_path(LOCOMOPATH.'assets/');
-\Asset::add_path(APPPATH.'locomo/assets/');
+\Asset::add_path(LOCOMOPATH.'assets'.DS);
+\Asset::add_path(APPPATH.'locomo'.DS.'assets'.DS);
 
 /* End of file bootstrap.php */

@@ -1,0 +1,11 @@
+@charset "UTF-8";
+form p.cf {
+	position: absolute;
+	right: 0;
+}
+textarea.tinymce {
+	margin-top: 1.25em;
+}
+.mce-tinymce.mce-container.mce-panel {
+	margin-top: 1.25em;
+}

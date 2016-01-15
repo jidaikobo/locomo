@@ -44,7 +44,7 @@
 <p>
 <?php
 	echo \Form::label('ユーザをドロップダウンから選択', 'usergroup');
-	echo \Form::select('group_list', 'none', \Model_Acl::get_usergroups());
+	echo \Form::select('group_list', 'none', \Model_Acl::get_usergroups(), array('class'=>'select_narrow_down', 'data-target-id'=>'form_user'));
 	echo \Form::select('user', 'none', \Model_Usr::get_users());
 ?>
 </p>
@@ -56,32 +56,3 @@
 </div>
 </fieldset>
 <?php echo \Form::close(); ?>
-
-<script>
-// ユーザグループによるユーザの絞り込み
-$("#form_group_list").change(function(event) {
-	get_group_user(event, $("#form_group_list").val(), "form_user");
-});
-
-var base_uri = $('body').data('uri');
-function get_group_user(e, groupId, targetEle) {
-
-	var targetEle = targetEle;
-	var group_id = groupId;
-
-	$.ajax({
-		url: base_uri + 'usr/user_list.json',
-		type: 'post',
-		data: 'gid=' + group_id,
-		success: function(res) {
-			exists = JSON.parse(res);
-
-			document.getElementById(targetEle).options.length=0;
-
-			for(var i in exists) {
-				$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
-			}
-		}
-	});
-}
-</script>

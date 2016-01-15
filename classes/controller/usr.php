@@ -35,7 +35,11 @@ class Controller_Usr extends \Locomo\Controller_Base
 		// check item's creator_id
 		$pkid = \Request::main()->id;
 		$obj = \Model_Usr::find($pkid);
-		if ($obj)
+		if (
+			! \Auth::is_admin() &&
+			! in_array('\Controller_Usr/edit_other', \Auth::get('allowed')) &&
+			$obj
+		)
 		{
 			// actions
 			$actions = array(
@@ -43,7 +47,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 				'\Controller_Usr/edit',
 				'\Controller_Usr/reset_paswd'
 			);
-	
+
 			// modify \Auth::get('allowed')
 			\Auth::instance()->remove_allowed($actions);
 			if ($obj->id === \Auth::get('id'))
@@ -171,21 +175,24 @@ class Controller_Usr extends \Locomo\Controller_Base
 	 * @return users の配列
 	 */
 	public function post_user_list()
+//	public function action_user_list()
 	{
-		if (!\Input::is_ajax()) throw new \HttpNotFoundException;;
+		if ( ! \Input::is_ajax()) throw new \HttpNotFoundException;;
 		$where = array();
 
-		$gid = \Input::post("gid", 0);
+		$gid = \Input::post("gid", '');
+//		$gid = \Input::get("gid");
 
 		switch ($gid)
 		{
-			// guest users - return nothing
-			case 0:
-				$where = array(array('usergroup.id', '=', 0));
-				break;
 			// all logged in users
+			case '':
 			case -10:
 				$where = array();
+				break;
+			// guest users - return nothing
+			case 0:
+				$where = array(array('usergroup.id', 'is', null));
 				break;
 			// return users in group
 			default:
@@ -201,10 +208,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 				)
 			);
 		$result = array();
-		$index = 0;
 		foreach ($response as $row) {
-//			$row[0] = $index;
-			$index++;
 			$result[] = $row;
 		}
 		echo $this->response($result, 200); die();

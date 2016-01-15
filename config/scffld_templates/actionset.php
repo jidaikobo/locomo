@@ -55,7 +55,7 @@ class Actionset_XXX extends \Actionset
 	{
 		if (\Request::main()->action == 'edit' && $id)
 		{
-			$urls = array(array($controller.DS."sample_action/".$id, 'STR'));
+			$urls = array(array($controller."/sample_action/".$id, 'STR'));
 		}
 
 		$retvals = array(

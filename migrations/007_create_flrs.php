@@ -9,13 +9,14 @@ class Create_Flrs
 			'id'           => array('constraint' => 11,  'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'name'         => array('constraint' => 1024, 'type' => 'varchar'),
 			'explanation'  => array('type' => 'text'),
-			'path'         => array('constraint' => 1024, 'type' => 'varchar', 'unique' => true),
+			'path'         => array('type' => 'text', 'unique' => true),
 			'depth'        => array('constraint' => 5,   'type' => 'int'),
 			'is_visible'   => array('constraint' => 5,   'type' => 'int'),
 			'is_sticky'    => array('constraint' => 5,   'type' => 'int'),
 			'ext'          => array('constraint' => 10,  'type' => 'varchar'),
 			'mimetype'     => array('constraint' => 20,  'type' => 'varchar'),
-			'genre'        => array('constraint' => "'dir', 'file', 'txt', 'image', 'audio', 'movie', 'braille', 'doc', 'xls', 'ppt', 'pdf', 'compressed'",  'type' => "enum"),
+//			'genre'        => array('constraint' => "'dir', 'file', 'txt', 'image', 'audio', 'movie', 'braille', 'doc', 'xls', 'ppt', 'pdf', 'compressed'",  'type' => "enum"),
+			'genre'        => array('constraint' => 20,  'type' => 'varchar'),
 			'deleted_at'   => array('type' => 'datetime', 'null' => true),
 			'created_at'   => array('type' => 'datetime', 'null' => true),
 			'expired_at'   => array('type' => 'datetime', 'null' => true),
@@ -23,7 +24,7 @@ class Create_Flrs
 			'creator_id'   => array('constraint' => 5, 'type' => 'int'),
 			'updater_id'   => array('constraint' => 5, 'type' => 'int'),
 		), array('id'));
-		\DBUtil::create_index('lcm_flrs', array('path'), 'flrs_path');
+		\DBUtil::create_index('lcm_flrs', \DB::expr('path(1023)'), 'flrs_path');
 	}
 
 	// create_table_permissions

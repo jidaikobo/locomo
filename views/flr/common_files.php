@@ -9,17 +9,17 @@
 	<tbody>
 	<?php foreach ($items as $item): ?>
 	<?php if (\Controller_Flr::check_auth($item->path)): ?>
-		<tr>
-			<td><div class="col_scrollable" style="min-width: 6em;">
+		<tr title="<?php echo $item->name.' (登録日:'.date('Y年n月j日G時i分', strtotime($item->created_at)).')' ?>" tabindex="-1">
+			<th><div class="col_scrollable" style="min-width: 12em;">
 			<?php
 				if ($item->genre == 'dir'):
-					echo Html::anchor('flr/index_files'.DS.$item->id, $item->name, array('class' => 'icon dir'));
+					echo Html::anchor('flr/index_files'.DS.$item->id, '<span class="skip">'.$item->genre.' </span>'.$item->name, array('class' => 'icon dir'));
 				else:
-					echo Html::anchor('flr/file/dl/?dl=1&p='.\Model_Flr::enc_url($item->path, true), $item->name, array('class' => 'icon '.$item->genre));
+					echo Html::anchor('flr/file/dl/?dl=1&p='.\Model_Flr::enc_url($item->path, true), '<span class="skip">'.$item->genre.' </span>'.$item->name, array('class' => 'icon '.$item->genre));
 				endif;
 			?>
-			</div></td>
-			<td><div class="col_scrollable" style="min-width: 6em;"><?php echo $item->explanation; ?></div></td>
+			</div></th>
+			<td><div class="col_scrollable"><?php echo $item->explanation; ?></div></td>
 		</tr>
 	<?php endif; ?>
 	<?php endforeach; ?>

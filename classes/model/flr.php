@@ -23,10 +23,16 @@ class Model_Flr extends \Model_Base
 	protected static $_properties = array(
 		'id',
 		'name' => array(
-			'label' => 'ディレクトリ名',
-			'form' => array('type' => 'text', 'size' => 20, 'class' => 'text'),
+			'label' => '名称',
+			'form' => array(
+				'type' => 'textarea',
+				'class' => 'textarea',
+				'style' => 'height:3.5em;',
+				'description' => '半角英数文字、全角文字などで構成してください。改行コードやスラッシュは禁止されています。'
+			),
 			'validation' => array(
 				'required',
+				'match_pattern' => array("/^[一-龠ぁ-んァ-ヴa-zA-Z0-9０-９・.ー_ 　-]+$/u"),
 				'max_length' => array(255),
 			),
 		),
@@ -141,7 +147,8 @@ class Model_Flr extends \Model_Base
 
 		// modify path
 		// パスの確定
-		if ( ! $this->path && \Input::post('parent'))
+//		if ( ! $this->path && \Input::post('parent'))
+		if (\Input::post('parent'))
 		{
 			// action_create_dir
 			$this->path = \Input::post('parent', DS).\Input::post('name');
@@ -155,13 +162,13 @@ class Model_Flr extends \Model_Base
 
 		// modify name - currently directory only
 		// 名称変更。今のところディレクトリのみ
-		if ($this->genre == 'dir'){
+		if ($this->genre == 'dir' && $this->path != '/'){
 			$old_name = \Arr::get($this->_original, 'name', $this->name);
 			$new_name = \Input::post('name', $this->name);
 			 // rename flag to use at _event_after_update
 			if ($old_name != $new_name)
 			{
-				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).DS.$new_name).DS;
+				$this->path = static::enc_url(dirname(rtrim($this->path,DS)).$new_name).DS;
 				$this->name = $new_name;
 				$fullpath = LOCOMOFLRUPLOADPATH.$this->path;
 			}
@@ -176,86 +183,22 @@ class Model_Flr extends \Model_Base
 
 		// modify fileinfo
 		// 拡張子やmimetypeを修正
-		if ($this->genre != 'dir')
-		{
-			$this->ext      = substr($this->name, strrpos($this->name, '.') + 1) ;
-			$this->mimetype = \File::file_info($fullpath)['mimetype'] ;
-			$this->genre    = \Locomo\File::get_file_genre($this->name);
-		}
-
-		// permission
-		// ディレクトリパーミッションの修正
 		if ($this->genre == 'dir')
 		{
-			// to solve contradiction compare permission between parent and current dir.
-			// パーミッションの矛盾を直情の親を見て解決。親以下にする。
-			if ($this->path != '/') // not for root dir.
+			$this->ext = '';
+			$this->mimetype = '';
+		}
+		else
+		{
+			$this->ext = strtolower(substr($this->name, strrpos($this->name, '.') + 1));
+			try
 			{
-				$p_obj = static::get_parent($this);
-	
-				// usergroup
-				$parent_g  = static::get_relation_as_array($p_obj, 'usergroup');
-				$parent_g  = static::transform_permission_to_intersect_arr($parent_g, 'usergroup');
-				$current_g = static::get_relation_as_array($this, 'usergroup');
-				$current_g = static::transform_permission_to_intersect_arr($current_g, 'usergroup');
-				$group_intersects = array_intersect($parent_g, $current_g);
-				$parent_g = array_unique($parent_g);
-				$group_intersects = array_unique($group_intersects);
-	
-				// user
-				$parent_u  = static::get_relation_as_array($p_obj, 'user');
-				$parent_u  = static::transform_permission_to_intersect_arr($parent_u, 'user');
-				$current_u = static::get_relation_as_array($this, 'user');
-				$current_u = static::transform_permission_to_intersect_arr($current_u, 'user');
-				$user_intersects = array_intersect($parent_u, $current_u);
-				$parent_u = array_unique($parent_u);
-				$user_intersects = array_unique($user_intersects);
-
-				// initialize permission - overhead but for test purpose, it must be place here
-				// データベースを初期化。
-				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
-				unset($this->permission_usergroup);
-				unset($this->permission_user);
-
-				// update permissions - group
-				if ( ! $current_g)
-				{
-					// default permission is same as parent permission
-					// 現在のパーミッションが空だったら親のパーミッションと同じにする
-					static::update_permission_by_intersects($this, $parent_g, 'usergroup');
-				} else {
-					// update permission by intersects
-					// 現在のパーミッションを親以下にする
-					static::update_permission_by_intersects($this, $group_intersects, 'usergroup');
-				}
-
-				// update permissions - user
-				if ( ! $current_u)
-				{
-					static::update_permission_by_intersects($this, $parent_u, 'user');
-				} else {
-					static::update_permission_by_intersects($this, $user_intersects, 'user');
-				}
+				$this->mimetype = \File::file_info($fullpath)['mimetype'];
+			} catch (\Fuel\Core\InvalidPathException $e) {
+				$this->mimetype = 'unknown' ;
 			}
-	
-			// tidy up order of permissions at root dir
-			if ($this->path == '/')
-			{
-				// preserve and sort
-				$usergroup = static::get_relation_as_array($this, 'usergroup');
-				$user = static::get_relation_as_array($this, 'user');
-	
-				// initialize permission - overhead but for test purpose, it must be place here
-				\DB::delete(\Model_Flr_Usergroup::table())->where('flr_id', $this->id)->execute();
-				unset($this->permission_usergroup);
-				unset($this->permission_user);
-	
-				// update permissions
-				static::update_permission($this, $usergroup, 'usergroup');
-				static::update_permission($this, $user, 'user');
-			}
-		} // is_dir until here.
-
+			$this->genre = \Locomo\File::get_file_genre($this->name);
+		}
 	}
 
 	/**
@@ -267,20 +210,6 @@ class Model_Flr extends \Model_Base
 		// Controller_Flr::sync() doesn't have \Input::post() but Controller_Flr::sync() already define $this->path
 		$this->path = $this->path ?: \Input::post('parent').\Input::post('name');
 		$this->save();
-	}
-
-	/**
-	 * _event_after_update()
-	 * it calls static::embed_hidden_info().
-	 * static::embed_hidden_info() は、確実にデータベースをアップデートしたあとに呼びたいので、ここに設置する。しかし、関係テーブルしかアップデートしないaction_permission_dir()は、これを呼び出さないので、処理のためだけにaction_permission_dir()でupdated_atフィールドを改変しているが、要検討。
-	*/
-	public function _event_after_update()
-	{
-		// prevent loop at inside of this observer
-		$this->disable_event('after_update');
-
-		// embed hidden file
-		static::embed_hidden_info($this);
 	}
 
 	/**
@@ -298,7 +227,6 @@ class Model_Flr extends \Model_Base
 
 	/**
 	 * enc_url()
-	 * 
 	*/
 	public static function enc_url($path, $enc_slash = false)
 	{
@@ -370,23 +298,6 @@ class Model_Flr extends \Model_Base
 	}
 
 	/**
-	 * transform_permission_to_intersect_arr()
-	*/
-	public static function transform_permission_to_intersect_arr($permissions, $relation)
-	{
-		$tmps = array();
-		foreach ($permissions as $v)
-		{
-			$v['access_level'] = @$v['access_level'] ?: 1;
-			for ($n = 1; $n <= $v['access_level']; $n++)
-			{
-				$tmps[] = $v[$relation.'_id'].DS.$n;
-			}
-		}
-		return $tmps;
-	}
-
-	/**
 	 * get_parent()
 	 */
 	public static function get_parent($obj)
@@ -400,7 +311,7 @@ class Model_Flr extends \Model_Base
 				array('path', '=', $p_path),
 			),
 		);
-		return static::find('first');
+		return static::find('first', $option);
 	}
 
 	/**
@@ -410,107 +321,101 @@ class Model_Flr extends \Model_Base
 	{
 		if ( ! $obj instanceof Model_Flr) return array();
 
-		// current children
-		$option = array(
-			'where' => array(
-				array('path', 'like', $obj->path.'%'),
+		$path = str_replace('%', '\%', $obj->path);
+
+		// admin/root user condition
+		if (\Auth::is_admin())
+		{
+			$or_conditions = array(
+				array('genre', '=', 'dir'),
+				array('path', 'like', $path.'%'),
 				array('depth', '=', $obj->depth + 1),
 				array('id', '<>', $obj->id),
+			);
+		}
+		elseif($obj->path == '/')
+		{
+			$or_conditions = array(
+				array('genre', '=', 'dir'),
+				array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+				array('permission_usergroup.access_level', '>=', 1),
+				array('path', 'like', $path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+				'or' => array(
+					array('genre', '=', 'dir'),
+					array('permission_user.user_id', 'in', \Auth::get_groups()),
+					array('permission_user.access_level', '>=', 1),
+					array('path', 'like', $path.'%'),
+					array('depth', '=', $obj->depth + 1),
+					array('id', '<>', $obj->id),
+				),
+			);
+		}
+		else
+		{
+			// ルートディレクトリ以外では、最上層ディレクトリのアクセス権を対象とするため、一旦取得したのちにあとでハツる
+			$or_conditions = array(
+				array('genre', '=', 'dir'),
+				array('path', 'like', $path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+			);
+		}
+
+		// current children
+		$option = array(
+			'related' => array('permission_usergroup', 'permission_user'),
+			'where' => array(
+				array('genre', '<>', 'dir'),
+				array('path', 'like', $path.'%'),
+				array('depth', '=', $obj->depth + 1),
+				array('id', '<>', $obj->id),
+				'or' => $or_conditions,
 			),
 			'order_by' => array(
-				'genre' => 'ASC',
+				'ext' => 'ASC',
+				'name' => 'ASC',
 				'created_at' => 'DESC'
 			),
 		);
-		return static::find('all', $option);
+
+		$objs = static::find('all', $option);
+
+		foreach ($objs as $k => $obj)
+		{
+			if ( ! \Controller_Flr::check_auth($obj->path))
+			{
+				unset($obj[$k]);
+			}
+		}
+
+		return $objs;
 	}
 
 	/**
-	 * embed_hidden_info()
+	 * get_permission_dir()
+	 * ファイラのパーミッション判定対象はルートディレクトリと最上層ディレクトリ
 	 */
-	public static function embed_hidden_info($obj)
+	public static function get_permission_dir($path)
 	{
-		// current
-		if ( ! $obj) return false;
-		$current = static::fetch_hidden_info(LOCOMOFLRUPLOADPATH.$obj->path);
+		$paths = explode('/', $path);
 
-		// target
-		$path = LOCOMOFLRUPLOADPATH.$obj->path;
-		$target = is_dir($path) ? rtrim($path, DS).DS : dirname($path).DS ;
-
-		// get myself and children
-		$vals = Model_Flr::find('all', array('where' => array(array('path', 'like', $obj->path.'%'))));
-
-		// update myself and children 
-		if ($vals)
+		// root dir
+		if (count($paths) == 2)
 		{
-			foreach ($vals as $val)
-			{
-				if ( ! is_object($val)) continue;
-				$key = md5($val->path); // to save dot and ext.
-
-				// var_export() to use Model's __to_string() and eval() it
-				eval('$data = '.var_export($val->_data, true).';');
-				\Arr::set($current, $key.'.data'     , $data);
-
-				// relations
-				$usergroups = static::get_relation_as_array($val, 'usergroup');
-				\Arr::set($current, $key.'.permission_usergroup', $usergroups);
-				$users = static::get_relation_as_array($val, 'user');
-				\Arr::set($current, $key.'.permission_user', $users);
-			}
+			$path = '/';
 		}
-
-		// tidy up current
-		foreach ($current as $k => $v)
+		// deep dir
+		elseif (count($paths) > 2)
 		{
-			if( ! file_exists(LOCOMOFLRUPLOADPATH.\Arr::get($v, 'data.path')))
-			{
-				unset($current[$k]);
-			}
+			$path = '/'.$paths[1].'/';
 		}
-
-		// put 
-		if (file_exists($target.'.LOCOMO_DIR_INFO'))
+		// invalid path
+		else
 		{
-			\File::delete($target.'.LOCOMO_DIR_INFO');
+			return false;
 		}
-
-		$permissions = File::get_permissions($target);
-		if ($permissions !== '0777')
-		{
-			try
-			{
-				chmod($target, 0777);
-			} catch (\Fuel\Core\PhpErrorException $e) {
-				// do nothing
-			}
-		}
-
-		try
-		{
-			\File::create($target, '.LOCOMO_DIR_INFO', serialize($current));
-		} catch (\Fuel\Core\InvalidPathException $e) {
-			// do nothing
-			\Session::set_flash('error', array('同期用の補助情報の保存に失敗しています。サーバ管理者にディレクトリのパーミッションを調整するように打診してください。'));
-		}
-	}
-
-	/**
-	 * fetch_hidden_info()
-	 */
-	public static function fetch_hidden_info($path)
-	{
-		$target = is_dir($path) ? $path.'.LOCOMO_DIR_INFO' : dirname($path).DS.'.LOCOMO_DIR_INFO' ;
-		if ( ! file_exists($target)) return array();
-		$content = \File::read($target, $as_string = true);
-
-		try
-		{
-			$retval = unserialize($content) ?: array();
-		} catch (Exception $e) {
-			$retval = array();
-		}
-		return $retval;
+		return $path;
 	}
 }

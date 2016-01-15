@@ -97,6 +97,13 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// current dir
 		$current_obj = \Model_Flr::find($id);
 
+		// check_auth()
+		if ($current_obj && ! static::check_auth($current_obj->path))
+		{
+			\Session::set_flash('error', "アクセス権のないディレクトリです。");
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		// show current dir items. when search ingnore this.
 		// 現在のディレクトリを表示。
 		// 検索の場合でもいちおうディレクトリ整合性確認のため走るが、結果は無視する。
@@ -126,9 +133,12 @@ class Controller_Flr extends \Locomo\Controller_Base
 		{
 			if (Controller_Flr_Sync::sync())
 			{
-				\Session::set_flash('success', "データベースとファイルの状況に矛盾が見つかったので、強制同期をかけました。");
+				if (\Auth::is_root())
+				{
+					\Session::set_flash('success', "データベースとファイルの状況に矛盾が見つかったので、強制同期をかけました。");
+				}
 			} else {
-				\Session::set_flash('error', "データベースとファイルの矛盾解消のため、強制同期をかけましたが失敗しました。矛盾は解消されていません。物理ファイルの状況を確認してください。");
+				\Session::set_flash('error', "データベースとファイルの矛盾解消のため、強制同期をかけましたが失敗しました。矛盾は解消されていません。システム管理者に問い合わせてください。");
 			}
 			\Response::redirect(static::$main_url);
 		}
@@ -137,39 +147,131 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// 検索の場合
 		if (\Input::get('submit'))
 		{
-			// free word search
-			$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
-			if ($all)
+			$objs = array();
+
+			// アクセス権のあるディレクトリを取得
+
+			// rootで全部検索するようにする
+			if (\Auth::is_admin())
 			{
-				\Model_Flr::$_options['where'][] = array(
-					array('name', 'LIKE', $all),
-					'or' => array(
-						array('explanation', 'LIKE', $all),
-						'or' => array(
-							array('path', 'LIKE', $all), 
-						)
-					) 
-				);
-				\Model_Flr::$_options['order_by'] = array(
-					'genre'      => 'asc',
-					'created_at' => 'desc'
+				$options = array();
+			}
+			else
+			{
+				$options = array(
+					'related' => array('permission_usergroup'),
+					'where' => array(
+						array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+						array('permission_usergroup.access_level', '>', 1),
+					),
 				);
 			}
+			$dirs = \Model_Flr::find('all', $options) ;
 
-			// eliminate root dir
-			\Model_Flr::$_options['where'][] = array('depth', '!=', '0');
+			// 検索キーワード
+			$all = strlen(\Input::get('all')) ? '%'.\Input::get('all').'%' : '' ;
 
-			// span
-			if (\Input::get('from')) \Model_Flr::$_options['where'][] = array('created_at', '>=', \Input::get('from'));
-			if (\Input::get('to'))   \Model_Flr::$_options['where'][] = array('created_at', '<=', \Input::get('to'));
+			// root ディレクトリ直下のファイルを対象とする
+			$dirs[] = (object) array(
+				'path' => '/',
+			);
 
-			// set_paginated_options
-			\Model_Flr::set_paginated_options();
-			$objs = \Model_Flr::find('all', \Model_Flr::$_options) ;
+			// ディレクトリをループ
+			foreach ($dirs as $k => $dir)
+			{
+				$options = array();
+
+				// rootディレクトリそのものは対象外とする
+				$options['where'][] = array('depth', '!=', '0');
+
+				// フリーワード検索
+				if ($all)
+				{
+					$options['related'] = array('permission_usergroup');
+					$options['where'][] = array(
+						array('name', 'LIKE', $all),
+						array('genre', '<>', 'dir'),
+						'or' => array(
+							array('explanation', 'LIKE', $all),
+							array('genre', '<>', 'dir'),
+							'or' => array(
+								array('name', 'LIKE', $all),
+								array('genre', '=', 'dir'),
+								array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+								array('permission_usergroup.access_level', '>=', 1),
+								'or' => array(
+									array('explanation', 'LIKE', $all),
+									array('genre', '=', 'dir'),
+									array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+									array('permission_usergroup.access_level', '>=', 1),
+								)
+							),
+						),
+					);
+				}
+				else
+				{
+					// 検索キーワードがない場合でも、権限のないディレクトリをハツるようにする
+					$options['related'] = array('permission_usergroup');
+					$options['where'][] = array(
+						array(
+							array('genre', '=', 'dir'),
+							array('permission_usergroup.usergroup_id', 'in', \Auth::get_groups()),
+							array('permission_usergroup.access_level', '>', 1),
+						),
+						'or' => array(
+							array('genre', '<>', 'dir'),
+						)
+					);
+				}
+
+				// path
+				if (count(explode('/', $dir->path)) == 2)
+				{
+					// ルートディレクトリを検索するときには、深さで見る
+					$options['where'][] = array('depth', 1);
+				} else {
+					// ルートディレクトリ以外を検索する場合は、前方一致でディレクトリ名を確認する
+					$path = str_replace('%', '\%', $dir->path);
+					$options['where'][] = array('path', 'like', $path.'%');
+				}
+
+				// span
+				if (\Input::get('from')) $options['where'][] = array('created_at', '>=', \Input::get('from').' 0:0:0');
+				if (\Input::get('to'))   $options['where'][] = array('created_at', '<=', \Input::get('to').' 23:59:59');
+
+				// 取得
+				$objs = \Arr::merge($objs, \Model_Flr::find('all', $options)) ;
+			}
+			// order by
+/*
+			\Model_Flr::$_options['order_by'] = array(
+				'genre'      => 'asc',
+				'created_at' => 'desc'
+			);
+*/
+
+			// 重複する検索結果をはつる
+			$exists = array();
+			foreach ($objs as $k => $obj)
+			{
+				if (in_array($obj->id, $exists)) unset($objs[$k]);
+				$exists[] = $obj->id;
+			}
+
+			$objs = \Arr::multisort($objs, array('ext' => SORT_ASC, 'created_at' => SORT_DESC));
 		}
 
-		// count
-		\Pagination::$refined_items = count($objs);
+		// count - Flrはページネーションをしないので、refinedやper_pageは、常に最大値を取る
+		$cnt = count($objs);
+		\Pagination::$refined_items = $cnt;
+		\Pagination::set('total_items', $cnt);
+		\Pagination::set('per_page', $cnt);
+
+		if ( ! $objs)
+		{
+			\Session::set_flash('message', 'ファイルおよびディレクトリが存在しません。');
+		}
 
 		// view
 		$content = \Presenter::forge('flr/index/files');
@@ -229,6 +331,7 @@ class Controller_Flr extends \Locomo\Controller_Base
 			'where' => array(
 				array('is_sticky', 1),
 				array('genre', 'image'),
+				array('ext', 'in', array('gif','jpg','jpeg','png','bmp')),
 			),
 		);
 		$objs = \Model_Flr::find('all', $option);
@@ -277,6 +380,11 @@ class Controller_Flr extends \Locomo\Controller_Base
 	 */
 	public static function check_auth($path, $level = 'read')
 	{
+/*
+		// ルートディレクトリはアクセスはできる
+		$paths = explode('/', $path);
+		if ($level == 'read' && count($paths) == 2) return true;
+*/
 		// rights
 		$rights = array(
 		 'read'       => 1,
@@ -293,10 +401,26 @@ class Controller_Flr extends \Locomo\Controller_Base
 		// always true
 		if (in_array('-1', $usergroups) || in_array('-2', $usergroups) ) return true;
 
-		// when file, check parent dir
-		$fullpath = LOCOMOFLRUPLOADPATH.$path;
-		$path = is_dir($fullpath) ? $path : rtrim(dirname($path),DS).DS;
+		// check first level and root dir
+		$paths = explode('/', $path);
+
+		// root dir
+		if (count($paths) == 2)
+		{
+			$path = '/';
+		}
+		// deep dir
+		elseif (count($paths) > 2)
+		{
+			$path = '/'.$paths[1].'/';
+		}
+		// invalid path
+		else
+		{
+			return false;
+		}
 		$obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
+
 		if ( ! $obj) return false;
 
 		// check usergroups

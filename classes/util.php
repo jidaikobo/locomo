@@ -70,11 +70,12 @@ class Util
 
 			// classディレクトリを走査し、$locomoのメンバ変数を持っているコントローラを洗い出す
 			$paths = array_merge(
-				\Inflector::dir_to_ctrl(APPPATH.'classes/controller'),
-				\Inflector::dir_to_ctrl(LOCOMOPATH.'classes/controller')
+				\Inflector::dir_to_ctrl(APPPATH.'classes'.DS.'controller'),
+				\Inflector::dir_to_ctrl(LOCOMOPATH.'classes'.DS.'controller')
 			);
 
-			foreach(array_keys($paths) as $ctrl):
+			foreach(array_keys($paths) as $ctrl)
+			{
 				if (strpos($ctrl, 'Controller_Traits_') !== false) continue;
 				if ( ! property_exists($ctrl, 'locomo')) continue;
 				$retvals[$ctrl]['is_module'] = false;
@@ -87,7 +88,7 @@ class Util
 				$retvals[$ctrl]['no_acl'] = \Arr::get($ctrl::$locomo, 'no_acl', false) ;
 				$retvals[$ctrl]['widgets'] = \Arr::get($ctrl::$locomo, 'widgets') ;
 				$retvals[$ctrl]['order'] = \Arr::get($ctrl::$locomo, 'order', 100) ;
-			endforeach;
+			}
 
 			// order
 			$retvals = \Arr::multisort($retvals, array('order' => SORT_ASC,));
@@ -276,6 +277,28 @@ class Util
 			return static::get_locomo($parent, $property, $default);
 		}
 		return \Arr::get($locomos, $property, $default);
+	}
+
+	/**
+	 * uniform_locomopath
+	 * [\Namespace]\Controller_Name/actionの形式を整える。Windows環境では、DSが、バックスラッシュになっているため、actionsetのdependenciesをDSを使って定義していると、locomoパスの一意性が失われてしまう。これを防止するため、locomoパスのアクション名の前をスラッシュに整える。
+	 * at Windows environment, DS means backslash. this cause break uniqueness of locomo-path. so unity style of locomo-path.
+	 * @return string
+	 */
+	public static function uniform_locomopath($str = '')
+	{
+		$last_backslash_pos = strrpos($str, '\\');
+
+		// Locomoパスは、必ずスラッシュの後にアクションを伴うので、最後に出現するバックスラッシュが先頭の場合は、正しいLocomoパスか、たいへん不正な値かのどちらかなので、とりあえずそのまま返す。
+		if ($last_backslash_pos === 0 || $last_backslash_pos == false) return $str;
+
+		$slash_pos = strpos($str, '/');
+		// スラッシュが存在する場合は、問題がないので、そのまま返す。
+		if ($slash_pos !== false) return $str;
+
+		// バックスラッシュが先頭以外に存在し、かつスラッシュがない場合、最後のバックスラッシュはスラッシュに変換する
+		$str[$last_backslash_pos] = '/';
+		return $str;
 	}
 
 	/**

@@ -1,10 +1,15 @@
-
 <?php if (isset($detail_pop_data->title_text)) { ?>
 <div id="pop<?php print $detail_pop_data->scdlid.$detail_pop_data->target_year.$detail_pop_data->target_mon.$detail_pop_data->target_day; ?>" aria-hidden="true">
 <table class="tbl2">
 	<thead>
 	<tr>
 		<th style="text-align: left;" colspan="2">
+		<?php
+			//外部表示(施設予約)
+			if(\Request::active()->controller !== "\Controller_Scdl"):
+				echo $detail_pop_data['public_display']==2 ? '<span class="text_icon reserve public"><span class="skip">外部表示</span></span>' : '';
+			endif;
+		 ?>
 			<?php print $detail_pop_data->title_text; ?>
 		</th>
 	</tr>
@@ -13,7 +18,6 @@
 	<tr>
 		<th>
 			<?php
-
 			// 指定なし
 			print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
 			?>
@@ -22,7 +26,7 @@
 	<?php if (!$detail_pop_data->private_kb) { ?>
 	<tr>
 		<th class="min">
-			メッセージ：</th><td><?php print preg_replace("/(\r\n|\r|\n)/", "<br />", (mb_substr($detail_pop_data->message, 0, 20))); ?>
+			メッセージ：</th><td><?php print preg_replace("/(\r\n|\r|\n)/", "<br />", $detail_pop_data->message); ?>
 		</td>
 	</tr>
 	<?php } ?>
@@ -35,7 +39,7 @@
 		foreach ($detail_pop_data->user as $row) {
 			$members[] .= $row['display_name'];
 		}
-		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>'; 
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $members).'</span>';
 		?>
 	</td>
 	</tr>
@@ -47,19 +51,22 @@
 	<td>
 		<?php $buildings = [];
 		foreach ($detail_pop_data->building as $row) {
-			$buildings[] .= $row['item_name'];
+			$buildings[$row->item_id] = $row['item_name'];
 		}
-		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>'; 
+		ksort($buildings);
+		echo '<span style="inline-block">'.implode(',</span> <span  style="display: inline-block">', $buildings).'</span>';
 		?>
-		
+
 	</td>
 	</tr>
 	<?php } ?>
 	<?php if (!$detail_pop_data->private_kb) { ?>
 	<tr>
+<?php /* ?>
 		<th>
 			予定の種類：</th><td><?php print $detail_pop_data->title_kb; ?>
 		</td>
+<?php */ ?>
 	</tr>
 	<?php if ($detail_pop_data->kind_flg == 2) { ?>
 	<tr>
@@ -86,6 +93,3 @@
 
 </div>
 <?php } ?>
-
-
-

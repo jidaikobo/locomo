@@ -24,7 +24,7 @@ Locomoパッケージ（以下locomo）では、モジュールやコントロ�
 
 [\Namespace]\Controller_Name/action
 
-完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。定数のLOCOMOPATHは、package/locomoの物理パスを指します。
+完全なコントローラのクラス名のあとにスラッシュでアクション名を書きます。ぜったいにスラッシュです。くれぐれもDS（Directory Separator）を使わないようにしてください。これを「locomoパス（locomo-path）」と呼称します。定数のLOCOMOPATHとは異なりますので、注意してください。定数のLOCOMOPATHは、package/locomoの物理パスを指します。
 
 // $locomo
 
@@ -71,6 +71,10 @@ return array(
 );
 +-------------------------------quote end+
 
+// config
+
+モジュールの場合は、モジュールディレクトリのconfigのなか、モジュールでない場合は、APPPATH.configにあるコントローラ名と同名のconfigを参照します。
+
 // actionset - overview
 
 アクションセットは、ユーザインタフェイスの提供とアクセス権管理の設定用クラスです。
@@ -112,11 +116,6 @@ return array(
 // actionset - acl
 
 アクションセットで設定されているdependenciesは、アクションセットのリンクを表示する上で必要なアクションです。ここにはlocomo-pathの文字列を配列で渡します。ここで設定したものがlocomoのaclの画面に表示され、管理の対象になります。
-
-// config
-
-configにnicenameとmain_controllerを設定してください。nicenameは人間用にコントローラ（モジュール）名を読みやすくしたもの。main_controllerは、これを使って、モジュールの代表画面を設定します。
-モジュールの場合は、モジュールディレクトリのconfigのなか、モジュールでない場合は、APPPATH.configにあるコントローラ名と同名のconfigを参照します。
 
 // template override
 
@@ -301,3 +300,15 @@ Authをoverrideしたいときに参考になるのは、\Locomo\Controller_Usr:
 原理的には、before()で、Authの判定材料である\Auth::get('allowed')の値をあらかじめ改変しておくという手法をとります。
 
 \Auth::has_access()には、locomo_has_accessというEventもあり、こちらも利用できますが、controllerのなかで処理が完結するような場合は、before()で十分間に合うと思われます。
+
+// pagination
+
+ページネーションをgetで行いたい時には、app/config/pagination.phpに以下を記述すること。
+
+start_______________________
+<?php
+return array(
+	'uri_segment' => 'paged',
+	'active' => '<span class="active">{link}</span>',
+);
+_________________________end

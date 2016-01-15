@@ -20,14 +20,14 @@ class Controller_Flr_File extends Controller_Flr
 		if ( ! $obj)
 		{
 			\Session::set_flash('error', "ディレクトリが見つかりませんでした");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'upload'))
 		{
 			\Session::set_flash('error', "ディレクトリに対するアップロード権限がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// upload
@@ -57,7 +57,7 @@ class Controller_Flr_File extends Controller_Flr
 						$errors[] = $v['message'];
 					}
 					\Session::set_flash('error', $errors);
-					\Response::redirect(\Uri::create('flr/file/view/'.$obj->id));
+					\Response::redirect(\Uri::create('flr/index_files/'.$obj->id));
 				}
 
 				// upload succeed
@@ -68,7 +68,7 @@ class Controller_Flr_File extends Controller_Flr
 					$obj_file->name        = urldecode($name);
 					$obj_file->path        = $obj->path.$name;
 					$obj_file->is_sticky   = \Input::post('is_sticky');
-					$obj_file->ext         = substr($name, strrpos($name, '.') + 1);
+					$obj_file->ext         = strtolower(substr($name, strrpos($name, '.') + 1));
 					$obj_file->genre       = \Locomo\File::get_file_genre($name);
 					$obj_file->is_visible  = \Input::post('is_visible', 1);
 					$obj_file->explanation = \Input::post('explanation');
@@ -115,17 +115,17 @@ class Controller_Flr_File extends Controller_Flr
 		$obj = \Model_Flr::find($id);
 
 		// existence
-		if ( ! $obj)
+		if ( ! $obj || $obj->genre == 'dir')
 		{
-			\Session::set_flash('error', "ファイル／ディレクトリが見つかりませんでした");
-			\Response::redirect(static::$main_url);
+			\Session::set_flash('error', "ファイルが見つかりませんでした");
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'read'))
 		{
 			\Session::set_flash('error', "ファイル閲覧の権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// set_object
@@ -136,6 +136,7 @@ class Controller_Flr_File extends Controller_Flr
 
 		// view
 		$content->set_safe('plain', $content::plain($obj));
+		$content->set_safe('file_info', \File::file_info(LOCOMOFLRUPLOADPATH.$obj->path));
 		$content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
 		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', 'ファイル詳細');
@@ -146,6 +147,22 @@ class Controller_Flr_File extends Controller_Flr
 	 */
 	public function action_edit($id = null)
 	{
+		$obj = \Model_Flr::find($id);
+
+		// existence
+		if ( ! $obj || $obj->genre == 'dir')
+		{
+			\Session::set_flash('error', "ファイルが見つかりませんでした");
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
+		}
+
+		// check_auth
+		if ( ! static::check_auth($obj->path, 'read'))
+		{
+			\Session::set_flash('error', "ファイル編集の権利がありません。");
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
+		}
+
 		$this->model_name = '\\Model_Flr';
 		$obj = parent::edit($id);
 		$obj = $obj ? $obj : \Model_Flr::find($id);
@@ -161,17 +178,17 @@ class Controller_Flr_File extends Controller_Flr
 		$obj = \Model_Flr::find($id);
 
 		// existence
-		if ( ! $obj)
+		if ( ! $obj || $obj->genre == 'dir')
 		{
 			\Session::set_flash('error', "ファイルが見つかりませんでした。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'upload'))
 		{
 			\Session::set_flash('error', "ファイルを削除する権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// purge
@@ -237,7 +254,7 @@ class Controller_Flr_File extends Controller_Flr
 		// 404
 		$page = \Request::forge('sys/404')->execute();
 		$this->template->set_safe('content', $page);
-		if ( ! $obj)
+		if ( ! $obj || $obj->genre == 'dir')
 		{
 			return new \Response($page, 404);
 		}

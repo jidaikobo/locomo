@@ -49,6 +49,7 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		\Fuel::$profiling = \Fuel::$env == 'development' ?: false ;
 		\Fuel::$profiling = \Input::get('no_prof') ? false : \Fuel::$profiling ;
 		\Fuel::$profiling = \Locomo\Browser::getIEVersion() && \Locomo\Browser::getIEVersion() <= 8 ? false : \Fuel::$profiling;
+		\Fuel::$profiling = file_exists(APPPATH.'noprof') ? false : \Fuel::$profiling;
 
 		// hmvc
 		$this->_template = \Request::is_hmvc() ? 'widget' : $this->_template ;
@@ -80,11 +81,11 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		}
 		static::$config = static::$config ?: array();
 
-		// pagination_config
-		if (is_null($this->pagination_config))
+		// uri_segment
+		if (is_numeric(\Pagination::get('uri_segment')))
 		{
 			$suspicious_segment = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
-			\Pagination::set_config('uri_segment', $suspicious_segment);
+			\Pagination::set('uri_segment', $suspicious_segment);
 		}
 	}
 
@@ -170,10 +171,19 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 	 */
 	public static function auth()
 	{
+		// Do not use 'DS' instead of '/' for windows environment!!
 		$current_action = '\\'.\Request::active()->controller.'/'.\Request::active()->action;
 
 		// ordinary auth
 		$is_allow = \Auth::instance()->has_access($current_action);
+
+		// ログイン画面へのip制限
+		if (\Config::get('allowed_ip_access_admin') &&
+				$current_action == '\Controller_Auth/login' &&
+				$_SERVER['REMOTE_ADDR'] != \Config::get('allowed_ip_access_admin'))
+		{
+			return \Response::redirect('/');
+		}
 
 		// additional conditions
 		$conditions = \Arr::get(static::$config, 'conditioned_allowed', false);
@@ -295,4 +305,3 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// if ($name == 'template') return $this->template = \View::forge('default'); //var_dump($name); die();
 	}
 }
-

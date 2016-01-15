@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Flr_Dir_Permission extends \Presenter_Base
 {
 	/**
@@ -10,50 +11,19 @@ class Presenter_Flr_Dir_Permission extends \Presenter_Base
 
 		// hidden current name
 		$form->field('name')->set_type('hidden');
-		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'text', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
+//		$form->add_after('display_name', 'ディレクトリ名', array('type' => 'textarea', 'class' => 'textarea', 'style' => 'height: 3.5em', 'disabled' => 'disabled'),array(), 'name')->set_value(@$obj->name);
 
 		// delete is form
 		$form->delete('is_sticky');
 		$form->field('explanation')->set_type('hidden');
 
-		// message
-		\Session::set_flash('message', [
-			'親以上の権限は選択しても有効になりません。',
-			'親以上の権限を設定しようとすると、自動的に親以下の権限に調整されます。',
-			'親ディレクトリでユーザがいっさい指定されていなければ、ユーザの権限設定は表示されません。',
-		]);
-
-		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'display_name')->set_template('<div class="input_group">');
-		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'display_name')->set_template('</div>');
+		// opener
+		$form->add_before('div_opener', '', array('type' => 'text'),array(), 'name')->set_template('<div class="input_group">');
+		$form->add_after('div_closer', '', array('type' => 'text'),array(), 'name')->set_template('</div>');
 
 		// === usergroup_id ===
 		$options = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true), array('customgroup_uid', 'is', null))));
 		$options = array('-10' => 'ログインユーザすべて', '0' => 'ゲスト') + $options;
-
-		// ルートディレクトリであれば、上記で取得した全項目をoptionsとしてよい
-		if ($obj->path !== '/')
-		{
-			$parent = \Model_Flr::get_parent($obj);
-			$g_permissions = array();
-			foreach ($parent->permission_usergroup as $k => $v)
-			{
-				// logged in users - non object value
-				if ($v->usergroup_id === '-10')
-				{
-					$g_permissions[-10] = 'ログインユーザすべて';
-				}
-				// guest - non object value
-				elseif ($v->usergroup_id === '0')
-				{
-					$g_permissions[0] = 'ゲスト';
-				}
-				elseif (is_object($v->usrgrp))
-				{
-					$g_permissions[$v->usergroup_id] = $v->usrgrp->name;
-				}
-			}
-			$options = array_intersect($g_permissions, $options);
-		}
 
 		// $formset
 		$options = array(''=>'選択してください') + $options;
@@ -71,16 +41,6 @@ class Presenter_Flr_Dir_Permission extends \Presenter_Base
 
 		// === user_id ===
 		$options = \Model_Usr::find_options('display_name');
-		if ($obj->path !== '/')
-		{
-			$u_permissions = array();
-			foreach ($parent->permission_user as $k => $v)
-			{
-				if ( ! is_object($v->usr)) continue;
-				$g_permissions[$v->user_id] = $v->usr->display_name;
-			}
-			$options = array_intersect($u_permissions, $options);
-		}
 
 		// $formset
 		$options = array(''=>'選択してください') + $options;

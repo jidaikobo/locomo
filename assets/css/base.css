@@ -506,8 +506,7 @@ input[type="time"],
 input[type="datetime-local"],
 input[type="number"],
 textarea {
-	padding: 0 3px;
-	line-height: 1.5;
+	padding: 3px;
 	font-size: 110%;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -516,6 +515,9 @@ textarea {
 	box-sizing: border-box;
 	max-width: 100%;
 	vertical-align: middle;
+}
+testarea {
+	line-height: 1.5;
 }
 
 .btn,
@@ -604,7 +606,7 @@ form em.explanation {
 }
 
 .label_fb label:hover {
-	background-color: #e8e8e8;
+	background-color: #e3e3e3;
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -720,7 +722,7 @@ table.tbl th {
 }
 table.tbl thead th,
 table.tbl .thead th {
-	background-color: #eee;
+	background-color: #e0e0e0;
 	color: #111;
 	text-align: center;
 }
@@ -791,7 +793,7 @@ table.tbl2.even tbody tr:nth-child(even) td {
 }
 table.datatable th,
 table.datatable td{
-	border-bottom: 1px solid #f3f3f3;
+	border-bottom: 1px solid #e0e0e0;
 }
 table.tbl2 tbody tr:nth-child(odd),
 table.tbl2 tbody tr:nth-child(odd) th,
@@ -809,7 +811,7 @@ table.tbl2.odd tbody tr:nth-child(odd) td {
 table.tbl2.odd tbody tr:nth-child(even),
 table.tbl2.odd tbody tr:nth-child(even) th,
 table.tbl2.odd tbody tr:nth-child(even) td {
-	background: #f3f3f3;
+	background: #e0e0e0;
 }
 table.tbl2 th {
 	font-weight: normal;
@@ -979,7 +981,6 @@ table.list th,
 table.list td {
 	padding: 5px 3px 0 0;
 }
-
 table.list th {
 	white-space: nowrap;
 	vertical-align: top;
@@ -1052,7 +1053,7 @@ a.zip:before,    a.icon[href$=".zip"]:before    { content: url( '../img/icons/ic
 a.lzh:before,    a.icon[href$=".lzh"]:before    { content: url( '../img/icons/icon_lzh.gif' ); }
 a.txt:before,    a.icon[href$=".txt"]:before    { content: url( '../img/icons/icon_txt.gif' ); }
 a.tar_gz:before, a.icon[href$=".tar.gz"]:before { content: url( '../img/icons/icon_tgz.gif' ); }
-a.lock:after,    a.icon[href^="https:"]:before  { content: url( '../img/icons/lock.gif' ); }
+a.lock:after,   /* a.icon[href^="https:"]:before */ { content: url( '../img/icons/lock.gif' ); }
 a._blank:after,  a.icon[target="_blank"]:after  { content: url( '../img/icons/window.gif' ); }
 
 a.noicon:before,

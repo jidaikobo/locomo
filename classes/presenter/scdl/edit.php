@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Scdl_Edit extends \Presenter_Base
 {
 	/**
@@ -9,34 +10,46 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 	 *
 	 * @return  obj
 	 */
-	public static function form($factory = 'schedules', $obj = null)
+	public static function form($obj = null)
 	{
-		$form = parent::form($factory, $obj);
+		$form = parent::form($obj);
 
 //		$usergroups = \Model_Usrgrp::find_options('name', array('where' => array(array('is_available', true),array('is_for_acl', false))));
 		$usergroups = \Model_Usrgrp_Custom::find_options();
+
 		$form->field('group_detail')->set_options($usergroups);
 
-		$form->field('kind_flg')->set_value(\Model_Scdl::$_kind_flg);
+		$model = \Request::main()->controller == 'Controller_Scdl' ? '\Model_Scdl' : '\Reserve\Model_Reserve' ;
+		$form->field('kind_flg')->set_value($model::$_kind_flg);
 
 		// 作成者
 		// テンポラル対応
 		if (isset(\Model_Usr::properties()['pronunciation']))
 		{
-			$form->field('user_id')->set_options(Model_Usr::find_options('display_name', array('order_by' => 'pronunciation')));
+			$users = Model_Usr::find_options('display_name', array('order_by' => 'pronunciation'));
 		} else {
-			$form->field('user_id')->set_options(Model_Usr::find_options('display_name'));
+			$users = Model_Usr::find_options('display_name');
 		}
+		// 管理者を足す
+		if (\Auth::is_admin())
+		{
+			$users = array('-1' => '管理者') + $users;
+		}
+		if (\Auth::is_root())
+		{
+			$users = array('-2' => 'root管理者') + $users;
+		}
+		$form->field('user_id')->set_options($users);
 
 		//$form->field('user_id')->set_value(\Auth::get('id'));
 		$form->field('is_visible')->set_value(1);
 
 		// 初期値
-		if ($obj == null) {
+		if (\Request::main()->action == 'create') {
 			// 自分を選択する
 			$form->field('user_id')->set_value(\Auth::get('id'));
 			// 重要度
-			$form->field('title_importance_kb')->set_value("→中");
+//			$form->field('title_importance_kb')->set_value("→中");
 			if (\Input::get("ymd", "") == "") {
 				$form->field('start_date')->set_value(date('Y-m-d'));
 				$form->field('end_date')->set_value(date('Y-m-d'));
@@ -62,6 +75,6 @@ class Presenter_Scdl_Edit extends \Presenter_Base
 
 		return $form;
 	}
-	
-	
+
+
 }

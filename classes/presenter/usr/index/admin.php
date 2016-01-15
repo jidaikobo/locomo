@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Usr_Index_Admin extends \Presenter_Base
 {
 	/*

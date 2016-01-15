@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Usr_Edit extends \Presenter_Base
 {
 	/**
@@ -61,7 +62,10 @@ class Presenter_Usr_Edit extends \Presenter_Base
 			->add_rule('banned_string', $allnames);
 
 		// usernameの変更は管理者のみ可能
-		if ( ! \Auth::is_admin())
+		if (
+			! \Auth::is_admin() &&
+			\Request::main()->action != 'create'
+		)
 		{
 			$form->field('username')
 				->set_type('hidden');

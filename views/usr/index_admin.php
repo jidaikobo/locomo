@@ -1,5 +1,6 @@
-<?php if ($items): ?>
 <?php echo $search_form; ?>
+
+<?php if ($items): ?>
 
 <!--ページネーション-->
 <div class="index_toolbar clearfix">
@@ -7,7 +8,7 @@
 </div>
 
 <!--一覧-->
-<table class="tbl datatable tbl_scrollable lcm_focus" title="ユーザ一覧">
+<table class="tbl datatable tbl_scrollable lcm_focus" title="予定一覧">
 	<thead>
 		<tr>
 			<!--
@@ -47,9 +48,9 @@
 					if (\Auth::has_access('\Controller_Usr/view')):
 						echo Html::anchor('usr/view/'.$item->id, '<span class="skip">'.$item->display_name.'を</span>閲覧', array('class' => 'view'));
 					endif;
-					if (\Auth::has_access('\Controller_Usr/edit')):
+					// if (\Auth::has_access('\Controller_Usr/edit')):
 						echo Html::anchor('usr/edit/'.$item->id, '編集', array('class' => 'edit'));
-					endif;
+					// endif;
 					if (\Auth::has_access('\Controller_Usr/delete')):
 						if ($item->deleted_at):
 							echo Html::anchor('usr/undelete/'.$item->id, '復活', array('class' => 'undelete confirm'));

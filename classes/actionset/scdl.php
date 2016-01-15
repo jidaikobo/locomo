@@ -282,7 +282,7 @@ class Actionset_Scdl extends \Actionset
 
 		if(\Request::main()->action == 'viewdetail' && $id && $obj->provisional_kb)
 		{
-			$urls = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録'));
+			$urls = array(array($controller.DS."regchange/" . $id . "/" . \Uri::segment(4) . "/" . \Uri::segment(5) . "/" . \Uri::segment(6), '本登録',array('class' => 'confirm', 'data-jslcm-msg' => '本登録してよいですか？')));
 		}
 
 		$retvals = array(
@@ -370,5 +370,45 @@ class Actionset_Scdl extends \Actionset
 		return $retvals;
 */
 		return array();
+	}
+
+	/**
+	 * actionset_adminindex
+	 */
+	public static function actionset_adminindex($controller, $obj = null, $id = null, $urls = array())
+	{
+		if (\Auth::is_admin())
+		{
+			$urls = array(array($controller.DS."index_admin/", '管理者向け一覧'));
+		}
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '管理者向け一覧',
+			'show_at_top'  => true,
+			'explanation'  => '管理者向けの一覧です。',
+			'order'        => 50
+		);
+		return $retvals;
+	}
+
+	/**
+	 * actionset_index_deleted
+	 */
+	public static function actionset_index_deleted($controller, $obj = null, $id = null, $urls = array())
+	{
+		if (\Auth::is_admin())
+		{
+			$urls = array(array($controller.DS."index_deleted/", '削除済み項目一覧'));
+		}
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => '削除済み項目一覧',
+			'show_at_top'  => true,
+			'explanation'  => '管理者向けの削除済み項目一覧です。',
+			'order'        => 50
+		);
+		return $retvals;
 	}
 }

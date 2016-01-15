@@ -26,9 +26,11 @@ link     #36a
 	opacity: .55;
 	overflow-x: hidden;
 	white-space: nowrap;
+	z-index: 1;
 }
 .develop_info.top {
 	position: absolute;
+	bottom: auto;
 }
 .testserver {
 	background-color: #cdd7de !important;
@@ -45,102 +47,7 @@ a:link {
 	color: #36a;
 }
 /* あとでテーマカラー？や、ボーダー、背景色などの基本色をあてられるクラスを設定したい */
-/*=== login ===*/
 
-/* default */
-body.default_logo {
-    background-color: #eee;
-}
-body.default_logo.lcm_action_login {
-	   background-color: #ddd;
-}
-body.default_logo.lcm_action_login .container{
-	   height: 26.5em !important;
-}
-.default_logo.lcm_action_login #logo {
-    margin: -0.5em auto 0.5em;
-    width: 6em;
-}
-.default_logo.lcm_action_login .site_title {
-    display: none;
-}
-body.lcm_action_login {
-	background-color: #dde7ee;
-}
-.lcm_action_login .container {
-	min-height: inherit;
-	width: 23.5em;
-	min-width: 23em;
-	height: 23.75em !important;
-	padding: 0 1.5em;
-	margin: 7.5em auto 50px;
-	background-color: #fff;
-	border: 1px solid #ccc;
-	border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	text-align: center;
-	outline: none;
-}
-.lcm_action_login input[type="text"],
-.lcm_action_login input[type="password"] {
-	width: 13em;
-}
-.lcm_action_login.home .container {
-	height: 23em !important;
-}
-/*.lcm_action_login h1 {
-	position: absolute !important;
-	left: auto;
-	height: 0;
-	clip: rect(1px 1px 1px 1px);
-	clip: rect(1px, 1px, 1px, 1px);
-}
-*/
-.lcm_action_login .container h1 {
-	font-size: 2em !important;
-	color: #004896;
-	font-weight: normal;
-	font-family: Verdana;
-	border: none;
-	box-shadow: none;
-	margin: 0 0 .5em !important;
-}
-.lcm_action_login h1 img {
-	display: block;
-	margin: .5em auto 0;
-	width: 1.5em;
-}
-
-.lcm_action_login .form_group {
-	border: none;
-	padding: 0;
-	margin: .5em 0;
-	background-color: transparent;
-}
-.lcm_action_login input {
-	padding: 5px 2px;
-}
-.lcm_action_login input#form_submit {
-	margin: 1.5em 0;
-	width: 100%;
-}
-.lcm_action_login a {
-	display: block;
-	font-size: .9em;
-}
-.lcm_action_login .flash_alert {
-	position: absolute;
-	top: 2.5em;
-	left: 0;
-	right: 0;
-	width: 20em;
-	margin: 0 auto;
-	box-sizing: border-box;
-}
-body.loggedin {
-	padding-top: 70px;
-}
 .main_column,
 .sub_column,
 #adinbar,
@@ -151,13 +58,17 @@ body.loggedin {
 	box-sizing : border-box ;
 }
 
-#adminbar div,
-.adminbar_icon,
+.main_column,
+.sub_column {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+}
+
 .horizontal_list ul,
 .horizontal_list li {
 	display: inline-block;
 }
-*+html #adminbar div,
 *+html .horizontal_list ul,
 *+html .horizontal_list li {
 	display: inline;
@@ -217,171 +128,6 @@ body.loggedin {
 	width: 100%;
 }
 
-/*=== adminbar ===*/
-#adminbar {
-	width: 100%;
-	min-width: 300px;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 100;
-	padding: 2.5em 0 0;/* 上部バーの高さを設けておく */
-	border-top: 1px solid #7393c6;
-	background-color: #fff;
-	font-size: .9em;
-	-webkit-font-smoothing: subpixel-antialiased; /* Safariでのテキストのアンチエイリアス処理調整、薄くなるのを防ぐ */
-}
-
-#adminbar a {
-	text-decoration: none;
-	display: inline-block;
-}
-.adminbar_icon { /* IE8で画像のサイズをCSSで指定した場合に本来サイズで枠が描画されてしまうのを防ぐためにラッパーを用意 */
-	width: 1.75em;
-	height: 2em;
-	padding: 0 .125em;
-}
-.adminbar_bottom .adminbar_icon {
-	width: 1.5em;
-}
-
-.adminbar_top .adminbar_icon img {
-	width: 1.75em;
-	height: 1.75em;
-	padding: .1em 0;
-}
-
-.adminbar_bottom .adminbar_icon img {
-	padding: .25em 0;
-}
-
-.adminbar_top,
-.adminbar_bottom {
-	display: block;
-	width: 100%;
-}
-.adminbar_top {
-	height: 2.5em;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-/* あとで整理 */
-.lcmbar_top {
-	background-image: url('../../app_assets/img/system/adminbar_bg.png');
-	background-color: #0e3664;
-	background-position: center top;
-	background-repeat: no-repeat;
-	color: #fff !important;
-	text-shadow: 1px 1px 0 #333;
-	vertical-align: middle;
-}
-.default_bg #adminbar {
-	border-color: #998;
-}
-.default_bg .lcmbar_top {
-	background-color: #1f1210;
-	background-image: url('../img/system/adminbar_bg.png');
-	background-position: center top;
-	background-repeat: repeat;
-	color: #fff !important;
-	text-shadow: 1px 1px 0 #333;
-	vertical-align: middle;
-}
-
-.lcmbar_bottom {
-	clear: both;
-	border-top: 1px solid #7393c6;
-	border-bottom: 1px solid #858c91;
-	position: relative;
-	background: #fafafa;
-	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: -o-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: -webkit-gradient(linear, center top, center bottom, from(#fcfcfc), to(#ebebeb));
-	background-image: -webkit-linear-gradient(top, #fcfcfc, #ebebeb);
-	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
-	color: #333;
-	text-shadow: 1px 1px 0 #fff;
-	box-shadow: 0 0 2px rgba(0,0,0,.2);
-}
-#adminbar_logo {
-	height: 2.5em;
-	vertical-align: middle;
-	background-color: #fff;/* adminbarの背景色と合わせる */
-	padding: 0;
-}
-.adminbar_main,
-.adminbar_sub {
-	padding: .25em 10px;
-}
-.adminbar_main div,
-.adminbar_sub div {
-	position: relative;
-	vertical-align: middle;
-}
-.adminbar_main > div {
-	margin-right: 15px;
-}
-.adminbar_top .adminbar_main,
-.adminbar_top .adminbar_sub {
-	vertical-align: middle;
-}
-.adminbar_top .adminbar_main > a {
-	margin-right: 5px;
-}
-.adminbar_top .adminbar_sub {
-	height: 2.5em;
-}
-.adminbar_bottom .adminbar_main {
-	padding: .25em 33px .25em 10px;
-}
-.adminbar_bottom .adminbar_sub {
-	padding-top: 0;
-	padding-bottom: 0;
-	line-height: 2em;
-}
-.adminbar_top .adminbar_sub div {
-	line-height: 2em;
-	vertical-align: middle;
-	padding-left: 5px;
-}
-.adminbar_sub {
-	float: right;
-}
-.adminbar_sub ul.on {
-	right: 0;
-	left: auto !important;
-}
-#render_info {
-	opacity: .65;
-	font-size: .9em;
-	line-height: 2.3em;
-}
-.adminbar_top .menu > a {
-	display: block;
-	line-height: 2em;
-	vertical-align: middle;
-	color: #fff !important;
-}
-.adminbar_top a,
-.adminbar_bottom a {
-	border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-}
-.adminbar_top div > a:hover,
-.adminbar_top div > a:focus {
-	background-color: rgba(255,255,255,.15);
-	transition: 0.3s;
-}
-#adminbar li,
-#adminbar li a,
-#adminbar .adminbar_bottom a {
-	color: #333 !important;
-	text-shadow: 1px 1px 0 #fff !important;
-}
 a.has_dropdown {
 	padding-right: 15px;
 	background-image: url('../img/system/mark_listopen_bk.png');
@@ -389,39 +135,7 @@ a.has_dropdown {
 	background-repeat: no-repeat;
 	padding-left: 0;
 }
-.adminbar_top a.has_dropdown {
-	padding-right: 15px;
-	background-image: url('../img/system/mark_listopen_wh.png');
-	background-position: right center;
-	background-repeat: no-repeat;
-}
-#adminbar .icononly {
-	margin-right: -8px;
-}
-.adminbar_bottom div a:hover,
-.adminbar_bottom div a:focus {
-	background-color: rgba(0,0,0,.06);
-	transition: 0.3s;
-	text-shadow: none;
-}
-#adminbar .menulist.on {
-	box-shadow: 0 0 6px #aaa;
-	-moz-box-shadow: 0 0 6px #aaa;
-	-o-box-shadow: 0 0 6px #aaa;
-	-ms-box-shadow: 0 0 6px #aaa;
-/*
-	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true), 
-*/
-	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
-	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
-/*
-progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
-*/
-}
-#adminbar .menulist a {
-	display: block;
-	padding: 2px 20px 4px;
-}
+
 .has_top_separator {
 	border-top: 1px solid rgba(255,255,255,1);
 	box-shadow: 0 -1px 0 #ddd;
@@ -440,27 +154,12 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 	border-top: none;
 	box-shadow: 0 1px 0 rgba(255,255,255,1);
 }
-
-
-#adminbar .menulist.on a:hover,
-#adminbar .menulist.on a:focus {
-	background-color: #d8ebfc;
-	transition: 0.3s;
-	text-shadow: none;
-	border-radius: 0;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-}
 ul.horizontal_list {
 	line-height: 1.25;
 	padding-left: 0;
 }
 .horizontal_list li {
 	padding: .25em 6px .25em 0;
-}
-#adminbar ul.horizontal_list a {
-	display: inline;
-	padding: .25em;
 }
 .container .horizontal_list {
 	overflow: hidden;
@@ -471,65 +170,14 @@ ul.horizontal_list {
 	margin: .25em 0 .25em -1px;
 }
 
-.adminbar_main ul.on,
-.adminbar_sub ul.on {
-	position: absolute;
-	left: 0;
-	z-index: 110;
-	display: block;
-	white-space: nowrap;
-	padding: .25em 0;
-	border: 1px solid #b9b9b9;
-	border-radius: 2px;
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	background: rgb(250, 250, 250);
-	background: rgba(250, 250, 250, .95);
-}
-#adminbar .on li {
-	display: block;
-}
+/* ========== 管理画面:body.loggedin ========== */
 
-#adminbar li .label {
-	display: block;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 8em;
-	padding-left: 20px;
-}
-#adminbar .usergroup {
-	padding-left: 20px;
-	padding-bottom: 4px;
-	font-size: .85em;
-}
-#adminbar .usergroup li {
-	display: list-item;
-	list-style-type: disc;
-	margin-left: -.125em;
-	padding-right: 20px;
-}
-#adminbar .on  > li {
-	display: block;
-}
-#adminbar .show_if_focus {
-	left:4px;
-	top: 4px;
-}
-
-/* あとで考える。オプションの歯車と戻る画面のリンクリストがあるので、管理バーしたの領域のレイアウトは要再考。
-.adminbar_sub .admin_controller_option {
-	position: absolute;
-	top: 0;
-	right: 9px;
-}
-*/
 /* dashboard */
 .lcm_action_dashboard .contents {
 	margin-left: 0;
 	margin-right: -2%;
 }
-.widget {
+.lcm_action_dashboard .widget {
 	box-sizing: border-box;
 	border: 1px #aaa solid;
 	border-radius: 2px;
@@ -543,14 +191,14 @@ ul.horizontal_list {
 	font-size: .85em;
 	
 }
-.widget.size1 {
+.lcm_action_dashboard .widget.size1 {
 	width: 32% !important;
 }
-.widget.size2 {
+.lcm_action_dashboard .widget.size2 {
 	width: 65.125% !important;
 }
-.widget.size3 {
-	98.275% !important
+.lcm_action_dashboard .widget.size3 {
+	width: 98.275% !important;
 }
 
 .lcmbar_top_title {
@@ -559,7 +207,7 @@ ul.horizontal_list {
 	margin: 0 !important;
 	overflow: hidden;
 }
-.widget_content {
+.lcm_action_dashboard .widget_content {
 	overflow: auto;
 	position: absolute;
 	top: 2em;
@@ -570,17 +218,16 @@ ul.horizontal_list {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-.widget_content_fc {
+.lcm_action_dashboard .widget_content_fc {
     display: block;
     margin: auto;
 }
-.widget_content_fr {
+.lcm_action_dashboard .widget_content_fr {
 	text-align: right;
 }
-.widget_content > table:first-child {
+.lcm_action_dashboard .widget_content > table:first-child {
 	margin-top: 0;
 }
-
 
 /* widget */
 .sys_admin_dashboard ul {
@@ -616,10 +263,10 @@ ul.horizontal_list {
 	top: .1em;
 	position: relative;
 }
-
 .scdl_dashboard_today td.time{
 	min-width: 6.5em;
 }
+
 /* button */
 .btn,
 .button {
@@ -647,7 +294,6 @@ ul.horizontal_list {
 	color: #fff;
 	padding: 5px 15px;
 }
-
 .btn.primary:active,
 .button.primary:active {
 	border: 1px solid  #357ebd;
@@ -705,7 +351,6 @@ a.button.danger:active {
 	border-width: 2px;
 	padding: 0 4px;
 }
-
 .btn.btn_block,
 .button.button_block {
 	display: block;
@@ -725,7 +370,6 @@ a.button.danger:active {
 .button.button_block:focus {
 	padding: .75em 0;
 }
-
 .btn.disabled,
 .button.disabled,
 input.button[disabled],
@@ -745,13 +389,11 @@ fieldset[disabled] a.button {
 	background-color: #fff3f3;
 	outline-color: rgba(238,153,153,.6);
 }
-
 .no_appearance {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
 }
-
 input[disabled],
 select[disabled],
 textarea[disabled] {
@@ -839,6 +481,7 @@ div.lcm_tooltip {
 	-ms-box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	box-shadow: 0 0 2px rgba(128, 128, 128, .5);
 	border: 1px solid #aaa !important;
+	max-width: 100%;
 }
 .lcm_tooltip:after,
 .lcm_tooltip:before {
@@ -873,7 +516,9 @@ div.lcm_tooltip {
 	text-align: right;
 	font-weight: bold;
 }
-
+.lcm_action_calendar div.lcm_tooltip {
+	max-width: 350px ;
+}
 /* tooolbar */
 .index_toolbar {
 	margin: 20px 0 5px;
@@ -887,6 +532,7 @@ table + .index_toolbar {
 .index_toolbar_buttons {
 	float: left;
 }
+
 /* pagenation */
 .index_toolbar .pagination {
 	float: right;
@@ -894,7 +540,6 @@ table + .index_toolbar {
 .pagination a {
 	padding: 5px 10px;
 }
-
 .pagination .active a,
 .pagination a:hover,
 .select_period .active {
@@ -934,7 +579,7 @@ table + .index_toolbar {
 	webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	margin-top: 2em;
+	margin-top: 1.25em;
 	padding-bottom: 4em;
 }
 .lcm_form:after {
@@ -1007,6 +652,26 @@ table + .index_toolbar {
 	min-width: 8em;
 }
 
+/* placeholder */
+/*Webkit*/
+::-webkit-input-placeholder {color: #bbb;}
+/*Firefox 19以降*/
+::-moz-placeholder    {color: #bbb;}
+/*Firefox 18以前*/
+:-moz-placeholder    {color: #bbb;}
+/*Windows IE*/
+:-ms-input-placeholder    {color: #bbb;}
+
+/*== lcm_form.compact ==*/
+.lcm_form.compact {
+	padding-bottom: 0 !important; /*とりあえず*/
+	border: 4px double #bbb;
+	margin-top: 1.25em;
+	margin-bottom: 1.25em;
+}
+
+
+
 /*=== multiple_select ===*/
 .lcm_multiple_select {
 	position: relative;
@@ -1052,7 +717,7 @@ table + .index_toolbar {
 
 .lcm_form textarea {
 	width: 98%;
-	max-width: 800px;
+/*	max-width: 800px; */
 }
 .lcm_form .address input[type="button"] {
 	margin-bottom: .5em;
@@ -1299,21 +964,6 @@ a.desc:after {
 	content: ' ▼';
 }
 
-/*=== 同じ値チェック ===*/
-/*.same_value.check_same_value {
-	color: #ccc;
-	background-color: #fff;
-}
-*/
-/*
-.same_value {
-	background-color: #fff3f3;
-}
-*/
-/*.same_value.check_same_value:focus {
-	color: inherit;
-}
-*/
 /*===  table  ===*/
 th.min,
 td.min,
@@ -1325,6 +975,7 @@ td.minimum {
 .tbl_wrapper {
 	overflow-x: auto;
 }
+
 /* tbl datatable */
 *>table.datatable thead th,
 *>table.datatable .thead th,
@@ -1351,6 +1002,15 @@ td.minimum {
 	font-weight: normal;
 	padding:.25em .5em;	
 } 
+.lcm_ctrl_-controller_flr .datatable tbody th.dir {
+	background-image: url('../img/system/mark_disclose.png') !important;
+	background-position: right center !important;
+	background-repeat: no-repeat !important;
+	background-size: 6px 9px !important;
+}
+.datatable tbody th a {
+	display: block;
+}
 .datatable th,
 .datatable td {
 	border-bottom: 1px solid #eee;
@@ -1366,10 +1026,13 @@ td.minimum {
 	background: #fefefe;
 }
 .datatable tbody tr:nth-child(even) {
-	background: #f9f9f9;
+	background: #f0f0f0;
+}
+.datatable tbody tr:nth-child(odd) th {
+	background: #f3f3f3;
 }
 .datatable tbody tr:nth-child(even) th {
-	background: #eee;
+	background: #e3e3e3;
 }
 .datatable thead a,
 .datatable .thead a {
@@ -1379,7 +1042,7 @@ td.minimum {
 }
 .datatable thead a:hover,
 .datatable .thead a:hover {
-	background-color: #ddd;
+	background-color: #d0d0d0;
 	text-decoration: underline;
 }
 .datatable tr.current th,
@@ -1387,13 +1050,13 @@ td.minimum {
 .datatable tr.affected:nth-child(even) th,
 .datatable tbody tr:hover th,
 .datatable tfoot tr:hover th {
-	background-color: #f0f0dd;
+	background-color: #f0f0ba;
 }
 .datatable tr.current td,
 .datatable tr.affected td,
 .datatable tbody tr:hover td,
 .datatable tfoot tr:hover td {
-	background-color: #fafadd;
+	background-color: #fafac6;
 }
 
 .datatable tbody tr.checked th {
@@ -1564,7 +1227,7 @@ table.calendar {
 }
 
 .calendar td.today {
-	background-color: #fafadd;
+	background-color: #fafac6;
 }
 .calendar td.week6.today {
 	background-color: #f6f6e6;
@@ -1579,7 +1242,7 @@ table.calendar {
 	border-color: darkcyan;
 }
 .calendar td.week6 {
-	background-color: #f3f3f3;
+	background-color: #f0f0f0;
 }
 .calendar th.week0 {
 	color: indianred;
@@ -1695,15 +1358,17 @@ table.calendar .events {
 	font-size: 85%;
 }
 
-/* あとでkesu */
-.icon_small {
-	font-size: .6em;
+.calendar.week tbody th,
+.schedule_day.graph tbody th {
+	background-color: #eaf0f5;
 }
+
 .widget .schedule_day.detail th,
 .widget .schedule_day.detail td {
 	padding: .125em;
 }
 
+/*== 時間グラフ ==*/
 .schedule_day.graph {
 	table-layout: fixed;
 }
@@ -1718,11 +1383,11 @@ table.calendar .events {
 	white-space: nowrap;
 	padding: 2px;
 }
-.schedule_day.graph .bar {
-	padding: 4px 2px;
+.schedule_day.graph .bar td {
+	padding: 0;
 	border-right-color: #ddd;
 }
-.schedule_day.graph .bar:last-child{
+.schedule_day.graph .bar td:last-child{
 	border-right-color: #bbb;
 }
 .schedule_day.graph tbody td{
@@ -1742,15 +1407,14 @@ table.calendar .events {
 .schedule_day.graph .time.h23 {
 /*	width: 1.25em;  縮小した時に、むしろ営業時間帯より長くなってしまうので */
 }
-.schedule_day.graph td.active:not(.hoo) {
-	border-right: none;
+.schedule_day.graph .bar td {
+	height: 1.5em;
 }
-.schedule_day.graph td.active + td:not(.active) {
-	border-left: 1px solid #bbb;
+.schedule_day.graph .active {
+	background-color: #d8ebfc;
+	cursor: pointer;
 }
-.schedule_day.graph td:last-child.active {
-	border-right: 1px solid #bbb ;
-}
+
 .datatable.schedule_day.detail tbody .members,
 .datatable.schedule_day.detail tbody .buildings {
 	white-space: normal;
@@ -1758,6 +1422,9 @@ table.calendar .events {
 .datatable.schedule_day.detail tbody .detail {
 	min-width: 8em;
 }
+
+
+
 .legend.calendar {
 	text-align: left;
 	font-size: .75em;
@@ -1800,7 +1467,6 @@ schedule_day.graph td {
 	margin-right: .5em;
 }
 
-
 /*== 重要度 ==*/
 .calendar .icon img ,
 .schedule_day.detail .icon img ,
@@ -1811,6 +1477,17 @@ schedule_day.graph td {
 }
 .legend.calendar .icon img {
 	margin-left: .75em;
+}
+
+/*== 外部表示 ==*/
+.text_icon.public {
+	background-color: #ac2000;
+}
+.text_icon.public:before {
+	content: '外';
+}
+.legend .text_icon.public + span:before {
+	content: '外部表示';
 }
 
 /*== 繰り返し ==*/
@@ -1887,7 +1564,7 @@ schedule_day.graph td {
 	content: '仮';
 }
 .legend .text_icon.provisional_kb + span:after {
-	content: '仮予約';
+	content: '仮登録';
 }
 
 /*  時間指定無し  */
@@ -1925,7 +1602,6 @@ schedule_day.graph td {
 	content: '非公開';
 }
 
-
 /* 登録者関係 */
 .text_icon.proxy {
 	background-color: #804000;
@@ -1937,16 +1613,7 @@ schedule_day.graph td {
 	content: '代理登録';
 }
 
-/*== 時間グラフ ==*/
-.schedule_day.graph td.bar {
-	height: .75em;
-}
-.schedule_day.graph .active {
-	background-color: #d8ebfc;
-}
-table.schedule_day .graydown {
-	background-color: #CCC;
-}
+
 /*=== filer ===*/
 a.icon.dir:before,     span.icon.dir:before     { content: url('../img/led-icons/folder.png')' ';}
 a.icon.file:before,    span.icon.file:before    { content: url('../img/led-icons/page.png')' ';}
@@ -1984,14 +1651,15 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 	display: none;
 }
 
-.w1em {width: 1em !important;}
-.w2em {width: 2em !important;}
-.w3em {width: 3em !important;}
-.w4em {width: 4em !important;}
-.w5em {width: 5em !important;}
-.w6em {width: 6em !important;}
-.w7em {width: 7em !important;}
-.w8em {width: 8em !important;}
+.w1em  {width: 1em !important;}
+.w2em  {width: 2em !important;}
+.w3em  {width: 3em !important;}
+.w4em  {width: 4em !important;}
+.w5em  {width: 5em !important;}
+.w6em  {width: 6em !important;}
+.w7em  {width: 7em !important;}
+.w8em  {width: 8em !important;}
+.w9em  {width: 9em !important;}
 .w10em {width: 10em !important;}
 .w15em {width: 15em !important;}
 .w20em {width: 20em !important;}
@@ -2018,10 +1686,25 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 .hw6em h1, .hw6em h2, .hw6em h3, .hw6em h4, .hw6em h5 {width: 6em !important;}
 .hw7em h1, .hw7em h2, .hw7em h3, .hw7em h4, .hw7em h5 {width: 7em !important;}
 .hw8em h1, .hw8em h2, .hw8em h3, .hw8em h4, .hw8em h5 {width: 8em !important;}
+.hw9em h1, .hw9em h2, .hw9em h3, .hw9em h4, .hw9em h5 {width: 9em !important;}
 .hw10em h1, .hw10em h2, .hw10em h3, .hw10em h4, .hw10em h5 {width: 10em !important;}
 .hw15em h1, .hw15em h2, .hw15em h3, .hw15em h4, .hw15em h5 {width: 15em !important;}
 .hw20em h1, .hw20em h2, .hw20em h3, .hw20em h4, .hw20em h5 {width: 20em !important;}
 .hw25em h1, .hw25em h2, .hw25em h3, .hw25em h4, .hw25em h5 {width: 25em !important;}
+
+.hw1em .input_group > .field  { margin-left: 1em;}
+.hw2em .input_group > .field  { margin-left: 2em;}
+.hw3em .input_group > .field  { margin-left: 3em;}
+.hw4em .input_group > .field  { margin-left: 4em;}
+.hw5em .input_group > .field  { margin-left: 5em;}
+.hw6em .input_group > .field  { margin-left: 6em;}
+.hw7em .input_group > .field  { margin-left: 7em;}
+.hw8em .input_group > .field  { margin-left: 8em;}
+.hw9em .input_group > .field  { margin-left: 9em;}
+.hw10em .input_group > .field { margin-left: 10em;}
+.hw15em .input_group > .field { margin-left: 15em;}
+.hw20em .input_group > .field { margin-left: 20em;}
+.hw25em .input_group > .field { margin-left: 25em;}
 
 .display_inline {
 	display: inline;
@@ -2140,6 +1823,11 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 #help_window {
 	font-size: 1.125em;
  }
+#help_window div {
+	display: block;
+}
+
+
 .modal_content {
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
@@ -2173,11 +1861,23 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 #help_window .modal_content a:hover {
 	text-decoration: none;
 }
-#help_window .edit_link {
+#help_window .edit_link,
+.contents .txt .edit_link {
 	display: block;
 	position: relative;
 	text-align: right;
 }
+.contents .txt .edit_link {
+	z-index: 0;
+	opacity: 1;
+}
+#help_window .helpindex_link {
+	display: block;
+	border-top: 1px solid #aaa;
+	padding-top: .5em;
+	margin: 1em 0;
+}
+
 .lcm_close_window {
 	position: absolute;
 	top: .1em;
@@ -2305,6 +2005,11 @@ h1 .sort_info {
 .pagenation_info input {
 	margin-left: 3px;
 }
+.select_format {
+	width: 13em;
+	margin-right: .5em;
+}
+
 /*=== for_screenreader ===*/
 span.sr_replace span {
 	position: absolute !important;
@@ -2370,10 +2075,21 @@ span.sr_add.bracket:after {
 .ui-datepicker-current {
 	opacity: 1 !important;
 }
-.monthpicker .ui-datepicker-calendar {
+.monthpicker .ui-datepicker-calendar,
+.yearpicker .ui-datepicker-calendar {
 	display: none;
 }
-#ui-datepicker-div.monthpicker .ui-datepicker-buttonpane {
+.yearpicker .ui-datepicker-month {
+	display: none;
+}
+.yearpicker.ui-datepicker {
+	width: 14em;
+}
+.yearpicker.ui-datepicker .ui-datepicker-title {
+	margin: 0;
+}
+#ui-datepicker-div.monthpicker .ui-datepicker-buttonpane,
+#ui-datepicker-div.yearpicker .ui-datepicker-buttonpane {
 	border: none;
 	margin-top: 0;
 }
@@ -2396,7 +2112,6 @@ body .ui-resizable-handle {
 	padding: 0 8px 0 0!important;
 }
 
-
 /*=== for NetReader ===*/
 .netreader .ui-tooltip {
 	display: none !important;
@@ -2408,16 +2123,16 @@ body .ui-resizable-handle {
 	background-repeat: no-repeat;
 	background-position: left top;
 }
-.switch_mce.is_visual {
+.switch_mce.on {
 	background-image: url( '../img/led-icons/text_align_left.png' );
 }
-.switch_mce.is_text {
+.switch_mce.off {
 	background-image: url( '../img/led-icons/style.png' );
 }
 
 
 /*=== media_query ===*/
-li.show_if_smalldisplay {
+.show_if_smalldisplay {
 	display: none !important;
 }
 
@@ -2453,6 +2168,12 @@ li.show_if_smalldisplay {
 	}
 	.nd_if_smalldisplay {
 		display: none !important;
+	}
+	.show_if_smalldisplay {
+		display: inherit !important;
+	}
+	div.show_if_smalldisplay {
+		display: block !important;
 	}
 	li.show_if_smalldisplay {
 		display: list-item !important;
@@ -2510,7 +2231,7 @@ li.show_if_smalldisplay {
 		min-width: inherit;
 	}	
 	
-	/*=== float_list ===*/
+		/*=== float_list ===*/
 	.size1 ul.float_list li {
 		width: 100%;
 		float: none;

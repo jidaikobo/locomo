@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Presenter_Flr_Dir_Edit extends \Presenter_Base
 {
 	/**
@@ -8,13 +9,18 @@ class Presenter_Flr_Dir_Edit extends \Presenter_Base
 	{
 		$form = parent::form($obj);
 
-		// list of upload directories - for choose parent dir.
-		$selected_id = \Request::main()->id;
+		// list of upload directories - edit
 		$selected_path = '';
+		$selected_id = \Request::main()->id ;
 		if ($selected_id)
 		{
 			$selected_obj = \Model_Flr::find($selected_id);
-			$selected_path = $selected_obj ? $selected_obj->path : $selected_path;
+			if (\Request::main()->action == 'edit')
+			{
+				$selected_path = $selected_obj ? dirname(rtrim($selected_obj->path, DS)).DS : $selected_path;
+			} else {
+				$selected_path = $selected_obj ? rtrim($selected_obj->path, DS).DS : $selected_path;
+			}
 		}
 
 		$current_dir = @$obj->path ?: '';
@@ -53,6 +59,12 @@ class Presenter_Flr_Dir_Edit extends \Presenter_Base
 		// is_sticky
 		$form->delete('is_sticky');
 
+		// root directly
+		if ($obj && $obj->path == '/')
+		{
+			$form->field('name')->set_type('hidden');
+			$form->delete('parent');
+		}
 		return $form;
 	}
 }

@@ -26,10 +26,16 @@ class Controller_Flr_Dir extends Controller_Flr
 			$dirnname = \Input::post('name');
 			$path = \Model_Flr::enc_url($parent.$dirnname).DS;
 			$tmp_obj = \Model_Flr::find('first', array('where' => array(array('path', $path))));
-
-			if ($tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
+			// ディレクトリがすでに存在している場合
+			if (file_exists(LOCOMOFLRUPLOADPATH.$path) && $dirnname !== '/')
 			{
+				\Session::delete_flash('success');
 				\Session::set_flash('error', 'そのディレクトリは既に存在します。');
+				if ($edit_obj && $tmp_obj)
+				{
+					// 失敗したのでデータベースから削除
+					$edit_obj->delete(null, true);
+				}
 				\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 			}
 
@@ -37,6 +43,7 @@ class Controller_Flr_Dir extends Controller_Flr
 			// データベースには存在しなかったが、物理ディレクトリが存在していて、データベースへの保存が成功したとき。
 			if ($edit_obj && ! $tmp_obj && file_exists(LOCOMOFLRUPLOADPATH.$path))
 			{
+				\Session::delete_flash('success');
 				\Session::set_flash('success', '物理ディレクトリは存在していますが、データベース上にディレクトリが存在しなかったので、物理ディレクトリを作成せず、データベースのみをアップデートしました。');
 				\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 			}
@@ -49,136 +56,96 @@ class Controller_Flr_Dir extends Controller_Flr
 				if ( ! \File::create_dir(LOCOMOFLRUPLOADPATH.$parent, \Model_Flr::enc_url($dirnname)))
 				{
 					// 失敗したのでデータベースから削除
-					$edit_obj->purge();
+					$edit_obj->delete_self();
 					\Session::set_flash('error', 'ディレクトリの新規作成に失敗しました。');
 					\Response::redirect(\Uri::create('flr/dir/create/'.$id));
 				} else {
+					//新規作成の結果、最上層ディレクトリであれば、パーミッション編集に画面遷移する
+					if ($edit_obj->depth == 1)
+					{
+						\Session::set_flash('success', '引き続いてディレクトリへのアクセス権限の設定をしてください。');
+						\Response::redirect(\Uri::create('flr/dir/permission/'.$edit_obj->id));
+					}
+
+					// 最上層ディレクトリでないので、ディレクトリ一覧へ遷移
 					\Session::set_flash('success', "ディレクトリを新規作成しました。");
 					$pobj = \Model_flr::get_parent($edit_obj);
 					$id = is_object($pobj) ? $pobj->id : 1 ;//root
-					\Response::redirect(\Uri::create('flr/dir/index_files/'.$id));
+					\Response::redirect(\Uri::create('flr/index_files/'.$id));
 				}
 			}
 		}
 
-
 		// assign
 		$parent = \Model_Flr::find($id);
+		if ( ! $parent)
+		{
+			\Response::redirect(\Uri::create('flr/index_files/'));
+		}
+
 		$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($parent->path));
 		$this->template->set_global('title', 'ディレクトリ作成');
 	}
 
 	/**
 	 * action_edit()
-	 * ディレクトリのメモ欄の編集
+	 * ディレクトリの編集
 	 */
 	public function action_edit($id = null)
 	{
 		$obj = \Model_Flr::find($id);
 
 		// existence
-		if ( ! $obj)
+		if ( ! $obj || $obj->genre != 'dir')
 		{
-			\Session::set_flash('error', "ファイル／ディレクトリが見つかりませんでした");
-			\Response::redirect(static::$main_url);
-		}
-
-		// root directory
-		if (LOCOMOFLRUPLOADPATH.$obj->path == LOCOMOFLRUPLOADPATH.DS)
-		{
-			\Session::set_flash('error', "基底ディレクトリは編集できません。");
-			\Response::redirect(static::$main_url);
+			\Session::set_flash('error', "ディレクトリが見つかりませんでした");
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'create_dir'))
 		{
 			\Session::set_flash('error', "ディレクトリの編集をする権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
-		// parent::edit()
-		$this->model_name = '\\Model_Flr';
-		$edit_obj = parent::edit($id);
-
-		if ($edit_obj)
+		// 保存前にファイルに対して物理的変化（改名や移動）を適用
+		// いずれもルートディレクトリは対象外
+		if (\Input::post() && $obj->path != '/')
 		{
-			\Response::redirect(static::$current_url.$id);
-		}
-
-		$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
-		$this->template->set_global('title', 'ディレクトリの編集');
-	}
-
-	/**
-	 * action_rename()
-	 * ディレクトリのリネーム
-	 */
-	public function action_rename($id = null, $sync = false)
-	{
-		if ($sync)
-		{
-			// dbのupdate直後にsync()するとうまく行かないので、一回画面遷移を経る。
-			// 理由はよくわからない :-(
-			\Session::keep_flash('success');
-			\Controller_Flr_Sync::sync();
-			\Response::redirect(static::$current_url.$id);
-		}
-
-		$obj = \Model_Flr::find($id, \Model_Flr::$_options);
-
-		// not exist
-		if ( ! $obj)
-		{
-			\Session::set_flash('error', "ディレクトリが存在しません。");
-			\Response::redirect(static::$main_url);
-		}
-
-		// root directory
-		if (LOCOMOFLRUPLOADPATH.$obj->path == LOCOMOFLRUPLOADPATH.DS)
-		{
-			\Session::set_flash('error', "基底ディレクトリは名称変更できません。");
-			\Response::redirect(static::$main_url);
-		}
-
-		// check_auth
-		if ( ! static::check_auth($obj->path, 'rename_dir'))
-		{
-			\Session::set_flash('error', "ディレクトリの名称を変更する権利がありません。");
-			\Response::redirect(static::$main_url);
-		}
-
-		// rename dir
-		if (\Input::post())
-		{
+			// ディレクトリ名称変更の場合
 			$prev_name = $obj->name;
 			$new_name = \Input::post('name');
-			$parent = LOCOMOFLRUPLOADPATH.dirname($obj->path);
+			$parent = LOCOMOFLRUPLOADPATH.rtrim(dirname($obj->path), DS).DS;
+			$post_parent = LOCOMOFLRUPLOADPATH.rtrim(\Input::post('parent', DS), DS).DS;
+
+			// path
+			$prev  = \Model_Flr::enc_url($parent.$prev_name);
+			$new   = \Model_Flr::enc_url($parent.$new_name);
+			$moved = \Model_Flr::enc_url($post_parent.$new_name);
 
 			// rename
 			if ($prev_name != $new_name)
 			{
-				$prev = \Model_Flr::enc_url($parent.$prev_name);
-				$new  = \Model_Flr::enc_url($parent.$new_name);
-
 				// unicode normalized issue
 				// 濁音付き文字など、同じ文字を別物と判定することがあるが、有効手段がない。
 				// \Normalizerクラスがあればよいが、かならずしも存在しないので。
 				if (file_exists($new))
 				{
 					\Session::set_flash('error', "同じ階層に同じ名前のディレクトリが既に存在します。");
-					\Response::redirect(\Uri::create('flr/dir/rename/'.$obj->id));
+					\Response::redirect(static::$current_url.$obj->id);
 				}
 
 				// try to rename
-				// 解明に失敗するということはデータベースとディレクトリの状態に矛盾があるということ
+				// 改名に失敗するということはデータベースとディレクトリの状態に矛盾があるということ
 				try
 				{
 					$rename = \File::rename_dir($prev, $new);
+					\Session::set_flash('success', "ディレクトリの名称を変更しました。");
 				} catch (\Fuel\Core\PhpErrorException $e) {
 					Controller_Flr_Sync::sync();
-					\Session::set_flash('error', "データベースとファイルの状況に矛盾が見つかったので、強制同期をかけました。");
-					\Response::redirect(static::$main_url);
+					\Session::set_flash('error', "データベースとディレクトリの状況に矛盾が見つかったので、強制同期をかけました。");
+					\Response::redirect(static::$current_url.$obj->id);
 				}
 
 				// failed to rename
@@ -186,51 +153,108 @@ class Controller_Flr_Dir extends Controller_Flr
 				if( ! $rename)
 				{
 					\Session::set_flash('error', "ディレクトリのリネームに失敗しました。");
-					\Response::redirect(\Uri::create('flr/dir/rename/'.$obj->id));
+					\Response::redirect(static::$current_url.$obj->id);
+				}
+			}
+
+			// フォルダ移動
+			if ($new != $moved)
+			{
+				// 移動先に同名のフォルダがある場合
+				if (file_exists($moved))
+				{
+					\Session::set_flash('error', "移動先に同じ名前のディレクトリが既に存在します。");
+					\Response::redirect(static::$current_url.$obj->id);
+				}
+
+				// try to move
+				try
+				{
+					$move = \File::rename_dir($new, $moved);
+					\Session::set_flash('success', "ディレクトリを移動しました。");
+				} catch (\Fuel\Core\PhpErrorException $e) {
+					Controller_Flr_Sync::sync();
+					\Session::set_flash('error', "データベースとディレクトリの状況に矛盾が見つかったので、強制同期をかけました。");
+					\Response::redirect(static::$current_url.$obj->id);
+				}
+
+				// failed to move
+				// その他の理由による失敗
+				if( ! $move)
+				{
+					\Session::set_flash('error', "ディレクトリの移動に失敗しました。");
+					\Response::redirect(static::$current_url.$obj->id);
 				}
 			}
 		}
 
 		// parent::edit()
 		$this->model_name = '\\Model_Flr';
-		$this->_content_template = 'flr/dir/rename';
 		$edit_obj = parent::edit($id, $is_redirect = false);
 
-		// rewrite message
-		$success = \Session::get_flash('success');
-		if (\Input::post() && $edit_obj && $success)
+		// 編集を終え、名称変更やフォルダ移動を行っていた場合
+		
+
+
+
+		// 編集を終えたらとりあえずパーミッションに遷移する。そこではsyncも行う
+		if (\Input::post() && $edit_obj)
 		{
-			\Session::set_flash('success', "ディレクトリをリネームしました。");
-			\Response::redirect(\Uri::create('flr/dir/rename/'.$obj->id.DS.'sync'));
-		} else {
-			$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
+			\Response::redirect(\Uri::create('flr/dir/permission/'.$obj->id));
 		}
 
-		// assign
-		$this->template->set_global('title', 'ディレクトリリネーム');
+		$this->template->content->set_safe('breadcrumbs', self::breadcrumbs($obj->path));
+		$this->template->set_global('title', 'ディレクトリの編集');
 	}
 
 	/**
 	 * action_permission()
 	 * ディレクトリの権限
 	 */
-	public function action_permission($id = null)
+	public function action_permission($id = null, $sync = false)
 	{
 		$this->model_name = '\\Model_Flr';
 		$obj = \Model_Flr::find($id);
+		\Session::keep_flash('success');
+
+		if ($sync)
+		{
+			// dbのupdate直後にsync()するとうまく行かないので、一回画面遷移を経る。
+			// 理由はよくわからない :-(
+			\Controller_Flr_Sync::sync();
+
+			// 通常の編集画面へ
+			if ($obj)
+			{
+				// syncしているので、取得し直す
+				$obj = \Model_Flr::find('first', array('where' => array(array('path', $obj->path))));
+				\Response::redirect(static::$current_url.$obj->id);
+			}
+			else
+			{
+			\Response::redirect(\Uri::create('flr/index_files/'));
+			}
+		}
+
+		// depth
+		// パーミッションの対象はルートと最上層ディレクトリのみ
+		if ($obj->depth > 1)
+		{
+			\Response::redirect(\Uri::create('flr/dir/edit/'.$obj->id));
+		}
 
 		// check_auth
-		if ( ! static::check_auth($obj->path, 'create_dir'))
+		if ( ! static::check_auth($obj->path, 'create_dir') || $obj->genre != 'dir')
 		{
 			\Session::set_flash('error', "ディレクトリの権限を変更する権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// parent::edit()
 		$this->_content_template = 'flr/dir/permission';
 		$edit_obj = parent::edit($id, $is_redirect = false);
 
-		// to load \Model_Flr::_event_after_update() and \Model_Flr::embed_hidden_info().
+		// to load \Model_Flr::_event_after_update().
 		// no update cause no load observer_after_update
 		if (\Input::post())
 		{
@@ -243,9 +267,10 @@ class Controller_Flr_Dir extends Controller_Flr
 
 		// rewrite message
 		$success = \Session::get_flash('success');
-		if ($success && strpos(\Input::referrer(), 'permission') !== false)
+		if (\Input::post() && $edit_obj && $success && strpos(\Input::referrer(), 'permission') !== false)
 		{
 			\Session::set_flash('success', "ディレクトリの権限を変更しました。");
+			return \Response::redirect(static::$base_url.'permission/'.$edit_obj->id.'/sync/1');
 		}
 
 		// assign
@@ -262,24 +287,24 @@ class Controller_Flr_Dir extends Controller_Flr
 		$obj = \Model_Flr::find($id);
 
 		// existence
-		if ( ! $obj)
+		if ( ! $obj || $obj->genre != 'dir')
 		{
 			\Session::set_flash('error', "ディレクトリが見つかりませんでした。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// root dir
 		if ($obj->id == 1)
 		{
 			\Session::set_flash('error', "基底ディレクトリは削除できません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// check_auth
 		if ( ! static::check_auth($obj->path, 'purge_dir'))
 		{
 			\Session::set_flash('error', "ディレクトリを削除する権利がありません。");
-			\Response::redirect(static::$main_url);
+			\Response::redirect(dirname(static::$base_url).DS.'index_files');
 		}
 
 		// create dir

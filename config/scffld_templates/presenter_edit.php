@@ -25,7 +25,7 @@ class Presenter_XXX_Edit extends \Presenter_Base
 			->set_value(array_keys($obj->objname));
 
 		// set_tabular_form
-		$tabular_form = \Fieldset::forge('relation_name')->set_tabular_form('\Model_Name', 'relation_name', $obj, 2);
+		$tabular_form = \Fieldset::forge('relation_name')->set_tabular_form('Model_Name', 'relation_name', $obj, 2);
 		$form->add_after($tabular_form, 'name', array(), array(), 'field_name');
 */
 

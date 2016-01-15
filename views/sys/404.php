@@ -1,6 +1,6 @@
 <h1>Not Found.</h1>
 
-<p>The requested URL <code><?php echo \Input::protocol().'://'.\Input::server('HTTP_HOST').\Input::server('REQUEST_URI') ?></code> was not found on this server.</p>
+<p>The requested URL <code><?php echo \Input::protocol().'://'.e(\Input::server('HTTP_HOST')).e(\Input::server('REQUEST_URI')) ?></code> was not found on this server.</p>
 
 <?php
 /*

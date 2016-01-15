@@ -1,0 +1,296 @@
+/*
+ * default dom
+ */
+#main_content
+{
+	position: relative;
+	background-color: #696969;
+	height: auto;
+	padding: 0;
+}
+/* -> default */
+
+/*
+ * #controller_bar は適宜変更する
+ */
+#controller_bar
+{
+	position: fixed;
+	top: 72px;
+	left: 0;
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+	background: #222;
+	padding: 0.5em 1em;
+	box-sizing: border-box;
+	z-index: 100;
+}
+#controller_bar .btn_group
+{
+	display: inline;
+	width: auto;
+}
+#controller_bar .btn_group a
+{
+	margin: 0;
+}
+#controller_bar .active
+{
+	background-color: #FFA07A;
+}
+#controller_bar .show_element_seq,
+#controller_bar .show_controller
+{
+	float: right;
+}
+#print_wrapper{
+	position: relative;
+	margin: 10px;
+}
+.print
+{
+	position: absolute;
+	top: 50px;
+	left: 0;
+}
+svg.print
+{
+	background: white;
+	z-index: 0;
+}
+div.print
+{
+	background: transparent;
+	/*border: 1px solid black;*/
+	box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.8);
+	z-index: 1;
+}
+
+.element
+{
+	display: table;
+	overflow: hidden;
+	box-sizing: border-box;
+	position: absolute;
+}
+.element .display_name
+{
+	position: absolute;
+	min-height: 1.5em;
+	min-width: 2em;
+	left: -7px;
+	top: -5px;
+	padding: 2px;
+	border-radius: 2px;
+	border: 1px solid #666;
+	line-height: 1.0;
+	opacity: 0.4;
+	font-size: 14px;
+	background-color: #ccc;
+}
+#element_template{
+	display: none;
+}
+
+.element .text_wrapper
+{
+	display: table-cell;
+	vertical-align:middle;
+}
+.element .text
+{
+	display: block;
+	overflow: scroll;
+}
+.element .text.mincho
+{
+	font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+.element .text.mincho
+{
+	font-family:"ＭＳ Ｐ明朝", "MS PMincho", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", serif;
+}
+.element .text .field
+{
+	border: 1px solid NavajoWhite;
+	background: LemonChiffon;
+	color: #FF6347;
+}
+.element.shade.ln_y:before
+{
+	content: '＝＝▲▲';
+	position: absolute;
+	font-size: 12px;
+	width: 24px;
+	line-height: 0.6;
+	right: 0;
+	top: 0;
+	color: #4169e1;
+	opacity: 0.75;
+	font-weight: bold;
+}
+.element.shade.h_adjustable:after
+{
+	content: '▲▼';
+	position: absolute;
+	font-size: 12px;
+	width: 12px;
+	line-height: 1.0;
+	right: 0;
+	bottom: 0;
+	color: #ff6347;
+	opacity: 0.4;
+}
+
+.line
+{
+}
+
+.height_adjustable
+{
+}
+
+.element.focus,
+.element.shade.focus
+{
+	box-shadow: 0 0 3px 3px rgba(88, 125, 88, 0.4) inset;
+	z-index: 100;
+}
+.element.shade
+{
+	box-shadow: 0 0 1px 1px rgba(125, 125, 125, 0.4);
+}
+#controllers_wrapper,
+#element_seq_wrapper
+{
+	box-sizing: border-box;
+	position: absolute;
+	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.4);
+	background: Bisque;
+	background-color: #0e3664;
+	border: 10px solid #0e3664;
+	padding-bottom: 40px;
+	border-radius: 3px;
+}
+#controllers_wrapper h1.title,
+#element_seq_wrapper h1.title
+{
+	border-bottom: double 4px #ccc;
+	background: Beige;
+	padding-left: 1em;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+#controllers_wrapper
+{
+	width: 380px;
+	height: 500px;
+	right: 10px;
+	top: 45px;
+	z-index: 11;
+}
+#element_seq_wrapper
+{
+	width: 380px;
+	min-height: 200px;
+	right: 395px;
+	top: 45px;
+	z-index: 10;
+}
+#controllers_wrapper > #controller,
+#element_seq_wrapper > #element_seq
+{
+	box-sizing: border-box;
+	margin-bottom: 3em;
+	overflow: hidden;
+	padding: 10px;
+	background: Beige;
+	margin: 0 auto;
+	height: auto;
+	max-height: 100%;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+#controllers_wrapper > #controller
+{
+}
+
+#element_seq_wrapper > #element_seq
+{
+}
+#controller
+{
+}
+#controller label
+{
+	display: inline-block;
+	clear: both;
+	width: 20%;
+	float: left;
+	height: 2em;
+	font-size: 0.8em;
+}
+#controller input,
+#controller select
+{
+	display: inline-block;
+	float: left;
+	font-size: 1em;
+}
+#controller textarea
+{
+	width: 100%;
+}
+#controller .unit
+{
+	display: inline-block;
+	float: left;
+	padding-left: 0.3em;
+}
+#controller #model_properties
+{
+	border: 1px solid #aaa;
+	padding: 0.5em 1em;
+	margin-bottom: 0.25em;
+	margin-left: 0.33em;
+}
+/* button */
+#element_seq li
+{
+	clear: both;
+	list-style: none;
+	border: 1px solid #D3D3D3;
+	display: block;
+	overflow: hidden;
+	margin-bottom: 8px;
+	padding: 3px;
+	background-color: #E6E6FA;
+	box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.4);
+}
+#element_seq .focus_delete,
+#element_seq .focus_element
+{
+	display: block;
+	float: right;
+}
+#element_seq .display_name
+{
+	display: block;
+	max-width: 50%;
+	float: left;
+	height: 1.5em;
+	overflow-y: hidden;
+	overflow-x: scroll;
+}
+#element_seq .seq
+{
+	display: block;
+	float: left;
+	margin-right: 0.5em;
+	font-size: 0.9em;
+	font-weight: 700;
+	color: #666;
+}
+

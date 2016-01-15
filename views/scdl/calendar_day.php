@@ -13,16 +13,15 @@
 		<?php print htmlspecialchars_decode($next_url); ?> / 
 		<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date" id="move_date" title="表示年月日" /><input class="button small" id="btn_move_date" type="button" value="指定の日を表示" onclick="move_date()" />
 	</div>
-<!--	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
--->	
+	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>	
 	<h2 class="skip">タイムテーブル グラフ</h2>
-<?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-	<table class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
+<?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0): ?>
+	<table id="schedule_graph" class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
 	<tbody>
-	<?php foreach ($schedule_data['member_list'] as $row) { ?>
+	<?php foreach ($schedule_data['member_list'] as $row): ?>
 			<tr>
 			<th class="name" rowspan="<?php print count($row); ?>">
-				<?php print $row['model']->display_name; ?>
+				<?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day)).'&amp;member_id='.$row['model']->id).'">'.$row['model']->display_name.'</a>'; ?>
 			</th>
 				<?php foreach($schedule_data['schedules_list'] as $v) {?>
 				<td colspan="4" class="time h<?php print $v['hour']; ?>">
@@ -32,53 +31,62 @@
 			</tr>
 	
 				<?php
-				foreach ($row as $member_rowdata) {
+				foreach ($row as $member_rowdata):
 					if (!isset($member_rowdata['data'])) { continue; }
 					?>
-					<tr>
-						<?php foreach($schedule_data['schedules_list'] as $v) {?>
-						<?php $p_active = ""; $s_active = ""; $t_active = ""; $f_active = ""; ?>
-						
-							<?php foreach ($v['data'] as $detail_data) {
-								foreach ($member_rowdata['data'] as $member_detail) {
-									if ($member_detail->id == $detail_data->schedule_id) {
-
-										if ($detail_data->primary)
-											$p_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
-										if ($detail_data->secondary)
-											$s_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
-										if ($detail_data->third)
-											$t_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
-										if ($detail_data->fourth)
-											$f_active = $detail_data->scdlid . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
-											
-									}
-								}
-							}
-							?>
-						<td colspan="" class="<?php if ($p_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($p_active) { print 'data-jslcm-tooltip-id="pop' . $p_active . '"'; } ?> <?php // if ($p_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?> >
-						</td>
-						<td colspan="" class="<?php if ($s_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($s_active) { print 'data-jslcm-tooltip-id="pop' . $s_active . '"'; } ?> <?php // if ($s_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
-						</td>
-						<td colspan="" class="<?php if ($t_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($t_active) { print 'data-jslcm-tooltip-id="pop' . $t_active . '"'; } ?> <?php // if ($t_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
-						</td>
-						<td colspan="" class="<?php if ($f_active) { print "active lcm_tooltip_parent"; } ?> bar" <?php if ($f_active) { print 'data-jslcm-tooltip-id="pop' . $f_active . '"'; } ?> <?php // if ($f_active) { echo 'title="'.$detail_data->title_text.'('.$detail_data->title_kb.')'.'"'; } ?>>
-						</td>
-						<?php } ?>
-					</tr>
-				<?php } ?>
+					<tr class="bar">
+					<?php // 24時間をloop
+						$empty_cells = 0;
+						$filled_cells = 0;
+						foreach($schedule_data['schedules_list'] as $v):
+							foreach ($v['data'] as $detail_data):
+								foreach ($member_rowdata['data'] as $member_detail):
+									if ($member_detail->id == $detail_data->schedule_id):
+										$tooltipid = $detail_data->schedule_id . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
+										if ($detail_data->primary)   $filled_cells++;
+										if ( ! $filled_cells && ! $detail_data->primary)   $empty_cells++;
 	
-	<?php } ?>
+										if ($detail_data->secondary) $filled_cells++;
+										if ( ! $filled_cells && ! $detail_data->secondary) $empty_cells++;
+	
+										if ($detail_data->third)     $filled_cells++;
+										if ( ! $filled_cells && ! $detail_data->third)     $empty_cells++;
+	
+										if ($detail_data->fourth)    $filled_cells++;
+										if ( ! $filled_cells && ! $detail_data->fourth)    $empty_cells++;
+									endif;
+								endforeach;
+							endforeach;
+						endforeach;
+						//24jikan
+						// 描画
+						//  空白セル
+						for ($i = 1; $i <= $empty_cells; $i++)
+						{
+							echo '<td>&nbsp;</td>';
+						}
+
+						//  予定セル
+						echo '<td colspan="'.$filled_cells.'" class="active lcm_tooltip_parent" data-jslcm-tooltip-id="pop'.$tooltipid.'">&nbsp;</td>';
+
+						//  空白セル
+						for ($i = 1, $cnt_rest = 24*4-$empty_cells-$filled_cells; $i <= $cnt_rest; $i++)
+						{
+							echo '<td>&nbsp;</td>';
+						} ?>
+					</tr>
+				<?php endforeach;
+			endforeach; ?>
 		</tbody>
 	</table>
-<?php } ?>
-<?php endif;//hmvcをとじる ?>
+<?php endif; 
+	endif;//hmvcをとじる ?>
 
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
 <?php if(!\Request::is_hmvc()): ?>
 	<h2 class="skip">タイムテーブル 一覧</h2>
 <?php endif; ?>
-	<table class="tbl datatable schedule_day detail lcm_focus" title="タイムテーブル 一覧">
+	<table id="schedule_detail" class="tbl datatable schedule_day detail lcm_focus" title="タイムテーブル 一覧">
 		<thead>
 		<tr>
 			<th class="time">
@@ -155,9 +163,14 @@
 			<?php
 				$eventtitle_icon = '';
 				$eventtitle_skip = '<span class="skip">';
-				//繰り返し区分
-				$eventtitle_icon.= $detaildata['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata['repeat_kb'].'"></span>' : '';
-				$eventtitle_skip.= $detaildata['repeat_kb'] != 0 ? $repeat_kbs[$detaildata['repeat_kb']] : '';
+
+/*
+				//外部表示(施設予約)
+				if(\Request::active()->controller !== "\Controller_Scdl"):
+					$eventtitle_icon.= $detaildata['public_display']==2 ? '<span class="text_icon reserve public"></span>' : '';
+					$eventtitle_skip.= $detaildata['public_display']==2 ? '外部に表示 ' : '';
+				endif;
+*/
 				//詳細区分
 				foreach($detail_kbs as $key => $value):
 					if($detaildata[$key]):
@@ -165,10 +178,16 @@
 						$eventtitle_skip.= ' '.$value;
 					endif;
 				endforeach;
+				//繰り返し区分
+				$eventtitle_icon.= $detaildata['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata['repeat_kb'].'"></span>' : '';
+				$eventtitle_skip.= $detaildata['repeat_kb'] != 0 ? $repeat_kbs[$detaildata['repeat_kb']] : '';
+
+/*
 				//重要度
 				$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($detaildata['title_importance_kb']));
-				$eventtitle_icon.= '<span class="icon"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
+				$eventtitle_icon.= '<span class="icon" style="width: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
 				$eventtitle_skip.= ' '.$importance_kbs[$importance_v];
+*/
 				$eventtitle_skip.= '</span>';
 			?>
 				<p class="lcm_tooltip_parent" data-jslcm-tooltip-id="pop<?php echo $detaildata->scdlid.$detaildata->target_year.$detaildata->target_mon.$detaildata->target_day ?>">

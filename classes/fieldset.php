@@ -117,14 +117,16 @@ class Fieldset extends \Fuel\Core\Fieldset
 	}
 
 
-
-
 	/*
 	 * 全リフレッシュ用の tabular
 	 * 全て _new_ で set するため、delete と併用する
 	 */
 	public function set_tabular_form_blank($model, $relation, $parent, $blanks = 1)
 	{
+
+		if (isset($parent::$_hm_delete_else) and $parent::$_hm_delete_else == false) $parent::$_hm_delete_else =true; 
+
+
 		if ( ! $parent instanceOf \Orm\Model) throw new \RuntimeException('Parent passed to set_tabular_form() is not an ORM model object.');
 
 		$relations = call_user_func(array($parent, 'relations'));

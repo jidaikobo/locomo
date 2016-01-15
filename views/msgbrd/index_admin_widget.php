@@ -14,9 +14,9 @@
 	$create_time = date('Y年n月j日', strtotime($item->created_at));
 ?>
 	<tr title="<?php echo $msg_title.'：'.$creator_name ?>" tabindex="-1">
-		<td><div class="col_scrollable">
+		<th><div class="col_scrollable">
 			<?php echo \Html::anchor(\Uri::create('msgbrd/view/'.$item->id), $msg_title.'<span class="skip"> 作成日 '.$create_time.' 投稿者 '.$creator_name.'</span>'); ?>
-		</div></td>
+		</div></th>
 		<td><?php echo $create_time ?>
 		</td>
 		<td><div class="col_scrollable" style="min-width: 4em;"><?php echo $creator_name; ?></div></td>

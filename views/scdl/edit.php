@@ -1,5 +1,45 @@
 <?php
 if (isset($overlap_result) && count($overlap_result)) {
+	$display_results = array();
+	foreach($overlap_result as $each_result):
+		// ？時間表示の整形？
+		$each_result->display_startdate = date('Y年n月j日', strtotime($each_result->start_date . " " . $each_result->start_time));
+		$each_result->display_enddate = date('Y年n月j日', strtotime($each_result->end_date . " " . $each_result->end_time));
+		$each_result->display_starttime = date('i', strtotime($each_result->start_time))==0 ?
+			date('G時', strtotime($each_result->start_date . " " . $each_result->start_time)) :
+			preg_replace("/時0/", "時", date('G時i分', strtotime($each_result->start_date . " " . $each_result->start_time)));
+		$each_result->display_endtime = date('i', strtotime($each_result->end_time))==0 ?
+			date('G時', strtotime($each_result->end_date . " " . $each_result->end_time)) :
+			preg_replace("/時0/", "時", date('G時i分', strtotime($each_result->start_date . " " . $each_result->end_time)));
+
+		if ($each_result->repeat_kb == 0 && $each_result->display_startdate != $each_result->display_enddate) { //開始日終了日が異なる場合は連続した期間扱い
+	/*
+		//開始日〜終了日 (何時〜何時）開始日と終了日を比較しつつ、同年や同月の表示省略
+			if(date('Y', strtotime($each_result->start_date)) == date('Y', strtotime($each_result->end_date))) : //年が同じかどうか
+				$each_result->display_startdate = intval(date("Y")) == $year ? //現在と同年なら省略
+					date('n月j日', strtotime($each_result->start_date)) :
+					date('Y年n月j日', strtotime($each_result->start_date));
+				$each_result->display_enddate = date('n', strtotime($each_result->start_date)) == date('n', strtotime($each_result->end_date)) ? //同月なら省略
+					date('j日', strtotime($each_result->end_date)) :
+					date('n月j日', strtotime($each_result->end_date));
+			endif;
+	*/
+			if($each_result->allday_kb): // 終日は時間を省略
+				$result_str = '<span class="nowrap">'.$each_result->display_startdate.' <span class="sr_replace to"><span>から</span></span></span> <span class="nowrap">'.$each_result->display_enddate.'</span>';
+			else:
+				$result_str = '<span class="nowrap">'.$each_result->display_startdate.' '.$each_result->display_starttime.'<span class="sr_replace to"><span>から</span></span></span> <span class="nowrap">'.$each_result->display_enddate.' '.$each_result->display_endtime.'</span>';
+			endif;
+		} else { //期間でないならば繰り返し
+			if($each_result->allday_kb){
+				$result_str = $each_result->display_startdate.'<span class="sr_replace to"><span>から</span></span>'.$each_result->display_startdate.'<span class="nowrap">終日</span>';
+			}else{
+				$result_str = $each_result->display_startdate.'<span class="sr_replace to"><span>から</span></span>'.$each_result->display_startdate.'<span class="nowrap">'.$each_result->display_starttime . '<span class="sr_replace to"><span>から</span></span></span> <span class="nowrap">' . $each_result->display_endtime.'</span>';
+			}
+		}
+	$display_results[] = $result_str;
+	echo '#'.$each_result['id'].': '.$each_result['targetdata'].' '.$result_str.' '.$each_result['title_text'].'<br>';
+
+	endforeach;
 ?>
 <table class="tbl datatable" tabindex="0">
 	<thead>
@@ -16,7 +56,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	</tr>
 	</thead>
 	<tbody>
-<?php 
+<?php
 	foreach ($overlap_result as $v) {
 ?>
 	<tr>
@@ -48,17 +88,24 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2><?php echo $form->field('title_text')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
 			<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
-			<span class="nowrap">
-				<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
-				<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
+			<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"): ?>
+			<span id="span_public_display" class="display_inline_block">
+				<?php echo $form->field('public_display')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
 			</span>
+			<?php endif; ?>
+<?php /* ?>
+<span class="nowrap">
+	<?php echo $form->field('title_importance_kb')->set_template('{label}'); ?>
+		<?php echo $form->field('title_importance_kb')->set_template('{error_msg}{field}'); ?>
+		</span>
 			<span class="nowrap">
 				<?php echo $form->field('title_kb')->set_template('{label}'); ?>
 				<?php echo $form->field('title_kb')->set_template('{error_msg}{field}'); ?>
 			</span>
+<?php */ ?>
 		</div>
 	</div><!-- /.input_group -->
-	
+
 	<div class="input_group">
 		<h2><?php echo $form->field('repeat_kb')->set_template('{required}{label}'); ?></h2>
 		<div id="field_repeat_kb" class="field">
@@ -67,6 +114,10 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 			<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
 			<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+			&nbsp;&nbsp;
+			<span id="span_week_kb_option1"><?php echo $form->field('week_kb_option1')->set_template('{error_msg}{field}'); ?></span>  <span id="span_week_number_option1">第<?php echo $form->field('week_index_option1')->set_template('{error_msg}{field}'); ?>週目</span>
+			&nbsp;&nbsp;
+			<span id="span_week_kb_option2"><?php echo $form->field('week_kb_option2')->set_template('{error_msg}{field}'); ?></span>  <span id="span_week_number_option2">第<?php echo $form->field('week_index_option2')->set_template('{error_msg}{field}'); ?>週目</span>
 			<div id="field_set_time" style="display: none;"> から </div>
 		</div>
 	</div><!-- /.input_group -->
@@ -82,6 +133,19 @@ if (isset($overlap_result) && count($overlap_result)) {
 			</span>
 		</div>
 	</div><!-- /.input_group -->
+<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"): // 施設予約では、公開用の設定をする ?>
+	<div class="input_group">
+		<h2>実使用時間</h2>
+		<div id="field_term" class="lcm_focus field" title="実使用時間">
+			<span id="span_public_time_start" class="">
+			<?php echo $form->field('public_start_time')->set_template('{error_msg}{field}'); ?>
+			</span> から <span id="span_public_time_end" class="display_inline_block" style="margin-right: 1em;">
+			<?php echo $form->field('public_end_time')->set_template('{error_msg}{field}'); ?>
+			</span>
+		</div>
+	</div><!-- /.input_group -->
+<?php endif; ?>
+
 	<div class="input_group lcm_focus" title="詳細設定">
 		<h2>詳細設定</h2>
 		<div class="field">
@@ -97,19 +161,19 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2><?php echo $form->field('message')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('message')->set_template('{error_msg}{field}'); ?></div>
 	</div>
-	
+
 	<?php if( $locomo['controller']['name'] === "\Controller_Scdl"): //施設選択の時は下に ?>
 	<div class="input_group">
 	<h2><span class="label_required">必須</span>メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
-				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
-					<option value="">絞り込み：全グループ
+				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
+					<option value="">絞り込み：全グループ</option>
 					<?php foreach($group_list as $key => $value) { ?>
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 					<?php } ?>
 				</select>
-				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
+				<div id="user_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_members">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
 						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
@@ -139,14 +203,14 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
-				<select id="building_group_list" title="施設グループ絞り込み" onchange="get_group_building()">
-					<option value="">絞り込み：全施設
+				<select id="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
+					<option value="">絞り込み：全施設</option>
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 					<?php } ?>
 				</select>
 				</div>
-				<div class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
+				<div id="building_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_buildings">
 					<div class="multiple_select_content">
 						<label for="building_kizon">選択済み</label>
 						<select id="form_building_kizon" name="building_kizon" class="selected" size="2" title="選択済み施設" multiple>
@@ -200,7 +264,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 					<option value="<?php print $key; ?>"><?php  print $value; ?>
 				<?php } ?>
 			</select>
-			<?php echo $form->field('user_id')->set_template('{error_msg}{field}'); ?>
+			<?php echo $form->field('user_id')->set_template('{error_msg}{field}');
+			echo $item->user_id != $item->updater_id ? '<span class="dairi">代理登録者：'.\Model_Usr::get_display_name($item->updater_id).'</span>' : '';
+			?>
 		</div>
 	</div><!-- /.input_group -->
 	<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"):?>
@@ -208,13 +274,13 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2 class="ar">メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-				<select id="group_list" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list').val(), 'form_member_new');})">
+				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
 					<option value="">絞り込み：全グループ
 				<?php foreach($group_list as $key => $value): ?>
 					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 				<?php endforeach; ?>
 				</select>
-				<div class="lcm_multiple_select" data-hidden-item-id="hidden_members">
+				<div id="user_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_members">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
 						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みメンバー">
@@ -239,7 +305,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</div>
 	</div><!-- /.input_group -->
 	<?php endif; ?>
-	
+
 	<?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
 	<?php echo $form->field('is_visible')->set_template('{error_msg}{field}'); ?>
 	<?php echo $form->field('kind_flg')->set_template('{error_msg}{field}'); ?>
@@ -248,10 +314,10 @@ if (isset($overlap_result) && count($overlap_result)) {
 		// revision memo template - optional
 		//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
 	?>
-	
+
 	<div class="submit_button">
 		<?php
-		if( ! @$is_revision): 
+		if( ! @$is_revision):
 			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 			echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
 		endif;
@@ -264,25 +330,6 @@ if (isset($overlap_result) && count($overlap_result)) {
 <script>
 <!-- jsに移す -->
 change_repeat_kb_area();
-/* いったんonchangeに変更。でも.attachEvent('onchange', ...)とかで書き直せる？
-$("#form_repeat_kb").change(function(event){
-	change_repeat_kb_area();
-});
-$("#group_list").change(function(event) {
-	get_group_user(event, $("#group_list").val(), "form_member_new");
-});
-$("#group_list_create_user").change(function(event) {
-	get_group_user(event, $("#group_list_create_user").val(), "form_user_id");
-});
-
-$("#building_group_list").change(function(event) {
-	get_group_building(event);
-});
-$("#form_group_detail").change(function(event) {
-	form_group_detail_change(event);
-});
-*/
-
 
 function form_group_detail_change(e) {
 	$("#form_group_kb_1").val(['2']);
@@ -311,27 +358,47 @@ function change_repeat_kb_area() {
 	if (repeat_kb == 0 || repeat_kb == 1 || repeat_kb == 2) {
 		// なし
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 3) {
 		$("#span_week_kb").css({'display': 'inline-block'});
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 4) {
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 5) {
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'inline-block'});
 	} else if (repeat_kb == 6) {
 		$("#span_week_kb").css({'display': 'inline-block'});
+		$("#span_week_kb_option1").css({'display': 'inline-block'});
+		$("#span_week_kb_option2").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'inline-block'});
+		$("#span_week_number_option1").css({'display': 'inline-block'});
+		$("#span_week_number_option2").css({'display': 'inline-block'});
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	}
@@ -377,20 +444,19 @@ function change_repeat_kb_area() {
 		}
 	}
 
-	//区分選択により、期間の入力欄の種類を変更 //入力が未対応なのでコメントアウト
-/*	if(repeat_kb < 4){
-		$('#form_start_date, #form_end_date').removeClass('month');
-		//入力欄の値もyy-mmに変更したい。datepicker上の値は"1日"が補完される
+	//区分選択により、期間の入力欄の種類を変更
+	if(repeat_kb == 5){
+		$('#form_start_date, #form_end_date').removeClass('month').addClass('year');
+	}else if(repeat_kb == 4 || repeat_kb == 6){
+		$('#form_start_date, #form_end_date').removeClass('year').addClass('month');
 	}else{
-		$('#form_start_date, #form_end_date').addClass('month');
+		$('#form_start_date, #form_end_date').removeClass('month year');
 	}
-*/
+
 }
 
 //終日選択反映
-//終日選択されている時のinput.timeでtimepickerをよびだしたくない
 is_allday();
-//$('#form_allday_kb').change(is_allday);
 function is_allday(){
 	if($('#form_allday_kb').prop('checked')){
 		$('#form_start_time').val('0:00');
@@ -400,76 +466,59 @@ function is_allday(){
 		$('#form_start_time, #form_end_time').attr('readonly',false);
 	}
 }
-/*
-	複数選択はjquery.inc.jsに移動。
-*/
+//start_timeを変更した際にend_timeに+1時間を入れる // 時間を変更していても引っ張られて良い？
+$('#form_start_time').on('change', function(){
+	if($('#form_start_time').val()){
+		var hour   = $('#form_start_time').val().slice(0, 2)-0;
+		var minute = $('#form_start_time').val().slice(-2);
+		hour = ((hour+1)+'').slice(-2);
+		if(hour==24) hour = 23; //23:59?
+		$('#form_end_time').val(hour+':'+minute).trigger('change');
+	}
+});
 
+//時間の設定を外部表示のplaceholderに
+$('#form_start_time, #form_end_time').on('change', function(){
+	if($(this).is('#form_start_time')){ //すでに値が入っている場合どうする？ placeholderだからよい？ //選択時のtimepickerの開始値とか、ずっとplaceholderにいれてていいの？とか //空でないときはplaceholderは見えないので、とにかく入れてしまう
+//		if($('#form_public_start_time').val()==''){
+			$('#form_public_start_time').attr('placeholder', $('#form_start_time').val());
+//		}
+	}else{
+//		if($('#form_public_end_time').val()==''){
+			$('#form_public_end_time').attr('placeholder', $('#form_end_time').val());
+//		}
+	}
+});
 
-var base_uri = $('body').data('uri');
+//実使用時間の片方のみに入力した場合に、もう一方に設定時間の値を入力
+$('#form_public_start_time, #form_public_end_time').on('change', function(){
+	$from = $(this).is('#form_public_start_time') ? $('#form_public_start_time') : $('#form_public_end_time');
+	$to = $(this).is('#form_public_start_time') ? $('#form_public_end_time') :  $('#form_public_start_time');
+	time_completion($from,$to);
 
-function get_group_user(groupId, targetEle) {
-
-	var targetEle = targetEle;
-	var group_id = groupId;
-
-	var now_members = new Object();
-	var kizon_options = document.getElementById('form_member_kizon').options;
-	for(var i = 0; i < kizon_options.length; i++){
-		now_members['member' + kizon_options[i].value] = 1;
-	};
-
-	$.ajax({
-		url: base_uri + 'usr/user_list.json',
-		type: 'post',
-		data: 'gid=' + group_id,
-		success: function(res) {
-			exists = JSON.parse(res);
-
-			document.getElementById(targetEle).options.length=0;
-
-			for(var i in exists) {
-				if (targetEle == "member_new") {
-					if (!now_members['member' + exists[i]['id']]) {
-						$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
-					}
-				} else {
-					$("#" + targetEle).append($('<option>').html(exists[i]['display_name']).val(exists[i]['id']));
+	function time_completion($from,$to){
+		if($from.val()){ //値が入力された場合
+			if(!$to.val()){
+				if($from.is('#form_public_start_time')){
+					$to.val($('#form_end_time').val());
+				}else{
+					$to.val($('#form_start_time').val());
 				}
 			}
-		
-		}
-	});
-}
-
-function get_group_building() {
-
-	var group_id = $("#building_group_list").val();
-
-	var now_buildings = new Object();
-	var kizon_options = document.getElementById('form_building_kizon').options;
-	for(var i = 0; i < kizon_options.length; i++){
-		now_buildings['building' + kizon_options[i].value] = 1;
-	};
-
-	$.ajax({
-		url: base_uri + 'scdl/get_building_list.json',
-		type: 'post',
-		data: 'bid=' + group_id,
-		success: function(res) {
-
-			exists = JSON.parse(res);
-
-			document.getElementById("form_building_new").options.length=0;
-
-			for(var i in exists) {
-				if (!now_buildings['building' + exists[i]['item_id']]) {
-					$("#form_building_new").append($('<option>').html(exists[i]['item_name']).val(exists[i]['item_id']));
+		}else{ //値が削除された場合
+			if(!$to.val()){
+				if($from.is('#form_public_start_time')){
+					$from.val($('#form_start_time').val());
+				}else{
+					$from.val($('#form_end_time').val());
 				}
 			}
-		
 		}
-	});
-}
+		$from.focus();
+	}
+
+});
+
 </script>
 
 

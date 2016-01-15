@@ -19,6 +19,9 @@ return array(
 	'site_title' => 'Locomo',
 	'slogan' => 'Accessible Web System Package for FuelPHP',
 
+	// allowed_ip_access_admin
+	'allowed_ip_access_admin' => '',
+
 	// is_use_customusergroup
 	'is_use_customusergroup' => true,
 
@@ -84,6 +87,21 @@ return array(
 			'size' => 1,
 			'seq' => 2,
 		),
+	),
+
+	// disable controller even if for administrator
+	// ex) '\\Modname\\Controller_Something'
+	'disabled_controllers' => array(
+		// '\\Controller_Scdl',
+		// '\\Controller_Msgbrd',
+		// '\\Controller_Adrs',
+		// '\\Controller_Flr',
+		// '\\Controller_Usr',
+		// '\\Controller_Usrgrp',
+		// '\\Controller_Acl',
+		// '\\Controller_Scffld',
+		// '\\Controller_Wrkflwadmin',
+		// '\\Controller_Bkmk',
 	),
 
 	// always guest allowed actions

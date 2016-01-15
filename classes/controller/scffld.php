@@ -21,24 +21,25 @@ class Controller_Scffld extends \Controller_Base
 	public static function _init()
 	{
 		// only at development
-		if (\Fuel::$env != 'development') throw new \Exception('scaffold is only worked under development environment.');
-
-		// permission check
-		$arrs = array(
-//			APPPATH.'classes/',
-			APPPATH.'migrations/',
-			APPPATH.'classes/controller/',
-			APPPATH.'classes/actionset/',
-			APPPATH.'classes/model/',
-			APPPATH.'classes/presenter/',
-			APPPATH.'views/',
-			APPPATH.'modules/',
-		);
-		foreach ($arrs as $arr)
+		if (\Fuel::$env == 'development')
 		{
-			if ('0777' !== \File::get_permissions($arr))
+			// permission check
+			$arrs = array(
+	//			APPPATH.'classes/',
+				APPPATH.'migrations/',
+				APPPATH.'classes/controller/',
+				APPPATH.'classes/actionset/',
+				APPPATH.'classes/model/',
+				APPPATH.'classes/presenter/',
+				APPPATH.'views/',
+				APPPATH.'modules/',
+			);
+			foreach ($arrs as $arr)
 			{
-				throw new \Exception($arr.'のパーミッションを確認してください。');
+				if ('0777' !== \File::get_permissions($arr))
+				{
+					throw new \Exception($arr.'のパーミッションを確認してください。');
+				}
 			}
 		}
 	}
@@ -59,16 +60,43 @@ class Controller_Scffld extends \Controller_Base
 			$scfld_type  = \Input::post('type', 'app');
 			$scfld_model = \Input::post('model', 'model');
 
+			// repopulate for error
+			\Session::set_flash('cmd_raw', $cmd_raw);
+			\Session::set_flash('type', $scfld_type);
+			\Session::set_flash('model', $scfld_model);
+
 			// vals
 			$cmd_orig = str_replace(array("\n","\r"), "\n", $cmd_raw);
 			$cmd_orig = join(explode("\n", $cmd_orig),' ');
 			$cmd_orig = trim(preg_replace("/ +/", ' ', $cmd_orig));
 			$cmd  = \Controller_Scffld_Helper::remove_nicename($cmd_orig);
 			$cmds = explode(' ', $cmd);
+			$files = array();
 
+			// errors
+			$errors = array();
+			if ( ! isset($cmds[0]) || $cmds[0] == '')
+			{
+				$errors[] = 'first line must be controller/module name.';
+			}
+
+			// banned name - reserved keyword
+			$banned = array('__halt_compiler', 'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue', 'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'eval', 'exit', 'extends', 'final', 'for', 'foreach', 'function', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'isset', 'list', 'namespace', 'new', 'or', 'print', 'private', 'protected', 'public', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 'xor');
+			if ($scfld_type == 'module' && in_array(strtolower($cmds[0]), $banned))
+			{
+				$errors[] = 'reserved keyword. cannot use "'.$cmds[0].'" for mudule\'s namespace. ';
+			}
+
+			// empty
 			if ( ! $cmd_orig)
 			{
-				\Session::set_flash('error', 'invalid value sent');
+				$errors[] = 'invalid value sent.';
+			}
+
+			// redirection
+			if ($errors)
+			{
+				\Session::set_flash('error', $errors);
 				\Response::redirect(\Uri::create('/scffld/main'));
 			}
 
@@ -129,7 +157,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// path - app
-			if ($scfld_type == 'app' || $scfld_type == 'view')
+			if ($scfld_type == 'app' || $scfld_type == 'view' || $scfld_type == 'model')
 			{
 				$scfldpath      = APPPATH;
 				$migrationpath  = APPPATH.'migrations/';
@@ -138,9 +166,12 @@ class Controller_Scffld extends \Controller_Base
 				$modelpath      = $classpath.'model/';
 				$presenterpath  = $classpath.'presenter/';
 				$actionsetpath  = $classpath.'actionset/';
-				if (\File::create_dir($scfldpath.'views/', $name)) $viewpath = APPPATH.'views/'.$name;
-				if (\File::create_dir($presenterpath, $name)) $presenterpath.= $name.DS;
-				if (\File::create_dir($presenterpath, 'index')) $presenteridxpath = $presenterpath.'index/';
+				if ($scfld_type != 'model')
+				{
+					if (\File::create_dir($scfldpath.'views/', $name)) $viewpath = APPPATH.'views/'.$name;
+					if (\File::create_dir($presenterpath, $name)) $presenterpath.= $name.DS;
+					if (\File::create_dir($presenterpath, 'index')) $presenteridxpath = $presenterpath.'index/';
+				}
 			}
 			$log_dir = APPPATH.'logs/scffld/'.$name;
 
@@ -156,9 +187,11 @@ class Controller_Scffld extends \Controller_Base
 			{
 				// migrations
 				\File::update($migrationpath, $migrate_file, $migration);
+				$files[] = $migrationpath.$migrate_file;
 
 				// model
 				\File::update($modelpath, $filename, $model);
+				$files[] = $modelpath.$filename;
 
 				// message
 				$messages[] = "modelとmigrationを生成しました。";
@@ -173,11 +206,13 @@ class Controller_Scffld extends \Controller_Base
 				\File::update($viewpath, 'index_admin.php', $tpl_index_admin);
 				\File::update($viewpath, 'view.php', $tpl_view);
 				\File::update($viewpath, 'edit.php', $tpl_edit);
+				$files[] = $viewpath;
 
 				// prensenter
 				\File::update($presenteridxpath, 'admin.php', $presenter_index);
 				\File::update($presenterpath, 'view.php', $presenter_view);
 				\File::update($presenterpath, 'edit.php', $presenter_edit);
+				$files[] = $presenterpath;
 
 				// message
 				$messages[] = "viewsとpresenterのファイル群を生成しました。";
@@ -188,6 +223,8 @@ class Controller_Scffld extends \Controller_Base
 			{
 				\File::update($controllerpath, $filename, $controller);
 				\File::update($actionsetpath, $filename, $actionset);
+				$files[] = $controllerpath.$filename;
+				$files[] = $actionsetpath.$name;
 
 				// message
 				$messages[] = "controllerとactionsetのファイル群を生成しました。";
@@ -197,6 +234,7 @@ class Controller_Scffld extends \Controller_Base
 			if ($scfld_type == 'module')
 			{
 				\File::update($configpath, $filename, $config);
+				$files[] = $configpath.'modules/'.$filename;
 
 				// message
 				$messages[] = "configのファイルを生成しました。";
@@ -217,7 +255,8 @@ class Controller_Scffld extends \Controller_Base
 			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scffld/'.$name);
 			$latest = \Util::get_latestprefix($log_dir);
 			\File::update($log_dir, $latest.'_scaffold.txt', $cmd_raw);
-	
+			\File::update($log_dir, 'files.php', '<?php'."\n".'$scfflds = '.var_export($files, 1).';');
+
 			// message
 			$messages[] = "{$log_dir}";
 			$messages[] = "にpostされた文字列を保存しています。";
@@ -236,4 +275,36 @@ class Controller_Scffld extends \Controller_Base
 		$this->template->content = $view;
 	}
 
+	/**
+	 * action_destory()
+	 */
+	public function action_destory()
+	{
+		// view
+		$view = \View::forge('scffld/destory');
+		if (\Input::method() == 'POST' && \Security::check_token())
+		{
+			$cmd_raw     = \Input::post('cmd');
+			$scfld_type  = \Input::post('type', 'app');
+			$scfld_model = \Input::post('model', 'model');
+
+			// repopulate for error
+			\Session::set_flash('cmd_raw', $cmd_raw);
+			\Session::set_flash('type', $scfld_type);
+			\Session::set_flash('model', $scfld_model);
+
+
+
+		}
+
+		// set errors
+		if (\Input::method() == 'POST' && ! \Security::check_token())
+		{
+			\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+		}
+
+		// view
+		$view->set_global('title', '削除');
+		$this->template->content = $view;
+	}
 }

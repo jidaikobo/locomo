@@ -9,16 +9,23 @@
 
 <ul>
 <?php if ($user): ?>
-	<li>ユーザグループ単位で許可されいてるアクションを不許可にはできません</li>
+	<li>ユーザグループ単位で許可されているアクションを不許可にはできません</li>
 <?php endif; ?>
-	<li>コンフィグで許可されいてるアクションを不許可にはできません</li>
+	<li>コンフィグで許可されているアクションを不許可にはできません</li>
 </ul>
 
 <h2>設定</h2>
 <?php echo \Form::open(array('action' => \Uri::base(false).'acl/update_acl/', 'class'=>'lcm_form form_group')); ?>
 
+<div class="index_toolbar_buttons">
+<?php
+echo \Form::button('全てチェック', null, array('class' => 'check_all button small'));
+echo \Form::button('全て外す', null, array('class' => 'uncheck_all button small'));
+?>
+</div>
+
 <?php foreach($actionsets as $controller => $each_actionsets): ?>
-	<fieldset>
+	<fieldset class="clear">
 	<legend><?php echo \Util::get_locomo($controller, 'nicename') ?></legend>
 	<table class="tbl2">
 	<?php
@@ -26,11 +33,11 @@
 		if ( ! isset($actionset['action_name'])) continue;
 		if ( ! isset($actionset['dependencies'])) continue;
 	?>
-		<tr>
+		<tr class="has_checkbox">
 			<th style="width:30%">
 				<?php
 				$checked = in_array($action, $aprvd_actionset[$controller]) ? ' checked="checked"' : null ;
-				echo '<label>'.\Form::checkbox("acls[{$controller}][{$action}]", 1, array($checked)).' '.$actionset['action_name'].'</label><br />';
+				echo '<label>'.\Form::checkbox("acls[{$controller}][{$action}]", 1, array('class' => 'checkbox_binded', $checked)).' '.$actionset['action_name'].'</label><br />';
 				?>
 			</th>
 			<td><?php echo @$actionset['explanation'] ?></td>
