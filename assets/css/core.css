@@ -1167,6 +1167,7 @@ td.minimum {
 }
 .select_period .active {
 	padding: 5px 10px;
+	background-color: #fafacb;
 }
 
 .narrow_user,
@@ -1481,7 +1482,7 @@ schedule_day.graph td {
 
 /*== 外部表示 ==*/
 .text_icon.public {
-	background-color: #ac2000;
+	background-color: #9c3;
 }
 .text_icon.public:before {
 	content: '外';

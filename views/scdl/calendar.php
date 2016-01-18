@@ -39,12 +39,13 @@
 						$('table.calendar .events .lcm_tooltip_parent').each(function(){
 							if($(this).data('jslcmTooltipId') == detail_id){
 								$(this).show();
-								cnt++;
 							}
 						});
-						msg = cnt+'件ヒットしました';
 					}
 				});
+				cnt = $('table.calendar').find('.lcm_tooltip_parent:visible').length;
+				if(cnt) 	msg = cnt+'件ヒットしました';
+
 				if(clear){
 					$('#narrow_text_info').hide();
 				}else{
@@ -84,9 +85,9 @@
 	$mon_select_html.= '<span class="select_num lcm_focus" title="各月を選択">';
 	for($i = 1; $i <= 12; $i++):
 		if ($i == $mon):
-			$mon_select_html.= '<span class="active">'.$i.'</span>';
+			$mon_select_html.= '<strong class="active">'.$i.'</strong>';
 		else:
-			$mon_select_html.= '<span><a href="'.\Uri::create( $kind_name . '/calendar/' . $year . '/' . $i).'">'.$i.'</a></span>';
+			$mon_select_html.= '<span><a href="'.\Uri::create( $kind_name . '/calendar/' . $year . '/' . $i).$cond.'">'.$i.'</a></span>';
 		endif;
 	endfor;
 	$mon_select_html.= '</span>';
