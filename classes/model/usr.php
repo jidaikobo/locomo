@@ -283,7 +283,7 @@ class Model_Usr extends Model_Base_Soft
 					array('usergroup.id', '=', $gid),
 				)
 			);
-		} else {
+		} else if ($gid) {
 			// ユーザグループを内包していなければ、普通に取得する
 			$options['where'] = array(array('usergroup.id', '=', $gid));
 		}

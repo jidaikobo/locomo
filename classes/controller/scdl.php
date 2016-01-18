@@ -799,17 +799,23 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 各モードにより処理分け
 		$calendar = array();
+		$conds = array();
+		foreach(\Input::get() as $k => $v){
+			$conds[] = e($k).'='.e($v);
+		}
+		$cond = '?'.join('&amp;', $conds);
+
 		$next_url = "";
 		$prev_url = "";
 		$mini_next_url = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " + 1month"));
 		$mini_prev_url = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " - 1month"));
 		$next_year = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " + 1year"));
 		$prev_year = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " - 1year"));
-		$mini_next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_next_url), '次の月',  array('class' => 'next_month'));
-		$mini_prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_prev_url), '前の月',  array('class' => 'prev_month'));
+		$mini_next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_next_url . $cond), '次の月',  array('class' => 'next_month'));
+		$mini_prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_prev_url . $cond), '前の月',  array('class' => 'prev_month'));
 
-		$next_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_year), '次の年',  array('class' => 'next_year'));
-		$prev_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_year), '前の年',  array('class' => 'prev_year'));
+		$next_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_year . $cond), '次の年',  array('class' => 'next_year'));
+		$prev_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_year . $cond), '前の年',  array('class' => 'prev_year'));
 
 		if ($mode == "week")
 		{
@@ -822,8 +828,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$next_url .= "/" . $week_option;
 				$prev_url .= "/" . $week_option;
 			}
-			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の週',  array('class' => 'next_week'));
-			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の週',  array('class' => 'prev_week'));
+			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url . $cond), '次の週',  array('class' => 'next_week'));
+			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url . $cond), '前の週',  array('class' => 'prev_week'));
 		}
 		else if ($day && $mode == null)
 		{
@@ -831,8 +837,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$calendar = $this->make_day_calendar($year , $mon, $day);
 			$next_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " + 1days"));
 			$prev_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " - 1days"));
-			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の日');
-			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の日');
+			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url . $cond), '次の日');
+			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url . $cond), '前の日');
 		}
 		else
 		{
@@ -897,6 +903,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("mini_prev_url", $mini_prev_url);
 		$view->set("next_year_url", $next_year_url);
 		$view->set("prev_year_url", $prev_year_url);
+		$view->set("cond", $cond);
 		$view->set("kind_name", $model::$_kind_name);
 		$view->set("display_month", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $year . '/' . $mon), '月表示'));
 		$view->set("display_week", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $weekY . '/' . $weekM . '/' . $weekD . '/week'), '週表示'));
