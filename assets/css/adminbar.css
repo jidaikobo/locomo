@@ -192,7 +192,7 @@ img#adminbar_logo {
 	padding-right: .25em;
 }
 #adminbar .adminbar_bottom .adminbar_sub {
-	height: 2em;
+	line-height: 2em;
 }
 #adminbar .adminbar_top .adminbar_sub div {
 	vertical-align: middle;
