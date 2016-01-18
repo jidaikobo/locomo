@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /*
 CSSハック(valid)
-IE6 : * html 
+IE6 : * html
 IE7 : *+html
 IE8,MacIE5,Opera9以下 html:first-child
 */
@@ -189,7 +189,7 @@ ul.horizontal_list {
 	overflow: hidden;
 	margin: 5px 1.125% 15px 0;
 	font-size: .85em;
-	
+
 }
 .lcm_action_dashboard .widget.size1 {
 	width: 32% !important;
@@ -1000,8 +1000,8 @@ td.minimum {
 
 .datatable tbody th {
 	font-weight: normal;
-	padding:.25em .5em;	
-} 
+	padding:.25em .5em;
+}
 .lcm_ctrl_-controller_flr .datatable tbody th.dir {
 	background-image: url('../img/system/mark_disclose.png') !important;
 	background-position: right center !important;
@@ -1333,7 +1333,7 @@ table.calendar {
 }
 .calendar .add_new:hover {
 	color: #36f;
-} 
+}
 
 table.calendar .events {
 	padding: 0 2px 5px;
@@ -1755,7 +1755,7 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 .jslcm_fixed_tfoot {
 	width: 100%;
 }
-.jslcm_tbody_wrapper { 
+.jslcm_tbody_wrapper {
 	overflow-x: hidden;
 }
 .jslcm_fixed_thead,
@@ -1794,8 +1794,8 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 	-o-box-shadow: 0 0 6px #aaa;
 	-ms-box-shadow: 0 0 6px #aaa;
 	/* filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true),; */
-	progid: DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
-	 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+	progid: DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true),
+	 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true),
 	 /*
 	 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 	 */;
@@ -2193,7 +2193,7 @@ body .ui-resizable-handle {
 		text-shadow: none;
 		line-height: 1;
 	}
-	
+
 /*=== .lcm_form ===*/
 	.lcm_form > .input_group,
 	.lcm_form .hidden_item > .input_group {
@@ -2229,8 +2229,8 @@ body .ui-resizable-handle {
 	.lcm_form .input_group > table tbody th,
 	.lcm_form .input_group > table tbody td {
 		min-width: inherit;
-	}	
-	
+	}
+
 		/*=== float_list ===*/
 	.size1 ul.float_list li {
 		width: 100%;
@@ -2278,4 +2278,4 @@ body .ui-resizable-handle {
 	#pqp-container {
 		display: none;
 	}
-} 
+}
