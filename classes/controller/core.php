@@ -177,6 +177,14 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		// ordinary auth
 		$is_allow = \Auth::instance()->has_access($current_action);
 
+		// ログイン画面へのip制限
+		if (\Config::get('allowed_ip_access_admin') &&
+				$current_action == '\Controller_Auth/login' &&
+				$_SERVER['REMOTE_ADDR'] != \Config::get('allowed_ip_access_admin'))
+		{
+			return \Response::redirect('/');
+		}
+
 		// additional conditions
 		$conditions = \Arr::get(static::$config, 'conditioned_allowed', false);
 		if ( ! $is_allow && $conditions && array_key_exists($current_action, $conditions))

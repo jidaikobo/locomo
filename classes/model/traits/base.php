@@ -710,10 +710,25 @@ trait Model_Traits_Base
 	}
 
 
-
-
-
-
+	/*
+	 * _relation_reset()
+	 * @param   array     $property
+	 * 検索時に related で絞り込んだ物に -> でアクセスすると
+	 * 絞り込んだ状態で取得するので、コイツでリセットかける
+	 */
+	public function _reset_related($property)
+	{
+		$conditons = array();
+		if ($rel = static::relations($property))
+		{
+			if (array_key_exists($property, $this->_data_relations))
+			{
+				$this->_data_relations[$property] = $rel->get($this, $conditons);
+				$this->_update_original_relations(array($property));
+			}
+		}
+		return $this->{$property};
+	}
 
 	/*
 	 * csv 用関数
