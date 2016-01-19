@@ -749,8 +749,61 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $mode
 	 * @return [type]
 	 */
-	public function action_calendar($year = null, $mon = null, $day = null, $mode = null, $week_option = null) {
+	public function action_calendar($year = null, $mon = null, $day = null, $mode = null, $week_option = null)
+	{
 		$model = $this->model_name;
+		\Profiler::mark('Scdl::calendar() - Called');
+
+		// キャッシュ用にタイトルは最初にアサイン
+		$this->template->set_global('title', self::$nicename);
+
+		// is_hmvcが、キャッシュ時なぜなtrueになるので明示的にアサイン
+		$this->template->set_global('is_hmvc', \Request::is_hmvc());
+
+		// キャッシュクリア用にget値をアサイン
+		$this->template->set_global('input_get', join('&amp;',\Input::get()));
+
+		// テンプレート切り分け
+		$tmpl_sub = "";
+		if ($mode == "week")
+			$tmpl_sub = "_week";
+		if ($mode == null && $day)
+			$tmpl_sub = "_day";
+		// 週表示用にテンプレートを分ける
+		if ($week_option == "member") {
+			$tmpl_sub = "_week_" . $week_option;
+		} else if ($week_option == "building") {
+			$tmpl_sub = "_week_" . $week_option;
+		}
+		if ($this->_content_template)
+		{
+			$view = \View::forge($model::$_kind_name . "/" . $this->_content_template);
+		} else {
+			$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
+		}
+
+		// ログインしているユーザIDとget値でキャッシュする
+		$cache_str = 'scdl_'.\Auth::get('id').'_'.\Inflector::friendly_title(\Uri::current().join(\Input::get()));
+
+		try
+		{
+			// root not use cache
+//			if (\Auth::is_root()) throw new \CacheNotFoundException();
+			if (\Cache::get($cache_str) && ! \Input::get('nocache'))
+			{
+				\Profiler::mark('Scdl::calendar() with cache - Done');
+				$this->template->set_global('is_cache', true);
+				$this->template->content = \Cache::get($cache_str);
+				return ;
+			}
+			else
+			{
+				throw new \CacheNotFoundException();
+			}
+		}
+		catch (\CacheNotFoundException $e)
+		{
+		$this->template->set_global('is_cache', false);
 
 		// 絞り込みをセッションへ保存
 		if (\Input::get("ugid", "not") != "not")
@@ -827,19 +880,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12)
 			$mon = date('m');
 
-		// テンプレート切り分け
-		$tmpl_sub = "";
-		if ($mode == "week")
-			$tmpl_sub = "_week";
-		if ($mode == null && $day)
-			$tmpl_sub = "_day";
-		// 週表示用にテンプレートを分ける
-		if ($week_option == "member") {
-			$tmpl_sub = "_week_" . $week_option;
-		} else if ($week_option == "building") {
-			$tmpl_sub = "_week_" . $week_option;
-		}
-
 		$year = (int)$year;
 		$mon = (int)$mon;
 		$day = (int)$day;
@@ -897,14 +937,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 週表示用
 		list($weekY, $weekM, $weekD) = $this->week_first_date($year, $mon, $day);
-        if ($this->_content_template)
-        {
-            $view = \View::forge($model::$_kind_name . "/" . $this->_content_template);
-        } else {
-            $view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
-        }
 
-		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
 
 		// ユーザーグループ一覧作成
@@ -952,9 +985,18 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("prev_year_url", $prev_year_url);
 		$view->set("cond", $cond);
 		$view->set("kind_name", $model::$_kind_name);
-		$view->set("display_month", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $year . '/' . $mon), '月表示'));
-		$view->set("display_week", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $weekY . '/' . $weekM . '/' . $weekD . '/week'), '週表示'));
+		$view->set("display_month",
+							 \Html::anchor(\Uri::create($model::$_kind_name.'/calendar/'.$year.'/'.$mon), '月表示'));
+		$view->set("display_week", \Html::anchor(\Uri::create($model::$_kind_name.'/calendar/'.$weekY.'/'.$weekM.'/'.$weekD.'/week'), '週表示'));
+		} // end of catch
+
+		// cache 5 min
+		\Cache::delete($cache_str);
+		\Cache::set($cache_str, $view, 300);
+
+		// set
 		$this->template->content = $view;
+		\Profiler::mark('Scdl::calendar() without cache - Done');
 	}
 
 	/**
