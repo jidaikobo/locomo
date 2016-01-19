@@ -87,9 +87,27 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_edit($id = null, $year = null, $mon = null, $day = null)
 	{
-		$model = $this->model_name ;
+		// 戻り先確保
+		$ref = \Input::server('HTTP_REFERER');
+		// リファラで戻るときには、editかcreateだったらアップデートも代入もしない
+		if (strpos($ref, 'edit') || strpos($ref, 'create'))
+		{
+			$ref = \Session::get('ref');
+		}
+		else
+		{
+			\Session::set('ref', $ref);
+		}
+		$save_ret_to = \Input::post('submit_top') ? 'save_ret_to_top' : 'save_ret_to_bottom';
+		$ret_to = \Input::post('submit_top') ? 'ret_to_top' : 'ret_to_bottom';
+		// ユーザごとの戻り先の設定
+		if (\Input::post($save_ret_to))
+		{
+			\Session::set("ret_to", \Input::post($ret_to));
+		}
 
 		// --------------------- parent ---------------------
+		$model = $this->model_name ;
 		$content = \View::forge($model::$_kind_name . "/edit");
 
 		if ($id) {
@@ -198,11 +216,40 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					);
 
 					// 部分編集の場合はリダイレクトしない
-					if ($this->_someedit_id):
+					if ($this->_someedit_id)
+					{
 						return $obj;
-					else:
-						return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
-					endif;
+					}
+					else
+					{
+						// 戻り先分岐
+						$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id);
+						$y = date('Y', strtotime($obj->start_date));
+						$m = date('m', strtotime($obj->start_date));
+						$d = date('d', strtotime($obj->start_date));
+						$type = $model::$_kind_name == 'scdl' ? 'member' : 'building';
+
+						switch(\Input::post($ret_to))
+						{
+						case 'view':
+							$ret = str_replace('edit', 'viewdetail', $ret);
+							break;
+						case 'prev':
+							$ret = strpos($ref, \Uri::base()) !== false ? $ref : $ret ;
+							break;
+						case 'month':
+							$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class())."/calendar/$y/$m");
+							break;
+						case 'week':
+							$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/calendar/'.join('/', $this->week_first_date($y, $m, $d))."/week/$type");
+							break;
+						case 'day':
+							$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class())."/calendar/$y/$m/$d");
+							break;
+						}
+
+						return \Response::redirect($ret);
+					}
 				else:
 
 					//save failed

@@ -136,16 +136,43 @@ if (isset($overlap_result) && count($overlap_result)) {
 <h1 class="skip"><?php echo $title ?></h1>
 <?php echo \Form::open(); ?>
 
+<?php
+// 保存ボタン
+function scdl_submit ($id)
+{
+	$arr = array(
+		'edit'  => '編集画面',
+		'view'  => '閲覧画面',
+		'prev'  => '前の画面',
+		'month' => '月表示',
+		'week'  => '週表示',
+		'day'   => '日表示',
+	);
+
+	$html = '';
+	$ret_to = \Session::get("ret_to");
+
+	$html.= '<label for="ret_to_'.$id.'" class="skip">戻り先</label>'."\n";
+	$html.= '<select name="ret_to_'.$id.'" id="ret_to_'.$id.'" title="保存後の戻り先です。「前の画面」の場合は、'.e(\Session::get("ref")).'に戻ります。">'."\n\t";
+	foreach ($arr as $k => $v)
+	{
+		$selected = $ret_to == $k ? ' selected="selected"' : '';
+		$html.= '<option'.$selected.' value="'.$k.'">'.$v.'</option>'."\n\t";
+	}
+	$html.= '</select>'."\n";
+	$html.= '<label for="save_ret_to_'.$id.'" title="戻り先を保存する場合はチェックしてください"><input type="checkbox" id="save_ret_to_'.$id.'" name="save_ret_to_'.$id.'" value="1" /> <span class="skip">戻り先の</span>保存</label>'."\n";
+	$html.= \Form::submit('submit_'.$id, '保存する', array('class' => 'button primary', 'id' => 'form_submit_top'.$id));
+	echo $html;
+}
+?>
+
 <div class="form_group lcm_form">
 	<div class="submit_button top"><!-- 上部保存ボタン -->
 		<?php
-		if( ! @$is_revision):
-			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-			echo \Form::submit('submit', '保存する', array('class' => 'button primary', 'id' => 'form_submit_top'));
-		endif;
+			scdl_submit('top');
 		?>
 	</div>
-	
+
 <?php
 	// use model's form definition instead of raw-like html
 	//echo $form;
@@ -398,10 +425,8 @@ if (isset($overlap_result) && count($overlap_result)) {
 
 	<div class="submit_button">
 		<?php
-		if( ! @$is_revision):
 			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-			echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
-		endif;
+			scdl_submit('bottom');
 		?>
 	</div>
 
