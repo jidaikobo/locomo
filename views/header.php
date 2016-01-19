@@ -17,7 +17,7 @@
 	<?php echo \Asset::css('base.css'); ?>
 	<?php echo \Asset::css('core.css'); ?>
 	<?php echo \Asset::css('layout.css'); ?>
-	<?php echo \Asset::css('../js/jquery-ui-1.10.4/css/jquery-ui-1.10.4.custom.min.css'); ?>
+	<?php echo \Asset::css('../js/jquery-ui-1.10.4/css/smoothness/jquery-ui-1.10.4.custom.min.css'); ?>
 	<?php echo \Asset::css('../js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css'); ?>
 	<?php echo \Asset::render('css'); ?>
 
