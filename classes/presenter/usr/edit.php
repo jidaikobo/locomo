@@ -115,7 +115,10 @@ class Presenter_Usr_Edit extends \Presenter_Base
 			->add_rule('valid_string', array('alpha','numeric','dot','dashes',));
 
 		// 管理者以外は現在のパスワードを求める
-		if ( ! \Auth::is_admin())
+		if (
+			! \Auth::is_admin() &&
+			\Request::main()->action != 'create'
+		)
 		{
 			$form->add_after(
 					'old_password',
