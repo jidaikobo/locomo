@@ -1,0 +1,870 @@
+/* ========== 管理バーの設定CSS ========== */
+/* 管理画面:body.loggedin, 管理バー:#adminbar */
+/* 表側サイトの影響を受けないようにリセットCSS的なものもあわせる */
+
+/* ===== リセットCSS ===== */
+/* div, section, nav, p, span, a, img, ul, li, dl, h1~6 */
+#adminbar {
+	font-size: 14px;
+	line-height: 1.2;
+}
+#adminbar div,
+#adminbar nav,
+#adminbar p,
+#adminbar ul,
+#adminbar ol,
+#adminbar dl,
+#adminbar li,
+#adminbar h1,
+#adminbar h2,
+#adminbar h3,
+#adminbar h4,
+#adminbar h5,
+#adminbar h6,
+#adminbar h7,
+#adminbar img,
+#adminbar strong,
+#adminbar em {
+	margin:0;
+	padding:0;
+	border:0;
+	font-size:100%;
+	background-color:transparent;
+	background-image: none;
+}
+#adminbar nav,
+#adminbar section,
+#adminbar p,
+#adminbar ul,
+#adminbar dl,
+#adminbar h1,
+#adminbar h2,
+#adminbar h3,
+#adminbar h4,
+#adminbar h5,
+#adminbar h6,
+#adminbar h7 {
+	display: block;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	height: auto;
+}
+#adminbar div {
+	display: inline-block;
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+	height: auto;
+}
+*+html #adminbar div {
+	display: inline;
+	zoom: 1;
+}
+#adminbar a {
+	margin:0;
+	padding:0;
+	background-color:transparent;
+	background-image: none;
+}
+
+#adminbar h1:after {
+	content: "";
+}
+.lcm_modal_content {
+	height: 100% !important;
+	overflow: auto;
+	padding-bottom: 1em !important;
+}
+
+/* === リセットここまで === */
+
+/* adminbar_hidden_item */
+#adminbar .hidden_item {
+	display: none;
+}
+#adminbar .hidden_item.on {
+	display: block !important;
+}
+
+body.loggedin {
+	padding-top: 70px;
+}
+
+#adminbar {
+	width: 100%;
+	min-width: 300px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	padding: 2.5em 0 0;/* 上部バーの高さを設けておく */
+	border-top: 1px solid #7393c6;
+	background-color: #fff;
+	-webkit-font-smoothing: subpixel-antialiased; /* Safariでのテキストのアンチエイリアス処理調整、薄くなるのを防ぐ */
+}
+/* === デフォルトのLocomoテーマ === */
+.default_bg #adminbar {
+	border-color: #998;
+}
+.default_bg .lcmbar_top {/* adminbarとlcmbarの整理は後で考える。lcmbarは、本文内のボックス（例えばダッシュボード）でも使う。 */
+	background-color: #1f1210 !important;
+	background-image: url('../img/system/adminbar_bg.png') !important;
+	background-position: center top !important;
+	background-repeat: repeat !important;
+	color: #fff !important;
+	text-shadow: 1px 1px 0 #333 !imortant;
+	vertical-align: middle !important;
+}
+
+#adminbar div.adminbar_top,
+#adminbar div.adminbar_bottom {
+	display: block;
+	width: 100%;
+}
+img#adminbar_logo {
+	background-color: #fff;
+}
+/* あとで整理 */
+#adminbar div.adminbar_top {
+	height: 2.5em;
+	line-height: 2.5em;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-image: url('../../app_assets/img/system/adminbar_bg.png');
+	background-color: #0e3664;
+	background-position: center top;
+	background-repeat: no-repeat;
+	color: #fff !important;
+	text-shadow: 1px 1px 0 #333;
+	vertical-align: middle;
+}
+#adminbar .menulist li {
+	text-shadow: none;
+	color: #333;
+}
+#adminbar .adminbar_bottom {
+	clear: both;
+	border-top: 1px solid #7393c6;
+	border-bottom: 1px solid #858c91;
+	position: relative;
+	background: #fafafa;
+	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -o-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -webkit-gradient(linear, center top, center bottom, from(#fcfcfc), to(#ebebeb));
+	background-image: -webkit-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
+	color: #333;
+	text-shadow: 1px 1px 0 #fff;
+	box-shadow: 0 0 2px rgba(0,0,0,.2);
+}
+/*#adminbar .adminbar_main,
+#adminbar .adminbar_sub {
+	padding: 0 10px;
+}*/
+#adminbar .adminbar_main div,
+#adminbar .adminbar_sub div {
+	position: relative;
+	vertical-align: middle;
+}
+/* 表側と裏側で高さが違うので、いったんなし
+#adminbar .adminbar_top .adminbar_main,
+#adminbar .adminbar_top .adminbar_sub {
+	padding-top: .125em;
+}
+*/
+#adminbar .adminbar_top .adminbar_main a {
+	margin: 0 5px;
+}
+/*#adminbar .adminbar_bottom .adminbar_main {
+	padding: 0 1.85em 0 10px;
+}
+*/
+#adminbar .adminbar_bottom .adminbar_main div:first-child,
+#adminbar .adminbar_bottom .adminbar_main div:first-child + div {
+	margin-right: .5em;
+}
+#adminbar .adminbar_sub {
+	float: right;
+	padding-right: .25em;
+}
+#adminbar .adminbar_bottom .adminbar_sub {
+	line-height: 2em;
+}
+#adminbar .adminbar_top .adminbar_sub div {
+	vertical-align: middle;
+	line-height: 2em;
+	padding-left: 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+#adminbar a {
+	display: inline-block;
+	text-decoration: none;
+}
+/* 横並びリスト */
+#adminbar ul.adminbar_list_horizontal ul,
+.adminbar_list_horizontal li {
+	display: inline-block;
+}
+*+html #adminbar ul.adminbar_list_horizontal ul,
+*+html #adminbar ul.adminbar_list_horizontal li {
+	display: inline;
+	zoom: 1;
+}
+#adminbar ul.adminbar_list_horizontal {
+	line-height: 1.25;
+	padding: .35em 4px .4em;
+}
+#adminbar ul.adminbar_list_horizontal li {
+	padding: .25em 6px .25em 0;
+}
+
+/* ドロップダウンリスト */
+#adminbar a.has_dropdown {
+	padding-right: 15px;
+	background-image: url('../img/system/mark_listopen_bk.png');
+	background-position: right center;
+	background-repeat: no-repeat;
+	padding-left: 0;
+}
+#adminbar .has_top_separator {
+	border-top: 1px solid rgba(255,255,255,1);
+	box-shadow: 0 -1px 0 #ddd;
+	margin-top: -1px;
+	padding-top: 3px;
+}
+#adminbar .has_bottom_separator {
+	border-bottom: 1px solid #ddd;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+	margin-bottom: 3px;
+}
+#adminbar .has_top_separator.has_bottom_separator {
+	box-shadow: 0 1px 0 rgba(255,255,255,1), 0 -1px 0 #ddd;
+}
+#adminbar .has_bottom_separator + .has_top_separator {
+	border-top: none;
+	box-shadow: 0 1px 0 rgba(255,255,255,1);
+}
+
+#adminbar_logo {
+	height: 2.5em;
+	vertical-align: top;
+	background-color: #000;
+	padding: 0;
+}
+#adminbar_logo + .adminbar_main {
+	padding-left: 4px;
+}
+#adminbar .adminbar_icon { /* IE8で画像のサイズをCSSで指定した場合に本来サイズで枠が描画されてしまうのを防ぐためにラッパーを用意 */
+	display: inline-block;
+	height: 2em;
+	vertical-align: middle;
+}
+#adminbar .adminbar_top .adminbar_icon {
+	width: 1.75em;
+	padding: 0.2em .125em .25em;
+}
+#adminbar .adminbar_top .adminbar_icon img {
+	width: 1.75em;
+	height: 1.75em;
+	padding: .1em 0;
+}
+#adminbar .adminbar_bottom .adminbar_icon {
+	width: 1.5em;
+	padding: 0 .125em;
+}
+#adminbar .adminbar_bottom .adminbar_icon img {
+	padding: .25em 0;
+}
+
+#adminbar .adminbar_sub ul.on {
+	right: 0;
+	left: auto !important;
+}
+#adminbar #adminbar_render_info {
+	opacity: .65;
+	font-size: .9em;
+	line-height: 2em;
+	padding-top: .5em;
+}
+#adminbar .adminbar_bottom .adminbar_sub a.has_dropdown {
+	padding: .15em 16px .15em 0;
+}
+#adminbar .adminbar_top .adminbar_main div > a {
+	display: block;
+	line-height: 2em;
+	vertical-align: middle;
+}
+#adminbar .adminbar_top a {
+	color: #fff !important;
+	text-shadow: 1px 1px 0 #333 !important;
+}
+#adminbar .adminbar_top a,
+#adminbar .adminbar_bottom a {
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+#adminbar .adminbar_top div > a:hover,
+#adminbar .adminbar_top div > a:focus {
+	background-color: rgba(255,255,255,.15);
+	transition: 0.3s;
+}
+#adminbar .li,
+#adminbar .menulist li a,
+#adminbar .adminbar_bottom a {
+	color: #333 !important;
+	text-shadow: 1px 1px 0 #fff !important;
+	margin: 0 !important;
+	padding: .35em 4px .4em;
+}
+#adminbar .adminbar_top a.has_dropdown {
+	padding-right: 15px;
+	background-image: url('../img/system/mark_listopen_wh.png');
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+#adminbar .icononly {
+	margin-right: -8px;
+}
+#adminbar .adminbar_bottom div a:hover,
+#adminbar .adminbar_bottom div a:focus {
+	background-color: rgba(0,0,0,.06);
+	transition: 0.3s;
+	text-shadow: none;
+}
+#adminbar .menulist.on {
+	box-shadow: 0 0 6px #aaa;
+	-moz-box-shadow: 0 0 6px #aaa;
+	-o-box-shadow: 0 0 6px #aaa;
+	-ms-box-shadow: 0 0 6px #aaa;
+/*
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true), 
+*/
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+/*
+progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
+*/
+}
+#adminbar .menulist a {
+	display: block !important;
+	padding: 2px 20px 4px !important;
+}
+#adminbar .menulist.on a:hover,
+#adminbar .menulist.on a:focus {
+	background-color: #d8ebfc;
+	transition: 0.3s;
+	text-shadow: none;
+	border-radius: 0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+}
+#adminbar ul.adminbar_list_horizontal a {
+	display: inline !important;
+/*	padding: .25em !important;*/
+}
+#adminbar .adminbar_main ul.on,
+#adminbar .adminbar_sub ul.on {
+	position: absolute;
+	left: 0;
+	z-index: 110;
+	display: block;
+	white-space: nowrap;
+	padding: .25em 0;
+	border: 1px solid #b9b9b9;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	background: rgb(250, 250, 250);
+	background: rgba(250, 250, 250, .95);
+}
+#adminbar .on li {
+	display: block;
+}
+
+#adminbar li .label {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 8em;
+	padding-left: 20px;
+}
+#adminbar #adminbar_usergroup {
+	padding-left: 20px;
+	padding-bottom: 4px;
+	font-size: .85em;
+}
+#adminbar adminbar_usergroup li {
+	display: list-item;
+	list-style-type: disc;
+	margin-left: -.125em;
+	padding-right: 20px;
+}
+#adminbar .on  > li {
+	display: block;
+}
+#adminbar .show_if_focus {
+	left:4px;
+	top: 4px;
+}
+
+#adminbar a.has_dropdown {
+	padding-right: 15px;
+	background-image: url('../img/system/mark_listopen_bk.png');
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+
+/* あとで考える。オプションの歯車と戻る画面のリンクリストがあるので、管理バーしたの領域のレイアウトは要再考。
+#adminbar .adminbar_sub .admin_controller_option {
+	position: absolute;
+	top: 0;
+	right: 9px;
+}
+*/
+
+/* floatwindow */
+#adminbar .lcm_floatwindow h1 a{
+	color: #fff !important;
+	text-decoration: none !important;
+	cursor: move !important;
+}
+#adminbar .lcm_floatwindow {
+	z-index: 100 !important;
+	top: 2.25em ;
+	right: 0 !important;
+	background: rgb(250, 250, 250) !important;
+	position: fixed !important;
+	box-shadow: 0 0 6px #aaa !important;
+	-moz-box-shadow: 0 0 6px #aaa !important;
+	-o-box-shadow: 0 0 6px #aaa !important;
+	-ms-box-shadow: 0 0 6px #aaa !important;
+	/* filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true),; */
+	progid: DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
+	 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+	 /*
+	 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
+	 */;
+	border: 1px solid #b9b9b9 !important;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+	height: 15em ;
+	min-height: 1.2em !important;
+	width: 20em ;
+	padding: 2em 0 0 !important;
+	min-width: 200px !important;
+	overflow: hidden !important;
+	color: #333 !important;
+	text-shadow: none !important;
+}
+#adminbar .lcm_floatwindow a:link {
+	color: #36a !important;
+	text-shadow: none !important;
+	text-decoration: underline !important;
+}
+#adminbar .lcm_floatwindow a:visited {
+	color: #515 !important;
+}
+#adminbar .lcm_floatwindow a:hover {
+	text-decoration: none !important;
+}
+#adminbar .lcm_floatwindow_title {
+	margin: -2em 0 0 !important;
+	z-index: 2 !important;
+	position: relative !important;
+	height: 33px !important;
+	font-size: 15px !important;
+}
+#adminbar .lcm_floatwindow_title a:link,
+#adminbar .lcm_floatwindow_title a:visited {
+	color: #fff !important;
+	text-decoration: none !important;
+	margin-top: 6px !important;
+	margin-left: 3px !important;
+	padding-left: 2px !important;
+}
+#adminbar .draggable .lcm_floatwindow_title {
+	cursor: move !important;
+}
+#adminbar .ui-icon,
+#adminbar .ui-resizable-handle {
+	width: 16px !important;
+	height: 16px !important;
+}
+#adminbar .ui-resizable-handle.ui-resizable-se.ui-icon.ui-icon-gripsmall-diagonal-se {
+	background-image: url("../js/jquery-ui-1.10.4/css/smoothness/images/ui-icons_222222_256x240.png");
+}
+
+#adminbar .lcm_floatwindow #lcm_help_txt {
+	width: 100%;
+	height: 100%;
+}
+#adminbar .lcm_floatwindow .mark_loading {
+	margin: 50px auto;
+}
+#adminbar .lcm_close_window {
+	position: absolute;
+	top: 0.25em;
+	right: 0.125em;
+	z-index: 110;
+	width: 1.75em;
+	height: 1.75em;
+}
+#adminbar .lcm_close_window img {
+	width: 1.75em;
+	height: 1.75em;
+}
+
+/* ========== ブックマーク ========== */
+#adminbar #bookmark_window
+{
+	height: 25em;
+	width: 20em;
+	box-sizing: border-box;
+}
+#admin_bookmark_name_input,
+#admin_bookmark_url_input
+{
+	margin-left: 0;
+	width: 100%;
+}
+#admin_bookmark_url_input
+{
+	font-size: 0.8em;
+}
+#admin_bookmark_add_button
+{
+	display: block;
+	float: right;
+}
+#bookmark_form
+{
+	overflow: hidden;
+	box-sizing: border-box;
+}
+#bookmarks
+{
+	margin-top: 1em;
+	padding-left: 0;
+	width: 100%;
+}
+#bookmarks li
+{
+	list-style: none;
+	font-size: 0.95em;
+}
+#bookmark_window #bookmark_txt #bookmark_bottom
+{
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+}
+
+
+/* ========== baseから ========== */
+body.loggedin {
+	background-color: #fff;
+	color: #000;
+	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+	margin: 0;
+	padding: 0;
+	padding-top: 70px !important;
+	position: relative;
+	word-break: break-all;
+}
+
+#adminbar p,
+#adminbar dl,
+#adminbar ul,
+#adminbar ol {
+	line-height: 1.6;
+	margin: 0;
+	padding: 0;
+}
+
+/* === heading === */
+#adminbar h1,
+#adminbar h2,
+#adminbar h3,
+#adminbar h4,
+#adminbar h5,
+#adminbar h6 {
+	clear: both;
+	font-size: 100%;	
+	font-weight: bold;
+	line-height: 1.6;
+	margin: 0;
+	background-image: none;
+}
+#adminbar h3 {
+	padding-bottom: 0;
+}
+/* header footer */
+
+#adminbar .nowrap,
+#adminbar .nobr {
+	white-space: nowrap !important;
+}
+
+#adminbar .radius {
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+#adminbar .gradient {
+	background-color: #eee;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#aaaaaa', endColorstr = '#eeeeee');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr = '#aaaaaa', endColorstr = '#eeeeee')";
+	background-image: -moz-linear-gradient(top, #aaa, #eee);
+	background-image: -ms-linear-gradient(top, #aaa, #eee);
+	background-image: -o-linear-gradient(top, #aaa, #eee);
+	background-image: -webkit-gradient(linear, center top, center bottom, from(#aaa), to(#eee));
+	background-image: -webkit-linear-gradient(top, #aaa, #eee);
+	background-image: linear-gradient(top, #aaa, #eee);
+}
+#adminbar .boxshadow {
+	box-shadow: 0 0 6px #aaa;
+	-moz-box-shadow: 0 0 6px #aaa;
+	-o-box-shadow: 0 0 6px #aaa;
+	-ms-box-shadow: 0 0 6px #aaa;
+/*
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true), 
+*/
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+/*
+progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
+*/
+}
+#adminbar .op *,
+#adminbar .opacity * {
+	opacity: .6; /* Standard: FF gt 1.5, Opera, Safari */
+	filter: alpha(opacity=60); /* IE lt 8 */
+	-ms-filter: "alpha(opacity=60)"; /* IE 8 */
+	-khtml-opacity: .6; /* Safari 1.x */
+	-moz-opacity: .6; /* FF lt 1.5, Netscape */
+}
+#adminbar .borderbox,
+#adminbar .boxsizing_borderbox {
+	-webkit-box-sizing : border-box ;
+	-moz-box-sizing : border-box ;
+	box-sizing : border-box ;
+}
+#adminbar .content_box,
+#adminbar .boxsizing_contentbox {
+	-webkit-box-sizing : content-box ;
+	-moz-box-sizing : content-box ;
+	box-sizing : content-box ;
+}
+
+#adminbar a.edit_link span.icon {
+	background-image: url( '/wp-admin/img/menu.png' );
+	background-position: -277px -40px;
+	display: inline-block;
+	height: 15px;
+	width: 15px;
+	margin: 0 4px;
+}
+#adminbar a.edit_link:hover span {
+	background-position: -277px -8px;
+}
+#adminbar a.edit_link:hover {
+	opacity: .6; /* Standard: FF gt 1.5, Opera, Safari */
+	-khtml-opacity: .6; /* Safari 1.x */
+	-moz-opacity: .6; /* FF lt 1.5, Netscape */
+}
+#adminbar a.edit_link:hover * {
+	filter: alpha(opacity=60); /* IE lt 8 */
+	-ms-filter: "alpha(opacity=60)"; /* IE 8 */
+}
+#adminbar a.edit_link span span {
+	position: absolute !important;
+	left: auto;
+	height: 0;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
+}
+#adminbar a.edit_link {
+	display: block;
+	position: relative;
+	text-align: right;
+	font-size: 85%;
+	font-weight: bold;
+	text-decoration: none;
+	z-index: 1000;
+	color: #000;
+	background-color: #fff;
+	opacity: 0.6;
+	padding: 2px 3px;
+}
+#adminbar #helpindex_link {
+	display: block;
+	border-top: 1px solid #aaa;
+	padding-top: .5em;
+	margin: 1em 0;
+}
+
+
+/* === clear , hidden === */
+#adminbar .nd,
+#adminbar .nodisplay {
+	display: none;
+}
+
+#adminbar .hd,
+#adminbar .hidden {
+	visibility: hidden;
+}
+
+#adminbar .hl,
+#adminbar .hiddenlink,
+#adminbar .hiddenmessage,
+#adminbar .forscreenreader,
+#adminbar .skip {
+	position: absolute !important;
+	left: auto;
+	clip: rect(1px 1px 1px 1px);
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+}
+
+#adminbar .hl.show_if_focus:focus,
+#adminbar .hiddenlink.show_if_focus:focus,
+#adminbar .hiddenmessage.show_if_focus:focus,
+#adminbar .forscreenreader.show_if_focus:focus,
+#adminbar .skip.show_if_focus:focus {
+/*	position: relative !important; */
+	left: auto;
+	clip: auto;
+	dislay: block;
+	padding:5px 10px;
+	background-color: #fff;
+	z-index: 1000;
+	height: auto;
+	width: auto;
+	text-decoration: none;
+}
+
+/* === clearfix === */
+#adminbar .clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	height: 0;
+	visibility: hidden;
+}
+
+#adminbar .clearfix {
+	min-height: 1px;
+}
+
+* html #adminbar .clearfix {
+	height: 1px;
+	/*\*//*/
+	height: auto;
+	overflow: hidden;
+	/**/
+}
+
+/*===== メディアクエリ =====*/
+
+/*=== media_query ===*/
+.show_if_smalldisplay {
+	display: none !important;
+}
+
+
+@media screen and (max-width: 700px) {
+	#adminbar .adminbar_bottom .adminbar_main {
+		padding-right: 3.5em;
+	}
+	#adminbar .adminbar_bottom .adminbar_sub {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	#adminbar #adminbar .adminbar_toggle_item .adminbar_icon {
+		margin-right: -8px;
+	}
+	#adminbar #adminbar .adminbar_bottom .adminbar_list_horizontal li {
+		margin-left: -.25em;
+	}
+	#adminbar .hide_if_smalldisplay {
+		position: absolute !important;
+		left: auto;
+		height: 0;
+		clip: rect(1px 1px 1px 1px);
+		clip: rect(1px, 1px, 1px, 1px);
+		overflow: hidden;
+	}
+	#adminbar .nd_if_smalldisplay {
+		display: none !important;
+	}
+	#adminbar .show_if_smalldisplay {
+		display: inherit !important;
+	}
+	#adminbar div.show_if_smalldisplay {
+		display: block !important;
+	}
+	#adminbar li.show_if_smalldisplay {
+		display: list-item !important;
+	}
+	#adminbar li.show_if_smalldisplay .label {
+		position: relative !important;
+		height: auto;
+		color: #333 !important;
+		text-shadow: none;
+		font-weight: bold;
+	}
+	#adminbar_render_info {
+		position: fixed;
+		bottom: 0;
+		left: 1%;
+		color: #333;
+		text-shadow: none;
+		line-height: 1;
+	}
+}
+@media screen and (max-width: 320px) {
+	.lcm_action_login .account label,
+	.lcm_action_login .password label {
+		position: absolute !important;
+		left: auto;
+		height: 0;
+		clip: rect(1px 1px 1px 1px);
+		clip: rect(1px, 1px, 1px, 1px);
+	}
+	/*=== float_list ===*/
+	#adminbar ul.float_list li {
+		width: 100%;
+		float: none;
+	}
+
+
+}
+@media print {
+	.noprint,
+	#openProfiler,
+	#pqp-container {
+		display: none;
+	}
+} 

@@ -22,12 +22,13 @@ $(function() {
 			}
 		}).fail(function(xhr, st, err) {
 		});
+		if(!$('#admin_bookmark_name_input').val()) $('#admin_bookmark_name_input').val(document.title);
 	}
 
 	function addBookmark(e)
 	{
-		e.preventDefault();
-		e.stopPropagation();
+//		e.preventDefault();
+//		e.stopPropagation();
 
 		var name = $('#admin_bookmark_name_input').val();
 		var url = $('#admin_bookmark_url_input').val();
@@ -56,17 +57,17 @@ $(function() {
 	}
 
 	$('#lcm_bookmark').on('click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
+//		e.preventDefault();
+//		e.stopPropagation();
 
 		if ($('#bookmark_window').css('display') == 'none')
 		{
-			$('#bookmark_window').show();
+//			$('#bookmark_window').show();
 			getBookmarks();
 		}
 		else
 		{
-			$('#bookmark_window').hide();
+//			$('#bookmark_window').hide();
 		}
 	});
 

@@ -51,7 +51,7 @@ h4,
 h5,
 h6 {
 	clear: both;
-	font-size: 100%;	
+	font-size: 100%;
 	font-weight: bold;
 	line-height: 1.6;
 	margin: 0;
@@ -172,8 +172,8 @@ strong strong {
 }
 strong.strong2 {
 	color: #000;
-	border-bottom:2px solid #ff6; 
-	box-shadow:0 -.45em 0 #ff6 inset; 
+	border-bottom:2px solid #ff6;
+	box-shadow:0 -.45em 0 #ff6 inset;
 }
 
 /* === abbr , acronym === */
@@ -300,10 +300,10 @@ dfn {
 
 /* === list === */
 ol {
- padding:  0 0 0 30px; 
+ padding:  0 0 0 30px;
 }
 ul {
- padding:  0 0 0 18px; 
+ padding:  0 0 0 18px;
 }
 
 /* === ul , ol (.nlm) === */
@@ -506,8 +506,7 @@ input[type="time"],
 input[type="datetime-local"],
 input[type="number"],
 textarea {
-	padding: 0 3px;
-	line-height: 1.5;
+	padding: 3px;
 	font-size: 110%;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -517,9 +516,13 @@ textarea {
 	max-width: 100%;
 	vertical-align: middle;
 }
+testarea {
+	line-height: 1.5;
+}
 
 .btn,
 .button {
+	-webkit-appearance: none;
 	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
 	vertical-align: middle;
 	padding: 5px 15px ;
@@ -534,7 +537,6 @@ textarea {
 	cursor: pointer;
 	border: 1px solid #999;
 	background-color: #fafafa;
-	-webkit-appearance: none;
 }
 .btn+.btn,
 .button+.button {
@@ -604,7 +606,7 @@ form em.explanation {
 }
 
 .label_fb label:hover {
-	background-color: #e8e8e8;
+	background-color: #e3e3e3;
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -887,7 +889,7 @@ table.radius td { /* 右、下にborder */
 /*
 	border-right: 1px solid #888888;
 	border-bottom: 1px solid #888888;
-	border-top: none; 
+	border-top: none;
 	border-left: none;
 */
 }
@@ -979,7 +981,6 @@ table.list th,
 table.list td {
 	padding: 5px 3px 0 0;
 }
-
 table.list th {
 	white-space: nowrap;
 	vertical-align: top;
@@ -1191,7 +1192,7 @@ a.edit_link span span {
 }
 .marugo,
 .roundedfont {
-	font-family: "Lucida Grande", "ヒラギノ丸ゴ ProN W4", "Hiragino Maru Gothic ProN", "HG丸ｺﾞｼｯｸM-PRO", "HGMaruGothicMPRO", Meiryo, Arial, sans-serif;
+	font-family: "Lucida Grande", "ヒラギノ丸ゴ ProN W4", "Hiragino Maru Gothic ProN", Meiryo, Arial, sans-serif;
 }
 
 /* forMobile */
@@ -1232,10 +1233,10 @@ span.nobr {
 	-o-box-shadow: 0 0 6px #aaa;
 	-ms-box-shadow: 0 0 6px #aaa;
 /*
-	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true), 
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true),
 */
-	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
-	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true),
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true),
 /*
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */

@@ -9,7 +9,7 @@ if (\Auth::check()):
 		$html.='<div class="adminbar_bottom lcmbar_bottom">';
 			// context menu
 			$html.='<div class="adminbar_main">';
-				$html.= '<div class="admin_controller">';
+				$html.= '<div id="adminbar_controller">';
 				$mod_home = '';
 				if (\Arr::get($locomo, 'module.nicename'))
 				{
@@ -41,18 +41,18 @@ if (\Auth::check()):
 					endif;
 				endif;
 				$html.= "<h3>{$top_link} : <span>{$title}</span></h3>\n";
-				$html.= '</div><!-- /.admin_controller -->';
+				$html.= '</div><!-- /#adminbar_controller -->';
 
 				// realmがbase, option, ctrl以外のアクションセットを取得
 				$indexes = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('base','option','ctrl'), $exclusive = true);
 				foreach ($indexes as $realm => $index):
 					$idxmenu = \Actionset::generate_menu_html($indexes[$realm], array('class'=>'semimodal menulist hidden_item boxshadow')) ;
 					if(!$idxmenu) continue;
-					$html.= '<div class="admin_index_list">';
+					$html.= '<div id="adminbar_index_list">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"インデクス一覧を開く\">インデクス<span class=\"skip\">エンターでメニューを開きます</span></a>";
 					
 					$html.= $idxmenu;
-					$html.= '</div><!-- .admin_index_list -->';
+					$html.= '</div><!-- /#adminbar_index_listadmin_index_list -->';
 				endforeach;
 
 				$bases = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('base'));
@@ -61,20 +61,20 @@ if (\Auth::check()):
 					array_unshift($bases, array('urls' => array($ctrl_index)));
 				endif;
 				if ($bases):
-					$html.= '<div class="admin_context">';
-					$html.= \Actionset::generate_menu_html($bases['base'], array('class'=>'horizontal_list'));
-					$html.= '</div><!-- .adminbar_context -->';
+					$html.= '<div id="adminbar_context">';
+					$html.= \Actionset::generate_menu_html($bases['base'], array('class'=>'adminbar_list_horizontal'));
+					$html.= '</div><!-- /#adminbar_context -->';
 				endif;
 
-			$html.= '</div><!-- .adminbar_main -->';
+			$html.= '</div><!-- /.adminbar_main -->';
 
 			// context menu2
 			$html.= '<div class="adminbar_sub">';
 			$ctrl = \Actionset::get_actionset_by_realm($locomo['controller']['name'], array('ctrl'));
 			if (@$ctrl):
-				$html.= '<div class="admin_ctrl hide_if_smalldisplay">';
-				$html.= \Actionset::generate_menu_html($ctrl['ctrl'], array('class'=>'horizontal_list'));
-				$html.='</div><!-- /.admin_ctrl -->';
+				$html.= '<div id="admin_ctrl" class="hide_if_smalldisplay">';
+				$html.= \Actionset::generate_menu_html($ctrl['ctrl'], array('class'=>'adminbar_list_horizontal'));
+				$html.='</div><!-- /#admin_ctrl -->';
 			endif;
 			
 				// option menu
@@ -82,10 +82,10 @@ if (\Auth::check()):
 				$optmenu = $optmenu ? \Actionset::generate_menu_html($optmenu['option'], array('class'=>'semimodal menulist hidden_item boxshadow')) : false ;
 
 				if ($optmenu):
-					$html.= '<div class="admin_module_option">';
+					$html.= '<div id="module_option">';
 					$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"".$current_nicename."の設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_module_option.png\" alt=\"\"><span class=\"skip\">".$current_nicename."の設定 エンターでメニューを開きます</span></span></a>";
 					$html.= $optmenu;
-					$html.= '</div><!-- .admin_module_option -->';
+					$html.= '</div><!-- /#adminbar_module_option -->';
 				endif;
 
 			$html.= '</div><!-- /.adminbar_sub -->';
@@ -95,8 +95,8 @@ if (\Auth::check()):
 		$html.= '<div class="adminbar_top lcmbar_top">'; 
 			$html.=  \Asset::img('system/logo_s.png', array('id' => 'adminbar_logo', 'alt' => '')) ;
 			$html.= '<div class="adminbar_main menu">';
-			$html.= \Config::get('no_home') ? '' : '<a href="'.\Uri::base().'" title="ホーム"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_home.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ホーム</span></a>';
-			$html.= '<a href="'.\Uri::base().'sys/dashboard/" title="ダッシュボード"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_dashboard.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ダッシュボード</span></a>';
+			$html.= \Config::get('no_home') ? '' : '<div id="adminbar_home"><a href="'.\Uri::base().'" title="ホーム"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_home.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ホーム</span></a></div>';
+			$html.= '<div id="adminbar_dashboard"><a href="'.\Uri::base().'sys/dashboard/" title="ダッシュボード"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_dashboard.png\" alt=\"\"></span>".'<span class="hide_if_smalldisplay">ダッシュボード</span></a></div>';
 			$html.= '<h3 class="skip">ここからメインメニューです</h3>';
 			// controller menu
 			$controller_menu = '';
@@ -109,7 +109,7 @@ if (\Auth::check()):
 				}
 			endforeach;
 			if ($controller_menu):
-				$html.= '<div class="admin_menu menu">';
+				$html.= '<div id="adminbar_menu" class="menu">';
 				$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="メニューを開く"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_menu.png\" alt=\"\">".'</span><span class="hide_if_smalldisplay">メニュー<span class="skip"> エンターでメニューを開きます</span></span></a>';
 				// IE8では画像のサイズをCSSで与えた場合、画像の本来のサイズで親要素が描画されてしまうので、明示的なサイズを持った要素で画像を囲む。
 				$html.= '<ul class="semimodal hidden_item menulist">';
@@ -121,26 +121,25 @@ if (\Auth::check()):
 			$html.='<div class="adminbar_sub">';
 		
 			// 処理速度
-			$html.= \Fuel::$env == 'development' ? '<div id="render_info">{exec_time}s  {mem_usage}mb</div>' : '';
+			$html.= \Fuel::$env == 'development' ? '<div id="adminbar_render_info">{exec_time}s  {mem_usage}mb</div>' : '';
 
 
 // ブックマーク テスト中
 			// bkmk ブックマーク
 			if(\Auth::has_access('\\Controller_Bkmk/index_admin')):
 				$bookmark_uri = \Uri::base().'bkmk/index_admin';
-				$html.= '<div class="admin_bookmark menu">';
-				$html.= '<a href="'.$bookmark_uri.'" title="ブックマーク" alt="B" id="lcm_bookmark" data-uri="'.$bookmark_uri.'"  accesskey="D"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_bookmark.png\" alt=\"\">".'<span class="skip">ブックマーク エンターでブックマークを開きます</span></span></a>';
+				$html.= '<div class="admin_bookmark menu lcm_floatwindow_parent">';
+				$html.= '<a href="'.$bookmark_uri.'" title="ブックマーク" id="lcm_bookmark"  class="toggle_floatwindow" data-uri="'.$bookmark_uri.'" data-target-window="bookmark_window" accesskey="D"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_bookmark.png\" alt=\"\">".'<span class="skip">ブックマーク エンターでブックマークを開きます</span></span></a>';
 				$html.= '</div><!-- /.admin_bookmark -->';
 			endif;
 // ブックマーク テスト中
 
-
 			// help
 			if(\Auth::has_access('\\Controller_Hlp/index_admin')):
 				$help_uri = \Uri::base().'hlp/view?action='.urlencode(\Inflector::ctrl_to_safestr($locomo['locomo_path']));
-				$html.= '<div class="admin_help menu">';
-				$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_help.png\" alt=\"\">".'<span class="skip">ヘルプ エンターでヘルプを開きます</span></span></a>';
-				$html.= '</div><!-- /.admin_help -->';
+				$html.= '<div id="adminbar_help" class="menu lcm_floatwindow_parent">';
+				$html.= '<a href="'.$help_uri.'" title="ヘルプ" id="lcm_help" class="toggle_floatwindow" data-uri="'.$help_uri.'"  accesskey="H"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_help.png\" alt=\"\">".'<span class="skip">ヘルプ エンターでヘルプを開きます</span></span></a>';
+				$html.= '</div><!-- /#admin_help -->';
 			endif;
 			
 			// admin option menu
@@ -152,10 +151,10 @@ if (\Auth::check()):
 				endif;
 			endforeach;
 			if ($admin_menu):
-				$html.= '<div class="admin_option menu">';
+				$html.= '<div id="adminbar_option" class="menu">';
 				$html.= "<a href=\"javascript:void(0)\" class=\"has_dropdown toggle_item\" title=\"管理者設定を開く\"><span class=\"adminbar_icon icononly\"><img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_option.png\" alt=\"\"><span class=\"skip\">管理者設定 エンターでメニューを開きます</span></span></a>";
 				$html.= '<ul class="semimodal menulist hidden_item">'.$admin_menu.'</ul>';
-				$html.= '</div><!-- /.admin_option -->';
+				$html.= '</div><!-- /#adminbar_option -->';
 			endif;
 
 		// thx debe
@@ -163,7 +162,7 @@ if (\Auth::check()):
 			$root_prefix = \Auth::is_root() ? '_root' : $root_prefix ;
 		
 			// user menu
-			$html.= '<div class="adminbar_user menu">';
+			$html.= '<div id="adminbar_user" class="menu">';
 			$html.= '<a href="javascript:void(0);" class="has_dropdown toggle_item" title="ユーザメニューを開く:'.\Auth::get('display_name').'でログイン中"><span class="adminbar_icon">'."<img src=\"".\Uri::base()."lcm_assets/img/system/adminbar_icon_user{$root_prefix}.png\" alt=\"\"></span><span class=\"hide_if_smalldisplay\">".\Auth::get('display_name').'<span class="skip"> エンターでメニューを開きます</span></span></a>';
 			$html.= '<ul class="semimodal menulist hidden_item">';
 			$html.= '<li class="show_if_smalldisplay"><span class="label">'.\Auth::get('display_name').'</span></li>';
@@ -178,7 +177,7 @@ if (\Auth::check()):
 			$usergroups = \Auth::get('usergroup');
 
 			if($usergroups):
-				$html.= '<li class="usergroup">所属ユーザグループ<ul>';
+				$html.= '<li id="adminbar_usergroup">所属ユーザグループ<ul>';
 				foreach ($usergroups as $k => $usergroup):
 					if (in_array($k, [0, -10])) continue; // usergroup -10: logged in users, 0:guest
 					$html.= "<li>{$usergroup->name}</li>";
@@ -186,7 +185,7 @@ if (\Auth::check()):
 				$html.= '</ul></li>';
 			endif;
 			$html.= '</ul>';
-			$html.= '</div><!-- /.adminbar_user -->';
+			$html.= '</div><!-- /#adminbar_user -->';
 
 		$html.= '</div><!-- /.adminbar_sub -->';
 		$html.= '</div><!-- /.adminbar_top -->';
@@ -198,24 +197,22 @@ endif;
 // is_user?
 ?>
 
-<div id="help_window" class="lcm_floatwindow resizable draggable" style=" display: none;">
-	<h1 id="help_title" class="lcmbar_top lcmbar_top_title lcm_floatwindow_title">
-		<a href="javascript:show_help({flg: true});void(0);" tabindex="0" id="help_title_anchor" class="has_accesskey" >ヘルプ<span class="accesskey">(H)</span></a>
+<div id="lcm_help_window" class="lcm_floatwindow resizable draggable" style=" display: none;">
+	<h1 id="lcm_help_title" class="lcmbar_top lcmbar_top_title lcm_floatwindow_title">
+		<a href="javascript:lcm_floatwindow({trigger: 'lcm_help'});void(0);" tabindex="0" id="help_title_anchor" class="has_accesskey" >ヘルプ<span class="accesskey">(H)</span></a>
 	</h1>
-	<div id="help_txt" class="modal_content">
+	<div id="lcm_help_txt" class="lcm_load_txt lcm_modal_content">
 		<img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/mark_loading_m.gif" class="mark_loading" alt="" role="presentation">
 	</div>
 	<a href="javascript: void(0);" role="button" class="lcm_close_window lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ヘルプウィンドウを閉じる"></a>
 </div>
 
-
-
 <!-- ブックマークテスト中 -->
 <div id="bookmark_window" class="lcm_floatwindow resizable draggable" style=" display: none;">
 	<h1 id="bookmark_title" class="lcmbar_top lcmbar_top_title lcm_floatwindow_title">
-		ブックマーク
+<a href="javascript:lcm_floatwindow({trigger: 'lcm_bookmark'});void(0);" tabindex="0" id="bookmark_title_anchor" class="has_accesskey" >ブックマーク<span class="accesskey">(D)</span></a>
 	</h1>
-	<div id="bookmark_txt" class="modal_content">
+	<div id="bookmark_txt" class="lcm_modal_content">
 		<div id="bookmark_form">
 			<h2>現在のページ</h2>
 			<input type="text" id="admin_bookmark_name_input" value="<?php echo $title; ?><?php if (\Arr::get($locomo, 'module.nicename')) echo ' - '.\Arr::get($locomo, 'module.nicename'); ?>">
@@ -232,51 +229,28 @@ endif;
 	<a href="javascript: void(0);" role="button" class="lcm_close_window lcm_reset_style menubar_icon"><img src="<?php echo \Uri::base() ;?>lcm_assets/img/system/adminbar_icon_close.png" alt="ブックマークウィンドウを閉じる"></a>
 </div>
 
-<style>
-#bookmark_window
-{
-	height: 25em;
-	width: 20em;
-	box-sizing: border-box;
-}
-#admin_bookmark_name_input,
-#admin_bookmark_url_input
-{
-	margin-left: 0;
-	width: 100%;
-}
-#admin_bookmark_url_input
-{
-	font-size: 0.8em;
-}
-#admin_bookmark_add_button
-{
-	display: block;
-	float: right;
-}
-#bookmark_form
-{
-	overflow: hidden;
-	box-sizing: border-box;
-}
-#bookmarks
-{
-	margin-top: 1em;
-	padding-left: 0;
-	width: 100%;
-}
-#bookmarks li
-{
-	list-style: none;
-	font-size: 0.95em;
-}
-#bookmark_bottom
-{
-position: absolute;
-bottom: 5px;
-right: 5px;
-}
-</style>
 
 <?php echo \Asset::js('bookmark.js') ?>
 
+<?php /* adminbar用のjs、css。重複をチェックして読み込む */
+//	echo \Asset::js('jquery.lcm.adminbar.js');
+?>
+<script>
+<!--
+$(function(){
+	if(typeof(lcm_env)=='undefined') lcm_env = new Object();
+	$.getScript("<?php echo \Asset::get_file('jquery.lcm.adminbar.js', 'js'); ?>");
+//	$('<link/>', {rel: 'stylesheet',type: 'text/css', href: '<?php echo \Asset::get_file('adminbar.css', 'css') ?>'}).appendTo('head'); //読み込むタイミングでずれる？
+	if(! lcm_env.load_lcm_modal_semimodal)      $.getScript("<?php echo \Asset::get_file('jquery.lcm.modal.semimodal.js', 'js') ?>");
+	if(! lcm_env.load_dragresize)               $.getScript("<?php echo \Asset::get_file('jquery-ui.dragresize.js', 'js') ?>");
+	if(! $.fn.tabindex_ctrl)                    $.getScript("<?php echo \Asset::get_file('jquery.tabindexctrl.js', 'js') ?>");
+	if(typeof(check_formchange) == 'undefined') $.getScript("<?php echo \Asset::get_file('jquery.lcm.msgconfirm.js', 'js') ?>");
+	if(typeof(lcm_floatwindow)  == 'undefined') $.getScript("<?php echo \Asset::get_file('jquery.lcm.floatwindow.js', 'js') ?>");
+	if(typeof(jQuery.ui)        == 'undefined'){
+		$.getScript("<?php echo \Asset::get_file('jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js', 'js') ?>");
+		$.getScript("<?php echo \Asset::get_file('jquery-ui-1.10.4/development-bundle/ui/i18n/jquery.ui.datepicker-ja.js', 'js') ?>") ;
+	}
+	if(typeof($.ex)             == 'undefined') $.getScript("<?php echo \Asset::get_file('jquery.exresize/jquery.exresize.0.1.0.js', 'js') ?>");
+});
+// -->
+</script>

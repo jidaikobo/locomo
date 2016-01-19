@@ -6,16 +6,20 @@
 	<?php endforeach; ?>
 </select>
 
+	<?php if ( ! $is_main_ugid): ?>
+	<a href="<?php echo \Uri::create('/usr/edit/').\Auth::get('id') ?>">代表ユーザグループを設定してください。</a>
+	<?php endif; ?>
+
 <select class="schedule_narrow" id="narrow_user_id" name="narrow_user_list" title="ユーザー">
 	<option value="">-- ユーザー --
-	<?php foreach($narrow_user_list as $row):?>
-		<option value="<?php print $row['id']; ?>" <?php if ($row['id'] == \Session::get($kind_name . "narrow_uid")) { print "selected"; } ?>><?php  print $row['display_name']; ?>
+	<?php foreach($narrow_user_list as $id => $row):?>
+		<option value="<?php print $id; ?>" <?php if ($id == \Session::get($kind_name . "narrow_uid")) { print "selected"; } ?>><?php  print $row; ?>
 	<?php endforeach; ?>
 </select>
 <input class="schedule_narrow button small primary" id="btn_user" type="button" value="絞り込み" onclick="javascript:location.href='?uid=' + $('#narrow_user_id').val() + '&ugid=' + $('#narrow_user_group_id').val()" />
 <input class="schedule_narrow button small" id="btn_user_reset" type="button" value="絞り込みを解除" onclick="javascript:location.href='?uid=&ugid='" />
 
-<?php 
+<?php
 // 非表示のとき以外
 if (!(isset($day) && $day && $mode != "week")):
 	if (\Session::get('scdl_display_time') == "1"):

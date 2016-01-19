@@ -66,7 +66,8 @@ class Controller_Sys extends \Controller_Base
 		$this->action_admin();
 
 		// size
-		$this->template->content->set('widget_size', func_get_args()[0]);
+		$args = func_get_args();
+		$this->template->content->set('widget_size', $args[0]);
 	}
 
 	/**
@@ -184,7 +185,7 @@ class Controller_Sys extends \Controller_Base
 			$size = $obj->size ?: 1 ;// default small
 			$size = intval($size);
 
-			// querystring 
+			// querystring
 			$qstr = \Arr::get($acts, 1);
 
 			// method exists?
@@ -230,8 +231,9 @@ class Controller_Sys extends \Controller_Base
 		$view = \View::forge('sys/clock');
 		$view->set_global('title', 'アナログ時計');
 		$this->template->content = $view;
+		$args = func_get_args();
 
 		// size
-		$this->template->content->set('widget_size', func_get_args()[0]);
+		$this->template->content->set('widget_size', $args[0]);
 	}
 }

@@ -81,8 +81,8 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 		}
 		static::$config = static::$config ?: array();
 
-		// pagination_config
-		if (empty($this->pagination_config) && is_numeric(\Pagination::get('uri_segment')))
+		// uri_segment
+		if (is_numeric(\Pagination::get('uri_segment')))
 		{
 			$suspicious_segment = \Arr::search(\Uri::segments(), \Request::main()->action) + 2;
 			\Pagination::set('uri_segment', $suspicious_segment);
@@ -176,6 +176,14 @@ class Controller_Core extends \Fuel\Core\Controller_Rest
 
 		// ordinary auth
 		$is_allow = \Auth::instance()->has_access($current_action);
+
+		// ログイン画面へのip制限
+		if (\Config::get('allowed_ip_access_admin') &&
+				$current_action == '\Controller_Auth/login' &&
+				$_SERVER['REMOTE_ADDR'] != \Config::get('allowed_ip_access_admin'))
+		{
+			return \Response::redirect('/');
+		}
 
 		// additional conditions
 		$conditions = \Arr::get(static::$config, 'conditioned_allowed', false);
