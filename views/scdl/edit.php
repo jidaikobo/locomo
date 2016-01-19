@@ -43,6 +43,10 @@
 	margin-right: -7px;
 	margin-left: -7px;
 }
+.dairi {
+	margin-left: .5em;
+	display: inline-block;
+}
 .lcm_form .submit_button.top {
 	position: relative;
 	right: auto;
