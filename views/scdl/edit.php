@@ -12,11 +12,28 @@
 .lcm_form section h1,
 .lcm_form .input_group .field,
 .lcm_form .input_group table {
-	padding: 7px;
+	padding: 4px;
 }
+.label_narrow_down,
 .multiple_select_narrow_down,
 #group_list_create_user {
 	width: 11em;
+}
+.label_narrow_down {
+	display: block;
+	font-weight: bold;
+	text-align: center;
+}
+
+.lcm_multiple_select {
+	margin-left: 13em;
+	margin-top: -4.5em;
+}
+@media screen and (max-width: 700px) {
+	.lcm_multiple_select {
+		margin-left: 0;
+		margin-top: 0;
+	}
 }
 .form_group.lcm_form .toggle_item {
 	width: auto;
@@ -32,6 +49,7 @@
 	bottom: auto;
 	margin-top: 0;
 }
+
 </style>
 <?php
 if (isset($overlap_result) && count($overlap_result)) {
@@ -211,8 +229,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<h2><span class="label_required">必須</span>メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
-				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
-					<option value="">絞り込み：全グループ</option>
+				<label for="group_list" class="label_narrow_down">グループ絞り込み</label>
+				<select id="group_list" name="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
+					<option value="">全グループ</option>
 					<?php foreach($group_list as $key => $value) { ?>
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 					<?php } ?>
@@ -255,8 +274,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
-				<select id="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
-					<option value="">絞り込み：全施設</option>
+				<label for="building_group_list" class="label_narrow_down">施設グループ絞り込み</label>
+				<select id="building_group_list" name="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
+					<option value="">全施設</option>
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 					<?php } ?>
@@ -330,8 +350,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2 class="ar">メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
-					<option value="">絞り込み：全グループ
+				<label for="group_list" class="label_narrow_down">グループ絞り込み</label>
+				<select id="group_list" name="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
+					<option value="">全グループ
 				<?php foreach($group_list as $key => $value): ?>
 					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 				<?php endforeach; ?>

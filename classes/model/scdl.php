@@ -717,7 +717,6 @@ class Model_Scdl extends \Model_Base_Soft
 				$print .= ", 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
 				$date_detail['display_repeat_kb'] .= ", 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
 			}
-			if ($data->repeat_kb == 6) $print .= ')';
 		}
 		if($data->repeat_kb != 0) $print .= "</p>";
 		if ($data->repeat_kb == 0) { //繰り返しなし
