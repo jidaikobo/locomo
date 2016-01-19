@@ -15,9 +15,6 @@ class Controller_Bkmk extends \Locomo\Controller_Base
 		'show_at_menu' => true, // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 1200, // order of appearance
-		'widgets' =>array(
-			array('name' => '新規ユーザ一覧', 'uri' => '\\Controller_Usr/index_widget?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
-		),
 	);
 
 	public function before()
