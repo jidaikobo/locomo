@@ -152,7 +152,7 @@ function scdl_submit ($id)
 	$html = '';
 	$ret_to = \Session::get("ret_to");
 
-	$html.= '<label for="ret_to_'.$id.'" class="skip">戻り先</label>'."\n";
+	$html.= '<label for="ret_to_'.$id.'">戻り先</label>'."\n";
 	$html.= '<select name="ret_to_'.$id.'" id="ret_to_'.$id.'" title="保存後の戻り先です。「前の画面」の場合は、'.e(\Session::get("ref")).'に戻ります。">'."\n\t";
 	foreach ($arr as $k => $v)
 	{
@@ -160,7 +160,7 @@ function scdl_submit ($id)
 		$html.= '<option'.$selected.' value="'.$k.'">'.$v.'</option>'."\n\t";
 	}
 	$html.= '</select>'."\n";
-	$html.= '<label for="save_ret_to_'.$id.'" title="戻り先を保存する場合はチェックしてください"><input type="checkbox" id="save_ret_to_'.$id.'" name="save_ret_to_'.$id.'" value="1" /> <span class="skip">戻り先の</span>保存</label>'."\n";
+//	$html.= '<label for="save_ret_to_'.$id.'" title="戻り先を保存する場合はチェックしてください"><input type="checkbox" id="save_ret_to_'.$id.'" name="save_ret_to_'.$id.'" value="1" /> <span class="skip">戻り先の</span>保存</label>'."\n";
 	$html.= \Form::submit('submit_'.$id, '保存する', array('class' => 'button primary', 'id' => 'form_submit_top'.$id));
 	echo $html;
 }
@@ -355,6 +355,8 @@ function scdl_submit ($id)
 		</div><!-- /.hidden_item -->
 	</section>
 	<?php endif; ?>
+
+	<?php if($locomo['controller']['name'] === "\Controller_Scdl"):?>
 	<div class="input_group">
 		<h2><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
@@ -362,6 +364,11 @@ function scdl_submit ($id)
 			<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
 		</div>
 	</div><!-- /.input_group -->
+	<?php else: ?>
+		<input type="hidden" name="group_kb" value="1" />
+	<?php endif; ?>
+
+
 	<div class="input_group">
 		<h2><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></h2>
 		<div class="field">

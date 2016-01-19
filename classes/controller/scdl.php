@@ -98,10 +98,9 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set('ref', $ref);
 		}
-		$save_ret_to = \Input::post('submit_top') ? 'save_ret_to_top' : 'save_ret_to_bottom';
 		$ret_to = \Input::post('submit_top') ? 'ret_to_top' : 'ret_to_bottom';
 		// ユーザごとの戻り先の設定
-		if (\Input::post($save_ret_to))
+		if (\Input::post($ret_to))
 		{
 			\Session::set("ret_to", \Input::post($ret_to));
 		}
