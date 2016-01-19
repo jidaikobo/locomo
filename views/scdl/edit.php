@@ -248,7 +248,7 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<h1>
 		<a href="javascript:void(0);" class="toggle_item disclosure">施設設定</a>
 	</h1>
-	<div class="hidden_item">
+	<div class="hidden_item off">
 	<?php endif; ?>
 	<div class="input_group">
 		<h2><?php echo ($locomo['controller']['name'] === "\Controller_Scdl") ? '' : '<span class="label_required">必須</span>' ;?>施設選択</h2>
