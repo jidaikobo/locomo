@@ -61,6 +61,16 @@ class Model_Usrgrp extends \Model_Base
 			'key_to' => 'id',
 			'cascade_save' => false,
 			'cascade_delete' => false,
+		),
+		'usergroup' => array(
+			'key_from' => 'id',
+			'key_through_from' => 'group_id_from',
+			'table_through' => 'lcm_usrgrps_usrgrps',
+			'key_through_to' => 'group_id_to',
+			'model_to' => 'Model_Usrgrp',
+			'key_to' => 'id',
+			'cascade_save' => false,
+			'cascade_delete' => false,
 		)
 	);
 

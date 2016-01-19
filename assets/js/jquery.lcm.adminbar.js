@@ -18,7 +18,6 @@ if(!lcm_env.headerheight){
 	lcm_env.headerheight = 0;
 	if($adminbar[0]) lcm_env.headerheight = $adminbar.outerHeight();
 }
-
 // ヘッダーの高さぶん(+α)bodyにpaddingを追加
 if($adminbar[0]){
 	add_body_padding(lcm_env.headerheight);
@@ -28,7 +27,8 @@ if($adminbar[0]){
 	});
 }
 function add_body_padding(){
-	$('body').css('padding-top', lcm_env.headerheight+'px' );
+	
+	$('body').css('cssText', $('body').attr('style') + '; padding-top: '+lcm_env.headerheight+'px !important;' );
 }
 
 /*=== 環境の取得 ===*/

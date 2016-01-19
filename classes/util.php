@@ -150,7 +150,7 @@ class Util
 	public static function convert_jp_era($str, $ad2jp = TRUE)
 	{
 		$str = mb_convert_kana($str, "a", "UTF-8");
-	
+
 		//4文字だけだったら年のみと見なして1月1日で換算する
 		$is_short_way = FALSE;
 		if (strlen($str))
@@ -158,7 +158,7 @@ class Util
 			$str.= '-01-01';
 			$is_short_way = TRUE;
 		}
-	
+
 		//vals
 		$timestr = strtotime($str);
 		$date = date('Ymd', $timestr);
@@ -168,7 +168,7 @@ class Util
 		$date = intval($date) ;
 		$y = intval($y) ;
 		$retvals = array() ;
-	
+
 		//西暦 -> 和暦
 		if ($ad2jp)
 		{
@@ -196,7 +196,7 @@ class Util
 				$jp = 'H';
 				$yy = $y - 1988;
 			}
-	
+
 			//平成元年を特別扱い
 			$jpk2 = '' ;
 			$jp2 = '' ;
@@ -213,7 +213,7 @@ class Util
 		{
 			//準備中
 		}
-	
+
 		//retval
 		$retvals['jp']['full']    = $jpk.$yy.'年'.$m.'月'.$d.'日' ;
 		$retvals['jp']['full2']   = $jp.$yy.'年'.$m.'月'.$d.'日' ;
@@ -223,7 +223,7 @@ class Util
 		$retvals['jp']['y_long']  = $jpk2 ? $jpk.$yy.'年'.$jpk2.$yy2.'年' : $jpk.$yy.'年' ;
 		$retvals['jp']['y2_long'] = $jpk2 ? $jp.$yy.'年'.$jp2.$yy2.'年' : $jp.$yy.'年' ;
 		$retvals['jp']['y3_long'] = $jpk2 ? $jp.$yy.$jp2.$yy2 : $jp.$yy ;
-	
+
 		return $retvals;
 	}
 
@@ -251,7 +251,7 @@ class Util
 			if (! \Str::ends_with($basename, '.') && substr($basename, 0, 1) == '.') continue; // invisible file
 			$list[] = $path;
 		}
-		
+
 		return $list;
 	}
 

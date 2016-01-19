@@ -198,6 +198,7 @@ $('.hidden_item').each(function(){
 		}
 	}else if($(this).find(':input')[0]){
 		$(this).find(':input').each(function(){
+		console.log($(this).attr('class')+' : '+$(this).val())
 			v = $(this).val()!='' ? true : v;
 		});
 	}

@@ -5,7 +5,84 @@
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
 <?php if(!\Request::is_hmvc()): ?>
+<?php /* ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
+<?php */ ?>
+<h1 id="page_title" class="clearfix">
+	<a href="javascript: void(0);" class="toggle_item disclosure nomarker tabindex_ctrl">
+		<?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ
+		<span class="icon fr ">
+		<img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_search.png" alt="">
+		<span class="hide_if_smalldisplay" aria-hidden="true" role="presentation">検索</span>
+		<span class="skip"> エンターで検索条件を開きます</span>
+		</span>
+	</a>
+</h1>
+<div class="hidden_item form_group" style="display: none;">
+<section>
+	<h1 class="skip">検索</h1>
+	<form class="search" action="" onsubmit="calendar_narrow_text();return false;">
+		<div class="submit_button">
+			<script>
+			function calendar_narrow_text(clear){
+				var str = $('#form_narrow_text').val();
+				var cnt = 0;
+				var msg = 'ヒットしませんでした';
+				$(document).find('.detail_pop_wrapper div').each(function(){ // すべてのdetail_popを浚う
+					var detail_id = $(this)[0].id;
+					if($(this).text().indexOf(str)==-1){ // ヒットしない場合
+						$('table.calendar .events .lcm_tooltip_parent').each(function(){
+							if($(this).data('jslcmTooltipId') == detail_id){
+								$(this).hide();
+							}
+						});
+					} else { // ヒットする場合
+						$('table.calendar .events .lcm_tooltip_parent').each(function(){
+							if($(this).data('jslcmTooltipId') == detail_id){
+								$(this).show();
+							}
+						});
+					}
+				});
+				if( $('table.calendar tbody th')[0] ){
+					$('table.calendar tbody tr').each(function(){
+						$(this).show();
+						if($(this).find('.lcm_tooltip_parent:visible').length){
+							$(this).show();
+						}else{
+							$(this).hide();
+						};
+					});
+				} 
+				cnt = $('table.calendar').find('.lcm_tooltip_parent:visible').length;
+				if(cnt) 	msg = cnt+'件ヒットしました';
+
+				
+				if(clear){
+					$('#narrow_text_info').hide();
+				}else{
+					$('#narrow_text_info').find('p').text(msg).end().show();
+				}
+			}
+			$(function(){
+				$('#form_clear').on('click',function(){
+					$('#form_narrow_text').val('');
+					calendar_narrow_text(true);
+				});
+			});
+			</script>
+			<input type="text" title="カレンダ内検索" id="form_narrow_text" value="">
+			<input type="submit" value="カレンダ内検索" class="button primary" id="form_submit" name="submit">
+			<input type="button" value="解除" class="button" id="form_clear" name="clear">
+		</div><!--/.submit_button-->
+	</form>
+</section>
+</div>
+<div id="narrow_text_info" class="flash_alert alert_success" style="display: none;">
+	<a href="#msg" id="anchor_alert_success" class="skip tabindex_ctrl" tabindex="1">インフォメーション:メッセージが次の行にあります</a>
+	<p id="msg" tabindex="-1"></p>
+</div>
+
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar">
 
@@ -41,17 +118,21 @@
 
 <?php
 $ugids = array();
-foreach($narrow_user_list as $v):
-	$ugids[$v->id] = true;
+
+foreach($narrow_user_list as $id => $v):
+	if ($id == 'none') continue;
+	$ugids[$id] = true;
 endforeach;
  ?>
 <?php // foreach($schedule_data['member_list'] as $row): ?>
 
-<?php foreach($narrow_user_list as $row): ?>
+<?php foreach($narrow_user_list as $id => $row): ?>
 <?php // 絞り込みを反映
 	//if(\Session::get('show_empty_row'))
-if(isset($schedule_data['member_list'][$row->id])):
-	$each_row_data = $schedule_data['member_list'][$row->id];
+	if ($id == 'none') continue;
+
+if(isset($schedule_data['member_list'][$id])):
+	$each_row_data = $schedule_data['member_list'][$id];
 	if((\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') == null) ||
 	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $each_row_data['model']->id) ||
 	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$each_row_data['model']->id]))):
