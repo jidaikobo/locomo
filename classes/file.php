@@ -67,7 +67,7 @@ class File extends \Fuel\Core\File
 	 */
 	public static function attach($dir, $id)
 	{
-		if ( ! \Input::post() || ! \Upload::get_files()) return null;
+		if ( ! \Input::file()) return null;
 
 		// vals
 		$errors = array();
@@ -159,15 +159,20 @@ class File extends \Fuel\Core\File
 	 * unlink()
 	 * こちらも将来的に汎用化を進める
 	 */
-	public static function unlink()
+	public static function unlink($unlinks = false)
 	{
-		$unlinks = array();
+		if (!$unlinks) $unlinks = \Input::post('unlink'); // TODO 汎用化が進んだら消す
+
+		$results = array();
 
 		// unlink
-		if (\Input::post('unlink'))
+		if (! is_array($unlinks) ) $unlinks = array($unlinks);
+		if ($unlinks)
 		{
-			foreach (\Input::post('unlink') as $path)
+			foreach ($unlinks as $path)
 			{
+				if ( ! is_file($path) and ! is_link($path)) continue;
+
 				\File::delete($path);
 				// 自動生成される画像の削除
 				foreach(array('_lg.jpg','_sm.jpg','_tn.jpg') as $suffix)
@@ -175,11 +180,11 @@ class File extends \Fuel\Core\File
 					$ext = substr($path, strrpos($path, '.'));
 					$pathtemp = str_replace(substr($path, strrpos($path, '.')), $suffix, $path);
 					if (file_exists($pathtemp)) \File::delete($pathtemp);
-					// $unlinks['failed'][] = $pathtemp; // 削除に失敗したものを保存予定
-					$unlinks['deleted'][] = $pathtemp;
+					// $results['failed'][] = $pathtemp; // 削除に失敗したものを保存予定
+					$results['deleted'][] = $pathtemp;
 				}
 			}
-			return $unlinks;
+			return $results;
 		}
 	}
 }

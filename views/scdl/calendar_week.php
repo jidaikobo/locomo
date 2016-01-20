@@ -4,7 +4,7 @@
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar">
@@ -22,7 +22,7 @@
 <h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week <?php if (!\Request::is_hmvc()) echo 'lcm_focus" title="カレンダ';?>">
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 	<thead>
 		<tr>
 			<th class="week1"><span>月曜日</span></th>
@@ -119,7 +119,7 @@ endif; ?>
 </tbody>
 </table>
 <?php include("inc_legend.php"); //カレンダ凡例 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 </div><!-- /.field_wrapper.calendar -->
 <?php endif; ?>
 <?php

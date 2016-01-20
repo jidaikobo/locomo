@@ -44,6 +44,17 @@ class Model_Usrgrp_Custom extends \Model_Usrgrp
 		{
 			unset($this->user);
 		}
+
+		// off the checkboxes of usergroups
+		if (
+			\Request::main()->controller == 'Controller_Usrgrp_Custom' &&
+			in_array(\Request::main()->action, array('edit', 'create')) &&
+			\Input::post() &&
+			is_null(\Input::post('usergroup'))
+		)
+		{
+			unset($this->usergroup);
+		}
 	}
 
 	/**

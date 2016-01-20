@@ -234,8 +234,9 @@ class Controller_Sys extends \Controller_Base
 		$view = \View::forge('sys/clock');
 		$view->set_global('title', 'アナログ時計');
 		$this->template->content = $view;
+		$args = func_get_args();
 
 		// size
-		$this->template->content->set('widget_size', func_get_args()[0]);
+		$this->template->content->set('widget_size', $args[0]);
 	}
 }

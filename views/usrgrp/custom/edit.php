@@ -6,7 +6,7 @@ echo $form;
 
 <!--multiple selector-->
 <!--checkboxes for noscript-->
-<div class="input_group show_if_no_js">
+<div class="input_group show_if_no_js1">
 	<h2>ユーザ選択</h2>
 	<div class="field label_fb lcm_focus" title="ユーザ選択">
 	<?php
@@ -19,12 +19,12 @@ echo $form;
 
 <!--/checkboxes for noscript-->
 
-<div class="input_group hide_if_no_js">
+<div class="input_group hide_if_no_js nd">
 <h2>ユーザ選択</h2>
 	<div class="field">
 			<div id="member_panel" class="lcm_focus" title="ユーザの選択">
-				<select id="group_list" class="multiple_select_narrow_down" title="グループ絞り込み">
-					<option value="">絞り込み：全グループ</option>
+				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_sel		ects" title="グループ絞り込み">
+							<option value="">絞り込み：全グループ</option>
 					<?php foreach(\Model_Usrgrp::find_options('name',
 						array(
 							'where' => array(
@@ -33,18 +33,17 @@ echo $form;
 									array('is_for_acl', false),
 									array('customgroup_uid', 'is', null)
 								),
-								'or' => array(array('customgroup_uid', \Auth::get('id')))
 							),
 						)
 						) as $gid => $name): ?>
 					<option value="<?php print $gid; ?>"><?php  print $name; ?></option>
 					<?php endforeach; ?>
 				</select>
-				
-				<div class="lcm_multiple_select">
+
+				<div id="user_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_members">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
-						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みユーザ">
+						<select id="form_member_kizon" name="member_kizon" multiple size="2" title="選択済みユーザ">
 						<?php foreach($item->user as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>
@@ -59,6 +58,63 @@ echo $form;
 							if (array_key_exists($uid, $item->user)) continue;
 						?>
 							<option value="<?php echo $uid; ?>"><?php echo $name; ?></option>
+						<?php endforeach; ?>
+						</select>
+					</div><!-- /.multiple_select_content -->
+					<input type="button" value="選択" class="button small add_item primary">
+				</div><!-- /.lcm_multiple_select -->
+			</div>
+	</div><!-- /.field -->
+</div>
+<!--/multiple selector-->
+
+<!--multiple selector-->
+<?php
+$usrgrps = \Model_Usrgrp::find_options('name',
+																			 array(
+																				 'where' => array(
+																					 array(
+																						 array('is_available', true),
+																						 array('is_for_acl', false),
+																						 array('customgroup_uid', 'is', null)
+																					 )
+																				 ),
+																			 ));
+?>
+
+<!--checkboxes for noscript-->
+<div class="input_group show_if_no_js1">
+	<h2>ユーザグループ選択</h2>
+	<div class="field label_fb lcm_focus" title="ユーザグループ選択">
+	<?php
+	foreach ($usrgrps as $ugid => $v):
+		echo '<label>'.\Form::checkbox('usergroup[]', $ugid, array_key_exists($ugid, $item->usergroup)).$v.'</label>';
+	endforeach;
+	?>
+	</div>
+</div>
+
+<!--/checkboxes for noscript-->
+
+<div class="input_group hide_if_no_js nd">
+<h2>ユーザグループ選択</h2>
+	<div class="field">
+			<div id="group_panel" class="lcm_focus" title="ユーザグループの選択">
+				<div class="lcm_multiple_select" data-hidden-item-id="hidden_group">
+					<div class="multiple_select_content">
+						<label for="group_kizon">選択済み</label>
+						<select id="form_group_kizon" name="group_kizon" multiple size="2" title="選択済みユーザ">
+						<?php foreach($item->usergroup as $row): ?>
+							<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option>
+						<?php endforeach; ?>
+						</select>
+					</div><!-- /.multiple_select_content -->
+					<input type="button" value="解除" class="remove_item button small">
+					<div class="multiple_select_content">
+						<label for="group_new">ここから選択</label>
+						<select id="form_group_new" name="group_new" class="select_from" multiple size="2" title="ユーザ選択肢">
+						<?php foreach($usrgrps as $gid => $name): ?>
+						<option value="<?php print $gid; ?>"><?php  print $name; ?></option>
 						<?php endforeach; ?>
 						</select>
 					</div><!-- /.multiple_select_content -->

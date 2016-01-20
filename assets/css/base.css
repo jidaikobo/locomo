@@ -51,7 +51,7 @@ h4,
 h5,
 h6 {
 	clear: both;
-	font-size: 100%;	
+	font-size: 100%;
 	font-weight: bold;
 	line-height: 1.6;
 	margin: 0;
@@ -172,8 +172,8 @@ strong strong {
 }
 strong.strong2 {
 	color: #000;
-	border-bottom:2px solid #ff6; 
-	box-shadow:0 -.45em 0 #ff6 inset; 
+	border-bottom:2px solid #ff6;
+	box-shadow:0 -.45em 0 #ff6 inset;
 }
 
 /* === abbr , acronym === */
@@ -300,10 +300,10 @@ dfn {
 
 /* === list === */
 ol {
- padding:  0 0 0 30px; 
+ padding:  0 0 0 30px;
 }
 ul {
- padding:  0 0 0 18px; 
+ padding:  0 0 0 18px;
 }
 
 /* === ul , ol (.nlm) === */
@@ -522,6 +522,7 @@ testarea {
 
 .btn,
 .button {
+	-webkit-appearance: none;
 	font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
 	vertical-align: middle;
 	padding: 5px 15px ;
@@ -536,7 +537,6 @@ testarea {
 	cursor: pointer;
 	border: 1px solid #999;
 	background-color: #fafafa;
-	-webkit-appearance: none;
 }
 .btn+.btn,
 .button+.button {
@@ -889,7 +889,7 @@ table.radius td { /* 右、下にborder */
 /*
 	border-right: 1px solid #888888;
 	border-bottom: 1px solid #888888;
-	border-top: none; 
+	border-top: none;
 	border-left: none;
 */
 }
@@ -1233,10 +1233,10 @@ span.nobr {
 	-o-box-shadow: 0 0 6px #aaa;
 	-ms-box-shadow: 0 0 6px #aaa;
 /*
-	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true), 
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=0, strength=3, enabled=true),
 */
-	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true), 
-	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true), 
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=90, strength=3, enabled=true),
+	progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=180, strength=3, enabled=true),
 /*
 progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=3, enabled=true);
 */

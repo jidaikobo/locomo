@@ -196,7 +196,26 @@ class Controller_Usr extends \Locomo\Controller_Base
 				break;
 			// return users in group
 			default:
-				$where = array(array('usergroup.id', '=', $gid));
+				// カスタムユーザグループ取得のため、一旦ユーザグループのrelationを確認する
+				$usrgrp = \Model_Usrgrp::find('first',
+												 array(
+													 'related' => array('usergroup'),
+													 'where'=> array(array('id', '=', $gid)),
+												 )
+				);
+				// ユーザグループがユーザグループを内包している場合は、それも取得する
+				if ($usrgrp->usergroup)
+				{
+					$where = array(
+						array('usergroup.id', 'IN', array_keys($usrgrp->usergroup)),
+						'or' => array(
+							array('usergroup.id', '=', $gid),
+						)
+					);
+				} else {
+					// ユーザグループを内包していなければ、普通に取得する
+					$where = array(array('usergroup.id', '=', $gid));
+				}
 				break;
 		}
 
@@ -204,13 +223,14 @@ class Controller_Usr extends \Locomo\Controller_Base
 			array(
 				'related' => count($where) ? array('usergroup') : array(),
 				'where'=> $where,
-				'order_by' => array('username' => 'asc')
+				'order_by' => array('username' => 'asc'),
 				)
 			);
 		$result = array();
 		foreach ($response as $row) {
 			$result[] = $row;
 		}
+
 		echo $this->response($result, 200); die();
 	}
 
@@ -327,7 +347,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 	public static function reset_paswd($obj, $is_sendmail = false)
 	{
 		if ( ! is_object($obj)) return false;
-	
+
 		// package and config
 		\Package::load('email');
 		$site_title = \Config::get('site_title');
@@ -352,7 +372,7 @@ class Controller_Usr extends \Locomo\Controller_Base
 			$body.= "-- \n";
 			$body.= $site_title."\n";
 			$body.= date('Y-m-d H:i:s')."\n";
-	
+
 			// set up email
 			$email = \Email::forge();
 			$email->from(LOCOMO_ADMIN_MAIL, $site_title);

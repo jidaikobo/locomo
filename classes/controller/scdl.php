@@ -87,9 +87,26 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 */
 	public function action_edit($id = null, $year = null, $mon = null, $day = null)
 	{
-		$model = $this->model_name ;
+		// 戻り先確保
+		$ref = \Input::server('HTTP_REFERER');
+		// リファラで戻るときには、editかcreateだったらアップデートも代入もしない
+		if (strpos($ref, 'edit') || strpos($ref, 'create'))
+		{
+			$ref = \Session::get('ref');
+		}
+		else
+		{
+			\Session::set('ref', $ref);
+		}
+		$ret_to = \Input::post('submit_top') ? 'ret_to_top' : 'ret_to_bottom';
+		// ユーザごとの戻り先の設定
+		if (\Input::post($ret_to))
+		{
+			\Session::set("ret_to", \Input::post($ret_to));
+		}
 
 		// --------------------- parent ---------------------
+		$model = $this->model_name ;
 		$content = \View::forge($model::$_kind_name . "/edit");
 
 		if ($id) {
@@ -151,7 +168,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 								, \Input::post("week_kb")
 								, \Input::post("target_day")
 								, \Input::post("target_month")
-								, \Input::post("week_index"));
+								, \Input::post("week_index")
+								, \Input::post("week_kb_option1")
+								, \Input::post("week_index_option1")
+								, \Input::post("week_kb_option2")
+								, \Input::post("week_index_option2"));
 			}
 
 			if (
@@ -194,11 +215,40 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					);
 
 					// 部分編集の場合はリダイレクトしない
-					if ($this->_someedit_id):
+					if ($this->_someedit_id)
+					{
 						return $obj;
-					else:
-						return \Response::redirect(\Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id));
-					endif;
+					}
+					else
+					{
+						// 戻り先分岐
+						$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/edit/'.$obj->id);
+						$y = date('Y', strtotime($obj->start_date));
+						$m = date('m', strtotime($obj->start_date));
+						$d = date('d', strtotime($obj->start_date));
+						$type = $model::$_kind_name == 'scdl' ? 'member' : 'building';
+
+						switch(\Input::post($ret_to))
+						{
+						case 'view':
+							$ret = str_replace('edit', 'viewdetail', $ret);
+							break;
+						case 'prev':
+							$ret = strpos($ref, \Uri::base()) !== false ? $ref : $ret ;
+							break;
+						case 'month':
+							$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class())."/calendar/$y/$m");
+							break;
+						case 'week':
+							$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class()).'/calendar/'.join('/', $this->week_first_date($y, $m, $d))."/week/$type");
+							break;
+						case 'day':
+							$ret = \Uri::create(\Inflector::ctrl_to_dir(get_called_class())."/calendar/$y/$m/$d");
+							break;
+						}
+
+						return \Response::redirect($ret);
+					}
 				else:
 
 					//save failed
@@ -368,7 +418,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text'
 									, 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
+									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index"
+									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2');
 /*
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
@@ -697,8 +748,61 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $mode
 	 * @return [type]
 	 */
-	public function action_calendar($year = null, $mon = null, $day = null, $mode = null, $week_option = null) {
+	public function action_calendar($year = null, $mon = null, $day = null, $mode = null, $week_option = null)
+	{
 		$model = $this->model_name;
+		\Profiler::mark('Scdl::calendar() - Called');
+
+		// キャッシュ用にタイトルは最初にアサイン
+		$this->template->set_global('title', self::$nicename);
+
+		// is_hmvcが、キャッシュ時なぜなtrueになるので明示的にアサイン
+		$this->template->set_global('is_hmvc', \Request::is_hmvc());
+
+		// キャッシュクリア用にget値をアサイン
+		$this->template->set_global('input_get', join('&amp;',\Input::get()));
+
+		// テンプレート切り分け
+		$tmpl_sub = "";
+		if ($mode == "week")
+			$tmpl_sub = "_week";
+		if ($mode == null && $day)
+			$tmpl_sub = "_day";
+		// 週表示用にテンプレートを分ける
+		if ($week_option == "member") {
+			$tmpl_sub = "_week_" . $week_option;
+		} else if ($week_option == "building") {
+			$tmpl_sub = "_week_" . $week_option;
+		}
+		if ($this->_content_template)
+		{
+			$view = \View::forge($model::$_kind_name . "/" . $this->_content_template);
+		} else {
+			$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
+		}
+
+		// ログインしているユーザIDとget値でキャッシュする
+		$cache_str = 'scdl_'.\Auth::get('id').'_'.\Inflector::friendly_title(\Uri::current().join(\Input::get()));
+
+		try
+		{
+			// root not use cache
+//			if (\Auth::is_root()) throw new \CacheNotFoundException();
+			if (\Cache::get($cache_str) && ! \Input::get('nocache'))
+			{
+				\Profiler::mark('Scdl::calendar() with cache - Done');
+				$this->template->set_global('is_cache', true);
+				$this->template->content = \Cache::get($cache_str);
+				return ;
+			}
+			else
+			{
+				throw new \CacheNotFoundException();
+			}
+		}
+		catch (\CacheNotFoundException $e)
+		{
+		$this->template->set_global('is_cache', false);
 
 		// 絞り込みをセッションへ保存
 		if (\Input::get("ugid", "not") != "not")
@@ -741,66 +845,63 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$is_main_ugid = true;
 		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
 		{
-			// 自分の代表グループIDを取得
-			$mydata = \Model_Usr::find(\Auth::get('id'));
-			if (\Input::get("ugid", "not") == "not" && $mydata && $mydata->main_usergroup_id) {
-				\Session::set($model::$_kind_name . "narrow_ugid", $mydata->main_usergroup_id);
+			// get値がある場合はそれを優先
+			if ( ! \Input::get('ugid'))
+			{
+				// 自分の代表グループIDを取得
+				$mydata = \Model_Usr::find(\Auth::get('id'));
+				if ($mydata && $mydata->main_usergroup_id) {
+					$is_main_ugid = $mydata->main_usergroup_id;
+				}
+				else if (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
+				{
+					// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
+					$is_main_ugid = reset($mydata->usergroup);
+				}
+
+				if ($is_main_ugid)
+				{
+					\Session::set($model::$_kind_name . "narrow_ugid", $is_main_ugid);
+				}
+				else
+				{
+					// 代表グループが設定されておらず、ユーザグループも複数ある場合
+					$is_main_ugid = false;
+				}
 				\Session::set($model::$_kind_name . "narrow_uid", "");
 				\Session::set($model::$_kind_name . "narrow_bgid", "");
 				\Session::set($model::$_kind_name . "narrow_bid", "");
-			}
-			elseif (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
-			{
-				// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
-				$main_ugid = reset($mydata->usergroup);
-				\Session::set($model::$_kind_name . "narrow_ugid", $main_ugid->id);
-				\Session::set($model::$_kind_name . "narrow_uid", "");
-				\Session::set($model::$_kind_name . "narrow_bgid", "");
-				\Session::set($model::$_kind_name . "narrow_bid", "");
-			}
-			else
-			{
-				// 代表グループが設定されておらず、ユーザグループも複数ある場合
-				$is_main_ugid = false;
 			}
 		}
+
 		if ($year == null || $year == "" || $year < 1000)
 			$year = date('Y');
 		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12)
 			$mon = date('m');
 
-		// テンプレート切り分け
-		$tmpl_sub = "";
-		if ($mode == "week")
-			$tmpl_sub = "_week";
-		if ($mode == null && $day)
-			$tmpl_sub = "_day";
-		// 週表示用にテンプレートを分ける
-		if ($week_option == "member") {
-			$tmpl_sub = "_week_" . $week_option;
-		} else if ($week_option == "building") {
-			$tmpl_sub = "_week_" . $week_option;
-		}
-
 		$year = (int)$year;
 		$mon = (int)$mon;
 		$day = (int)$day;
 
-
-
 		// 各モードにより処理分け
 		$calendar = array();
+		$conds = array();
+		foreach(\Input::get() as $k => $v){
+			$conds[] = e($k).'='.e($v);
+		}
+		$cond = '?'.join('&amp;', $conds);
+
 		$next_url = "";
 		$prev_url = "";
 		$mini_next_url = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " + 1month"));
 		$mini_prev_url = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " - 1month"));
 		$next_year = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " + 1year"));
 		$prev_year = date('Y/m/', strtotime(sprintf("%04d/%02d/15", $year, $mon) . " - 1year"));
-		$mini_next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_next_url), '次の月',  array('class' => 'next_month'));
-		$mini_prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_prev_url), '前の月',  array('class' => 'prev_month'));
+		$mini_next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_next_url . $cond), '次の月',  array('class' => 'next_month'));
+		$mini_prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $mini_prev_url . $cond), '前の月',  array('class' => 'prev_month'));
 
-		$next_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_year), '次の年',  array('class' => 'next_year'));
-		$prev_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_year), '前の年',  array('class' => 'prev_year'));
+		$next_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_year . $cond), '次の年',  array('class' => 'next_year'));
+		$prev_year_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_year . $cond), '前の年',  array('class' => 'prev_year'));
 
 		if ($mode == "week")
 		{
@@ -813,8 +914,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				$next_url .= "/" . $week_option;
 				$prev_url .= "/" . $week_option;
 			}
-			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の週',  array('class' => 'next_week'));
-			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の週',  array('class' => 'prev_week'));
+			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url . $cond), '次の週',  array('class' => 'next_week'));
+			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url . $cond), '前の週',  array('class' => 'prev_week'));
 		}
 		else if ($day && $mode == null)
 		{
@@ -822,8 +923,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$calendar = $this->make_day_calendar($year , $mon, $day);
 			$next_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " + 1days"));
 			$prev_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " - 1days"));
-			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url), '次の日');
-			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url), '前の日');
+			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url . $cond), '次の日');
+			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url . $cond), '前の日');
 		}
 		else
 		{
@@ -835,14 +936,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 週表示用
 		list($weekY, $weekM, $weekD) = $this->week_first_date($year, $mon, $day);
-        if ($this->_content_template)
-        {
-            $view = \View::forge($model::$_kind_name . "/" . $this->_content_template);
-        } else {
-            $view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
-        }
 
-		$view->set_global('title', self::$nicename);
 		$view->set_global("detail_pop_data", array());
 
 		// ユーザーグループ一覧作成
@@ -851,26 +945,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// 代表グループの存在
 		$view->set('is_main_ugid', $is_main_ugid);
 
-		$where = \Session::get($model::$_kind_name . "narrow_ugid") > 0 ? array(array('usergroup.id', '=', \Session::get($model::$_kind_name . "narrow_ugid"))) : array();
-
-		// テンポラル対応
-		if (isset(\Model_Usr::properties()['pronunciation']))
-		{
-			$view->set('narrow_user_list', \Model_Usr::find('all',
-				array(
-					'related'   => count($where) ? array('usergroup') : array(),
-					'where'=> $where,
-					'order_by' => 'pronunciation'
-					)
-				));
-		} else {
-			$view->set('narrow_user_list', \Model_Usr::find('all',
-				array(
-					'related'   => count($where) ? array('usergroup') : array(),
-					'where'=> $where,
-					)
-				));
-		}
+		// ユーザ一覧作成
+		$view->set('narrow_user_list', \Model_Usr::get_users_by_group(\Session::get($model::$_kind_name . "narrow_ugid")));
 
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
@@ -906,10 +982,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set("mini_prev_url", $mini_prev_url);
 		$view->set("next_year_url", $next_year_url);
 		$view->set("prev_year_url", $prev_year_url);
+		$view->set("cond", $cond);
 		$view->set("kind_name", $model::$_kind_name);
-		$view->set("display_month", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $year . '/' . $mon), '月表示'));
-		$view->set("display_week", \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $weekY . '/' . $weekM . '/' . $weekD . '/week'), '週表示'));
+		$view->set("display_month",
+							 \Html::anchor(\Uri::create($model::$_kind_name.'/calendar/'.$year.'/'.$mon), '月表示'));
+		$view->set("display_week", \Html::anchor(\Uri::create($model::$_kind_name.'/calendar/'.$weekY.'/'.$weekM.'/'.$weekD.'/week'), '週表示'));
+		} // end of catch
+
+		// cache 5 min
+		\Cache::delete($cache_str);
+		\Cache::set($cache_str, $view, 300);
+
+		// set
 		$this->template->content = $view;
+		\Profiler::mark('Scdl::calendar() without cache - Done');
 	}
 
 	/**
@@ -1480,6 +1566,20 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							$result = (ceil($target_day / 7) == $row['week_index']);
 						}
 					}
+					if ($target_week == $row['week_kb_option1'] && $result == false) {
+						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
+						if ($result && $row['week_index_option1']) {
+							// 第何週指定がある場合
+							$result = (ceil($target_day / 7) == $row['week_index_option1']);
+						}
+					}
+					if ($target_week == $row['week_kb_option2'] && $result == false) {
+						$result = !$this->checkDeleteDay($row['delete_day'], $target_year, $target_mon, $target_day);
+						if ($result && $row['week_index_option2']) {
+							// 第何週指定がある場合
+							$result = (ceil($target_day / 7) == $row['week_index_option2']);
+						}
+					}
 				}
 				break;
 		}
@@ -1543,7 +1643,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	 * @param  [type] $target_month [description]
 	 * @return [type]               [description]
 	 */
-	private function checkOverlap($id, $syear, $smon, $sday, $shour, $smin, $eyear, $emon, $eday, $ehour, $emin, $repeat_kb, $week_kb = null, $target_day = null, $target_month = null, $week_index = null) {
+	private function checkOverlap($id, $syear, $smon, $sday, $shour, $smin, $eyear, $emon, $eday, $ehour, $emin, $repeat_kb, $week_kb = null, $target_day = null, $target_month = null, $week_index = null, $week_kb_option1 = null, $week_index_option1 = null, $week_kb_option2 = null, $week_index_option2 = null) {
 		$model = $this->model_name;
 
 		$arrUsers = explode("/", \Input::post("hidden_members"));
@@ -1637,7 +1737,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 					break;
 				case 6:
-					if ($target_week != $week_kb && (ceil($target_day / 7) != $week_index)) {
+					if (
+						(($target_week == $week_kb) && (ceil($target_day_from / 7) == $week_index))
+						|| (($target_week == $week_kb_option1) && (ceil($target_day_from / 7) == $week_index_option1))
+						|| (($target_week == $week_kb_option2) && (ceil($target_day_from / 7) == $week_index_option2))
+						) {
+					} else {
 				 		$flgContinue = true;
 					}
 					break;

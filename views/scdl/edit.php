@@ -1,3 +1,60 @@
+<style type="text/css">
+.form_group.lcm_form {
+	margin-top: -10px;
+}
+.flash_alert {
+	margin-top: -10px !important;
+}
+.flash_alert + .contents .form_group.lcm_form {
+	margin-top: 0;
+}
+.lcm_form .input_group h2,
+.lcm_form section h1,
+.lcm_form .input_group .field,
+.lcm_form .input_group table {
+	padding: 4px;
+}
+.label_narrow_down,
+.multiple_select_narrow_down,
+#group_list_create_user {
+	width: 11em;
+}
+.label_narrow_down {
+	display: block;
+	font-weight: bold;
+	text-align: center;
+}
+
+.lcm_multiple_select {
+	margin-left: 13em;
+	margin-top: -4.5em;
+}
+@media screen and (max-width: 700px) {
+	.lcm_multiple_select {
+		margin-left: 0;
+		margin-top: 0;
+	}
+}
+.form_group.lcm_form .toggle_item {
+	width: auto;
+	text-align: left;
+	border-top: 1px solid #fff;
+	box-shadow: 0 -1px 0 #ccc;
+	margin-right: -7px;
+	margin-left: -7px;
+}
+.dairi {
+	margin-left: .5em;
+	display: inline-block;
+}
+.lcm_form .submit_button.top {
+	position: relative;
+	right: auto;
+	bottom: auto;
+	margin-top: 0;
+}
+
+</style>
 <?php
 if (isset($overlap_result) && count($overlap_result)) {
 	$display_results = array();
@@ -76,10 +133,46 @@ if (isset($overlap_result) && count($overlap_result)) {
 	</tbody>
 </table>
 <?php } ;?>
-<h1><?php echo $title ?></h1>
+<h1 class="skip"><?php echo $title ?></h1>
 <?php echo \Form::open(); ?>
 
+<?php
+// 保存ボタン
+function scdl_submit ($id)
+{
+	$arr = array(
+		'edit'  => '編集画面',
+		'view'  => '閲覧画面',
+		'prev'  => '前の画面',
+		'month' => '月表示',
+		'week'  => '週表示',
+		'day'   => '日表示',
+	);
+
+	$html = '';
+	$ret_to = \Session::get("ret_to");
+
+	$html.= '<label for="ret_to_'.$id.'">戻り先</label>'."\n";
+	$html.= '<select name="ret_to_'.$id.'" id="ret_to_'.$id.'" title="保存後の戻り先です。「前の画面」の場合は、'.e(\Session::get("ref")).'に戻ります。">'."\n\t";
+	foreach ($arr as $k => $v)
+	{
+		$selected = $ret_to == $k ? ' selected="selected"' : '';
+		$html.= '<option'.$selected.' value="'.$k.'">'.$v.'</option>'."\n\t";
+	}
+	$html.= '</select>'."\n";
+//	$html.= '<label for="save_ret_to_'.$id.'" title="戻り先を保存する場合はチェックしてください"><input type="checkbox" id="save_ret_to_'.$id.'" name="save_ret_to_'.$id.'" value="1" /> <span class="skip">戻り先の</span>保存</label>'."\n";
+	$html.= \Form::submit('submit_'.$id, '保存する', array('class' => 'button primary', 'id' => 'form_submit_top'.$id));
+	echo $html;
+}
+?>
+
 <div class="form_group lcm_form">
+	<div class="submit_button top"><!-- 上部保存ボタン -->
+		<?php
+			scdl_submit('top');
+		?>
+	</div>
+
 <?php
 	// use model's form definition instead of raw-like html
 	//echo $form;
@@ -114,6 +207,10 @@ if (isset($overlap_result) && count($overlap_result)) {
 			<span id="span_target_month"><?php echo $form->field('target_month')->set_template('{error_msg}{field}'); ?>月</span>
 			<span id="span_target_day"><?php echo $form->field('target_day')->set_template('{error_msg}{field}'); ?>日</span>
 			<span id="span_week_kb"><?php echo $form->field('week_kb')->set_template('{error_msg}{field}'); ?>曜日</span>  <span id="span_week_number">第<?php echo $form->field('week_index')->set_template('{error_msg}{field}'); ?>週目</span>
+			&nbsp;&nbsp;
+			<span id="span_week_kb_option1"><?php echo $form->field('week_kb_option1')->set_template('{error_msg}{field}'); ?></span>  <span id="span_week_number_option1">第<?php echo $form->field('week_index_option1')->set_template('{error_msg}{field}'); ?>週目</span>
+			&nbsp;&nbsp;
+			<span id="span_week_kb_option2"><?php echo $form->field('week_kb_option2')->set_template('{error_msg}{field}'); ?></span>  <span id="span_week_number_option2">第<?php echo $form->field('week_index_option2')->set_template('{error_msg}{field}'); ?>週目</span>
 			<div id="field_set_time" style="display: none;"> から </div>
 		</div>
 	</div><!-- /.input_group -->
@@ -163,8 +260,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 	<h2><span class="label_required">必須</span>メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="必須 メンバーの選択">
-				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
-					<option value="">絞り込み：全グループ</option>
+				<label for="group_list" class="label_narrow_down">グループ絞り込み</label>
+				<select id="group_list" name="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
+					<option value="">全グループ</option>
 					<?php foreach($group_list as $key => $value) { ?>
 						<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 					<?php } ?>
@@ -194,13 +292,22 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</div>
 	</div><!-- /.input_group -->
 	<?php endif; ?>
+	<?php /* 施設の設定 */ ?>
+	<?php if($locomo['controller']['name'] === "\Controller_Scdl"): ?>
+	<section>
+	<h1>
+		<a href="javascript:void(0);" class="toggle_item disclosure">施設設定</a>
+	</h1>
+	<div class="hidden_item off">
+	<?php endif; ?>
 	<div class="input_group">
-		<h2><?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '<span class="label_required">必須</span>';?>施設選択</h2>
+		<h2><?php echo ($locomo['controller']['name'] === "\Controller_Scdl") ? '' : '<span class="label_required">必須</span>' ;?>施設選択</h2>
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
-				<select id="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
-					<option value="">絞り込み：全施設</option>
+				<label for="building_group_list" class="label_narrow_down">施設グループ絞り込み</label>
+				<select id="building_group_list" name="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
+					<option value="">全施設</option>
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
 					<?php } ?>
@@ -230,13 +337,6 @@ if (isset($overlap_result) && count($overlap_result)) {
 		</div>
 	</div><!-- /.input_group -->
 	<div class="input_group">
-		<h2><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></h2>
-		<div class="field">
-			<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
-			<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
-		</div>
-	</div><!-- /.input_group -->
-	<div class="input_group">
 		<h2><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></div>
 	</div><!-- /.input_group -->
@@ -251,6 +351,24 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('user_num')->set_template('{error_msg}{field}'); ?>人</div>
 	</div><!-- /.input_group -->
+	<?php if($locomo['controller']['name'] === "\Controller_Scdl"): ?>
+		</div><!-- /.hidden_item -->
+	</section>
+	<?php endif; ?>
+
+	<?php if($locomo['controller']['name'] === "\Controller_Scdl"):?>
+	<div class="input_group">
+		<h2><?php echo $form->field('group_kb')->set_template('{required}{label}'); ?></h2>
+		<div class="field">
+			<?php echo $form->field('group_kb')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
+			<?php echo $form->field('group_detail')->set_template('{error_msg}{field}'); ?>
+		</div>
+	</div><!-- /.input_group -->
+	<?php else: ?>
+		<input type="hidden" name="group_kb" value="1" />
+	<?php endif; ?>
+
+
 	<div class="input_group">
 		<h2><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
@@ -270,8 +388,9 @@ if (isset($overlap_result) && count($overlap_result)) {
 		<h2 class="ar">メンバー</h2>
 		<div class="field">
 			<div id="member_panel" class="lcm_focus" title="メンバーの選択">
-				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
-					<option value="">絞り込み：全グループ
+				<label for="group_list" class="label_narrow_down">グループ絞り込み</label>
+				<select id="group_list" name="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
+					<option value="">全グループ
 				<?php foreach($group_list as $key => $value): ?>
 					<option value="<?php print $key; ?>" <?php if (\Session::get($kind_name . "narrow_ugid") == $key && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $value; ?>
 				<?php endforeach; ?>
@@ -313,10 +432,8 @@ if (isset($overlap_result) && count($overlap_result)) {
 
 	<div class="submit_button">
 		<?php
-		if( ! @$is_revision):
 			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-			echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
-		endif;
+			scdl_submit('bottom');
 		?>
 	</div>
 
@@ -354,27 +471,47 @@ function change_repeat_kb_area() {
 	if (repeat_kb == 0 || repeat_kb == 1 || repeat_kb == 2) {
 		// なし
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 3) {
 		$("#span_week_kb").css({'display': 'inline-block'});
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 4) {
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").hide();
 	} else if (repeat_kb == 5) {
 		$("#span_week_kb").hide();
+		$("#span_week_kb_option1").hide();
+		$("#span_week_kb_option2").hide();
 		$("#span_week_number").hide();
+		$("#span_week_number_option1").hide();
+		$("#span_week_number_option2").hide();
 		$("#span_target_day").css({'display': 'inline-block'});
 		$("#span_target_month").css({'display': 'inline-block'});
 	} else if (repeat_kb == 6) {
 		$("#span_week_kb").css({'display': 'inline-block'});
+		$("#span_week_kb_option1").css({'display': 'inline-block'});
+		$("#span_week_kb_option2").css({'display': 'inline-block'});
 		$("#span_week_number").css({'display': 'inline-block'});
+		$("#span_week_number_option1").css({'display': 'inline-block'});
+		$("#span_week_number_option2").css({'display': 'inline-block'});
 		$("#span_target_day").hide();
 		$("#span_target_month").hide();
 	}
