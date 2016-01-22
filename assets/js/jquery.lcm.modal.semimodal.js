@@ -122,7 +122,11 @@ $('.toggle_item').on('click', function(e){
 		replace_info();//開く・閉じる説明文切り替え
 		if(itself) return;//モーダルが自分ならそこでおわり
 	}
-	t.toggleClass('on');
+	if(t.is('.on')){
+		t.removeClass('on').addClass('off');
+	}else{
+		t.removeClass('off').addClass('on');
+	}
 	$(this).toggleClass('on').focus();
 
 	if(t.is('.semimodal.on')){//tabindex制御

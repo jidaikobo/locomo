@@ -675,7 +675,11 @@ table + .index_toolbar {
 /*=== multiple_select ===*/
 .lcm_multiple_select {
 	position: relative;
-	height: 13.5em;
+	height: 11.5em;
+}
+.lcm_multiple_select option {
+	min-height: 1.25em;
+	height: 1.25em;
 }
 .lcm_multiple_select .remove_item,
 .lcm_multiple_select .add_item {
@@ -683,10 +687,10 @@ table + .index_toolbar {
     left: 13.5em;
 }
 .lcm_multiple_select .add_item {
-	top: 5.5em;
+	top: 4.5em;
 }
 .lcm_multiple_select .remove_item {
-    top: 10em;
+    top: 8em;
 }
 .lcm_multiple_select label {
 	display: block;
@@ -699,7 +703,7 @@ table + .index_toolbar {
 .lcm_multiple_select select[size] {
 	margin-bottom: .5em;
 	width: 11em;
-	height: 10.5em;
+	height: 8.5em;
 }
 .lcm_multiple_select .multiple_select_content {
 	position: absolute;
@@ -714,6 +718,22 @@ table + .index_toolbar {
 .lcm_multiple_select .selected {
 	margin-left: 0;
 }
+@media screen and (max-width: 700px) {
+	.lcm_multiple_select {
+		position: relative;
+		height: 14.5em;
+	}
+	.lcm_multiple_select option {
+		min-height: 1.75em;
+		height: 1.75em;
+	}
+	.lcm_multiple_select .multiple_select_content,
+	.lcm_multiple_select select,
+	.lcm_multiple_select select[size] {
+		height: 11.5em;
+	}
+}
+
 
 .lcm_form textarea {
 	width: 98%;

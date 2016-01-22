@@ -77,18 +77,18 @@ class Actionset_Scdl extends \Actionset
 			// 項目が日付を持っていたらそれを使う
 			if(isset($obj->start_date))
 			{
-				// 短日イベントの場合（開始日と終了日が一致）は、その値を使う。
+				// 単日イベントの場合（開始日と終了日が一致）は、その値を使う。
 				if ($obj->start_date == $obj->end_date)
 				{
 					$y = date('Y', strtotime($obj->start_date));
 					$m = date('m', strtotime($obj->start_date));
 					$d = date('d', strtotime($obj->start_date));
-				} else {
-					// 短日イベントでない場合は、ターゲット日時にする
-					$y = date('Y');
-					$m = $obj->target_month ?: date('m');
-					$d = intval($obj->target_day);
+				} else if (\Uri::segment(4)){
+					$y = \Uri::segment(4) ?: $y ;
+					$m = \Uri::segment(5) ?: $m ;
+					$d = \Uri::segment(6) ?: $d ;
 				}
+
 				$ym = date('Y-m', strtotime($y.'-'.$m.'-'.$d));
 				$ymd = date('Y-m-d', strtotime($y.'-'.$m.'-'.$d));
 			}
@@ -313,7 +313,7 @@ class Actionset_Scdl extends \Actionset
 		);
 		return $retvals;
 	}
-	
+
 /*
 	// actionset_view
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())
