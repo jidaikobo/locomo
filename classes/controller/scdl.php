@@ -861,7 +861,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 				if ($is_main_ugid)
 				{
-					\Session::set($model::$_kind_name . "narrow_ugid", $is_main_ugid);
+					\Session::set($model::$_kind_name . "narrow_ugid", $is_main_ugid->id);
 				}
 				else
 				{
@@ -1462,17 +1462,19 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// DBからクエリを流すと重いのでここで判断する
 		if ($opt == null) {
 			$is_member = false;
-			if ((\Session::get($model::$_kind_name . "narrow_uid") > 0 || \Session::get($model::$_kind_name . "narrow_ugid") > 0) && $model::$_kind_name == "scdl") {
+			$narrow_uid = intval(\Session::get($model::$_kind_name . "narrow_uid"));
+			$narrow_ugid = intval(\Session::get($model::$_kind_name . "narrow_ugid"));
+			if (($narrow_uid > 0 || $narrow_ugid > 0) && $model::$_kind_name == "scdl") {
 
 				foreach ($row['user'] as $v) {
-					if (\Session::get($model::$_kind_name . "narrow_uid") > 0
-							&& \Session::get($model::$_kind_name . "narrow_uid") == $v['id']) {
+					if ($narrow_uid > 0
+							&& $narrow_uid == $v['id']) {
 						$is_member = true;
 						break;
-					} else if (!\Session::get($model::$_kind_name . "narrow_uid")
-						&& \Session::get($model::$_kind_name . "narrow_ugid") > 0) {
+					} else if (!$narrow_uid
+						&& $narrow_ugid > 0) {
 						foreach ($v->usergroup as $v2) {
-							if ($v2->id == \Session::get($model::$_kind_name . "narrow_ugid")) {
+							if ($v2->id == $narrow_ugid) {
 								$is_member = true;
 								break;
 							}
