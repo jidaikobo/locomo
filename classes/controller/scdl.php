@@ -843,6 +843,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 初期表示 スケジューラのときだけ代表グループIDを見る
 		$is_main_ugid = true;
+		$main_ugid = 0;
 		if ($model::$_kind_name == 'scdl' && ($year == null || $year == ""))
 		{
 			// get値がある場合はそれを優先
@@ -851,17 +852,17 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				// 自分の代表グループIDを取得
 				$mydata = \Model_Usr::find(\Auth::get('id'));
 				if ($mydata && $mydata->main_usergroup_id) {
-					$is_main_ugid = $mydata->main_usergroup_id;
+					$main_ugid = $mydata->main_usergroup_id;
 				}
 				else if (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
 				{
 					// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
-					$is_main_ugid = reset($mydata->usergroup);
+					$main_ugid = reset($mydata->usergroup)->id;
 				}
 
-				if ($is_main_ugid)
+				if ($main_ugid)
 				{
-					\Session::set($model::$_kind_name . "narrow_ugid", $is_main_ugid);
+					\Session::set($model::$_kind_name . "narrow_ugid", $main_ugid);
 				}
 				else
 				{
@@ -1462,17 +1463,19 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// DBからクエリを流すと重いのでここで判断する
 		if ($opt == null) {
 			$is_member = false;
-			if ((\Session::get($model::$_kind_name . "narrow_uid") > 0 || \Session::get($model::$_kind_name . "narrow_ugid") > 0) && $model::$_kind_name == "scdl") {
+			$narrow_uid = intval(\Session::get($model::$_kind_name . "narrow_uid"));
+			$narrow_ugid = intval(\Session::get($model::$_kind_name . "narrow_ugid"));
+			if (($narrow_uid > 0 || $narrow_ugid > 0) && $model::$_kind_name == "scdl") {
 
 				foreach ($row['user'] as $v) {
-					if (\Session::get($model::$_kind_name . "narrow_uid") > 0
-							&& \Session::get($model::$_kind_name . "narrow_uid") == $v['id']) {
+					if ($narrow_uid > 0
+							&& $narrow_uid == $v['id']) {
 						$is_member = true;
 						break;
-					} else if (!\Session::get($model::$_kind_name . "narrow_uid")
-						&& \Session::get($model::$_kind_name . "narrow_ugid") > 0) {
+					} else if (!$narrow_uid
+						&& $narrow_ugid > 0) {
 						foreach ($v->usergroup as $v2) {
-							if ($v2->id == \Session::get($model::$_kind_name . "narrow_ugid")) {
+							if ($v2->id == $narrow_ugid) {
 								$is_member = true;
 								break;
 							}
