@@ -154,6 +154,17 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 				// always_user_allowed
 				$acls_user = \Config::get('always_user_allowed');
 				$acls = array_merge($acls, $acls_user);
+
+				// always_group_allowed
+				$acls_groups = \Config::get('always_group_allowed');
+				foreach ($usergroups as $ugid)
+				{
+					if (isset($acls_groups[$ugid]) && is_array($acls_groups[$ugid]))
+					{
+						$acls = array_merge($acls, $acls_groups[$ugid]);
+					}
+				}
+
 				$this->user['allowed'] = $acls;
 
 				// related controller
@@ -403,7 +414,7 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 
 	/**
 	 * check_deny()
-	 * 
+	 *
 	 * @param type $account
 	 * @return boolean
 	 * by shimizu@hinodeya at bems
