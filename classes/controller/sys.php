@@ -127,11 +127,14 @@ class Controller_Sys extends \Controller_Base
 					$url = $ctrl.DS.$home;
 					$args = array(
 						'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($url), $home_name)),
+						'order'       => -1,
 						'show_at_top' => true,
 						'explanation' => $home_exp
 					);
 					array_unshift($actionset[$ctrl], $args); // add main action to top
 				}
+				// order
+				$actionset[$ctrl] = \Arr::multisort($actionset[$ctrl], array('order' => SORT_ASC));
 			}
 
 			// order

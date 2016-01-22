@@ -170,7 +170,6 @@ class Inflector extends \Fuel\Core\Inflector
 		return str_replace('Controller', 'Model', $ctrl);
 	}
 
-
 	/**
 	 * get_root_relative_path()
 	 * @param string http://exmple.com/root_dir/ctrl/action

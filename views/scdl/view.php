@@ -41,7 +41,8 @@
 <tr>
 	<th>予定日時</th>
 	<td>
-	<?php if($detail->repeat_kb == 0):
+	<?php
+		if($detail->repeat_kb == 0):
 			echo $info['display_target_date'];
 		elseif($detail->allday_kb):
 			echo $ymd_str.'終日';
