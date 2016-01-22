@@ -124,4 +124,14 @@ return array(
 		'\\Controller_Sys/edit',
 		'\\Controller_Sys/clock',
 	),
+
+	// always group allowed actions
+	// KeyVal: Key must be existence usergroup's id
+	'always_group_allowed' => array(
+/*
+		1 => array(
+			'\\Controller_Hlp/view',
+		)
+*/
+	),
 );
