@@ -85,7 +85,7 @@ class File extends \Fuel\Core\File
 			'overwrite' => true,
 		);
 		\Upload::process($config);
-		\Upload::register('before', function (&$file){$file['filename'] = urlencode(urlencode($file['filename']));});
+		\Upload::register('before', function (&$file){$file['filename'] = urlencode($file['filename']);});
 
 		// upload
 		$files = \Upload::get_files();

@@ -714,7 +714,7 @@ class Controller_Base extends Controller_Core
 	/**
 	 * bulk()
 	 */
-	protected function bulk($page = 1, $add = 3, $is_redirect = true, $add_delete_field = true)
+	protected function bulk($page = 1, $add = 3, $is_redirect = true)
 	{
 		// TODO $page => \Pagination::set('uri_segments', 'paged');
 		$model = $this->model_name;
@@ -773,7 +773,7 @@ class Controller_Base extends Controller_Core
 		// forge bulk
 		$bulk = \Locomo\Bulk::forge();
 		$bulk::$_presenter = $this->_content_template ?: static::$dir.'bulk';
-		$bulk->add_model($objects, $add_delete_field);
+		$bulk->add_model($objects);
 
 		// count all for pagination
 		if (method_exists($model, 'set_public_options'))

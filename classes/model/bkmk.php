@@ -41,7 +41,7 @@ class Model_Bkmk extends \Locomo\Model_Base
 		),
 
 		'url' => array(
-			'label' => '用紙幅',
+			'label' => 'URL',
 			'form' => array(
 				'type' => 'text',
 				'size' => 50,
