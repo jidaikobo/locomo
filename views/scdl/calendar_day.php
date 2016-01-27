@@ -4,7 +4,7 @@
 	$importance_kbs = $model_name::get_importance_kbs();
 ?>
 
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 一日詳細カレンダ</h1>
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar_detail">
@@ -83,7 +83,7 @@
 	endif;//hmvcをとじる ?>
 
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 	<h2 class="skip">タイムテーブル 一覧</h2>
 <?php endif; ?>
 	<table id="schedule_detail" class="tbl datatable schedule_day detail lcm_focus" title="タイムテーブル 一覧">
@@ -98,7 +98,7 @@
 			<th class="detail">
 				内容
 			</th>
-			<?php if(!\Request::is_hmvc()): ?>
+			<?php if( ! $is_hmvc): ?>
 			<th class="name">
 				登録者
 			</th>
@@ -198,7 +198,7 @@
 				echo '</p>';
 				?>
 			</td>
-			<?php if(!\Request::is_hmvc()): ?>
+			<?php if( ! $is_hmvc): ?>
 			<td class="name nowrap">
 			<?php
 				echo $detaildata->create_user['display_name'];
@@ -217,7 +217,7 @@
 	foreach($detail_kbs as $k => $v){
 		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
 	}
-	if(!\Request::is_hmvc()): //重要度
+	if( ! $is_hmvc): //重要度
 		foreach($importance_kbs as $k => $v){
 			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
 		}
@@ -228,7 +228,7 @@
  <?php }else{ ?>
 <p tabindex="0">予定の登録がありません</p>
 <?php } ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 </div><!-- /.field_wrapper -->
 <?php endif; ?>
 <?php

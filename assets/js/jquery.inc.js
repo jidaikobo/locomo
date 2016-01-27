@@ -183,6 +183,10 @@ function set_focus(t){
 //非表示の要素の設定
 $('.hidden_item').each(function(){
 	var query, params, v, $trigger ; 
+	//hidden_itemでデフォルトが.offの場合、中身に関係なく折りたたみ
+	if($(this).is('.off')) {
+		return;
+	}
 	//hidden_itemでも検索条件がデフォルトでない場合は展開しておく
 	if($(this).find('form.search')[0]){
 	//検索フォームの場合、get値を見る。
@@ -198,13 +202,16 @@ $('.hidden_item').each(function(){
 		}
 	}else if($(this).find(':input')[0]){
 		$(this).find(':input').each(function(){
-		console.log($(this).attr('class')+' : '+$(this).val())
+//		console.log($(this).attr('class')+' : '+$(this).val())
 			v = $(this).val()!='' ? true : v;
 		});
 	}
-	if(!v) return;
+	if(!v) {
+		$(this).addClass('off');
+		return;
+	}
 	$trigger = $('.toggle_item').eq($('.hidden_item').index(this));
-	$(this).addClass('on').show();
+	$(this).removeClass('off').addClass('on').show();
 	$trigger.addClass('on');
 });
 

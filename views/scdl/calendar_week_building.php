@@ -4,7 +4,8 @@
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
-<?php if(!\Request::is_hmvc()): ?>
+
+<?php if( ! $is_hmvc): ?>
 <?php /* ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <?php */ ?>
@@ -53,7 +54,7 @@
 							$(this).hide();
 						};
 					});
-				} 
+				}
 				cnt = $('table.calendar').find('.lcm_tooltip_parent:visible').length;
 				if(cnt) 	msg = cnt+'件ヒットしました';
 
@@ -82,9 +83,7 @@
 	<p id="msg" tabindex="-1"></p>
 </div>
 
-
 <div class="field_wrapper calendar">
-
 <?php
 	include("calendar_narrow.php");
 	// 週選択
@@ -99,7 +98,7 @@
 <h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week lcm_focus" title="カレンダ">
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 	<thead>
 	<tr>
 		<th>&nbsp;</th>
@@ -222,7 +221,7 @@ endforeach; ?>
 	</tbody>
 </table>
 <?php include("inc_legend.php"); //カレンダ凡例 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <?php
 	// 週選択
 	echo $week_select_html;

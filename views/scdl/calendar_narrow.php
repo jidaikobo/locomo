@@ -13,7 +13,7 @@
 <select class="schedule_narrow" id="narrow_user_id" name="narrow_user_list" title="ユーザー">
 	<option value="">-- ユーザー --
 	<?php foreach($narrow_user_list as $id => $row):?>
-		<option value="<?php print $id; ?>" <?php if ($id == \Session::get($kind_name . "narrow_uid")) { print "selected"; } ?>><?php  print $row; ?>
+		<option value="<?php print $id; ?>" <?php if ($id == \Session::get($kind_name . "narrow_uid")) { print "selected"; } ?>><?php print $row; ?>
 	<?php endforeach; ?>
 </select>
 <input class="schedule_narrow button small primary" id="btn_user" type="button" value="絞り込み" onclick="javascript:location.href='?uid=' + $('#narrow_user_id').val() + '&ugid=' + $('#narrow_user_group_id').val()" />
@@ -27,6 +27,10 @@ if (!(isset($day) && $day && $mode != "week")):
 	else:
 		echo '<input type="button" class="schedule_narrow button small" value="時間を表示" id="scdl_time_button">';
 	endif;
+endif;
+
+if ($is_cache):
+	echo '<a href="?'.$input_get.'&amp;nocache=1" class="button small" />キャッシュクリア</a>';
 endif;
 ?>
 <?php /*
