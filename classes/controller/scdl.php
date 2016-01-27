@@ -1465,6 +1465,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$is_member = false;
 			$narrow_uid = intval(\Session::get($model::$_kind_name . "narrow_uid"));
 			$narrow_ugid = intval(\Session::get($model::$_kind_name . "narrow_ugid"));
+			$users = \Model_Usr::get_users_by_group($narrow_ugid);
+
 			if (($narrow_uid > 0 || $narrow_ugid > 0) && $model::$_kind_name == "scdl") {
 
 				foreach ($row['user'] as $v) {
@@ -1474,11 +1476,18 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						break;
 					} else if (!$narrow_uid
 						&& $narrow_ugid > 0) {
+/*
 						foreach ($v->usergroup as $v2) {
 							if ($v2->id == $narrow_ugid) {
 								$is_member = true;
 								break;
 							}
+						}
+*/
+						if (array_key_exists($v['id'], $users))
+						{
+								$is_member = true;
+								break;
 						}
 					}
 				}
