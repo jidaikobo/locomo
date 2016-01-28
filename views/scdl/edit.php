@@ -14,6 +14,9 @@
 .lcm_form .input_group table {
 	padding: 4px;
 }
+.lcm_form .input_group * {
+	vertical-align: middle;
+}
 .label_narrow_down,
 .multiple_select_narrow_down,
 #group_list_create_user {
@@ -182,9 +185,10 @@ function scdl_submit ($id)
 		<div class="field">
 			<?php echo $form->field('title_text')->set_template('{error_msg}{field}'); ?>
 			<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"): ?>
-			<span id="span_public_display" class="display_inline_block">
+			<span id="span_public_display" class="display_inline_block">[
+				<h2 class="display_inline_block">事務所処理欄</h2>
 				<?php echo $form->field('public_display')->set_template('{error_msg}{fields}<label>{field} {label}</label> {fields}'); ?>
-			</span>
+			]</span>
 			<?php endif; ?>
 <?php /* ?>
 <span class="nowrap">
@@ -227,16 +231,24 @@ function scdl_submit ($id)
 		</div>
 	</div><!-- /.input_group -->
 <?php if( $locomo['controller']['name'] !== "\Controller_Scdl"): // 施設予約では、公開用の設定をする ?>
-	<div class="input_group">
-		<h2>実使用時間</h2>
-		<div id="field_term" class="lcm_focus field" title="実使用時間">
-			<span id="span_public_time_start" class="">
-			<?php echo $form->field('public_start_time')->set_template('{error_msg}{field}'); ?>
-			</span> から <span id="span_public_time_end" class="display_inline_block" style="margin-right: 1em;">
-			<?php echo $form->field('public_end_time')->set_template('{error_msg}{field}'); ?>
-			</span>
-		</div>
-	</div><!-- /.input_group -->
+	<section>
+	<h1>
+		<a href="javascript:void(0);" class="toggle_item disclosure">実使用時間設定</a>
+	</h1>
+	<div class="hidden_item">
+		<div class="input_group">
+			<h2>実使用時間</h2>
+			<div id="field_term" class="lcm_focus field" title="実使用時間">
+				<span id="span_public_time_start" class="">
+				<?php echo $form->field('public_start_time')->set_template('{error_msg}{field}'); ?>
+				</span> から <span id="span_public_time_end" class="display_inline_block" style="margin-right: 1em;">
+				<?php echo $form->field('public_end_time')->set_template('{error_msg}{field}'); ?>
+				</span>
+				<em class="exp" style="display: inline-block;">実使用時間が異なる場合のみ入力してください。</em>
+			</div>
+		</div><!-- /.input_group -->
+	</div><!-- /.hidden_item -->
+	</section>
 <?php endif; ?>
 
 	<div class="input_group lcm_focus" title="詳細設定">
@@ -590,9 +602,15 @@ $('#form_start_time').on('change', function(){
 	}
 });
 
-//時間の設定を外部表示のplaceholderに
-$('#form_start_time, #form_end_time').on('change', function(){
-	if($(this).is('#form_start_time')){ //すでに値が入っている場合どうする？ placeholderだからよい？ //選択時のtimepickerの開始値とか、ずっとplaceholderにいれてていいの？とか //空でないときはplaceholderは見えないので、とにかく入れてしまう
+//時間の設定を実時間表示のplaceholderに
+
+$('#form_start_time, #form_end_time').each(function(){
+	set_publictime_placeholder($(this));
+}).on('change', function(){
+	set_publictime_placeholder($(this));
+});
+function set_publictime_placeholder($input) {
+	if($input.is('#form_start_time')){ //placeholderだからよい？ //選択時のtimepickerの開始値とか //空でないときはplaceholderは見えないので、とにかく入れてしまう
 //		if($('#form_public_start_time').val()==''){
 			$('#form_public_start_time').attr('placeholder', $('#form_start_time').val());
 //		}
@@ -601,9 +619,12 @@ $('#form_start_time, #form_end_time').on('change', function(){
 			$('#form_public_end_time').attr('placeholder', $('#form_end_time').val());
 //		}
 	}
-});
+
+}
 
 //実使用時間の片方のみに入力した場合に、もう一方に設定時間の値を入力
+//placeholderで表示しているので不要
+/*
 $('#form_public_start_time, #form_public_end_time').on('change', function(){
 	$from = $(this).is('#form_public_start_time') ? $('#form_public_start_time') : $('#form_public_end_time');
 	$to = $(this).is('#form_public_start_time') ? $('#form_public_end_time') :  $('#form_public_start_time');
@@ -618,19 +639,19 @@ $('#form_public_start_time, #form_public_end_time').on('change', function(){
 					$to.val($('#form_start_time').val());
 				}
 			}
-		}else{ //値が削除された場合
-			if(!$to.val()){
-				if($from.is('#form_public_start_time')){
-					$from.val($('#form_start_time').val());
-				}else{
-					$from.val($('#form_end_time').val());
-				}
-			}
+//		}else{ //値が削除された場合はなにもしなくてよい？
+//			if(!$to.val()){
+//				if($from.is('#form_public_start_time')){
+//					$from.val($('#form_start_time').val());
+//				}else{
+//					$from.val($('#form_end_time').val());
+//				}
+//			}
 		}
 		$from.focus();
 	}
-
 });
+*/
 
 </script>
 

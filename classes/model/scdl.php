@@ -245,7 +245,7 @@ class Model_Scdl extends \Model_Base_Soft
 			'form' =>
 			array (
 				'type' => 'text',
-				'size' => 50,
+				'size' => 40,
 				'class' => 'text',
 			),
 			'validation' =>
