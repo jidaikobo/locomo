@@ -233,7 +233,7 @@ function scdl_submit ($id)
 <?php if( $locomo['controller']['name'] !== "\Controller_Scdl"): // 施設予約では、公開用の設定をする ?>
 	<section>
 	<h1>
-		<a href="javascript:void(0);" class="toggle_item disclosure">実使用時間設定</a>
+		<a href="javascript:void(0);" class="toggle_item disclosure">実使用時間設定<span class="skip"> エンターで実使用時間設定を開きます</span></a>
 	</h1>
 	<div class="hidden_item">
 		<div class="input_group">
@@ -308,7 +308,7 @@ function scdl_submit ($id)
 	<?php if($locomo['controller']['name'] === "\Controller_Scdl"): ?>
 	<section>
 	<h1>
-		<a href="javascript:void(0);" class="toggle_item disclosure">施設設定</a>
+		<a href="javascript:void(0);" class="toggle_item disclosure">施設設定<span class="skip"> エンターで施設設定を開きます</span></a>
 	</h1>
 	<div class="hidden_item off">
 	<?php endif; ?>
@@ -317,8 +317,8 @@ function scdl_submit ($id)
 		<div class="field">
 			<div id="building_panel" class="lcm_focus" title="<?php echo $locomo['controller']['name'] === "\Controller_Scdl" ? '' : '必須 ';?>施設の選択">
 				<div id="building_select_wrapper">
-				<label for="building_group_list" class="label_narrow_down">施設グループ絞り込み</label>
-				<select id="building_group_list" name="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="施設グループ絞り込み">
+				<label for="building_group_list" class="label_narrow_down">グループ絞り込み</label>
+				<select id="building_group_list" name="building_group_list" class="multiple_select_narrow_down" data-uri="scdl/building_list.json" data-target-id="building_group_selects" title="グループ絞り込み">
 					<option value="">全施設</option>
 					<?php foreach($building_group_list as $row) { ?>
 						<option value="<?php print $row['item_group2']; ?>" <?php if (\Session::get($kind_name . "narrow_bgid") == $row['item_group2'] && count(\Input::post()) == 0) { print "selected"; } ?>><?php  print $row['item_group2']; ?>
@@ -396,6 +396,11 @@ function scdl_submit ($id)
 		</div>
 	</div><!-- /.input_group -->
 	<?php if( $locomo['controller']['name'] !== "\Controller_Scdl"):?>
+	<section>
+	<h1>
+		<a href="javascript:void(0);" class="toggle_item disclosure">メンバー設定<span class="skip"> エンターでメンバー設定を開きます</span></a>
+	</h1>
+	<div class="hidden_item off">
 	<div class="input_group">
 		<h2 class="ar">メンバー</h2>
 		<div class="field">
@@ -431,6 +436,8 @@ function scdl_submit ($id)
 			</div>
 		</div>
 	</div><!-- /.input_group -->
+	</div><!-- /.hidden_item -->
+	</section>
 	<?php endif; ?>
 
 	<?php echo $form->field('created_at')->set_template('{error_msg}{field}'); ?>
@@ -472,8 +479,6 @@ if ($("#is_someedit").val() == 1) {
 	change_repeat_kb_area();
 	$("#form_repeat_kb").css("display", "none");
 }
-
-
 /**
  * [change_repeat_kb_area description]
  * @return {[type]} [description]
@@ -542,6 +547,10 @@ function change_repeat_kb_area() {
 
 	if(isNetReader){
 		move_time_inputfield();
+		$('#alert_error').find('a').each(function(){ // NetReaderが空のselectとの相性が悪いことと、スケジューラではエラー対応が不十分なのでいったん
+			var inner = $(this).text();
+			$(this).replaceWith(inner);
+		});
 	}else{
 		setTimeout(move_time_inputfield, 250);
 	}
