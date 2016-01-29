@@ -711,11 +711,22 @@ class Controller_Base extends Controller_Core
 		}
 	}
 
+
 	/**
 	 * bulk()
 	 */
-	protected function bulk($page = 1, $add = 3, $is_redirect = true)
+	// protected function bulk($page = 1, $add = 3, $is_redirect = true)
+	protected function bulk($args = array())
 	{
+		$defaults = array('page' => 1, 'add' => 3, 'is_redirect' => true);
+		/*
+		$args = array_merge($defaults, $args);
+		$page = $args['page'];
+		$add = $args['add'];
+		$is_redirect = $args['is_redirect'];
+		 */
+		extract(\Util::parse_args($defaults, $args));
+
 		// TODO $page => \Pagination::set('uri_segments', 'paged');
 		$model = $this->model_name;
 		$action = \Request::main()->action;
@@ -833,8 +844,16 @@ class Controller_Base extends Controller_Core
 	/*
 	 * 条件1 $options related の一つ目にマスタの relation
 	 */
-	protected function conditioned_bulk($options, $defaults = array(), $belongs_to_display_name = 'name', $is_redirect = true)
+	protected function conditioned_bulk($options, $args = array())
 	{
+
+		$default_args = array(
+			'default_values' => array(),
+			'belongs_to_display_name' => 'name',
+			'is_redirect' => true
+		);
+
+		extract(\Util::parse_args($defaults, $args));
 
 		$model = $this->model_name;
 		$model::set_authorized_options();
@@ -864,7 +883,7 @@ class Controller_Base extends Controller_Core
 					$rel_key_from => $data->{$rel_key_to},
 				));
 			}
-			foreach ($defaults as $key => $default) {
+			foreach ($default_values as $key => $default) {
 				$row->{$key} = $default;
 			}
 

@@ -352,5 +352,4 @@ class Util
 		$ret = array_intersect_key($defaults, $defs);
 		return $ret;
 	}
-
 }
