@@ -109,7 +109,12 @@ class Controller_Adrs extends \Locomo\Controller_Base
 		// bulk
 		$this->model_name = '\Model_Adrsgrp';
 		$this->_content_template = 'adrsgrp/bulk';
-		$this->bulk($page, 0);
+
+
+		$this->bulk(array(
+			'page' => $page,
+			'add' => 0,
+		));
 
 		// assign
 		$presenter = \Presenter::forge($this->_content_template);

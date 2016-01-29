@@ -114,29 +114,61 @@ class Bulk
 	/*
 	 * build()
 	 */
-	public function build()
+	public function build($header = true, $footer = false)
 	{
 		if ( ! $this->forms) return '';
 
-		$output = '<thead><tr>';
 
-		$fst_obj = reset($this->forms);
-		foreach ($fst_obj->field() as $f)
+		$header_str = '';
+		// header
+		if ($header)
 		{
-			if ($f->type === false  OR $f->type === 'hidden' OR $f->type === 'submit') continue;
-			if (is_null ($f->template))
+			if (is_string($header))
 			{
-				$output .=  '<th>' . $f->label . '</th>';
-			} else {
-				$temp = str_replace('td>', 'th>', $f->template);
-				$temp = str_replace('{fields}', '', $temp);
-				$temp = str_replace('{field}', $f->label, $temp);
-				$temp = str_replace('{label}','',  str_replace('{error_msg}','', $temp));
-				$output .= $temp;
+				$header_str = $header;
+			}
+			else
+			{
+				$header_str .= '<thead><tr>';
+				$fst_obj = reset($this->forms);
+				foreach ($fst_obj->field() as $f)
+				{
+					if ($f->type === false  OR $f->type === 'hidden' OR $f->type === 'submit') continue;
+					$header_str .=  '<th>' . $f->label . '</th>';
+					/*
+					if (is_null ($f->template))
+					{
+						$header_str .=  '<th>' . $f->label . '</th>';
+					} else {
+						$temp = str_replace('td>', 'th>', $f->template);
+						$temp = str_replace('{fields}', '', $temp);
+						$temp = str_replace('{field}', $f->label, $temp);
+						$temp = str_replace('{label}','',  str_replace('{error_msg}','', $temp));
+						$header_str .= $temp;
+					}
+					 */
+				}
+				$header_str .= '</tr><thead>';
 			}
 		}
-		$output .= '</tr><thead>';
 
+		// footer
+		$footer_str = '';
+		if ($footer)
+		{
+			if (is_string($footer))
+			{
+				$footer_str = $footer;
+			}
+			else
+			{
+				$footer_str = str_replace('thead', 'tfoot', $header_str);
+			}
+		}
+
+
+		// body
+		$body = '';
 		foreach($this->forms as $form)
 		{
 			$form->set_config('form_template', "\t\t\t<tr>\n{fields}\n\t\t\t</tr>\n");
@@ -156,8 +188,10 @@ class Bulk
 				$field->delete_rule('required', false)->delete_rule('required_with', false);
 			}
 
-			$output .= $form->build();
+			$body .= $form->build();
 		}
+
+		$output = $header_str.$body.$footer_str;
 
 		$output = str_replace('{fields}', $output, "\n\t\t\n\t\t<table class=\"tbl datatable\">\n{fields}\n\t\t</table>\n\t\t\n"); // todo template
 		return $output;

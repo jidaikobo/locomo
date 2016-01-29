@@ -332,4 +332,24 @@ class Util
 		return true;
 	}
 
+	/**
+	 * parse_args
+	 * $defaults の中にある key のもののみ
+	 * かつ、値は $args のほうを使用した配列を返す
+	 * 戻り値をextract で使うとき等に使用
+	 */
+	public static function parse_args($args, $defaults = array())
+	{
+		/*
+		 * object が来るかも?
+		if ( is_object( $args ) )
+			$r = get_object_vars( $args );
+		elseif ( is_array( $args ) )
+			$r =& $args;
+		 */
+
+		$args = array_merge($defaults, $args);
+		$ret = array_intersect_key($defaults, $defs);
+		return $ret;
+	}
 }
