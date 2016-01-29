@@ -187,6 +187,11 @@ endforeach;
 								//繰り返し区分
 								$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
 								$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']].' ' : '';
+								//代理登録
+								if(($v2->user_id && $v2->updater_id)&&($v2->user_id != $v2->updater_id)):
+									$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
+									$eventtitle_skip.= '代理登録 ';
+								endif;
 /*
 								//重要度
 								$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));

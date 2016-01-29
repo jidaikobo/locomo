@@ -5,7 +5,6 @@
 	$title_str = '' ;
 	if(!$detail->private_kb):
 		$title_str = '：';
-
 		//外部表示(施設予約)
 		if(\Request::active()->controller !== "\Controller_Scdl"):
 			$title_str.= $detail['public_display']==2 ? '<span class="text_icon reserve public"><span class="skip">外部表示</span></span>' : '';
@@ -18,6 +17,10 @@
 		endforeach;
 		//繰り返し区分
 		$title_str .=  $detail->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detail->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detail->repeat_kb].'</span></span>' : '';
+		//代理登録
+		if(($detail->user_id && $detail->updater_id) &&($detail->user_id != $detail->updater_id)):
+			$title_str .=  '<span class="text_icon schedule dairi"><span class="skip">代理登録</span></span>';
+		endif;
 /*
 		//重要度
 		$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($detail->title_importance_kb));
@@ -39,7 +42,7 @@
 	$info = $model_name::make_target_day_info($detail);
 ?>
 <tr>
-	<th>予定日時</th>
+	<th style="width: 6em;">予定日時</th>
 	<td>
 	<?php
 		if($detail->repeat_kb == 0):
@@ -126,20 +129,18 @@
 </tr>
 <?php } ?>
 
-<?php if($locomo['controller']['name'] === "\Reserve\Controller_Reserve" && $detail->purpose_kb && !$detail->private_kb): //施設選択の時 ?>
+<?php /* if($locomo['controller']['name'] === "\Reserve\Controller_Reserve" && $detail->purpose_kb && !$detail->private_kb): //施設選択の時 ?>
 <tr>
-	<th class="min">施設使用目的</th>
+	<th>施設使用目的</th>
 	<td><?php echo $detail->purpose_kb; ?></td>
 </tr>
-
 <?php endif; ?>
 <?php if($detail->purpose_text && !$detail->private_kb): ?>
 <tr>
 	<th>施設使用目的テキスト</th>
 	<td><?php echo $detail->purpose_text; ?></td>
 </tr>
-
-<?php endif; ?>
+<?php endif; */?>
 <?php if($detail->user_num && !$detail->private_kb): ?>
 <tr>
 	<th>施設利用人数</th>
@@ -159,6 +160,13 @@
 </tr>
 <?php } ?>
 
+
+<?php if($detail->created_at): ?>
+<tr>
+	<th>作成日時</th>
+	<td><?php echo date('Y年n月j日 G時i分', strtotime($detail->created_at)); ?></td>
+</tr>
+<?php endif; ?>
 <?php if($detail->user_id): ?>
 <tr>
 	<th>作成者</th>
@@ -173,9 +181,9 @@
 </tr>
 <?php endif; ?>
 
-<?php if($detail->updater_id): ?>
+<?php if($detail->updater_id && ($detail->updater_id != $detail->user_id)): ?>
 <tr>
-	<th>更新者</th>
+	<th>代理登録者</th>
 	<td><?php echo \Model_Usr::get_display_name($detail->updater_id); ?></td>
 </tr>
 <?php endif; ?>

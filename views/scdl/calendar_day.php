@@ -181,7 +181,11 @@
 				//繰り返し区分
 				$eventtitle_icon.= $detaildata['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata['repeat_kb'].'"></span>' : '';
 				$eventtitle_skip.= $detaildata['repeat_kb'] != 0 ? $repeat_kbs[$detaildata['repeat_kb']] : '';
-
+				//代理登録
+				if(($detaildata->user_id && $detaildata->updater_id)&&($detaildata->user_id != $detaildata->updater_id)):
+					$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
+					$eventtitle_skip.= '代理登録 ';
+				endif;
 /*
 				//重要度
 				$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($detaildata['title_importance_kb']));
@@ -209,23 +213,8 @@
 <?php } ?>
 		</tbody>
 	</table>
-	<div class="legend calendar" aria-hidden=true>
-<?php
-	foreach($repeat_kbs as $k => $v){
-		echo $k != 0 ? '<span class="display_inline_block"><span class="text_icon schedule repeat_kb_'.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	}
-	foreach($detail_kbs as $k => $v){
-		echo $k != 'unspecified_kb' ? '<span class="display_inline_block"><span class="text_icon schedule '.$k.'"><span class="skip"> '.$v.'</span></span>'.$v.' </span>' : '';
-	}
-	if( ! $is_hmvc): //重要度
-		foreach($importance_kbs as $k => $v){
-			echo '<span class="display_inline_block"><span class="icon mark_importance"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$k.'.png" alt="'.$v.'"></span>'.$v.'</span>';
-		}
-	endif;
-?>
-		<span class="display_inline_block"><span class="icon mark_private"><img src="<?php echo \Uri::base() ?>lcm_assets/img/system/mark_private.png" alt="非公開"></span>非公開</span>
-	 </div><!-- /.legend.calendar -->
- <?php }else{ ?>
+<?php include(LOCOMOPATH . "/views/scdl/inc_legend.php"); //カレンダ凡例 ?>
+<?php }else{ ?>
 <p tabindex="0">予定の登録がありません</p>
 <?php } ?>
 <?php if( ! $is_hmvc): ?>

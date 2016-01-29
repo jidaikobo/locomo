@@ -171,6 +171,11 @@
 				$event_time_display_data = $model_name::make_target_day_info($v2);
 				$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
 				$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
+				//代理登録
+				if(($v2->user_id && $v2->updater_id)&&($v2->user_id != $v2->updater_id)):
+					$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
+					$eventtitle_skip.= '代理登録 ';
+				endif;
 /*
 				//詳細区分
 				foreach($detail_kbs as $key => $value):
@@ -215,7 +220,7 @@ if($detail_pop_array):
 endif;
 
 	// 下段表示分
-	echo '<div style="text-align: center; margin: 15px 0;">';
+	echo '<div style="text-align: center; margin: 25px 0 15px;">';
 	echo $mon_select_html;
 	echo '</div>';
 ?>

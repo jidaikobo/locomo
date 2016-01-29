@@ -1489,7 +1489,7 @@ schedule_day.graph td {
 }
 
 /*== 重要度 ==*/
-.calendar .icon img ,
+/*.calendar .icon img ,
 .schedule_day.detail .icon img ,
 .legend.calendar .icon img {
 	width: .9em;
@@ -1499,6 +1499,7 @@ schedule_day.graph td {
 .legend.calendar .icon img {
 	margin-left: .75em;
 }
+*/
 
 /*== 外部表示 ==*/
 .text_icon.public {
@@ -1576,7 +1577,6 @@ schedule_day.graph td {
 	content: '毎年';
 }
 
-/*== 詳細設定 ==*/
 /*  仮予約  */
 .text_icon.provisional_kb {
 	background-color: #666;
@@ -1587,6 +1587,18 @@ schedule_day.graph td {
 .legend .text_icon.provisional_kb + span:after {
 	content: '仮登録';
 }
+
+/* 登録者関係 */
+.text_icon.dairi {
+	background-color: #804000;
+}
+.text_icon.dairi:before {
+	content: '代';
+}
+.legend .text_icon.dairi + span:after {
+	content: '代理登録';
+}
+
 
 /*  時間指定無し  */
 .text_icon.unspecified_kb {
@@ -1609,6 +1621,7 @@ schedule_day.graph td {
 	content: '終日';
 }
 /* 重要度 */
+/*
 .legend .icon.mark_importance.kb_0:after {
 	content: '重要度 高';
 }
@@ -1618,22 +1631,11 @@ schedule_day.graph td {
 .legend .icon.mark_importance.kb_2 + span:after {
 	content: '重要度 低';
 }
+*/
 /* 公開状態 */
 .legend .icon.mark_private + span:after {
 	content: '非公開';
 }
-
-/* 登録者関係 */
-.text_icon.proxy {
-	background-color: #804000;
-}
-.text_icon.proxy:before {
-	content: '代';
-}
-.text_icon.proxy + span:after {
-	content: '代理登録';
-}
-
 
 /*=== filer ===*/
 a.icon.dir:before,     span.icon.dir:before     { content: url('../img/led-icons/folder.png')' ';}

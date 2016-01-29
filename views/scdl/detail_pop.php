@@ -69,11 +69,13 @@
 <?php */ ?>
 	</tr>
 	<?php if ($detail_pop_data->kind_flg == 2) { ?>
+	<?php /* ?>
 	<tr>
 		<th class="min">
 			施設使用目的：</th><td><?php print $detail_pop_data->purpose_kb . " " . $detail_pop_data->purpose_text; ?>
 		</td>
 	</tr>
+	<?php */ ?>
 	<?php if ($detail_pop_data->user_num > 0) { ?>
 	<tr>
 		<th>
@@ -90,6 +92,14 @@
 	</tr>
 	</tbody>
 </table>
+<span class="skip">
+<?php
+	//仮登録
+//	if() echo '仮登録';
 
+	//代理登録
+	if(($detail_pop_data->user_id && $detail_pop_data->updater_id)&&($detail_pop_data->user_id != $detail_pop_data->updater_id)) echo '代理登録 ';
+?>
+</span>
 </div>
 <?php } ?>
