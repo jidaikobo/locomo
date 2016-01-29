@@ -349,7 +349,7 @@ class Util
 		 */
 
 		$args = array_merge($defaults, $args);
-		$ret = array_intersect_key($defaults, $defs);
+		$ret = array_intersect_key($defaults, $args);
 		return $ret;
 	}
 }
