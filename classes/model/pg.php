@@ -37,7 +37,7 @@ class Model_Pg extends \Model_Base_Soft
 				'type' => 'text',
 				'size' => 30,
 				'class' => 'varchar',
-				'placeholder' => '/example/example.html',
+				'placeholder' => 'example/example.html',
 			),
 			'validation' => array (
 				'required',
