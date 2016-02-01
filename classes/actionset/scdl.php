@@ -83,7 +83,9 @@ class Actionset_Scdl extends \Actionset
 					$y = date('Y', strtotime($obj->start_date));
 					$m = date('m', strtotime($obj->start_date));
 					$d = date('d', strtotime($obj->start_date));
-				} else if (\Uri::segment(4)){
+				}
+				else if (\Uri::segment(4) && \Uri::segment(5) && \Uri::segment(6))
+				{
 					$y = \Uri::segment(4) ?: $y ;
 					$m = \Uri::segment(5) ?: $m ;
 					$d = \Uri::segment(6) ?: $d ;
