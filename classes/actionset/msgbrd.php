@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Actionset_Msgbrd extends \Actionset_Base
 {
 //	use \Actionset_Traits_Revision;
