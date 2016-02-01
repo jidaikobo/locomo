@@ -358,9 +358,40 @@ class Controller_Base extends Controller_Core
 		// find()
 		$model::set_authorized_options();
 		$model::$_options['from_cache'] = false;
-		if ( ! $item = $model::find($id, $model::$_options))
+		$item = $model::find($id, $model::$_options);
+
+		// find_deleted
+		$column = \Arr::get($model::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
+		if (
+			! $item &&
+			is_subclass_of($model, '\Orm\Model_Soft') &&
+			isset($model::properties()[$column])
+		)
 		{
-				// event
+			$item = $model::find_deleted($id);
+
+			// 管理者か作成者であれば項目を返す
+			$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
+			if (
+				$item &&
+				(
+					isset($model::properties()[$column]) &&
+					$model::properties()[$column] == \Auth::get('id')
+				) ||
+				\Auth::is_admin()
+			)
+			{
+				\Session::set_flash('message', array('ごみ箱の中の項目です。'));
+			}
+			else
+			{
+				$item = false;
+			}
+		}
+
+		if ( ! $item)
+		{
+			// event
 			$event = 'locomo_view_not_found';
 			if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event);
 
@@ -408,6 +439,35 @@ class Controller_Base extends Controller_Core
 			$model::set_authorized_options();
 			$model::$_options['from_cache'] = false;
 			$item = $model::find($id, $model::$_options);
+
+			// find_deleted
+			$column = \Arr::get($model::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
+			if (
+				! $item &&
+				is_subclass_of($model, '\Orm\Model_Soft') &&
+				isset($model::properties()[$column])
+			)
+			{
+				$item = $model::find_deleted($id);
+
+				// 管理者か作成者であれば項目を返す
+				$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
+				if (
+					$item &&
+					(
+						isset($model::properties()[$column]) &&
+						$model::properties()[$column] == \Auth::get('id')
+					) ||
+					\Auth::is_admin()
+				)
+				{
+					\Session::set_flash('message', array('ごみ箱の中の項目です。'));
+				}
+				else
+				{
+					$item = false;
+				}
+			}
 
 			// not found
 			if ( ! $item)
