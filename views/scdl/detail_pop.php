@@ -87,7 +87,7 @@
 	<?php } ?>
 	<tr>
 		<th>
-			登録者：</th><td><?php print @$detail_pop_data->create_user->display_name; ?>
+			登録者：</th><td><?php print $detail_pop_data->create_user['display_name']; ?>
 		</td>
 	</tr>
 	</tbody>
