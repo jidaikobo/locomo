@@ -75,7 +75,7 @@ class Actionset_Base extends Actionset
 		return $retvals;
 	}
 
-	
+
 	/**
 	 * delete()
 	 */
@@ -304,7 +304,8 @@ class Actionset_Base extends Actionset
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/index_admin',
-			)
+			),
+			'count'        => $count,
 		);
 		return $retvals;
 	}
@@ -334,7 +335,8 @@ class Actionset_Base extends Actionset
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.'/index_deleted',
-			)
+			),
+			'count'        => $count,
 		);
 		return $retvals;
 	}
@@ -365,7 +367,8 @@ class Actionset_Base extends Actionset
 			'order'        => 30,
 			'dependencies' => array(
 				$controller.'/index_yet',
-			)
+			),
+			'count'        => $count,
 		);
 		return $retvals;
 	}
@@ -396,7 +399,8 @@ class Actionset_Base extends Actionset
 			'order'        => 40,
 			'dependencies' => array(
 				$controller.'/index_expired',
-			)
+			),
+			'count'        => $count,
 		);
 		return $retvals;
 	}
@@ -427,7 +431,8 @@ class Actionset_Base extends Actionset
 			'order'        => 50,
 			'dependencies' => array(
 				$controller.'/index_invisible',
-			)
+			),
+			'count'        => $count,
 		);
 		return $retvals;
 	}
@@ -458,7 +463,8 @@ class Actionset_Base extends Actionset
 			'order'        => 60,
 			'dependencies' => array(
 				$controller.'/index_unavailable',
-			)
+			),
+			'count'        => $count,
 		);
 		return $retvals;
 	}
@@ -506,7 +512,8 @@ class Actionset_Base extends Actionset
 				$controller.'/index_invisible',
 				$controller.'/index_unavailable',
 				$controller.'/index_all',
-			)
+			),
+			'count'        => $count,
 		);
 		return $retvals;
 	}

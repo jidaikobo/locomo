@@ -2,6 +2,7 @@
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
+	$business_hours = array(9,10,11,12,13,14,15,16,17,18,19,20);
 ?>
 
 <?php if( ! $is_hmvc): ?>
@@ -24,7 +25,7 @@
 				<?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day)).'&amp;member_id='.$row['model']->id).'">'.$row['model']->display_name.'</a>'; ?>
 			</th>
 				<?php foreach($schedule_data['schedules_list'] as $v) {?>
-				<td colspan="4" class="time h<?php print $v['hour']; ?>">
+				<td colspan="4" class="time h<?php print $v['hour']; ?><?php if(!in_array($v['hour'],$business_hours)) echo ' small';?>"">
 					<?php print $v['hour']; ?>
 				</td>
 				<?php } ?>

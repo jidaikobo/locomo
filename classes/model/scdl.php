@@ -685,6 +685,7 @@ class Model_Scdl extends \Model_Base_Soft
 		// 登録データ
 		$week = array('日', '月', '火', '水', '木', '金', '土');
 		$repeat_kbs = self::get_repeat_kbs($data->repeat_kb);
+		$detail_kbs = self::get_detail_kbs($data->provisional_kb);
 		if($data->repeat_kb != 0) {
 			$print .= "<td></tr><tr><th>期間：</th><td>";
 			$print .= "<p>" . $repeat_kbs[$data->repeat_kb];

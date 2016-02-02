@@ -10,7 +10,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	public static $locomo = array(
 		'nicename'     => 'スケジューラ', // for human's name
 		'explanation'  => 'ユーザ毎のスケジュール管理をします。',
-		'main_action'  => 'calendar', // main action
+		'main_action'  => 'calendartop', // main action
 		'show_at_menu' => true,  // true: show at admin bar and admin/home
 		'is_for_admin' => false, // true: hide from admin bar
 		'order'        => 900,   // order of appearance
@@ -24,6 +24,25 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 	private $_someedit_id = 0;	// someeditで利用します
 	private $_someedit_date = "";	// someeditで利用します。
+
+	/**
+	 * [action_create description]
+	 * @return [type]
+	 */
+	public function action_calendartop()
+	{
+		// calendarがmain_actionのとき、scdlだったらugidを渡したいので、いったんここで受け取る
+		$model = $this->model_name;
+		if ($model::$_kind_name == 'scdl')
+		{
+			$main_ugid = \Model_Usr::get_main_usergroup_id(\Auth::get('id'));
+			\Response::redirect(\Uri::create($model::$_kind_name . '/calendar/?ugid='.$main_ugid));
+		}
+		else
+		{
+			\Response::redirect(\Uri::create($model::$_kind_name . '/calendar'));
+		}
+	}
 
 	/**
 	 * [action_create description]
@@ -798,11 +817,26 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// キャッシュ用にタイトルは最初にアサイン
 		$this->template->set_global('title', self::$nicename);
 
-		// is_hmvcが、キャッシュ時なぜなtrueになるので明示的にアサイン
+		// is_hmvcが、キャッシュ時なぜかtrueになるので明示的にアサイン
 		$this->template->set_global('is_hmvc', \Request::is_hmvc());
 
+		// 表示系セッションはキャッシュと別管理
+		if (\Input::get("scdl_display_time", "") != "")
+		{
+			\Session::set("scdl_display_time", \Input::get("scdl_display_time"));
+		}
+		if (\Input::get("show_empty_row", "") != "")
+		{
+			\Session::set("show_empty_row", \Input::get("show_empty_row"));
+		}
+
 		// キャッシュクリア用にget値をアサイン
-		$this->template->set_global('input_get', join('&amp;',\Input::get()));
+		$qstr = array();
+		foreach(\Input::get() as $k => $v)
+		{
+			$qstr[]= e($k).'='.e($v);
+		}
+		$this->template->set_global('input_get', join('&amp;', $qstr));
 
 		// テンプレート切り分け
 		$tmpl_sub = "";
@@ -878,16 +912,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			\Session::set($model::$_kind_name . "narrow_bid", \Input::get("bid"));
 		}
 
-		if (\Input::get("scdl_display_time", "") != "")
-		{
-			\Session::set("scdl_display_time", \Input::get("scdl_display_time"));
-		}
-
-		if (\Input::get("show_empty_row", "") != "")
-		{
-			\Session::set("show_empty_row", \Input::get("show_empty_row"));
-		}
-
 		// 初期表示 スケジューラのときだけ代表グループIDを見る
 		$is_main_ugid = true;
 		$main_ugid = 0;
@@ -896,17 +920,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			// get値がある場合はそれを優先
 			if ( ! \Input::get('ugid'))
 			{
-				// 自分の代表グループIDを取得
-				$mydata = \Model_Usr::find(\Auth::get('id'));
-				if ($mydata && $mydata->main_usergroup_id)
-				{
-					$main_ugid = $mydata->main_usergroup_id;
-				}
-				else if (isset($mydata->usergroup) && count($mydata->usergroup) == 1)
-				{
-					// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
-					$main_ugid = reset($mydata->usergroup)->id;
-				}
+				$main_ugid = \Model_Usr::get_main_usergroup_id(\Auth::get('id'));
 
 				if ($main_ugid)
 				{
@@ -975,6 +989,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$prev_url = date('Y/m/d', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, $day) . " - 1days"));
 			$next_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $next_url . $cond), '次の日');
 			$prev_url = \Html::anchor(\Uri::create($model::$_kind_name . '/calendar/' . $prev_url . $cond), '前の日');
+			$mode = 'day';
 		}
 		else
 		{
@@ -982,6 +997,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$calendar = $this->make_month_calendar($year, $mon);
 			$next_url = $mini_next_url;
 			$prev_url = $mini_prev_url;
+			$mode = 'month';
 		}
 
 		// 週表示用
@@ -996,7 +1012,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$view->set('is_main_ugid', $is_main_ugid);
 
 		// ユーザ一覧作成
-		$view->set('narrow_user_list', \Model_Usr::get_users_by_group(\Session::get($model::$_kind_name . "narrow_ugid")));
+		$view->set('narrow_user_list', \Model_Usr::get_users_by_group(\Input::get("ugid")));
 
 		// 施設一覧作成
 		$view->set('narrow_building_group_list', \DB::select(\DB::expr("DISTINCT item_group2"))->from("lcm_scdls_items")->where("item_group", "building")->execute()->as_array());
@@ -1595,7 +1611,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 			if (($narrow_uid > 0 || $narrow_ugid > 0) && $model::$_kind_name == "scdl")
 			{
-				$users = \Model_Usr::get_users_by_group($narrow_ugid);
+				static $users;
+				if ( ! $users)
+				{
+					$users = \Model_Usr::get_users_by_group($narrow_ugid);
+				}
 
 				foreach ($row['user'] as $v)
 				{
@@ -1606,8 +1626,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					}
 					else if ( ! $narrow_uid && $narrow_ugid > 0)
 					{
-/*
-						foreach ($v->usergroup as $v2)
+/*						foreach ($v->usergroup as $v2)
 						{
 							if ($v2->id == $narrow_ugid)
 							{
