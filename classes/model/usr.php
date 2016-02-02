@@ -301,4 +301,35 @@ class Model_Usr extends Model_Base_Soft
 		$users += static::find_options('display_name', $options);
 
 		return $users;
-	}}
+	}
+	
+	/**
+	 * get_main_usergroup_id()
+	 */
+	public static function get_main_usergroup_id($uid)
+	{
+		static $ret;
+	
+		if (isset($ret[$uid]))
+		{
+			return $ret[$uid];
+		}
+		else
+		{
+			// 自分の代表グループIDを取得
+			$usr = \Model_Usr::find($uid);
+			if ($usr && $usr->main_usergroup_id)
+			{
+				$ret[$uid] = $usr->main_usergroup_id;
+			}
+			else if (isset($usr->usergroup) && count($usr->usergroup) == 1)
+			{
+				// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
+				$ret[$uid] = reset($usr->usergroup)->id;
+			} else {
+				$ret[$uid] = false;
+			}
+		}
+		return $ret[$uid];
+	}
+}

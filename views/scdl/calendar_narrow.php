@@ -2,7 +2,7 @@
 <select class="schedule_narrow select_narrow_down" id="narrow_user_group_id" title="ユーザーグループ" data-target-id="narrow_user_id">
 	<option value="">-- ユーザーグループ --</option>
 	<?php foreach ($narrow_user_group_list as $k => $v): ?>
-		<option value="<?php print $k; ?>" <?php if ($k == \Session::get($kind_name . "narrow_ugid")) { print "selected"; } ?>><?php  print $v; ?></option>
+		<option value="<?php print $k; ?>" <?php if ($k == \Input::get("ugid")) { print "selected"; } ?>><?php  print $v; ?></option>
 	<?php endforeach; ?>
 </select>
 
@@ -13,7 +13,7 @@
 <select class="schedule_narrow" id="narrow_user_id" name="narrow_user_list" title="ユーザー">
 	<option value="">-- ユーザー --
 	<?php foreach($narrow_user_list as $id => $row):?>
-		<option value="<?php print $id; ?>" <?php if ($id == \Session::get($kind_name . "narrow_uid")) { print "selected"; } ?>><?php print $row; ?>
+		<option value="<?php print $id; ?>" <?php if ($id == \Input::get("uid")) { print "selected"; } ?>><?php print $row; ?>
 	<?php endforeach; ?>
 </select>
 <input class="schedule_narrow button small primary" id="btn_user" type="button" value="絞り込み" onclick="javascript:location.href='?uid=' + $('#narrow_user_id').val() + '&ugid=' + $('#narrow_user_group_id').val()" />
@@ -65,6 +65,7 @@ $("#scdl_time_button").click(function(event) {
 		location.href = url + "1";
 	}
 });
+
 $("#show_empty_row").click(function(event) {
 	var show_empty_row = '<?php print \Session::get('show_empty_row'); ?>';
 	var url = location.href;
@@ -84,7 +85,4 @@ $("#show_empty_row").click(function(event) {
 		location.href = url + "1";
 	}
 });
-
-
-
 </script>

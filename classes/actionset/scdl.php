@@ -111,17 +111,36 @@ class Actionset_Scdl extends \Actionset
 		$week_1st_day = $year.DS.$mon.DS.$day;
 		$ym_str = $y.DS.$m;
 
+		// グループおよび建物ID
+		$qstr_tmp = array();
+		$qstr = '';
+		if ($controller == '\Controller_Scdl')
+		{
+			$main_usergroup_id = \Auth::get('main_usergroup_id');
+			$qstr_tmp[] = $main_usergroup_id ? 'ugid='.intval($main_usergroup_id) : 'ugid='.intval(\Input::get('ugid'));
+			$qstr_tmp[] = 'ugid='.intval(\Input::get('uid'));
+		}
+		else
+		{
+			$qstr_tmp[] = \Input::get('bid') ? 'bid='.intval(\Input::get('bid')) : 'bid=';
+			$qstr_tmp[] = 'bgid='.e(\Input::get('bgid'));
+		}
+		if ($qstr_tmp)
+		{
+			$qstr = '?'.join('&amp;', $qstr_tmp);
+		}
+
 		// uri
 		$urls = array(
-			0 => array($controller.DS."calendar/", '今月'),
-			1 => array($controller.DS."calendar/".$ym_str, '月表示'),
-			3 => array($controller.DS."calendar/{$y}/{$m}/{$d}", '日表示'),
+			0 => array($controller.DS."calendar/".$qstr, '今月'),
+			1 => array($controller.DS."calendar/".$ym_str.$qstr, '月表示'),
+			3 => array($controller.DS."calendar/{$y}/{$m}/{$d}".$qstr, '日表示'),
 		);
 		if ($controller == '\Controller_Scdl')
 		{
-			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member', '週表示');
+			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member'.$qstr, '週表示');
 		} else {
-			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/building', '週表示');
+			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/building'.$qstr, '週表示');
 		}
 		ksort($urls);
 		$urls = \Request::main()->action == 'create' ? array() : $urls ;

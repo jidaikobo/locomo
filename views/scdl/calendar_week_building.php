@@ -3,6 +3,12 @@
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
+/*	
+	$bldgs = \Model_Scdl_Item::find('all', array(
+		'where' => array(array('item_group', 'building')),
+		'order_by' => array(array('item_sort', 'ASC'))
+	));
+*/
 ?>
 
 <?php if( ! $is_hmvc): ?>
@@ -120,8 +126,9 @@ foreach($narrow_building_list as $v):
 	$bgids[$v->item_id] = true;
 endforeach;
 ?>
- <?php $reserve_rows = array(); ?>
-<?php foreach($narrow_building_list as $row):
+<?php $reserve_rows = array(); ?>
+<?php
+	foreach($narrow_building_list as $row):
 	if(isset($schedule_data['building_list'][$row->item_id])): //該当する場合は、予定リストの中に施設が含まれている。順番は$narrow_building_listに依るので、item_sortはみないでよい。
 		$each_row_data = $schedule_data['building_list'][$row->item_id];
 		if((\Session::get('reservenarrow_bid') == null && \Session::get('reservenarrow_bgid') == null) || // 絞り込み：なし

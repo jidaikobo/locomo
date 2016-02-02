@@ -16,7 +16,7 @@
 	</thead>
 	<tbody>
 	<tr>
-		<th>
+		<th style="width: 6em;">
 			<?php
 			// 指定なし
 			print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
@@ -78,7 +78,7 @@
 	<?php */ ?>
 	<?php if ($detail_pop_data->user_num > 0) { ?>
 	<tr>
-		<th>
+		<th class="min">
 			施設使用人数：</th><td><?php print $detail_pop_data->user_num.'人'; ?>
 		</td>
 	</tr>
@@ -93,8 +93,11 @@
 	</tbody>
 </table>
 <span class="skip">
-<?php
+
+<?php //ページ内検索用文字列
 	//仮登録
+
+
 //	if() echo '仮登録';
 
 	//代理登録
