@@ -862,14 +862,21 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
 		}
 
-		// ログインしているユーザIDとget値でキャッシュする
-		$cache_str = 'scdl_'.\Auth::get('id').'_'.\Inflector::friendly_title(\Uri::current().join(\Input::get()));
+		// GET値持ち回し用
+		$conds = array();
+		foreach(\Input::get() as $k => $v){
+			$conds[] = e($k).'='.e($v);
+		}
+		$cond = '?'.join('&amp;', $conds);
+
+		// 月表示だったらログインしているユーザIDとget値でキャッシュする
+		$cache_str = ! $mode ? 'scdl_'.$mode.'_'.\Auth::get('id').'_'.\Inflector::friendly_title($cond) : '' ;
 
 		try
 		{
 			// root not use cache
 //			if (\Auth::is_root()) throw new \CacheNotFoundException();
-			if (\Cache::get($cache_str) && ! \Input::get('nocache'))
+			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache'))
 			{
 				\Profiler::mark('Scdl::calendar() with cache - Done');
 				$this->template->set_global('is_cache', true);
@@ -948,11 +955,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 各モードにより処理分け
 		$calendar = array();
-		$conds = array();
-		foreach(\Input::get() as $k => $v){
-			$conds[] = e($k).'='.e($v);
-		}
-		$cond = '?'.join('&amp;', $conds);
 
 		$next_url = "";
 		$prev_url = "";
@@ -1056,8 +1058,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		} // end of catch
 
 		// cache 5 min
-		\Cache::delete($cache_str);
-		\Cache::set($cache_str, $view, 300);
+		if ($cache_str)
+		{
+			\Cache::delete($cache_str);
+			\Cache::set($cache_str, $view, 300);
+		}
 
 		// set
 		$this->template->content = $view;

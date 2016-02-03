@@ -29,19 +29,18 @@ if (!(isset($day) && $day && $mode != "week")):
 	endif;
 endif;
 
-if ($is_cache):
-	echo '<a href="?'.$input_get.'&amp;nocache=1" class="button small" />キャッシュクリア</a>';
-endif;
-?>
-<?php /*
 if($mode == "week"):
-	if (\Session::get('view_empty_row') == "1"):
+	if (\Session::get('show_empty_row') == "1"):
 		echo '&nbsp;<input type="button" class="schedule_narrow button small" value="予定のないユーザを非表示" id="show_empty_row">';
 	else:
 		echo '&nbsp;<input type="button" class="schedule_narrow button small" value="予定のないユーザを表示" id="show_empty_row">';
 	endif;
 endif;
-*/ ?>
+
+if ($is_cache):
+	echo '<a href="?'.$input_get.'&amp;nocache=1" class="button small" />キャッシュクリア</a>';
+endif;
+?>
 </div><!-- /.narrow_user -->
 
 <script>
