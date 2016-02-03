@@ -156,6 +156,40 @@ class Actionset_Scdl extends \Actionset
 	}
 
 	/**
+	 * actionset_swap
+	 */
+	public static function actionset_swap($controller, $obj = null, $id = null, $urls = array())
+	{
+		$segments = \Uri::segments();
+		if ($controller == '\Controller_Scdl')
+		{
+			$ctrl = '\Reserve\Controller_Reserve';
+			$segments = array_slice($segments, 1);
+			$last = $segments[max(array_keys($segments))];
+			if ($last == 'member') $segments[max(array_keys($segments))] = 'building';
+			$str = '施設予約へ';
+		}
+		else
+		{
+			$ctrl = '\Controller_Scdl';
+			$segments = array_slice($segments, 2);
+			$last = $segments[max(array_keys($segments))];
+			if ($last == 'building') $segments[max(array_keys($segments))] = 'member';
+			$str = 'スケジューラへ';
+		}
+		$urls = array(array($ctrl.DS.join('/', $segments), $str));
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => $str,
+			'show_at_top'  => true,
+			'explanation'  => '管理者向けの削除済み項目一覧です。',
+			'order'        => 50
+		);
+		return $retvals;
+	}
+
+	/**
 	 * actionset_create
 	 */
 	public static function actionset_create($controller, $obj = null, $id = null, $urls = array())

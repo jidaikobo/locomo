@@ -873,14 +873,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		}
 
 		// GET値持ち回し用
-		$conds = array();
-		foreach(\Input::get() as $k => $v){
-			$conds[] = e($k).'='.e($v);
-		}
-		$cond = '?'.join('&amp;', $conds);
+		$cond = '?'.join('&amp;', $qstr);
 
-		// 月表示だったらログインしているユーザIDとget値でキャッシュする
-		$cache_str = ! $mode ? 'scdl_'.$mode.'_'.\Auth::get('id').'_'.\Inflector::friendly_title($cond) : '' ;
+		// ログインしているユーザIDとget値でキャッシュする
+		$cache_str = 'scdl_'.$mode.'_'.\Auth::get('id').join('_', \Uri::segments()).'_'.\Inflector::friendly_title($cond);
 
 		try
 		{
