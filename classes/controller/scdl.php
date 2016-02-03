@@ -835,6 +835,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set("show_empty_row", \Input::get("show_empty_row"));
 		}
+		if (\Input::get("show_available_person", "") != "")
+		{
+			\Session::set("show_available_person", \Input::get("show_available_person"));
+		}
 
 		// キャッシュクリア用にget値をアサイン
 		$qstr = array();

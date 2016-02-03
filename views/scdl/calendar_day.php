@@ -1,8 +1,13 @@
-<?php 
+<?php
 	$repeat_kbs = $model_name::get_repeat_kbs();
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
 	$business_hours = array(9,10,11,12,13,14,15,16,17,18,19,20);
+
+	$persons = \Model_Usr::find('all', array(
+		'where' => array(array('id', 'is not', NULL)),
+		'order_by' => array(array('pronunciation', 'ASC'))
+	));
 ?>
 
 <?php if( ! $is_hmvc): ?>
@@ -10,28 +15,60 @@
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar_detail">
 	<div class="select_period lcm_focus" title="表示する日を変更">
-		<?php print htmlspecialchars_decode($prev_url); ?> / 
-		<?php print htmlspecialchars_decode($next_url); ?> / 
+		<?php print htmlspecialchars_decode($prev_url); ?> /
+		<?php print htmlspecialchars_decode($next_url); ?> /
 		<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date" id="move_date" title="表示年月日" /><input class="button small" id="btn_move_date" type="button" value="指定の日を表示" onclick="move_date()" />
 	</div>
-	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>	
+	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 	<h2 class="skip">タイムテーブル グラフ</h2>
-<?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0): ?>
+<?php if (isset($schedule_data['member_list'])): ?>
 	<table id="schedule_graph" class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
 	<tbody>
-	<?php foreach ($schedule_data['member_list'] as $row): ?>
+	<?php
+	//foreach ($schedule_data['member_list'] as $row):
+		foreach ($persons as $person):
+			$row = array();
+			$uid = \Input::get('uid');
+			$ugid = \Input::get('ugid');
+
+			if ($uid && $uid != $person->id) continue;
+			if ( ! $uid && $ugid && ! array_key_exists($ugid, $person->usergroup)) continue;
+
+			$available_person = false;
+			if (isset($schedule_data['member_list'][$person->id]))
+			{
+				$row = $schedule_data['member_list'][$person->id];
+			} else if (\Session::get('show_available_person')) {
+				$available_person = true;
+				$row = (object) array();
+			} else {
+				continue;
+			}
+			$rowspan = $available_person ? 2 : count($row) ;
+	?>
 			<tr>
-			<th class="name" rowspan="<?php print count($row); ?>">
-				<?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day)).'&amp;member_id='.$row['model']->id).'">'.$row['model']->display_name.'</a>'; ?>
+			<th class="name" rowspan="<?php print $rowspan; ?>">
+				<?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day)).'&amp;member_id='.$person->id).'">'.$person->display_name.'</a>'; ?>
 			</th>
 				<?php foreach($schedule_data['schedules_list'] as $v) {?>
-				<td colspan="4" class="time h<?php print $v['hour']; ?><?php if(!in_array($v['hour'],$business_hours)) echo ' small';?>"">
+				<td colspan="4" class="time h<?php print $v['hour']; ?><?php if(!in_array($v['hour'],$business_hours)) echo ' small';?>">
 					<?php print $v['hour']; ?>
 				</td>
 				<?php } ?>
 			</tr>
-	
+
 				<?php
+				// ほどよくからの列を足す
+				if ($available_person)
+				{
+					echo '<tr class="bar">';
+					for( $n = 0 ; $n < 96 ; $n++ ):
+					echo '<td></td>';
+					endfor;
+					echo '</tr>';
+				}
+
+				// 内実のある予定を表示
 				foreach ($row as $member_rowdata):
 					if (!isset($member_rowdata['data'])) { continue; }
 					?>
@@ -46,13 +83,13 @@
 										$tooltipid = $detail_data->schedule_id . $detail_data->target_year . $detail_data->target_mon . $detail_data->target_day;
 										if ($detail_data->primary)   $filled_cells++;
 										if ( ! $filled_cells && ! $detail_data->primary)   $empty_cells++;
-	
+
 										if ($detail_data->secondary) $filled_cells++;
 										if ( ! $filled_cells && ! $detail_data->secondary) $empty_cells++;
-	
+
 										if ($detail_data->third)     $filled_cells++;
 										if ( ! $filled_cells && ! $detail_data->third)     $empty_cells++;
-	
+
 										if ($detail_data->fourth)    $filled_cells++;
 										if ( ! $filled_cells && ! $detail_data->fourth)    $empty_cells++;
 									endif;
@@ -80,7 +117,7 @@
 			endforeach; ?>
 		</tbody>
 	</table>
-<?php endif; 
+<?php endif;
 	endif;//hmvcをとじる ?>
 
 <?php if (isset($schedule_data['member_list']) && count($schedule_data['member_list']) > 0) { ?>
@@ -123,7 +160,7 @@
 
 				//"〜"は、前後にスペースを持ち、前方の文字列に含めて扱う。もしかすると適当なクラス、skipと疑似要素で〜(から)の読み上げが達成できるかもしれないが、あとで
 				//表の上にもう一度日付を出したほうが迷わない？？
-				
+
 				if ($detaildata->repeat_kb == 0 && $detaildata->display_startdate != $detaildata->display_enddate) { //期間の予定。開始日終了日同日の場合は単日予定として除外
 					//開始日終了日が異なる場合は期間 //開始日〜終了日 (何時〜何時）開始日と終了日を比較しつつ、表示振り分け
 					if(date('Y', strtotime($detaildata->start_date)) == date('Y', strtotime($detaildata->end_date))) : //年が同じかどうか

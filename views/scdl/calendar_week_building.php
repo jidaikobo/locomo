@@ -3,12 +3,6 @@
 	$detail_kbs = $model_name::get_detail_kbs();
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
-/*
-	$bldgs = \Model_Scdl_Item::find('all', array(
-		'where' => array(array('item_group', 'building')),
-		'order_by' => array(array('item_sort', 'ASC'))
-	));
-*/
 ?>
 
 <?php if( ! $is_hmvc): ?>

@@ -53,11 +53,11 @@
 							$(this).hide();
 						};
 					});
-				} 
+				}
 				cnt = $('table.calendar').find('.lcm_tooltip_parent:visible').length;
 				if(cnt) 	msg = cnt+'件ヒットしました';
 
-				
+
 				if(clear){
 					$('#narrow_text_info').hide();
 				}else{
@@ -126,19 +126,27 @@ endforeach;
  ?>
 <?php // foreach($schedule_data['member_list'] as $row): ?>
 
-<?php foreach($narrow_user_list as $id => $row): ?>
-<?php // 絞り込みを反映
-	//if(\Session::get('show_empty_row'))
+<?php
+foreach($narrow_user_list as $id => $row):
+ // 絞り込みを反映
+	$show_available_person = \Session::get('show_available_person');
 	if ($id == 'none') continue;
 
-if(isset($schedule_data['member_list'][$id])):
-	$each_row_data = $schedule_data['member_list'][$id];
+	if(true):
+	if(isset($schedule_data['member_list'][$id])):
+		$each_row_data = $schedule_data['member_list'][$id];
+	else:
+		if ( ! $show_available_person) continue;
+		$each_row_data = array();
+		$each_row_data['model'] = array();
+	endif;
+
 	if((\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') == null) ||
-	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $each_row_data['model']->id) ||
-	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$each_row_data['model']->id]))):
+	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $id) ||
+	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$id]))):
 ?>
-	<tr class="lcm_focus" title="<?php echo  $each_row_data['model']->display_name?>">
-		<th><?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d", $year, $mon)).'&amp;member_id='.$each_row_data['model']->id).'">'.$each_row_data['model']->display_name.'</a>'; ?>
+	<tr class="lcm_focus" title="<?php echo $row ?>">
+		<th><?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d", $year, $mon)).'&amp;member_id='.$id).'">'.$row.'</a>'; ?>
 		</th>
 		<?php
 		foreach($schedule_data['schedules_list'] as $schedule_row):
@@ -178,7 +186,7 @@ if(isset($schedule_data['member_list'][$id])):
 					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
 
-				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;member_id='.$each_row_data['model']->id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
+				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;member_id='.$id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 
 				<div class="events">
 					<?php
