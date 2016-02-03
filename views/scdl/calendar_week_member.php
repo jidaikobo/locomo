@@ -18,7 +18,7 @@
 		</span>
 	</a>
 </h1>
-<div class="hidden_item form_group" style="display: none;">
+<div class="hidden_item form_group off" style="display: none;">
 <section>
 	<h1 class="skip">検索</h1>
 	<form class="search" action="" onsubmit="calendar_narrow_text();return false;">
