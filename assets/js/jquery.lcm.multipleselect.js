@@ -9,9 +9,8 @@ $('.lcm_multiple_select').each(function(){
 	$selects = $select.add($selected);
 	hidden_items = $(this).data('hiddenItemId') ?
 		$(this).data('hiddenItemId') :
-		$(this).closest('.show_if_js').prevAll('.show_if_no_js').last();
+		$(this).closest('.show_if_js').nextAll('.show_if_no_js').first();
 		//スケジューラはnoscriptのチェックボックス未対応。別途hiddenの値をしようしている
-	
 	if(typeof hidden_items !== 'object'){
 	//スケジューラの場合data-hidden-item-idを取っている。noscriptチェックボックス併用の場合はここは不要
 		make_hidden_form_items(hidden_items, $selected);
