@@ -1131,6 +1131,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						// クローンする前にアクセスしないと取得しないため
 						$r['building'] = $r['building'];
 						$r['user'] = $r['user'];
+						$r['display_target_day_info'] = $model::display_target_day_info($r);
 						$unique_schedule_data[] = clone $r;
 						$unique_index['schedule_' . $r['id']] = 1;
 					}
@@ -1178,6 +1179,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						$r['schedule_id'] = $r['id'];	// cloneすると消えるため
 						$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
 						$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
+						$r['display_target_day_info'] = $model::display_target_day_info($r);
 						// 追加
 						$row['data'][] = clone $r;
 //						$schedules[$r['id']] = clone $r;
@@ -1302,6 +1304,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
 					$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
 					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
+					$r['display_target_day_info'] = $model::display_target_day_info($r);
 					// 追加
 					$row['data'][] = clone $r;
 
@@ -1402,6 +1405,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$model = $this->model_name;
 		// 後でmodelを使うように
 		//$obj = $model::find(1);
+
+		/**
 		$query = \Locomo\Model_Scdl::query()
 							//->where_open()
 							//	// 開始日時と終了日時が範囲内のもの
@@ -1429,8 +1434,42 @@ class Controller_Scdl extends \Locomo\Controller_Base
 							->where("deleted_at", "is", null)
 							->where("kind_flg", $model::$_kind_flg)
 							->order_by("start_time");
-		$schedules_data = $query->get();
+		 */
+		// $schedules_data = $query->get();
 
+		\Locomo\Model_Scdl::$_options['where'][] = array(
+			array(
+				array(
+					array("start_date", "<=", $target_start),
+					array("end_date", ">=", $target_end),
+				),
+				'or' =>
+				array(
+					array("start_date", "<=", $target_end),
+					array("end_date", ">=", $target_end),
+					'or' =>
+					array(
+						array("start_date", "<=", $target_start),
+						array("end_date", ">=", $target_start),
+						'or' =>
+							array(
+								array("start_date", ">=", $target_start),
+								array("end_date", "<=", $target_end),
+							)
+					)
+				)
+			),
+			array("deleted_at", "is", null),
+			array("kind_flg", $model::$_kind_flg),
+		);
+		\Locomo\Model_Scdl::$_options['order_by'] = array("start_time");
+		\Locomo\Model_Scdl::$_options['related'] = array('create_user', 'user', 'building');
+
+
+		$schedules_data = \Locomo\Model_Scdl::find('all', \Locomo\Model_Scdl::$_options);
+
+
+		// vaR_dump(\DB::last_query());
 
 		// 月曜日からはじまるため、空白のデータを入れる
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1)));
@@ -1466,6 +1505,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['scdlid']   = $r['id'];	// クローンするとIDが消えるため
 					$r['user']     = $r['user'];	// クローンすると消える（クエリが発行されない）
 					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
+					$r['display_target_day_info'] = $model::display_target_day_info($r);
 					$row['data'][] = clone $r;
 				}
 			}
