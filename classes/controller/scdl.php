@@ -243,6 +243,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
 
+					// キャッシュを全削除
+					foreach (\Util::get_file_list(APPPATH.'cache') as $cache)
+					{
+						if (strpos($cache, 'cache/scdl_') !== false) \File::delete($cache);
+					}
+
 					// 部分編集の場合はリダイレクトしない
 					if ($this->_someedit_id)
 					{
