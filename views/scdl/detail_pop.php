@@ -19,7 +19,8 @@
 		<th style="width: 6em;">
 			<?php
 			// 指定なし
-			print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
+			//print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
+			print '予定日時：</th><td>' . htmlspecialchars_decode($detail_pop_data->display_target_day_info);
 			?>
 		</td>
 	</tr>

@@ -1131,6 +1131,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						// クローンする前にアクセスしないと取得しないため
 						$r['building'] = $r['building'];
 						$r['user'] = $r['user'];
+						$r['display_target_day_info'] = $model::display_target_day_info($r);
 						$unique_schedule_data[] = clone $r;
 						$unique_index['schedule_' . $r['id']] = 1;
 					}
@@ -1178,6 +1179,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						$r['schedule_id'] = $r['id'];	// cloneすると消えるため
 						$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
 						$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
+						$r['display_target_day_info'] = $model::display_target_day_info($r);
 						// 追加
 						$row['data'][] = clone $r;
 //						$schedules[$r['id']] = clone $r;
@@ -1302,6 +1304,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['scdlid'] = $r['id'];	// クローンするとIDが消えるため
 					$r['user'] = $r['user'];	// クローンすると消える（クエリが発行されない）
 					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
+					$r['display_target_day_info'] = $model::display_target_day_info($r);
 					// 追加
 					$row['data'][] = clone $r;
 
@@ -1502,6 +1505,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 					$r['scdlid']   = $r['id'];	// クローンするとIDが消えるため
 					$r['user']     = $r['user'];	// クローンすると消える（クエリが発行されない）
 					$r['building'] = $r['building'];	// クローンすると消える（クエリが発行されない）
+					$r['display_target_day_info'] = $model::display_target_day_info($r);
 					$row['data'][] = clone $r;
 				}
 			}
