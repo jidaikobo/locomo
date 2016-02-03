@@ -34,6 +34,9 @@ jQuery(function ($){
 		}
 		if(str){
 			$info = $('<p class="develop_info through_click">').prepend(str);
+			if($('#main_content .lcmbar_bottom')[0]){
+				$info.css('bottom','3em');
+			}
 			$body.append($info);
 			if(lcm_env.isloggedin && $('body').hasClass('testserver')){
 				$topinfo = $info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');

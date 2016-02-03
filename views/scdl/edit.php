@@ -448,17 +448,25 @@ function scdl_submit ($id)
 		// revision memo template - optional
 		//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
 	?>
-
+<?php  ?>
 	<div class="submit_button">
 		<?php
 			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 			scdl_submit('bottom');
 		?>
 	</div>
-
+<?php  ?>
 </div><!--/.form_group-->
-
-
+<?php /* ?>
+<div class="lcmbar_bottom">
+	<div class="submit_button">
+		<?php
+			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+			scdl_submit('bottom');
+		?>
+	</div>
+</div>
+<?php */ ?>
 <script>
 <!-- jsに移す -->
 change_repeat_kb_area();
@@ -616,17 +624,15 @@ $('#form_start_time').on('change', function(){
 $('#form_start_time, #form_end_time').each(function(){
 	set_publictime_placeholder($(this));
 }).on('change', function(){
-	set_publictime_placeholder($(this));
+	setTimeout(function($input){
+		set_publictime_placeholder($input);
+		},0,$(this));
 });
 function set_publictime_placeholder($input) {
 	if($input.is('#form_start_time')){ //placeholderだからよい？ //選択時のtimepickerの開始値とか //空でないときはplaceholderは見えないので、とにかく入れてしまう
-//		if($('#form_public_start_time').val()==''){
 			$('#form_public_start_time').attr('placeholder', $('#form_start_time').val());
-//		}
 	}else{
-//		if($('#form_public_end_time').val()==''){
 			$('#form_public_end_time').attr('placeholder', $('#form_end_time').val());
-//		}
 	}
 
 }

@@ -1404,6 +1404,7 @@ table.calendar .events {
 	text-align: center;
 	white-space: nowrap;
 	padding: 0 2px;
+	line-height: 1.25;
 }
 .schedule_day.graph .bar td {
 	padding: 0;
