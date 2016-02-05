@@ -3,6 +3,7 @@ namespace Locomo;
 class Observer_Srch extends \Orm\Observer
 {
 	public $_path = false;
+	public $_title = false;
 
 	/**
 	 * __construct
@@ -11,6 +12,7 @@ class Observer_Srch extends \Orm\Observer
 	{
 		$props = $class::observers(get_class($this));
 		$this->_path  = isset($props['path']) ? $props['path'] : false;
+		$this->_title  = isset($props['title']) ? $props['title'] : false;
 	}
 
 	/**
@@ -18,7 +20,7 @@ class Observer_Srch extends \Orm\Observer
 	 */
 	public function after_save(\Orm\Model $obj)
 	{
-		if( ! $this->_path) throw new \InvalidArgumentException('\\Locomo\\Ovserver_Srchを使う時には、Modelでpathを設定してください。');
+		if( ! $this->_path || ! $this->_title) throw new \InvalidArgumentException('\\Locomo\\Ovserver_Srchを使う時には、Modelでpathとtitleを設定してください。');
 
 		// Model_Softで削除時にはbefore_delete()だけ走らせる
 		$column = \Arr::get($obj::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
@@ -49,7 +51,7 @@ class Observer_Srch extends \Orm\Observer
 
 		$str = mb_convert_kana($str, "asKV");
 		$str = str_replace(array(' ', "\n", "\r"), '', $str);
-		$str = trim($str);
+		$str = strip_tags(trim($str));
 
 		// url
 		$url = '';
@@ -78,11 +80,13 @@ class Observer_Srch extends \Orm\Observer
 		}
 
 		// 保存
+		$title = $this->_title;
 		$args = array(
-			'path'       => $this->_path,
-			'pid'        => $pid,
-			'search'     => $str,
-			'url'        => $url,
+			'title'  => $obj->$title,
+			'path'   => $this->_path,
+			'pid'    => $pid,
+			'search' => $str,
+			'url'    => $url,
 		);
 		if ($srch)
 		{

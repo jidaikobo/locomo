@@ -17,6 +17,16 @@ class Model_Srch extends \Model_Base_Soft
 	protected static $_properties =
 	array (
 		'id',
+		'title' => array (
+			'data_type' => 'varchar',
+			'form' => array (
+				'type' => 'text',
+				'class' => 'varchar',
+			),
+			'validation' => array (
+				'required',
+			),
+		),
 		'path' => array (
 			'data_type' => 'varchar',
 			'form' => array (

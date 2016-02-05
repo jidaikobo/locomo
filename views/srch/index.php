@@ -4,36 +4,29 @@
 
 <!--.index_toolbar-->
 <div class="index_toolbar clearfix">
-<!--.index_toolbar_buttons-->
-<div class="index_toolbar_buttons">
-</div><!-- /.index_toolbar_buttons -->
 <?php echo \Pagination::create_links(); ?>
 </div><!-- /.index_toolbar -->
 
-<table class="tbl">
-	<thead>
-		<tr>
-			<th class="ar min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
+<dl>
+<?php
+foreach ($items as $item):
 
-		</tr>
-	</thead>
-	<tbody>
-<?php foreach ($items as $item): ?>		<tr>
-	<td><?php echo $item->id; ?></td>
+// 付近の文字列を表示
+$all = mb_convert_kana(\Input::get('all'), "asKV");
+$alls = explode(' ', $all);
+$pos = strpos($item->search, $alls[0]);
+$text = substr($item->search, $pos, 200).'...';
+foreach($alls as $v):
+	$text = str_replace($v, '<strong>'.$v.'</strong>',$text);
+endforeach;
 
-		</tr>
+?>
+<dt><a href="<?php echo \Uri::create($item->path.'/'.$item->pid); ?>"><?php echo $item->title; ?></a></dt>
+	<dd><?php echo $text ?></dd>
 <?php endforeach; ?>
-	</tbody>
-	<tfoot>
-		<tr>
-			<th class="ar min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
-
-		</tr>
-	</tfoot>
-</table>
+</dl>
 <?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>
-<p>srchが存在しません。</p>
-
+<p>検索結果が存在しません。</p>
 <?php endif; ?>
