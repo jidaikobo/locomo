@@ -173,8 +173,12 @@ class Actionset_Scdl extends \Actionset
 		{
 			$ctrl = '\Controller_Scdl';
 			$segments = array_slice($segments, 2);
-			$last = $segments[max(array_keys($segments))];
-			if ($last == 'building') $segments[max(array_keys($segments))] = 'member';
+			$max = empty($segments) ? false : max(array_keys($segments));
+			if ($max)
+			{
+				$last = $segments[$max];
+				if ($last == 'building') $segments[$max] = 'member';
+			}
 			$str = 'スケジューラへ';
 		}
 		$urls = array(array($ctrl.DS.join('/', $segments), $str));
