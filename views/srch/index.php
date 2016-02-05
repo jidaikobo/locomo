@@ -1,6 +1,15 @@
-<h1>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h1>
+<?php echo $search_form; ?>
 
 <?php if ($items): ?>
+
+<!--.index_toolbar-->
+<div class="index_toolbar clearfix">
+<!--.index_toolbar_buttons-->
+<div class="index_toolbar_buttons">
+</div><!-- /.index_toolbar_buttons -->
+<?php echo \Pagination::create_links(); ?>
+</div><!-- /.index_toolbar -->
+
 <table class="tbl">
 	<thead>
 		<tr>
@@ -28,4 +37,3 @@
 <p>srchが存在しません。</p>
 
 <?php endif; ?>
-

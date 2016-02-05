@@ -17,7 +17,7 @@ class Model_Srch extends \Model_Base_Soft
 	protected static $_properties =
 	array (
 		'id',
-		'controller' => array (
+		'path' => array (
 			'data_type' => 'varchar',
 			'form' => array (
 				'type' => 'text',
@@ -52,7 +52,7 @@ class Model_Srch extends \Model_Base_Soft
 				'required',
 			),
 		),
-		'seacrh' => array (
+		'search' => array (
 			'data_type' => 'text',
 			'form' => array (
 				'type' => 'text',
@@ -63,6 +63,7 @@ class Model_Srch extends \Model_Base_Soft
 				'required',
 			),
 		),
+		'deleted_at' => array('form' => array('type' => false), 'default' => null),
 	) ;
 
 /*
@@ -121,20 +122,29 @@ class Model_Srch extends \Model_Base_Soft
 	public static function set_search_options()
 	{
 		// free word search
-/*
-		$all = \Input::get('all') ? '%'.\Input::get('all').'%' : '' ;
+		$is_or = \Input::get('and_srch') ? false : true ;
+
+		// free word search
+		$all = \Input::get('all', '') ;
 		if ($all)
 		{
-			static::$_options['where'][] = array(
-				array('name', 'LIKE', $all),
-				'or' => array(
-					array('body', 'LIKE', $all),
-					'or' => array(
-						array('memo', 'LIKE', $all),
-					)
-				)
-			);
+			$all = mb_convert_kana($all, "asKV");
+			$alls = explode(' ', $all);
+			$whr = array();
+
+			foreach ($alls as $v)
+			{
+				if ($is_or)
+				{
+					$whr = static::add_or($whr, array('search', 'LIKE', '%'.$v.'%'));
+				}
+				else
+				{
+					$whr[] = array('search', 'LIKE', '%'.$v.'%');
+				}
+			}
+			static::$_options['where'][] = $whr;
 		}
-*/
+
 	}
 }
