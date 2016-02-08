@@ -223,10 +223,24 @@ function scdl_submit ($id)
 		<div id="field_term" class="lcm_focus field" title="必須 期間">
 			<span id="span_date_start" class="display_inline_block">
 			<?php echo $form->field('start_date')->set_template('{error_msg}{field}'); ?>
-			<?php echo $form->field('start_time')->set_template('{error_msg}{field}'); ?>
+			<?php
+				if ($form->field('start_time')->value):
+					$start_time = date('H:i', strtotime($form->field('start_time')->value));
+				else:
+					$start_time = '';
+				endif;
+				echo $form->field('start_time')->set_template('{error_msg}{field}')->set_value($start_time);
+			?>
 			</span> から <span id="span_date_end" class="display_inline_block">
 			<?php echo $form->field('end_date')->set_template('{error_msg}{field}'); ?>
-			<?php echo $form->field('end_time')->set_template('{error_msg}{field}'); ?>
+			<?php
+				if ($form->field('end_time')->value):
+					$end_time = date('H:i', strtotime($form->field('end_time')->value));
+				else:
+					$end_time = '';
+				endif;
+				echo $form->field('end_time')->set_template('{error_msg}{field}')->set_value($end_time);
+			?>
 			</span>
 		</div>
 	</div><!-- /.input_group -->
@@ -258,7 +272,11 @@ function scdl_submit ($id)
 			<?php echo $form->field('unspecified_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 			<?php echo $form->field('allday_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
 			<?php echo $form->field('private_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
-			<?php echo $form->field('overlap_kb')->set_template('{error_msg}<label>{field} {label}</label>'); ?>
+			<?php
+				// overlap_kbが常にオンなのは、あとで調査
+				// $form->field('overlap_kb')->set_attribute('checked', NULL);
+				echo $form->field('overlap_kb')->set_template('{error_msg}<label>{field} {label}</label>');
+			?>
 			<em class="exp" style="display: inline-block;">過去の予定は重複チェックの対象になりません。</em>
 		</div>
 	</div><!-- /.input_group -->
@@ -348,16 +366,19 @@ function scdl_submit ($id)
 			</div>
 		</div>
 	</div><!-- /.input_group -->
+	<?php /* ?>
 	<div class="input_group">
 		<h2><?php echo $form->field('purpose_kb')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('purpose_kb')->set_template('{error_msg}{field}'); ?></div>
 	</div><!-- /.input_group -->
+	<?php */ ?>
 	<?php /* ?>
 	<div class="input_group">
 		<h2><?php echo $form->field('purpose_text')->set_template('{required}{label}'); ?></h2>
 		<div class="field"><?php echo $form->field('purpose_text')->set_template('{error_msg}{field}'); ?></div>
 	</div>
 	<?php */ ?>
+	<?php echo $form->field('purpose_kb')->set_type('hidden'); ?>
 	<?php echo $form->field('purpose_text')->set_type('hidden'); ?>
 	<div class="input_group">
 		<h2><?php echo $form->field('user_num')->set_template('{required}{label}'); ?></h2>
@@ -381,7 +402,7 @@ function scdl_submit ($id)
 	<?php endif; ?>
 
 
-	<div class="input_group">
+	<div class="input_group lcm_focus">
 		<h2><?php echo $form->field('user_id')->set_template('{required}{label}'); ?></h2>
 		<div class="field">
 			<select id="group_list_create_user" title="グループ絞り込み" onchange="$(function(){get_group_user($('#group_list_create_user').val(), 'form_user_id');})">
@@ -391,7 +412,8 @@ function scdl_submit ($id)
 				<?php } ?>
 			</select>
 			<?php echo $form->field('user_id')->set_template('{error_msg}{field}');
-			echo $item->user_id != $item->updater_id ? '<span class="dairi">代理登録者：'.\Model_Usr::get_display_name($item->updater_id).'</span>' : '';
+			echo ! empty($item->creator_id) && $item->user_id != $item->creator_id ? '<span class="dairi" tabindex="0">代理登録者：'.\Model_Usr::get_display_name($item->creator_id).'</span>' : '';
+			echo ! empty($item->updater_id) && \Request::main()->action != 'create' ? '<span class="dairi" tabindex="0">最終更新：'.\Model_Usr::get_display_name($item->updater_id).'</span>' : '';
 			?>
 		</div>
 	</div><!-- /.input_group -->

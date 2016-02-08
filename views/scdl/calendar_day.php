@@ -220,7 +220,7 @@
 				$eventtitle_icon.= $detaildata['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$detaildata['repeat_kb'].'"></span>' : '';
 				$eventtitle_skip.= $detaildata['repeat_kb'] != 0 ? $repeat_kbs[$detaildata['repeat_kb']] : '';
 				//代理登録
-				if(($detaildata->user_id && $detaildata->updater_id)&&($detaildata->user_id != $detaildata->updater_id)):
+				if(($detaildata->user_id && $detaildata->creator_id)&&($detaildata->user_id != $detaildata->creator_id)):
 					$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
 					$eventtitle_skip.= '代理登録 ';
 				endif;
