@@ -221,7 +221,7 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 	/**
 	 * action_edit_categories()
 	 */
-	public function action_edit_categories($page = 1)
+	public function action_edit_categories()
 	{
 		// bulk
 		\Model_Msgbrd_Categories::$_options = array(
@@ -230,7 +230,12 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 		);
 		$this->model_name = '\Model_Msgbrd_Categories';
 		$this->_content_template = 'msgbrd/categories/bulk';
-		$this->bulk($page);
+
+		\Pagination::set('per_page', 25);
+		\Pagination::set('uri_segment', 'paged');
+
+		$args = array('page' => 1, 'add' => 3, 'is_redirect' => true);
+		$this->bulk($args);
 
 		// assign
 		$presenter = \Presenter::forge($this->_content_template);
