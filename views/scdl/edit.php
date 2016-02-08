@@ -254,6 +254,15 @@ function scdl_submit ($id)
 			<h2>実使用時間</h2>
 			<div id="field_term" class="lcm_focus field" title="実使用時間">
 				<span id="span_public_time_start" class="">
+				<?php
+				// 予定の複製の際、元は空でもこちらには値が来るので、とりあえずここで潰す
+				if ($form->field('public_start_time')->value == '00:00:00'):
+					$form->field('public_start_time')->set_value(null);
+				endif;
+				if ($form->field('public_end_time')->value == '00:00:00'):
+					$form->field('public_end_time')->set_value(null);
+				endif;
+				?>
 				<?php echo $form->field('public_start_time')->set_template('{error_msg}{field}'); ?>
 				</span> から <span id="span_public_time_end" class="display_inline_block" style="margin-right: 1em;">
 				<?php echo $form->field('public_end_time')->set_template('{error_msg}{field}'); ?>
