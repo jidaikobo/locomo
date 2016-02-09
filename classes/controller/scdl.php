@@ -243,6 +243,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 						sprintf('%1$sの #%2$d を更新しました', self::$nicename, $obj->id)
 					);
 
+					// キャッシュを全削除
+					foreach (\Util::get_file_list(APPPATH.'cache') as $cache)
+					{
+						if (strpos($cache, 'cache/scdl_') !== false) \File::delete($cache);
+					}
+
 					// 部分編集の場合はリダイレクトしない
 					if ($this->_someedit_id)
 					{
@@ -471,7 +477,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 									, 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
 									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index"
-									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2');
+									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2', 'public_start_time', 'public_end_time', 'public_display');
 /*
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
@@ -829,6 +835,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set("show_empty_row", \Input::get("show_empty_row"));
 		}
+		if (\Input::get("show_available_person", "") != "")
+		{
+			\Session::set("show_available_person", \Input::get("show_available_person"));
+		}
 
 		// キャッシュクリア用にget値をアサイン
 		$qstr = array();
@@ -862,14 +872,17 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$view = \View::forge($model::$_kind_name . "/calendar" . $tmpl_sub);
 		}
 
+		// GET値持ち回し用
+		$cond = '?'.join('&amp;', $qstr);
+
 		// ログインしているユーザIDとget値でキャッシュする
-		$cache_str = 'scdl_'.\Auth::get('id').'_'.\Inflector::friendly_title(\Uri::current().join(\Input::get()));
+		$cache_str = 'scdl_'.$mode.'_'.\Auth::get('id').join('_', \Uri::segments()).'_'.\Inflector::friendly_title($cond);
 
 		try
 		{
 			// root not use cache
 //			if (\Auth::is_root()) throw new \CacheNotFoundException();
-			if (\Cache::get($cache_str) && ! \Input::get('nocache'))
+			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache') && ! \Request::main()->action != 'lobby_today')
 			{
 				\Profiler::mark('Scdl::calendar() with cache - Done');
 				$this->template->set_global('is_cache', true);
@@ -948,11 +961,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 
 		// 各モードにより処理分け
 		$calendar = array();
-		$conds = array();
-		foreach(\Input::get() as $k => $v){
-			$conds[] = e($k).'='.e($v);
-		}
-		$cond = '?'.join('&amp;', $conds);
 
 		$next_url = "";
 		$prev_url = "";
@@ -1056,8 +1064,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		} // end of catch
 
 		// cache 5 min
-		\Cache::delete($cache_str);
-		\Cache::set($cache_str, $view, 300);
+		if ($cache_str)
+		{
+			\Cache::delete($cache_str);
+			\Cache::set($cache_str, $view, 300);
+		}
 
 		// set
 		$this->template->content = $view;

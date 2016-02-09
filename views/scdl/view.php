@@ -18,7 +18,7 @@
 		//繰り返し区分
 		$title_str .=  $detail->repeat_kb != 0 ? '<span class="text_icon schedule repeat_kb_'.$detail->repeat_kb.'"><span class="skip"> '.$repeat_kbs[$detail->repeat_kb].'</span></span>' : '';
 		//代理登録
-		if(($detail->user_id && $detail->updater_id) &&($detail->user_id != $detail->updater_id)):
+		if(($detail->user_id && $detail->creator_id) && ($detail->user_id != $detail->creator_id)):
 			$title_str .=  '<span class="text_icon schedule dairi"><span class="skip">代理登録</span></span>';
 		endif;
 /*
@@ -169,9 +169,16 @@
 <?php endif; ?>
 <?php if($detail->user_id): ?>
 <tr>
-	<th>作成者</th>
+	<th>登録者</th>
 	<td><?php echo @$detail->create_user->display_name; ?></td>
 </tr>
+
+<?php if($detail->creator_id && ($detail->creator_id != $detail->user_id)): ?>
+<tr>
+	<th>代理登録者</th>
+	<td><?php echo \Model_Usr::get_display_name($detail->creator_id); ?></td>
+</tr>
+<?php endif; ?>
 
 <?php endif; ?>
 <?php if($detail->updated_at): ?>
@@ -181,13 +188,12 @@
 </tr>
 <?php endif; ?>
 
-<?php if($detail->updater_id && ($detail->updater_id != $detail->user_id)): ?>
+<?php if($detail->updater_id): ?>
 <tr>
-	<th>代理登録者</th>
+	<th>最終更新者</th>
 	<td><?php echo \Model_Usr::get_display_name($detail->updater_id); ?></td>
 </tr>
 <?php endif; ?>
-
 
 
 </table>

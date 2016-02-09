@@ -1,31 +1,32 @@
-<h1>項目一覧<?php echo (\Pagination::get('total_items') != 0) ? '（全'.\Pagination::get('total_items').'件）' : ''; ?></h1>
+<?php echo $search_form; ?>
 
 <?php if ($items): ?>
-<table class="tbl">
-	<thead>
-		<tr>
-			<th class="ar min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
 
-		</tr>
-	</thead>
-	<tbody>
-<?php foreach ($items as $item): ?>		<tr>
-	<td><?php echo $item->id; ?></td>
+<!--.index_toolbar-->
+<div class="index_toolbar clearfix">
+<?php echo \Pagination::create_links(); ?>
+</div><!-- /.index_toolbar -->
 
-		</tr>
+<dl>
+<?php
+foreach ($items as $item):
+
+// 付近の文字列を表示
+$all = mb_convert_kana(\Input::get('all'), "asKV");
+$alls = explode(' ', $all);
+$pos = strpos($item->search, $alls[0]);
+$text = mb_substr($item->search, $pos, 160).'...';
+foreach($alls as $v):
+	$text = str_replace($v, '<strong>'.$v.'</strong>',$text);
+endforeach;
+
+?>
+<dt><a href="<?php echo \Uri::create($item->path.'/'.$item->pid); ?>"><?php echo $item->title; ?></a></dt>
+	<dd><?php echo $text ?></dd>
 <?php endforeach; ?>
-	</tbody>
-	<tfoot>
-		<tr>
-			<th class="ar min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
-
-		</tr>
-	</tfoot>
-</table>
+</dl>
 <?php echo \Pagination::create_links(); ?>
 
 <?php else: ?>
-<p>srchが存在しません。</p>
-
+<p>検索結果が存在しません。</p>
 <?php endif; ?>
-

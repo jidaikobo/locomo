@@ -102,7 +102,7 @@
 //	if() echo '仮登録';
 
 	//代理登録
-	if(($detail_pop_data->user_id && $detail_pop_data->updater_id)&&($detail_pop_data->user_id != $detail_pop_data->updater_id)) echo '代理登録 ';
+	if(($detail_pop_data->user_id && $detail_pop_data->creator_id)&&($detail_pop_data->user_id != $detail_pop_data->creator_id)) echo '代理登録 ';
 ?>
 </span>
 </div>
