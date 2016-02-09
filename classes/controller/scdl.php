@@ -1073,7 +1073,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	/**
 	 * 日の詳細予定を表示
 	 *
-	 *
 	 * @param  [type] $year
 	 * @param  [type] $mon
 	 * @param  [type] $day
@@ -1089,30 +1088,38 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// 他のクラスから利用される事を前提でメンバ変数を使わないように
 		$schedules = array();
 
-		$schedule_data = \Locomo\Model_Scdl::query()
-							->where_open()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_start)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_end)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", ">=", $target_start)
-								->where("end_date", "<=", $target_end)
-							->or_where_close()
-							->where_close()
-							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_time")
-							->get();
+		// 取得
+		$model::$_options['where'][] = array(
+			array(
+				array(
+					array("start_date", "<=", $target_start),
+					array("end_date", ">=", $target_end),
+				),
+				'or' =>
+				array(
+					array("start_date", "<=", $target_end),
+					array("end_date", ">=", $target_end),
+					'or' =>
+					array(
+						array("start_date", "<=", $target_start),
+						array("end_date", ">=", $target_start),
+						'or' =>
+							array(
+								array("start_date", ">=", $target_start),
+								array("end_date", "<=", $target_end),
+							)
+					)
+				)
+			),
+			array("deleted_at", "is", null),
+			array("kind_flg", $model::$_kind_flg),
+		);
+		$model::$_options['order_by'] = array("start_time");
+		$model::$_options['related'] = array('create_user', 'user', 'building');
 
+		$schedule_data = $model::find('all', $model::$_options);
+
+		// loop
 		$user_exist = array();
 		$building_exist = array();
 		$unique_schedule_data = array();
@@ -1262,30 +1269,38 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$schedules = array();
 		$schedules['schedules_list'] = array();
 
-		$schedule_data = $model::query()
-							->where_open()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_end)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_start)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", ">=", $target_start)
-								->where("end_date", "<=", $target_end)
-							->or_where_close()
-							->where_close()
-							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_time", "asc")
-							->get();
+		// 取得
+		$model::$_options['where'][] = array(
+			array(
+				array(
+					array("start_date", "<=", $target_start),
+					array("end_date", ">=", $target_end),
+				),
+				'or' =>
+				array(
+					array("start_date", "<=", $target_end),
+					array("end_date", ">=", $target_end),
+					'or' =>
+					array(
+						array("start_date", "<=", $target_start),
+						array("end_date", ">=", $target_start),
+						'or' =>
+							array(
+								array("start_date", ">=", $target_start),
+								array("end_date", "<=", $target_end),
+							)
+					)
+				)
+			),
+			array("deleted_at", "is", null),
+			array("kind_flg", $model::$_kind_flg),
+		);
+		$model::$_options['order_by'] = array("start_time");
+		$model::$_options['related'] = array('create_user', 'user', 'building');
 
+		$schedule_data = $model::find('all', $model::$_options);
+
+		// loop
 		$user_exist = array();
 		$building_exist = array();
 		for ($i = 0; $i < 7; $i++)
@@ -1384,7 +1399,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		return $schedules;
 	}
 
-
 	/**
 	 * [make_month_calendar]
 	 * 一ヶ月表示用
@@ -1406,43 +1420,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$target_start = sprintf("%04d-%02d-%02d", $year, $mon, 1);
 		$target_end = sprintf("%04d-%02d-%02d", $year, $mon, $last_day);
 
-		// モデル
-		$model = $this->model_name;
-		// 後でmodelを使うように
-		//$obj = $model::find(1);
-
-		/**
-		$query = \Locomo\Model_Scdl::query()
-							//->where_open()
-							//	// 開始日時と終了日時が範囲内のもの
-							//	->where(\DB::expr("DATE_FORMAT(start_date, '%Y%m')"), sprintf("%04d%02d", $year, $mon))
-							//	->or_where(\DB::expr("DATE_FORMAT(end_date, '%Y%m')"), sprintf("%04d%02d", $year, $mon))
-							//->where_close()
-							->where_open()
-							->or_where_open() // <|   |>
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open() // |   <|  >
-								->where("start_date", "<=", $target_end)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open() // <|  >    |
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_start)
-							->or_where_close()
-							->or_where_open()// |  <>  |
-								->where("start_date", ">=", $target_start)
-								->where("end_date", "<=", $target_end)
-							->or_where_close()
-							->where_close()
-							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_time");
-		 */
-		// $schedules_data = $query->get();
-
-		\Locomo\Model_Scdl::$_options['where'][] = array(
+		// 取得
+		$model::$_options['where'][] = array(
 			array(
 				array(
 					array("start_date", "<=", $target_start),
