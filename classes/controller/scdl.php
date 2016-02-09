@@ -882,7 +882,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			// root not use cache
 //			if (\Auth::is_root()) throw new \CacheNotFoundException();
-			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache'))
+			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache') && ! \Request::main()->action != 'lobby_today')
 			{
 				\Profiler::mark('Scdl::calendar() with cache - Done');
 				$this->template->set_global('is_cache', true);
