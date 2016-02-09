@@ -882,7 +882,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			// root not use cache
 //			if (\Auth::is_root()) throw new \CacheNotFoundException();
-			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache') && ! \Request::main()->action != 'lobby_today')
+			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache') && \Request::active()->action != 'lobby_today')
 			{
 				\Profiler::mark('Scdl::calendar() with cache - Done');
 				$this->template->set_global('is_cache', true);
@@ -903,7 +903,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set($model::$_kind_name . "narrow_ugid", \Input::get("ugid"));
 			\Session::set($model::$_kind_name . "narrow_uid", "");
-
 			\Session::set($model::$_kind_name . "narrow_bgid", "");
 			\Session::set($model::$_kind_name . "narrow_bid", "");
 		}
@@ -911,12 +910,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set($model::$_kind_name . "narrow_uid", \Input::get("uid"));
 		}
-
 		if (\Input::get("bgid", "not") != "not")
 		{
 			\Session::set($model::$_kind_name . "narrow_bgid", \Input::get("bgid"));
 			\Session::set($model::$_kind_name . "narrow_bid", "");
-
 			\Session::set($model::$_kind_name . "narrow_ugid", "");
 			\Session::set($model::$_kind_name . "narrow_uid", "");
 		}
@@ -950,14 +947,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 		}
 
-		if ($year == null || $year == "" || $year < 1000)
-			$year = date('Y');
-		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12)
-			$mon = date('m');
+		if ($year == null || $year == "" || $year < 1000) $year = date('Y');
+		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12) $mon = date('m');
 
 		$year = (int)$year;
-		$mon = (int)$mon;
-		$day = (int)$day;
+		$mon  = (int)$mon;
+		$day  = (int)$day;
 
 		// 各モードにより処理分け
 		$calendar = array();
@@ -1267,7 +1262,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$schedules = array();
 		$schedules['schedules_list'] = array();
 
-		$schedule_data = \Locomo\Model_Scdl::query()
+		$schedule_data = $model::query()
 							->where_open()
 							->or_where_open()
 								->where("start_date", "<=", $target_start)
@@ -1306,7 +1301,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				// 対象の日付のデータか判断
 				if ($this->is_target_day($row['year'], $row['mon'], $row['day'], $r))
 				{
-
 					// 詳細へのリンク
 					$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $row['day'])), $r['title_text']);
 					$r['target_year'] = $row['year'];
@@ -1476,11 +1470,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		\Locomo\Model_Scdl::$_options['order_by'] = array("start_time");
 		\Locomo\Model_Scdl::$_options['related'] = array('create_user', 'user', 'building');
 
-
 		$schedules_data = \Locomo\Model_Scdl::find('all', \Locomo\Model_Scdl::$_options);
-
-
-		// vaR_dump(\DB::last_query());
 
 		// 月曜日からはじまるため、空白のデータを入れる
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1)));

@@ -70,7 +70,6 @@ endif; ?>
 			<div class="events">
 			<?php foreach ($v['data'] as $v2):
 				$detail_pop_array[] = $v2;
-
 					$eventtitle_icon = '';
 					$eventtitle_skip = '<span class="skip">';
 
