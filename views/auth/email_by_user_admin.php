@@ -10,7 +10,7 @@ From: <?php echo \Config::get('site_title').' <'.LOCOMO_ADMIN_MAIL.">\n" ?>
 
 お名前：<?php echo $item->display_name ?>
 ユーザ名：<?php echo $item->username ?>
-ユーザ名：登録時に設定なさったもの
+パスワード：登録時に設定なさったもの
 
 ユーザ登録申請はサイト管理者に送信されました。
 サイト管理者の承認を経て、ログインいただけるようになります。
