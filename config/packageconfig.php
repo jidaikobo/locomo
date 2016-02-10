@@ -19,6 +19,21 @@ return array(
 	'site_title' => 'Locomo',
 	'slogan' => 'Accessible Web System Package for FuelPHP',
 
+	// is_allow_mailaddress_login
+	'is_allow_mailaddress_login' => true,
+
+	// user_registration_type
+	// by_admin: only administrator can add new user.
+	// by_user_only: user can activate account by email activation.
+	// by_user_admin: user can apply to registration, administrator activates user.
+	'user_registration_type' => 'by_admin',
+
+	// user_registration_limit_days
+	'user_registration_limit_days' => 3,
+
+	// default_usergroup_id
+	'default_usergroup_id' => null,
+
 	// allowed_ip_access_admin
 	'allowed_ip_access_admin' => '',
 
@@ -113,6 +128,9 @@ return array(
 		'\\Controller_Sys/403',
 		'\\Controller_Sys/404',
 		'\\Controller_Flr/dl',
+		'\\Controller_Auth/registration', // ACL controled by controller
+		'\\Controller_Auth/by_user_only',
+		'\\Controller_Auth/by_user_admin',
 	),
 
 	// always user allowed actions
