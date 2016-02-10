@@ -11,10 +11,10 @@ class Controller_Auth extends \Locomo\Controller_Base
 		$days = intval(\Config::get('user_registration_limit_days'));
 		if ($days)
 		{
-			$target = time() - ($days * 86400);
+			$target = date('Y-m-d H:i:s', time() - ($days * 86400));
 			$users = \Model_Usr::find('all', array(
 				'where' => array(
-					array('created_at', '=<', $target),
+					array('created_at', '<=', $target),
 					array('is_visible', false)
 				)
 			));
@@ -23,6 +23,7 @@ class Controller_Auth extends \Locomo\Controller_Base
 				$user->delete(null, true);
 			}
 		}
+		parent::before();
 	}
 
 	/**
