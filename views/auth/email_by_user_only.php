@@ -8,6 +8,7 @@ From: <?php echo \Config::get('site_title').' <'.LOCOMO_ADMIN_MAIL.">\n" ?>
 
 下記リンクで、登録を承認いただけます。
 承認いただくまでは、ログインはできません。
+下記リンクは<?php echo intval(\Config::get('user_registration_limit_days')) ?>日間程度有効です。
 
 <?php echo \Uri::create('/auth/actibate/'.$item->activation_key.DS.$item->email) ?>
 

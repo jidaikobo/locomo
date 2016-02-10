@@ -3,6 +3,29 @@ namespace Locomo;
 class Controller_Auth extends \Locomo\Controller_Base
 {
 	/**
+	 * before()
+	 */
+	public function before()
+	{
+		// アクティベーションしないまま、設定期日を超えたユーザはdeleteする
+		$days = intval(\Config::get('user_registration_limit_days'));
+		if ($days)
+		{
+			$target = time() - ($days * 86400);
+			$users = \Model_Usr::find('all', array(
+				'where' => array(
+					array('created_at', '=<', $target),
+					array('is_visible', false)
+				)
+			));
+			foreach ($users as $user)
+			{
+				$user->delete(null, true);
+			}
+		}
+	}
+
+	/**
 	 * action_login()
 	 */
 	public function action_login()
@@ -91,7 +114,7 @@ class Controller_Auth extends \Locomo\Controller_Base
 				),
 			);
 			$deleted = \Model_Usr::find_deleted('first', $cond);
-			$deleted->purge();
+			$deleted->purge(null, true);
 		}
 
 		// vals
