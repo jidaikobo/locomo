@@ -65,8 +65,8 @@ class Model_Srch extends \Model_Base_Soft
 		'search' => array (
 			'data_type' => 'text',
 			'form' => array (
-				'type' => 'text',
-				'size' => 0,
+				'type' => 'textarea',
+				'rows' => 5,
 				'class' => 'text',
 			),
 			'validation' => array (
