@@ -477,7 +477,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 									, 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
 									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
 									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index"
-									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2');
+									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2', 'public_start_time', 'public_end_time', 'public_display');
 /*
 				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
 									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
@@ -882,7 +882,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			// root not use cache
 //			if (\Auth::is_root()) throw new \CacheNotFoundException();
-			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache'))
+			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache') && \Request::active()->action != 'lobby_today')
 			{
 				\Profiler::mark('Scdl::calendar() with cache - Done');
 				$this->template->set_global('is_cache', true);
@@ -903,7 +903,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set($model::$_kind_name . "narrow_ugid", \Input::get("ugid"));
 			\Session::set($model::$_kind_name . "narrow_uid", "");
-
 			\Session::set($model::$_kind_name . "narrow_bgid", "");
 			\Session::set($model::$_kind_name . "narrow_bid", "");
 		}
@@ -911,12 +910,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			\Session::set($model::$_kind_name . "narrow_uid", \Input::get("uid"));
 		}
-
 		if (\Input::get("bgid", "not") != "not")
 		{
 			\Session::set($model::$_kind_name . "narrow_bgid", \Input::get("bgid"));
 			\Session::set($model::$_kind_name . "narrow_bid", "");
-
 			\Session::set($model::$_kind_name . "narrow_ugid", "");
 			\Session::set($model::$_kind_name . "narrow_uid", "");
 		}
@@ -950,14 +947,12 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			}
 		}
 
-		if ($year == null || $year == "" || $year < 1000)
-			$year = date('Y');
-		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12)
-			$mon = date('m');
+		if ($year == null || $year == "" || $year < 1000) $year = date('Y');
+		if ($mon == null || $mon == "" || $mon < 0 || $mon > 12) $mon = date('m');
 
 		$year = (int)$year;
-		$mon = (int)$mon;
-		$day = (int)$day;
+		$mon  = (int)$mon;
+		$day  = (int)$day;
 
 		// 各モードにより処理分け
 		$calendar = array();
@@ -1078,7 +1073,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 	/**
 	 * 日の詳細予定を表示
 	 *
-	 *
 	 * @param  [type] $year
 	 * @param  [type] $mon
 	 * @param  [type] $day
@@ -1094,30 +1088,38 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		// 他のクラスから利用される事を前提でメンバ変数を使わないように
 		$schedules = array();
 
-		$schedule_data = \Locomo\Model_Scdl::query()
-							->where_open()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_start)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_end)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", ">=", $target_start)
-								->where("end_date", "<=", $target_end)
-							->or_where_close()
-							->where_close()
-							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_time")
-							->get();
+		// 取得
+		$model::$_options['where'][] = array(
+			array(
+				array(
+					array("start_date", "<=", $target_start),
+					array("end_date", ">=", $target_end),
+				),
+				'or' =>
+				array(
+					array("start_date", "<=", $target_end),
+					array("end_date", ">=", $target_end),
+					'or' =>
+					array(
+						array("start_date", "<=", $target_start),
+						array("end_date", ">=", $target_start),
+						'or' =>
+							array(
+								array("start_date", ">=", $target_start),
+								array("end_date", "<=", $target_end),
+							)
+					)
+				)
+			),
+			array("deleted_at", "is", null),
+			array("kind_flg", $model::$_kind_flg),
+		);
+		$model::$_options['order_by'] = array("start_time");
+		$model::$_options['related'] = array('create_user', 'user', 'building');
 
+		$schedule_data = $model::find('all', $model::$_options);
+
+		// loop
 		$user_exist = array();
 		$building_exist = array();
 		$unique_schedule_data = array();
@@ -1267,30 +1269,38 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$schedules = array();
 		$schedules['schedules_list'] = array();
 
-		$schedule_data = \Locomo\Model_Scdl::query()
-							->where_open()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_end)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_start)
-							->or_where_close()
-							->or_where_open()
-								->where("start_date", ">=", $target_start)
-								->where("end_date", "<=", $target_end)
-							->or_where_close()
-							->where_close()
-							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_time", "asc")
-							->get();
+		// 取得
+		$model::$_options['where'][] = array(
+			array(
+				array(
+					array("start_date", "<=", $target_start),
+					array("end_date", ">=", $target_end),
+				),
+				'or' =>
+				array(
+					array("start_date", "<=", $target_end),
+					array("end_date", ">=", $target_end),
+					'or' =>
+					array(
+						array("start_date", "<=", $target_start),
+						array("end_date", ">=", $target_start),
+						'or' =>
+							array(
+								array("start_date", ">=", $target_start),
+								array("end_date", "<=", $target_end),
+							)
+					)
+				)
+			),
+			array("deleted_at", "is", null),
+			array("kind_flg", $model::$_kind_flg),
+		);
+		$model::$_options['order_by'] = array("start_time");
+		$model::$_options['related'] = array('create_user', 'user', 'building');
 
+		$schedule_data = $model::find('all', $model::$_options);
+
+		// loop
 		$user_exist = array();
 		$building_exist = array();
 		for ($i = 0; $i < 7; $i++)
@@ -1306,7 +1316,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 				// 対象の日付のデータか判断
 				if ($this->is_target_day($row['year'], $row['mon'], $row['day'], $r))
 				{
-
 					// 詳細へのリンク
 					$r['link_detail'] = \Html::anchor(\Uri::create($model::$_kind_name . '/viewdetail/' . $r['id'] . sprintf("/%04d/%d/%d", $year, $mon, $row['day'])), $r['title_text']);
 					$r['target_year'] = $row['year'];
@@ -1390,7 +1399,6 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		return $schedules;
 	}
 
-
 	/**
 	 * [make_month_calendar]
 	 * 一ヶ月表示用
@@ -1412,43 +1420,8 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$target_start = sprintf("%04d-%02d-%02d", $year, $mon, 1);
 		$target_end = sprintf("%04d-%02d-%02d", $year, $mon, $last_day);
 
-		// モデル
-		$model = $this->model_name;
-		// 後でmodelを使うように
-		//$obj = $model::find(1);
-
-		/**
-		$query = \Locomo\Model_Scdl::query()
-							//->where_open()
-							//	// 開始日時と終了日時が範囲内のもの
-							//	->where(\DB::expr("DATE_FORMAT(start_date, '%Y%m')"), sprintf("%04d%02d", $year, $mon))
-							//	->or_where(\DB::expr("DATE_FORMAT(end_date, '%Y%m')"), sprintf("%04d%02d", $year, $mon))
-							//->where_close()
-							->where_open()
-							->or_where_open() // <|   |>
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open() // |   <|  >
-								->where("start_date", "<=", $target_end)
-								->where("end_date", ">=", $target_end)
-							->or_where_close()
-							->or_where_open() // <|  >    |
-								->where("start_date", "<=", $target_start)
-								->where("end_date", ">=", $target_start)
-							->or_where_close()
-							->or_where_open()// |  <>  |
-								->where("start_date", ">=", $target_start)
-								->where("end_date", "<=", $target_end)
-							->or_where_close()
-							->where_close()
-							->where("deleted_at", "is", null)
-							->where("kind_flg", $model::$_kind_flg)
-							->order_by("start_time");
-		 */
-		// $schedules_data = $query->get();
-
-		\Locomo\Model_Scdl::$_options['where'][] = array(
+		// 取得
+		$model::$_options['where'][] = array(
 			array(
 				array(
 					array("start_date", "<=", $target_start),
@@ -1476,11 +1449,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		\Locomo\Model_Scdl::$_options['order_by'] = array("start_time");
 		\Locomo\Model_Scdl::$_options['related'] = array('create_user', 'user', 'building');
 
-
 		$schedules_data = \Locomo\Model_Scdl::find('all', \Locomo\Model_Scdl::$_options);
-
-
-		// vaR_dump(\DB::last_query());
 
 		// 月曜日からはじまるため、空白のデータを入れる
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1)));

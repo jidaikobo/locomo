@@ -155,11 +155,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '第何週',
 			),
 		),
-		'week_kb_option1' => 
+		'week_kb_option1' =>
 		array (
 			'label' => '繰り返し曜日2',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('' => '---',
@@ -174,11 +174,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '曜日',
 			),
 		),
-		'week_index_option1' => 
+		'week_index_option1' =>
 		array (
 			'label' => '第何週2',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('1' => '1'
@@ -191,11 +191,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '第何週',
 			),
 		),
-		'week_kb_option2' => 
+		'week_kb_option2' =>
 		array (
 			'label' => '繰り返し曜日3',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('' => '---'
@@ -210,11 +210,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '曜日',
 			),
 		),
-		'week_index_option2' => 
+		'week_index_option2' =>
 		array (
 			'label' => '第何週2',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('1' => '1'
@@ -401,13 +401,13 @@ class Model_Scdl extends \Model_Base_Soft
 		),
 		'user_id' =>
 		array (
-			'label' => '作成者',
+			'label' => '登録者',
 			'data_type' => 'int',
 			'form' =>
 			array (
 				'type' => 'select',
 				'class' => 'int',
-				'title' => '作成者'
+				'title' => '登録者'
 			),
 		),
 		'attend_flg' =>

@@ -23,6 +23,77 @@ class Controller_Srch extends \Locomo\Controller_Base
 	);
 
 	/**
+	 * action_sync()
+	 */
+	public function action_sync()
+	{
+		$cnt = 0;
+		if (\Input::post())
+		{
+			// vals
+			$models = array();
+
+			// modules
+			$paths = \Module::get_exists();
+			if ($paths)
+			{
+				foreach ($paths as $path)
+				{
+					$model_path = $path.'/classes/model';
+					if ( ! file_exists($model_path)) continue;
+					foreach (\Util::get_file_list($model_path) as $v)
+					{
+						if (is_dir($v)) continue;
+						$models[] = \Inflector::path_to_classname($v, 'model');
+					}
+				}
+			}
+
+			// ordinally models
+			$paths = array_merge(
+				\Inflector::dir_to_ctrl(APPPATH.'classes'.DS.'model'),
+				\Inflector::dir_to_ctrl(LOCOMOPATH.'classes'.DS.'model')
+			);
+			foreach ($paths as $path)
+			{
+				$models[] = \Inflector::path_to_classname($path, 'model');
+			}
+
+			// sync
+			foreach ($models as $model)
+			{
+				// seacrh model which has a Observer_Srch
+				if ( ! class_exists($model))
+				{
+					$suspicious = explode('\\', $model);
+					if (count($suspicious) < 2) continue;
+					\Module::exists($suspicious[1]) and \Module::load($suspicious[1]);
+				}
+				if ( ! class_exists($model)) continue;
+				if ( ! isset($model::observers()['Locomo\Observer_Srch'])) continue;
+
+				// sync
+				$items = $model::find('all');
+				foreach ($items as $item)
+				{
+					if ($item->save()) $cnt++;
+				}
+			}
+		}
+
+		// view
+		$content = \View::forge(static::$dir.'sync');
+
+		// title
+		$title = '検索センターの同期';
+
+		// view
+		$content->set_global('cnt', $cnt);
+		$content->set_global('title', $title);
+		$this->template->set_safe('content', $content);
+	}
+
+	/**
 	 * action_index()
 	 */
 	public function action_index()

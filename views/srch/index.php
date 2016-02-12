@@ -15,7 +15,7 @@ foreach ($items as $item):
 $all = mb_convert_kana(\Input::get('all'), "asKV");
 $alls = explode(' ', $all);
 $pos = strpos($item->search, $alls[0]);
-$text = substr($item->search, $pos, 200).'...';
+$text = mb_substr($item->search, $pos, 160).'...';
 foreach($alls as $v):
 	$text = str_replace($v, '<strong>'.$v.'</strong>',$text);
 endforeach;

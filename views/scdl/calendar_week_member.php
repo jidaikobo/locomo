@@ -216,7 +216,7 @@ foreach($narrow_user_list as $id => $row):
 										$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
 										$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']].' ' : '';
 										//代理登録
-										if(($v2->user_id && $v2->updater_id)&&($v2->user_id != $v2->updater_id)):
+										if(($v2->user_id && $v2->creator_id)&&($v2->user_id != $v2->creator_id)):
 											$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
 											$eventtitle_skip.= '代理登録 ';
 										endif;

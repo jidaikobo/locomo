@@ -160,6 +160,12 @@ class Actionset_Scdl extends \Actionset
 	 */
 	public static function actionset_swap($controller, $obj = null, $id = null, $urls = array())
 	{
+		// 編集画面では表示しない
+		if (in_array(\Request::main()->action, array('edit', 'create', 'viewdetail')))
+		{
+			return array();
+		}
+
 		$segments = \Uri::segments();
 		if ($controller == '\Controller_Scdl')
 		{

@@ -70,7 +70,6 @@ endif; ?>
 			<div class="events">
 			<?php foreach ($v['data'] as $v2):
 				$detail_pop_array[] = $v2;
-
 					$eventtitle_icon = '';
 					$eventtitle_skip = '<span class="skip">';
 
@@ -81,7 +80,7 @@ endif; ?>
 							$eventtitle_skip.= $value.' ';
 						endif;
 					endforeach;
-					
+
 					//外部表示(施設予約)
 					if(\Request::active()->controller == "Reserve\Controller_Reserve"):
 						$eventtitle_icon.= $v2['public_display']==2 ? '<span class="text_icon reserve public"></span>' : '';
@@ -96,7 +95,7 @@ endif; ?>
 					$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
 					$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
 					//代理登録
-					if(($v2->user_id && $v2->updater_id)&&($v2->user_id != $v2->updater_id)):
+					if(($v2->user_id && $v2->creator_id)&&($v2->user_id != $v2->creator_id)):
 						$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
 						$eventtitle_skip.= '代理登録 ';
 					endif;

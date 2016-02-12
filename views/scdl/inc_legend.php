@@ -1,7 +1,7 @@
 <div class="legend calendar" aria-hidden=true>
 <?php /* 音声読み上げ用に文字を削除する */
 	// 外部表示
-	echo \Request::active()->controller !== "\Controller_Scdl" ? '<span class="display_inline_block"><span class="text_icon reserve public"></span><span></span></span>' : '';
+	echo \Request::active()->controller !== "Controller_Scdl" ? '<span class="display_inline_block"><span class="text_icon reserve public"></span><span></span></span>' : '';
 
 
 	foreach($repeat_kbs as $k => $v):

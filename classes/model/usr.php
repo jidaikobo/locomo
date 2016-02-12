@@ -196,6 +196,14 @@ class Model_Usr extends Model_Base_Soft
 	}
 
 	/**
+	 * _event_before_insert()
+	 */
+	public function _event_before_insert()
+	{
+		$this->activation_key = \Auth::hash_password(microtime());
+	}
+
+	/**
 	 * _event_before_save()
 	 */
 	public function _event_before_save()
@@ -302,14 +310,14 @@ class Model_Usr extends Model_Base_Soft
 
 		return $users;
 	}
-	
+
 	/**
 	 * get_main_usergroup_id()
 	 */
 	public static function get_main_usergroup_id($uid)
 	{
 		static $ret;
-	
+
 		if (isset($ret[$uid]))
 		{
 			return $ret[$uid];

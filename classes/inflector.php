@@ -83,12 +83,12 @@ class Inflector extends \Fuel\Core\Inflector
 	}
 
 	/**
-	 * path_to_ctrl()
-	 * path to controller class name
+	 * path_to_classname()
+	 * path to controller/model/presenter class name
 	 * @param string  "path/to/file"
-	 * @return string "\Controller_Foo_Bar"
+	 * @return string "\[Controller|Model|Presenter]_Foo_Bar"
 	 */
-	public static function path_to_ctrl($path = null)
+	public static function path_to_classname($path = null, $type = 'controller')
 	{
 		if ( ! file_exists($path)) throw new \InvalidArgumentException('file not found.');
 		$paths = explode(DS, $path);
@@ -99,7 +99,7 @@ class Inflector extends \Fuel\Core\Inflector
 		$module = $module ? '\\'.ucfirst($module).'\\' : '\\' ;
 
 		// search controller position
-		$class_pos = \Arr::search($paths, 'controller');
+		$class_pos = \Arr::search($paths, $type);
 		//if ( ! $class_pos) throw new \InvalidArgumentException('controller not found.');
 
 		// classify
@@ -114,6 +114,17 @@ class Inflector extends \Fuel\Core\Inflector
 		}
 
 		return str_replace('.php', '', $class);
+	}
+
+	/**
+	 * path_to_ctrl()
+	 * path to controller class name
+	 * @param string  "path/to/file"
+	 * @return string "\Controller_Foo_Bar"
+	 */
+	public static function path_to_ctrl($path = null)
+	{
+		return static::path_to_classname($path);
 	}
 
 	/**
