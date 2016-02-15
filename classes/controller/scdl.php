@@ -1446,7 +1446,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			array("deleted_at", "is", null),
 			array("kind_flg", $model::$_kind_flg),
 		);
-		$options['from_cache'] = false;
+//		$options['from_cache'] = false; // falseにすると、realtedが正しく取得できない
 		$options['order_by'] = array("start_time");
 		$options['related'] = array('create_user', 'user', 'building');
 
