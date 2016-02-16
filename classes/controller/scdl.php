@@ -473,17 +473,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$from_data = $model::find(\Input::get("from"));
 			if ($from_data)
 			{
-				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text'
-									, 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
-									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index"
-									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2', 'public_start_time', 'public_end_time', 'public_display');
-/*
-				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
-									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
-									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
-*/
+				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb', 'message', 'group_kb', 'group_detail', 'purpose_kb', 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index", 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2');
+
+				if ($model::$_kind_name != 'scdl')
+				{
+					$setcolumns = array_merge($setcolumns, array('public_start_time', 'public_end_time', 'public_display'));
+				}
+
 				foreach ($setcolumns as $v)
 				{
 					$this->template->content->form->field($v)->set_value($from_data->$v);
