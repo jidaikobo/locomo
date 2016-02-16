@@ -14,7 +14,7 @@ class Create_srch
 			'deleted_at' => array('type' => 'datetime', 'null' => true),
 		), array('id'));
 		\DBUtil::create_index('lcm_srches', array('path'), 'srch_path');
-		\DBUtil::create_index('lcm_srches', array('pid'), 'srch_pid', 'UNIQUE');
+		\DBUtil::create_index('lcm_srches', array('pid'), 'srch_pid');
 	}
 
 	public function down()
