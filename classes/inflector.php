@@ -1,5 +1,4 @@
 <?php
-
 namespace Locomo;
 class Inflector extends \Fuel\Core\Inflector
 {
