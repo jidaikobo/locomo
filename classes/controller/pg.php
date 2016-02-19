@@ -25,7 +25,7 @@ class Controller_Pg extends \Locomo\Controller_Base
 	/**
 	 * pg_router()
 	 */
-	private function pg_router()
+	public function pg_router()
 	{
 		// search content
 		$path = \Input::get('path') ?: \Input::server('PATH_INFO');
