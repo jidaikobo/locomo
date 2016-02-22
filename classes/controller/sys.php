@@ -41,6 +41,7 @@ class Controller_Sys extends \Controller_Base
 	public function action_404()
 	{
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
+		$this->response_status = "404";
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
 		$this->template->content = $view;
@@ -53,6 +54,7 @@ class Controller_Sys extends \Controller_Base
 	public function action_403()
 	{
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
+		$this->response_status = "403";
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
 		$this->template->content = $view;

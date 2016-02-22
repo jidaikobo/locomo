@@ -117,6 +117,8 @@ return array(
 		// '\\Controller_Scffld',
 		// '\\Controller_Wrkflwadmin',
 		// '\\Controller_Bkmk',
+		// '\\Controller_Pg',
+		// '\\Controller_Srch',
 	),
 
 	// always guest allowed actions
