@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Locomo - Accessible Web System Package for FuelPHP
  * bootstrap for locomo
