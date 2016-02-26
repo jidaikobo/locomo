@@ -133,10 +133,10 @@ class Actionset_Frmt extends \Actionset_Base
 	{
 		$retvals = array(
 			'realm'        => 'base',
-			'urls'         => array(array($controller.DS."excel_create", 'EXCEL新規作成')),
+			'urls'         => array(array($controller.DS."excel_create", 'EXCEL, CSV 新規作成')),
 			'action_name'  => 'EXCEL新規作成',
 			'show_at_top'  => true,
-			'explanation'  => '新しいEXCEL用フォーマットを追加します。',
+			'explanation'  => '新しいEXCEL CSV 用フォーマットを追加します。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.'/pdf_create',
@@ -152,9 +152,9 @@ class Actionset_Frmt extends \Actionset_Base
 		$retvals = array(
 			// 'realm'        => 'base',
 			'urls'         => array(),
-			'action_name'  => 'EXCEL編集',
+			'action_name'  => 'EXCEL, CSV 編集',
 			'show_at_top'  => true,
-			'explanation'  => 'EXCEL用フォーマットを編集します。',
+			'explanation'  => 'EXCEL CSV 用フォーマットを編集します。',
 			'order'        => 20,
 			'dependencies' => array(
 				$controller.'/pdf_create',

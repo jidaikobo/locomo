@@ -239,7 +239,6 @@ $(function () {
 	{
 		elm.find('.display_name').text(elm.find('.name').val());
 
-
 		if (elm.find('.ln_y').val() == 1) {
 			before_id = $('#element_seq').find('.' + $(elm).attr('id')).prev().find('.id').val();
 			if (before_id) {
@@ -266,16 +265,16 @@ $(function () {
 			elm.removeClass('ln_y');
 		}
 
-		elm.css('left',   parseFloat(elm.find('.x').val())*mm2px);
-		elm.css('width',  parseFloat(elm.find('.w').val())*mm2px);
-		elm.css('maxWidth',  parseFloat(elm.find('.w').val())*mm2px);
-		elm.css('height', parseFloat(elm.find('.h').val())*mm2px);
-		elm.css('maxHeight', parseFloat(elm.find('.h').val())*mm2px);
+		elm.css('left',          parseFloat(elm.find('.x').val())*mm2px);
+		elm.css('width',         parseFloat(elm.find('.w').val())*mm2px);
+		elm.css('maxWidth',      parseFloat(elm.find('.w').val())*mm2px);
+		elm.css('height',        parseFloat(elm.find('.h').val())*mm2px);
+		elm.css('maxHeight',     parseFloat(elm.find('.h').val())*mm2px);
 		elm.css('paddingRight',  parseFloat(elm.find('.padding_right').val())*mm2px);
 		elm.css('paddingLeft',   parseFloat(elm.find('.padding_left').val())*mm2px);
 		elm.css('paddingTop',    parseFloat(elm.find('.padding_top').val())*mm2px);
 		elm.css('paddingBottom', parseFloat(elm.find('.padding_bottom').val())*mm2px);
-		elm.css('marginTop',    parseFloat(elm.find('.margin_top').val())*mm2px);
+		elm.css('marginTop',     parseFloat(elm.find('.margin_top').val())*mm2px);
 		elm.find('.text').css('font-size', parseFloat(elm.find('.font_size').val())*mm2px*mm2pt);
 
 		elm.find('.text').css('maxHeight', parseFloat(elm.find('.h').val() - elm.find('.padding_top').val() - elm.find('.padding_bottom').val())*mm2px);
