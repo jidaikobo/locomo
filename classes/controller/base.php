@@ -358,9 +358,40 @@ class Controller_Base extends Controller_Core
 		// find()
 		$model::set_authorized_options();
 		$model::$_options['from_cache'] = false;
-		if ( ! $item = $model::find($id, $model::$_options))
+		$item = $model::find($id, $model::$_options);
+
+		// find_deleted
+		$column = \Arr::get($model::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
+		if (
+			! $item &&
+			is_subclass_of($model, '\Orm\Model_Soft') &&
+			isset($model::properties()[$column])
+		)
 		{
-				// event
+			$item = $model::find_deleted($id);
+
+			// 管理者か作成者であれば項目を返す
+			$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
+			if (
+				$item &&
+				(
+					isset($model::properties()[$column]) &&
+					$model::properties()[$column] == \Auth::get('id')
+				) ||
+				\Auth::is_admin()
+			)
+			{
+				\Session::set_flash('message', array('ごみ箱の中の項目です。'));
+			}
+			else
+			{
+				$item = false;
+			}
+		}
+
+		if ( ! $item)
+		{
+			// event
 			$event = 'locomo_view_not_found';
 			if (\Event::instance()->has_events($event)) \Event::instance()->trigger($event);
 
@@ -408,6 +439,35 @@ class Controller_Base extends Controller_Core
 			$model::set_authorized_options();
 			$model::$_options['from_cache'] = false;
 			$item = $model::find($id, $model::$_options);
+
+			// find_deleted
+			$column = \Arr::get($model::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
+			if (
+				! $item &&
+				is_subclass_of($model, '\Orm\Model_Soft') &&
+				isset($model::properties()[$column])
+			)
+			{
+				$item = $model::find_deleted($id);
+
+				// 管理者か作成者であれば項目を返す
+				$column = \Arr::get($model::get_field_by_role('creator_id'), 'lcm_field', 'creator_id');
+				if (
+					$item &&
+					(
+						isset($model::properties()[$column]) &&
+						$model::properties()[$column] == \Auth::get('id')
+					) ||
+					\Auth::is_admin()
+				)
+				{
+					\Session::set_flash('message', array('ごみ箱の中の項目です。'));
+				}
+				else
+				{
+					$item = false;
+				}
+			}
 
 			// not found
 			if ( ! $item)
@@ -711,11 +771,22 @@ class Controller_Base extends Controller_Core
 		}
 	}
 
+
 	/**
 	 * bulk()
 	 */
-	protected function bulk($page = 1, $add = 3, $is_redirect = true)
+	// protected function bulk($page = 1, $add = 3, $is_redirect = true)
+	protected function bulk($args = array())
 	{
+		$defaults = array('page' => 1, 'add' => 3, 'is_redirect' => true);
+		/*
+		$args = array_merge($defaults, $args);
+		$page = $args['page'];
+		$add = $args['add'];
+		$is_redirect = $args['is_redirect'];
+		 */
+		extract(\Util::parse_args($defaults, $args));
+
 		// TODO $page => \Pagination::set('uri_segments', 'paged');
 		$model = $this->model_name;
 		$action = \Request::main()->action;
@@ -833,8 +904,16 @@ class Controller_Base extends Controller_Core
 	/*
 	 * 条件1 $options related の一つ目にマスタの relation
 	 */
-	protected function conditioned_bulk($options, $defaults = array(), $belongs_to_display_name = 'name', $is_redirect = true)
+	protected function conditioned_bulk($options, $args = array())
 	{
+
+		$default_args = array(
+			'default_values' => array(),
+			'belongs_to_display_name' => 'name',
+			'is_redirect' => true
+		);
+
+		extract(\Util::parse_args($defaults, $args));
 
 		$model = $this->model_name;
 		$model::set_authorized_options();
@@ -864,7 +943,7 @@ class Controller_Base extends Controller_Core
 					$rel_key_from => $data->{$rel_key_to},
 				));
 			}
-			foreach ($defaults as $key => $default) {
+			foreach ($default_values as $key => $default) {
 				$row->{$key} = $default;
 			}
 

@@ -675,7 +675,11 @@ table + .index_toolbar {
 /*=== multiple_select ===*/
 .lcm_multiple_select {
 	position: relative;
-	height: 13.5em;
+	height: 11.5em;
+}
+.lcm_multiple_select option {
+	min-height: 1.25em;
+	height: 1.25em;
 }
 .lcm_multiple_select .remove_item,
 .lcm_multiple_select .add_item {
@@ -683,10 +687,10 @@ table + .index_toolbar {
     left: 13.5em;
 }
 .lcm_multiple_select .add_item {
-	top: 5.5em;
+	top: 4.5em;
 }
 .lcm_multiple_select .remove_item {
-    top: 10em;
+    top: 8em;
 }
 .lcm_multiple_select label {
 	display: block;
@@ -699,7 +703,7 @@ table + .index_toolbar {
 .lcm_multiple_select select[size] {
 	margin-bottom: .5em;
 	width: 11em;
-	height: 10.5em;
+	height: 8.5em;
 }
 .lcm_multiple_select .multiple_select_content {
 	position: absolute;
@@ -714,6 +718,22 @@ table + .index_toolbar {
 .lcm_multiple_select .selected {
 	margin-left: 0;
 }
+@media screen and (max-width: 700px) {
+	.lcm_multiple_select {
+		position: relative;
+		height: 14.5em;
+	}
+	.lcm_multiple_select option {
+		min-height: 1.75em;
+		height: 1.75em;
+	}
+	.lcm_multiple_select .multiple_select_content,
+	.lcm_multiple_select select,
+	.lcm_multiple_select select[size] {
+		height: 11.5em;
+	}
+}
+
 
 .lcm_form textarea {
 	width: 98%;
@@ -1375,14 +1395,16 @@ table.calendar .events {
 }
 .schedule_day.graph th.name,
 .widget .schedule_day.detail th.name {
-	width: 6em;
-	white-space: normal;
+	width: 10em;
+	font-size: .9em;
+/*	white-space: normal; */
 }
 .schedule_day.graph .time {
 	font-size: .75em;
 	text-align: center;
 	white-space: nowrap;
-	padding: 2px;
+	padding: 0 2px;
+	line-height: 1.25;
 }
 .schedule_day.graph .bar td {
 	padding: 0;
@@ -1394,19 +1416,13 @@ table.calendar .events {
 .schedule_day.graph tbody td{
 	height: .75em;
 }
-.schedule_day.graph .time.h0,
-.schedule_day.graph .time.h1,
-.schedule_day.graph .time.h2,
-.schedule_day.graph .time.h3,
-.schedule_day.graph .time.h4,
-.schedule_day.graph .time.h5,
-.schedule_day.graph .time.h6,
-.schedule_day.graph .time.h7,
-.schedule_day.graph .time.h8,
-.schedule_day.graph .time.h21,
-.schedule_day.graph .time.h22,
-.schedule_day.graph .time.h23 {
-/*	width: 1.25em;  縮小した時に、むしろ営業時間帯より長くなってしまうので */
+.schedule_day.graph .time {
+	width: 2.5em;
+}
+.schedule_day.graph .time.small {
+	padding: .25em 0 0.15em;
+	width: 13px;
+	font-size: .65em;
 }
 .schedule_day.graph .bar td {
 	height: 1.5em;
@@ -1469,7 +1485,7 @@ schedule_day.graph td {
 }
 
 /*== 重要度 ==*/
-.calendar .icon img ,
+/*.calendar .icon img ,
 .schedule_day.detail .icon img ,
 .legend.calendar .icon img {
 	width: .9em;
@@ -1479,6 +1495,7 @@ schedule_day.graph td {
 .legend.calendar .icon img {
 	margin-left: .75em;
 }
+*/
 
 /*== 外部表示 ==*/
 .text_icon.public {
@@ -1556,7 +1573,6 @@ schedule_day.graph td {
 	content: '毎年';
 }
 
-/*== 詳細設定 ==*/
 /*  仮予約  */
 .text_icon.provisional_kb {
 	background-color: #666;
@@ -1567,6 +1583,18 @@ schedule_day.graph td {
 .legend .text_icon.provisional_kb + span:after {
 	content: '仮登録';
 }
+
+/* 登録者関係 */
+.text_icon.dairi {
+	background-color: #804000;
+}
+.text_icon.dairi:before {
+	content: '代';
+}
+.legend .text_icon.dairi + span:after {
+	content: '代理登録';
+}
+
 
 /*  時間指定無し  */
 .text_icon.unspecified_kb {
@@ -1589,6 +1617,7 @@ schedule_day.graph td {
 	content: '終日';
 }
 /* 重要度 */
+/*
 .legend .icon.mark_importance.kb_0:after {
 	content: '重要度 高';
 }
@@ -1598,22 +1627,11 @@ schedule_day.graph td {
 .legend .icon.mark_importance.kb_2 + span:after {
 	content: '重要度 低';
 }
+*/
 /* 公開状態 */
 .legend .icon.mark_private + span:after {
 	content: '非公開';
 }
-
-/* 登録者関係 */
-.text_icon.proxy {
-	background-color: #804000;
-}
-.text_icon.proxy:before {
-	content: '代';
-}
-.text_icon.proxy + span:after {
-	content: '代理登録';
-}
-
 
 /*=== filer ===*/
 a.icon.dir:before,     span.icon.dir:before     { content: url('../img/led-icons/folder.png')' ';}
@@ -1958,7 +1976,7 @@ a.icon.compressed:before,     span.icon.compressed:before     { content: url('..
 .sub_column select {
 	font-size: .9em;
 }
-form_group table tbody th {
+.form_group table tbody th {
 	text-align: left;
 	min-width: 5em;
 	background-color: transparent;

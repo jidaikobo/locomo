@@ -23,9 +23,10 @@ class Controller_Sys extends \Controller_Base
 	public function action_home()
 	{
 		// このアクションはトップページ専用として、sys/homeへのアクセスはできないようにする。
-		if (substr(\Uri::string(),0,12) == 'sys/home'):
+		if (substr(\Uri::string(),0,12) == 'sys/home')
+		{
 			return \Response::redirect('/', 'location', 404);
-		endif;
+		}
 
 		// 描画
 		$view = \View::forge('sys/home');
@@ -40,6 +41,7 @@ class Controller_Sys extends \Controller_Base
 	public function action_404()
 	{
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
+		$this->response_status = "404";
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
 		$this->template->content = $view;
@@ -52,6 +54,7 @@ class Controller_Sys extends \Controller_Base
 	public function action_403()
 	{
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
+		$this->response_status = "403";
 		$view = \View::forge('sys/403');
 		$view->set_global('title', 'Forbidden');
 		$this->template->content = $view;
@@ -127,11 +130,14 @@ class Controller_Sys extends \Controller_Base
 					$url = $ctrl.DS.$home;
 					$args = array(
 						'urls'        => array(\Html::anchor(\Inflector::ctrl_to_dir($url), $home_name)),
+						'order'       => -1,
 						'show_at_top' => true,
 						'explanation' => $home_exp
 					);
 					array_unshift($actionset[$ctrl], $args); // add main action to top
 				}
+				// order
+				$actionset[$ctrl] = \Arr::multisort($actionset[$ctrl], array('order' => SORT_ASC));
 			}
 
 			// order

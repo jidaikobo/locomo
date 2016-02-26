@@ -5,26 +5,12 @@ echo $form;
 ?>
 
 <!--multiple selector-->
-<!--checkboxes for noscript-->
-<div class="input_group show_if_no_js1">
-	<h2>ユーザ選択</h2>
-	<div class="field label_fb lcm_focus" title="ユーザ選択">
-	<?php
-	foreach (\Model_Usr::find_options('display_name', array()) as $uid => $v):
-		echo '<label>'.\Form::checkbox('user[]', $uid, array_key_exists($uid, $item->user)).$v.'</label>';
-	endforeach;
-	?>
-	</div>
-</div>
-
-<!--/checkboxes for noscript-->
-
-<div class="input_group hide_if_no_js nd">
+<div class="input_group hide_if_no_js ">
 <h2>ユーザ選択</h2>
 	<div class="field">
 			<div id="member_panel" class="lcm_focus" title="ユーザの選択">
-				<select id="group_list" class="multiple_select_narrow_down" data-target-id="user_group_sel		ects" title="グループ絞り込み">
-							<option value="">絞り込み：全グループ</option>
+				<select id="group_list" name="group_list" class="multiple_select_narrow_down" data-target-id="user_group_selects" title="グループ絞り込み">
+					<option value="">絞り込み：全グループ</option>
 					<?php foreach(\Model_Usrgrp::find_options('name',
 						array(
 							'where' => array(
@@ -40,10 +26,10 @@ echo $form;
 					<?php endforeach; ?>
 				</select>
 
-				<div id="user_group_selects" class="lcm_multiple_select" data-hidden-item-id="hidden_members">
+				<div id="user_group_selects" class="lcm_multiple_select">
 					<div class="multiple_select_content">
 						<label for="member_kizon">選択済み</label>
-						<select id="form_member_kizon" name="member_kizon" multiple size="2" title="選択済みユーザ">
+						<select id="form_member_kizon" name="member_kizon" class="selected" multiple size="2" title="選択済みユーザ">
 						<?php foreach($item->user as $row): ?>
 							<option value="<?php echo $row->id; ?>"><?php echo $row->display_name; ?></option>
 						<?php endforeach; ?>
@@ -67,8 +53,19 @@ echo $form;
 	</div><!-- /.field -->
 </div>
 <!--/multiple selector-->
+<!--checkboxes for noscript-->
+<div class="input_group show_if_no_js">
+	<h2>ユーザ選択</h2>
+	<div class="field label_fb lcm_focus" title="ユーザ選択">
+	<?php
+	foreach (\Model_Usr::find_options('display_name', array()) as $uid => $v):
+		echo '<label>'.\Form::checkbox('user[]', $uid, array_key_exists($uid, $item->user)).$v.'</label>';
+	endforeach;
+	?>
+	</div>
+</div>
 
-<!--multiple selector-->
+<!--/checkboxes for noscript-->
 <?php
 $usrgrps = \Model_Usrgrp::find_options('name',
 																			 array(
@@ -95,7 +92,7 @@ $usrgrps = \Model_Usrgrp::find_options('name',
 </div>
 
 <!--/checkboxes for noscript-->
-
+<?php /* ?>
 <div class="input_group hide_if_no_js nd">
 <h2>ユーザグループ選択</h2>
 	<div class="field">
@@ -124,7 +121,7 @@ $usrgrps = \Model_Usrgrp::find_options('name',
 	</div><!-- /.field -->
 </div>
 <!--/multiple selector-->
-
+<?php */ ?>
 <?php
 echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 echo \Form::close();

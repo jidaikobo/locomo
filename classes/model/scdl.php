@@ -155,11 +155,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '第何週',
 			),
 		),
-		'week_kb_option1' => 
+		'week_kb_option1' =>
 		array (
 			'label' => '繰り返し曜日2',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('' => '---',
@@ -174,11 +174,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '曜日',
 			),
 		),
-		'week_index_option1' => 
+		'week_index_option1' =>
 		array (
 			'label' => '第何週2',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('1' => '1'
@@ -191,11 +191,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '第何週',
 			),
 		),
-		'week_kb_option2' => 
+		'week_kb_option2' =>
 		array (
 			'label' => '繰り返し曜日3',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('' => '---'
@@ -210,11 +210,11 @@ class Model_Scdl extends \Model_Base_Soft
 				'title' => '曜日',
 			),
 		),
-		'week_index_option2' => 
+		'week_index_option2' =>
 		array (
 			'label' => '第何週2',
 			'data_type' => 'int',
-			'form' => 
+			'form' =>
 			array (
 				'type' => 'select',
 				'options' => array('1' => '1'
@@ -245,7 +245,7 @@ class Model_Scdl extends \Model_Base_Soft
 			'form' =>
 			array (
 				'type' => 'text',
-				'size' => 50,
+				'size' => 40,
 				'class' => 'text',
 			),
 			'validation' =>
@@ -401,13 +401,13 @@ class Model_Scdl extends \Model_Base_Soft
 		),
 		'user_id' =>
 		array (
-			'label' => '作成者',
+			'label' => '登録者',
 			'data_type' => 'int',
 			'form' =>
 			array (
 				'type' => 'select',
 				'class' => 'int',
-				'title' => '作成者'
+				'title' => '登録者'
 			),
 		),
 		'attend_flg' =>
@@ -685,6 +685,7 @@ class Model_Scdl extends \Model_Base_Soft
 		// 登録データ
 		$week = array('日', '月', '火', '水', '木', '金', '土');
 		$repeat_kbs = self::get_repeat_kbs($data->repeat_kb);
+		$detail_kbs = self::get_detail_kbs($data->provisional_kb);
 		if($data->repeat_kb != 0) {
 			$print .= "<td></tr><tr><th>期間：</th><td>";
 			$print .= "<p>" . $repeat_kbs[$data->repeat_kb];
@@ -717,7 +718,6 @@ class Model_Scdl extends \Model_Base_Soft
 				$print .= ", 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
 				$date_detail['display_repeat_kb'] .= ", 第" . $data->week_index_option2 . $week[$data->week_kb_option2] . "曜日";
 			}
-			if ($data->repeat_kb == 6) $print .= ')';
 		}
 		if($data->repeat_kb != 0) $print .= "</p>";
 		if ($data->repeat_kb == 0) { //繰り返しなし

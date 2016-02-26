@@ -118,8 +118,8 @@ body.loggedin {
 	vertical-align: middle !important;
 }
 
-#adminbar div.adminbar_top,
-#adminbar div.adminbar_bottom {
+#adminbar div.lcmbar_top,
+#adminbar div.lcmbar_bottom {
 	display: block;
 	width: 100%;
 }
@@ -127,7 +127,7 @@ img#adminbar_logo {
 	background-color: #fff;
 }
 /* あとで整理 */
-#adminbar div.adminbar_top {
+#adminbar div.lcmbar_top {
 	height: 2.5em;
 	line-height: 2.5em;
 	position: absolute;
@@ -145,7 +145,7 @@ img#adminbar_logo {
 	text-shadow: none;
 	color: #333;
 }
-#adminbar .adminbar_bottom {
+#adminbar .lcmbar_bottom {
 	clear: both;
 	border-top: 1px solid #7393c6;
 	border-bottom: 1px solid #858c91;
@@ -171,30 +171,30 @@ img#adminbar_logo {
 	vertical-align: middle;
 }
 /* 表側と裏側で高さが違うので、いったんなし
-#adminbar .adminbar_top .adminbar_main,
-#adminbar .adminbar_top .adminbar_sub {
+#adminbar .lcmbar_top .adminbar_main,
+#adminbar .lcmbar_top .adminbar_sub {
 	padding-top: .125em;
 }
 */
-#adminbar .adminbar_top .adminbar_main a {
+#adminbar .lcmbar_top .adminbar_main a {
 	margin: 0 5px;
 }
-/*#adminbar .adminbar_bottom .adminbar_main {
+/*#adminbar .lcmbar_bottom .adminbar_main {
 	padding: 0 1.85em 0 10px;
 }
 */
-#adminbar .adminbar_bottom .adminbar_main div:first-child,
-#adminbar .adminbar_bottom .adminbar_main div:first-child + div {
+#adminbar .lcmbar_bottom .adminbar_main div:first-child,
+#adminbar .lcmbar_bottom .adminbar_main div:first-child + div {
 	margin-right: .5em;
 }
 #adminbar .adminbar_sub {
 	float: right;
 	padding-right: .25em;
 }
-#adminbar .adminbar_bottom .adminbar_sub {
+#adminbar .lcmbar_bottom .adminbar_sub {
 	line-height: 2em;
 }
-#adminbar .adminbar_top .adminbar_sub div {
+#adminbar .lcmbar_top .adminbar_sub div {
 	vertical-align: middle;
 	line-height: 2em;
 	padding-left: 5px;
@@ -274,20 +274,20 @@ img#adminbar_logo {
 	height: 2em;
 	vertical-align: middle;
 }
-#adminbar .adminbar_top .adminbar_icon {
+#adminbar .lcmbar_top .adminbar_icon {
 	width: 1.75em;
 	padding: 0.2em .125em .25em;
 }
-#adminbar .adminbar_top .adminbar_icon img {
+#adminbar .lcmbar_top .adminbar_icon img {
 	width: 1.75em;
 	height: 1.75em;
 	padding: .1em 0;
 }
-#adminbar .adminbar_bottom .adminbar_icon {
+#adminbar .lcmbar_bottom .adminbar_icon {
 	width: 1.5em;
 	padding: 0 .125em;
 }
-#adminbar .adminbar_bottom .adminbar_icon img {
+#adminbar .lcmbar_bottom .adminbar_icon img {
 	padding: .25em 0;
 }
 
@@ -301,38 +301,38 @@ img#adminbar_logo {
 	line-height: 2em;
 	padding-top: .5em;
 }
-#adminbar .adminbar_bottom .adminbar_sub a.has_dropdown {
+#adminbar .lcmbar_bottom .adminbar_sub a.has_dropdown {
 	padding: .15em 16px .15em 0;
 }
-#adminbar .adminbar_top .adminbar_main div > a {
+#adminbar .lcmbar_top .adminbar_main div > a {
 	display: block;
 	line-height: 2em;
 	vertical-align: middle;
 }
-#adminbar .adminbar_top a {
+#adminbar .lcmbar_top a {
 	color: #fff !important;
 	text-shadow: 1px 1px 0 #333 !important;
 }
-#adminbar .adminbar_top a,
-#adminbar .adminbar_bottom a {
+#adminbar .lcmbar_top a,
+#adminbar .lcmbar_bottom a {
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 }
-#adminbar .adminbar_top div > a:hover,
-#adminbar .adminbar_top div > a:focus {
+#adminbar .lcmbar_top div > a:hover,
+#adminbar .lcmbar_top div > a:focus {
 	background-color: rgba(255,255,255,.15);
 	transition: 0.3s;
 }
 #adminbar .li,
 #adminbar .menulist li a,
-#adminbar .adminbar_bottom a {
+#adminbar .lcmbar_bottom a {
 	color: #333 !important;
 	text-shadow: 1px 1px 0 #fff !important;
 	margin: 0 !important;
 	padding: .35em 4px .4em;
 }
-#adminbar .adminbar_top a.has_dropdown {
+#adminbar .lcmbar_top a.has_dropdown {
 	padding-right: 15px;
 	background-image: url('../img/system/mark_listopen_wh.png');
 	background-position: right center;
@@ -341,8 +341,8 @@ img#adminbar_logo {
 #adminbar .icononly {
 	margin-right: -8px;
 }
-#adminbar .adminbar_bottom div a:hover,
-#adminbar .adminbar_bottom div a:focus {
+#adminbar .lcmbar_bottom div a:hover,
+#adminbar .lcmbar_bottom div a:focus {
 	background-color: rgba(0,0,0,.06);
 	transition: 0.3s;
 	text-shadow: none;
@@ -794,10 +794,10 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 
 
 @media screen and (max-width: 700px) {
-	#adminbar .adminbar_bottom .adminbar_main {
+	#adminbar .lcmbar_bottom .adminbar_main {
 		padding-right: 3.5em;
 	}
-	#adminbar .adminbar_bottom .adminbar_sub {
+	#adminbar .lcmbar_bottom .adminbar_sub {
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -805,7 +805,7 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 	#adminbar #adminbar .adminbar_toggle_item .adminbar_icon {
 		margin-right: -8px;
 	}
-	#adminbar #adminbar .adminbar_bottom .adminbar_list_horizontal li {
+	#adminbar #adminbar .lcmbar_bottom .adminbar_list_horizontal li {
 		margin-left: -.25em;
 	}
 	#adminbar .hide_if_smalldisplay {

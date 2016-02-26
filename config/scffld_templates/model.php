@@ -62,6 +62,13 @@ class Model_XXX extends \Model_Base
 	}
 
 	/**
+	 * _event_before_save()
+	 */
+	public function _event_before_save()
+	{
+	}
+
+	/**
 	 * set_search_options()
 	 */
 	public static function set_search_options()
@@ -76,9 +83,9 @@ class Model_XXX extends \Model_Base
 				'or' => array(
 					array('body', 'LIKE', $all),
 					'or' => array(
-						array('memo', 'LIKE', $all), 
+						array('memo', 'LIKE', $all),
 					)
-				) 
+				)
 			);
 		}
 */

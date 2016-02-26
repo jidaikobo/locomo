@@ -77,18 +77,20 @@ class Actionset_Scdl extends \Actionset
 			// 項目が日付を持っていたらそれを使う
 			if(isset($obj->start_date))
 			{
-				// 短日イベントの場合（開始日と終了日が一致）は、その値を使う。
+				// 単日イベントの場合（開始日と終了日が一致）は、その値を使う。
 				if ($obj->start_date == $obj->end_date)
 				{
 					$y = date('Y', strtotime($obj->start_date));
 					$m = date('m', strtotime($obj->start_date));
 					$d = date('d', strtotime($obj->start_date));
-				} else {
-					// 短日イベントでない場合は、ターゲット日時にする
-					$y = date('Y');
-					$m = $obj->target_month ?: date('m');
-					$d = intval($obj->target_day);
 				}
+				else if (\Uri::segment(4) && \Uri::segment(5) && \Uri::segment(6))
+				{
+					$y = \Uri::segment(4) ?: $y ;
+					$m = \Uri::segment(5) ?: $m ;
+					$d = \Uri::segment(6) ?: $d ;
+				}
+
 				$ym = date('Y-m', strtotime($y.'-'.$m.'-'.$d));
 				$ymd = date('Y-m-d', strtotime($y.'-'.$m.'-'.$d));
 			}
@@ -109,17 +111,36 @@ class Actionset_Scdl extends \Actionset
 		$week_1st_day = $year.DS.$mon.DS.$day;
 		$ym_str = $y.DS.$m;
 
+		// グループおよび建物ID
+		$qstr_tmp = array();
+		$qstr = '';
+		if ($controller == '\Controller_Scdl')
+		{
+			$main_usergroup_id = \Auth::get('main_usergroup_id');
+			$qstr_tmp[] = $main_usergroup_id ? 'ugid='.intval($main_usergroup_id) : 'ugid='.intval(\Input::get('ugid'));
+			$qstr_tmp[] = 'ugid='.intval(\Input::get('uid'));
+		}
+		else
+		{
+			$qstr_tmp[] = \Input::get('bid') ? 'bid='.intval(\Input::get('bid')) : 'bid=';
+			$qstr_tmp[] = 'bgid='.e(\Input::get('bgid'));
+		}
+		if ($qstr_tmp)
+		{
+			$qstr = '?'.join('&amp;', $qstr_tmp);
+		}
+
 		// uri
 		$urls = array(
-			0 => array($controller.DS."calendar/", '今月'),
-			1 => array($controller.DS."calendar/".$ym_str, '月表示'),
-			3 => array($controller.DS."calendar/{$y}/{$m}/{$d}", '日表示'),
+			0 => array($controller.DS."calendar/".$qstr, '今月'),
+			1 => array($controller.DS."calendar/".$ym_str.$qstr, '月表示'),
+			3 => array($controller.DS."calendar/{$y}/{$m}/{$d}".$qstr, '日表示'),
 		);
 		if ($controller == '\Controller_Scdl')
 		{
-			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member', '週表示');
+			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/member'.$qstr, '週表示');
 		} else {
-			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/building', '週表示');
+			$urls[2] = array($controller.DS."calendar/".$week_1st_day.'/week/building'.$qstr, '週表示');
 		}
 		ksort($urls);
 		$urls = \Request::main()->action == 'create' ? array() : $urls ;
@@ -130,6 +151,50 @@ class Actionset_Scdl extends \Actionset
 			'show_at_top'  => true,
 			'explanation'  => 'カレンダ形式で表示します。',
 			'order'        => 1
+		);
+		return $retvals;
+	}
+
+	/**
+	 * actionset_swap
+	 */
+	public static function actionset_swap($controller, $obj = null, $id = null, $urls = array())
+	{
+		// 編集画面では表示しない
+		if (in_array(\Request::main()->action, array('edit', 'create', 'viewdetail')))
+		{
+			return array();
+		}
+
+		$segments = \Uri::segments();
+		if ($controller == '\Controller_Scdl')
+		{
+			$ctrl = '\Reserve\Controller_Reserve';
+			$segments = array_slice($segments, 1);
+			$last = $segments[max(array_keys($segments))];
+			if ($last == 'member') $segments[max(array_keys($segments))] = 'building';
+			$str = '施設予約へ';
+		}
+		else
+		{
+			$ctrl = '\Controller_Scdl';
+			$segments = array_slice($segments, 2);
+			$max = empty($segments) ? false : max(array_keys($segments));
+			if ($max)
+			{
+				$last = $segments[$max];
+				if ($last == 'building') $segments[$max] = 'member';
+			}
+			$str = 'スケジューラへ';
+		}
+		$urls = array(array($ctrl.DS.join('/', $segments), $str));
+
+		$retvals = array(
+			'urls'         => $urls ,
+			'action_name'  => $str,
+			'show_at_top'  => true,
+			'explanation'  => '管理者向けの削除済み項目一覧です。',
+			'order'        => 50
 		);
 		return $retvals;
 	}
@@ -313,7 +378,7 @@ class Actionset_Scdl extends \Actionset
 		);
 		return $retvals;
 	}
-	
+
 /*
 	// actionset_view
 	public static function actionset_view($controller, $obj = null, $id = null, $urls = array())

@@ -4,7 +4,8 @@
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
-<?php if(!\Request::is_hmvc()): ?>
+
+<?php if( ! $is_hmvc): ?>
 <?php /* ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <?php */ ?>
@@ -18,7 +19,7 @@
 		</span>
 	</a>
 </h1>
-<div class="hidden_item form_group" style="display: none;">
+<div class="hidden_item form_group off" style="display: none;">
 <section>
 	<h1 class="skip">検索</h1>
 	<form class="search" action="" onsubmit="calendar_narrow_text();return false;">
@@ -53,7 +54,7 @@
 							$(this).hide();
 						};
 					});
-				} 
+				}
 				cnt = $('table.calendar').find('.lcm_tooltip_parent:visible').length;
 				if(cnt) 	msg = cnt+'件ヒットしました';
 
@@ -70,6 +71,7 @@
 				});
 			});
 			</script>
+
 			<input type="text" title="カレンダ内検索" id="form_narrow_text" value="">
 			<input type="submit" value="カレンダ内検索" class="button primary" id="form_submit" name="submit">
 			<input type="button" value="解除" class="button" id="form_clear" name="clear">
@@ -82,9 +84,7 @@
 	<p id="msg" tabindex="-1"></p>
 </div>
 
-
 <div class="field_wrapper calendar">
-
 <?php
 	include("calendar_narrow.php");
 	// 週選択
@@ -99,7 +99,7 @@
 <h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week lcm_focus" title="カレンダ">
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 	<thead>
 	<tr>
 		<th>&nbsp;</th>
@@ -114,22 +114,38 @@
 	</thead>
 <?php endif; ?>
 	<tbody>
-<?php $detail_pop_array = array(); ?>
 <?php
+$detail_pop_array = array();
 $bgids = array();
 foreach($narrow_building_list as $v):
 	$bgids[$v->item_id] = true;
 endforeach;
-?>
- <?php $reserve_rows = array(); ?>
-<?php foreach($narrow_building_list as $row):
-	if(isset($schedule_data['building_list'][$row->item_id])): //該当する場合は、予定リストの中に施設が含まれている。順番は$narrow_building_listに依るので、item_sortはみないでよい。
-		$each_row_data = $schedule_data['building_list'][$row->item_id];
-		if((\Session::get('reservenarrow_bid') == null && \Session::get('reservenarrow_bgid') == null) || // 絞り込み：なし
-		 	 (\Session::get('reservenarrow_bid') != null && \Session::get('reservenarrow_bid') == $each_row_data['model']->item_id) || // 絞り込み：単一
-		 	 (\Session::get('reservenarrow_bid') == null && \Session::get('reservenarrow_bgid') != null && isset($bgids[$each_row_data['model']->item_id]))): // 絞り込み：グループ
+$reserve_rows = array();
+$reservenarrow_bid  = \Session::get('reservenarrow_bid');
+$reservenarrow_bgid = \Session::get('reservenarrow_bgid');
+$show_empty_row     = \Session::get('show_empty_row');
 
-		 $reserve_rows[$each_row_data['model']->item_sort] ="\t".'<tr class="lcm_focus" title="'.$each_row_data['model']->item_name .'">'."\n\t\t"
+foreach($narrow_building_list as $row):
+	//該当する場合は、予定リストの中に施設が含まれている。順番は$narrow_building_listに依るので、item_sortはみないでよい。
+//	if(isset($schedule_data['building_list'][$row->item_id])):
+	if (true):
+		if(isset($schedule_data['building_list'][$row->item_id])):
+			$each_row_data = $schedule_data['building_list'][$row->item_id];
+		else:
+			if ( ! $show_empty_row) continue;
+			$each_row_data = array();
+			$each_row_data['data'] = array();
+			$each_row_data['model'] = (object) array(
+				'id' => $row->id,
+				'item_id' => $row->item_id,
+				'item_name' => $row->item_name,
+				'item_sort' => $row->item_id,
+			);
+		endif;
+		if(($reservenarrow_bid == null && $reservenarrow_bgid == null) || // 絞り込み：なし
+			 ($reservenarrow_bid != null && $reservenarrow_bid == $each_row_data['model']->item_id) || // 絞り込み：単一
+			 ($reservenarrow_bid == null && $reservenarrow_bgid != null && isset($bgids[$each_row_data['model']->item_id]))): // 絞り込み：グループ
+			$reserve_rows[$each_row_data['model']->item_sort] ="\t".'<tr class="lcm_focus" title="'.$each_row_data['model']->item_name .'">'."\n\t\t"
 //			.'<th>'.$each_row_data['model']->item_name.'</th>'."\n\t\t";
 			.'<th><a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d", $year, $mon)).'&amp;building_id='.$each_row_data['model']->id).'" class="">'.$each_row_data['model']->item_name.'</a></th>'."\n\t\t";
 
@@ -188,6 +204,11 @@ endforeach;
 								//繰り返し区分
 								$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
 								$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']].' ' : '';
+								//代理登録
+								if(($v2->user_id && $v2->creator_id)&&($v2->user_id != $v2->creator_id)):
+									$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
+									$eventtitle_skip.= '代理登録 ';
+								endif;
 /*
 								//重要度
 								$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
@@ -222,7 +243,7 @@ endforeach; ?>
 	</tbody>
 </table>
 <?php include("inc_legend.php"); //カレンダ凡例 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <?php
 	// 週選択
 	echo $week_select_html;

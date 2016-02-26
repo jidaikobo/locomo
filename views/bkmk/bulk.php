@@ -1,6 +1,5 @@
 <?php if (isset($search_form)) echo $search_form; ?>
 
-
 <?php if ($form): ?>
 <?php echo \Form::open(\Uri::create(\Uri::current(), array(), \Input::get())); ?>
 <div class="form_group">
@@ -19,4 +18,3 @@
 <?php endif; ?>
 <?php echo \Form::close() ?>
 <?php echo \Pagination::create_links() ?>
-

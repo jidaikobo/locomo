@@ -16,10 +16,11 @@
 	</thead>
 	<tbody>
 	<tr>
-		<th>
+		<th style="width: 6em;">
 			<?php
 			// 指定なし
-			print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
+			//print '予定日時：</th><td>' . $model_name::display_target_day_info($detail_pop_data);
+			print '予定日時：</th><td>' . htmlspecialchars_decode($detail_pop_data->display_target_day_info);
 			?>
 		</td>
 	</tr>
@@ -69,14 +70,16 @@
 <?php */ ?>
 	</tr>
 	<?php if ($detail_pop_data->kind_flg == 2) { ?>
+	<?php /* ?>
 	<tr>
 		<th class="min">
 			施設使用目的：</th><td><?php print $detail_pop_data->purpose_kb . " " . $detail_pop_data->purpose_text; ?>
 		</td>
 	</tr>
+	<?php */ ?>
 	<?php if ($detail_pop_data->user_num > 0) { ?>
 	<tr>
-		<th>
+		<th class="min">
 			施設使用人数：</th><td><?php print $detail_pop_data->user_num.'人'; ?>
 		</td>
 	</tr>
@@ -85,11 +88,22 @@
 	<?php } ?>
 	<tr>
 		<th>
-			登録者：</th><td><?php print @$detail_pop_data->create_user->display_name; ?>
+			登録者：</th><td><?php print $detail_pop_data->create_user['display_name']; ?>
 		</td>
 	</tr>
 	</tbody>
 </table>
+<span class="skip">
 
+<?php //ページ内検索用文字列
+	//仮登録
+
+
+//	if() echo '仮登録';
+
+	//代理登録
+	if(($detail_pop_data->user_id && $detail_pop_data->creator_id)&&($detail_pop_data->user_id != $detail_pop_data->creator_id)) echo '代理登録 ';
+?>
+</span>
 </div>
 <?php } ?>

@@ -4,7 +4,7 @@
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <?php /* ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <?php */ ?>
@@ -18,7 +18,7 @@
 		</span>
 	</a>
 </h1>
-<div class="hidden_item form_group" style="display: none;">
+<div class="hidden_item form_group off" style="display: none;">
 <section>
 	<h1 class="skip">検索</h1>
 	<form class="search" action="" onsubmit="calendar_narrow_text();return false;">
@@ -53,11 +53,11 @@
 							$(this).hide();
 						};
 					});
-				} 
+				}
 				cnt = $('table.calendar').find('.lcm_tooltip_parent:visible').length;
 				if(cnt) 	msg = cnt+'件ヒットしました';
 
-				
+
 				if(clear){
 					$('#narrow_text_info').hide();
 				}else{
@@ -99,7 +99,7 @@
 <h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week lcm_focus" title="カレンダ">
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <thead>
 	<tr>
 		<th></th>
@@ -126,19 +126,27 @@ endforeach;
  ?>
 <?php // foreach($schedule_data['member_list'] as $row): ?>
 
-<?php foreach($narrow_user_list as $id => $row): ?>
-<?php // 絞り込みを反映
-	//if(\Session::get('show_empty_row'))
+<?php
+foreach($narrow_user_list as $id => $row):
+ // 絞り込みを反映
+	$show_available_person = \Session::get('show_available_person');
 	if ($id == 'none') continue;
 
-if(isset($schedule_data['member_list'][$id])):
-	$each_row_data = $schedule_data['member_list'][$id];
+	if(true):
+	if(isset($schedule_data['member_list'][$id])):
+		$each_row_data = $schedule_data['member_list'][$id];
+	else:
+		if ( ! $show_available_person) continue;
+		$each_row_data = array();
+		$each_row_data['model'] = array();
+	endif;
+
 	if((\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') == null) ||
-	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $each_row_data['model']->id) ||
-	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$each_row_data['model']->id]))):
+	 (\Session::get('scdlnarrow_uid') != null && \Session::get('scdlnarrow_uid') == $id) ||
+	 (\Session::get('scdlnarrow_uid') == null && \Session::get('scdlnarrow_ugid') != null && isset($ugids[$id]))):
 ?>
-	<tr class="lcm_focus" title="<?php echo  $each_row_data['model']->display_name?>">
-		<th><?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d", $year, $mon)).'&amp;member_id='.$each_row_data['model']->id).'">'.$each_row_data['model']->display_name.'</a>'; ?>
+	<tr class="lcm_focus" title="<?php echo $row ?>">
+		<th><?php echo '<a href="'.\Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d", $year, $mon)).'&amp;member_id='.$id).'">'.$row.'</a>'; ?>
 		</th>
 		<?php
 		foreach($schedule_data['schedules_list'] as $schedule_row):
@@ -178,7 +186,7 @@ if(isset($schedule_data['member_list'][$id])):
 					<span class="skip"><?php print $each_date_title_skip ?></span>
 				</a>
 
-				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;member_id='.$each_row_data['model']->id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
+				<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $schedule_row['year'], $schedule_row['mon'], $schedule_row['day'])).'&amp;member_id='.$id); ?>" class="add_new" title="新規追加"><span class="skip">新規追加</span></a>
 
 				<div class="events">
 					<?php
@@ -207,6 +215,11 @@ if(isset($schedule_data['member_list'][$id])):
 										//繰り返し区分
 										$eventtitle_icon.= $v2['repeat_kb'] != 0 ? '<span class="text_icon schedule repeat_kb_'.$v2['repeat_kb'].'"></span>' : '';
 										$eventtitle_skip.= $v2['repeat_kb'] != 0 ? $repeat_kbs[$v2['repeat_kb']].' ' : '';
+										//代理登録
+										if(($v2->user_id && $v2->creator_id)&&($v2->user_id != $v2->creator_id)):
+											$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
+											$eventtitle_skip.= '代理登録 ';
+										endif;
 /*										//重要度
 										$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
 										$eventtitle_icon.= '<span class="icon" style="width: 1em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_importance_'.$importance_v.'.png" alt=""></span>';
@@ -241,7 +254,7 @@ if(isset($schedule_data['member_list'][$id])):
 </tbody>
 </table>
 <?php include("inc_legend.php"); //カレンダ凡例 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <?php
 	// 週選択
 	echo $week_select_html;

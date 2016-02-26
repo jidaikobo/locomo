@@ -4,7 +4,7 @@
 	$importance_kbs = $model_name::get_importance_kbs();
 	$currentday = (date("Y") == $year && date("n") == $mon ) ? date("j") : '';
 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 週間カレンダ</h1>
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar">
@@ -22,7 +22,7 @@
 <h2 class="skip">カレンダ</h2>
 <?php endif; ?>
 <table class="calendar week <?php if (!\Request::is_hmvc()) echo 'lcm_focus" title="カレンダ';?>">
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 	<thead>
 		<tr>
 			<th class="week1"><span>月曜日</span></th>
@@ -70,7 +70,6 @@ endif; ?>
 			<div class="events">
 			<?php foreach ($v['data'] as $v2):
 				$detail_pop_array[] = $v2;
-
 					$eventtitle_icon = '';
 					$eventtitle_skip = '<span class="skip">';
 
@@ -81,7 +80,7 @@ endif; ?>
 							$eventtitle_skip.= $value.' ';
 						endif;
 					endforeach;
-					
+
 					//外部表示(施設予約)
 					if(\Request::active()->controller == "Reserve\Controller_Reserve"):
 						$eventtitle_icon.= $v2['public_display']==2 ? '<span class="text_icon reserve public"></span>' : '';
@@ -95,6 +94,11 @@ endif; ?>
 					$event_time_display_data = $model_name::make_target_day_info($v2);
 					$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
 					$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
+					//代理登録
+					if(($v2->user_id && $v2->creator_id)&&($v2->user_id != $v2->creator_id)):
+						$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
+						$eventtitle_skip.= '代理登録 ';
+					endif;
 /*
 					//重要度
 					$importance_v = $model_name::value2index('title_importance_kb', html_entity_decode($v2['title_importance_kb']));
@@ -119,7 +123,7 @@ endif; ?>
 </tbody>
 </table>
 <?php include("inc_legend.php"); //カレンダ凡例 ?>
-<?php if(!\Request::is_hmvc()): ?>
+<?php if( ! $is_hmvc): ?>
 </div><!-- /.field_wrapper.calendar -->
 <?php endif; ?>
 <?php

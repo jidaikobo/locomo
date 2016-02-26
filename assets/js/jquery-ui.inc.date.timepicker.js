@@ -141,13 +141,15 @@ $('input.datetime,  input[type=datetime]').datetimepicker({
 			if(lcm_env.isTouchDevice){ this.useSelect = true;}
 		},
 		beforeShow: function(){
+			if(this.input.attr('placeholder')){ this.input.val(this.input.attr('placeholder'));}
+			
 		},
 	});
 })();//datepickerここまで
 
 //入力された日付の整形
 
-$('input.date , input[type=date]').each(function(){
+$('input.date , input[type=date], input.time').each(function(){
 	this.onchange = function(){
 		$(this).val(format_datestr($(this).val()));
 	}
@@ -170,6 +172,7 @@ function format_datestr(data){
 	"−":"-",
 	"/":"-",
 	"／":"-",
+	"：":":",
 	"年":"-",
 	"月":"-",
 	"日":"",

@@ -93,11 +93,12 @@ class File extends \Fuel\Core\File
 
 		// retouch
 		// $files = is_dir($upload_path) ? \File::read_dir($upload_path, 1) : array(); // 既存のファイルを取り直すあえて
+		$files = \Upload::get_files(); // save_as を取る
 		if ($files)
 		{
 			foreach ($files as $file)
 			{
-				$file = $file['name'];
+				$file = $file['saved_as'];
 				if( ! in_array(substr(strtolower($file), -4, 4), array('.jpg','jpeg','.gif','.png'))) continue;
 				if(in_array(substr(strtolower($file), -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
 
@@ -130,27 +131,27 @@ class File extends \Fuel\Core\File
 				if ($sizes->width <= 1600)
 				{
 					$img_file
-																	 ->save_pa('', '_lg', 'jpg');
+						->save_pa('', '_lg', 'jpg');
 				}
 				else
 				{
 					$img_file
-																	 ->resize(1600)
-																	 ->config('bgcolor', '#ffffff')
-																	 ->save_pa('', '_lg', 'jpg');
+						->resize(1600)
+						->config('bgcolor', '#ffffff')
+						->save_pa('', '_lg', 'jpg');
 				}
 
 				// small image
 				$img_file
-																 ->resize(400)
-																 ->config('bgcolor', '#ffffff')
-																 ->save_pa('', '_sm', 'jpg');
+					->resize(400)
+					->config('bgcolor', '#ffffff')
+					->save_pa('', '_sm', 'jpg');
 
 				// thumbnail
 				$img_file
-																 ->crop_resize(400, 400)
-																 ->config('bgcolor', '#ffffff')
-																 ->save_pa('', '_tn', 'jpg');
+					->crop_resize(400, 400)
+					->config('bgcolor', '#ffffff')
+					->save_pa('', '_tn', 'jpg');
 			}
 		}
 	}

@@ -189,7 +189,10 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 		);
 		$this->model_name = '\Model_Msgbrd_Categories';
 		$this->_content_template = 'msgbrd/categories/bulk';
-		$this->bulk($page);
+
+		$this->bulk(array(
+			'page' => $page,
+		));
 
 		// assign
 		$presenter = \Presenter::forge($this->_content_template);

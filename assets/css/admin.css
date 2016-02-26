@@ -205,3 +205,74 @@ body.lcm_action_login.default_logo .container{
 	box-sizing: border-box;
 }
 
+/* ツールバー周り。adminbarがあるの前提なら、向こうにあるべきなの？ */
+#main_content div.lcmbar_top,
+#main_content div.lcmbar_bottom {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#main_content .lcmbar_bottom {
+	clear: both;
+	border-top: 1px solid #858c91;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 4px 10px;
+	background: #fafafa;
+	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -o-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: -webkit-gradient(linear, center top, center bottom, from(#fcfcfc), to(#ebebeb));
+	background-image: -webkit-linear-gradient(top, #fcfcfc, #ebebeb);
+	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
+	color: #333;
+	text-shadow: 1px 1px 0 #fff;
+	box-shadow: 0 0 2px rgba(0,0,0,.2);
+}
+
+#main_content .lcmbar_bottom  div:first-child,
+#main_content .lcmbar_bottom  div:first-child + div {
+	margin-right: .5em;
+}
+#main_content .lcmbar_bottom .adminbar_sub {
+	line-height: 2em;
+}
+#main_content .lcmbar_bottom .adminbar_icon {
+	width: 1.5em;
+	padding: 0 .125em;
+}
+#main_content .lcmbar_bottom .adminbar_icon img {
+	padding: .25em 0;
+}
+
+#main_content .lcmbar_bottom .adminbar_sub a.has_dropdown {
+	padding: .15em 16px .15em 0;
+}
+
+#main_content .lcmbar_top a,
+#main_content .lcmbar_bottom a {
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+#main_content .li,
+#main_content .menulist li a,
+#main_content .lcmbar_bottom a {
+	color: #333 !important;
+	text-shadow: 1px 1px 0 #fff !important;
+	margin: 0 !important;
+	padding: .35em 4px .4em;
+}
+#main_content .lcmbar_bottom div a:hover,
+#main_content .lcmbar_bottom div a:focus {
+	background-color: rgba(0,0,0,.06);
+	transition: 0.3s;
+	text-shadow: none;
+}
+#main_content .lcmbar_bottom div.submit_button {
+	margin: 0 10px 0;
+	text-align: center;
+}

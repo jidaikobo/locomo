@@ -332,4 +332,54 @@ class Util
 		return true;
 	}
 
+	/**
+	 * parse_args
+	 * $defaults の中にある key のもののみ
+	 * かつ、値は $args のほうを使用した配列を返す
+	 * 戻り値をextract で使うとき等に使用
+	 */
+	public static function parse_args($args, $defaults = array())
+	{
+		/*
+		 * object が来るかも?
+		if ( is_object( $args ) )
+			$r = get_object_vars( $args );
+		elseif ( is_array( $args ) )
+			$r =& $args;
+		 */
+
+		$args = array_merge($defaults, $args);
+		$ret = array_intersect_key($defaults, $args);
+		return $ret;
+	}
+
+	/*
+	 * parse_email()
+	 */
+	public static function parse_email ($str = '')
+	{
+		$str = str_replace("\r", "", $str);
+		$headers_raw = trim(substr($str, 0, strpos($str, "\n\n")));
+		$body = trim(substr($str, strpos($str, "\n\n")));
+
+		$headers = array();
+		foreach (explode("\n", $headers_raw) as $header)
+		{
+			list($k, $v) = explode(':', $header);
+			if (strpos($v, '<') !== false)
+			{
+				$vv = substr($v, 0, strpos($v, '<'));
+				$key = trim($k).'_str';
+				$headers[$key] = trim($vv);
+				$vv = substr($v, strpos($v, '<'), strpos($v, '>'));
+				$key = trim($k).'_email';
+				$headers[$key] = trim(trim($vv, ">"), "<");
+			}
+			else
+			{
+				$headers[trim($k)] = trim($v);
+			}
+		}
+		return array('headers' => $headers, 'body' => $body);
+	}
 }

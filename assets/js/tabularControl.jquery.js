@@ -175,7 +175,7 @@
 						.timepicker({
 							timeFormat: 'H:i',
 							beforeRender: function(self){
-								if(isTouchDevice){ this.useSelect = true;}
+								if(lcm_env.isTouchDevice){ this.useSelect = true;}
 							},
 							beforeShow: function(){
 							},

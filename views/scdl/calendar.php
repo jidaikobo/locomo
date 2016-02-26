@@ -17,7 +17,7 @@
 		</span>
 	</a>
 </h1>
-<div class="hidden_item form_group" style="display: none;">
+<div class="hidden_item form_group off" style="display: none;">
 <section>
 	<h1 class="skip">検索</h1>
 	<form class="search" action="" onsubmit="calendar_narrow_text();return false;">
@@ -146,7 +146,6 @@
 			<?php foreach ($v['data'] as $v2):
 				$detail_pop_data = $v2;
 				$detail_pop_array[] = $v2;
-
 				$eventtitle_icon = '';
 				$eventtitle_skip = '<span class="skip">';
 
@@ -171,6 +170,11 @@
 				$event_time_display_data = $model_name::make_target_day_info($v2);
 				$event_time_display = (\Session::get('scdl_display_time') == "1") ? "inline" : "none";
 				$event_time = '<span class="scdl_time sr_add bracket" style="display:' . $event_time_display . '">'. $event_time_display_data['start_time'] . '<span class="sr_replace to"><span>から</span></span>' . $event_time_display_data['end_time'] . '</span>';
+				//代理登録
+				if(($v2->user_id && $v2->creator_id)&&($v2->user_id != $v2->creator_id)):
+					$eventtitle_icon.= '<span class="text_icon schedule dairi"></span>';
+					$eventtitle_skip.= '代理登録 ';
+				endif;
 /*
 				//詳細区分
 				foreach($detail_kbs as $key => $value):
@@ -215,7 +219,7 @@ if($detail_pop_array):
 endif;
 
 	// 下段表示分
-	echo '<div style="text-align: center; margin: 15px 0;">';
+	echo '<div style="text-align: center; margin: 25px 0 15px;">';
 	echo $mon_select_html;
 	echo '</div>';
 ?>
