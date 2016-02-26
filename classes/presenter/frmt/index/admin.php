@@ -53,6 +53,7 @@ class Presenter_Frmt_Index_Admin extends \Presenter_Base
 				''      => '',
 				'pdf'   => 'pdf のみ',
 				'excel' => 'excel のみ',
+				'csv'   => 'csv のみ',
 			),
 			'value' => \Input::get('searches.type'),
 		))
