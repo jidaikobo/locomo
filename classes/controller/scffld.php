@@ -16,9 +16,9 @@ class Controller_Scffld extends \Controller_Base
 	);
 
 	/**
-	 * _init()
+	 * action_main()
 	 */
-	public static function _init()
+	public function action_main()
 	{
 		// only at development
 		if (\Fuel::$env == 'development')
@@ -42,13 +42,10 @@ class Controller_Scffld extends \Controller_Base
 				}
 			}
 		}
-	}
 
-	/**
-	 * action_main()
-	 */
-	public function action_main()
-	{
+		// keep permission
+		$current_permission = umask();
+
 		// view
 		$view = \View::forge('scffld/main');
 
@@ -105,6 +102,9 @@ class Controller_Scffld extends \Controller_Base
 			{
 				throw new \Exception('invalid model choosen.');
 			}
+
+			// change permission
+			umask(002);
 
 			// migration
 			$name       = array_shift($cmds);
@@ -195,8 +195,6 @@ class Controller_Scffld extends \Controller_Base
 
 				// message
 				$messages[] = "modelとmigrationを生成しました。";
-//				$messages[] = "sudo chmod 777 ".$migrationpath.$migrate_file;
-//				$messages[] = "sudo chmod -R 777 ".$modelpath.$filename;
 			}
 
 			// views
@@ -268,6 +266,12 @@ class Controller_Scffld extends \Controller_Base
 		if (\Input::method() == 'POST' && ! \Security::check_token())
 		{
 			\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+		}
+
+		// umask chack
+		umask($current_permission);
+		if (umask() != $current_permission) {
+			die('An error occurred while changing back the umask');
 		}
 
 		// view

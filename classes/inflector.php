@@ -189,9 +189,8 @@ class Inflector extends \Fuel\Core\Inflector
 	public static function get_root_relative_path($url = '')
 	{
 		$url = $url ?: \Uri::current();
-		$http_host = \Input::server('HTTP_HOST');
-		$pos = strpos(\Uri::base(false), $http_host) + strlen($http_host);
-		return substr($url, $pos);
+		$urls = explode('/', $url);
+		return '/'.join('/', array_slice(explode('/', $url), 3));
 	}
 
 	/**

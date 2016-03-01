@@ -105,7 +105,8 @@ if (\Auth::check()):
 				if ( ! $v['is_for_admin'] && $v['show_at_menu'])
 				{
 					$sep = array_key_exists($k, $menu_separators) ? ' class="'.$menu_separators[$k].'"' : '';
-					$controller_menu.= '<li'.$sep.'><a href="'.\Uri::base().'sys/admin/'.\Inflector::ctrl_to_safestr($k).'">'.$v['nicename'].'</a></li>';
+					$safe_str = \Inflector::ctrl_to_safestr($k);
+					$controller_menu.= '<li'.$sep.'><a href="'.\Uri::base().'sys/admin/'.$safe_str.'" class="'.substr(strtolower($safe_str),1).'">'.$v['nicename'].'</a></li>';
 				}
 			endforeach;
 			if ($controller_menu):

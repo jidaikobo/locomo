@@ -2,6 +2,7 @@
 
 	<div id="controller_bar">
 		<a href="#" class="add_element           button small" title="要素の追加">要素の追加</a>
+		<a href="#" class="delete_element        button small" title="要素の削除">要素の削除</a>
 		<input      class="save                  button small" title="保存" type="submit" value="保存">
 
 		<a href="#" class="show_controller       button small" title="要素の編集を表示">要素の編集</a>

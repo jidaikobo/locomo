@@ -153,6 +153,19 @@ $(function () {
 			applyStyle($('#elements .element.focus'));
 		});
 
+
+		$('#controller_bar .delete_element').on('click', function(e) {
+			e.preventDefault()
+			if ($('#elements .element.focus')[0]) {
+				var name = $('#elements .element.focus').find('.name').val() || '選択した要素';
+				if(window.confirm('[' + name + ']を削除します')) {
+					$('#elements .element.focus').remove();
+					applyAllStyle();
+				}
+			} else {
+				alert('削除する要素を選択して下さい。');
+			}
+		});
 	}
 
 	init();

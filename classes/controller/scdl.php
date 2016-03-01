@@ -473,17 +473,13 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			$from_data = $model::find(\Input::get("from"));
 			if ($from_data)
 			{
-				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text'
-									, 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
-									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index"
-									, 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2', 'public_start_time', 'public_end_time', 'public_display');
-/*
-				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'title_importance_kb'
-									, 'title_kb', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb'
-									, 'message', 'group_kb', 'group_detail', 'purpose_kb'
-									, 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index");
-*/
+				$setcolumns = array('start_date', 'start_time', 'end_date', 'end_time', 'title_text', 'provisional_kb', 'private_kb', 'allday_kb', 'unspecified_kb', 'overlap_kb', 'message', 'group_kb', 'group_detail', 'purpose_kb', 'purpose_text', 'user_num', 'repeat_kb', "week_kb", "target_day", "target_month", "week_index", 'week_kb_option1', 'week_kb_option2', 'week_index_option1', 'week_index_option2');
+
+				if ($model::$_kind_name != 'scdl')
+				{
+					$setcolumns = array_merge($setcolumns, array('public_start_time', 'public_end_time', 'public_display'));
+				}
+
 				foreach ($setcolumns as $v)
 				{
 					$this->template->content->form->field($v)->set_value($from_data->$v);
@@ -882,7 +878,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		{
 			// root not use cache
 //			if (\Auth::is_root()) throw new \CacheNotFoundException();
-			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache') && \Request::active()->action != 'lobby_today')
+			if ($cache_str && \Cache::get($cache_str) && ! \Input::get('nocache') && \Request::active()->action != 'lobby_today' && \Request::active()->action != 'dashboard_today' && \Request::active()->action != 'dashboard_week_calendar' && ! \Request::is_hmvc())
 			{
 				\Profiler::mark('Scdl::calendar() with cache - Done');
 				$this->template->set_global('is_cache', true);
@@ -1089,7 +1085,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$schedules = array();
 
 		// 取得
-		$model::$_options['where'][] = array(
+		$options['where'][] = array(
 			array(
 				array(
 					array("start_date", "<=", $target_start),
@@ -1114,10 +1110,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			array("deleted_at", "is", null),
 			array("kind_flg", $model::$_kind_flg),
 		);
-		$model::$_options['order_by'] = array("start_time");
-		$model::$_options['related'] = array('create_user', 'user', 'building');
+		$options['order_by'] = array("start_time");
+		$options['related'] = array('create_user', 'user', 'building');
 
-		$schedule_data = $model::find('all', $model::$_options);
+		$schedule_data = $model::find('all', $options);
 
 		// loop
 		$user_exist = array();
@@ -1270,7 +1266,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$schedules['schedules_list'] = array();
 
 		// 取得
-		$model::$_options['where'][] = array(
+		$options['where'][] = array(
 			array(
 				array(
 					array("start_date", "<=", $target_start),
@@ -1295,10 +1291,10 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			array("deleted_at", "is", null),
 			array("kind_flg", $model::$_kind_flg),
 		);
-		$model::$_options['order_by'] = array("start_time");
-		$model::$_options['related'] = array('create_user', 'user', 'building');
+		$options['order_by'] = array("start_time");
+		$options['related'] = array('create_user', 'user', 'building');
 
-		$schedule_data = $model::find('all', $model::$_options);
+		$schedule_data = $model::find('all', $options);
 
 		// loop
 		$user_exist = array();
@@ -1421,7 +1417,7 @@ class Controller_Scdl extends \Locomo\Controller_Base
 		$target_end = sprintf("%04d-%02d-%02d", $year, $mon, $last_day);
 
 		// 取得
-		$model::$_options['where'][] = array(
+		$options['where'][] = array(
 			array(
 				array(
 					array("start_date", "<=", $target_start),
@@ -1446,10 +1442,11 @@ class Controller_Scdl extends \Locomo\Controller_Base
 			array("deleted_at", "is", null),
 			array("kind_flg", $model::$_kind_flg),
 		);
-		\Locomo\Model_Scdl::$_options['order_by'] = array("start_time");
-		\Locomo\Model_Scdl::$_options['related'] = array('create_user', 'user', 'building');
+//		$options['from_cache'] = false; // falseにすると、realtedが正しく取得できない
+		$options['order_by'] = array("start_time");
+		$options['related'] = array('create_user', 'user', 'building');
 
-		$schedules_data = \Locomo\Model_Scdl::find('all', \Locomo\Model_Scdl::$_options);
+		$schedules_data = $model::find('all', $options);
 
 		// 月曜日からはじまるため、空白のデータを入れる
 		$week = date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1))) == 0 ? 7 : date('w', strtotime(sprintf("%04d/%02d/%02d", $year, $mon, 1)));

@@ -491,6 +491,11 @@ trait Model_Traits_Base
 		static::$_properties_cached = \Arr::merge(static::$_properties_cached, $args);
 	}
 
+	public static function clear_cache()
+	{
+		static::$_cached_objects[get_called_class()] = array();
+	}
+
 	/**
 	 * get_field_by_role()
 	 * some properties expected that it has 'lcm_role'.

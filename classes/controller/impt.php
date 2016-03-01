@@ -3,7 +3,7 @@
  * Base のコントローラー 直接は呼ばない
  */
 namespace Locomo;
-class Controller_Impt extends \Locomo\Controller_Base
+class Controller_Impt extends \Controller_Base
 {
 	/*
 	 * before()
