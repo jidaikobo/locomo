@@ -26,10 +26,10 @@ jQuery(function ($){
 		var host, $body, str, $info, topinfo;
 		host = location.host;
 		$body = $('body');
-		if(host == 'www.kyoto-lighthouse.org'){
+		if($body.hasClass('staging')){
 			$body.addClass('testserver');
 			str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
-		}else if(host!='kyoto-lighthouse.org'){
+		}else if($body.hasClass('development')){
 			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
 		}
 		if(str){

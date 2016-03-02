@@ -44,7 +44,7 @@
 	<link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>">
 
 </head>
-<body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
+<body class="<?php echo $body_class; echo ' '.\Fuel::$env; ?>" <?php echo $body_data ?>>
 <?php
 	echo (\Auth::check()) ? '<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
 ?>
