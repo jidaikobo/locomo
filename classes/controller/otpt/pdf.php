@@ -326,6 +326,19 @@ trait Controller_Otpt_Pdf
 				if (method_exists($this, $format_type))
 				{
 					$action_name = $format_type;
+
+					if (isset($format['ln_y']))
+					{
+						if ($format['ln_y'])
+						{
+							$format['y'] = $pdf->getY()+$format['margin_top'];
+						}
+						else
+						{
+							$format['y'] += $format['margin_top'];
+						}
+					}
+
 					$pdf->setXY($format['x'], $format['y']);
 					$this->$action_name($object);
 				}
