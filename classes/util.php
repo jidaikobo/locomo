@@ -113,6 +113,10 @@ class Util
 	{
 		$files = \File::read_dir($dir, 1);
 		sort($files);
+		foreach ($files as $k => $file)
+		{
+			if ( ! is_numeric($file[0])) unset($files[$k]);
+		}
 		$latest_one = array_pop($files);
 		$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));
 		$latest_prefix = sprintf($format , $latest_prefix + 1);
