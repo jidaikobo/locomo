@@ -200,7 +200,12 @@ class Model_Usr extends Model_Base_Soft
 	 */
 	public function _event_before_insert()
 	{
-		$this->activation_key = \Auth::hash_password(microtime());
+
+		$this->activation_key = str_replace(
+			array('/'),
+			array(''),
+			\Auth::hash_password(microtime())
+		);
 	}
 
 	/**
