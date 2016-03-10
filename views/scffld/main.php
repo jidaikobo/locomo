@@ -19,10 +19,10 @@
 <h2>使い方</h2>
 
 <h3>拡張oil書式例</h3>
-<textarea class="pre" style="width: 100%;height: 10em;">test(テスト) 
+<textarea class="pre" style="width: 100%;height: 10em;">test(テスト)
 title(表題):varchar[255]:unique:default[title]
 body(本文):text:default['']
-is_bool(真偽値):bool:null:default[0]
+is_available(有効):bool:null:default[0]
 created_at(作成日時):datetime:null
 updated_at(更新日時):datetime:null
 expired_at(有効期日):datetime:null
@@ -46,5 +46,3 @@ workflow_status:enum[init,before_progress,in_progress,finish]:null
 <h3>オーバライド</h3>
 <p><code>LOCOMOPATH.classes/scffld/helper/</code>から、<code>APPPATH.classes/scffld/helper/</code>に必要なファイルを移動すれば、処理をオーバライドできます。</p>
 <p><code>LOCOMOPATH.config/scffld_templates/</code>から、<code>APPPATH.config/scffld_templates/</code>に必要なファイルを移動すれば、基礎テンプレートのみを変更できます。</p>
-
-

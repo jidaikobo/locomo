@@ -55,6 +55,14 @@ class Controller_XXX extends \Locomo\Controller_Base
 	}
 
 	/**
+	 * action_index_unavailable()
+	 */
+	public function action_index_unavailable()
+	{
+		parent::index_unavailable();
+	}
+
+	/**
 	 * action_index_deleted()
 	 */
 	public function action_index_deleted()

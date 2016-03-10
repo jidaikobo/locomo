@@ -3,7 +3,7 @@
  * Base のコントローラー 直接は呼ばない
  */
 namespace Locomo;
-class Controller_Frmt extends \Locomo\Controller_Base
+class Controller_Frmt extends \Controller_Base
 {
 
 	public $model_name = '\Locomo\Model_Frmt';

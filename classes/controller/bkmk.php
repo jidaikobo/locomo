@@ -3,7 +3,7 @@
  * Base のコントローラー 直接は呼ばない
  */
 namespace Locomo;
-class Controller_Bkmk extends \Locomo\Controller_Base
+class Controller_Bkmk extends \Controller_Base
 {
 	// locomo
 	public static $locomo = array(

@@ -229,20 +229,25 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 			return $this->_admin_info;
 		}
 
+		// is_allow_mailaddress_login
+		$is_allow_mailaddress_login = \Config::get('is_allow_mailaddress_login');
+		$whr = $is_allow_mailaddress_login ?
+					array(array('username', '=', $username_or_email),
+					'or' => array('email', '=', $username_or_email),) :
+					array(array('username', '=', $username_or_email)) ;
+
 		// others
 		$password = $this->hash_password($password);
 		$user = \Model_Auth_Usr::find('first', array(
 			'where' => array(
 				array('password', '=', $password),
+				array('is_visible', true),
 				array('created_at', '<=', date('Y-m-d H:i:s')),
 				array(
 					array('expired_at', '>=', date('Y-m-d H:i:s')),
 					'or' => array('expired_at', 'is', null),
 				),
-				array(
-					array('username', '=', $username_or_email),
-					'or' => array('email', '=', $username_or_email),
-				)),
+				$whr),
 			)
 		);
 

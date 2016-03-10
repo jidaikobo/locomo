@@ -113,6 +113,10 @@ class Util
 	{
 		$files = \File::read_dir($dir, 1);
 		sort($files);
+		foreach ($files as $k => $file)
+		{
+			if ( ! is_numeric($file[0])) unset($files[$k]);
+		}
 		$latest_one = array_pop($files);
 		$latest_prefix = intval(substr($latest_one, 0, strpos($latest_one, '_')));
 		$latest_prefix = sprintf($format , $latest_prefix + 1);
@@ -349,7 +353,38 @@ class Util
 		 */
 
 		$args = array_merge($defaults, $args);
-		$ret = array_intersect_key($defaults, $args);
+		$ret = array_intersect_key($args, $defaults);
+
 		return $ret;
+	}
+
+	/*
+	 * parse_email()
+	 */
+	public static function parse_email ($str = '')
+	{
+		$str = str_replace("\r", "", $str);
+		$headers_raw = trim(substr($str, 0, strpos($str, "\n\n")));
+		$body = trim(substr($str, strpos($str, "\n\n")));
+
+		$headers = array();
+		foreach (explode("\n", $headers_raw) as $header)
+		{
+			list($k, $v) = explode(':', $header);
+			if (strpos($v, '<') !== false)
+			{
+				$vv = substr($v, 0, strpos($v, '<'));
+				$key = trim($k).'_str';
+				$headers[$key] = trim($vv);
+				$vv = substr($v, strpos($v, '<'), strpos($v, '>'));
+				$key = trim($k).'_email';
+				$headers[$key] = trim(trim($vv, ">"), "<");
+			}
+			else
+			{
+				$headers[trim($k)] = trim($v);
+			}
+		}
+		return array('headers' => $headers, 'body' => $body);
 	}
 }

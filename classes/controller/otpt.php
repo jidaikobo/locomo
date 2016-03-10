@@ -185,7 +185,7 @@ class Controller_Otpt extends \Controller
 			\Response::redirect($referrer, 'location', 307); // 307 post も維持してリダイレクト
 		}
 
-		$this->output($objects, $format);
+		return $this->output($objects, $format);
 
 		// ここまでに return しなかったらページはない
 		throw new \HttpNotFoundException;
