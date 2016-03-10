@@ -220,7 +220,8 @@ body.lcm_action_login.default_logo .container{
 	bottom: 0;
 	left: 0;
 	right: 0;
-	padding: 4px 10px;
+	z-index: 50;
+	padding: 4px 2%;
 	background: #fafafa;
 	background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
 	background-image: -ms-linear-gradient(top, #fcfcfc, #ebebeb);
@@ -272,6 +273,9 @@ body.lcm_action_login.default_logo .container{
 	transition: 0.3s;
 	text-shadow: none;
 }
+.lcm_form .lcmbar_bottom .submit_button {
+	position: static;
+}
 #main_content .lcmbar_bottom {
 	margin: 0 ;
 	text-align: center;
@@ -279,4 +283,7 @@ body.lcm_action_login.default_logo .container{
 #main_content .lcmbar_bottom .submit_button {
 	margin: 0;
 	text-align: right;
+}
+#main_content .lcmbar_bottom .submit_button .primary {
+	margin-right: 0;
 }

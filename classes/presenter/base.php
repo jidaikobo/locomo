@@ -32,7 +32,7 @@ class Presenter_Base extends \Presenter
 		$form->add_model($obj)->populate($obj, true);
 
 		// submit
-		$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');
+		$form->add('submit', '', array('type' => 'submit', 'value' => '保存する', 'class' => 'button primary'))->set_template('<div class="lcmbar_bottom"><div class="submit_button">{field}</div><!-- /.submit_button --></div><!-- /.lcmbar_bottom -->');
 
 		return $form;
 	}
