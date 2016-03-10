@@ -771,7 +771,6 @@ class Controller_Base extends Controller_Core
 		}
 	}
 
-
 	/**
 	 * bulk()
 	 */
