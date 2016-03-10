@@ -17,7 +17,7 @@
 	<div class="select_period lcm_focus" title="表示する日を変更">
 		<?php print htmlspecialchars_decode($prev_url); ?> /
 		<?php print htmlspecialchars_decode($next_url); ?> /
-		<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date" id="move_date" title="表示年月日" /><input class="button small" id="btn_move_date" type="button" value="指定の日を表示" onclick="move_date()" />
+		<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date move_date" id="move_date" title="表示年月日" /><input class="button small" id="btn_move_date" type="button" value="指定の日を表示" onclick="move_date()" />
 	</div>
 	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 	<h2 class="skip">タイムテーブル グラフ</h2>
@@ -268,11 +268,18 @@ if($schedule_data['unique_schedule_data']):
 	endforeach;
 	echo '</section></div>';
 endif;
-;?>
+?>
+<div class="lcmbar_bottom select_period lcm_focus" title="表示する日を変更">
+	<?php print htmlspecialchars_decode($prev_url); ?> /
+	<?php print htmlspecialchars_decode($next_url); ?> /
+	<input type="text" name="move_date_bottom" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date move_date" id="move_date_bottom" title="表示年月日" /><input class="button small" id="btn_move_date_bottom" type="button" value="指定の日を表示" onclick="move_date()" />
+</div><!-- /.lcmbar_bottom.select_period -->
+
+
 
 <script>
 function move_date(){
-	var target = $("#move_date").val().replace(/-/g, "/");
+	var target = $(".move_date").val().replace(/-/g, "/");
 	location.href='<?php echo \Uri::base().$kind_name.'/calendar/' ?>' + target;
 }
 </script>
