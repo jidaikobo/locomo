@@ -1647,6 +1647,8 @@ a.icon.audio:before,   span.icon.audio:before   { content: url('../img/led-icons
 a.icon.movie:before,   span.icon.movie:before   { content: url('../img/led-icons/doc_film.png')' ';}
 a.icon.compressed:before,     span.icon.compressed:before     { content: url('../img/led-icons/page_zip.png')' ';}
 
+a.icon.csv:before,     span.icon.csv:before     { content: url('../img/led-icons/doc_excel_csv.png')' ';}
+
 /*=== contents ===*/
 .contents > h1 {
 	margin: 0 0 .5em;

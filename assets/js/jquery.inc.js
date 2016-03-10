@@ -19,17 +19,16 @@ jQuery(function ($){
 	}
 });
 
-
 //テスト環境やローカル開発環境での表示
 jQuery(function ($){
 	(function(){
 		var host, $body, str, $info, topinfo;
 		host = location.host;
 		$body = $('body');
-		if(host == 'www.kyoto-lighthouse.org'){
+		if($body.hasClass('staging')){
 			$body.addClass('testserver');
 			str = '--- テスト環境です　改造要望等はまずこちらで実験します　データは頻繁にリセットされます　動作テストなどご自由に操作いただけます ---';
-		}else if(host!='kyoto-lighthouse.org'){
+		}else if($body.hasClass('development')){
 			str = '--- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ローカル開発環境です --- ';
 		}
 		if(str){
@@ -38,10 +37,6 @@ jQuery(function ($){
 				$info.css('bottom','3em');
 			}
 			$body.append($info);
-			if(lcm_env.isloggedin && $('body').hasClass('testserver')){
-				$topinfo = $info.clone().addClass("top").css('top', $('#adminbar').outerHeight()+'px');
-				$('#main_content').prepend($topinfo);
-			}
 		}
 	})();
 });
@@ -58,9 +53,9 @@ jQuery(function ($) {
 		var x, y, el;
 		x = e.clientX;
 		y = e.clientY;
-		
+
 		$(this).hide();//いったん非表示にすることで、直下の要素を座標から取得
-		el = document.elementFromPoint(x,y); 
+		el = document.elementFromPoint(x,y);
 		$(this).show();
 		el.click();
 	});
@@ -91,7 +86,7 @@ function pluginExists( pluginName ){
 			closelink.href = 'javascript: void(0);';
 			closelink.innerHTML = '閉じる';
 			closelink.setAttribute('tabindex','0');
-			
+
 			$(event.target).addClass('modal_parent');
 			el.addClass('on')
 			//画面中央表示のためにbodyのはじめに移動、その前に元に戻す時のため#modal_wrapperを追加 戻す必要ある？appendのほうがよい？ 読み上げ的に冒頭にあったほうがよいのかなあ
@@ -152,7 +147,7 @@ if(!lcm_env.UA){
 	lcm_env.isTouchDevice = lcm_env.UA.indexOf('iPhone') > 0 || lcm_env.UA.indexOf('iPod') > 0 || lcm_env.UA.indexOf('iPad') > 0 || lcm_env.UA.indexOf('Android') > 0 ? true : false;
 	lcm_env.isie          = !$('body').hasClass('lcm_ieversion_0') ? true : false;
 	lcm_env.isLtie9       = $('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6') ? true : false;
-	
+
 }
 
 //フォーカスするついでに場合によってはセレクトもする
@@ -178,14 +173,14 @@ function set_focus(t){
 		$('#main_content').focus();
 		document.body.scrollTop = 0; //描画が遅れるとカクカクしちゃうので、containerの描画位置自体を考えられたらよいのかも？
 	}
-	
+
 	//見出しのh1に最初のフォーカスを与える
 	$('h1').first().not(':has(>a)').attr('tabindex', '0');
 })();
 
 //非表示の要素の設定
 $('.hidden_item').each(function(){
-	var query, params, v, $trigger ; 
+	var query, params, v, $trigger ;
 	//hidden_itemでデフォルトが.offの場合、中身に関係なく折りたたみ
 	if($(this).is('.off')) {
 		return;
@@ -273,7 +268,7 @@ $(document).on('click', 'a[href^=#]', function(e){
 		lcm_smooth_scroll($t);
 		set_focus($t);
 		return false;
-	}else if(e.isDefaultPrevented()){ // #でイベントを設定されている場合に抑止？ 
+	}else if(e.isDefaultPrevented()){ // #でイベントを設定されている場合に抑止？
 		e.preventDefault();
 	}
 });
@@ -348,7 +343,7 @@ $(window).resize(function(){
 	if (resize_timer !== false) clearTimeout(resize_timer);
 	resize_timer = setTimeout(function(){
 	//リサイズ終了待ちの処理
-	
+
 	}, 200);
 	$(document).find('#help_window:visible').each(function(e){
 		var pw, w, l, r;
@@ -417,7 +412,7 @@ function lcm_select_narrow_down(group_id, uri, $select, $selected){
 				//scdl/reserveはuser:idとbuilding:item_idの２通りで管理している。あとで整理したい。
 				if ($(now_items)[0] && $(now_items[exists[i]['id']])[0] ) continue;
 				if ($(now_items)[0] && $(now_items[exists[i]['item_id']])[0] ) continue;
-				
+
 				id = (exists[i]['item_id']!=null) ? exists[i]['item_id'] : exists[i]['id'];
 				name = (exists[i]['display_name']!=null) ? exists[i]['display_name'] : exists[i]['item_name'];
 				select_items += '<option value="'+id+'">'+name+'</option>';
@@ -440,7 +435,7 @@ $('.select_narrow_down').each(function(){
 
 //複数選択ボックスを持つ場合
 $('.multiple_select_narrow_down').each(function(){
-	var uri, $selects, $select, $selected; 
+	var uri, $selects, $select, $selected;
 	uri = base_uri;
 	uri += $(this).data('uri') ? $(this).data('uri') : 'usr/user_list.json';
 	$selects  = $('#'+$(this).data('targetId')).find('select');
@@ -494,7 +489,7 @@ $('input.bt').hover(function(){
 });
 
 /*
-////lowvision menuimg 
+////lowvision menuimg
 function replacemenuimg(a){
 	imgalt = a.find('img').attr('alt');
 	a.html(imgalt);
@@ -673,7 +668,7 @@ $('.gmapblock').each(function(){
 	var gmid = $(this).attr('id');
 	var gmdata = $(this).html().split(',');
 	$(this).css({'width':'350px','height':'340px','margin':'10px 0'}).html('');
-	
+
 	if(gmdata[4]){$(this).css({'width':gmdata[4]});}
 	if(gmdata[5]){$(this).css({'height':gmdata[5]});}
 	if(gmdata[2]){gmdata[2] = gmdata[2];clickable=true;}else{gmdata[2]='';clickable=false;}

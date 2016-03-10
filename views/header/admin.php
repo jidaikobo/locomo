@@ -26,6 +26,7 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 	<?php echo \Asset::css('core.css'); ?>
 	<?php echo \Asset::css('admin.css'); ?>
 	<?php echo \Asset::css('adminbar.css'); ?>
+	<?php echo \Asset::css('code_profiler.css'); ?>
 	<?php echo \Asset::css('../js/jquery-ui-1.10.4/css/smoothness/jquery-ui-1.10.4.custom.min.css'); ?>
 	<?php echo \Asset::css('../js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css'); ?>
 	<?php echo \Asset::css('../js/jquery.timepicker/jquery.timepicker.css'); ?>
@@ -73,7 +74,7 @@ Locomo - Accessible Web System Package for FuelPHP version.<?php echo LOCOMOVERS
 		-->
 	</script>
 </head>
-<body class="<?php echo $body_class ?>" <?php echo $body_data ?>>
+<body class="<?php echo $body_class ; echo ' '.\Fuel::$env; ?>" <?php echo $body_data ?>>
 	<div id="main_content" class="container clearfix" title="<?php echo $titlestr ?>ページ" tabindex="-1">
 <?php 
 	echo (\Auth::check()) ? '		<a href="#anchor_adminbar" class="skip show_if_focus">ツールバーに移動</a>' : '';
