@@ -231,7 +231,7 @@ body.lcm_action_login.default_logo .container{
 	background-image: linear-gradient(top, #fcfcfc, #ebebeb);
 	color: #333;
 	text-shadow: 1px 1px 0 #fff;
-	box-shadow: 0 0 2px rgba(0,0,0,.2);
+	box-shadow: 0 0 2px rgba(0,0,0,.3);
 }
 
 #main_content .lcmbar_bottom  div:first-child,
@@ -286,4 +286,22 @@ body.lcm_action_login.default_logo .container{
 }
 #main_content .lcmbar_bottom .submit_button .primary {
 	margin-right: 0;
+}
+/* ページネーション */
+#main_content .lcmbar_bottom .pagination a {
+	padding: 5px 10px;
+}
+#main_content .lcmbar_bottom .select_period .active {
+	padding: 5px 10px;
+}
+#main_content .lcmbar_bottom .select_period .next_month,
+#main_content .select_period .prev_year {
+	padding: 2px 10px;
+}
+
+#main_content .lcmbar_bottom .select_period .prev_month {
+	margin-left: 4em;
+}
+#main_content .lcmbar_bottom .select_period .next_year {
+	margin-left: 4em;
 }
