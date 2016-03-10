@@ -14,12 +14,6 @@
 <h1><?php echo $year; ?>年 <?php echo (int)$mon; ?>月 <?php echo (int)$day; ?>日 一日詳細カレンダ</h1>
 <?php include("calendar_narrow.php"); ?>
 <div class="field_wrapper calendar_detail">
-	<div class="select_period lcm_focus" title="表示する日を変更">
-		<?php print htmlspecialchars_decode($prev_url); ?> /
-		<?php print htmlspecialchars_decode($next_url); ?> /
-		<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date move_date" id="move_date" title="表示年月日" /><input class="button small" id="btn_move_date" type="button" value="指定の日を表示" onclick="move_date()" />
-	</div>
-	<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
 	<h2 class="skip">タイムテーブル グラフ</h2>
 <?php if (isset($schedule_data['member_list'])): ?>
 	<table id="schedule_graph" class="table schedule_day graph tbl lcm_focus" title="タイムテーブル グラフ">
@@ -269,12 +263,15 @@ if($schedule_data['unique_schedule_data']):
 	echo '</section></div>';
 endif;
 ?>
+<?php //lcmbar_bottom
+ if( ! $is_hmvc): ?>
 <div class="lcmbar_bottom select_period lcm_focus" title="表示する日を変更">
-	<?php print htmlspecialchars_decode($prev_url); ?> /
-	<?php print htmlspecialchars_decode($next_url); ?> /
-	<input type="text" name="move_date_bottom" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date move_date" id="move_date_bottom" title="表示年月日" /><input class="button small" id="btn_move_date_bottom" type="button" value="指定の日を表示" onclick="move_date()" />
-</div><!-- /.lcmbar_bottom.select_period -->
-
+		<?php print htmlspecialchars_decode($prev_url); ?> /
+		<?php print htmlspecialchars_decode($next_url); ?> /
+		<input type="text" name="move_date" value="<?php print sprintf("%04d-%02d-%02d", $year, $mon, $day);?>" style="width: 8em;" size="13" class="date move_date" id="move_date" title="表示年月日" /><input class="button small" id="btn_move_date" type="button" value="指定の日を表示" onclick="move_date()" />
+		<a href="<?php echo \Uri::create($kind_name . "/create?ymd=" . htmlspecialchars(sprintf("%04d-%02d-%02d", $year, $mon, $day))); ?>" />新規追加</a>
+	</div><!-- /.lcmbar_bottom.select_period -->
+<?php endif; ?>
 
 
 <script>
