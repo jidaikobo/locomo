@@ -247,8 +247,10 @@ class Controller_Auth extends \Locomo\Controller_Base
 	/**
 	 * action_activation()
 	 */
-	public function action_activation($key = null, $email = null)
+	public function action_activation()// $key = null, $email = null)
 	{
+		$key = \Input::get('key');
+		$email = \Input::get('email');
 		is_null($key) || is_null($email) and \Response::redirect(\Uri::create('/'));
 		$view = \View::forge('auth/activation');
 
@@ -323,6 +325,23 @@ class Controller_Auth extends \Locomo\Controller_Base
 		$email->to($to, $to_str);
 		$email->subject($subject);
 		$email->body($body);
-		$email->send();
+
+			try
+			{
+				$email->send();
+			}
+			catch(\EmailValidationFailedException $e)
+			{
+				throw new \EmailValidationFailedException($e);
+				echo 'バリデーションが失敗したとき';
+				die();
+			}
+			catch(\EmailSendingFailedException $e)
+			{
+				throw new \EmailSendingFailedException($e);
+				echo 'ドライバがメールを送信できなかったとき';
+				die();
+			}
+
 	}
 }

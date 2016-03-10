@@ -100,6 +100,7 @@
 		},
 
 		addRow: function(e) {
+
 			var tb = e.target ? e.data.tb : e;
 
 			var new_row = (tb.wrap.find(tb.row_class)).length + 1;

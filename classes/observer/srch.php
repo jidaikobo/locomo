@@ -41,6 +41,8 @@ class Observer_Srch extends \Orm\Observer
 		// 関係テーブル
 		foreach ($obj::relations() as $k => $v)
 		{
+			if (! $v->cascade_save) continue;
+
 			$rel = $obj->$k;
 			if ( ! is_object($rel)) continue;
 			foreach ($rel::properties() as $kk => $vv)
@@ -48,6 +50,7 @@ class Observer_Srch extends \Orm\Observer
 				$str.= $obj->$k->$kk;
 			}
 		}
+		
 
 		$str = mb_convert_kana($str, "asKV");
 		$str = str_replace(array(' ', "\n", "\r"), '', $str);
