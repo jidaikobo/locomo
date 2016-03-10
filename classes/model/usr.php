@@ -200,7 +200,6 @@ class Model_Usr extends Model_Base_Soft
 	 */
 	public function _event_before_insert()
 	{
-
 		$this->activation_key = str_replace(
 			array('/'),
 			array(''),
@@ -213,7 +212,8 @@ class Model_Usr extends Model_Base_Soft
 	 */
 	public function _event_before_save()
 	{
-		// not for migration
+		// POST以外の更新であれば既存モデルを送ったものと見なしてハッシュ処理
+		// migrationは特別扱いする
 		if (\Input::method() == 'POST')
 		{
 			// パスワードのハッシュ
@@ -222,14 +222,17 @@ class Model_Usr extends Model_Base_Soft
 			{
 				// postがない場合、すなわちパスワード変更なし
 				$this->password = $this->_original['password'];
-			} else {
+			}
+			else
+			{
 				// postがあるのでパスワードを変更
 				$this->password = \Auth::hash_password($password);
 			}
-		} elseif ($this->password) {
-			// POST以外の更新であれば生値を送ったものと見なしてハッシュ処理
+		}
+		elseif (php_sapi_name() == 'cli')
+		{
+			// cliのときにはmigrationとみなしてハッシュ
 			$this->password = \Auth::hash_password($this->password);
-
 		}
 	}
 
