@@ -272,7 +272,11 @@ body.lcm_action_login.default_logo .container{
 	transition: 0.3s;
 	text-shadow: none;
 }
-#main_content .lcmbar_bottom div.submit_button {
-	margin: 0 10px 0;
+#main_content .lcmbar_bottom {
+	margin: 0 ;
 	text-align: center;
+}
+#main_content .lcmbar_bottom .submit_button {
+	margin: 0;
+	text-align: right;
 }
