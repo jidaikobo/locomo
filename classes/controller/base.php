@@ -781,7 +781,7 @@ class Controller_Base extends Controller_Core
 			'add' => 3,
 			'is_redirect' => true,
 			'is_deletable' => true);
-		extract(\Util::parse_args($defaults, $args));
+		extract(\Util::parse_args($args, $defaults));
 
 		// TODO $page => \Pagination::set('uri_segments', 'paged');
 		$model = $this->model_name;
