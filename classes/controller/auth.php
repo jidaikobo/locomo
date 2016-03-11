@@ -279,8 +279,8 @@ class Controller_Auth extends \Locomo\Controller_Base
 			$mail = Util::parse_email($mail_raw);
 			$this->send($mail['headers']['From_email'],
 									$mail['headers']['From_str'],
-									$exist->email,
-									$exist->display_name,
+									LOCOMO_ADMIN_MAIL,
+									\Config::get('site_title'),
 									$mail['headers']['Subject'],
 									$mail['body']);
 
