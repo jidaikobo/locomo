@@ -13,31 +13,30 @@ lcm_env.load_lcm_modal_semimodal = true;
 	}
 	
 	//全体に対するクリックイベント。
-	$(document).click(function(e){
+	$(document).on('click', function(e){
 		e = e ? e : event;
 		var t = e.target;
 
-	//modalの枠外伝播防止	
+			console.log(t);
+		//modalの枠外伝播防止	不要？
 		if($(t).is($('#modal_wrapper'))){
 			e.stopPropagation();
-			return false;
+			w = $('.lcm_close_window:visible').parent();
+			$(t).lcm_modal('close_window', w);
+			$(t).removeClass('on');	
 		}
 	
-	//リストの開け閉め
+		//リストの開け閉め
 		$(document).lcm_modal('close_semimodal',t);
 		replace_info();//開く・閉じる説明文切り替え
 	} );
-
-	//モーダルの外制御//キーボードのことを考えてdisabled制御をするならclick処理は重複？
-	$('#modal_wrapper').on('click', function(){
-		return false;
-	});
 
 	//親を閉じる
 	$('.lcm_close_window').on('click', function(e){
 		e = e ? e : event;
 		var w = $(this).parent();
 		$(this).lcm_modal('close_window', w);
+		$('#modal_wrapper').removeClass('on');
 		e.preventDefault();//抑止しておかないとIEでページ遷移前の警告が出る
 	});
 	
@@ -102,7 +101,8 @@ function replace_info(){ //説明文の切り替え
 $(document).on('click', '#close_modal' ,function(){
 	$document.lcm_modal('close_modal', $('.modal_parent'), $('.lcm_modal_on'));
 });
-$(document).on('click', '.semimodal.on, modal.on', function(e){
+
+$(document).on('click', '.semimodal.on, .modal.on', function(e){
 	e = e ? e : event;
 	e.stopPropagation();
 });

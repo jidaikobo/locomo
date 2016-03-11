@@ -537,8 +537,8 @@ table + .index_toolbar {
 .index_toolbar .pagination {
 	float: right;
 }
-#main_content .pagination a {
-	padding: 5px 10px !important;
+.pagination a {
+	padding: 5px 10px;
 }
 .pagination .active a,
 .pagination a:hover,
@@ -1164,20 +1164,20 @@ td.minimum {
 	display: inline;
 	zoom: 1;
 }
-#main_content .select_period .prev_month {
-	margin-left: 4em !important;
+.select_period .prev_month {
+	margin-left: 4em;
 }
-#main_content .select_period .next_year {
-	margin-left: 4em !important;
+.select_period .next_year {
+	margin-left: 4em;
 }
-#main_content .select_period .next_month,
-#main_content .select_period .prev_year {
+.select_period .next_month,
+.select_period .prev_year {
 	position: absolute;
-	padding: 2px 10px !important;
+	padding: 2px 10px;
 	top: -2px;
 }
-#main_content .select_period .next_month {
-	right: 4em !important;
+.select_period .next_month {
+	right: 4em;
 }
 .select_period .prev_year {
 	left: 0;
@@ -1185,8 +1185,8 @@ td.minimum {
 .select_period .select_num {
 	display: inline-block;
 }
-#main_content .select_period .active {
-	padding: 5px 10px !important;
+.select_period .active {
+	padding: 5px 10px;
 	background-color: #fafacb;
 }
 
@@ -2066,16 +2066,20 @@ span.sr_add.bracket:after {
 .modal.on {
 	display: block;
 	position: fixed;
-	top: 0;
-	left: 0;
 	/* right: 0; */
 	/* bottom: 0; */
 	/* margin: auto; */
 	background: #fefefe;
-	padding: 10px;
+/*	padding: 10px;*/
 	z-index: 10000;
+	width: 80%;
+	height: 80%;
+	max-height: 90%;
+	left: 10%;
+	top: 10%
 }
-#modal_wrapper {
+
+#modal_wrapper.on {
 	position: fixed;
 	left: 0;
 	top: 0;
