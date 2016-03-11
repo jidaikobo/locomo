@@ -12,17 +12,43 @@ lcm_env.load_lcm_modal_semimodal = true;
 		lcm_env.isLtie9       = $('body').hasClass('lcm_ieversion_8') || $('body').hasClass('lcm_ieversion_7') || $('body').hasClass('lcm_ieversion_6') ? true : false;
 	}
 	
+	// modal準備
+	if($('.lcm_modal_open')[0]){
+		base_uri = $('body').data('uri');
+		var modal_str = '<div id="modal_wrapper"><div id="lcm_modal" class="modal"><h1 id="lcm_modal_title" class="lcmbar_top lcmbar_top_title" tabindex="-1"></h1><div class="modal_content"><img src="'+base_uri+'/lcm_assets/img/system/mark_loading_m.gif" class="mark_loading" alt="" role="presentation"></div><!-- /.modal_content --><a href="javascript: void(0);" role="button" class="lcm_close_modal menubar_icon"><img src="http://localhost:8090/lightstaff/public/lcm_assets/img/system/adminbar_icon_close.png" alt="ポップアップウィンドウを閉じる"></a></div><!-- /.modal --></div><!-- /#lcm_modal_wrapper -->';
+		$('body').append(modal_str); 
+		
+		$('.lcm_modal_open').on('click', function(){
+			var modal_id = $(this).data('lcmModalId');
+			var modal_title = $(this).data('lcmModalTitle');
+			if(!(modal_id && modal_title)) return; //idとタイトルが与えられていなければ実行しない
+
+			var modal_content = $(document).find($('#'+modal_id)).html();
+			$(document).find('#lcm_modal .modal_content').html(modal_content);
+			$(document).find('#modal_wrapper, #lcm_modal').addClass("on");
+			$(document).find('#lcm_modal_title').text(modal_title).focus();
+			$(document).find('#lcm_modal .lcm_close_modal');
+			$(this).addClass('modal_trigger');
+		});
+	}
+	
+	
 	//全体に対するクリックイベント。
 	$(document).on('click', function(e){
 		e = e ? e : event;
 		var t = e.target;
 
-			console.log(t);
-		//modalの枠外伝播防止	不要？
+		//modalの外クリックのふるまいと伝播防止
 		if($(t).is($('#modal_wrapper'))){
 			e.stopPropagation();
-			w = $('.lcm_close_window:visible').parent();
-			$(t).lcm_modal('close_window', w);
+			w = $('.lcm_close_window:visible, .lcm_close_modal:visible').parent();
+
+			if(w.hasClass('lcm_close_modal')){
+				$(t).lcm_modal('close_window', w);
+			}else{
+				var focus = $(document).find('.modal_trigger').removeClass('modal_trigger');
+				$(this).lcm_modal('close_modal', focus, w);
+			}
 			$(t).removeClass('on');	
 		}
 	
@@ -32,17 +58,26 @@ lcm_env.load_lcm_modal_semimodal = true;
 	} );
 
 	//親を閉じる
-	$('.lcm_close_window').on('click', function(e){
+	$('.lcm_close_window, .lcm_close_modal').on('click', function(e){
 		e = e ? e : event;
 		var w = $(this).parent();
-		$(this).lcm_modal('close_window', w);
+		if($(this).is('.lcm_close_window')) {
+			$(this).lcm_modal('close_window', w);
+		} else {
+			var focus = $(document).find('.modal_trigger').removeClass('modal_trigger');
+			$(this).lcm_modal('close_modal', focus, w);
+		}
 		$('#modal_wrapper').removeClass('on');
 		e.preventDefault();//抑止しておかないとIEでページ遷移前の警告が出る
 	});
 	
 var methods = {
 	close_window : function(w){
-		w.hide();
+		if(w.hasClass('on')){
+			w.removeClass('on');
+		}else{
+			w.hide();
+		}
 		if($(w.find('.lcm_close_window')[0]).hasClass('lcm_reset_style')){
 			w.removeAttr('style').hide();
 		}
@@ -68,15 +103,13 @@ var methods = {
 	
 };
 
-
 $.fn.lcm_modal = function(method){
 	if(methods[method]){
 		methods[method].apply(this, Array.prototype.slice.call( arguments, 1 ));
 	}
 }
 
-
-function replace_info(){ //説明文の切り替え
+function replace_info(){ //toggle_itemの説明文の切り替え。
 	var els, len, el, title, skip;
 	els = $(document).find('.toggle_item');
 	len  = els.length;

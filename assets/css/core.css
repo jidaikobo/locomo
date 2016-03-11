@@ -1899,7 +1899,8 @@ a.icon.csv:before,     span.icon.csv:before     { content: url('../img/led-icons
 	margin: 1em 0;
 }
 
-.lcm_close_window {
+.lcm_close_window,
+.lcm_close_modal {
 	position: absolute;
 	top: .1em;
 	right: 5px;
@@ -2059,12 +2060,12 @@ span.sr_add.bracket:after {
 }
 
 /*=== modal ===*/
-.modal
+#lcm_modal
 {
 	display: none;
 }
-.modal.on {
-	display: block;
+#lcm_modal.on {
+	display: block !important;
 	position: fixed;
 	/* right: 0; */
 	/* bottom: 0; */
