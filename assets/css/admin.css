@@ -295,13 +295,13 @@ body.lcm_action_login.default_logo .container{
 	padding: 5px 10px;
 }
 #main_content .lcmbar_bottom .select_period .next_month,
-#main_content .select_period .prev_year {
+#main_content .lcmbar_bottom .select_period .prev_year {
 	padding: 2px 10px;
 }
 
 #main_content .lcmbar_bottom .select_period .prev_month {
-	margin-left: 4em;
+	margin-left: 4em !important;
 }
 #main_content .lcmbar_bottom .select_period .next_year {
-	margin-left: 4em;
+	margin-left: 4em !important;
 }
