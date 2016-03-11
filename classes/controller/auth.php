@@ -265,28 +265,27 @@ class Controller_Auth extends \Locomo\Controller_Base
 
 		if ($exist)
 		{
+			$mail_raw = (string) \View::forge('auth/email_user_activated', array('item' => $exist));
+			$mail = Util::parse_email($mail_raw);
+
+			$this->send($mail['headers']['From_email'],
+									$mail['headers']['From_str'],
+									$exist->email,
+									$exist->display_name,
+									$mail['headers']['Subject'],
+									$mail['body']);
+
+			$mail_raw = (string) \View::forge('auth/email_to_admin', array('item' => $exist));
+			$mail = Util::parse_email($mail_raw);
+			$this->send($mail['headers']['From_email'],
+									$mail['headers']['From_str'],
+									$exist->email,
+									$exist->display_name,
+									$mail['headers']['Subject'],
+									$mail['body']);
+
 			$exist->is_visible = true;
 			$exist->save();
-
-			$view->set('item', $exist);
-
-			$mail_raw = (string) \View::forge('auth/email_user_activated');
-			$mail = Util::parse_email($mail_raw);
-			$this->send($mail['headers']['From_email'],
-									$mail['headers']['From_str'],
-									$item->email,
-									$item->display_name,
-									$mail['headers']['Subject'],
-									$mail['body']);
-
-			$mail_raw = (string) \View::forge('auth/email_to_admin');
-			$mail = Util::parse_email($mail_raw);
-			$this->send($mail['headers']['From_email'],
-									$mail['headers']['From_str'],
-									$item->email,
-									$item->display_name,
-									$mail['headers']['Subject'],
-									$mail['body']);
 		}
 
 		// 登録済みユーザ
@@ -320,6 +319,7 @@ class Controller_Auth extends \Locomo\Controller_Base
 	 */
 	private function send ($from, $from_str, $to, $to_str, $subject, $body)
 	{
+		\Package::load('email');
 		$email = \Email::forge();
 		$email->from($from, $from_str);
 		$email->to($to, $to_str);
