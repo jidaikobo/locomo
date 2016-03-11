@@ -15,17 +15,17 @@ lcm_env.load_lcm_modal_semimodal = true;
 	// modal準備
 	if($('.lcm_modal_open')[0]){
 		base_uri = $('body').data('uri');
-		var modal_str = '<div id="modal_wrapper"><div id="lcm_modal" class="modal"><h1 id="lcm_modal_title" class="lcmbar_top lcmbar_top_title" tabindex="-1"></h1><div class="modal_content"></div><!-- /.modal_content --><a href="javascript: void(0);" role="button" class="lcm_close_modal menubar_icon"><img src="http://localhost:8090/lightstaff/public/lcm_assets/img/system/adminbar_icon_close.png" alt="ポップアップウィンドウを閉じる"></a></div><!-- /.modal --></div><!-- /#lcm_modal_wrapper -->';
+		var modal_str = '<div id="modal_wrapper"><div id="lcm_modal" class="modal"><h1 id="lcm_modal_title" class="lcmbar_top lcmbar_top_title" tabindex="-1"></h1><div class="lcm_modal_content"></div><!-- /.modal_content --><a href="javascript: void(0);" role="button" class="lcm_close_modal menubar_icon"><img src="http://localhost:8090/lightstaff/public/lcm_assets/img/system/adminbar_icon_close.png" alt="ポップアップウィンドウを閉じる"></a></div><!-- /.modal --></div><!-- /#lcm_modal_wrapper -->';
 		$('body').append(modal_str); 
 		
 		$('.lcm_modal_open').on('click', function(){
 			var modal_id = $(this).data('lcmModalId');
 			var modal_title = $(this).data('lcmModalTitle');
 			if(!(modal_id && modal_title)) return; //idとタイトルが与えられていなければ実行しない
-
+/* 後で整理 */
 			var $modal_content = $(document).find($('#'+modal_id));
-			$(document).find('#lcm_modal .modal_content').append($modal_content);
-			$modal_content.show();
+			$(document).find('#lcm_modal .lcm_modal_content').append($modal_content);
+			$modal_content.removeClass('lcm_modal_content');
 			$(document).find('#modal_wrapper, #lcm_modal').addClass("on");
 			$(document).find('#lcm_modal_title').text(modal_title).focus();
 			$(document).find('#lcm_modal .lcm_close_modal');

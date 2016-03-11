@@ -71,7 +71,7 @@
 #adminbar h1:after {
 	content: "";
 }
-.lcm_modal_content {
+#adminbar .lcm_modal_content {
 	height: 100% !important;
 	overflow: auto;
 	padding-bottom: 1em !important;

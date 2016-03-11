@@ -1848,37 +1848,48 @@ a.icon.csv:before,     span.icon.csv:before     { content: url('../img/led-icons
 	display: block;
 }
 
-
-.modal_content {
+.lcm_modal_content {
+	display: none;
+}
+.on .lcm_modal_content,
+.on .modal_content {
+	display: block;
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
 	box-sizing : border-box ;
-	height: 100%;
+/*	height: 100%; */
+	height: calc(100% - 2em);
 	width: 100%;
 	padding: .75em 15px;
 	overflow: auto;
-	font-size: .9em;
 	color: #333 !important;
 	text-shadow: none;
 }
+#adminbar .on .lcm_modal_content {
+	font-size: .9em;
+}
+.lcm_modal_content h2,
 .modal_content h2 {
 	margin: 1.5em 0 .25em;
 	border-bottom: 1px solid #aaa;
 	text-shadow: 1px 1px 0 #fff;
 	box-shadow: 0 1px 0 #fff;
 }
+.lcm_modal_content h2:first-of-type,
 .modal_content h2:first-of-type {
 	margin-top: .5em;
 }
-.modal_content h3 {
+.lcm_modal_content h3 {
 	margin-top: .5em;
 }
-.modal_content p {
+.lcm_modal_content p {
 	margin-bottom: .5em;
 }
+#help_window .lcm_modal_content a,
 #help_window .modal_content a {
 	text-decoration: underline;
 }
+#help_window .lcm_modal_content a:hover,
 #help_window .modal_content a:hover {
 	text-decoration: none;
 }
