@@ -221,5 +221,5 @@ endif;
 	// 下段表示分
 	echo '<div class="lcmbar_bottom">';
 	echo $mon_select_html;
-	echo '</div><!-- /.lcmbar_bottom -->';
+	echo '</div><!-- /.lcmbar_bottom 19:09:10-->';
 ?>

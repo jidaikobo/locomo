@@ -537,8 +537,8 @@ table + .index_toolbar {
 .index_toolbar .pagination {
 	float: right;
 }
-#main_content .pagination a {
-	padding: 5px 10px !important;
+.pagination a {
+	padding: 5px 10px;
 }
 .pagination .active a,
 .pagination a:hover,
@@ -1164,20 +1164,20 @@ td.minimum {
 	display: inline;
 	zoom: 1;
 }
-#main_content .select_period .prev_month {
-	margin-left: 4em !important;
+.select_period .prev_month {
+	margin-left: 4em;
 }
-#main_content .select_period .next_year {
-	margin-left: 4em !important;
+.select_period .next_year {
+	margin-left: 4em;
 }
-#main_content .select_period .next_month,
-#main_content .select_period .prev_year {
+.select_period .next_month,
+.select_period .prev_year {
 	position: absolute;
-	padding: 2px 10px !important;
+	padding: 2px 10px;
 	top: -2px;
 }
-#main_content .select_period .next_month {
-	right: 4em !important;
+.select_period .next_month {
+	right: 4em;
 }
 .select_period .prev_year {
 	left: 0;
@@ -1185,8 +1185,8 @@ td.minimum {
 .select_period .select_num {
 	display: inline-block;
 }
-#main_content .select_period .active {
-	padding: 5px 10px !important;
+.select_period .active {
+	padding: 5px 10px;
 	background-color: #fafacb;
 }
 
@@ -1848,37 +1848,48 @@ a.icon.csv:before,     span.icon.csv:before     { content: url('../img/led-icons
 	display: block;
 }
 
-
-.modal_content {
+.lcm_modal_content {
+	display: none;
+}
+.on .lcm_modal_content,
+.on .modal_content {
+	display: block;
 	-webkit-box-sizing : border-box ;
 	-moz-box-sizing : border-box ;
 	box-sizing : border-box ;
-	height: 100%;
+/*	height: 100%; */
+	height: calc(100% - 2em);
 	width: 100%;
 	padding: .75em 15px;
 	overflow: auto;
-	font-size: .9em;
 	color: #333 !important;
 	text-shadow: none;
 }
+#adminbar .on .lcm_modal_content {
+	font-size: .9em;
+}
+.lcm_modal_content h2,
 .modal_content h2 {
 	margin: 1.5em 0 .25em;
 	border-bottom: 1px solid #aaa;
 	text-shadow: 1px 1px 0 #fff;
 	box-shadow: 0 1px 0 #fff;
 }
+.lcm_modal_content h2:first-of-type,
 .modal_content h2:first-of-type {
 	margin-top: .5em;
 }
-.modal_content h3 {
+.lcm_modal_content h3 {
 	margin-top: .5em;
 }
-.modal_content p {
+.lcm_modal_content p {
 	margin-bottom: .5em;
 }
+#help_window .lcm_modal_content a,
 #help_window .modal_content a {
 	text-decoration: underline;
 }
+#help_window .lcm_modal_content a:hover,
 #help_window .modal_content a:hover {
 	text-decoration: none;
 }
@@ -1899,7 +1910,8 @@ a.icon.csv:before,     span.icon.csv:before     { content: url('../img/led-icons
 	margin: 1em 0;
 }
 
-.lcm_close_window {
+.lcm_close_window,
+.lcm_close_modal {
 	position: absolute;
 	top: .1em;
 	right: 5px;
@@ -2059,23 +2071,27 @@ span.sr_add.bracket:after {
 }
 
 /*=== modal ===*/
-.modal
+#lcm_modal
 {
 	display: none;
 }
-.modal.on {
-	display: block;
+#lcm_modal.on {
+	display: block !important;
 	position: fixed;
-	top: 0;
-	left: 0;
 	/* right: 0; */
 	/* bottom: 0; */
 	/* margin: auto; */
 	background: #fefefe;
-	padding: 10px;
+/*	padding: 10px;*/
 	z-index: 10000;
+	width: 80%;
+	height: 80%;
+	max-height: 90%;
+	left: 10%;
+	top: 10%
 }
-#modal_wrapper {
+
+#modal_wrapper.on {
 	position: fixed;
 	left: 0;
 	top: 0;
