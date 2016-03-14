@@ -147,6 +147,7 @@ class Controller_Impt extends \Controller_Base
 				}
 			}
 
+			\Session::set_flash('success' , 'インポートが完了いたしました');
 		}
 
 		$content = \Presenter::forge($this->_content_template ?: static::$dir.'import');

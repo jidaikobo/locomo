@@ -73,6 +73,7 @@ class Presenter_Impt_Index_Admin extends \Presenter_Base
 		$controllables = array(
 			'pdf',
 			'excel',
+			'csv',
 		);
 
 		if (! in_array($obj->type, $controllables)) return '';
