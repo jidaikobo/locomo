@@ -907,13 +907,15 @@ class Controller_Base extends Controller_Core
 	protected function conditioned_bulk($options, $args = array())
 	{
 
-		$default_args = array(
+		$defaults = array(
 			'default_values' => array(),
 			'belongs_to_display_name' => 'name',
 			'is_redirect' => true
 		);
+		var_dump(\Util::parse_args($defaults, $args));
 
 		extract(\Util::parse_args($defaults, $args));
+
 
 		$model = $this->model_name;
 		$model::set_authorized_options();
@@ -971,7 +973,7 @@ class Controller_Base extends Controller_Core
 			}
 		}
 
-		$content = \View::forge(static::$dir.'bulk');
+		$content = \View::forge($this->_content_template ?: static::$dir.'bulk');
 		$this->template->content = $content;
 		$this->template->set_global('form', $bulk->build(), false);
 		$this->template->set_global('title', self::$nicename.'の一括処理');
