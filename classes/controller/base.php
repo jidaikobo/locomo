@@ -908,9 +908,8 @@ class Controller_Base extends Controller_Core
 			'belongs_to_display_name' => 'name',
 			'is_redirect' => true
 		);
-		var_dump(\Util::parse_args($defaults, $args));
 
-		extract(\Util::parse_args($defaults, $args));
+		extract(\Util::parse_args($args, $defaults));
 
 
 		$model = $this->model_name;
@@ -961,11 +960,19 @@ class Controller_Base extends Controller_Core
 				$action = \Request::main()->action;
 
 				$url = \Uri::create(static::$base_url.$action, array(), \Input::get());
-				if ($is_redirect) return \Response::redirect($url);
+				if ($is_redirect)
+				{
+					return \Response::redirect($url);
+				}
+				else
+				{
+					return $bulk;
+				}
 			}
 			else
 			{
 				\Session::set_flash('error', self::$nicename . 'の保存に失敗しました。エラーメッセージを参照して下さい。');
+				return false;
 			}
 		}
 
