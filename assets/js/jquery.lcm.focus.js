@@ -51,7 +51,10 @@ function lcm_focus(){
 		}else if(target && target.hasClass('lcm_focus')){
 			target.parents('.lcm_focus');
 			parents = target.parents('.lcm_focus').addClass('focusparent');
-			target.addClass('currentfocus').css('position', 'relative').tabindex_ctrl();
+			if(target.css('position')=='static'){
+				target.css('position', 'relative');
+			}
+			target.addClass('currentfocus').tabindex_ctrl();
 		}else{
 			$(document).tabindex_ctrl();//重いかなあ。
 		}

@@ -10,16 +10,16 @@ From: <?php echo \Config::get('site_title').' <'.LOCOMO_ADMIN_MAIL.">\n" ?>
 承認いただくまでは、ログインはできません。
 下記リンクは<?php echo intval(\Config::get('user_registration_limit_days')) ?>日間程度有効です。
 
-<?php echo \Uri::create('/auth/actibate/'.$item->activation_key.DS.$item->email) ?>
+<?php echo \Uri::create('/auth/activation/?key='.urlencode($item->activation_key).'&email='.urlencode($item->email))."\n" ?>
 
 登録内容は以下の通りです。
 
-お名前：<?php echo $item->display_name ?>
-ユーザ名：<?php echo $item->username ?>
+お名前：<?php echo $item->display_name."\n" ?>
+ユーザ名：<?php echo $item->username."\n" ?>
 パスワード：登録時に設定なさったもの
 
 当サイトを今後ともよろしくお願いいたします。
 
---
-<?php echo \Config::get('site_title') ?>
+-- 
+<?php echo \Config::get('site_title')."\n" ?>
 <?php echo \Config::get('slogan') ?>

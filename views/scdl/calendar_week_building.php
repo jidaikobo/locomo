@@ -246,7 +246,9 @@ endforeach; ?>
 <?php if( ! $is_hmvc): ?>
 <?php
 	// 週選択
+	echo '<div class="lcmbar_bottom">';
 	echo $week_select_html;
+	echo '</div><!-- /.lcmbar_bottom -->';
 ?>
 </div><!-- /.field_wrapper.calendar -->
 <?php endif; ?>

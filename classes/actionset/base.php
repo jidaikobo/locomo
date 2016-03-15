@@ -154,12 +154,11 @@ class Actionset_Base extends Actionset
 			'explanation'  => '削除された項目を復活できないように削除する権限です。通常項目の閲覧権限と、削除された項目の閲覧権限も付与されます。現在はルート管理者のみに許されています。',
 			'order'        => 50,
 			'dependencies' => array(
-/*
+				$controller.'/purge',
 				$controller.'/view',
 				$controller.'/view_deleted',
 				$controller.'/index_deleted',
 				$controller.'/purge_confirm',
-*/
 			)
 		);
 		return $retvals;

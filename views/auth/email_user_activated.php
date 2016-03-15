@@ -1,8 +1,8 @@
-subject: 【自動返信】ユーザ登録完了
-From: <?php echo \Config::get('site_title') ?>
-return-to: example@example.com
+Subject: 【自動返信】ユーザ登録完了
+From: <?php echo \Config::get('site_title').' <'.LOCOMO_ADMIN_MAIL.">\n" ?>
+return-to: <?php echo LOCOMO_ADMIN_MAIL."\n" ?>
 
-<?php echo $item->dislay_name ?>さま
+<?php echo $item->display_name ?>さま
 
 このメールは<?php echo \Config::get('site_title') ?>にユーザ登録申請された方への自動返信です。
 お心当たりのない場合は、このメールを破棄してください。
@@ -11,6 +11,6 @@ return-to: example@example.com
 
 当サイトを今後ともよろしくお願いいたします。
 
---
-<?php echo \Config::get('site_title') ?>
+-- 
+<?php echo \Config::get('site_title')."\n" ?>
 <?php echo \Config::get('slogan') ?>

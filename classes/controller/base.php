@@ -771,21 +771,17 @@ class Controller_Base extends Controller_Core
 		}
 	}
 
-
 	/**
 	 * bulk()
 	 */
-	// protected function bulk($page = 1, $add = 3, $is_redirect = true)
 	protected function bulk($args = array())
 	{
-		$defaults = array('page' => 1, 'add' => 3, 'is_redirect' => true);
-		/*
-		$args = array_merge($defaults, $args);
-		$page = $args['page'];
-		$add = $args['add'];
-		$is_redirect = $args['is_redirect'];
-		 */
-		extract(\Util::parse_args($defaults, $args));
+		$defaults = array(
+			'page' => 1,
+			'add' => 3,
+			'is_redirect' => true,
+			'is_deletable' => true);
+		extract(\Util::parse_args($args, $defaults));
 
 		// TODO $page => \Pagination::set('uri_segments', 'paged');
 		$model = $this->model_name;
@@ -844,7 +840,7 @@ class Controller_Base extends Controller_Core
 		// forge bulk
 		$bulk = \Locomo\Bulk::forge();
 		$bulk::$_presenter = $this->_content_template ?: static::$dir.'bulk';
-		$bulk->add_model($objects);
+		$bulk->add_model($objects, $is_deletable);
 
 		// count all for pagination
 		if (method_exists($model, 'set_public_options'))

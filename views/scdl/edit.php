@@ -480,16 +480,15 @@ function scdl_submit ($id)
 		// revision memo template - optional
 		//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
 	?>
-<?php  ?>
+<?php /* ?>
 	<div class="submit_button">
 		<?php
 			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 			scdl_submit('bottom');
 		?>
 	</div>
-<?php  ?>
+<?php */ ?>
 </div><!--/.form_group-->
-<?php /* ?>
 <div class="lcmbar_bottom">
 	<div class="submit_button">
 		<?php
@@ -498,7 +497,7 @@ function scdl_submit ($id)
 		?>
 	</div>
 </div>
-<?php */ ?>
+
 <script>
 <!-- jsに移す -->
 change_repeat_kb_area();

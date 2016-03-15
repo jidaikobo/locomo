@@ -219,7 +219,7 @@ if($detail_pop_array):
 endif;
 
 	// 下段表示分
-	echo '<div style="text-align: center; margin: 25px 0 15px;">';
+	echo '<div class="lcmbar_bottom">';
 	echo $mon_select_html;
-	echo '</div>';
+	echo '</div><!-- /.lcmbar_bottom 19:09:10-->';
 ?>

@@ -145,6 +145,11 @@ class Controller_Impt extends \Controller_Base
 						$insert_model::forge($arr)->save();
 					}
 				}
+				\Session::set_flash('success' , 'インポートが完了いたしました');
+			}
+			else
+			{
+				\Session::set_flash('error' , 'ファイルのアップロードに失敗いたしました');
 			}
 
 		}
