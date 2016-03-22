@@ -5,10 +5,8 @@ namespace Locomo;
  * thx https://gist.github.com/takahashi-yuki/4667353
  * @version 1.2.2
  */
-
 class Browser
 {
-
 	/**
 	 * IEのバージョンを整数値で取得する
 	 *
@@ -16,13 +14,18 @@ class Browser
 	 */
 	public static function getIEVersion()
 	{
-		if(stristr(@$_SERVER['HTTP_USER_AGENT'], "MSIE")) {
+		if (stristr(@$_SERVER['HTTP_USER_AGENT'], "MSIE"))
+		{
 			preg_match('/MSIE\s([\d.]+)/i', @$_SERVER['HTTP_USER_AGENT'], $ver);
 			$ver = @floor($ver[1]);
-		} elseif (stristr(@$_SERVER['HTTP_USER_AGENT'], "Trident")){
+		}
+		elseif (stristr(@$_SERVER['HTTP_USER_AGENT'], "Trident"))
+		{
 			preg_match('/rv\:([\d.]+)/i', @$_SERVER['HTTP_USER_AGENT'], $ver);
 			$ver = $ver[1];
-		} else {
+		}
+		else
+		{
 			$ver = 0;
 		}
 		return (int) $ver;
@@ -38,12 +41,13 @@ class Browser
 	{
 		$type = 'legacy';
 
-		if(isset($_SERVER['HTTP_USER_AGENT']))
+		if (isset($_SERVER['HTTP_USER_AGENT']))
 		{
-			if(self::getIEVersion() >= 10)
+			if (self::getIEVersion() >= 10)
 			{
 				$type = 'modern';
-			} else if(strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false
+			}
+			else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'Silk/') !== false
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'Kindle') !== false
@@ -52,16 +56,18 @@ class Browser
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mobi') !== false)
 			{
 				$type = 'mobile';
-			} else if(strpos($_SERVER['HTTP_USER_AGENT'], 'bot') !== false
+			}
+			else if (strpos($_SERVER['HTTP_USER_AGENT'], 'bot') !== false
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'spider') !== false
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'archiver') !== false
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'Google') !== false
 			       || strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo') !== false)
 			{
 				$type = 'robot';
-			} else if(isset($_SERVER['HTTP_ACCEPT'])) {
-				if(
-						strpos($_SERVER['HTTP_ACCEPT'], 'application/xml') !== false
+			}
+			else if (isset($_SERVER['HTTP_ACCEPT']))
+			{
+				if (strpos($_SERVER['HTTP_ACCEPT'], 'application/xml') !== false
 						|| strpos($_SERVER['HTTP_ACCEPT'], 'application/xhtml+xml') !== false)
 				{
 					$type = 'modern';
@@ -111,7 +117,4 @@ class Browser
 	{
 		return (bool) (self::getBrowserType() === 'robot');
 	}
-
 }
-
-?>
