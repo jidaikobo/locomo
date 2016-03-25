@@ -903,13 +903,14 @@ class Controller_Base extends Controller_Core
 	protected function conditioned_bulk($options, $args = array())
 	{
 
-		$default_args = array(
+		$defaults = array(
 			'default_values' => array(),
 			'belongs_to_display_name' => 'name',
 			'is_redirect' => true
 		);
 
-		extract(\Util::parse_args($defaults, $args));
+		extract(\Util::parse_args($args, $defaults));
+
 
 		$model = $this->model_name;
 		$model::set_authorized_options();
@@ -959,15 +960,23 @@ class Controller_Base extends Controller_Core
 				$action = \Request::main()->action;
 
 				$url = \Uri::create(static::$base_url.$action, array(), \Input::get());
-				if ($is_redirect) return \Response::redirect($url);
+				if ($is_redirect)
+				{
+					return \Response::redirect($url);
+				}
+				else
+				{
+					return $bulk;
+				}
 			}
 			else
 			{
 				\Session::set_flash('error', self::$nicename . 'の保存に失敗しました。エラーメッセージを参照して下さい。');
+				return false;
 			}
 		}
 
-		$content = \View::forge(static::$dir.'bulk');
+		$content = \View::forge($this->_content_template ?: static::$dir.'bulk');
 		$this->template->content = $content;
 		$this->template->set_global('form', $bulk->build(), false);
 		$this->template->set_global('title', self::$nicename.'の一括処理');

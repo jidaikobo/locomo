@@ -21,7 +21,7 @@ class Presenter_Impt_Import extends \Presenter_Base
 		$form->add(
 			'upload[]',
 			'アップロード',
-			array('type' => 'file', 'multiple' => 'multiple', 'description' => '複数ファイル可')
+			array('type' => 'file')
 		);
 
 		// uploads
