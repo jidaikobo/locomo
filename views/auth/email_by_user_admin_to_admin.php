@@ -12,6 +12,6 @@ From: <?php echo \Config::get('site_title').' <'.LOCOMO_ADMIN_MAIL.">\n" ?>
 お名前：<?php echo $item->display_name."\n" ?>
 ユーザ名：<?php echo $item->username."\n" ?>
 
--- 
+<?php echo LOCOMO_MAIL_SIGNATURE ?>
 <?php echo \Config::get('site_title')."\n" ?>
 <?php echo \Config::get('slogan') ?>
