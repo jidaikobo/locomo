@@ -98,6 +98,7 @@ class Controller_Srch extends \Locomo\Controller_Base
 	 */
 	public function action_index()
 	{
+		\Pagination::set('uri_segment', 'paged');
 		parent::index();
 	}
 

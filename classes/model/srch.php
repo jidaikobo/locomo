@@ -155,6 +155,10 @@ class Model_Srch extends \Model_Base_Soft
 			}
 			static::$_options['where'][] = $whr;
 		}
+		else
+		{
+			static::$_options['where'][] = array('id' => null);
+		}
 
 	}
 }
