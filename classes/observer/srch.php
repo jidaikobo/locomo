@@ -34,8 +34,22 @@ class Observer_Srch extends \Orm\Observer
 		$str = '';
 		foreach ($obj::properties() as $k => $v)
 		{
+			// 対象外
+			if (\Arr::get($v, 'lcm_srch_index', null) === false) continue;
 			if ($k == $pk) continue;
-			$str.= $obj->$k;
+
+			// 選択肢がある場合
+			$opts = \Arr::get($v, 'form.options');
+			if ($opts)
+			{
+				$str.= \Arr::get($v, 'label', ' ').' ';
+				$str.= \Arr::get($v, 'form.options.'.$obj->$k, ' ').' ';
+			}
+			else
+			{
+				$str.= $obj->$k;
+				$str.= ' ';
+			}
 		}
 
 		// 関係テーブル
@@ -48,9 +62,9 @@ class Observer_Srch extends \Orm\Observer
 			foreach ($rel::properties() as $kk => $vv)
 			{
 				$str.= $obj->$k->$kk;
+				$str.= ' ';
 			}
 		}
-		
 
 		$str = mb_convert_kana($str, "asKV");
 		$str = str_replace(array(' ', "\n", "\r"), '', $str);
