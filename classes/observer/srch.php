@@ -52,17 +52,32 @@ class Observer_Srch extends \Orm\Observer
 			}
 		}
 
-		// 関係テーブル
+		// relation
 		foreach ($obj::relations() as $k => $v)
 		{
 			if ( ! $v->cascade_save && get_class($v) != 'Orm\BelongsTo') continue;
 
 			$rel = $obj->$k;
-			if ( ! is_object($rel)) continue;
-			foreach ($rel::properties() as $kk => $vv)
+			if (is_array($rel))
 			{
-				$str.= $obj->$k->$kk;
-				$str.= ' ';
+				foreach ($rel as $r)
+				{
+					if ( ! is_object($r)) continue;
+					foreach ($r::properties() as $kk => $vv)
+					{
+						$str.= $r->$kk;
+						$str.= ' ';
+					}
+				}
+			}
+			else
+			{
+				if ( ! is_object($rel)) continue;
+				foreach ($rel::properties() as $kk => $vv)
+				{
+					$str.= $obj->$k->$kk;
+					$str.= ' ';
+				}
 			}
 		}
 
