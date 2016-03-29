@@ -136,6 +136,7 @@ class Model_Srch extends \Model_Base_Soft
 
 		// free word search
 		$all = \Input::get('all', '') ;
+		$all = trim($all);
 		if ($all)
 		{
 			$all = mb_convert_kana($all, "asKV");
