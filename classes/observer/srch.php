@@ -55,7 +55,7 @@ class Observer_Srch extends \Orm\Observer
 		// 関係テーブル
 		foreach ($obj::relations() as $k => $v)
 		{
-			if (! $v->cascade_save) continue;
+			if ( ! $v->cascade_save && get_class($v) != 'Orm\BelongsTo') continue;
 
 			$rel = $obj->$k;
 			if ( ! is_object($rel)) continue;
