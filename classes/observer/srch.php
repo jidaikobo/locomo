@@ -34,23 +34,52 @@ class Observer_Srch extends \Orm\Observer
 		$str = '';
 		foreach ($obj::properties() as $k => $v)
 		{
+			// 対象外
+			if (\Arr::get($v, 'lcm_srch_index', null) === false) continue;
 			if ($k == $pk) continue;
-			$str.= $obj->$k;
-		}
 
-		// 関係テーブル
-		foreach ($obj::relations() as $k => $v)
-		{
-			if (! $v->cascade_save) continue;
-
-			$rel = $obj->$k;
-			if ( ! is_object($rel)) continue;
-			foreach ($rel::properties() as $kk => $vv)
+			// 選択肢がある場合
+			$opts = \Arr::get($v, 'form.options');
+			if ($opts)
 			{
-				$str.= $obj->$k->$kk;
+				$str.= \Arr::get($v, 'label', ' ').' ';
+				$str.= \Arr::get($v, 'form.options.'.$obj->$k, ' ').' ';
+			}
+			else
+			{
+				$str.= $obj->$k;
+				$str.= ' ';
 			}
 		}
-		
+
+		// relation
+		foreach ($obj::relations() as $k => $v)
+		{
+			if ( ! $v->cascade_save && get_class($v) != 'Orm\BelongsTo') continue;
+
+			$rel = $obj->$k;
+			if (is_array($rel))
+			{
+				foreach ($rel as $r)
+				{
+					if ( ! is_object($r)) continue;
+					foreach ($r::properties() as $kk => $vv)
+					{
+						$str.= $r->$kk;
+						$str.= ' ';
+					}
+				}
+			}
+			else
+			{
+				if ( ! is_object($rel)) continue;
+				foreach ($rel::properties() as $kk => $vv)
+				{
+					$str.= $obj->$k->$kk;
+					$str.= ' ';
+				}
+			}
+		}
 
 		$str = mb_convert_kana($str, "asKV");
 		$str = str_replace(array(' ', "\n", "\r"), '', $str);
