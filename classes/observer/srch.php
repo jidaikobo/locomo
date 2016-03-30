@@ -63,8 +63,13 @@ class Observer_Srch extends \Orm\Observer
 				foreach ($rel as $r)
 				{
 					if ( ! is_object($r)) continue;
+					$pk = $r::primary_key()[0];
+
 					foreach ($r::properties() as $kk => $vv)
 					{
+						if (\Arr::get($vv, 'lcm_srch_index', null) === false) continue;
+						if ($kk == $pk) continue;
+
 						$str.= $r->$kk;
 						$str.= ' ';
 					}
@@ -73,8 +78,12 @@ class Observer_Srch extends \Orm\Observer
 			else
 			{
 				if ( ! is_object($rel)) continue;
+				$pk = $rel::primary_key()[0];
 				foreach ($rel::properties() as $kk => $vv)
 				{
+					if (\Arr::get($vv, 'lcm_srch_index', null) === false) continue;
+					if ($kk == $pk) continue;
+
 					$str.= $obj->$k->$kk;
 					$str.= ' ';
 				}
