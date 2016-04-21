@@ -20,6 +20,6 @@ From: <?php echo \Config::get('site_title').' <'.LOCOMO_ADMIN_MAIL.">\n" ?>
 
 当サイトを今後ともよろしくお願いいたします。
 
--- 
+<?php echo LOCOMO_MAIL_SIGNATURE ?>
 <?php echo \Config::get('site_title')."\n" ?>
 <?php echo \Config::get('slogan') ?>

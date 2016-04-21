@@ -12,6 +12,7 @@ $admins = array(
 );
 defined('LOCOMO_ADMINS') or define('LOCOMO_ADMINS', serialize($admins));
 defined('LOCOMO_ADMIN_MAIL') or define('LOCOMO_ADMIN_MAIL', 'example@example.com');
+defined('LOCOMO_MAIL_SIGNATURE') or define('LOCOMO_MAIL_SIGNATURE', "-- \n");
 
 // fuel config
 return array(
