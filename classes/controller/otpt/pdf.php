@@ -10,7 +10,6 @@ trait Controller_Otpt_Pdf
 	 */
 	public function pdf($objects, $format)
 	{
-		// todo test
 		$pdf = $this->pdf;
 
 		$pdf->setCellPaddings(0,0,0,0);
@@ -130,8 +129,6 @@ trait Controller_Otpt_Pdf
 
 			$cell_left = ($cell_width  + $space_horizontal) * $col_position + $start_left;
 			$cell_top  = ($cell_height + $space_vertical  ) * $row_position + $start_top;
-		//	var_dump($col_position. ':' . $row_position);
-		//	var_dump($cell_left. ':' . $cell_top);
 			$cell_format = array();
 			foreach ($format_arr as $v)
 			{
@@ -140,7 +137,6 @@ trait Controller_Otpt_Pdf
 				if (isset($tmp['y']))  $tmp['y'] = $tmp['y'] + $cell_top;
 				$cell_format[] = $tmp;
 			}
-			//	var_dump($cell_format);
 			$this->FormatBulk($object, $cell_format);
 
 			$current_cell++;

@@ -187,6 +187,14 @@ class Controller_Frmt extends \Controller_Base
 		$this->template->set_global('title', $item->name . ' 要素編集');
 	}
 
+	/**
+	 * template
+	 */
+	protected function template($template)
+	{
+	}
+
+
 	/*
 	 * action_copy()
 	 */
