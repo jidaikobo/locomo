@@ -2,9 +2,9 @@
 namespace Locomo;
 class Model_Frmt extends \Locomo\Model_Base_Soft
 {
-
-
 	public static $_format_model = '';
+
+
 	public static $_format_pdf_fields = array(
 	);
 
