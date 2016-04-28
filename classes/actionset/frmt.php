@@ -26,6 +26,11 @@ class Actionset_Frmt extends \Actionset_Base
 			$controller.'/excel_create',
 			$controller.'/excel_edit',
 			$controller.'/excel_edit_element',
+
+
+			$controller.'/table_index',
+			$controller.'/pdf_edit_element',
+
 		);
 		\Arr::set($retvals, 'dependencies', $actions);
 		return $retvals;
@@ -127,7 +132,7 @@ class Actionset_Frmt extends \Actionset_Base
 	}
 
 	/**
-	 * actionset_pdf_create()
+	 * actionset_excel_create()
 	 */
 	public static function actionset_excel_create($controller, $obj = null, $id = null, $urls = array())
 	{
@@ -163,5 +168,43 @@ class Actionset_Frmt extends \Actionset_Base
 		return $retvals;
 	}
 
+
+
+	/**
+	 * actionset_pdf_create()
+	 */
+	public static function actionset_table_index($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = array(
+			'realm'        => 'base',
+			'urls'         => array(array($controller.DS."table_index", 'PDF 用テーブル')),
+			'action_name'  => 'PDF 用テーブル',
+			'show_at_top'  => true,
+			'explanation'  => 'PDFに挿入可能なテーブルを追加します。',
+			'order'        => 40,
+			'dependencies' => array(
+				$controller.'/table_index',
+			)
+		);
+		return $retvals;
+	}
+	/**
+	 * actionset_table_create()
+	 */
+	public static function actionset_table_create($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = array(
+			'realm'        => 'base',
+			'urls'         => array(array($controller.DS."table_create", 'PDF 用テーブル 新規作成')),
+			'action_name'  => 'PDF 用テーブル新規作成',
+			'show_at_top'  => true,
+			'explanation'  => '新しいPDFに挿入可能なテーブルを追加します。',
+			'order'        => 20,
+			'dependencies' => array(
+				$controller.'/pdf_create',
+			)
+		);
+		return $retvals;
+	}
 
 }

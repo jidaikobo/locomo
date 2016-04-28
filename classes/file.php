@@ -71,9 +71,15 @@ class File extends \Fuel\Core\File
 
 		// vals
 		$errors = array();
+		if ( ! is_dir(LOCOMOUPLOADPATH.DS.$dir))
+		{
+			mkdir(LOCOMOUPLOADPATH.DS.$dir, 0777);
+		}
 		$dir = \Inflector::add_tailing_slash($dir);
 		$upload_path = LOCOMOUPLOADPATH.DS.$dir.$id;
 		$save_path = 'uploads'.DS.$dir.$id.DS;
+
+
 
 		if ( ! is_dir($upload_path))
 		{
@@ -123,7 +129,6 @@ class File extends \Fuel\Core\File
 						break;
 					}
 				}
-
 
 				$sizes = \Image::sizes($img_path);
 

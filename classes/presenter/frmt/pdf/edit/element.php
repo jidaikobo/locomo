@@ -53,7 +53,7 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 		return $result_str;
 	}
 
-	public static function setController($model_properties = array())
+	public static function setController($model_properties = array(), $image_properties = array(), $relation_properties = array())
 	{
 		$form = \Fieldset::forge('controller');
 		$form->add_model(\Locomo\Model_Frmt_Element::forge());
@@ -131,6 +131,8 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 		}
 
 		static::setModelProperties($model_properties, true);
+		static::setImageProperties($image_properties, true);
+		static::setRelationProperties($relation_properties, true);
 		$form->add_after(static::modelPropertiesForm(), '', array(), array(), 'txt');
 
 		return $form;
@@ -143,7 +145,12 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 	{
 		$form = \Fieldset::forge('model_properties_form');
 
-		$form->add('model_properties_opener', '', array(), array())->set_template('<div id="model_properties">');
+		$form->add('model_properties_opener', '', array(), array())
+			->set_template(
+				'<div id="model_properties">
+				<h2>プロパティ</h2>
+				<em></em>
+				');
 
 		$child_group_count = 0;
 		foreach (static::$_model_properties as $prop_name => $label)
@@ -168,6 +175,54 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 		}
 		$form->add('model_properties_closer', '', array(), array())->set_template('</div>');
 
+
+		// TODO イメージのプロパティを追加
+		// find
+		$form->add('image_properties_opener', '', array(), array())
+			->set_template(
+				'<div id="image_properties">
+				<h2>挿入可能なイメージ</h2>
+				<em></em>
+				');
+		foreach (static::$_image_properties as $path => $image)
+		{
+			$name = 'image_'.$path;
+			$form->add($name, '', array(
+				'type'          => 'button',
+				'value'         => $image,
+				'title'         => $image,
+				'class'         => 'field_'.$image.' btn small',
+				'data-path'     => $path,
+				'data-fullpath' => LOCOMOUPLOADPATH.$path,
+				'data-name'     => $image,
+			))->set_template('{field}');
+		}
+		$form->add('image_properties_closer', '', array(), array())->set_template('</div>');
+
+
+		// TODO リレーションのプロパティを追加
+		// find
+		$form->add('relation_properties_opener', '', array(), array())
+			->set_template(
+				'<div id="relation_properties">
+				<h2>挿入可能なテーブル</h2>
+				<em></em>
+				');
+		foreach (static::$_relation_properties as $table)
+		{
+			$name = 'table_'.$table->relation.'_'.$table->id;
+			$form->add($name, '', array(
+				'type'          => 'button',
+				'value'         => $table->name,
+				'title'         => $table->name,
+				'class'         => 'field_'.$table->id.' btn small',
+				'data-id'       => $table->id,
+				'data-name'     => $table->name,
+				'data-relation' => $table->relation,
+			))->set_template('{field}');
+		}
+		$form->add('relation_properties_closer', '', array(), array())->set_template('</div>');
+
 		return $form;
 	}
 
@@ -183,4 +238,40 @@ class Presenter_Frmt_Pdf_Edit_Element extends \Presenter_Base
 			static::$_model_properties = $model_properties;
 		}
 	}
+
+	/**
+	 * Image
+	 */
+	protected static $_image_properties = array();
+	public static function setImageProperties($image_properties, $merge = true)
+	{
+		if ($merge)
+		{
+			static::$_image_properties = array_merge(static::$_image_properties, $image_properties);
+		}
+		else
+		{
+			static::$_image_properties = $image_properties;
+		}
+	}
+
+
+
+	/**
+	 * Table
+	 */
+	protected static $_relation_properties = array();
+	public static function setRelationProperties($relation_properties, $merge = true)
+	{
+		if ($merge)
+		{
+			static::$_relation_properties = array_merge(static::$_relation_properties, $relation_properties);
+		}
+		else
+		{
+			static::$_relation_properties = $relation_properties;
+		}
+	}
+
+
 }

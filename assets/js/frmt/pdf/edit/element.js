@@ -290,7 +290,9 @@ $(function () {
 
 		var txt = elm.find('.txt').val();
 		elm.find('.txt').text(txt);
-		rendered_text = txt.replace(/{(.*?)}/g, '<span class="field">$1</span>');
+		rendered_text = txt.replace(/{IMAGE path="(.*?)"}/g, '<img src="' + $('body').data('uri') + '$1">');
+		rendered_text = rendered_text.replace(/{TABLE id="(.*?)"}/g, '<span class="table">ここにテーブル$1が入ります</span>');
+		rendered_text = rendered_text.replace(/{(.*?)}/g, '<span class="field">$1</span>');
 		rendered_text = rendered_text.replace(/\r\n/g, "<br>");
 		rendered_text = rendered_text.replace(/(\n|\r)/g, "<br>");
 
@@ -337,6 +339,27 @@ $(function () {
 
 		// element_seq に名前を適用
 		$('#element_seq .' + elm.attr('id')).find('.display_name').text( elm.find('.name').val() );
+
+		/**
+		 * imageのサイズ
+		 */
+		if (elm.find('img')[0])
+		{
+			elm.find('img').css('width',         parseFloat(elm.find('.w').val())*mm2px);
+			elm.find('img').css('maxWidth',      parseFloat(elm.find('.w').val())*mm2px);
+
+			if (elm.find('.h_adjustable').val() == 1)
+			{
+				elm.find('img').css('height',    'auto');
+				elm.find('img').css('maxHeight', 'auto');
+			}
+			else
+			{
+				elm.find('img').css('height',        parseFloat(elm.find('.h').val())*mm2px);
+				elm.find('img').css('maxHeight',     parseFloat(elm.find('.h').val())*mm2px);
+			}
+		}
+
 
 		if (apply_callbacks[0])
 		{
@@ -435,6 +458,28 @@ $(function () {
 		if ($('.print .element.focus')[0]) valueInputController2Element();
 	}
 
+	function inputImageProperty(e)
+	{
+		var path = $(e.target).data('path');
+		/*
+		var name     = $(e.target).data('field');
+		var relation = $(e.target).data('field');
+		*/
+		$('#controller .txt').val('{IMAGE path="' + path + '"}');
+		if ($('.print .element.focus')[0]) valueInputController2Element();
+	}
+
+	// TODO inputRelationProperty
+	function inputRelationProperty(e)
+	{
+		var id = $(e.target).data('id');
+		/*
+		var name     = $(e.target).data('field');
+		var relation = $(e.target).data('field');
+		*/
+		$('#controller .txt').val('{TABLE id="' + id + '"}');
+		if ($('.print .element.focus')[0]) valueInputController2Element();
+	}
 
 	function applyAllStyle()
 	{
@@ -457,6 +502,8 @@ $(function () {
 		// Handlers
 		$('.print').on('click', printClickListener);
 		$('#model_properties button').on('click', inputModelProperty);
+		$('#image_properties button').on('click', inputImageProperty);
+		$('#relation_properties button').on('click', inputRelationProperty);
 		$('#controller').on('change', valueInputController2Element);
 		$('.print .element').on('click', focusElementListener);
 		// Handlers inline
