@@ -286,6 +286,7 @@ trait Model_Traits_Base
 		if (isset(static::properties()[$column]))
 		{
 			$options['where'][] = array($column, 'is not', null);
+			$options['where'][] = array($column, '<', date('Y-m-d H:i:s'));
 		}
 
 		// array_merge
