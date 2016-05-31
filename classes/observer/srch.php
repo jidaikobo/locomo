@@ -34,18 +34,74 @@ class Observer_Srch extends \Orm\Observer
 		$str = '';
 		foreach ($obj::properties() as $k => $v)
 		{
+			// 対象外
+			if (\Arr::get($v, 'lcm_srch_index', null) === false) continue;
 			if ($k == $pk) continue;
-			$str.= $obj->$k;
+
+			// 選択肢がある場合
+			$opts = \Arr::get($v, 'form.options');
+			if ($opts)
+			{
+				$str.= \Arr::get($v, 'label', ' ').' ';
+				$str.= \Arr::get($v, 'form.options.'.$obj->$k, ' ').' ';
+			}
+			else
+			{
+				$str.= $obj->$k;
+				$str.= ' ';
+			}
 		}
 
-		// 関係テーブル
+		// relation
 		foreach ($obj::relations() as $k => $v)
 		{
-			$rel = $obj->$k;
-			if ( ! is_object($rel)) continue;
-			foreach ($rel::properties() as $kk => $vv)
+			if (
+				! $v->cascade_save &&
+				get_class($v) != 'Orm\BelongsTo'
+			)
 			{
-				$str.= $obj->$k->$kk;
+				continue;
+			}
+
+			try
+			{
+				$rel = $obj->$k;
+
+				if (is_array($rel))
+				{
+					foreach ($rel as $r)
+					{
+						if ( ! is_object($r)) continue;
+						$pk = $r::primary_key()[0];
+
+						foreach ($r::properties() as $kk => $vv)
+						{
+							if (\Arr::get($vv, 'lcm_srch_index', null) === false) continue;
+							if ($kk == $pk) continue;
+
+							$str.= $r->$kk;
+							$str.= ' ';
+						}
+					}
+				}
+				else
+				{
+					if ( ! is_object($rel)) continue;
+					$pk = $rel::primary_key()[0];
+					foreach ($rel::properties() as $kk => $vv)
+					{
+						if (\Arr::get($vv, 'lcm_srch_index', null) === false) continue;
+						if ($kk == $pk) continue;
+
+						$str.= $obj->$k->$kk;
+						$str.= ' ';
+					}
+				}
+
+			}
+			catch (\Orm\FrozenObject $e)
+			{
+				\Log::error('Observer Srch parent frozen');
 			}
 		}
 

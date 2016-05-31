@@ -62,6 +62,43 @@ class Presenter_Frmt_Pdf_Edit extends \Presenter_Base
 				</div>
 			</div>
 		');
+
+		$form->add_after(
+			'upload[]',
+			'使用イメージのアップロード',
+			array(
+				'type' => 'file',
+				'multiple' => 'multiple',
+				'description' => '
+					画像ファイル .jpeg .jpg .png .gif ファイル<br>
+					複数ファイル可<br>
+				',
+				'class' => 'button',
+			),
+			array(),
+			'preview');
+
+		$images = (\File::get_attached_files($obj::$_upload_path, false, array('image')));
+		$select = array();
+
+		if ($images)
+		{
+			foreach ($images as $url => $filename)
+			{
+				$thumb_url = substr($url, 0, strrpos($url, '.')).'_tn.jpg';// substr($url, strrpos($url, '.'));
+				$select[$url] = \Html::img($thumb_url) . $filename;
+			}
+		}
+		if ($select)
+		{
+			$form->add_after(
+				'unlink',
+				'イメージ削除',
+				array('type' => 'checkbox', 'description' => '削除したいファイルにチェックを入れてください。', 'options' => $select),
+				array(),
+				'upload[]');
+		}
+
 		return $form;
 	}
 

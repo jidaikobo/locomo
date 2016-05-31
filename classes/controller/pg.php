@@ -29,6 +29,7 @@ class Controller_Pg extends \Locomo\Controller_Base
 	{
 		// search content
 		$path = \Input::get('path') ?: \Input::server('PATH_INFO');
+		$path = $path ?: \Uri::segment(2);
 		$path = str_replace('/pg/', '', rawurldecode($path));
 		$model = $this->model_name;
 		$model::set_authorized_options();

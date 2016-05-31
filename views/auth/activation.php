@@ -1,6 +1,6 @@
-<?php if ($item): ?>
+<?php if ($activated): ?>
 <h1>ユーザ登録完了</h1>
-<p><?php echo $item->display_name ?>さまのユーザ登録を完了しました。</p>
+<p><?php echo $activated->display_name ?>さまのユーザ登録を完了しました。</p>
 <p>今後とも当サイトをよろしくお願い致します。</p>
 <p><a href="<?php echo \Uri::create('auth/login/') ?>" class="button">ログインする</a></p>
 

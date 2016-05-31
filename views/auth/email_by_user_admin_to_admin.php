@@ -9,9 +9,9 @@ From: <?php echo \Config::get('site_title').' <'.LOCOMO_ADMIN_MAIL.">\n" ?>
 
 登録内容は以下の通りです。
 
-お名前：<?php echo $item->dislay_name ?>
-ユーザ名：<?php echo $item->username ?>
+お名前：<?php echo $item->display_name."\n" ?>
+ユーザ名：<?php echo $item->username."\n" ?>
 
---
-<?php echo \Config::get('site_title') ?>
+<?php echo LOCOMO_MAIL_SIGNATURE ?>
+<?php echo \Config::get('site_title')."\n" ?>
 <?php echo \Config::get('slogan') ?>

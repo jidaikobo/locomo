@@ -20,6 +20,8 @@ class Presenter_Srch_Index extends \Presenter_Base
 			'opener'
 		);
 
+		$form->field('clear_results')->set_template('<div class="submit_button">');
+
 		// AND検索
 		$tpl_and_srch = str_replace('<h2', '<h2 id="and_srch"', $tpl['multi_field_template']);
 		$form->add_after(

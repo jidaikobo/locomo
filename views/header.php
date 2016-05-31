@@ -11,13 +11,14 @@
 	?>
 	<title><?php echo $title; ?></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=0.5,user-scalable=yes,initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, minimum-scale=0.5,user-scalable=yes,initial-scale=1.0" />
 
 	<!--stylesheet-->
 	<?php echo \Asset::css('base.css'); ?>
 	<?php echo \Asset::css('core.css'); ?>
 	<?php echo \Asset::css('layout.css'); ?>
 	<?php echo \Asset::css('adminbar.css'); ?>
+	<?php echo \Asset::css('code_profiler.css'); ?>
 	<?php echo \Asset::css('../js/jquery-ui-1.10.4/css/smoothness/jquery-ui-1.10.4.custom.min.css'); ?>
 	<?php echo \Asset::css('../js/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.css'); ?>
 	<?php echo \Asset::render('css'); ?>

@@ -8,9 +8,8 @@ trait Controller_Otpt_Pdf
 	 * @param object $format  object of format
 	 * @param array  $objects array include Model or array
 	 */
-	public function pdf($objects, $format)
+	public function pdf_single($objects, $format)
 	{
-		// todo test
 		$pdf = $this->pdf;
 
 		$pdf->setCellPaddings(0,0,0,0);
@@ -50,7 +49,7 @@ trait Controller_Otpt_Pdf
 			}
 
 
-			$this->pdf_single($object, $format_arr);
+			$this->FormatBulk($object, $format_arr);
 
 			if ($format->rotation == 90 || $format->rotation == 270)
 			{
@@ -61,12 +60,6 @@ trait Controller_Otpt_Pdf
 
 		$pdf->output($format->name.'('.date('Ymd').')');
 	}
-
-	public function pdf_single($object, $format_arr)
-	{
-		$this->FormatBulk($object, $format_arr);
-	}
-
 
 	/*
 	 * Free format for PDF Multiple
@@ -130,8 +123,6 @@ trait Controller_Otpt_Pdf
 
 			$cell_left = ($cell_width  + $space_horizontal) * $col_position + $start_left;
 			$cell_top  = ($cell_height + $space_vertical  ) * $row_position + $start_top;
-		//	var_dump($col_position. ':' . $row_position);
-		//	var_dump($cell_left. ':' . $cell_top);
 			$cell_format = array();
 			foreach ($format_arr as $v)
 			{
@@ -140,7 +131,6 @@ trait Controller_Otpt_Pdf
 				if (isset($tmp['y']))  $tmp['y'] = $tmp['y'] + $cell_top;
 				$cell_format[] = $tmp;
 			}
-			//	var_dump($cell_format);
 			$this->FormatBulk($object, $cell_format);
 
 			$current_cell++;
@@ -231,7 +221,7 @@ trait Controller_Otpt_Pdf
 				if ( !isset($format['fields']) ) continue;
 
 				$format['txt'] = '';
-				foreach($format['fields'] as $field_name)
+				foreach($format['fields'] as $field_name) // フィールドを印刷
 				{
 
 					// field を元に, object を txt に変換
@@ -294,7 +284,7 @@ trait Controller_Otpt_Pdf
 						else
 						{
 							$format['y'] += $format['margin_top'];
-					}
+						}
 					}
 
 					if (isset($format['font_family']))
@@ -312,16 +302,66 @@ trait Controller_Otpt_Pdf
 
 				$pdf->MultiBox($format);
 
-				// padding 戻し
+				// padding 戻し padding MultiBox に積んだので不要か
 				$pdf->setCellPaddings(
 					$default_paddings['L'],
 					$default_paddings['T'],
 					$default_paddings['R'],
 					$default_paddings['B']
 				);
-
 			}
-			else
+			else if ($format_type == 'image') // image 印刷
+			{
+				$path = str_replace('{IMAGE path="', '', str_replace('"}', '', $format['txt']));
+				$file = APPPATH.'locomo'.DS.$path;
+				if (\File::exists(APPPATH.'locomo'.DS.$path))
+				{
+					if (isset($format['ln_y']))
+					{
+						if ($format['ln_y'])
+						{
+							$format['y'] = $pdf->getY()+$format['margin_top'];
+						}
+						else
+						{
+							$format['y'] += $format['margin_top'];
+						}
+					}
+					$height = 0;
+					if (!$format['h_adjustable'])
+					{
+						$height = $format['h'];
+					}
+					$pdf->Image($file, $format['x'], $format['y'], $format['w'], $height);
+				}
+			}
+			else if ($format_type == 'table') // table 印刷
+			{
+				if (isset($format['ln_y']))
+				{
+					if ($format['ln_y'])
+					{
+						$format['y'] = $pdf->getY()+$format['margin_top'];
+					}
+					else
+					{
+						$format['y'] += $format['margin_top'];
+					}
+				}
+
+				$pdf->setXY($format['x'], $format['y']);
+
+				// TODO ここでテーブルを印刷する
+				// TODO メソッド定義
+				$table_id = str_replace('id=', '', str_replace('{TABLE id="', '', str_replace('"}', '', $format['txt'])));
+
+				$table_model = $this->table_model_name ?: $this->model_name.'_Table';
+				$table_obj = $table_model::find($table_id);
+
+				$this->FormatBulkTable($table_obj, $object);
+				if (!$table_obj) continue;
+			}
+			else // その他、aciton があれば印刷
 			{
 				if (method_exists($this, $format_type))
 				{
@@ -356,6 +396,151 @@ trait Controller_Otpt_Pdf
 	}
 
 
+
+	/*
+	 * フォーマットの変更用
+	 * Override する際は parent で呼ぶ
+	 */
+	protected static function convert_table_formats($element)
+	{
+		$format_arr = array();
+
+		$defaults = array(
+			'maxh'      => 100,
+			'h'         => 0,
+			'font_size' => 18,
+			'fitcell'   => 0,
+		);
+
+		foreach ($element as $elm)
+		{
+			$arr = $elm->to_array();
+
+			/* TODO 位置調整 ここで全てやる
+			if (isset($arr['x'])) $arr['x'] = $arr['x'] - 50;
+			if (isset($arr['y'])) $arr['y'] = $arr['y'] - 50;
+			 */
+
+			$arr = array_merge($defaults, $arr);
+
+			if (isset($arr['min_h']) && $arr['min_h'])
+			{
+				$arr['h'] = $arr['min_h'];
+			}
+
+			// テキストの処理
+			$fields = explode('}', str_replace('{', '}', $elm->txt));
+			$arr['fields'] = $fields;
+
+			/*
+			if ($elm->h_adjustable) {
+				$arr['fitcell']  = false;
+				$arr['maxh'] = 0;
+				$arr['h'] = 0;
+			} else {
+				$arr['fitcell'] = true;
+				$arr['maxh'] = $elm->h;
+			}
+
+			if ($elm->ln_y) {
+				unset($arr['y']);
+			} else {
+			}
+
+			$border_str = '';
+			if ($elm->border_left) $border_str .= 'L';
+			if ($elm->border_top) $border_str .= 'T';
+			if ($elm->border_right) $border_str .= 'R';
+			if ($elm->border_bottom) $border_str .= 'B';
+			$arr['border'] = $border_str;
+			 */
+			$format_arr[] = $arr;
+		}
+
+		return $format_arr;
+	}
+
+	public function FormatBulkTable($table_obj, $object)
+	{
+		$pdf = $this->pdf;
+
+		$relate_objects = $object->{$table_obj->relation};
+
+		$formats = static::convert_table_formats($table_obj->element);
+
+		$objects_arr = array();
+
+		// ここでヘッダー
+		$this->FormatBulkTableHeader($table_obj, $object, $formats); // カプセル化
+
+
+		foreach ($relate_objects as $value)
+		{
+			$objects_arr[] = $value;
+		}
+
+		$pdf->Table($objects_arr, $formats);
+
+		return;
+	}
+
+	protected function FormatBulkTableHeader($table_obj, $object, $formats)
+	{
+		$pdf = $this->pdf;
+
+
+		$row_height             = $table_obj['header_min_h'];
+		$header_padding_top     = $table_obj['header_padding_top'];
+		$header_padding_left    = $table_obj['header_padding_left'];
+		$header_padding_right   = $table_obj['header_padding_right'];
+		$header_padding_bottom  = $table_obj['header_padding_bottom'];
+		$header_font_size       = $table_obj['header_font_size'];
+		// $header_font_family     = $table_obj['header_font_family'];
+
+
+		$default_font = $pdf->getFontFamily();
+		if (isset($table_obj['header_font_family']))
+		{
+			if ($table_obj['header_font_family'] == 'G')
+			{
+				$pdf->setFont('kozgopromedium');
+			}
+			else
+			{
+				$pdf->setFont('kozminproregular');
+			}
+		}
+
+		$header_align           = $table_obj['header_align'];
+
+		$header_formats = array();
+		$header_data    = array();
+
+		foreach ($formats as $key => $format)
+		{
+			$header_formats[] = array(
+				'w'           => $format['w'],
+				'font_size'   => $header_font_size,
+				'fields'      => array($key),
+				'align'       => $header_align,
+				'valign'      => 'M',
+				'h'           => $row_height,
+				'maxh'        => $row_height,
+				'fitcell'     => 1,
+
+				'padding_top'    => $header_padding_top,
+				'padding_left'   => $header_padding_left,
+				'padding_right'  => $header_padding_right,
+				'padding_bottom' => $header_padding_bottom,
+			);
+
+			$header_data[(string)$key] = $format['label'];
+		}
+
+		$pdf->Table(array($header_data), $header_formats);
+
+		$pdf->setFont($default_font);
+	}
 
 
 
@@ -492,8 +677,6 @@ trait Controller_Otpt_Pdf
 			}
 
 			if ($rotate) $pdf->StopTransform();
-
-
 
 		} //endforeach;
 

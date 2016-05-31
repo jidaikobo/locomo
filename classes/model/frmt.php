@@ -4,6 +4,7 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 {
 	public static $_format_model = '';
 
+	public static $_upload_path = 'lcm_frmt';
 
 	public static $_format_pdf_fields = array(
 	);
@@ -267,6 +268,9 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 	public function _event_before_save()
 	{
 		$this->model = static::$_format_model;
+
+
+		// elerment の方に type を処理する observer 有り
 	}
 
 	protected static $_has_many = array(
@@ -277,21 +281,6 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 			'cascade_save' => true,
 			'cascade_delete' => true,
 		),
-		// EAV
-		'eav' => array(
-			'key_from' => 'id',
-			'model_to' => '\Locomo\Model_Frmt_Eav',
-			'key_to' => 'format_id',
-			'cascade_save' => true,
-			'cascade_delete' => true,
-		),
-	);
-
-	protected static $_eav = array(
-		'eav' => array(
-			'attribute' => 'key',
-			'value' => 'value',
-		)
 	);
 
 	/*

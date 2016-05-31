@@ -7,7 +7,8 @@
 開発にあたってLocomoには、Locomo用のアプリケーション開発のためのscaffold（足場組み）があります。
 FuelとLocomoを展開した後、rootでログインします。画面上右上のスパナのアイコンの項目の中に「足場組み」があるので、画面の指示に従って、アプリケーションを作ってみてください。アプリケーションはappに展開されます。
 
-なお、scaffoldのためには以下パスへのパーミッションが必要です。scaffoldに失敗したら、chmodでパーミッションを調整してください。
+なお、scaffoldのためには以下パスへのパーミッションが必要です。
+
 chmod -R 777 /path/to/app/migrations/
 chmod -R 777 /path/to/app/classes/controller
 chmod -R 777 /path/to/app/classes/model
@@ -16,6 +17,7 @@ chmod -R 777 /path/to/app/classes/presenter
 chmod -R 777 /path/to/app/views
 
 モジュールを生成する場合は、このディレクトリのパーミッションも調整してください。
+
 chmod -R 777 /path/to/app/modules
 
 // locomoパス
@@ -32,44 +34,33 @@ Locomoで開発をする際、各コントローラは必要に応じて、\Loco
 
 またLocomo管理下に置かれるコントローラ／モジュールには、$locomoというメンバ変数があることを期待されます。
 
-+quote start-----------------------------+
+start_______________________
 	// locomo
 	public static $locomo = array(
-		// (str)	name for human
-		'nicename' => 'ユーザ',
-		// (bool)	show at menus
-		'show_at_menu' => true,
-		// (int)	order at menu
-		'order' => 10,
-		// (bool)	true: not appear to acl menu
-		'is_for_admin' => true,
-		// (bool)	true: not appear to acl menu
-		'no_acl' => true,
-		 // (str)	explanation of controller
-		'explanation'  => 'システムを利用するユーザの新規作成、編集、削除等を行います。',
-		 // (str)	main action
-		'main_action'  => 'index_admin',
-		 // (str)	main action's name
-		'main_action_name' => 'ユーザ管理',
-		 // (str)	explanation of top page
-		'main_action_explanation' => '既存ユーザの一覧です。',
-		// (arr)	widgets
-		'widgets' =>array(
-		),
+		'nicename' => 'ユーザ',             // (str)  name for human
+		'show_at_menu' => true,             // (bool) show at menus
+		'order' => 10,                      // (int)  order at menu
+		'is_for_admin' => true,             // (bool) true: not appear to acl menu
+		'no_acl' => true,                   // (bool) true: not appear to acl menu
+		'explanation'  => '',               // (str)  explanation of controller
+		'main_action'  => 'index',          // (str)  main action
+		'main_action_name' => 'foo',        // (str)  main action's name
+		'main_action_explanation' => 'bar', // (str)  explanation of top page
+		'widgets' =>array(),                // (arr)  widgets
 	);
-+-------------------------------quote end+
+_________________________end
 
 モジュールの場合は、Locomoは、モジュール名と同名のconfigが存在することを期待します。configでは、最低限、一つの項目、main_controllerを持っている必要があります。configのnicename、explanation、orderは推奨項目です。
 なお、モジュールがconfigを持っていない場合、\Locomo\Controller_Baseを継承していても、モジュールは管理画面のコントローラリストやアクセス権限管理コントローラの対象になりません。しかし、\Locomo\Controller_Baseを継承するとアクセス権限チェックは行われるので、別途アクセス権限管理を実装する必要があります。
 
-+quote start-----------------------------+
+start_______________________
 return array(
 	'main_controller' => '\\Mod\\Controller_Mod', // required
 	'nicename'        => 'MODULE NICENAME',
 	'explanation'     => 'XXを行います。',
 	'order'           => 10,
 );
-+-------------------------------quote end+
+_________________________end
 
 // config
 
@@ -101,9 +92,9 @@ return array(
 
 // actionset - disable default actionset
 
-アクションセットを使う際は、＼Locomo\Actionset_Baseを継承します。ここには、基本的なアクションセットが定義されているので、実装の際は、actionset_のprefixをもったメソッドからActionset_Baseのメソッドを呼びます。基本的なアクションセットの振る舞いを少しだけ改変したい場合も、以下のような記述をすると楽です。
+アクションセットを使う際は、\Locomo\Actionset_Baseを継承します。ここには、基本的なアクションセットが定義されているので、実装の際は、actionset_のprefixをもったメソッドからActionset_Baseのメソッドを呼びます。基本的なアクションセットの振る舞いを少しだけ改変したい場合も、以下のような記述をすると楽です。
 
-+quote start-----------------------------+
+start_______________________
 	public static function actionset_index($controller, $obj = null, $id = null, $urls = array())
 	{
 		$urls = array(array($controller.DS."index_XXX", 'リンク文字列'),);
@@ -111,7 +102,7 @@ return array(
 		\Arr::set($retvals, 'urls', $urls);
 		return $retvals;
 	}
-+-------------------------------quote end+
+_________________________end
 
 // actionset - acl
 
@@ -158,12 +149,12 @@ orderはいちおうMySQLの予約語なので、表示順を制御する際は�
 
 // Model::cascade_set()
 
-モデルでORM用のリレーションを設定している場合、Model::cascade_set()でsave()に適した形のオブジェクトを生成できます。また、このメソッドは、リレーション先のバリデーションを同時に行うので、bool値を返します。
+モデルでORM用のリレーションを設定している場合、Model::cascade_set()でsave()に適した形のオブジェクトを生成できます。また、このメソッドは、リレーション先のバリデーションを同時に行うので、bool値を返します。具体例は\Locomo\Controller_Base::edit()を参照してください。
 
 // revision
 
 revisionを適用したいコントローラとアクションセットで、Traitを追加します。
-scaffoldを使った場合はコメントアウトされています。
+scaffoldを使った場合は、当該行はコメントアウトされています。
 
 	use \Controller_Traits_Revision;
 	use \Actionset_Traits_Revision;
@@ -176,7 +167,9 @@ scaffoldを使った場合はコメントアウトされています。
 
 またモデルで、そのモデルの項目の表題名にあたるフィールド名を設定してください。
 $_propertiesの当該fieldに、
+
 			'lcm_role' => 'subject',
+
 を設定します。
 
 以上でコントローラでの編集履歴が有効になります。
@@ -190,11 +183,11 @@ scaffoldを使った場合はコメントアウトされています。
 	use \Model_Traits_Wrkflw;
 	use \Actionset_Traits_Wrkflw;
 
-最初からワークフロー想定の場合は、migrationに追加する。
+最初からワークフロー想定の場合は、migrationに追加してください。
 
 'workflow_status' => array('constraint' => '"init","in_progress","before_progress","finish"', 'type' => 'enum', 'null' => true),
 
-なければ、MySQLで直接足す。
+なければ、MySQLで直接足します。
 
 ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_progress', 'finish');
 
@@ -217,7 +210,7 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 
 モデルの$_optionsに条件設定をしたのちに、適宜、$this->model_nameや$this->_content_templateを設定して、Controller_Baseのbulk()を呼び出しています。ほとんどの処理はController_Base::bulk()で行われますが、search_formを使う場合は、表題（h1）を設定する必要があるため、コントローラ側で明示的に設定してください。
 
-+quote start-----------------------------+
+start_______________________
 	/**
 	 * action_edit_categories()
 	 */
@@ -242,13 +235,13 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 		$this->template->set_global('search_form', $presenter::search_form('カテゴリ設定'), false);
 		$this->template->set_global('title', 'カテゴリ設定');
 	}
-+-------------------------------quote end+
+_________________________end
 
 バルク編集に関しては、\Admin\Controller_Admin::action_edit()にもちょっと違ったサンプルがあります。こちらはtabular formを使ったサンプルで、\Admin\Model_Adminや\Admin\Model_Userなど、専用のリレーションモデルを対象にした事例です。
 
 次は、conditioned_bulk()の使用例です。
 
-+quote start-----------------------------+
+start_______________________
 	public function action_bulk ()
 	{
 		$date = \Input::get('date', date('Y-m-d'));
@@ -271,18 +264,18 @@ ALTER TABLE TABLE_NAME ADD `workflow_status` ENUM('init', 'in_progress','before_
 
 		$this->conditioned_bulk($options, $defaults);
 	}
-+-------------------------------quote end+
+_________________________end
 
 // dashboard widget
 
 コントローラクラスの$locomoにwidgetsを宣言すると、ダッシュボードウィジェットの候補にできます。以下はuserモジュールの例です。
 
-+quote start-----------------------------+
+start_______________________
 		'widgets' =>array(
 			array('name' => '新規ユーザ一覧', 'uri' => '\\User\\Controller_User/index_widget?order_by%5B0%5D%5B0%5D=id&order_by%5B0%5D%5B1%5D=desc'),
 			array('name' => '新規ユーザ登録', 'uri' => '\\User\\Controller_User/create'),
 		),
-+-------------------------------quote end+
+_________________________end
 
 原則、ウィジェット件名をキーとして、locomo-pathと引数をクエリストリングスの形式で渡します。一点注意が必要なのは、index_adminに渡すようなクエリストリングスでなくfind()に渡すような形式で渡す必要がある、ということです。
 
@@ -316,4 +309,28 @@ return array(
 	'uri_segment' => 'paged',
 	'active' => '<span class="active">{link}</span>',
 );
+_________________________end
+
+// 検索センターの利用
+
+\Locomo\Controller_Srchは、複数のコントローラにまたがって、文字列を検索できる仕組みです。Modelに、Observer_Srchを足すことで、保存時に検索用インデクスを生成します。Observer設定の際、幾つかの引数をObserverに渡す必要があります。pathは、そこにidが続くことでアクセスできるURLの基礎、titleは、$_propatiesのうち、検索の表題にあたるカラムを指定します。
+
+start_______________________
+protected static $_observers = array(
+	"Orm\Observer_Self" => array(),
+	'Locomo\Observer_Srch' => array(
+		'events' => array('after_save', 'before_delete'),
+		'path' => 'facility/view',
+		'title' => 'name',
+	),
+);
+_________________________end
+
+当該モデル及びrelationを参照して、ほとんどの文字列を収集してインデクスを作ります。検索対象としたくないフィールドについては、$_propatiesにlcm_srch_indexをfalseで設定してください。
+
+start_______________________
+'foo => array(
+	'lcm_srch_index' => false,
+	'form' => array('type' => false)
+),
 _________________________end

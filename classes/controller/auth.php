@@ -32,9 +32,10 @@ class Controller_Auth extends \Locomo\Controller_Base
 	public function action_login()
 	{
 		// return to
+		$path = \Inflector::ctrl_to_dir(\Request::main()->controller).DS.\Request::main()->action;
 		$dashboard = '/sys/dashboard/';
 		$ret = \Input::param('ret', \Input::referrer(), null);
-		$ret = $ret == \Uri::create('auth/login/') ? $dashboard : $ret ;
+		$ret = $ret == \Uri::create($path) ? $dashboard : $ret ;
 		$ret = $ret == null ? $dashboard : $ret ;
 		$ret = substr($ret, 0, 4) == 'http' && substr($ret, 0, strlen(\Uri::base())) != \Uri::base() ? $dashboard : $ret;
 
@@ -63,12 +64,12 @@ class Controller_Auth extends \Locomo\Controller_Base
 			{
 				\Auth::instance()->add_user_log($username, $password, false);
 				\Session::set_flash('error', 'ログインに失敗しました。入力内容に誤りがあります。');
-				return \Response::redirect('auth/login/');
+				return \Response::redirect($path);
 			}
 		}
 
 		// view
-		$view = \View::forge('auth/login');
+		$view = \View::forge($this->_content_template ?: 'auth/login');
 		$view->set('ret', $ret);
 		$view->set_global('title', 'ログイン');
 		$this->template->content = $view;
@@ -119,7 +120,7 @@ class Controller_Auth extends \Locomo\Controller_Base
 		}
 
 		// vals
-		$content = \Presenter::forge('auth/registration');
+		$content = \Presenter::forge($this->_content_template ?: 'auth/registration');
 		$item = \Model_Usr::forge();
 		if (\Input::get('email')) $item->email = \Input::get('email');
 		$form = $content::form($item);
@@ -200,7 +201,7 @@ class Controller_Auth extends \Locomo\Controller_Base
 		$item = \Model_Usr::find('first', $cond);
 
 		// assign
-		$content = \View::forge('auth/pre_registration');
+		$content = \View::forge($this->_content_template ?: 'auth/pre_registration');
 		$this->template->set_global('item', $item, false);
 
 		// mail
@@ -210,11 +211,11 @@ class Controller_Auth extends \Locomo\Controller_Base
 
 			if ($type == 'by_user_only')
 			{
-				$mail_raw = (string) \View::forge('auth/email_by_user_only');
+				$mail_raw = (string) \View::forge($this->_content_template ?: 'auth/email_by_user_only');
 			}
 			else
 			{
-				$mail_raw = (string) \View::forge('auth/email_by_user_admin');
+				$mail_raw = (string) \View::forge($this->_content_template ?: 'auth/email_by_user_admin');
 			}
 
 			$mail = Util::parse_email($mail_raw);
@@ -227,7 +228,7 @@ class Controller_Auth extends \Locomo\Controller_Base
 
 			if ($type == 'by_user_admin')
 			{
-				$mail_raw = (string) \View::forge('auth/email_by_user_admin_to_admin');
+				$mail_raw = (string) \View::forge($this->_content_template ?: 'auth/email_by_user_admin_to_admin');
 				$mail = Util::parse_email($mail_raw);
 				$this->send($mail['headers']['From_email'],
 							$mail['headers']['From_str'],
@@ -247,10 +248,12 @@ class Controller_Auth extends \Locomo\Controller_Base
 	/**
 	 * action_activation()
 	 */
-	public function action_activation($key = null, $email = null)
+	public function action_activation()// $key = null, $email = null)
 	{
+		$key = \Input::get('key');
+		$email = \Input::get('email');
 		is_null($key) || is_null($email) and \Response::redirect(\Uri::create('/'));
-		$view = \View::forge('auth/activation');
+		$view = \View::forge($this->_content_template ?: 'auth/activation');
 
 		$cond = array(
 			'where' => array(
@@ -263,28 +266,27 @@ class Controller_Auth extends \Locomo\Controller_Base
 
 		if ($exist)
 		{
+			$mail_raw = (string) \View::forge($this->_content_template ?: 'auth/email_user_activated', array('item' => $exist));
+			$mail = Util::parse_email($mail_raw);
+
+			$this->send($mail['headers']['From_email'],
+									$mail['headers']['From_str'],
+									$exist->email,
+									$exist->display_name,
+									$mail['headers']['Subject'],
+									$mail['body']);
+
+			$mail_raw = (string) \View::forge($this->_content_template ?: 'auth/email_to_admin', array('item' => $exist));
+			$mail = Util::parse_email($mail_raw);
+			$this->send($mail['headers']['From_email'],
+									$mail['headers']['From_str'],
+									LOCOMO_ADMIN_MAIL,
+									\Config::get('site_title'),
+									$mail['headers']['Subject'],
+									$mail['body']);
+
 			$exist->is_visible = true;
 			$exist->save();
-
-			$view->set('item', $exist);
-
-			$mail_raw = (string) \View::forge('auth/email_user_activated');
-			$mail = Util::parse_email($mail_raw);
-			$this->send($mail['headers']['From_email'],
-									$mail['headers']['From_str'],
-									$item->email,
-									$item->display_name,
-									$mail['headers']['Subject'],
-									$mail['body']);
-
-			$mail_raw = (string) \View::forge('auth/email_to_admin');
-			$mail = Util::parse_email($mail_raw);
-			$this->send($mail['headers']['From_email'],
-									$mail['headers']['From_str'],
-									$item->email,
-									$item->display_name,
-									$mail['headers']['Subject'],
-									$mail['body']);
 		}
 
 		// 登録済みユーザ
@@ -318,11 +320,29 @@ class Controller_Auth extends \Locomo\Controller_Base
 	 */
 	private function send ($from, $from_str, $to, $to_str, $subject, $body)
 	{
+		\Package::load('email');
 		$email = \Email::forge();
 		$email->from($from, $from_str);
 		$email->to($to, $to_str);
 		$email->subject($subject);
 		$email->body($body);
-		$email->send();
+
+			try
+			{
+				$email->send();
+			}
+			catch(\EmailValidationFailedException $e)
+			{
+				throw new \EmailValidationFailedException($e);
+				echo 'バリデーションが失敗したとき';
+				die();
+			}
+			catch(\EmailSendingFailedException $e)
+			{
+				throw new \EmailSendingFailedException($e);
+				echo 'ドライバがメールを送信できなかったとき';
+				die();
+			}
+
 	}
 }

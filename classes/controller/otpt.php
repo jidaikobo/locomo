@@ -202,7 +202,6 @@ class Controller_Otpt extends \Controller
 
 	// convert_formats trait pdf に
 
-
 	/*
 	 * デフォルトの action 用のカプセル化
 	 * id が渡されたら model でfind して、配列化して返す
@@ -293,7 +292,7 @@ class Controller_Otpt extends \Controller
 				}
 				else
 				{
-					return $this->pdf($objects, $format);
+					return $this->pdf_single($objects, $format);
 				}
 				break;
 			case 'excel':
