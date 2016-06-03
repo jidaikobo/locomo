@@ -55,38 +55,53 @@ class Observer_Srch extends \Orm\Observer
 		// relation
 		foreach ($obj::relations() as $k => $v)
 		{
-			if ( ! $v->cascade_save && get_class($v) != 'Orm\BelongsTo') continue;
-
-			$rel = $obj->$k;
-			if (is_array($rel))
+			if (
+				! $v->cascade_save &&
+				get_class($v) != 'Orm\BelongsTo'
+			)
 			{
-				foreach ($rel as $r)
-				{
-					if ( ! is_object($r)) continue;
-					$pk = $r::primary_key()[0];
+				continue;
+			}
 
-					foreach ($r::properties() as $kk => $vv)
+			try
+			{
+				$rel = $obj->$k;
+
+				if (is_array($rel))
+				{
+					foreach ($rel as $r)
+					{
+						if ( ! is_object($r)) continue;
+						$pk = $r::primary_key()[0];
+
+						foreach ($r::properties() as $kk => $vv)
+						{
+							if (\Arr::get($vv, 'lcm_srch_index', null) === false) continue;
+							if ($kk == $pk) continue;
+
+							$str.= $r->$kk;
+							$str.= ' ';
+						}
+					}
+				}
+				else
+				{
+					if ( ! is_object($rel)) continue;
+					$pk = $rel::primary_key()[0];
+					foreach ($rel::properties() as $kk => $vv)
 					{
 						if (\Arr::get($vv, 'lcm_srch_index', null) === false) continue;
 						if ($kk == $pk) continue;
 
-						$str.= $r->$kk;
+						$str.= $obj->$k->$kk;
 						$str.= ' ';
 					}
 				}
-			}
-			else
-			{
-				if ( ! is_object($rel)) continue;
-				$pk = $rel::primary_key()[0];
-				foreach ($rel::properties() as $kk => $vv)
-				{
-					if (\Arr::get($vv, 'lcm_srch_index', null) === false) continue;
-					if ($kk == $pk) continue;
 
-					$str.= $obj->$k->$kk;
-					$str.= ' ';
-				}
+			}
+			catch (\Orm\FrozenObject $e)
+			{
+				\Log::error('Observer Srch parent frozen');
 			}
 		}
 

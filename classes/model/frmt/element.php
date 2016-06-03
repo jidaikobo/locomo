@@ -301,5 +301,16 @@ class Model_Frmt_Element extends \Locomo\Model_Base_Soft
 	public static $model_properties = array(
 	);
 
+	public function _event_before_save()
+	{
+		if (strpos($this->txt, '{IMAGE') !== false)
+		{
+			$this->type = 'image';
+		}
+		elseif (strpos($this->txt, '{TABLE') !== false)
+		{
+			$this->type = 'table';
+		}
+	}
 
 }

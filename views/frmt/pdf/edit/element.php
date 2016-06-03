@@ -45,7 +45,7 @@
 <div id="controllers_wrapper">
 	<h1 class="title">要素の編集</h1>
 	<div id="controller">
-		<?php echo \Locomo\Presenter_Frmt_Pdf_Edit_Element::setController($model_properties); ?>
+		<?php echo \Locomo\Presenter_Frmt_Pdf_Edit_Element::setController($model_properties, $image_properties, $relation_properties); ?>
 	</div>
 </div>
 
