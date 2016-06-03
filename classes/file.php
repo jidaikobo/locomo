@@ -88,7 +88,6 @@ class File extends \Fuel\Core\File
 		{
 			mkdir($upload_path, 0777);
 		}
-
 		$config = array(
 			'path' => $upload_path,
 			'auto_rename' => false,
