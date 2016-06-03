@@ -75,6 +75,11 @@ class File extends \Fuel\Core\File
 		$upload_path = LOCOMOUPLOADPATH.DS.$dir.$id;
 		$save_path = 'uploads'.DS.$dir.$id.DS;
 
+		// keep permission
+		$current_permission = umask();
+		// change permission
+		umask(000);
+
 		if ( ! is_dir($upload_path))
 		{
 			mkdir($upload_path, 0777);
@@ -124,7 +129,6 @@ class File extends \Fuel\Core\File
 					}
 				}
 
-
 				$sizes = \Image::sizes($img_path);
 
 				// large image
@@ -162,12 +166,12 @@ class File extends \Fuel\Core\File
 	 */
 	public static function unlink($unlinks = false)
 	{
-		if (!$unlinks) $unlinks = \Input::post('unlink'); // TODO 汎用化が進んだら消す
+		if ( ! $unlinks) $unlinks = \Input::post('unlink'); // TODO 汎用化が進んだら消す
 
 		$results = array();
 
 		// unlink
-		if (! is_array($unlinks) ) $unlinks = array($unlinks);
+		if ( ! is_array($unlinks) ) $unlinks = array($unlinks);
 		if ($unlinks)
 		{
 			foreach ($unlinks as $path)
