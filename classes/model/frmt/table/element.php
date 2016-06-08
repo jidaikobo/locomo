@@ -164,6 +164,18 @@ class Model_Frmt_Table_Element extends \Locomo\Model_Base_Soft
 			'unit' => 'mm',
 		),
 
+		'is_merge' => array(
+			'label' => '列のマージ',
+			'form' => array(
+				'type' => 'select',
+				'options' => array(
+					1 => 'マージする',
+					0 => 'しない',
+				),
+				'class' => 'is_merge',
+			),
+			'default' => 0,
+		),
 
 		'created_at' => array('form' => array('type' => false), 'default' => null),
 		'updated_at' => array('form' => array('type' => false), 'default' => null),

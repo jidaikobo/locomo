@@ -464,22 +464,93 @@ trait Controller_Otpt_Pdf
 	{
 		$pdf = $this->pdf;
 
-		$relate_objects = $object->{$table_obj->relation};
-
 		$formats = static::convert_table_formats($table_obj->element);
-
-		$objects_arr = array();
 
 		// ここでヘッダー
 		$this->FormatBulkTableHeader($table_obj, $object, $formats); // カプセル化
 
-
-		foreach ($relate_objects as $value)
+		// ネストされているか判定
+		if (($pos = strpos($table_obj->relation, '.')) > 0) // 最初に来ないのでここは 0 も false 扱いでいい
 		{
-			$objects_arr[] = $value;
-		}
+			$parent_relation = substr($table_obj->relation, 0,    $pos);
+			$child_relation  = substr($table_obj->relation, $pos+1, strlen($table_obj->relation));
+			// var_dump($parent_relation);
+			// var_dump($child_relation);
+			$parent_objects = $object->{$parent_relation};
+			foreach ($parent_objects as $parent)
+			{
+				$objects_arr = array();
+				$formats_arr = array();
+				$child_object = $parent->{$child_relation};
 
-		$pdf->Table($objects_arr, $formats);
+				$format_cpy = $formats;
+				$exist_merge = false;
+				foreach ($format_cpy as $key => $format)
+				{
+					// var_dump($format['is_merge']);
+					if ($format['is_merge'])
+					{
+						$exist_merge = true;
+						$format_cpy[$key]['rowspan'] = count($child_object);
+					}
+				}
+				if ($exist_merge)
+				{
+					// 一列目
+					$formats_arr[] = $format_cpy;
+					// 二列目以降
+					foreach ($format_cpy as $key => $format)
+					{
+						if ( isset($format_cpy[$key]['rowspan']) ) unset($format_cpy[$key]);
+					}
+					for ($i = 0; $i < count($child_object); $i++)
+					{
+						$formats_arr[] = array_values($format_cpy);
+					}
+				}
+				else
+				{
+					for ($i = 0; $i < count($child_object); $i++)
+					{
+						$formats_arr[] = $format_cpy;
+					}
+				}
+
+				$parent_arr = array();
+				unset($parent_arr[$child_relation]);
+				foreach ($parent->to_array(true) as $key => $value)
+				{
+					if (is_array($value)) continue;
+					$parent_arr[$parent_relation.'.'.$key] = $value;
+				}
+
+				foreach($child_object as $child)
+				{
+					$child_arr = $child->to_array(true);
+					foreach ($child_arr as $key => $value)
+					{
+						if (is_array($value)) continue;
+						$child_arr[$child_relation.'.'.$key] = $value;
+					}
+
+					$objects_arr[] = array_merge($parent_arr, $child_arr);
+				}
+				$pdf->Table($objects_arr, $formats_arr);
+			}
+		}
+		else
+		{
+			$relate_objects = $object->{$table_obj->relation};
+			$objects_arr = array();
+			foreach ($relate_objects as $value)
+			{
+				$objects_arr[] = $value;
+			}
+			$pdf->Table($objects_arr, $formats);
+		}
+		// die();
+
+
 
 		return;
 	}
@@ -487,7 +558,6 @@ trait Controller_Otpt_Pdf
 	protected function FormatBulkTableHeader($table_obj, $object, $formats)
 	{
 		$pdf = $this->pdf;
-
 
 		$row_height             = $table_obj['header_min_h'];
 		$header_padding_top     = $table_obj['header_padding_top'];

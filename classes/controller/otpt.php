@@ -200,6 +200,18 @@ class Controller_Otpt extends \Controller
 		return $objects;
 	}
 
+
+	/*
+	 * Override 用
+	 * テーブルのフィールドの出力を変えたい時などに使う
+	 */
+	protected static function convert_table_objects($table_objects, $table_format)
+	{
+		return $objects;
+	}
+
+
+
 	// convert_formats trait pdf に
 
 	/*

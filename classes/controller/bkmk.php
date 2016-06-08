@@ -40,7 +40,13 @@ class Controller_Bkmk extends \Controller_Base
 	public function action_bulk($page = 1)
 	{
 		// bulk
-		parent::bulk($page);
+		parent::bulk(array(
+			'page' => 1,
+			'add' => 3,
+			'is_redirect'  => true,
+			'is_deletable' => true
+			)
+		);
 
 		// add_actionset - back to index at edit
 		$action['urls'][] = \Html::anchor(static::$main_url, '一覧へ');
