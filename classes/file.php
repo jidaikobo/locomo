@@ -82,13 +82,12 @@ class File extends \Fuel\Core\File
 		// keep permission
 		$current_permission = umask();
 		// change permission
-		umask(002);
+		umask(0);
 
 		if ( ! is_dir($upload_path))
 		{
 			mkdir($upload_path, 0777);
 		}
-
 		$config = array(
 			'path' => $upload_path,
 			'auto_rename' => false,
