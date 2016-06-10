@@ -406,7 +406,7 @@ input[type="password"],
 input.int,
 input.time,
 input.date,
-input,datetime,
+input.datetime,
 input.han {
 	ime-mode: inactive;
 }
