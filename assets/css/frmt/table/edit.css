@@ -282,4 +282,17 @@
 	font-size: 0.85em;
 }
 
+.element .text_wrapper.merge:after
+{
+	content: '▲▼';
+	position: absolute;
+	font-size: 12px;
+	width: 12px;
+	line-height: 1.0;
+	right: 0;
+	bottom: 0;
+	color: #ff6347;
+	opacity: 0.4;
+}
+
 

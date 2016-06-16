@@ -20,8 +20,11 @@ class Actionset_Frmt extends \Actionset_Base
 			$controller.'/undelete',
 			$controller.'/confirm_delete',
 
+			$controller.'/copy',
+
 			$controller.'/pdf_create',
 			$controller.'/pdf_edit',
+
 			$controller.'/pdf_edit_element',
 			$controller.'/excel_create',
 			$controller.'/excel_edit',
@@ -107,6 +110,25 @@ class Actionset_Frmt extends \Actionset_Base
 			'order'        => 10,
 			'dependencies' => array(
 				$controller.'/pdf_create',
+			)
+		);
+		return $retvals;
+	}
+
+	/**
+	 * actionset_pdf_edit()
+	 */
+	public static function actionset_copy($controller, $obj = null, $id = null, $urls = array())
+	{
+		$retvals = array(
+			'realm'        => 'base',
+			// 'urls'         => array(),
+			'action_name'  => '複製',
+			'show_at_top'  => false,
+			'explanation'  => 'フォーマットを複製します。',
+			'order'        => 10,
+			'dependencies' => array(
+				$controller.'/copy',
 			)
 		);
 		return $retvals;
@@ -201,7 +223,7 @@ class Actionset_Frmt extends \Actionset_Base
 			'explanation'  => '新しいPDFに挿入可能なテーブルを追加します。',
 			'order'        => 20,
 			'dependencies' => array(
-				$controller.'/pdf_create',
+				$controller.'/table_create',
 			)
 		);
 		return $retvals;
