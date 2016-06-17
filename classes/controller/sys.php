@@ -23,9 +23,12 @@ class Controller_Sys extends \Controller_Base
 	public function action_home()
 	{
 		// このアクションはトップページ専用として、sys/homeへのアクセスはできないようにする。
-		if (substr(\Uri::string(),0,12) == 'sys/home')
+		if (
+			trim(\Input::uri(), '/') != \Lang::get_lang() &&
+			substr(\Uri::string(),0,12) == 'sys/home'
+		)
 		{
-			return \Response::redirect('/', 'location', 404);
+			return \Response::redirect('/'.\Lang::get_lang(), 'location', 404);
 		}
 
 		// 描画
