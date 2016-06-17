@@ -7,7 +7,7 @@ class Create_pg
 		\DBUtil::create_table('lcm_pgs', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'title' => array('type' => 'text', 'default' => ''),
-			'path' => array('constraint' => 255, 'type' => 'varchar', 'unique' => true),
+			'path' => array('constraint' => 255, 'type' => 'varchar'),
 			'url' => array('type' => 'text', 'default' => ''),
 			'summary' => array('type' => 'text', 'default' => ''),
 			'content' => array('type' => 'text', 'default' => ''),
@@ -23,6 +23,7 @@ class Create_pg
 			'updater_id' => array('constraint' => 5, 'type' => 'int'),
 			'workflow_status' => array('constraint' => '"init","before_progress","in_progress","finish"', 'type' => 'enum', 'null' => true),
 		), array('id'));
+		\DBUtil::create_index('lcm_pgs', 'path', 'path');
 
 		// lcm_pg_pggrps
 		\DBUtil::create_table('lcm_pg_pggrps', array(
@@ -35,5 +36,6 @@ class Create_pg
 	public function down()
 	{
 		\DBUtil::drop_table('lcm_pgs');
+		\DBUtil::drop_table('lcm_pg_pggrps');
 	}
 }
