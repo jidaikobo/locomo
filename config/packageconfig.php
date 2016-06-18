@@ -80,6 +80,9 @@ return array(
 		'limit_time'      => 300, //◯秒間バンする
 	),
 
+	// is_scaffold_tmp
+	'is_scaffold_tmp' => true,
+
 	// module_paths
 	'module_paths' => array(
 		APPPATH.'modules'.DS,
@@ -108,10 +111,10 @@ return array(
 	// disable controller even if for administrator
 	// ex) '\\Modname\\Controller_Something'
 	'disabled_controllers' => array(
-		// '\\Controller_Scdl',
-		// '\\Controller_Msgbrd',
-		// '\\Controller_Adrs',
-		// '\\Controller_Flr',
+		'\\Controller_Scdl',
+		'\\Controller_Msgbrd',
+		'\\Controller_Adrs',
+		'\\Controller_Flr',
 		// '\\Controller_Usr',
 		// '\\Controller_Usrgrp',
 		// '\\Controller_Acl',
