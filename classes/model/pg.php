@@ -30,6 +30,7 @@ class Model_Pg extends \Model_Base_Soft
 			),
 			'default' => '',
 		),
+
 		'path' => array (
 			'label' => 'ファイル名',
 			'data_type' => 'varchar',
@@ -41,10 +42,27 @@ class Model_Pg extends \Model_Base_Soft
 			),
 			'validation' => array (
 				'required',
+//				'valid_string' => array('dots', 'alpha', 'numeric', 'dashes'),
+				'match_pattern' => array('/^[0-9a-zA-Z\._-]+$/'),
 				'max_length' => array (255),
-				'unique' => array("lcm_pgs.path"),
+				// rule added at presenter \Locomo\Presenter_Pg_Edit()
 			),
 		),
+
+		'lang' => array (
+			'label' => '言語',
+			'data_type' => 'varchar',
+			'form' => array (
+				'type' => 'select',
+			),
+			'default' => '',
+			'validation' => array (
+				'valid_string' => array('alpha'),
+				'required',
+				// rule added at presenter \Locomo\Presenter_Pg_Edit()
+			),
+		),
+
 		'content' => array (
 			'label' => '本文',
 			'data_type' => 'text',
@@ -219,29 +237,6 @@ class Model_Pg extends \Model_Base_Soft
 		),
 	);
 
-/*
-	// $_has_many
-	protected static $_has_many = array(
-		'foo' => array(
-			'key_from' => 'id',
-			'model_to' => 'Model_Foo',
-			'key_to' => 'bar_id',
-			'cascade_save' => true,
-			'cascade_delete' => false
-		)
-	);
-	// $_belongs_to
-	protected static $_belongs_to = array(
-		'foo' => array(
-						'key_from' => 'foo_id',
-						'model_to' => 'Model_Foo',
-						'key_to' => 'id',
-						'cascade_save' => true,
-						'cascade_delete' => false,
-					)
-	);
-*/
-
 	// observers
 	protected static $_soft_delete = array(
 		'deleted_field'   => 'deleted_at',
@@ -261,13 +256,6 @@ class Model_Pg extends \Model_Base_Soft
 			'Locomo\Observer_Userids' => array(
 			'events' => array('before_insert', 'before_save'),
 		),
-//			'Locomo\Observer_Wrkflw' => array(
-//			'events' => array('before_insert', 'before_save','after_load'),
-//		),
-//			'Locomo\Observer_Revision' => array(
-//			'events' => array('after_insert', 'after_save', 'before_delete'),
-//		),
-
 	);
 
 	/**
