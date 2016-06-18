@@ -2,7 +2,7 @@
 
 <?php if ($item->title): ?>
 <tr>
-	<th>表題</th>
+	<th><?php echo __('title') ?></th>
 	<td><?php echo $item->title; ?></td>
 </tr>
 <?php endif; ?>
