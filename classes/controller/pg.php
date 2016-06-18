@@ -24,6 +24,7 @@ class Controller_Pg extends \Locomo\Controller_Base
 
 	/**
 	 * pg_router()
+	 * routerでの処理が改善したので、たぶんもう不要。はたらき支援ネットでしか使ってないので、小長井くんと削除する。
 	 */
 	public function pg_router()
 	{
@@ -121,7 +122,11 @@ class Controller_Pg extends \Locomo\Controller_Base
 	 */
 	public function action_view($id = null)
 	{
-		$id = $this->pg_router();
+		// TODO: 下位コンパチで残すけど一気に削除予定
+		if ( ! is_numeric($id))
+		{
+			$id = $this->pg_router();
+		}
 		static::view($id);
 	}
 
