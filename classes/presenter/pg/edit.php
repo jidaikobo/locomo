@@ -68,7 +68,6 @@ class Presenter_Pg_Edit extends \Presenter_Base
 			->set_value($obj->lang ?: \Lang::get_lang())
 			->set_options($options);
 
-
 		// カテゴリ
 		$options = \Model_Pggrp::find_options('name', array('where' => array(array('is_available', true))));
 		if ($options)
