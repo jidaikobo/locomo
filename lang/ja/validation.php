@@ -29,4 +29,3 @@ return array(
 	'match_password' => 'パスワードが正しくありません。',
 	'non_zero_datetime' => '有効な日付の値ではないようです。YYYY-MM-DD HH:MM:SSの形式で入力してください。',
 );
-
