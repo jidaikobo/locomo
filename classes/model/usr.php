@@ -25,7 +25,6 @@ class Model_Usr extends Model_Base_Soft
 				'type' => 'text',
 				'size' => 20,
 				'class' => 'username',
-				'description' => '半角英数字、ハイフン、アンダーバー、ドットで構成してください',
 			),
 			'validation' => array(
 				'required',
