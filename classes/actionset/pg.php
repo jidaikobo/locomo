@@ -32,7 +32,7 @@ class Actionset_Pg extends \Actionset_Base
 		$ret = \Actionset_Base::view($controller, $obj, $id, $urls);
 		if (\Request::main()->action == 'edit' && $obj && isset($obj->path))
 		{
-			$ret['urls'] = array(array($controller.DS.$obj->path, '閲覧'));
+			$ret['urls'] = array(array(\Lang::get_lang().DS.$obj->path, '閲覧'));
 		}
 		return $ret;
 	}
