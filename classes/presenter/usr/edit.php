@@ -84,23 +84,26 @@ class Presenter_Usr_Edit extends \Presenter_Base
 			->set_value('')
 			->add_rule('require_once', "lcm_usrs.password.{$id}")
 			->add_rule(
-				function ($password) use ($obj)
-				{
-					// ユーザ名とパスワードが一緒だったらban
-					if (isset($obj) && is_object($obj) ) {
-						if ($password == @$obj->username)
+				array(
+					'lcm_usr_password' =>
+					function ($password) use ($obj)
+					{
+						// ユーザ名とパスワードが一緒だったらban
+						if (isset($obj) && is_object($obj) ) {
+							if ($password == @$obj->username)
+							{
+								Validation::active()->set_message('lcm_usr_password', 'ユーザ名とパスワードに同じものを使用しないでください。');
+								return false;
+							}
+						}
+						// あまりに連続した同じ文字が続いている場合ban
+						if (preg_match('/([\d\w])\1{6}/', $password))
 						{
-							Validation::active()->set_message('closure', 'ユーザ名とパスワードに同じものを使用しないでください。');
+							Validation::active()->set_message('lcm_usr_password', '強度が低いパスワードです。');
 							return false;
 						}
 					}
-					// あまりに連続した同じ文字が続いている場合ban
-					if (preg_match('/([\d\w])\1{6}/', $password))
-					{
-						Validation::active()->set_message('closure', '強度が低いパスワードです。');
-						return false;
-					}
-				}
+				)
 			);
 
 		// confirm_password
