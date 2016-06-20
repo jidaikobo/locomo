@@ -43,7 +43,17 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_404()
 	{
-		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
+		// use widget tpl when hmvc instead of error tpl.
+		$this->_template = \Request::is_hmvc() ? 'widget' : 'error' ;
+
+		// app/config/routes.phpの_404_の多言語対応処理でここに来ると、hmvcとしてくるので、きちんとerrorテンプレートを使うように明示的に上書き
+		// app/config/routes.php _404_ gives args because routes's 404 behave as hmvc.
+		$args = func_get_args();
+		if ($args && \Arr::get($args, 0))
+		{
+			$this->_template = 'error';
+		}
+
 		$this->response_status = "404";
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
