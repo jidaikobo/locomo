@@ -16,7 +16,7 @@ class Presenter_Pg_Edit extends \Presenter_Base
 		$form->field('path')
 			->add_rule(
 				array(
-					'pg_unique' =>
+					'lcm_pg_unique' =>
 					function ($path) use ($obj)
 					{
 						if (isset($obj) && is_object($obj) )
@@ -33,7 +33,7 @@ class Presenter_Pg_Edit extends \Presenter_Base
 								));
 								if (count($r) !== 0)
 								{
-									Validation::active()->set_message('pg_unique', 'ファイル名と言語は、サイト内で重複しないものを入力してください。');
+									Validation::active()->set_message('lcm_pg_unique', 'ファイル名と言語は、サイト内で重複しないものを入力してください。');
 									return false;
 								}
 							}
@@ -48,7 +48,7 @@ class Presenter_Pg_Edit extends \Presenter_Base
 								));
 								if (count($r) !== 0)
 								{
-									Validation::active()->set_message('pg_unique', 'ファイル名と言語は、サイト内で重複しないものを入力してください。');
+									Validation::active()->set_message('lcm_pg_unique', 'ファイル名と言語は、サイト内で重複しないものを入力してください。');
 									return false;
 								}
 							}

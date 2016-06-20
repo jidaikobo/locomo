@@ -23,35 +23,6 @@ class Controller_Pg extends \Locomo\Controller_Base
 	);
 
 	/**
-	 * pg_router()
-	 * routerでの処理が改善したので、たぶんもう不要。はたらき支援ネットでしか使ってないので、小長井くんと削除する。
-	 */
-	public function pg_router()
-	{
-		// search content
-		$path = \Input::get('path') ?: \Input::server('PATH_INFO');
-		$path = $path ?: \Uri::segment(2);
-		$path = str_replace('/pg/', '', rawurldecode($path));
-		$model = $this->model_name;
-		$model::set_authorized_options();
-		$model::$_options['where'][] = array('path', $path);
-		$item = $model::find('first', $model::$_options);
-
-		// search deleted
-		// Controller_Base::view()でもうちょっと厳密なチェックがあるので、ここではさらっと
-		$column = \Arr::get($model::get_field_by_role('deleted_at'), 'lcm_field', 'deleted_at');
-		if (
-			! $item &&
-			is_subclass_of($model, '\Orm\Model_Soft') &&
-			isset($model::properties()[$column])
-		)
-		{
-			$item = $model::find_deleted('first', $model::$_options);
-		}
-		return $item ? $item->id : -1 ;
-	}
-
-	/**
 	 * action_index_admin()
 	 */
 	public function action_index_admin()
@@ -122,11 +93,6 @@ class Controller_Pg extends \Locomo\Controller_Base
 	 */
 	public function action_view($id = null)
 	{
-		// TODO: 下位コンパチで残すけど一気に削除予定
-		if ( ! is_numeric($id))
-		{
-			$id = $this->pg_router();
-		}
 		static::view($id);
 	}
 
