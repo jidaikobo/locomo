@@ -7,9 +7,9 @@ class Auth_Login_Locomoauth extends \Auth\Auth_Login_Driver
 	 */
 
 	protected $user;
-	private static $_roots;
-	private static $_admins;
-	private static $_alladmins;
+	protected static $_roots;
+	protected static $_admins;
+	protected static $_alladmins;
 	protected $_root_info = array(
 		'id'           => -2,
 		'display_name' => 'root管理者',

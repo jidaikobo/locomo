@@ -200,8 +200,19 @@ class Controller_Otpt extends \Controller
 		return $objects;
 	}
 
-	// convert_formats trait pdf に
 
+	/*
+	 * Override 用
+	 * テーブルのフィールドの出力を変えたい時などに使う
+	 */
+	protected static function convert_table_objects($table_objects, $table_format)
+	{
+		return $objects;
+	}
+
+
+
+	// convert_formats trait pdf に
 
 	/*
 	 * デフォルトの action 用のカプセル化
@@ -293,7 +304,7 @@ class Controller_Otpt extends \Controller
 				}
 				else
 				{
-					return $this->pdf($objects, $format);
+					return $this->pdf_single($objects, $format);
 				}
 				break;
 			case 'excel':

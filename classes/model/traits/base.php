@@ -25,6 +25,17 @@ trait Model_Traits_Base
 	 */
 	public static function _init()
 	{
+		// set language to static::$_properties
+		$langfile = strtolower(\Inflector::denamespace(get_called_class()));
+		$langfile = substr($langfile, strpos($langfile, '_') + 1);
+		\Lang::load($langfile);
+		foreach (static::$_properties as $k => $v)
+		{
+			if (is_numeric($k) || is_null(__($k))) continue;
+			static::$_properties[$k]['label'] = __($k);
+			if (is_null(__($k.'_description'))) continue;
+			static::$_properties[$k]['form']['description'] = __($k.'_description');
+		}
 	}
 
 	/*

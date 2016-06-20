@@ -20,6 +20,8 @@ class Controller_Scffld extends \Controller_Base
 	 */
 	public function action_main()
 	{
+		$is_scaffold_tmp = \Config::get('is_scaffold_tmp');
+
 		// only at development
 		if (\Fuel::$env == 'development')
 		{
@@ -34,6 +36,11 @@ class Controller_Scffld extends \Controller_Base
 				APPPATH.'views/',
 				APPPATH.'modules/',
 			);
+			if ($is_scaffold_tmp)
+			{
+				$arrs[] = APPPATH.'tmp/';
+			}
+
 			foreach ($arrs as $arr)
 			{
 				if ('0777' !== \File::get_permissions($arr))
@@ -112,6 +119,7 @@ class Controller_Scffld extends \Controller_Base
 			$table_name = \Inflector::pluralize($name);
 			$subjects   = array($table_name, $table_name);
 			$filename   = $name.'.php';
+			$scfldbase  = $is_scaffold_tmp ? APPPATH.'tmp/' : APPPATH;
 
 			// molding - logic
 			$migration  = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
@@ -141,8 +149,11 @@ class Controller_Scffld extends \Controller_Base
 			// path - module
 			if ($scfld_type == 'module')
 			{
-				$scfldpath = APPPATH.'modules/';
-				if (\File::create_dir($scfldpath, $name))        $scfldpath = APPPATH.'modules/'.$name.DS;
+				$scfldpath = $scfldbase.'modules/';
+				if ( ! file_exists($scfldpath)) \File::create_dir($scfldbase, 'modules');
+
+				if (\File::create_dir($scfldpath, $name))        $scfldpath = $scfldbase.'modules/'.$name.DS;
+				if (\File::create_dir($scfldpath, $name))        $scfldpath = $scfldbase.'modules/'.$name.DS;
 				if (\File::create_dir($scfldpath, 'migrations')) $migrationpath = $scfldpath.'migrations/';
 				if (\File::create_dir($scfldpath, 'config'))     $configpath = $scfldpath.'config/';
 				if (\File::create_dir($scfldpath, 'views'))      $viewpath = $scfldpath.'views/';
@@ -159,16 +170,29 @@ class Controller_Scffld extends \Controller_Base
 			// path - app
 			if ($scfld_type == 'app' || $scfld_type == 'view' || $scfld_type == 'model')
 			{
-				$scfldpath      = APPPATH;
-				$migrationpath  = APPPATH.'migrations/';
+				$scfldpath      = $scfldbase;
+				$viewpath       = $scfldpath.'view/';
+				$migrationpath  = $scfldpath.'migrations/';
 				$classpath      = $scfldpath.'classes/';
 				$controllerpath = $classpath.'controller/';
 				$modelpath      = $classpath.'model/';
 				$presenterpath  = $classpath.'presenter/';
 				$actionsetpath  = $classpath.'actionset/';
+
+				if ($is_scaffold_tmp)
+				{
+					if ( ! file_exists($viewpath)) \File::create_dir($scfldpath, 'views');
+					if ( ! file_exists($migrationpath)) \File::create_dir($scfldpath, 'migrations');
+					if ( ! file_exists($classpath)) \File::create_dir($scfldpath, 'classes');
+					if ( ! file_exists($controllerpath)) \File::create_dir($classpath, 'controller');
+					if ( ! file_exists($modelpath)) \File::create_dir($classpath, 'model');
+					if ( ! file_exists($presenterpath)) \File::create_dir($classpath, 'presenter');
+					if ( ! file_exists($actionsetpath)) \File::create_dir($classpath, 'actionset');
+				}
+
 				if ($scfld_type != 'model')
 				{
-					if (\File::create_dir($scfldpath.'views/', $name)) $viewpath = APPPATH.'views/'.$name;
+					if (\File::create_dir($scfldpath.'views/', $name)) $viewpath = $scfldbase.'views/'.$name;
 					if (\File::create_dir($presenterpath, $name)) $presenterpath.= $name.DS;
 					if (\File::create_dir($presenterpath, 'index')) $presenteridxpath = $presenterpath.'index/';
 				}
@@ -179,7 +203,7 @@ class Controller_Scffld extends \Controller_Base
 			$messages = array();
 
 			// migrations
-			$latest = \Util::get_latestprefix(APPPATH.'migrations');
+			$latest = \Util::get_latestprefix($migrationpath);
 			$migrate_file = $latest.'_create_'.$filename;
 
 			// model and migration
@@ -296,9 +320,6 @@ class Controller_Scffld extends \Controller_Base
 			\Session::set_flash('cmd_raw', $cmd_raw);
 			\Session::set_flash('type', $scfld_type);
 			\Session::set_flash('model', $scfld_model);
-
-
-
 		}
 
 		// set errors

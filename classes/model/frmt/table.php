@@ -1,11 +1,10 @@
 <?php
 namespace Locomo;
-class Model_Frmt extends \Locomo\Model_Base_Soft
+class Model_Frmt_Table extends \Locomo\Model_Base_Soft
 {
+
 	public static $_format_model = '';
-
-	public static $_upload_path = 'lcm_frmt';
-
+	public static $_format_model_relate = '';
 	public static $_format_pdf_fields = array(
 	);
 
@@ -26,7 +25,7 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 		if (static::$_format_model) static::$_conditions['where'][] = array('model', '=', static::$_format_model);
 	}
 
-	protected static $_table_name = 'lcm_frmts';
+	protected static $_table_name = 'lcm_frmt_tables';
 
 	// $_conditions
 	protected static $_conditions = array(
@@ -51,17 +50,17 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 			),
 			'default' => 1,
 		),
+
 		'seq' => array(
 			'label' => '表示順',
 			'form' => array(
 				'type' => 'text',
 				'size' => 3,
-				'class' => '',
+				'class' => 'ar',
 				'template' => 'closer',
 			),
 			'default' => 0,
 		),
-
 		'name' => array(
 			'label' => '名前',
 			'form' => array(
@@ -73,170 +72,116 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 				'required',
 			),
 		),
-		'w' => array(
-			'label' => '用紙幅',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'template' => 'opener',
-			),
-			'unit' => 'mm',
-			'default' => 210, // A4 縦
-		),
-		'h' => array(
-			'label' => '用紙高さ',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-			),
-			'unit' => 'mm',
-			'default' => 297, // A4 縦
-		),
-		'rotation' => array(
-			'label' => '用紙回転',
+		'relation' => array(
+			'label' => 'リレーション',
 			'form' => array(
 				'type' => 'select',
-				'options' => array(
-					0 => 'なし',
-					90 => '右',
-					270 => '左',
-					180 => '上下逆',
-				),
-				'template' => 'closer',
 			),
 			'default' => '',
 			'validation' => array(
 				'required',
 			),
 		),
-
-		// 以下 タックシールなどタックシールなど複数印刷用プロパティ
-		'is_multiple' => array(
-			'label' => '1ページ内に複数印刷',
+		'is_print_header' => array(
+			'label' => 'ヘッダーを印刷する',
 			'form' => array(
 				'type' => 'radio',
 				'options' => array(
-					1 => '複数印刷',
-					0 => '単数',
+					1 => 'ヘッダーあり',
+					0 => 'なし',
 				),
 			),
+			'default' => 1,
+		),
+
+
+		'header_min_h' => array(
+			'label' => 'ヘッダー高さ(最小)',
+			'form' => array(
+				'type' => 'text',
+				'size' => 3,
+				'class' => 'ar',
+			),
 			'default' => 0,
 		),
-
-		'margin_top' => array(
-			'label' => '余白上',
+		'header_padding_left' => array(
+			'label' => 'ヘッダーセル余白左',
 			'form' => array(
 				'type' => 'text',
-				'size' => 3,
+				'size' => 10,
+				'class' => 'padding_left ar',
 				'template' => 'opener',
-				'class' => 'for_multiple',
 			),
-			'unit' => 'mm',
-			'default' => 0.0,
-		),
-		'margin_bottom' => array(
-			'label' => '余白下',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'class' => 'for_multiple',
-			),
-			'unit' => 'mm',
-			'default' => 0.0,
-		),
-		'margin_left' => array(
-			'label' => '余白左',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'class' => 'for_multiple',
-			),
-			'unit' => 'mm',
-			'default' => 0.0,
-		),
-		'margin_right' => array(
-			'label' => '余白右',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'template' => 'closer',
-				'class' => 'for_multiple',
-			),
-			'unit' => 'mm',
-			'default' => 0.0,
-		),
-
-		'cols' => array(
-			'label' => '列',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'template' => 'opener',
-				'class' => 'for_multiple',
-			),
-			'default' => 2,
-		),
-		'rows' => array(
-			'label' => '行',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'template' => 'closer',
-				'class' => 'for_multiple',
-			),
-			'default' => 5,
-		),
-
-		'cell_w' => array(
-			'label' => 'セル幅',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'template' => 'opener',
-				'class' => 'for_multiple',
-			),
-			'unit' => 'mm',
 			'default' => 0,
+			'unit' => 'mm',
 		),
-		'cell_h' => array(
-			'label' => 'セル高さ',
+		'header_padding_top' => array(
+			'label' => 'ヘッダーセル余白上',
 			'form' => array(
 				'type' => 'text',
-				'size' => 3,
-				'template' => 'closer',
-				'class' => 'for_multiple',
+				'size' => 10,
+				'class' => 'padding_top ar',
 			),
-			'unit' => 'mm',
 			'default' => 0,
-		),
-		'space_horizontal' => array(
-			'label' => 'セルの間隔 左右',
-			'form' => array(
-				'type' => 'text',
-				'size' => 3,
-				'template' => 'opener',
-				'class' => 'for_multiple',
-			),
 			'unit' => 'mm',
-			'default' => 0.0,
 		),
-		'space_vertical' => array(
-			'label' => 'セルの間隔 上下',
+		'header_padding_right' => array(
+			'label' => 'ヘッダーセル余白右',
 			'form' => array(
 				'type' => 'text',
-				'size' => 3,
-				'class' => 'for_multiple',
+				'size' => 10,
+				'class' => 'padding_right ar',
+			),
+			'default' => 0,
+			'unit' => 'mm',
+		),
+		'header_padding_bottom' => array(
+			'label' => 'ヘッダーセル余白下',
+			'form' => array(
+				'type' => 'text',
+				'size' => 10,
+				'class' => 'padding_bottom ar',
 				'template' => 'closer',
 			),
+			'default' => 0,
 			'unit' => 'mm',
-			'default' => 0.0,
 		),
-
-		'type' => array(
+		'header_font_size' => array(
+			'label' => 'ヘッダーフォントサイズ',
 			'form' => array(
-				'type' => false,
+				'type' => 'text',
+				'size' => 10,
+				'class' => 'font_size ar',
+				'template' => 'opener',
 			),
-			'default' => 'pdf',
+			'default' => 12,
+			'unit' => 'pt',
+		),
+		'header_font_family' => array(
+			'label' => 'ヘッダーフォントファミリー',
+			'form' => array(
+				'type' => 'select',
+				'class' => 'font_family',
+				'options' => array(
+					'M' => '明朝体',
+					'G' => 'ゴシック体',
+				),
+				'template' => 'closer',
+			),
+			'default' => 'M',
+		),
+		'header_align' => array(
+			'label' => 'ヘッダー左右文字揃え',
+			'form' => array(
+				'type' => 'select',
+				'options' => array(
+					'L' => '左',
+					'C' => '中央',
+					'R' => '右',
+				),
+				'class' => 'align',
+			),
+			'default' => 'L',
 		),
 
 		'model' => array(
@@ -268,34 +213,16 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 	public function _event_before_save()
 	{
 		$this->model = static::$_format_model;
-
-
-		// elerment の方に type を処理する observer 有り
 	}
 
 	protected static $_has_many = array(
 		'element' => array(
 			'key_from' => 'id',
-			'model_to' => '\Locomo\Model_Frmt_Element',
-			'key_to' => 'format_id',
+			'model_to' => '\Locomo\Model_Frmt_Table_Element',
+			'key_to' => 'frmt_table_id',
 			'cascade_save' => true,
 			'cascade_delete' => true,
 		),
-		// EAV
-		'eav' => array(
-			'key_from' => 'id',
-			'model_to' => '\Locomo\Model_Frmt_Eav',
-			'key_to' => 'format_id',
-			'cascade_save' => true,
-			'cascade_delete' => true,
-		),
-	);
-
-	protected static $_eav = array(
-		'eav' => array(
-			'attribute' => 'key',
-			'value' => 'value',
-		)
 	);
 
 	/*
@@ -307,8 +234,6 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 		static::set_equal_options(
 			array(
 				'id',
-				'is_multiple',
-				'type',
 			)
 		, \Input::get('searches'));
 		static::set_like_options(
@@ -322,9 +247,7 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 			if (\Input::get('is_draft') == 'use') static::$_options['where'][] = array('is_draft', false);
 			if (\Input::get('is_draft') == 'draft') static::$_options['where'][] = array('is_draft', true);
 		}
-
 	}
-
 
 	public static function format_import_matcher($origin, $new)
 	{
@@ -342,3 +265,4 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 
 
 }
+

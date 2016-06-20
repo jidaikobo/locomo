@@ -101,7 +101,8 @@ div.print
 .element .text
 {
 	display: block;
-	overflow: scroll;
+	/* overflow: scroll; */
+	overflow: hidden;
 }
 .element .text.mincho
 {
@@ -117,6 +118,15 @@ div.print
 	background: LemonChiffon;
 	color: #FF6347;
 }
+.element .text .table
+{
+	border: 1px solid DarkBlue;
+	background: #4169E1;
+	color: #fff;
+	padding: 1em;
+	line-height: 4em;
+}
+
 .element.shade.ln_y:before
 {
 	content: '＝＝▲▲';
@@ -161,6 +171,13 @@ div.print
 {
 	box-shadow: 0 0 1px 1px rgba(125, 125, 125, 0.4);
 }
+
+.element.focus .display_name
+{
+	background-color: rgba(88, 125, 88, 0.7);
+	opacity: 1.0;
+}
+
 #controllers_wrapper,
 #element_seq_wrapper
 {
@@ -280,9 +297,10 @@ div.print
 	display: block;
 	max-width: 50%;
 	float: left;
-	height: 1.5em;
+	min-height: 1.5em;
 	overflow-y: hidden;
-	overflow-x: scroll;
+	/* overflow-x: scroll; */
+	overflow-x: hidden;
 }
 #element_seq .seq
 {

@@ -44,7 +44,7 @@
 			<div class="btn_group">
 				<?php
 				if (\Auth::has_access('\Controller_Pg/view')):
-					echo Html::anchor('pg/'.$item->path, '閲覧', array('class' => 'view'));
+					echo Html::anchor($item->lang.'/'.$item->path, '閲覧', array('class' => 'view'));
 				endif;
 				if (\Auth::has_access('\Controller_Pg/edit')):
 					echo Html::anchor('pg/edit/'.$item->id, '編集', array('class' => 'edit'));

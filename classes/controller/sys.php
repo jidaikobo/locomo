@@ -23,9 +23,12 @@ class Controller_Sys extends \Controller_Base
 	public function action_home()
 	{
 		// このアクションはトップページ専用として、sys/homeへのアクセスはできないようにする。
-		if (substr(\Uri::string(),0,12) == 'sys/home')
+		if (
+			trim(\Input::uri(), '/') != \Lang::get_lang() &&
+			substr(\Uri::string(),0,12) == 'sys/home'
+		)
 		{
-			return \Response::redirect('/', 'location', 404);
+			return \Response::redirect('/'.\Lang::get_lang(), 'location', 404);
 		}
 
 		// 描画
@@ -54,9 +57,18 @@ class Controller_Sys extends \Controller_Base
 	public function action_403()
 	{
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
-		$this->response_status = "403";
-		$view = \View::forge('sys/403');
-		$view->set_global('title', 'Forbidden');
+		if (\Auth::is_root())
+		{
+			$this->response_status = "403";
+			$view = \View::forge('sys/403');
+			$view->set_global('title', 'Forbidden');
+		}
+		else
+		{
+			$this->response_status = "404";
+			$view = \View::forge('sys/404');
+			$view->set_global('title', 'Not Found');
+		}
 		$this->template->content = $view;
 	}
 

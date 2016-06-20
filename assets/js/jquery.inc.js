@@ -260,7 +260,7 @@ $(document).on('click', 'a[href^=#]', function(e){
 		// フォーカスを確実に移動させるために、ターゲットがtabbableでない場合はtabindex-1を付与する
 		if(href != ''){
 			$t = $(href);
-			if(!$t.attr('tabindex')){
+				if( !$t.is(':input') && !$t.is('a') && !$t.attr('tabindex')){
 				$t.attr('tabindex', '-1');
 			}
 		}else{
