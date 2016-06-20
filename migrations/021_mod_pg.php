@@ -11,6 +11,8 @@ class Mod_Pg
 
 			echo "add pg.lang\n";
 			\DB::query("ALTER TABLE `lcm_pgs` ADD `lang` varchar(2) NOT NULL DEFAULT '';")->execute();
+
+			\DB::query('UPDATE `lcm_pgs` SET `lang` = "ja";')->execute();
 		}
 		catch (\Database_Exception $e)
 		{
