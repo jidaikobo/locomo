@@ -220,7 +220,7 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function remove_tailing_slash($str = null)
 	{
-		return trim($str, '/');
+		return rtrim($str, '/');
 	}
 
 	/**
