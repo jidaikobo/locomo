@@ -25,20 +25,23 @@ class Controller_Scffld extends \Controller_Base
 		// only at development
 		if (\Fuel::$env == 'development')
 		{
-			// permission check
-			$arrs = array(
-	//			APPPATH.'classes/',
-				APPPATH.'migrations/',
-				APPPATH.'classes/controller/',
-				APPPATH.'classes/actionset/',
-				APPPATH.'classes/model/',
-				APPPATH.'classes/presenter/',
-				APPPATH.'views/',
-				APPPATH.'modules/',
-			);
 			if ($is_scaffold_tmp)
 			{
-				$arrs[] = APPPATH.'tmp/';
+				$arrs = array(APPPATH.'tmp/');
+			}
+			else
+			{
+				// permission check
+				$arrs = array(
+		//			APPPATH.'classes/',
+					APPPATH.'migrations/',
+					APPPATH.'classes/controller/',
+					APPPATH.'classes/actionset/',
+					APPPATH.'classes/model/',
+					APPPATH.'classes/presenter/',
+					APPPATH.'views/',
+					APPPATH.'modules/',
+				);
 			}
 
 			foreach ($arrs as $arr)
@@ -171,7 +174,7 @@ class Controller_Scffld extends \Controller_Base
 			if ($scfld_type == 'app' || $scfld_type == 'view' || $scfld_type == 'model')
 			{
 				$scfldpath      = $scfldbase;
-				$viewpath       = $scfldpath.'view/';
+				$viewpath       = $scfldpath.'views/';
 				$migrationpath  = $scfldpath.'migrations/';
 				$classpath      = $scfldpath.'classes/';
 				$controllerpath = $classpath.'controller/';
