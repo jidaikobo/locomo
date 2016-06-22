@@ -196,4 +196,15 @@ class File extends \Fuel\Core\File
 			return $results;
 		}
 	}
+
+	/**
+	 * create_dir_if_not_exist()
+	 */
+	public static function create_dir_if_not_exist($basepath, $name, $chmod = 0777, $area = null)
+	{
+		if ( ! file_exists($basepath.$name))
+		{
+			parent::create_dir($basepath, $name, $chmod, $area);
+		}
+	}
 }
