@@ -23,9 +23,12 @@ class Controller_Sys extends \Controller_Base
 	public function action_home()
 	{
 		// このアクションはトップページ専用として、sys/homeへのアクセスはできないようにする。
-		if (substr(\Uri::string(),0,12) == 'sys/home')
+		if (
+			trim(\Input::uri(), '/') != \Lang::get_lang() &&
+			substr(\Uri::string(),0,12) == 'sys/home'
+		)
 		{
-			return \Response::redirect('/', 'location', 404);
+			return \Response::redirect('/'.\Lang::get_lang(), 'location', 404);
 		}
 
 		// 描画
@@ -40,7 +43,17 @@ class Controller_Sys extends \Controller_Base
 	*/
 	public function action_404()
 	{
-		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
+		// use widget tpl when hmvc instead of error tpl.
+		$this->_template = \Request::is_hmvc() ? 'widget' : 'error' ;
+
+		// app/config/routes.phpの_404_の多言語対応処理でここに来ると、hmvcとしてくるので、きちんとerrorテンプレートを使うように明示的に上書き
+		// app/config/routes.php _404_ gives args because routes's 404 behave as hmvc.
+		$args = func_get_args();
+		if ($args && \Arr::get($args, 0))
+		{
+			$this->_template = 'error';
+		}
+
 		$this->response_status = "404";
 		$view = \View::forge('sys/404');
 		$view->set_global('title', 'Not Found');
@@ -54,9 +67,18 @@ class Controller_Sys extends \Controller_Base
 	public function action_403()
 	{
 		$this->_template = \Request::main()->controller == 'Controller_Sys' ? 'error' : 'widget';
-		$this->response_status = "403";
-		$view = \View::forge('sys/403');
-		$view->set_global('title', 'Forbidden');
+		if (\Auth::is_root())
+		{
+			$this->response_status = "403";
+			$view = \View::forge('sys/403');
+			$view->set_global('title', 'Forbidden');
+		}
+		else
+		{
+			$this->response_status = "404";
+			$view = \View::forge('sys/404');
+			$view->set_global('title', 'Not Found');
+		}
 		$this->template->content = $view;
 	}
 

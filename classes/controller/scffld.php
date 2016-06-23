@@ -20,20 +20,30 @@ class Controller_Scffld extends \Controller_Base
 	 */
 	public function action_main()
 	{
+		$is_scaffold_tmp = \Config::get('is_scaffold_tmp');
+
 		// only at development
 		if (\Fuel::$env == 'development')
 		{
-			// permission check
-			$arrs = array(
-	//			APPPATH.'classes/',
-				APPPATH.'migrations/',
-				APPPATH.'classes/controller/',
-				APPPATH.'classes/actionset/',
-				APPPATH.'classes/model/',
-				APPPATH.'classes/presenter/',
-				APPPATH.'views/',
-				APPPATH.'modules/',
-			);
+			if ($is_scaffold_tmp)
+			{
+				$arrs = array(APPPATH.'tmp/');
+			}
+			else
+			{
+				// permission check
+				$arrs = array(
+		//			APPPATH.'classes/',
+					APPPATH.'migrations/',
+					APPPATH.'classes/controller/',
+					APPPATH.'classes/actionset/',
+					APPPATH.'classes/model/',
+					APPPATH.'classes/presenter/',
+					APPPATH.'views/',
+					APPPATH.'modules/',
+				);
+			}
+
 			foreach ($arrs as $arr)
 			{
 				if ('0777' !== \File::get_permissions($arr))
@@ -106,19 +116,22 @@ class Controller_Scffld extends \Controller_Base
 			// change permission
 			umask(002);
 
-			// migration
-			$name       = array_shift($cmds);
-			$name       = strtolower($name);
-			$table_name = \Inflector::pluralize($name);
+			// vals
+			$orig_name  = array_shift($cmds);
+			$orig_name  = strtolower($orig_name);
+			$names      = explode('_', $orig_name);
+			$name       = array_pop($names);
+			$table_name = \Inflector::pluralize($orig_name);
 			$subjects   = array($table_name, $table_name);
 			$filename   = $name.'.php';
+			$scfldbase  = $is_scaffold_tmp ? APPPATH.'tmp/' : APPPATH;
 
 			// molding - logic
-			$migration  = \Controller_Scffld_Helper_Migration::generate($name, $subjects, $cmds);
-			$controller = \Controller_Scffld_Helper_Controller::generate($name, $cmd_orig, $scfld_type, $scfld_model);
-			$actionset  = \Controller_Scffld_Helper_Actionset::generate($name, $cmd_orig, $scfld_type, $scfld_model);
-			$model      = \Controller_Scffld_Helper_Model::generate($name, $cmd_orig, $scfld_type, $scfld_model);
-			$config     = \Controller_Scffld_Helper_Config::generate($name, $cmd_orig);
+			$migration  = \Controller_Scffld_Helper_Migration::generate($orig_name, $subjects, $cmds);
+			$controller = \Controller_Scffld_Helper_Controller::generate($orig_name, $cmd_orig, $scfld_type, $scfld_model);
+			$actionset  = \Controller_Scffld_Helper_Actionset::generate($orig_name, $cmd_orig, $scfld_type, $scfld_model);
+			$model      = \Controller_Scffld_Helper_Model::generate($orig_name, $cmd_orig, $scfld_type, $scfld_model);
+			$config     = \Controller_Scffld_Helper_Config::generate($orig_name, $cmd_orig);
 
 			// error
 			if ($model == 'model_soft_error')
@@ -128,49 +141,137 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// molding presenter
-			$presenter_index = \Controller_Scffld_Helper_Presenter::generate($name, $scfld_type, 'index');
-			$presenter_edit  = \Controller_Scffld_Helper_Presenter::generate($name, $scfld_type, 'edit');
-			$presenter_view  = \Controller_Scffld_Helper_Presenter::generate($name, $scfld_type, 'view');
+			$presenter_index = \Controller_Scffld_Helper_Presenter::generate($orig_name, $scfld_type, 'index');
+			$presenter_edit  = \Controller_Scffld_Helper_Presenter::generate($orig_name, $scfld_type, 'edit');
+			$presenter_view  = \Controller_Scffld_Helper_Presenter::generate($orig_name, $scfld_type, 'view');
 
 			// molding - view
-			$tpl_index       = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig);
-			$tpl_index_admin = \Controller_Scffld_Helper_Views_Index::generate($name, $cmd_orig, true, $scfld_model);
-			$tpl_view        = \Controller_Scffld_Helper_Views_View::generate($name, $cmd_orig);
-			$tpl_edit        = \Controller_Scffld_Helper_Views_Edit::generate($name, $cmds);
+			$tpl_index       = \Controller_Scffld_Helper_Views_Index::generate($orig_name, $cmd_orig);
+			$tpl_index_admin = \Controller_Scffld_Helper_Views_Index::generate($orig_name, $cmd_orig, true, $scfld_model);
+			$tpl_view        = \Controller_Scffld_Helper_Views_View::generate($orig_name, $cmd_orig);
+			$tpl_edit        = \Controller_Scffld_Helper_Views_Edit::generate($orig_name, $cmds);
 
 			// path - module
 			if ($scfld_type == 'module')
 			{
-				$scfldpath = APPPATH.'modules/';
-				if (\File::create_dir($scfldpath, $name))        $scfldpath = APPPATH.'modules/'.$name.DS;
-				if (\File::create_dir($scfldpath, 'migrations')) $migrationpath = $scfldpath.'migrations/';
-				if (\File::create_dir($scfldpath, 'config'))     $configpath = $scfldpath.'config/';
-				if (\File::create_dir($scfldpath, 'views'))      $viewpath = $scfldpath.'views/';
-				if (\File::create_dir($viewpath, $name))         $viewpath.= $name.DS;
-				if (\File::create_dir($scfldpath, 'classes'))    $classpath = $scfldpath.'classes/';
-				if (\File::create_dir($classpath, 'controller')) $controllerpath = $classpath.'controller/';
-				if (\File::create_dir($classpath, 'model'))      $modelpath = $classpath.'model/';
-				if (\File::create_dir($classpath, 'presenter'))  $presenterpath = $classpath.'presenter/';
-				if (\File::create_dir($presenterpath, $name))    $presenterpath.= $name.DS;
-				if (\File::create_dir($presenterpath, 'index'))  $presenteridxpath = $presenterpath.'index/';
-				if (\File::create_dir($classpath, 'actionset'))  $actionsetpath = $classpath.'actionset/';
+				// error
+				if (strpos($orig_name, '_') !== false)
+				{
+					\Session::set_flash('error', 'モジュール名にアンダーバーを含めないでください。');
+					\Response::redirect(\Uri::create('/scffld/main'));
+				}
+
+				// $scfldpath
+				\File::create_dir_if_not_exist($scfldbase, 'modules');
+
+				// pathes
+				$scfldpath        = $scfldbase.'modules/'.$name.DS;
+				$migrationpath    = $scfldpath.'migrations/';
+				$configpath       = $scfldpath.'config/';
+				$viewspath        = $scfldpath.'views/'.$name;
+				$classespath      = $scfldpath.'classes/';
+				$actionsetpath   = $classespath.'actionset/';
+				$controllerpath   = $classespath.'controller/';
+				$modelpath        = $classespath.'model/';
+				$presenterpath    = $classespath.'presenter/'.$name.DS;
+				$presenteridxpath = $presenterpath.'index/';
+
+				// $scfldpath
+				\File::create_dir_if_not_exist(dirname($scfldpath), $name);
+
+				// $migrationpath
+				\File::create_dir_if_not_exist($scfldpath, 'migrations');
+
+				// $configpath
+				\File::create_dir_if_not_exist($scfldpath, 'config');
+
+				// $viewspath
+				\File::create_dir_if_not_exist($scfldpath, 'views');
+				\File::create_dir_if_not_exist($scfldpath.'views', $name);
+
+				// $classespath
+				\File::create_dir_if_not_exist($scfldpath, 'classes');
+
+				foreach (array('actionset', 'controller', 'model', 'presenter') as $d)
+				{
+					\File::create_dir_if_not_exist($classespath, $d);
+				}
+
+				\File::create_dir_if_not_exist(dirname($presenterpath), $name);
+				\File::create_dir_if_not_exist($presenterpath, 'index');
 			}
 
 			// path - app
 			if ($scfld_type == 'app' || $scfld_type == 'view' || $scfld_type == 'model')
 			{
-				$scfldpath      = APPPATH;
-				$migrationpath  = APPPATH.'migrations/';
-				$classpath      = $scfldpath.'classes/';
-				$controllerpath = $classpath.'controller/';
-				$modelpath      = $classpath.'model/';
-				$presenterpath  = $classpath.'presenter/';
-				$actionsetpath  = $classpath.'actionset/';
-				if ($scfld_type != 'model')
+				$scfldpath        = $scfldbase;
+				$viewspath        = $scfldpath.'views/';
+				$migrationpath    = $scfldpath.'migrations/';
+				$classespath      = $scfldpath.'classes/';
+				$controllerpath   = $classespath.'controller/';
+				$modelpath        = $classespath.'model/';
+				$presenterpath    = $classespath.'presenter/';
+				$actionsetpath    = $classespath.'actionset/';
+
+				// $classpath
+				\File::create_dir_if_not_exist($scfldpath, 'classes');
+
+				// $migrationpath
+				\File::create_dir_if_not_exist($scfldpath, 'migrations');
+
+				// 通常のコントローラ類とview and presenter
+				if ($scfld_type == 'app' || $scfld_type == 'view')
 				{
-					if (\File::create_dir($scfldpath.'views/', $name)) $viewpath = APPPATH.'views/'.$name;
-					if (\File::create_dir($presenterpath, $name)) $presenterpath.= $name.DS;
-					if (\File::create_dir($presenterpath, 'index')) $presenteridxpath = $presenterpath.'index/';
+					// $migrationpath
+					\File::create_dir_if_not_exist($scfldpath, 'views');
+
+					// $viewpath
+					foreach ($names as $p)
+					{
+						\File::create_dir_if_not_exist($viewspath, $p);
+						$viewspath.= $p.DS;
+					}
+					\File::create_dir_if_not_exist($viewspath, $name);
+					$viewspath.= $name.DS;
+
+					// $presenterpath
+					\File::create_dir_if_not_exist($classespath, 'presenter');
+					foreach ($names as $p)
+					{
+						\File::create_dir_if_not_exist($presenterpath, $p);
+						$presenterpath.= $p.DS;
+					}
+					\File::create_dir_if_not_exist($presenterpath, $name);
+					$presenterpath.= $name.DS;
+					\File::create_dir_if_not_exist($presenterpath, 'index');
+					$presenteridxpath = $presenterpath.'index/';
+
+					// $controllerpath
+					\File::create_dir_if_not_exist($classespath, 'controller');
+					foreach ($names as $p)
+					{
+						\File::create_dir_if_not_exist($controllerpath, $p);
+						$controllerpath.= $p.DS;
+					}
+
+					// $actionsetpath
+					\File::create_dir_if_not_exist($classespath, 'actionset');
+					foreach ($names as $p)
+					{
+						\File::create_dir_if_not_exist($actionsetpath, $p);
+						$actionsetpath.= $p.DS;
+					}
+				}
+
+				// 通常のコントローラあるいはモデルとマイグレーションのみ
+				if ($scfld_type == 'app' || $scfld_type == 'model')
+				{
+					\File::create_dir_if_not_exist($classespath, 'model');
+					foreach ($names as $p)
+					{
+						\File::create_dir_if_not_exist($modelpath, $p);
+						$modelpath.= $p.DS;
+					}
 				}
 			}
 			$log_dir = APPPATH.'logs/scffld/'.$name;
@@ -179,8 +280,8 @@ class Controller_Scffld extends \Controller_Base
 			$messages = array();
 
 			// migrations
-			$latest = \Util::get_latestprefix(APPPATH.'migrations');
-			$migrate_file = $latest.'_create_'.$filename;
+			$latest = \Util::get_latestprefix($migrationpath);
+			$migrate_file = $latest.'_create_'.$orig_name.'.php';
 
 			// model and migration
 			if ($scfld_type == 'model' || $scfld_type == 'app' || $scfld_type == 'module')
@@ -200,11 +301,11 @@ class Controller_Scffld extends \Controller_Base
 			// views
 			if ($scfld_type == 'view' || $scfld_type == 'app' || $scfld_type == 'module')
 			{
-				\File::update($viewpath, 'index.php', $tpl_index);
-				\File::update($viewpath, 'index_admin.php', $tpl_index_admin);
-				\File::update($viewpath, 'view.php', $tpl_view);
-				\File::update($viewpath, 'edit.php', $tpl_edit);
-				$files[] = $viewpath;
+				\File::update($viewspath, 'index.php', $tpl_index);
+				\File::update($viewspath, 'index_admin.php', $tpl_index_admin);
+				\File::update($viewspath, 'view.php', $tpl_view);
+				\File::update($viewspath, 'edit.php', $tpl_edit);
+				$files[] = $viewspath;
 
 				// prensenter
 				\File::update($presenteridxpath, 'admin.php', $presenter_index);
@@ -250,7 +351,7 @@ class Controller_Scffld extends \Controller_Base
 			}
 
 			// log
-			if ( ! file_exists($log_dir)) \File::create_dir(APPPATH.'logs', 'scffld/'.$name);
+			\File::create_dir_if_not_exist(APPPATH.'logs', 'scffld/'.$name);
 			$latest = \Util::get_latestprefix($log_dir);
 			\File::update($log_dir, $latest.'_scaffold.txt', $cmd_raw);
 			\File::update($log_dir, 'files.php', '<?php'."\n".'$scfflds = '.var_export($files, 1).';');
@@ -270,7 +371,8 @@ class Controller_Scffld extends \Controller_Base
 
 		// umask chack
 		umask($current_permission);
-		if (umask() != $current_permission) {
+		if (umask() != $current_permission)
+		{
 			die('An error occurred while changing back the umask');
 		}
 
@@ -296,9 +398,6 @@ class Controller_Scffld extends \Controller_Base
 			\Session::set_flash('cmd_raw', $cmd_raw);
 			\Session::set_flash('type', $scfld_type);
 			\Session::set_flash('model', $scfld_model);
-
-
-
 		}
 
 		// set errors

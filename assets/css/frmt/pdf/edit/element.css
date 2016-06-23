@@ -101,7 +101,8 @@ div.print
 .element .text
 {
 	display: block;
-	overflow: scroll;
+	/* overflow: scroll; */
+	overflow: hidden;
 }
 .element .text.mincho
 {

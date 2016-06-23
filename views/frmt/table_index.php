@@ -22,7 +22,6 @@ $index_toolbar.= '</div> <!-- /.index_toolbar -->';
 			<th class="min">使用</th>
 			<th class="min">要素数</th>
 			<th class="min">操作</th>
-			<?php if ($output_url) { ?><th class="min">テスト印刷</th><?php } ?>
 		</tr>
 	</thead>
 	<tbody class="has_checkbox">
@@ -35,9 +34,6 @@ $index_toolbar.= '</div> <!-- /.index_toolbar -->';
 				<?php echo count($item->element); ?>
 			</td>
 			<td class="min"><?php echo \Locomo\Presenter_Frmt_Table_Index::create_ctrls($item); ?></td>
-			<?php if ($output_url) : ?>
-				<td class="min"><?php echo \Locomo\Presenter_Frmt_Table_Index::create_preview($item, $output_url); ?></td>
-			<?php endif; ?>
 		</tr>
 <?php endforeach; ?>
 	</tbody>
@@ -47,7 +43,6 @@ $index_toolbar.= '</div> <!-- /.index_toolbar -->';
 			<th class="min">使用</th>
 			<th class="min">要素数</th>
 			<th class="min">操作</th>
-			<?php if ($output_url) { ?><th class="min">テスト印刷</th><?php } ?>
 	</tfoot>
 </table>
 

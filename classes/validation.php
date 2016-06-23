@@ -5,10 +5,10 @@ class Validation extends \Fuel\Core\Validation
 	/**
 	 * _validation_require_once()
 	 * require at first time and at changing
-	 * 
+	 *
 	 * @param str $val
 	 * @param str $options perioded value
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function _validation_require_once($val, $options)
@@ -21,22 +21,23 @@ class Validation extends \Fuel\Core\Validation
 		{
 			$result = \DB::select($field)
 				->from($table)
-				->where('id',$id)
+				->where('id', $id)
 				->execute();
 			return ($result->count() > 0);
-		} else {
+		}
+		else
+		{
 			//empty is not allowed
 			return ! empty($val);
 		}
-//Validation::active()->set_message('unique', '「:label 」はユニークです。「:value」は既に登録されています。');
 	}
 
 	/**
 	 * _validation_unique()
-	 * 
+	 *
 	 * @param str $val
 	 * @param str $options perioded value
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function _validation_unique($val, $options)
@@ -53,7 +54,9 @@ class Validation extends \Fuel\Core\Validation
 			->where($field, '=', \Str::lower($val))
 			->from($table)->execute();
 			return ($result->count() == 0);
-		} else {
+		}
+		else
+		{
 			//create
 			$result = \DB::select("id")
 			->where($field, '=', \Str::lower($val))
@@ -77,7 +80,9 @@ class Validation extends \Fuel\Core\Validation
 			->where($field, '=', \Str::lower($val))
 			->from($table)->execute();
 			return ($result->count() == 0);
-		} else {
+		}
+		else
+		{
 			//create
 			$result = \DB::select("id")
 			->where($field, '=', \Str::lower($val))
@@ -89,10 +94,10 @@ class Validation extends \Fuel\Core\Validation
 
 	/**
 	 * _validation_match_password()
-	 * 
+	 *
 	 * @param str $val
 	 * @param str $options perioded value
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function _validation_match_password($val, $options)
@@ -111,10 +116,10 @@ class Validation extends \Fuel\Core\Validation
 
 	/**
 	 * _validation_match_db_field()
-	 * 
+	 *
 	 * @param str $val
 	 * @param str $options perioded value
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function _validation_match_db_field($val, $options)
@@ -133,10 +138,10 @@ class Validation extends \Fuel\Core\Validation
 
 	/**
 	 * _validation_banned_string()
-	 * 
+	 *
 	 * @param str $val
 	 * @param str $options perioded value
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function _validation_banned_string($val, $options)
@@ -147,10 +152,10 @@ class Validation extends \Fuel\Core\Validation
 	/**
 	 * _validation_non_zero_datetime()
 	 * require at first time and at changing
-	 * 
+	 *
 	 * @param str $val
 	 * @param str $options
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function _validation_non_zero_datetime($val)

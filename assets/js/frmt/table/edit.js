@@ -15,6 +15,7 @@ $(function () {
 		padding_left: '',
 		padding_top: '',
 		padding_bottom: '',
+		is_merge: '',
 
 
 		/*
@@ -62,6 +63,7 @@ $(function () {
 		'#form_padding_left',
 		'#form_padding_right',
 		'#form_padding_bottom',
+		'#form_is_merge',
 	];
 
 
@@ -251,6 +253,15 @@ $(function () {
 				elm.find('.text').removeClass('gothic');
 				elm.find('.text').addClass('mincho');
 				break;
+		}
+
+		if (parseInt(elm.find('.is_merge').val()))
+		{
+			elm.find('.text_wrapper').addClass('merge');
+		}
+		else
+		{
+			elm.find('.text_wrapper').removeClass('merge');
 		}
 
 	}

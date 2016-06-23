@@ -281,6 +281,21 @@ class Model_Frmt extends \Locomo\Model_Base_Soft
 			'cascade_save' => true,
 			'cascade_delete' => true,
 		),
+		// EAV
+		'eav' => array(
+			'key_from' => 'id',
+			'model_to' => '\Locomo\Model_Frmt_Eav',
+			'key_to' => 'format_id',
+			'cascade_save' => true,
+			'cascade_delete' => true,
+		),
+	);
+
+	protected static $_eav = array(
+		'eav' => array(
+			'attribute' => 'key',
+			'value' => 'value',
+		)
 	);
 
 	/*

@@ -10,7 +10,7 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function ctrl_to_dir($controller = null, $delete_locomo = true)
 	{
-		if ( ! $controller) throw new \InvalidArgumentException('argument must not be null or empty');
+		if ( ! $controller) return '/';
 
 		$controller = static::add_head_backslash($controller);
 		$controller = $delete_locomo ? str_replace('\Locomo', '', $controller) : $controller;
@@ -220,7 +220,7 @@ class Inflector extends \Fuel\Core\Inflector
 	 */
 	public static function remove_tailing_slash($str = null)
 	{
-		return trim($str, '/');
+		return rtrim($str, '/');
 	}
 
 	/**

@@ -96,6 +96,102 @@ class DBUtil extends \Fuel\Core\DBUtil
 		return $results;
 	}
 
+	public static function create_table_for_soft(
+		$table,
+		$fields,
+		$primary_keys = array(),
+		$if_not_exists = true,
+		$engine = false,
+		$charset = null,
+		$foreign_keys = array(),
+		$db = null
+	)
+	{
+		$fields = static::fields_to_array($fields);
+
+		$p_fields = array('id' => array('type' => 'int', 'auto_increment' => true, 'unsigned' => true));
+
+		$fields = array_merge($p_fields, $fields);
+		$fields = array_merge($fields, array(
+			'creator_id' => array('type' => 'int', 'constraint' => 5),
+			'updater_id' => array('type' => 'int', 'constraint' => 5),
+			'created_at' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'updated_at' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'deleted_at' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		));
+
+		return static::create_table(
+			$table,
+			$fields,
+			array('id')
+		);
+	}
+
+	public static function add_fields_for_soft(
+		$table,
+		$fields,
+		$primary_keys = array(),
+		$if_not_exists = true,
+		$engine = false,
+		$charset = null,
+		$foreign_keys = array(),
+		$db = null
+	)
+	{
+		$fields = static::fields_to_array($fields);
+
+		return static::add_fields(
+			$table,
+			$fields
+		);
+	}
+
+	public static function modify_fields_for_soft(
+		$table,
+		$fields,
+		$primary_keys = array(),
+		$if_not_exists = true,
+		$engine = false,
+		$charset = null,
+		$foreign_keys = array(),
+		$db = null
+	)
+	{
+		$fields = static::fields_to_array($fields);
+
+		return static::modify_fields(
+			$table,
+			$fields
+		);
+	}
+
+
+	protected static $_fields_to_array = array(
+		'bool'     => array('type' => 'bool',                         'default' => 0),
+		'int'      => array('type' => 'int',     'constraint' => 11,  'default' => 0),
+		'float'    => array('type' => 'float',                        'default' => 0),
+		'double'   => array('type' => 'double',                       'default' => 0),
+		'varchar'  => array('type' => 'varchar', 'constraint' => 255, 'default' => ''),
+		'text'     => array('type' => 'text',                         'default' => ''),
+		'datetime' => array('type' => 'datetime',     'null' => true, 'default' => null),
+		'date'     => array('type' => 'date',         'null' => true, 'default' => null),
+		'time'     => array('type' => 'time',         'null' => true, 'default' => null),
+	);
+
+	public static function fields_to_array($fields)
+	{
+		foreach ($fields as $key => $value)
+		{
+			if (!is_array($value) && array_key_exists($value, static::$_fields_to_array))
+			{
+				 $fields[$key] = static::$_fields_to_array[$value];
+			}
+		}
+
+		return $fields;
+	}
+
+
 }
 
 

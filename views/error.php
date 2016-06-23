@@ -9,7 +9,6 @@
 	{
 		font-size: 130%;
 	}
-
 	.skip
 	{
 		position: absolute !important;
@@ -21,7 +20,7 @@
 		overflow: hidden;
 	}
 	</style>
-	
+
 	<!-- favicon -->
 	<link rel="shortcut icon" href="<?php echo Asset::get_file('system/favicon.ico', 'img') ?>">
 </head>

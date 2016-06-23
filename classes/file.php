@@ -51,9 +51,9 @@ class File extends \Fuel\Core\File
 		{
 			foreach ($files as $file)
 			{
-				if($types && ! in_array(static::get_file_genre($file), $types)) continue;
-				if($exclude_types && in_array(static::get_file_genre($file), $exclude_types)) continue;
-				if(in_array(substr($file, -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
+				if ($types && ! in_array(static::get_file_genre($file), $types)) continue;
+				if ($exclude_types && in_array(static::get_file_genre($file), $exclude_types)) continue;
+				if (in_array(substr($file, -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
 				$retvals[$save_path.$file] = rawurldecode($file);
 			}
 		}
@@ -79,7 +79,10 @@ class File extends \Fuel\Core\File
 		$upload_path = LOCOMOUPLOADPATH.DS.$dir.$id;
 		$save_path = 'uploads'.DS.$dir.$id.DS;
 
-
+		// keep permission
+		$current_permission = umask();
+		// change permission
+		umask(0);
 
 		if ( ! is_dir($upload_path))
 		{
@@ -105,8 +108,8 @@ class File extends \Fuel\Core\File
 			foreach ($files as $file)
 			{
 				$file = $file['saved_as'];
-				if( ! in_array(substr(strtolower($file), -4, 4), array('.jpg','jpeg','.gif','.png'))) continue;
-				if(in_array(substr(strtolower($file), -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
+				if ( ! in_array(substr(strtolower($file), -4, 4), array('.jpg','jpeg','.gif','.png'))) continue;
+				if (in_array(substr(strtolower($file), -7, 7), array('_lg.jpg','_sm.jpg','_tn.jpg'))) continue;
 
 				$img_path = $upload_path.DS.$file;
 				$img_file = \Image::load($img_path);
@@ -167,12 +170,12 @@ class File extends \Fuel\Core\File
 	 */
 	public static function unlink($unlinks = false)
 	{
-		if (!$unlinks) $unlinks = \Input::post('unlink'); // TODO 汎用化が進んだら消す
+		if ( ! $unlinks) $unlinks = \Input::post('unlink'); // TODO 汎用化が進んだら消す
 
 		$results = array();
 
 		// unlink
-		if (! is_array($unlinks) ) $unlinks = array($unlinks);
+		if ( ! is_array($unlinks) ) $unlinks = array($unlinks);
 		if ($unlinks)
 		{
 			foreach ($unlinks as $path)
@@ -181,7 +184,7 @@ class File extends \Fuel\Core\File
 
 				\File::delete($path);
 				// 自動生成される画像の削除
-				foreach(array('_lg.jpg','_sm.jpg','_tn.jpg') as $suffix)
+				foreach (array('_lg.jpg','_sm.jpg','_tn.jpg') as $suffix)
 				{
 					$ext = substr($path, strrpos($path, '.'));
 					$pathtemp = str_replace(substr($path, strrpos($path, '.')), $suffix, $path);
@@ -191,6 +194,19 @@ class File extends \Fuel\Core\File
 				}
 			}
 			return $results;
+		}
+	}
+
+	/**
+	 * create_dir_if_not_exist()
+	 */
+	public static function create_dir_if_not_exist($basepath, $name, $chmod = 0777, $area = null)
+	{
+		$basepath = \Inflector::add_tailing_slash($basepath);
+
+		if ( ! file_exists($basepath.$name))
+		{
+			parent::create_dir($basepath, $name, $chmod, $area);
 		}
 	}
 }
