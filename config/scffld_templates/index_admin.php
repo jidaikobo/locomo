@@ -1,10 +1,19 @@
 <?php echo $search_form; ?>
 
 <?php if ($items): ?>
+<?php
+// for output
+// echo \Form::open(array('method' => 'post', 'action' => \Uri::create('output/xxx/output', array(), \Input::get())));
+// echo \Asset::js('toolbarIndexAdmin.js');
+?>
 <!--.index_toolbar-->
 <div class="index_toolbar clearfix">
 <!--.index_toolbar_buttons-->
 <div class="index_toolbar_buttons">
+<?php
+// for output
+// echo \XXX\Presenter_XXX_Index_Admin::index_admin_toolbar_format('\Format\Model_XXX');
+?>
 </div><!-- /.index_toolbar_buttons -->
 <?php echo \Pagination::create_links(); ?>
 </div><!-- /.index_toolbar -->
@@ -22,13 +31,14 @@
 ###TBODY###			<td>
 				<div class="btn_group">
 					<?php
-					if (\Auth::has_access('\Controller_XXX/view')):
+					//echo \XXX\Presenter_XXX_Index_Admin::create_ctrls($item);
+					if (\Auth::has_access('\XXX\Controller_XXX/view')):
 						echo Html::anchor('xxx/view/'.$item->id, '閲覧', array('class' => 'view'));
 					endif;
-					if (\Auth::has_access('\Controller_XXX/edit')):
+					if (\Auth::has_access('\XXX\Controller_XXX/edit')):
 						echo Html::anchor('xxx/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
-					if (\Auth::has_access('\Controller_XXX/purge')):
+					if (\Auth::has_access('\XXX\Controller_XXX/purge')):
 						echo Html::anchor('xxx/purge_confirm/'.$item->id, '完全に削除', array('class' => 'delete confirm'));
 					endif;
 					?>
@@ -44,6 +54,11 @@
 		</tr>
 	</tfoot>
 </table><!--/.datatable-->
+<?php
+// for output
+// echo \XXX\Presenter_XXX_Index_Admin::index_admin_toolbar_format('\Format\Model_XXX', 1);
+// echo \Form::close();
+?>
 <?php else: ?>
 <p>項目が存在しません。</p>
 <?php endif; ?>

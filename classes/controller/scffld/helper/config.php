@@ -17,5 +17,4 @@ class Controller_Scffld_Helper_Config extends Controller_Scffld_Helper
 		$val = str_replace ('###NICENAME###', $nicename, $val);
 		return $val;
 	}
-
 }

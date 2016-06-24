@@ -217,7 +217,8 @@ class Controller_Scffld extends \Controller_Base
 				$orig_name,
 				$cmd_orig,
 				true,
-				$scfld_model);
+				$scfld_model,
+				$scfld_type == 'module' ? true : false);
 			$tpl_view        = \Controller_Scffld_Helper_Views_View::generate(
 				$orig_name,
 				$cmd_orig);
