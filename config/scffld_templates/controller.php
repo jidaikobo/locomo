@@ -27,7 +27,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_admin()
 	{
-		parent::index_admin();
+		static::index_admin();
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_yet()
 	{
-		parent::index_yet();
+		static::index_yet();
 	}
 
 	/**
@@ -43,7 +43,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_expired()
 	{
-		parent::index_expired();
+		static::index_expired();
 	}
 
 	/**
@@ -51,7 +51,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_invisible()
 	{
-		parent::index_invisible();
+		static::index_invisible();
 	}
 
 	/**
@@ -59,7 +59,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_unavailable()
 	{
-		parent::index_unavailable();
+		static::index_unavailable();
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_deleted()
 	{
-		parent::index_deleted();
+		static::index_deleted();
 	}
 
 	/*
@@ -75,7 +75,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_all()
 	{
-		parent::index_all();
+		static::index_all();
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_index_widget()
 	{
-		parent::index_widget(func_get_args());
+		static::index_widget(func_get_args());
 	}
 
 	/**
@@ -91,7 +91,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_view($id = null)
 	{
-		parent::view($id);
+		static::view($id);
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_create()
 	{
-		parent::create();
+		static::create();
 	}
 
 	/**
@@ -107,7 +107,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_edit($id = null)
 	{
-		parent::edit($id);
+		static::edit($id);
 	}
 
 	/**
@@ -115,7 +115,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_delete($id = null)
 	{
-		parent::delete($id);
+		static::delete($id);
 	}
 
 	/**
@@ -123,7 +123,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_undelete($id = null)
 	{
-		parent::undelete($id);
+		static::undelete($id);
 	}
 
 	/**
@@ -131,7 +131,7 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_purge_confirm($id = null)
 	{
-		parent::purge_confirm($id);
+		static::purge_confirm($id);
 	}
 
 	/**
@@ -139,6 +139,6 @@ class Controller_XXX extends \Locomo\Controller_Base
 	 */
 	public function action_purge($id = null)
 	{
-		parent::purge($id);
+		static::purge($id);
 	}
 }
