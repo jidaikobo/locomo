@@ -53,13 +53,6 @@ class Controller_Scffld_Helper_Views_Index extends Controller_Scffld_Helper
 		$val = str_replace ('###THEAD###', $thead, $val);
 		$val = str_replace ('###TBODY###', $tbody, $val);
 
-if ($is_admin)
-{
-echo '<textarea style="width:100%;height:200px;background-color:#fff;color:#111;font-size:90%;font-family:monospace;position:relative;z-index:9999">';
-var_dump($val);
-echo '</textarea>';
-die();
-}
 		return $val;
 	}
 }
