@@ -200,8 +200,13 @@ class File extends \Fuel\Core\File
 	/**
 	 * create_dir_if_not_exist()
 	 */
-	public static function create_dir_if_not_exist($basepath, $name, $chmod = 0777, $area = null)
+	public static function create_dir_if_not_exist($basepath, $name = '', $chmod = 0777, $area = null)
 	{
+		if ( ! $name)
+		{
+			$name = basename($basepath);
+			$basepath = dirname($basepath);
+		}
 		$basepath = \Inflector::add_tailing_slash($basepath);
 
 		if ( ! file_exists($basepath.$name))
