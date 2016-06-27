@@ -37,6 +37,7 @@ trait Controller_Traits_Wrkflw
 			if (\Request::main()->action == 'remand')  return array('remand',  $cmt);
 			if (\Request::main()->action == 'approve') return array('approve', $cmt);
 			if (\Request::main()->action == 'reject')  return array('reject',  $cmt);
+			if (\Request::main()->action == 'withdraw')  return array('withdraw',  $cmt);
 			return $operation_and_comment;
 		});
 	}
@@ -109,7 +110,7 @@ trait Controller_Traits_Wrkflw
 
 		// $obj
 		$obj = $model::find($id);
-		if ( ! $obj) 
+		if ( ! $obj)
 		{
 			\Session::set_flash('error', 'ルート設定すべき項目が見つかりませんでした。');
 			return \Response::redirect(static::$main_url);
@@ -121,20 +122,24 @@ trait Controller_Traits_Wrkflw
 			if ( ! \Security::check_token())
 			{
 				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
-			} else {
+			}
+			else
+			{
 				$route_id = \Input::post('route');
 				if ($route_id)
 				{
 					$model::set_route($route_id, \Request::active()->controller, $id);
 					\Session::set_flash('success', 'ルートを設定しました');
-	
+
 					// update workflow_status
 					$obj->workflow_status = 'init';
 					$obj->save();
-	
+
 					// ルート設定したら編集画面に返す
 					return \Response::redirect(static::$base_url.'edit/'.$id);
-				} else {
+				}
+				else
+				{
 					\Session::set_flash('error', 'ルートを選択してください');
 				}
 			}
@@ -217,11 +222,13 @@ trait Controller_Traits_Wrkflw
 			if ( ! \Security::check_token())
 			{
 				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
-			} else {
+			}
+			else
+			{
 				$comment = \Input::post('comment');
 				$model::add_log('approve', null, $controller, $id, $comment);
 				\Session::set_flash('success', '申請しました');
-	
+
 				// 項目のworkflow_statusをin_progressにする（編集できないようにする）
 				$obj->workflow_status = 'in_progress';
 				$obj->save();
@@ -263,7 +270,9 @@ trait Controller_Traits_Wrkflw
 			if ( ! \Security::check_token())
 			{
 				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
-			} else {
+			}
+			else
+			{
 				$route_id = $model::get_route($controller, $id);
 				if ($route_id)
 				{
@@ -281,10 +290,10 @@ trait Controller_Traits_Wrkflw
 					// 最後の承認かどうか確認する
 					$total_step   = $model::get_total_step($route_id);
 					$mode = $current_step + 1 == $total_step ? 'finish' : 'approve';
-	
+
 					// add_log
 					$model::add_log($mode, $route_id, $controller, $id,$comment);
-	
+
 					// 最後の承認であれば、項目のステータスを変更する
 					if ($mode == 'finish')
 					{
@@ -293,13 +302,17 @@ trait Controller_Traits_Wrkflw
 						$obj->workflow_status = 'finish';
 						$obj->save();
 						\Session::set_flash('success', '最終の承認をしました');
-					} else {
+					}
+					else
+					{
 						\Session::set_flash('success', '承認しました');
 					}
-	
+
 //					return \Response::redirect(static::$base_url.'view/'.$id);
 					return \Response::redirect(static::$base_url.'index_workflow/');
-				} else {
+				}
+				else
+				{
 					\Session::set_flash('error', '承認ルートを見つけられませんでした。');
 				}
 			}
@@ -328,12 +341,14 @@ trait Controller_Traits_Wrkflw
 			if ( ! \Security::check_token())
 			{
 				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
-			} else {
+			}
+			else
+			{
 				$comment     = \Input::post('comment');
 				$target_step = (int) \Input::post('target_step');
 				$model::add_log('remand', null, $controller, $id, $comment, $target_step);
 				\Session::set_flash('success', '差し戻し処理をしました');
-	
+
 				// 差し戻しが最初まで戻った場合、in_progressを解除して編集できるようにする
 				if ($target_step == -1)
 				{
@@ -389,6 +404,57 @@ trait Controller_Traits_Wrkflw
 	}
 
 	/**
+	 * action_withdraw()
+	 * 取り下げ
+	 */
+	public function action_withdraw($id)
+	{
+		$controller = \Request::active()->controller;
+		$model_name = str_replace('Controller', 'Model', get_called_class());
+		$model = $model_name::forge();
+
+		// postがあったら取り下げ処理をして、閲覧画面に戻る
+		if (\Input::method() == 'POST')
+		{
+			if ( ! \Security::check_token())
+			{
+				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
+			}
+			else
+			{
+				$comment     = \Input::post('comment');
+				$target_step = (int) \Input::post('target_step');
+				$model::add_log('withdraw', null, $controller, $id, $comment, $target_step);
+				\Session::set_flash('success', '取り下げ処理をしました');
+
+				// 取り下げたので、in_progressを解除して編集できるようにする
+				$target_model = $this->model_name ;
+				$obj = $target_model::find($id);
+				$obj->workflow_status = 'before_progress';
+				$obj->save();
+
+				if (method_exists(\Request::active()->controller, 'action_view'))
+				{
+					return \Response::redirect(static::$base_url.'/view/'.$id);
+				}
+				else
+				{
+					return \Response::redirect(static::$main_url);
+				}
+			}
+		}
+
+		// コメント入力viewを表示
+		$view = \View::forge('wrkflw/comment');
+
+		// assign
+		static::set_route_info($view, $controller, $id);
+		$view->set_global('title', '取り下げ');
+		$view->set('button', '取り下げ');
+		$this->template->content = $view;
+	}
+
+	/**
 	 * action_reject()
 	 * 却下（delete）
 	 */
@@ -406,9 +472,11 @@ trait Controller_Traits_Wrkflw
 			if ( ! \Security::check_token())
 			{
 				\Session::set_flash('error', 'ワンタイムトークンが失効しています。送信し直してみてください。');
-			} else {
+			}
+			else
+			{
 				$route_id = $model::get_route($controller, $id);
-	
+
 				if ($route_id)
 				{
 					$comment = \Input::post('comment');
@@ -422,15 +490,17 @@ trait Controller_Traits_Wrkflw
 						\Session::set_flash('success', '存在しない項目を却下しようとしました。');
 						return \Response::redirect(static::$main_url);
 					}
-	
+
 					if (isset($obj::properties()['deleted_at']))
 					{
 						$obj->delete();
-					} else {
+					}
+					else
+					{
 						$obj->purge(null, true);
 					}
 					\Session::set_flash('success', '項目を却下しました。');
-	
+
 					return \Response::redirect(static::$main_url);
 				}
 			}
