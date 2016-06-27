@@ -48,11 +48,13 @@
 	echo \Form::select('user', 'none', \Model_Usr::get_users());
 ?>
 </p>
+<div class="lcmbar_bottom">
 <div class="submit_button">
 <?php
 	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 	echo \Form::submit('submit', '次へ', array('class' => 'button primary'));
 ?>
+</div>
 </div>
 </fieldset>
 <?php echo \Form::close(); ?>
