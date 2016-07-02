@@ -36,16 +36,19 @@ class Asset_Instance extends \Fuel\Core\Asset_Instance
 		$apppath = str_replace($docroot, '', $apppath);
 		$locomopath = str_replace($docroot, '', $locomopath);
 
+		$search = array();
+		$replace = array();
+
 		// app_assets を先にreplace
 		if (strpos($retval, $apppath) !== false)
 		{
-			$replace = 'app_assets/';
-			$search = $apppath.'locomo/assets/';
+			$replace[] = 'app_assets/';
+			$search[] = $apppath.'locomo/assets/';
 		}
-		else
+		if (strpos($retval, $locomopath) !== false)
 		{
-			$replace = 'lcm_assets/';
-			$search = $locomopath.'assets/';
+			$replace[] = 'lcm_assets/';
+			$search[] = $locomopath.'assets/';
 		}
 
 		return str_replace($search, $replace, $retval);
