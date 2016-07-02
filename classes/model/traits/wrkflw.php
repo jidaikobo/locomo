@@ -292,7 +292,9 @@ trait Model_Traits_Wrkflw
 			if($current_step_id)
 			{
 				$unfinished[$id]->workflow_users = self::get_members($current_step_id);
-			} else {
+			}
+			else
+			{
 				// null means before progress - related members are 'writers'
 				$unfinished[$id]->workflow_users = $writers['allusers'];
 			}
@@ -351,11 +353,17 @@ trait Model_Traits_Wrkflw
 		if ($status == 'init')
 		{
 			$current_step = -1;
-		} elseif ($status == 'approve' || $status == 'finish') {
+		}
+		elseif ($status == 'approve' || $status == 'finish')
+		{
 			$current_step++;
-		} elseif ($status == 'reject') {
+		}
+		elseif ($status == 'reject' || $status == 'withdraw')
+		{
 			$current_step = -3;
-		} elseif ($status == 'remand') {
+		}
+		elseif ($status == 'remand')
+		{
 			$current_step = $target_step ? $target_step : $current_step - 1;
 		}
 

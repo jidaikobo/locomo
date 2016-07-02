@@ -73,6 +73,7 @@ trait Actionset_Traits_Wrkflw
 				$controller.'/index_workflow',
 				$controller.'/apply',
 				$controller.'/route',
+				$controller.'/withdraw',
 			)
 		);
 		return $retvals;
@@ -145,6 +146,11 @@ trait Actionset_Traits_Wrkflw
 					array("{$controller}/remand/{$obj->id}", '差戻し'),
 					array("{$controller}/reject/{$obj->id}", '却下'),
 				);
+				// 作成者だったら取り下げができる
+				if ($user_id == $obj->creator_id)
+				{
+					$urls[] = array("{$controller}/withdraw/{$obj->id}", '取り下げ');
+				}
 			}
 			$menu_str = '';
 		}
