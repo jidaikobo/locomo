@@ -22,7 +22,7 @@ class Controller_Scffld_Helper
 	 */
 	public static function replaces($name, $tpl)
 	{
-		$tpl = str_replace ('XXX', ucfirst($name), $tpl);
+		$tpl = str_replace ('XXX', \Inflector::words_to_upper($name), $tpl);
 		$tpl = str_replace ('xxx', strtolower($name), $tpl);
 		$tpl = str_replace ('YYY', $name, $tpl);
 		return $tpl;
@@ -53,7 +53,9 @@ class Controller_Scffld_Helper
 		if (preg_match('/(.*?)\[\d+\]/', $str, $m))
 		{
 			return @$m[1];
-		}else{
+		}
+		else
+		{
 			return $str;
 		}
 	}
@@ -76,9 +78,13 @@ class Controller_Scffld_Helper
 			if ($m[1] == '')
 			{
 				return '';
-			} elseif (is_numeric($m[1])) {
+			}
+			elseif (is_numeric($m[1]))
+			{
 				return intval($m[1]);
-			} else {
+			}
+			else
+			{
 				return $m[1];
 			}
 		}

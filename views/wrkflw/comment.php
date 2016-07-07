@@ -26,12 +26,12 @@
 </fieldset>
 <?php endif; ?>
 
+<div class="lcmbar_bottom">
 <div class="submit_button">
 	<?php
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit('submit', $button, array('class' => 'button primary confirm'));
 	?>
 </div>
-
+</div>
 <?php echo \Form::close(); ?>
-
