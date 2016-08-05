@@ -21,15 +21,32 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 		foreach($cmds as $field)
 		{
 			$is_required = strpos($field, 'null') !== false ? false : true;
-			$vals    = explode(':', $field);
-			$field   = $vals[0];
-			$attr    = $vals[1];
-			$default = isset($vals[2]) ? self::modify_default($vals[2]) : '' ;
-			$nicename   = self::get_nicename($field);
-			$field      = self::remove_nicename($field);
-			$attr_nolen = self::remove_length($attr);
-			$class      = ", 'class' => '".$attr_nolen."'";
-			$cmd_mods[] = $field;
+			$vals        = explode(':', $field);
+			$field       = $vals[0];
+			unset($vals[0]);
+			$attr        = $vals[1];
+			unset($vals[1]);
+
+			$default = '';
+			$is_unique = false ;
+			foreach ($vals as $k => $v)
+			{
+				if (strpos($v, 'default') !== false)
+				{
+					$default = isset($v) ? self::modify_default($v) : '' ;
+					unset($vals[$k]);
+				}
+				if (strpos($v, 'unique') !== false)
+				{
+					$is_unique = true ;
+					unset($vals[$k]);
+				}
+			}
+			$nicename    = self::get_nicename($field);
+			$field       = self::remove_nicename($field);
+			$attr_nolen  = self::remove_length($attr);
+			$class       = ", 'class' => '".$attr_nolen."'";
+			$cmd_mods[]  = $field;
 
 			// attribute
 			$size = 0;
@@ -60,7 +77,7 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 				{
 					$properties[$field]['data_type'] = $attr_nolen;
 				}
-	
+
 				// form
 				$form = array();
 				if (in_array($field, array('text', 'memo', 'body', 'content', 'etc', 'message'))):
@@ -81,27 +98,33 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 					$form['class'] = $attr_nolen;
 					$properties[$field]['form'] = $form;
 				}
-	
+
 				// validation
 				$validation = array();
 				if (in_array($field, array('name', 'title', 'subject')) || $is_required)
 				{
 					// require
-					$validation['required'] ='';
+					$validation['required'] = '';
 				}
-	
+
+				if ($is_unique)
+				{
+					// require
+					$validation['unique'] = array($name.'.'.$field);
+				}
+
 				if ($max)
 				{
 					// max
 					$validation['max_length'] = array($max => '');
 				}
-	
+
 				if ($validation)
 				{
 					$properties[$field]['validation'] = $validation;
 				}
 
-				if ($default)
+				if ($default !== false)
 				{
 					$properties[$field]['default'] = $default;
 				}
@@ -148,13 +171,31 @@ class Controller_Scffld_Helper_Model extends Controller_Scffld_Helper
 
 		// $field_str
 		$field_str = var_export($properties, true);
-		$field_str = preg_replace("/=> \n +array \(/m", "=> array (", $field_str); // konagai request :-)
-		$field_str = str_replace('  ', "\t", $field_str);
-		$field_str = preg_replace("/^/m", "\t", $field_str);
-		$field_str = str_replace(" => '',", ",", $field_str);
-		$field_str = str_replace("'default' => '\\'\\'',", "'default' => '',", $field_str);
-		$field_str = str_replace("'default' => 'null',", "'default' => null,", $field_str);
-		$field_str = preg_replace("/array \(\n\t+?(\d+),\n\t+?\),/m", "array ($1),", $field_str);
+		$field_str = preg_replace("/=> \n +array \(/m",
+															"=> array (",
+															$field_str); // konagai request :-)
+		$field_str = str_replace('  ',
+														 "\t",
+														 $field_str);
+		$field_str = preg_replace("/^/m",
+															"\t",
+															$field_str);
+		$field_str = str_replace(" => '',",
+														 ",",
+														 $field_str);
+		$field_str = str_replace("'default' => '\\'\\'',",
+														 "'default' => '',",
+														 $field_str);
+		$field_str = str_replace("'default' => 'null',",
+														 "'default' => null,",
+														 $field_str);
+		$field_str = preg_replace("/array \(\n\t+?(\d+),\n\t+?\),/m",
+															"array ($1),",
+															$field_str);
+		// to Lang
+		$field_str = preg_replace("/^(\t\t)'(.+?)' => array \(\n(\t+?)'(.*?)' => '(.*?)',\n/m",
+															"\n$1// $5\n$1'$2' => array(\n",
+															$field_str);
 
 		// template
 		$str = static::fetch_temlpate('model.php');

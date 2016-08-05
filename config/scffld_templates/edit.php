@@ -21,14 +21,16 @@ echo \Form::open(array('class' => 'lcm_form form_group'));
 	//echo render(LOCOMOPATH.'views/revision/inc_revision_memo.php');
 ?>
 
-<div class="submit_button">
-	<?php
+<div class="lcmbar_bottom">
+	<div class="submit_button">
+		<?php
 ###HIDDEN_FIELDS###
-	if ( ! @$is_revision):
-		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-		echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
-	endif;
-	?>
+		if ( ! @$is_revision):
+			echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+			echo \Form::submit('submit', '保存する', array('class' => 'button primary'));
+		endif;
+		?>
+	</div>
 </div>
 
 </div><!--/form_group-->

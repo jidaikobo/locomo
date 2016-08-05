@@ -18,11 +18,12 @@
 	</ul>
 </fieldset>
 
+<div class="lcmbar_bottom">
 <div class="submit_button">
 	<?php
 	echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 	echo \Form::submit('submit', '経路設定する', array('class' => 'button primary'));
 	?>
 </div>
-
+</div>
 <?php echo \Form::close(); ?>

@@ -461,6 +461,22 @@ class Controller_Frmt extends \Controller_Base
 				$elm_cpy = $element_model::forge($element->to_array());
 				$elm_cpy->format_id = $copy->id;
 				unset($elm_cpy->id);
+
+				/**
+				// タイプがテーブル
+				if ($elm_cpy->type == 'table')
+				{
+					$origin_table_id = str_replace('id=', '', str_replace('{TABLE id="', '', str_replace('"}', '', $elm_cpy->txt)));
+					$elm_cpy->txt  = copyTable($origin_table_id);
+				}
+				// タイプが image
+				if ($elm_cpy->type == 'image')
+				{
+					$path = str_replace('{IMAGE path="', '', str_replace('"}', '', $format['txt']));
+					$elm_cpy->txt  = copyImage($path);
+				}
+				 */
+
 				$copy->element[] = $elm_cpy;
 			}
 			if ($copy->save())
@@ -473,6 +489,18 @@ class Controller_Frmt extends \Controller_Base
 		\Response::redirect(\Input::referrer());
 	}
 
+	/**
+	 *
+	 */
+	protected function copyTable()
+	{
+	}
+
+	protected function copyImage($path)
+	{
+		$file = APPPATH.'locomo'.DS.$path;
+		$model::$_upload_path;
+	}
 
 	/* ==========
 	 * actions
