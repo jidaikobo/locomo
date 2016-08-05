@@ -1,4 +1,4 @@
-<h1>メッセージ<?php echo $item->name ? '：'.$item->name : '' ?></h1>
+<h2>メッセージ<?php echo $item->name ? '：'.$item->name : '' ?></h2>
 <table class="tbl">
 <?php
 	// use model's form plain definition instead of raw-like html
@@ -59,13 +59,3 @@
 </tr>
 </table>
 
-
-
-<h2>既読ユーザー</h2>
-<?php if ($users = \Arr::assoc_to_keyval($item->opened, 'id', 'display_name')): ?>
-	<?php echo implode(', ', $users); ?>
-<?php endif; ?>
-
-<?php
-echo \Presenter_Msgbrd_View::parents($item->parent);
-?>
