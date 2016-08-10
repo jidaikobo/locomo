@@ -5,7 +5,7 @@ jQuery(function ($){
 		theme : "modern",
 		language: 'ja',
 		theme_advanced_buttons3_add : "tablecontrols",
-		plugins:"table code",
+		plugins:"table code link",
 	});
 	
 	$(':input.tinymce').each(function(){

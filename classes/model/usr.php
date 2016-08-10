@@ -50,9 +50,6 @@ class Model_Usr extends Model_Base_Soft
 				'max_length' => array(255),
 			),
 		),
-		'main_usergroup_id' => array(
-			'label' => '代表ユーザグループ',
-		),
 		'password' => array(
 			'label' => 'パスワード',
 			'form' => array('type' => 'password', 'size' => 20, 'placeholder'=>'新規作成／変更する場合は入力してください'),
@@ -101,21 +98,15 @@ class Model_Usr extends Model_Base_Soft
 	/**
 	 * relations
 	 */
+	protected static $_belongs_to = array();
+	protected static $_has_one    = array();
+	protected static $_has_many   = array();
 	protected static $_many_many = array(
 		'usergroup' => array(
 			'key_from' => 'id',
 			'key_through_from' => 'user_id',
 			'table_through' => 'lcm_usrs_usrgrps',
 			'key_through_to' => 'group_id',
-			'model_to' => '\Model_Usrgrp',
-			'key_to' => 'id',
-			'cascade_save' => false,
-			'cascade_delete' => false,
-		)
-	);
-	protected static $_belongs_to = array(
-		'main_usergroup' => array(
-			'key_from' => 'main_usergroup_id',
 			'model_to' => '\Model_Usrgrp',
 			'key_to' => 'id',
 			'cascade_save' => false,
@@ -316,35 +307,5 @@ class Model_Usr extends Model_Base_Soft
 		$users += static::find_options('display_name', $options);
 
 		return $users;
-	}
-
-	/**
-	 * get_main_usergroup_id()
-	 */
-	public static function get_main_usergroup_id($uid)
-	{
-		static $ret;
-
-		if (isset($ret[$uid]))
-		{
-			return $ret[$uid];
-		}
-		else
-		{
-			// 自分の代表グループIDを取得
-			$usr = \Model_Usr::find($uid);
-			if ($usr && $usr->main_usergroup_id)
-			{
-				$ret[$uid] = $usr->main_usergroup_id;
-			}
-			else if (isset($usr->usergroup) && count($usr->usergroup) == 1)
-			{
-				// ユーザグループが単一なので、代表グループが設定されていなくてもそれとみなす
-				$ret[$uid] = reset($usr->usergroup)->id;
-			} else {
-				$ret[$uid] = false;
-			}
-		}
-		return $ret[$uid];
 	}
 }
