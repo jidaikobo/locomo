@@ -334,7 +334,9 @@ class Controller_Base extends Controller_Core
 		$options = $options ?: $model::$_options;
 
 		// view
-		$content = \View::forge(static::$dir.'index_admin_widget');
+		// $content = \Presenter::forge($this->_content_template ?: static::$dir.'index_admin_widget');
+		$content = \View::forge($this->_content_template ?: static::$dir.'index_admin_widget');
+		// $content = \View::forge(static::$dir.'index_admin_widget');
 		$content->set('items', $model::find('all', $options));
 		$this->template->set_safe('content', $content);
 		$this->template->set_global('title', static::$nicename.'管理一覧');

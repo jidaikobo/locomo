@@ -127,6 +127,16 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	public function action_view($id = null)
 	{
 		parent::view($id);
+
+		$item = $this->template->content->item;
+
+		if (!$item->is_opened())
+		{
+			Model_Msgbrd_Opened::forge(array(
+				'user_id' => \Auth::get('id'),
+				'msgbrd_id' => $item->id,
+			))->save();
+		}
 	}
 
 	/**
@@ -134,7 +144,12 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	 */
 	public function action_create()
 	{
-		parent::create();
+		static::create();
+
+		if ($parent = Model_Msgbrd::find(\Input::get('parent_id')))
+		{
+			$this->template->content->item->parent = $parent;
+		}
 	}
 
 	/**
@@ -142,8 +157,9 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	 */
 	public function action_edit($id = null)
 	{
-		parent::edit($id);
+		static::edit($id);
 	}
+
 
 	/**
 	 * action_delete()
@@ -206,12 +222,23 @@ class Controller_Msgbrd extends \Locomo\Controller_Base
 	public function action_index_dashboard()
 	{
 		\Model_Msgbrd::set_public_options();
-		\Model_Msgbrd::$_options['where'][] = array(
-			array('is_sticky', '=', 1)
-		);
 		\Model_Msgbrd::$_options['order_by'] = array('created_at' => 'desc');
 
 		$this->_content_template = 'msgbrd/index_admin_widget';
 		parent::index_widget();
+	}
+
+	/*
+	 * unopened() 未開封に
+	 */
+	public function action_unopened($id = null)
+	{
+		\DB::delete('lcm_msgbrds_opened')
+			->where('user_id', \Auth::get('id'))
+			->where('msgbrd_id', $id)
+			->execute();
+
+		\Session::set_flash('success', '未読にしました');
+		return \Response::redirect(\Input::referrer());
 	}
 }
