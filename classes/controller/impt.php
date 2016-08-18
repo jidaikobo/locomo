@@ -58,11 +58,11 @@ class Controller_Impt extends \Controller_Base
 		}
 
 		$content = \Presenter::forge($this->_content_template ?: static::$dir.'import');
-		$form = $content::form();
+		$form = $content::form($format);
 
 		$content->get_view()->set_global('item', $format, false);
 		$content->get_view()->set_global('form', $form, false);
 		$this->template->set_safe('content', $content);
-		$this->template->set_global('title', 'インポート');
+		$this->template->set_global('title', self::$nicename);
 	}
 }
