@@ -138,6 +138,7 @@ class Pagination extends \Fuel\Core\Pagination
 	*/
 	public function __set($name, $value = null)
 	{
+
 		if ($name == 'sort_info_model')
 		{
 			static::$_sort_info_model = $value;

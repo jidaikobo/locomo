@@ -39,6 +39,7 @@
 		this.calculate_total    = prop['calculate_total']  || '';
 		this.calculate_callback = prop['calculate_callback'] || false;
 		this.add_row_callback   = prop['add_row_callback'] || false;
+		this.sortable           = prop['sortable'] || {};
 
 
 		if (!this.model) { throw new Error( 'undefined "model"' ); }
@@ -67,6 +68,32 @@
 			// addRow
 			wrap.find(tb.add_row).on('click', {tb:tb}, tb.addRow);
 
+			// sort (th)
+			for (var key in this.sortable)
+			{
+				$(key).data({'sort': this.sortable[key]});
+
+				$(key).addClass('tabular-sortable');
+
+				$(key).on('click', function()
+				{
+
+					if ($(this).hasClass('tabular-sortable-asc'))
+					{
+						tb.sort($(this).data('sort'), 'DESC');
+						$('.tabular-sortable-asc').removeClass('tabular-sortable-asc');
+						$('.tabular-sortable-desc').removeClass('tabular-sortable-desc');
+						$(this).addClass('tabular-sortable-desc');
+					}
+					else
+					{
+						tb.sort($(this).data('sort'), 'ASC');
+						$('.tabular-sortable-asc').removeClass('tabular-sortable-asc');
+						$('.tabular-sortable-desc').removeClass('tabular-sortable-desc');
+						$(this).addClass('tabular-sortable-asc');
+					}
+				});
+			}
 		}
 
 	}
@@ -271,9 +298,40 @@
 
 			});
 
+		},
+
+
+		sort: function (value, order)
+		{
+			var tb = this;
+			var row_class = /^\./.test(tb.row_class) ? tb.row_class : '.' + tb.row_class;
+			var col_class = /^\./.test(value) ? value : '.' + value;
+
+			var length = $(row_class).length;
+
+			// バブルソート
+			for (var i = 0; i < ($(row_class).length-1 ); i++)
+			{
+				for (var j = ( $(row_class).length-1 ); j > i; j --)
+				{
+					var value_a = $($(row_class)[j]).find(col_class).val();
+					var value_b = $($(row_class)[j-1]).find(col_class).val();
+
+					if (!isNaN(value_a)) value_a = parseFloat(value_a);
+					if (!isNaN(value_b)) value_b = parseFloat(value_b);
+
+					if (
+						(order == 'ASC' && value_a < value_b) ||
+						(order != 'ASC' && value_a > value_b)
+					)
+					{
+						$( $(row_class)[j-1] ).before( $(row_class)[j] );
+					}
+				}
+			}
+
+			tb.calculateTabular(tb);
 		}
-
-
  
 	}
 

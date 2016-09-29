@@ -1266,3 +1266,21 @@ progid:DXImageTransform.Microsoft.Shadow(color=#aaaaaa, direction=270, strength=
 .hide_if_no_js {
 	display: none !important;
 }
+
+
+/* === tabular form sort === */
+.tabular-sortable
+{
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.tabular-sortable-asc:after
+{
+	content: '▲';
+}
+
+.tabular-sortable-desc:after
+{
+	content: '▼';
+}
