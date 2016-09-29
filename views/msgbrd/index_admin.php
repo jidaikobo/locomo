@@ -14,6 +14,7 @@
 <?php if (\Auth::is_root()): ?>
 			<th class="min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
 <?php endif; ?>
+			<th>未読</th>
 			<th><?php echo \Pagination::sort('name', '表題', false);?></th>
 <!--			<th><?php echo \Pagination::sort('contents', '本文', false);?></th>-->
 			<th><?php echo \Pagination::sort('category_id', 'カテゴリ', false);?></th>
@@ -25,6 +26,7 @@
 <?php endif; ?>
 			<th class="min"><?php echo \Pagination::sort('is_draft', '公開', false);?></th>
 			<th><?php echo \Pagination::sort('creator_id', '投稿者', false);?></th>
+			<th class="min">返信</th>
 			<th class="min">操作</th>
 		</tr>
 	</thead>
@@ -34,6 +36,11 @@
 <?php if (\Auth::is_root()): ?>
 			<td class="ar"><?php echo $item->id; ?></td>
 <?php endif; ?>
+			<td class="ac">
+				<?php if (!$item->is_opened()): ?>
+					未読
+				<?php endif; ?>
+			</td>
 			<th><div class="col_scrollable" style="min-width: 12em;">
 				<?php $icon_sticky = $item->is_sticky ? '<span class="icon" style="font-size: .5em;"><img src="'.\Uri::base().'lcm_assets/img/system/mark_pin.png" alt=""></span>' : '' ?>
 				<?php if (\Auth::has_access('\Controller_Msgbrd/view')):
@@ -53,10 +60,23 @@
 		<?php endif; ?>
 			<td><?php echo $item->is_draft ? '下書き' : '公開'; ?></td>
 			<td><div class="col_scrollable" style="min-width: 5em;"><?php echo \Model_Usr::get_display_name($item->creator_id); ?></div></td>
+			<td>
+				<?php
+					if (\Auth::has_access('\Controller_Msgbrd/create')):
+						echo \Html::anchor('msgbrd/create?parent_id='.$item->id, '返信', array('class' => 'edit button small'));
+					endif;
+				?>
+			</td>
 				<td>
 				<div class="btn_group">
+					<?php if ($item->creator_id == \Auth::get('id')): ?>
+					<?php elseif ($item->is_opened()): ?>
+						<?php echo Html::anchor('msgbrd/unopened/'.$item->id, '未読にする', array('class' => 'button small confirm')); ?>
+					<?php endif; ?>
 					<?php
-					if (\Auth::has_access('\Controller_Msgbrd/edit') && $item->creator_id == \Auth::get('id')):
+					if (\Auth::is_admin() ||
+						(\Auth::has_access('\Controller_Msgbrd/edit') && $item->creator_id == \Auth::get('id'))
+					):
 						echo Html::anchor('msgbrd/edit/'.$item->id, '編集', array('class' => 'edit'));
 					endif;
 
@@ -89,6 +109,7 @@
 <?php if (\Auth::is_root()): ?>
 			<th class="min"><?php echo \Pagination::sort('id', 'ID', false);?></th>
 <?php endif; ?>
+			<th>未読</th>
 			<th><?php echo \Pagination::sort('name', '表題', false);?></th>
 <!--			<th><?php echo \Pagination::sort('contents', '本文', false);?></th>-->
 			<th><?php echo \Pagination::sort('category_id', 'カテゴリ', false);?></th>
@@ -100,6 +121,7 @@
 <?php endif; ?>
 			<th><?php echo \Pagination::sort('is_draft', '公開', false);?></th>
 			<th><?php echo \Pagination::sort('creator_id', '投稿者', false);?></th>
+			<th class="min">返信</th>
 			<th>操作</th>
 		</tr>
 	</tfoot>

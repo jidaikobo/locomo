@@ -142,46 +142,6 @@ class Presenter_Usr_Edit extends \Presenter_Base
 		$form->field('email')
 			->add_rule('unique', "lcm_usrs.email.{$id}");
 
-		// ユーザグループ取得（代表用）
-		$ugrps4main = Model_Usrgrp::find_options(
-			'name',
-			array(
-				'where' => array(
-					array('is_available', true),
-					array('customgroup_uid', null),
-					array('is_for_acl', false),
-				),
-				'order_by' => array('seq' => 'ASC', 'name' => 'ASC')
-			)
-		);
-
-		// 選択されているユーザグループのみに絞り込む
-		$choosen = $obj->usergroup ?: array();
-		foreach ($ugrps4main as $k => $v)
-		{
-			if ( ! array_key_exists($k, $choosen))
-			{
-				unset($ugrps4main[$k]);
-			}
-		}
-
-		if ($ugrps4main)
-		{
-			// 代表ユーザグループ
-			$form->field('main_usergroup_id')
-				->set_description('権限用ユーザグループは対象にならないので、所属していても候補にされません。')
-				->set_type('select')
-				->set_options(array('0' => '') + $ugrps4main)
-				->set_value($obj->main_usergroup_id);
-		}
-		else
-		{
-			// 代表ユーザグループ
-			$form->field('main_usergroup_id')
-				->set_type('hidden')
-				->set_value($obj->main_usergroup_id);
-		}
-
 		// usergroup can modified by admin only 
 		if (\Auth::is_admin())
 		{

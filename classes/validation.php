@@ -164,4 +164,28 @@ class Validation extends \Fuel\Core\Validation
 		if ( ! strtotime($val) || strtotime($val) <= 0) return false;
 		return true;
 	}
+
+
+	public function _validation_required_least($val, $fields = array(), $least = 1)
+	{
+		$inputed = 0;
+
+		foreach ($fields as $field)
+		{
+			if ($this->input($field) !== '') $inputed++;
+		}
+
+
+		if($least > $inputed)
+		{
+			$labels = array();
+			foreach ($fields as $field)
+			{
+				$labels[] = $this->field($field)->label;
+			}
+			throw new \Validation_Error($this->active_field(), $val, array('required_least' => array($this->field($field))), array(implode(',', $labels)));
+		}
+
+		return true;
+	}
 }

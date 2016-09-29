@@ -11,11 +11,10 @@ class Presenter_Impt_Import extends \Presenter_Base
 		// populate なし
 		$form = \Fieldset::forge('impt');
 
-		// submit
-		$form->add('submit', '', array('type' => 'submit', 'value' => '保存', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');
-
 		// field の成形
 		$config = \Config::load('form', true);
+
+		$form->add('format', 'フォーマット')->set_template(str_replace('{field}', $obj->name, $config['field_template']));
 
 		// uploads
 		$form->add(
@@ -32,6 +31,9 @@ class Presenter_Impt_Import extends \Presenter_Base
 				'type' => 'checkbox',
 				'value' => 1
 			));
+
+		// submit
+		$form->add('submit', '', array('type' => 'submit', 'value' => 'インポート', 'class' => 'button primary'))->set_template('<div class="submit_button">{field}</div>');
 
 		return $form;
 

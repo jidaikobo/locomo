@@ -1,4 +1,5 @@
 <?php
+namespace Locomo;
 class Model_Msgbrd extends \Model_Base_Soft
 {
 //	use \Model_Traits_Wrkflw;
@@ -11,64 +12,69 @@ class Model_Msgbrd extends \Model_Base_Soft
 	public static $_options = array();
 
 	// $_properties
-	protected static $_properties =
-	array (
+	protected static $_properties = array(
 		'id',
-		'name' => 
-		array (
+		'parent_id' => array('form' => array('type' => 'hidden'), 'default' => 0),
+		'name' =>  array(
 			'label' => '表題',
 			'data_type' => 'varchar(255)',
-			'form' => 
-			array (
+			'form' => array(
 				'type' => 'text',
 				'size' => 30,
 				'class' => 'varchar',
 			),
-			'validation' => 
-			array (
+			'validation' => array(
 				'required',
-				'max_length' => 
-				array (
+				'max_length' => array (
 					255,
 				),
 			),
 		),
-		'usergroup_id' =>
-		array(
-			'label' => '公開範囲',
-			'form' => array('type' => 'select'),
-			'validation' => array ('required',),
+		'usergroup_id' => array(
+			'label' => '公開範囲(グループ)',
+			'form' => array(
+				'type' => 'select',
+			),
+			'validation' => array (
+				'required_least' => array(array('usergroup_id', 'user_id')),
+			),
+			'default' => null,
 		),
-		'category_id' =>
-		array(
+		'user_id' => array(
+			'label' => '公開範囲(個人)',
+			'form' => array(
+				'type' => 'select',
+			),
+			'validation' => array (
+				'required_least' => array(array('usergroup_id', 'user_id')),
+			),
+		),
+		'category_id' => array(
 			'label' => 'カテゴリ',
-			'form' => array('type' => 'select')
+			'form' => array(
+				'type' => 'select',
+			),
 		),
-		'contents' => 
-		array (
+		'contents' => array(
 			'label' => '本文',
 			'data_type' => 'text',
-			'form' => 
-			array (
+			'form' => array(
 				'type' => 'textarea',
 				'class' => 'textarea',
 			),
-			'validation' => 
-			array (
+			'validation' => array(
 				'required',
 			),
 		),
-		'is_sticky' => 
-		array (
-			'label' => '先頭表示',
+		'is_sticky' => array(
+			'label' => '先頭に固定表示',
 			'data_type' => 'bool',
-			'form' => 
-			array (
+			'form' => array(
 				'type' => 'select',
 				'options' => 
 				array (
-					0 => 'ダッシュボード／先頭に固定表示しない',
-					1 => 'ダッシュボード／先頭に固定表示する',
+					0 => 'しない',
+					1 => '先頭に固定表示する',
 				),
 				'class' => 'bool',
 			),
@@ -91,8 +97,7 @@ class Model_Msgbrd extends \Model_Base_Soft
 			'default' => 0
 		),
 
-		'expired_at' => 
-		array (
+		'expired_at' => array(
 			'label' => '公開期限',
 			'data_type' => 'datetime',
 			'form' => 
@@ -102,12 +107,10 @@ class Model_Msgbrd extends \Model_Base_Soft
 			),
 		),
 
-		'created_at' => 
-		array (
+		'created_at' => array(
 			'label' => '作成日',
 			'data_type' => 'datetime',
-			'form' => 
-			array (
+			'form' => array(
 				'type' => 'text',
 				'class' => 'datetime',
 			),
@@ -135,11 +138,45 @@ class Model_Msgbrd extends \Model_Base_Soft
 			'key_to' => 'id',
 			'cascade_save' => false,
 			'cascade_delete' => false
-		)
+		),
+		'user' => array(
+			'key_from'         => 'user_id',
+			'model_to'         => 'Model_Usr',
+			'key_to'           => 'id',
+			'cascade_save'     => false,
+			'cascade_delete'   => false,
+		),
+		'parent' => array(
+			'key_from'         => 'parent_id',
+			'model_to'         => 'Model_Msgbrd',
+			'key_to'           => 'id',
+			'cascade_save'     => false,
+			'cascade_delete'   => false,
+		),
 	);
 
 	// $_has_many
 	protected static $_has_many = array(
+		'child' => array(
+			'key_from'         => 'id',
+			'model_to'         => 'Model_Msgbrd',
+			'key_to'           => 'parent_id',
+			'cascade_save'     => false,
+			'cascade_delete'   => false,
+		),
+	);
+
+	protected static $_many_many = array(
+		'opened' => array(
+			'key_from'         => 'id',
+			'key_through_from' => 'msgbrd_id',
+			'model_to'         => 'Model_Usr',
+			'table_through'    => 'lcm_msgbrds_opened',
+			'key_through_to'   => 'user_id',
+			'key_to'           => 'id',
+			'cascade_save'     => false,
+			'cascade_delete'   => false,
+		),
 	);
 
 	// observers
@@ -177,6 +214,17 @@ class Model_Msgbrd extends \Model_Base_Soft
 	{
 		// set $_authorize_methods
 		static::$_authorize_methods[] = 'auth_msgbrd';
+	}
+
+
+	public function _event_before_save()
+	{
+		// usergroup 0 がゲストユーザーの為
+		// 空文字で null をセットする
+		if ( '' === \Input::post('usergroup_id', ''))
+		{
+			$this->usergroup_id = null;
+		}
 	}
 
 	/**
@@ -222,10 +270,17 @@ class Model_Msgbrd extends \Model_Base_Soft
 				array(
 					array('is_draft', '=', '0'),
 					array('usergroup_id', 'IN', \Auth::get_groups()),
-				), 
+				),
 				 // 公開範囲ではないが、creator_idが一致する。下書きかどうかは問わない。
 				'or' => array(
-					array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)),
+					// array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)), ???
+					array('creator_id', '=', \Auth::get('id')),
+
+					// もしくは、自分個人宛て
+					'or' => array(
+						array('is_draft', '=', '0'),
+						array('user_id', '=', \Auth::get('id')),
+					),
 				),
 			);
 		}
@@ -296,16 +351,47 @@ class Model_Msgbrd extends \Model_Base_Soft
 		if (in_array(\Auth::get('id'), [-1, -2])) return;
 		
 		// static::$_options
-		static::$_options['where'][] = array(
+		$options['where'][] = array(
 			// draftでなく、公開範囲内なら許可
 			array(
-				array($column, '=', '0'),
+				array('is_draft', '=', '0'),
 				array('usergroup_id', 'IN', \Auth::get_groups()),
-			), 
+			),
 			 // 公開範囲ではないが、creator_idが一致する。下書きかどうかは問わない。
 			'or' => array(
-				array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)),
+				// array('creator_id', 'IN', array(\Auth::get('id'), -1, -2)), ???
+				array('creator_id', '=', \Auth::get('id')),
+
+				// もしくは、自分個人宛て
+				'or' => array(
+					array('is_draft', '=', '0'),
+					array('user_id', '=', \Auth::get('id')),
+				),
 			),
 		);
 	}
+
+	/*
+	 * 未読・既読
+	 */
+	public function is_opened()
+	{
+		if (\Auth::get('id') == $this->creator_id)
+		{
+			return true;
+		}
+
+		$cnt = Model_Msgbrd_Opened::count(array(
+			'where' => array(
+				array('user_id', \Auth::get('id')),
+				array('msgbrd_id', $this->id),
+			),
+		));
+
+		return ($cnt > 0);
+	}
+
+	/*
+	 * 開封
+	 */
 }

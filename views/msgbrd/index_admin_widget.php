@@ -2,6 +2,7 @@
 <table class="tbl datatable">
 	<thead>
 		<tr>
+			<th>未読</th>
 			<th>表題</th>
 			<th class="min">作成日</th>
 			<th>投稿者</th>
@@ -14,6 +15,11 @@
 	$create_time = date('Y年n月j日', strtotime($item->created_at));
 ?>
 	<tr title="<?php echo $msg_title.'：'.$creator_name ?>" tabindex="-1">
+		<td class="ac">
+			<?php if (!$item->is_opened()): ?>
+				未読
+			<?php endif; ?>
+		</td>
 		<th><div class="col_scrollable">
 			<?php echo \Html::anchor(\Uri::create('msgbrd/view/'.$item->id), $msg_title.'<span class="skip"> 作成日 '.$create_time.' 投稿者 '.$creator_name.'</span>'); ?>
 		</div></th>

@@ -314,7 +314,6 @@ class Bulk
 		}
 	}
 
-
 	/*
 	 * set_define_function()
 	 */
