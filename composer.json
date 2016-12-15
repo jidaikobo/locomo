@@ -1,37 +1,16 @@
 {
-	"name": "locomo",
-	"description" : "FuelPHP 1.x Oil Package",
-	"homepage": "https://github.com/fuel/oil",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "FuelPHP Development Team",
-			"email": "team@fuelphp.com"
-		}
-	],
-	"require": {
-		"fuel/pdf": "*"
-	},
-	"repositories": [
-		{
-			"type": "package",
-			"package": {
-				"name": "fuel/pdf",
-				"version": "1.7.2",
-				"dist": {
-					"url": "https://github.com/jidaikobo/pdf/archive/master.zip",
-					"type": "zip"
-				},
-				"source": {
-					"url": "https://github.com/jidaikobo/pdf.git",
-					"type": "git",
-					"reference": "1.8/develop"
-				}
-			}
-		}
-	],
-	"config": {
-		"vendor-dir": "../../packages"
-	}
+    "name": "jidaikobo/locomo",
+    "description": "package of fuelPHP",
+    "type": "fuel-package",
+    "require": {
+        "monolog/monolog": "@stable"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jidaikobo",
+            "email": "info@jidaikobo.com"
+        }
+    ],
+    "minimum-stability": "stable"
 }
-
