@@ -1,54 +1,55 @@
 {
-    "name": "jidaikobo/locomo",
-    "description": "package of fuelPHP",
-    "type": "fuel-package",
-    "require": {
-        "jidaikobo/pdf": "*",
-        "jidaikobo/excel": "*"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "jidaikobo",
-            "email": "info@jidaikobo.com"
-        }
-    ],
-    "minimum-stability": "stable",
-	"version": "1.1.2" ,
-  "repositories": [
-    {
-    	"type": "package",
-            "package": {
-                "name": "jidaikobo/pdf",
-                "type": "fuel-package",
-                "version": "1.0.0",
-                "dist": {
-                    "url": "https://github.com/jidaikobo/pdf/archive/master.zip",
-                    "type": "zip"
-                },
-                "source": {
-                    "url": "https://github.com/jidaikobo/pdf.git",
-                    "type": "git",
-                    "reference": "1.8/develop"
-                }
-            }
-    },
-	{
-    	"type": "package",
-            "package": {
-                "name": "jidaikobo/excel",
-                "type": "fuel-package",
-                "version": "1.0.0",
-                "dist": {
-                    "url": "https://github.com/jidaikobo/excel/archive/master.zip",
-                    "type": "zip"
-                },
-                "source": {
-                    "url": "https://github.com/jidaikobo/excel.git",
-                    "type": "git",
-                    "reference": "1.8/develop"
-                }
-            }
-	}
-  ]
+	"name": "jidaikobo/locomo",
+	"description": "package of fuelPHP",
+	"type": "fuel-package",
+	"require": {
+		"jidaikobo/pdf": "*",
+		"jidaikobo/excel": "*"
+	},
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "jidaikobo",
+			"email": "info@jidaikobo.com"
+		}
+	],
+	"minimum-stability": "stable",
+	"version": "1.1.3" ,
+	"repositories":
+	[
+		{
+			"type": "package",
+			"package": {
+				"name": "jidaikobo/pdf",
+				"type": "fuel-package",
+				"version": "1.0.0",
+				"dist": {
+					"url": "https://github.com/jidaikobo/pdf/archive/master.zip",
+					"type": "zip"
+				},
+				"source": {
+					"url": "https://github.com/jidaikobo/pdf.git",
+					"type": "git",
+					"reference": "1.8/develop"
+				}
+			}
+		},
+		{
+			"type": "package",
+			"package": {
+				"name": "jidaikobo/excel",
+				"type": "fuel-package",
+				"version": "1.0.0",
+				"dist": {
+					"url": "https://github.com/jidaikobo/excel/archive/master.zip",
+					"type": "zip"
+				},
+				"source": {
+					"url": "https://github.com/jidaikobo/excel.git",
+					"type": "git",
+					"reference": "1.8/develop"
+				}
+			}
+		}
+	]
 }
