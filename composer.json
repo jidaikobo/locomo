@@ -3,7 +3,7 @@
     "description": "package of fuelPHP",
     "type": "fuel-package",
     "require": {
-        "monolog/monolog": "@stable"
+        "cangelis/pdf ": "@stable"
     },
     "license": "MIT",
     "authors": [
