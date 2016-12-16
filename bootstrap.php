@@ -58,4 +58,7 @@ Autoloader::add_classes($classes);
 \Asset::add_path(LOCOMOPATH.'assets'.DS);
 \Asset::add_path(APPPATH.'locomo'.DS.'assets'.DS);
 
+
+
+
 /* End of file bootstrap.php */
